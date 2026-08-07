@@ -3,7 +3,7 @@
 It states what each of the other pages is for, so the set can be opened cold by
 someone who has never seen it.
 
-    python -m gslg.viewers.index
+    python -m gslg.web.pages.index
 """
 
 from __future__ import annotations
@@ -12,23 +12,24 @@ import json
 import pathlib
 from collections import Counter
 
+from gslg import arms as A
 from gslg import paths
-from gslg.viewers.compare import CSS, PLAYGROUND_PATH, nav
+from gslg.web.pages.shared import CSS, PLAYGROUND_PATH, nav
 
 OUT = paths.SITE / "index.html"
 
+#: The comparison tiles describe themselves from the registry, so a new comparison is
+#: on the landing page as soon as it exists.
 CARDS = [
-    ("three_way.html", "Three arms",
-     "The raw prompt, yesterday's sub-genre Hard Needs and today's Build.md Part II "
-     "configuration, scored blind against what both guided arms asked for. Any scene, "
-     "or any set of them, downloads as a card."),
-    ("rules_compare.html", "Rules vs baseline",
-     "Today's arm against the unguided baseline, scene by scene, on the isometric and "
-     "the top-down. Cards download from here too."),
+    (c.page, f"{len(c.arms)} arms &mdash; " + ", ".join(a.short for a in c),
+     c.blurb + " Any scene, or any set of them, downloads as a card.")
+    for c in A.COMPARISONS.values()
+] + [
     ("roadmap.html", "Injection roadmap",
      "Every scene's injected block in one place, with 16:9 sheets rendered for slides."),
     ("requirements.html", "Requirements used",
-     "The two catalogues of requirements side by side, with how often each was met."),
+     "Every arm's catalogue of requirements side by side, with how often each was "
+     "met - by the arm that asked, and by the arms that did not."),
     ("rules_viewer/index.html", "Genre menu",
      "The Build.md model itself - each genre's shapes, options and presets."),
 ]

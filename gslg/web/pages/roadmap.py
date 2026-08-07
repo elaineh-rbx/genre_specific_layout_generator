@@ -11,7 +11,7 @@ native 16:9: one overview of the whole run, then one sheet per genre carrying th
 genre's injections verbatim.
 
 Usage (repo root):
-    python -m gslg.viewers.roadmap
+    python -m gslg.web.pages.roadmap
 """
 
 from __future__ import annotations
@@ -23,8 +23,8 @@ from collections import Counter, defaultdict
 from PIL import Image, ImageDraw, ImageFont
 
 from gslg import paths
-from gslg import rules as br
-from gslg.viewers import compare as brc
+from gslg.model import rules as br
+from gslg.web.pages import shared as brc
 
 OUT = paths.SITE / "roadmap.html"
 SLIDES = paths.SITE / "roadmap_slides"

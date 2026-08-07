@@ -20,9 +20,9 @@ unlisted request is classified with the document's own rule: geometry a segmente
 could identify is `image`, an invisible volume or marker is `layout`.
 
 Usage:
-    python -m gslg.router --text "..."
-    python -m gslg.router --golden
-    python -m gslg.router --golden --audit
+    python -m gslg.model.router --text "..."
+    python -m gslg.model.router --golden
+    python -m gslg.model.router --golden --audit
 """
 
 from __future__ import annotations
@@ -32,8 +32,8 @@ import json
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict, dataclass, field
 
-from gslg import llm
-from gslg import rules as br
+from gslg.backends import llm
+from gslg.model import rules as br
 from gslg.paths import PROMPTS as GOLDEN
 from gslg.paths import ROUTING
 

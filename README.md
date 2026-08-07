@@ -19,8 +19,8 @@ Part II is a menu rather than a specification:
 | **Option** | Additive on top of the shape, combined freely. Nothing is mandatory. |
 | **Preset** | A shape plus a few option IDs, modelled on a real game - a starting point, not a constraint. |
 
-`gslg/rules.py` parses that document at import, so the model in code cannot drift from
-the model in prose. A router (`gslg/router.py`) reads a prompt and picks a genre, a
+`gslg/model/rules.py` parses that document at import, so the model in code cannot drift from
+the model in prose. A router (`gslg/model/router.py`) reads a prompt and picks a genre, a
 shape and whatever options the prompt gives a reason to want - and picking almost
 nothing is a legitimate answer.
 
@@ -59,6 +59,12 @@ labelled A/B/C, so position cannot correlate with arm.
 | `needs` | an older model: per-sub-genre Hard Needs, injected as mandatory demands. |
 | `rules` | this repo: one shape plus the options the router picked, nothing mandatory. |
 
+An arm is an entry in `gslg/arms.py` - a name, a colour, where its run lives and what
+it demands - and a *comparison* is a set of arms judged together. Nothing counts to
+three: the judge asks about however many images it is handed, the pages draw a column
+per arm, and the card sizes its tiles to fit. Adding a fourth arm is one entry plus its
+images under `results/scenes/<id>/`.
+
 Against the raw baseline on the features it asked for, the rules arm lands 82% of them
 on the isometric and 83% on the top-down, where the baseline manages 63% of the same
 list. Judged against the union of both guided arms' asks, the picture is more
@@ -72,22 +78,34 @@ scene in a sub-genre gets the same demands whether or not its prompt called for 
 docs/build.md               the layout rules; rules.py parses this, nothing hardcodes it
 docs/subgenre-catalogue.html the 44 sub-genres of the older Hard Needs model
 
-gslg/rules.py               Build.md Part II -> genres, shapes, options, presets
-gslg/router.py              prompt -> genre, shape, options (two constrained LLM calls)
-gslg/prompts.py             every wrapper sent to the image model, in one file
-gslg/images.py              the image backend: generation and reference-conditioned edits
-gslg/llm.py                 the text/vision model behind one JSON-schema call
 gslg/paths.py               where everything lives
-gslg/server.py              the interactive server, and the viewer/results host
-gslg/cards.py               one downloadable sheet per prompt: three arms and a checklist
+gslg/arms.py                what an arm is, which exist, and which sets get compared
+
+gslg/model/rules.py         Build.md Part II -> genres, shapes, options, presets
+gslg/model/router.py        prompt -> genre, shape, options (two constrained LLM calls)
+gslg/model/hardneeds/       the older per-sub-genre model, kept for the comparison
+
+gslg/backends/images.py     the image backend: generation and reference-conditioned edits
+gslg/backends/llm.py        the text/vision model behind one JSON-schema call
+
+gslg/pipeline/prompts.py    every wrapper sent to the image model, in one file
+gslg/pipeline/spec.py       a playground spec -> the prompts it produces
+gslg/pipeline/carve.py      authored layouts, and the overlays that check them
+gslg/pipeline/run.py        one spec all the way to images, in any of the three orders
 gslg/layouts/               authored topology: mazes, racing circuits
-gslg/hardneeds/             the older per-sub-genre model, kept for the comparison
-gslg/judges/                the blinded judges, per pair and per trio
-gslg/viewers/               the static pages under site/
+
+gslg/evaluate/judge.py      one blinded judge, any number of arms
+gslg/evaluate/score.py      run a comparison over the golden set
+gslg/evaluate/card.py       one downloadable sheet per prompt: the arms and the checklist
+
+gslg/web/server.py          the HTTP layer, and the page/results host
+gslg/web/playground.html    the playground itself
+gslg/web/pages/             the static pages under site/
 
 scripts/generate_golden.py  regenerate the 75 scenes
 scripts/build_site.py       rebuild every page from results/
 scripts/import_results.py   how results/ was brought over, and what was renamed
+scripts/migrate_scores.py   how the pre-registry score files were converted
 scripts/serve.sh            keep 8887 and 8888 up, with a supervisor each
 
 results/                    the evidence: scenes, runs, routing picks, judge scores
@@ -110,17 +128,16 @@ nothing needs a second origin.
 Regenerating from scratch, in order:
 
 ```bash
-python -m gslg.router --golden        # route all 75 prompts
+python -m gslg.model.router --golden  # route all 75 prompts
 python scripts/generate_golden.py     # generate the rules arm
-python -m gslg.judges.rules           # judge it against the raw baseline
-python -m gslg.judges.three_way       # judge all three arms blind
+python -m gslg.evaluate.score         # judge every comparison, blind, both stages
 python scripts/build_site.py          # rebuild the pages
 ```
 
 A single card, without a server:
 
 ```bash
-python -m gslg.cards --scene 0025
+python -m gslg.evaluate.card --scene 0025
 ```
 
 ## Credentials
@@ -128,7 +145,7 @@ python -m gslg.cards --scene 0025
 One Azure key covers both the image deployment and the text/vision model. It is read
 from `~/.cache/i2l/gpt-image-2-token`, or from `GPT_IMAGE_2_API_KEY` and
 `GSLG_LLM_KEY`. Endpoints and deployment names are environment-overridable; see the
-constants at the top of `gslg/images.py` and `gslg/llm.py`.
+constants at the top of `gslg/backends/images.py` and `gslg/backends/llm.py`.
 
 The judge deployment rejects `temperature` and `top_p` and accepts `seed`, so
 determinism is best-effort: a repeat that differs is possible rather than a bug.

@@ -14,7 +14,7 @@ geometry from the isometric render, so anything invisible - a trigger volume, a
 spawn marker, a pickup - cannot be recovered and must never reach the image model.
 Only `image`, and the visible half of `both`, is injectable.
 
-    from gslg.rules import GENRES, render
+    from gslg.model.rules import GENRES, render
     g = GENRES["Racing"]
     print(render(g.name, g.shape("route-circuit"), ["spawn-grid", "barrier-guardrail"]))
 """

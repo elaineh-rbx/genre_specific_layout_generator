@@ -19,8 +19,8 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 
-from gslg.hardneeds import needs as hn
-from gslg.hardneeds import subgenres as sd
+from gslg.model.hardneeds import needs as hn
+from gslg.model.hardneeds import subgenres as sd
 from gslg.paths import SUBGENRE_DOC as VIEWER
 
 _VAR_RE = re.compile(

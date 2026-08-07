@@ -1,6 +1,6 @@
 """Generate all 75 golden scenes under the Build.md Part II layout model.
 
-Each scene uses the router's picks from `python -m gslg.router --golden`: a genre,
+Each scene uses the router's picks from `python -m gslg.model.router --golden`: a genre,
 one shape, and whatever options that prompt gave a reason to want. The addendum is
 built by the same code the interactive server previews, so what lands here is exactly
 what the UI shows.
@@ -32,8 +32,9 @@ from dataclasses import dataclass, field
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
 
-from gslg import images, paths  # noqa: E402
-from gslg import rules as br  # noqa: E402
+from gslg import paths
+from gslg.backends import images  # noqa: E402
+from gslg.model import rules as br  # noqa: E402
 from gslg import server as pg  # noqa: E402
 
 GOLDEN = paths.PROMPTS

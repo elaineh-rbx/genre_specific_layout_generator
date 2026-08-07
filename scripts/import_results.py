@@ -9,7 +9,8 @@ Three things are normalised:
   arms       `original`/`guided` become `raw`/`needs`, matching the names the judges
              and the viewers have always used in their data
   filenames  every arm uses `{scene}.png`, where one arm used to prefix `scene_`
-  scores     the two judges' outputs sit together under `results/scores/`
+  scores     every judged comparison sits together under `results/scores/`, and is
+             then converted to the generic format by `scripts/migrate_scores.py`
 
 Images are hard-linked rather than copied. They are identical bytes on the same
 filesystem, and a second full copy of ~900 MB buys nothing.

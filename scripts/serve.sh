@@ -42,7 +42,7 @@ supervise() {
         cd "'"$REPO"'"
         while true; do
             echo "[$(date -Is)] '"$TAG"' watching :'"$port"' ('"$home"')" >> "'"$log"'"
-            "'"$PY"'" -m gslg.server --port '"$port"' --home '"$home"' >> "'"$log"'" 2>&1
+            "'"$PY"'" -m gslg.web.server --port '"$port"' --home '"$home"' >> "'"$log"'" 2>&1
             echo "[$(date -Is)] :'"$port"' exited $?, restarting in 5s" >> "'"$log"'"
             sleep 5
         done
@@ -88,7 +88,9 @@ start_one() {
 
 stop_all() {
     pkill -f "$TAG watching" 2>/dev/null
-    pkill -f "gslg.server --port" 2>/dev/null
+    # Matches the module path loosely, so a server started before the package was
+    # reorganised is still adopted rather than left holding the port.
+    pkill -f "gslg[.a-z]*server --port" 2>/dev/null
     sleep 1
     rmdir /tmp/${TAG}-*.lock 2>/dev/null
     return 0

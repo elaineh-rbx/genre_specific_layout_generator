@@ -27,8 +27,8 @@ import json
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict, dataclass
 
-from gslg import llm
-from gslg.hardneeds import guidance as gd
+from gslg.backends import llm
+from gslg.model.hardneeds import guidance as gd
 from gslg.paths import PROMPTS as GOLDEN
 from gslg.paths import ROUTING
 

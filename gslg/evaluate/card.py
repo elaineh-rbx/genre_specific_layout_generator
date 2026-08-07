@@ -1,9 +1,12 @@
-"""One downloadable card per prompt: three arms of images, and what each was asked for.
+"""One downloadable card per prompt: every arm's images, and what each was asked for.
 
-A card answers a single question at a glance - what did this prompt look like before
-any guidance, under yesterday's sub-genre Hard Needs, and under today's Build.md
-shape-and-options - and then shows the checklist both guided arms were judged against,
-so the pictures and the requirements sit on the same sheet instead of in two viewers.
+A card answers a single question at a glance - what did this prompt look like under
+each arm - and then shows the checklist they were judged against, so the pictures and
+the requirements sit on the same sheet instead of on two different pages.
+
+It is drawn from a comparison, so its width is however many arms that comparison has.
+The tiles shrink to fit and the checklist gets one column per asking arm; nothing here
+counts to three.
 
 Two sources, one layout:
 
@@ -15,8 +18,8 @@ Two sources, one layout:
             mean what a stored card's ticks mean.
 
 Usage:
-    python -m gslg.cards --scene 0025
-    python -m gslg.cards --all
+    python -m gslg.evaluate.card --scene 0025
+    python -m gslg.evaluate.card --all --comparison rules_vs_raw
 """
 
 from __future__ import annotations
@@ -28,21 +31,20 @@ import pathlib
 
 from PIL import Image, ImageDraw, ImageFont
 
-from gslg import paths, prompts
-from gslg import rules as br
-from gslg.judges import rules as rsc
-from gslg.judges import three_way as tws
+from gslg import arms as A
+from gslg import paths
+from gslg.evaluate import judge as J
+from gslg.evaluate import score as sc
+from gslg.model import rules as br
 from gslg.paths import PROMPTS as MANIFEST
+from gslg.pipeline import prompts
 
 CARDS = paths.RUN / "cards"
 
-ARMS = paths.ARMS
-ARM_TITLE = {"raw": "RAW PROMPT", "needs": "YESTERDAY", "rules": "TODAY"}
-ARM_SUB = {"raw": "no guidance at all",
-           "needs": "sub-genre Hard Needs",
-           "rules": "Build.md Part II"}
-ARM_TICK = {"raw": "raw", "needs": "yest", "rules": "today"}
-STAGES = ("iso", "td")
+#: Which arms a card shows, unless one is passed in. The widest comparison, because a
+#: card is a thing you hand someone, and the more arms it holds the more it settles.
+DEFAULT = "three_way"
+STAGES = paths.STAGES
 STAGE_LABEL = {"iso": "isometric", "td": "top-down"}
 
 BG = (13, 17, 23)
@@ -53,7 +55,12 @@ DIM = (159, 176, 195)
 DIM2 = (111, 130, 150)
 OK = (63, 185, 80)
 MISS = (60, 72, 88)
-ACCENT = {"raw": (139, 148, 158), "needs": (210, 153, 34), "rules": (88, 166, 255)}
+
+
+def rgb(hex_colour: str) -> tuple[int, int, int]:
+    """An arm's accent, as Pillow wants it. The pages state it once, in hex."""
+    h = hex_colour.lstrip("#")
+    return tuple(int(h[i:i + 2], 16) for i in (0, 2, 4))
 
 W = 1920
 PAD = 40
@@ -114,7 +121,7 @@ def _key(text: str) -> str:
     return " ".join(text.split()).lower()
 
 
-def merge_stages(iso_items: list[dict], td_items: list[dict]) -> list[dict]:
+def merge_stages(iso_items: list[dict], td_items: list[dict], arms) -> list[dict]:
     """One checklist, with each requirement carrying both stages' verdicts.
 
     Keyed on the requirement text rather than position: the two stages are judged in
@@ -127,32 +134,34 @@ def merge_stages(iso_items: list[dict], td_items: list[dict]) -> list[dict]:
         td = by_text.get(_key(it["text"]), {})
         out.append({"label": it["label"], "text": it["text"],
                     "source": it["source"], "kind": it["kind"],
-                    "iso": {a: bool(it.get(a)) for a in ARMS},
-                    "td": {a: bool(td.get(a)) for a in ARMS}})
+                    "iso": {a: bool(it["present"].get(a)) for a in arms},
+                    "td": {a: bool(td.get("present", {}).get(a)) for a in arms}})
     return out
 
 
-def stored(scene: str) -> dict:
+def stored(scene: str, cmp: A.Comparison | None = None) -> dict:
     """A card's worth of data for one golden scene, entirely from disk."""
+    cmp = cmp or A.COMPARISONS[DEFAULT]
+
     def rows(path: pathlib.Path) -> dict:
         if not path.is_file():
             return {}
         return {json.loads(x)["scene"]: json.loads(x)
                 for x in path.open() if x.strip()}
 
-    rules = rows(paths.RUNS / "rules.jsonl").get(scene)
-    needs = rows(paths.RUNS / "needs.jsonl").get(scene)
-    if rules is None or needs is None:
+    run_rows = {a.id: rows(paths.RUNS / f"{a.run}.jsonl").get(scene) for a in cmp.runs}
+    if any(r is None for r in run_rows.values()):
         raise KeyError(f"scene {scene} has no stored run")
-    iso = rows(paths.SCORES / "three_way_iso.jsonl").get(scene, {})
-    td = rows(paths.SCORES / "three_way_td.jsonl").get(scene, {})
-    items = merge_stages(iso.get("items", []), td.get("items", []))
+    iso = rows(cmp.scores("iso")).get(scene, {})
+    td = rows(cmp.scores("td")).get(scene, {})
+    items = merge_stages(iso.get("items", []), td.get("items", []), cmp.arms)
     if not items:
         # Unjudged, so show what was asked for without pretending to a verdict.
-        items = [{**r, "iso": {}, "td": {}}
-                 for r in tws.requirements(needs, rules)]
+        items = [{**r, "iso": {}, "td": {}} for r in cmp.requirements(run_rows)]
 
-    prompt = rules.get("prompt") or ""
+    rules = run_rows.get("rules", {})
+    needs = run_rows.get("needs", {})
+    prompt = next((r.get("prompt") for r in run_rows.values() if r.get("prompt")), "")
     if not prompt and MANIFEST.is_file():
         for x in MANIFEST.open():
             if x.strip() and (m := json.loads(x))["scene"] == scene:
@@ -160,13 +169,14 @@ def stored(scene: str) -> dict:
                 break
 
     images = {}
-    for arm in ARMS:
+    for arm in cmp.arms:
         for stage in STAGES:
             p = paths.scene(arm, stage, scene)
             images[(arm, stage)] = p if p.is_file() else None
-    return {"title": f"Golden scene {scene}", "prompt": prompt,
+    return {"comparison": cmp.id, "title": f"Golden scene {scene}", "prompt": prompt,
             "subgenre": needs.get("subgenre_id", ""),
             "rules_label": _rules_label(rules), "order": rules.get("order", "std"),
+            "notes": {a.id: A.ARMS[a.id].group(run_rows.get(a.id, {})) for a in cmp.asking},
             "images": images, "items": items}
 
 
@@ -181,40 +191,55 @@ def _rules_label(rules: dict) -> str:
     return " \u203a ".join(b for b in bits if b)
 
 
-def live(prompt: str, spec: dict, images: dict, guidance, judged: dict) -> dict:
-    """A card's worth of data for a prompt that was run in the playground."""
+def rows_for_live(spec: dict, guidance) -> dict[str, dict]:
+    """A run row per arm for a prompt that has never been through a batch run.
+
+    The pages and the judge both work from run rows, so the playground fabricates the
+    rows the golden set would have written. Anything an arm's `asks` reads has to be
+    here; anything else is decoration.
+    """
     needs_row = {
         "needs": [{"primitive": n.primitive, "role": n.role, "visual": n.visual}
                   for n in (guidance.needs if guidance else [])],
         "fragments": (guidance.fragments if guidance else []),
         "subgenre_id": f"{guidance.genre} :: {guidance.variation}" if guidance else "",
+        "addendum": guidance.addendum if guidance else "",
     }
     rules_row = {"genre": spec.get("genre", ""), "shape": spec.get("shape") or "",
                  "options": spec.get("options") or [],
                  "extras": spec.get("extras") or [],
                  "preset": spec.get("preset") or "none"}
-    items = merge_stages(judged.get("iso", []), judged.get("td", []))
+    return {"needs": needs_row, "rules": rules_row}
+
+
+def live(prompt: str, spec: dict, images: dict, guidance, judged: dict,
+         cmp: A.Comparison | None = None) -> dict:
+    """A card's worth of data for a prompt that was run in the playground."""
+    cmp = cmp or A.COMPARISONS[DEFAULT]
+    rows = rows_for_live(spec, guidance)
+    items = merge_stages(judged.get("iso", []), judged.get("td", []), cmp.arms)
     if not items:
-        items = [{**r, "iso": {}, "td": {}}
-                 for r in tws.requirements(needs_row, rules_row)]
-    return {"title": "Playground prompt", "prompt": prompt,
-            "subgenre": needs_row["subgenre_id"],
-            "rules_label": _rules_label(rules_row),
+        items = [{**r, "iso": {}, "td": {}} for r in cmp.requirements(rows)]
+    return {"comparison": cmp.id, "title": "Playground prompt", "prompt": prompt,
+            "subgenre": rows["needs"]["subgenre_id"],
+            "rules_label": _rules_label(rows["rules"]),
+            "notes": {a.id: a.group(rows.get(a.id, {})) for a in cmp.asking},
             "order": spec.get("mode", "std"), "images": images, "items": items}
 
 
-def requirements_for(spec: dict, guidance) -> list[dict]:
+def requirements_for(spec: dict, guidance,
+                     cmp: A.Comparison | None = None) -> list[dict]:
     """The union checklist for a live prompt, before anything has been judged."""
-    return tws.requirements(
-        {"needs": [{"visual": n.visual} for n in (guidance.needs if guidance else [])],
-         "fragments": (guidance.fragments if guidance else [])},
-        {"genre": spec.get("genre", ""), "shape": spec.get("shape") or "",
-         "options": spec.get("options") or [], "extras": spec.get("extras") or []})
+    cmp = cmp or A.COMPARISONS[DEFAULT]
+    return cmp.requirements(rows_for_live(spec, guidance))
 
 
 # ---------------------------------------------------------------- drawing
 
-TILE = 452
+#: The largest a tile gets. Fewer arms do not make bigger pictures - a card should
+#: look like the same artefact whichever comparison drew it.
+TILE_MAX = 452
+GUTTER = 22
 ORDER_NOTE = {"std": "isometric first, then converted to top-down",
               "p6": "plan first, then dressed into isometric",
               "layout": "authored layout, then top-down, then isometric"}
@@ -236,15 +261,23 @@ def _tile(card: Image.Image, path, x: int, y: int, size: int) -> None:
     ImageDraw.Draw(card).rectangle(box, outline=LINE)
 
 
-def _ticks(d: ImageDraw.ImageDraw, item: dict, x: int, y: int) -> int:
-    """Six marks per requirement: three arms, each with its isometric and top-down.
+#: One tick: the box, the space to the next box, and the space between arms.
+BOX, GAP, GRP = 17, 4, 15
+
+
+def tick_width(n_arms: int) -> int:
+    return n_arms * (2 * BOX + GAP + GRP) - GRP
+
+
+def _ticks(d: ImageDraw.ImageDraw, item: dict, x: int, y: int, arms) -> int:
+    """Two marks per arm per requirement: its isometric and its top-down.
 
     Both stages are on the card because they disagree often enough to matter - a
     feature can survive the isometric and be lost in the conversion - and a single
     tick would have to pick one silently.
     """
-    box, gap, grp = 17, 4, 15
-    for i, arm in enumerate(ARMS):
+    box, gap, grp = BOX, GAP, GRP
+    for i, arm in enumerate(arms):
         for j, stage in enumerate(STAGES):
             verdict = item.get(stage, {}).get(arm)
             x0 = x + i * (2 * box + gap + grp) + j * (box + gap)
@@ -258,24 +291,30 @@ def _ticks(d: ImageDraw.ImageDraw, item: dict, x: int, y: int) -> int:
                 d.line([(x0 + 7, y + box - 5), (x0 + box - 3, y + 4)], fill=BG, width=2)
             else:
                 d.rectangle(r, outline=MISS)
-    return 3 * (2 * box + gap + grp) - grp
+    return tick_width(len(arms))
 
 
-def _tick_header(d: ImageDraw.ImageDraw, x: int, y: int) -> None:
-    box, gap, grp = 17, 4, 15
+def _tick_header(d: ImageDraw.ImageDraw, x: int, y: int, arms) -> None:
+    box, gap, grp = BOX, GAP, GRP
     small, tiny = _font(13, True), _font(11)
-    for i, arm in enumerate(ARMS):
+    for i, arm in enumerate(arms):
         x0 = x + i * (2 * box + gap + grp)
-        d.text((x0, y), ARM_TICK[arm], font=small, fill=ACCENT[arm])
+        d.text((x0, y), arm.short, font=small, fill=rgb(arm.accent))
         d.text((x0 + 1, y + 15), "iso", font=tiny, fill=DIM2)
         d.text((x0 + box + gap + 1, y + 15), "top", font=tiny, fill=DIM2)
 
 
-def render(data: dict) -> Image.Image:
-    """The card: header, prompt, the three arms, then the checklist in two columns."""
+def render(data: dict, cmp: A.Comparison | None = None) -> Image.Image:
+    """The card: header, prompt, one tile column per arm, then the checklist.
+
+    Everything below is measured before anything is drawn, because the height depends
+    on how long the prompt wrapped and how many requirements the longest column holds,
+    and a card that guessed would either clip its last row or trail blank space.
+    """
+    cmp = cmp or A.COMPARISONS[data.get("comparison") or DEFAULT]
+    arms = list(cmp)
     items = data["items"]
-    left = [it for it in items if it["source"] == "needs"]
-    right = [it for it in items if it["source"] == "rules"]
+    columns = [(a, [it for it in items if it["source"] == a.id]) for a in cmp.asking]
 
     f_title, f_meta = _font(34, True), _font(20)
     f_h4 = _font(15, True)
@@ -283,9 +322,10 @@ def render(data: dict) -> Image.Image:
     f_arm, f_armsub = _font(25, True), _font(17)
     f_lab, f_txt = _font(18, True), _font(17)
 
-    col_w = (W - 3 * PAD) // 2
-    tick_w = 3 * (2 * 17 + 4 + 15) - 15
-    text_w = col_w - tick_w - 30
+    tile = min(TILE_MAX, (W - 2 * PAD - (len(arms) - 1) * GUTTER) // len(arms))
+    n_col = max(len(columns), 1)
+    col_w = (W - (n_col + 1) * PAD) // n_col
+    text_w = col_w - tick_width(len(arms)) - 30
 
     prompt_lines = _wrap(data["prompt"], f_prompt, W - 2 * PAD, cap=6)
 
@@ -299,8 +339,8 @@ def render(data: dict) -> Image.Image:
 
     head_h = 96
     prompt_h = 42 + len(prompt_lines) * 29 + 24
-    arms_h = 46 + 2 * (TILE + 8) + 30
-    list_h = 74 + max(block(left), block(right)) + 30
+    arms_h = 46 + 2 * (tile + 8) + 30
+    list_h = 74 + max([block(rows) for _, rows in columns] or [0]) + 30
     H = head_h + prompt_h + arms_h + list_h
 
     card = Image.new("RGB", (W, H), BG)
@@ -325,45 +365,51 @@ def render(data: dict) -> Image.Image:
         y += 29
     y += 24
 
-    # the three arms
-    span = 3 * TILE + 2 * 22
+    # one column of tiles per arm
+    span = len(arms) * tile + (len(arms) - 1) * GUTTER
     x0 = (W - span) // 2
-    for i, arm in enumerate(ARMS):
-        x = x0 + i * (TILE + 22)
-        d.text((x, y), ARM_TITLE[arm], font=f_arm, fill=ACCENT[arm])
-        d.text((x, y + 27), ARM_SUB[arm], font=f_armsub, fill=DIM2)
-        met = {st: sum(1 for it in items if it.get(st, {}).get(arm)) for st in STAGES}
-        if any(it.get("iso") for it in items):
-            d.text((x + TILE, y + 6),
-                   f"met  iso {met['iso']}/{len(items)}  \u00b7  "
-                   f"top {met['td']}/{len(items)}",
-                   font=f_armsub, fill=DIM, anchor="ra")
+    judged = any(it.get("iso") for it in items)
+    for i, arm in enumerate(arms):
+        x = x0 + i * (tile + GUTTER)
+        title = arm.title.upper()
+        d.text((x, y), title, font=f_arm, fill=rgb(arm.accent))
+        d.text((x, y + 27), arm.sub, font=f_armsub, fill=DIM2)
+        met = {st: sum(1 for it in items if it.get(st, {}).get(arm.id))
+               for st in STAGES}
+        if judged:
+            tally = (f"met  iso {met['iso']}/{len(items)}  \u00b7  "
+                     f"top {met['td']}/{len(items)}")
+            # Beside the title if it fits, on the subtitle line if not. More arms mean
+            # narrower tiles, and a tally printed over the arm's own name is worse
+            # than one printed a line lower.
+            room = tile - f_armsub.getlength(tally) - 12
+            row = (y + 6 if f_arm.getlength(title) < room
+                   else y + 29 if f_armsub.getlength(arm.sub) < room else None)
+            if row is not None:
+                d.text((x + tile, row), tally, font=f_armsub, fill=DIM, anchor="ra")
         for j, stage in enumerate(STAGES):
-            ty = y + 46 + j * (TILE + 8)
-            _tile(card, data["images"].get((arm, stage)), x, ty, TILE)
+            ty = y + 46 + j * (tile + 8)
+            _tile(card, data["images"].get((arm.id, stage)), x, ty, tile)
             # A caption band, because a pale scene swallows plain white text.
-            d.rectangle([x, ty + TILE - 28, x + TILE, ty + TILE], fill=(10, 13, 18))
-            d.text((x + 9, ty + TILE - 24), STAGE_LABEL[stage], font=f_h4, fill=FG)
-    y += 46 + 2 * (TILE + 8) + 22
+            d.rectangle([x, ty + tile - 28, x + tile, ty + tile], fill=(10, 13, 18))
+            d.text((x + 9, ty + tile - 24), STAGE_LABEL[stage], font=f_h4, fill=FG)
+    y += 46 + 2 * (tile + 8) + 22
 
-    # the checklist
+    # the checklist, one column per arm that asked for something
     d.line([(PAD, y), (W - PAD, y)], fill=LINE)
     y += 18
-    heads = [("Yesterday \u2014 sub-genre Hard Needs",
-              data["subgenre"] or "no sub-genre resolved", left),
-             ("Today \u2014 Build.md Part II",
-              data["rules_label"] or "nothing picked", right)]
-    for c, (title, note, rows) in enumerate(heads):
+    for c, (arm, rows) in enumerate(columns):
         cx = PAD + c * (col_w + PAD)
-        d.text((cx, y), title, font=_font(21, True), fill=FG)
-        d.text((cx, y + 27), note, font=f_armsub, fill=DIM2)
-        _tick_header(d, cx + text_w + 30, y + 4)
+        d.text((cx, y), arm.title, font=_font(21, True), fill=rgb(arm.accent))
+        d.text((cx, y + 27), data.get("notes", {}).get(arm.id) or "nothing picked",
+               font=f_armsub, fill=DIM2)
+        _tick_header(d, cx + text_w + 30, y + 4, arms)
         ry = y + 56
         if not rows:
             d.text((cx, ry), "nothing was required", font=f_txt, fill=DIM2)
         for it in rows:
             lines = lines_of(it)
-            _ticks(d, it, cx + text_w + 30, ry + 2)
+            _ticks(d, it, cx + text_w + 30, ry + 2, arms)
             for k, ln in enumerate(lines):
                 d.text((cx, ry + k * 23), ln, font=f_lab if k == 0 else f_txt,
                        fill=FG if k == 0 else DIM)
@@ -371,25 +417,27 @@ def render(data: dict) -> Image.Image:
     return card
 
 
-def write(data: dict, dest: pathlib.Path) -> pathlib.Path:
+def write(data: dict, dest: pathlib.Path,
+          cmp: A.Comparison | None = None) -> pathlib.Path:
     dest.parent.mkdir(parents=True, exist_ok=True)
-    render(data).save(dest, format="PNG")
+    render(data, cmp).save(dest, format="PNG")
     return dest
 
 
 # ---------------------------------------------------------------- live arms
 
-def build_arms(source: str, addendum: str, gen, dest: pathlib.Path,
+def build_arms(source: str, addenda: dict[str, str], gen, dest: pathlib.Path,
                stem: str) -> dict:
-    """Generate the raw and yesterday arms for a prompt the playground just ran.
+    """Generate the arms the playground has not already produced.
 
-    Both use the golden set's own wrappers, and the top-down prompt is the same for
-    every arm - only the isometric it converts differs - so the three arms differ by
-    exactly the thing being compared and nothing else.
+    `addenda` maps arm to the text that arm injects - empty for a control. Every arm
+    uses the golden set's own wrappers, and the top-down prompt is identical across
+    arms because only the isometric it converts differs, so the arms differ by exactly
+    the thing being compared and nothing else.
 
-    The two arms run side by side. Each is a chain of two calls that has to stay in
-    order, but the arms have nothing to say to each other, so serialising them would
-    only double the wait.
+    They run side by side. Each is a chain of two calls that has to stay in order, but
+    the arms have nothing to say to each other, so serialising them would only
+    multiply the wait.
     """
     from concurrent.futures import ThreadPoolExecutor
 
@@ -402,29 +450,33 @@ def build_arms(source: str, addendum: str, gen, dest: pathlib.Path,
         return name, iso, td
 
     out = {}
-    with ThreadPoolExecutor(max_workers=2) as pool:
-        for name, iso, td in pool.map(lambda kv: arm(*kv),
-                                      [("raw", ""), ("needs", addendum)]):
+    with ThreadPoolExecutor(max_workers=max(len(addenda), 1)) as pool:
+        for name, iso, td in pool.map(lambda kv: arm(*kv), list(addenda.items())):
             out[(name, "iso")], out[(name, "td")] = iso, td
     return out
 
 
-def judge_live(items: list[dict], images: dict, key: int,
-               thumbs: pathlib.Path) -> dict:
-    """Run the blinded judge over a live trio, one call per stage."""
+def judge_live(items: list[dict], images: dict, key: int, thumbs: pathlib.Path,
+               cmp: A.Comparison | None = None) -> dict:
+    """Run the blinded judge over a live set, one call per stage.
+
+    The same judge the golden set went through, so a card built from a prompt someone
+    typed a minute ago carries ticks that mean what a stored card's ticks mean.
+    """
+    cmp = cmp or A.COMPARISONS[DEFAULT]
     marked = {}
     for stage in STAGES:
         shots = {}
-        for arm in ARMS:
+        for arm in cmp.arms:
             src = images.get((arm, stage))
             dest = thumbs / f"{stage}_{arm}.jpg"
-            if src is None or not rsc.thumb(pathlib.Path(src), dest):
+            if src is None or not sc.thumb(pathlib.Path(src), dest):
                 shots = {}
                 break
             shots[arm] = dest
         if not shots:
             continue
-        got = tws.judge_paths(items, shots, key)
+        got = J.judge(items, shots, key)
         if got:
             marked[stage] = got[0]
     return marked
@@ -438,7 +490,10 @@ def main() -> None:
     ap.add_argument("--scene", default="", help="one golden scene, e.g. 0025")
     ap.add_argument("--all", action="store_true", help="every scored golden scene")
     ap.add_argument("--outdir", default=str(CARDS))
+    ap.add_argument("--comparison", default=DEFAULT, choices=list(A.COMPARISONS),
+                    help="which arms the card holds")
     args = ap.parse_args()
+    cmp = A.COMPARISONS[args.comparison]
 
     out = pathlib.Path(args.outdir)
     scenes = []
@@ -453,7 +508,7 @@ def main() -> None:
 
     for s in scenes:
         try:
-            path = write(stored(s), out / f"card_{s}.png")
+            path = write(stored(s, cmp), out / f"card_{s}.png")
         except KeyError as exc:
             print(f"  {s}: {exc}")
             continue

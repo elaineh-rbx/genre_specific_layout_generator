@@ -8,7 +8,7 @@ The `Goes to` column is given the same weight it has in the document: an option
 marked `layout` is invisible, cannot survive segmentation, and is shown struck out
 of the injection rather than silently dropped.
 
-    python -m gslg.viewers.catalogue
+    python -m gslg.web.pages.catalogue
 """
 
 from __future__ import annotations
@@ -17,7 +17,7 @@ import json
 import pathlib
 
 from gslg import paths
-from gslg import rules as br
+from gslg.model import rules as br
 
 ROOT = paths.SITE / "rules_viewer"
 OUT = ROOT / "index.html"

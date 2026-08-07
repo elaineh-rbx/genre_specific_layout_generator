@@ -29,10 +29,9 @@ SCORES = RESULTS / "scores"                         # what the judges found
 SCENES = RESULTS / "scenes"                         # the images themselves
 THUMBS = RESULTS / "thumbs"
 
-#: The three arms every comparison is between. `raw` is the prompt with nothing added,
-#: `needs` is the older per-sub-genre Hard Needs, `rules` is Build.md Part II. These
-#: names are also the keys in every scores file, so they are not free to change.
-ARMS = ("raw", "needs", "rules")
+#: The two stages every arm produces. Which arms exist is `gslg.arms`, not here: an
+#: arm is a thing with a name, a colour and a set of demands, and this module only
+#: knows where files sit.
 STAGES = ("iso", "td")
 
 
