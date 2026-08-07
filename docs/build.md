@@ -470,6 +470,8 @@ Which IDs appear in more than one genre, so dedupe is a set union. **This is an 
 | `obstacle-guess` | **Path (Guess Obstacles)** | Hidden-correct-path and door-guessing sections where the wrong pick drops you. | | `image` | |
 | `obstacle-maze` | **Zone (Maze Segment)** | A maze the player has to route through mid-course. | | `image` | `P6` |
 | `path-shortcut` | **Path (High-Risk Shortcut)** | Significantly tighter alternate routes that skip ahead for skilled players. | | `image` | |
+| `path-road-vehicle` | **Path (Drivable Roadway)** | A continuous surfaced route wide enough to drive, replacing discrete platforms wherever the course is driven rather than jumped. | | `image` | `P6` |
+| `social-hub` | **SocialZone (Start Hub & Shop)** | A lobby at the course entrance where players gather, buy upgrades, and choose a stage before setting off. | | `image` | |
 | `winner-zone` | **WinnerZone (End Reward Area)** | The payoff at the end — path tools, flight tools, speed, morphs, interactables. | | `both` | |
 | `spectator-zone` | **SpectatorZone (Glass Overlook)** | A separate balcony where eliminated players watch the active track. | | `image` | |
 | `collectible-nodes` | **Collectible (Course Pickups)** | Coins or tokens placed on risky lines to bait players off the safe route. | | `layout` | |
@@ -483,7 +485,7 @@ Which IDs appear in more than one genre, so dedupe is a set union. **This is an 
 | **Classic Obby** | [Doc's Difficulty Chart Obby 2](https://www.roblox.com/games/7013860652/Docs-Difficulty-Chart-Obby-2) (Roblox) | `course-flat` | `path-track`, `checkpoint-respawn`, `obstacle-jump`, `obstacle-moving` |
 | **Tower Obby** | Tower of Hell (Roblox) | `course-tower` | `path-track`, `obstacle-timing`, `obstacle-climb`, `winner-zone` |
 | **Precision Platformer** | Super Mario 64, Celeste | `course-terraced` | `obstacle-jump`, `obstacle-moving`, `path-shortcut` |
-| **Vehicle Obby** | Roblox vehicle obbies | `course-flat` | `path-track`, `checkpoint-respawn`, `hazard-kill` |
+| **Vehicle Obby** | Roblox vehicle obbies | `course-flat` | `path-road-vehicle`, `checkpoint-respawn`, `hazard-kill` |
 | **Co-op Obby** | Roblox two-player obbies | `course-flat` | `path-track`, `checkpoint-respawn`, `teleporter-link` |
 | **Glitch Obby** | Roblox glitch obbies | `course-tower` | `obstacle-climb`, `path-shortcut` |
 
@@ -497,6 +499,7 @@ Which IDs appear in more than one genre, so dedupe is a set union. **This is an 
 * **Classic vs bespoke.** Difficulty-chart obbies reuse these blocks directly and repetitively. Modern bespoke obbies increasingly blend several into unique hand-built stage environments rather than repeating a fixed set — so don't assume a stage is one obstacle type.
 * **Most obbies aren't lethal on contact.** Failure is usually falling into a void or timing out, not touching something deadly. Reserve `hazard-kill` for genuinely contact-lethal obstacles rather than applying it to every hazard.
 * **Checkpoints are near-universal but not universal.** Very short courses and intentionally hardcore no-checkpoint obbies deliberately omit them.
+* **Two options exist because a dry run of the skill demanded them.** Walking real prompts through the genre file surfaced that Obby could express neither the start hub with a shop — near-universal on Roblox and the thing a user means by "and there's a shop town" — nor the drivable roadway a *Vehicle Obby* obviously runs on, which left that preset building discrete platforms for cars. `social-hub` and `path-road-vehicle` were added for them, reusing the shared IDs so the concept dedupes cleanly when Obby is mixed with Roleplay or Simulation.
 * **Glitch obbies can't be validated.** They rely on undocumented `Humanoid` state-machine timing — wallhopping, ladder flicking, corner clipping — rather than the documented physics baseline. Spacing can't be derived from Part I and the P6 generator can't check it; treat the structure as author-supplied.
 * **Co-op obbies break the "own pace" assumption.** Balloon-and-holder and frog-and-tongue pairs have complementary movement abilities, so neither player can progress solo. The layout has to make separation and permanent stranding impossible.
 * **Roblox's own subgenres here are Classic Obby, Tower Obby, and Runner.** The first two are presets above. **Runner is filed by Roblox under this genre but is genre 14 here** — see the note there for why the split is deliberate.

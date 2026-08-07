@@ -299,7 +299,7 @@ show rather than a silent stop.
 
 ## Maintenance
 
-`genres/*.md` are generated from `docs/LayoutGen - Build.md` Part II, which is
+`genres/*.md` are generated from `docs/build.md` Part II, which is
 canonical. Edit Build.md, then run:
 
 ```bash

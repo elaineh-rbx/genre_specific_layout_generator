@@ -75,7 +75,7 @@ The pipeline needs a rough sense of extent to frame a single image. Infer it;
 this is the one place where inference is strongly preferred to asking, because
 users rarely think in studs.
 
-Anchor to the avatar baseline in `docs/LayoutGen - Build.md` Part I: walk speed
+Anchor to the avatar baseline in `docs/build.md` Part I: walk speed
 is 16 studs per second, so a 30-second crossing is roughly 500 studs. Pick the
 smallest band that fits what was described.
 
@@ -129,6 +129,6 @@ and a key in the handoff. Two rules keep this from tangling:
 2. **Concerns do not read each other's skills.** They return blocks to this
    skill, which is the only place that sees all of them.
 
-Concerns known to be missing, from `docs/LayoutGen - Pipeline.md` Part V:
+Concerns known to be missing, from `docs/pipeline.md` Part V:
 **goal / win-or-loop condition**, which is a required spatial field with no
 current home. Route it here when it gets one.

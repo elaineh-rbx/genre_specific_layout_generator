@@ -5,6 +5,15 @@ Turn a game prompt into a scene whose **layout** is right, not just its art.
 The Python package is `layoutgen`, after the source document it is built from
 (`LayoutGen - Build.md`).
 
+Both source documents are mirrored here byte-for-byte from
+mpalleschi/3D-LayoutBuild-Rules, under shorter names, so re-syncing either one stays a
+straight copy. They cite each other by their names over there:
+
+| There | Here |
+|---|---|
+| `LayoutGen - Build.md` | `docs/build.md` |
+| `LayoutGen - Pipeline.md` | `docs/pipeline.md` |
+
 Ask an image model for "a racing game map" and you get something that looks like one:
 tarmac, kerbs, grandstands, and a road that forks, dead-ends, or quietly stops being a
 loop. The picture is fine and the map is unplayable. This repo puts a layout model
@@ -87,6 +96,9 @@ scene in a sub-genre gets the same demands whether or not its prompt called for 
 
 ```
 docs/build.md               the layout rules; rules.py parses this, nothing hardcodes it
+docs/pipeline.md            the companion: how a layout gets generated, and when the
+                            approach has to change. Reference only so far - nothing in
+                            the package reads it yet
 docs/subgenre-catalogue.html the 44 sub-genres of the older Hard Needs model
 
 layoutgen/paths.py               where everything lives
