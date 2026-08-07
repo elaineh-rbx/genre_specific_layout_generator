@@ -8,19 +8,15 @@ One comparison page is written per entry in the registry, so a new comparison ap
 here without this script learning its name.
 
 Usage:
-    python scripts/build_site.py
+    python -m layoutgen.web.build
 """
 
 from __future__ import annotations
 
-import pathlib
-import sys
 import time
 
-sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
-
-from layoutgen import paths  # noqa: E402
-from layoutgen.web.pages import (  # noqa: E402
+from layoutgen import paths
+from layoutgen.web.pages import (
     catalogue, comparison, index, requirements, roadmap, shared,
 )
 

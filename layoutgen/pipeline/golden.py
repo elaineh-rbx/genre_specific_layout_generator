@@ -1,9 +1,9 @@
 """Generate all 75 golden scenes under the Build.md Part II layout model.
 
-Each scene uses the router's picks from `python -m layoutgen.model.router --golden`: a genre,
-one shape, and whatever options that prompt gave a reason to want. The addendum is
-built by the same code the interactive server previews, so what lands here is exactly
-what the UI shows.
+Each scene uses the router's picks from `python -m layoutgen.model.router --golden`: a
+genre, one shape, and whatever options that prompt gave a reason to want. The addendum
+is built by the same code the interactive server previews - literally the same call, so
+what lands here cannot drift from what the UI showed.
 
 Order follows the route the picks force. A scene whose shape or options carry `P6`
 has a topology that must be valid by construction, and a free image cannot guarantee
@@ -14,28 +14,25 @@ The other two arms are not regenerated: `results/scenes/raw` and `results/scenes
 already hold them, and reusing them keeps the comparison honest and saves 300 calls.
 
 Usage:
-    python scripts/generate_golden.py            # all 75
-    python scripts/generate_golden.py --limit 4
-    python scripts/generate_golden.py --only 0025,0053
+    python -m layoutgen.pipeline.golden            # all 75
+    python -m layoutgen.pipeline.golden --limit 4
+    python -m layoutgen.pipeline.golden --only 0025,0053
 """
 
 from __future__ import annotations
 
 import argparse
 import json
-import pathlib
-import sys
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 
-sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
-
 from layoutgen import paths
-from layoutgen.backends import images  # noqa: E402
-from layoutgen.model import rules as br  # noqa: E402
-from layoutgen import server as pg  # noqa: E402
+from layoutgen.backends import images
+from layoutgen.model import rules as br
+from layoutgen.pipeline import carve as cv
+from layoutgen.pipeline import spec as sp
 
 GOLDEN = paths.PROMPTS
 CLASSIFIED = paths.ROUTING / "rules.jsonl"
@@ -89,15 +86,15 @@ def rows() -> list[Row]:
         # A P6 route means the topology is the game, so the plan comes first. Where a
         # generator exists - mazes and racing circuits - the layout is authored
         # outright rather than asked for, which is the whole point of the route.
-        kind = pg.layout_kind(g.name, r["shape"], r["options"])
+        kind = cv.layout_kind(g.name, r["shape"], r["options"])
         order = "layout" if kind else ("p6" if "P6" in r.get("route", []) else "std")
         spec = {"mode": order, "source": m["source_prompt"], "genre": r["genre"],
                 "shape": r["shape"], "options": r["options"], "edits": {},
-                "kind": kind or "maze", **pg.track_params(g.name, r["shape"]),
+                "kind": kind or "maze", **cv.track_params(g.name, r["shape"]),
                 "custom": [e["text"] for e in r.get("extras", [])
                            if e["goes_to"] == "image"],
                 "stageB": True}
-        built = pg.build(spec)
+        built = sp.build(spec)
         shape = g.shape(r["shape"])
         out.append(Row(
             scene=r["scene"], title=m.get("title", ""), prompt=m["source_prompt"],
@@ -120,7 +117,7 @@ def run_one(row: Row, total: int, redo: bool) -> Row:
     try:
         if row.order == "layout":
             # Seeded on the scene, so a rerun reproduces the same layout exactly.
-            lay = pg.carve({**row._spec, "cells": 13 if row._spec.get("kind") ==
+            lay = cv.carve({**row._spec, "cells": 13 if row._spec.get("kind") ==
                             "track" else 12, "seed": int(row.scene)})
             plan = PLAN / f"{row.scene}.png"
             plan.write_bytes((paths.OUT / lay["layout"]).read_bytes())

@@ -95,6 +95,7 @@ layoutgen/pipeline/prompts.py    every wrapper sent to the image model, in one f
 layoutgen/pipeline/spec.py       a playground spec -> the prompts it produces
 layoutgen/pipeline/carve.py      authored layouts, and the overlays that check them
 layoutgen/pipeline/run.py        one spec all the way to images, in any of the three orders
+layoutgen/pipeline/golden.py     the same, batched over the 75 golden prompts
 layoutgen/layouts/               authored topology: mazes, racing circuits
 
 layoutgen/evaluate/judge.py      one blinded judge, any number of arms
@@ -103,13 +104,13 @@ layoutgen/evaluate/card.py       one sheet per prompt: the arms and the checklis
 
 layoutgen/web/server.py          the HTTP layer, and the page/results host
 layoutgen/web/playground.html    the playground itself
+layoutgen/web/build.py           rebuild every page from results/
 layoutgen/web/pages/             the static pages under site/
 
-scripts/generate_golden.py  regenerate the 75 scenes
-scripts/build_site.py       rebuild every page from results/
-scripts/import_results.py   how results/ was brought over, and what was renamed
-scripts/migrate_scores.py   how the pre-registry score files were converted
-scripts/serve.sh            keep 8887 and 8888 up, with a supervisor each
+scripts/                    only what is not part of the program: a shell launcher,
+                            and the one-off migrations that record how results/ and
+                            the score files reached their current shape. Anything
+                            importable lives in the package and runs with -m.
 
 results/                    the evidence: scenes, runs, routing picks, judge scores
 site/                       the built pages
@@ -132,9 +133,9 @@ Regenerating from scratch, in order:
 
 ```bash
 python -m layoutgen.model.router --golden  # route all 75 prompts
-python scripts/generate_golden.py     # generate the rules arm
+python -m layoutgen.pipeline.golden   # generate the rules arm
 python -m layoutgen.evaluate.score         # judge every comparison, blind, both stages
-python scripts/build_site.py          # rebuild the pages
+python -m layoutgen.web.build         # rebuild the pages
 ```
 
 A single card, without a server:
