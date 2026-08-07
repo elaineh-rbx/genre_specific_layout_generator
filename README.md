@@ -123,10 +123,19 @@ layoutgen/assets.py         finds a scene's images, on this disk or in the bucke
 
 .cursor/skills/genre-choice/  the agent-facing version of the same model: classify a
                             prompt, offer the genre's options as a menu, emit the picks
-                            split into an image stream and a layout stream. Copied from
-                            mpalleschi/3D-LayoutBuild-Rules @ 61d65ed; it covers the
+                            split into an image stream and a layout stream. It covers the
                             same 15 genres this repo parses, so the two agree on what
-                            exists, but it is a copy and can drift
+                            exists
+.cursor/skills/layout-intake/ the front door above it: read a free-text prompt, work out
+                            which concerns are in play, send genre to genre-choice, and
+                            assemble one handoff with theme and scale alongside
+tools/generate_genre_skills.py  writes those 15 genre files from docs/build.md, and
+                            --check says whether they still match. This is the drift
+                            guard for the three copied items above
+
+All three are copied from mpalleschi/3D-LayoutBuild-Rules @ 61d65ed, where they were
+written. `python tools/generate_genre_skills.py --check` is what keeps the copy honest:
+it exits 1 and names the files that no longer follow from `docs/build.md`.
 
 results/                    the evidence. The runs, routing picks and judge scores are
                             committed; the 700 MB of renders are not - they live in
