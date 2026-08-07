@@ -144,6 +144,11 @@ All three are copied from mpalleschi/3D-LayoutBuild-Rules @ 61d65ed, where they 
 written. `python tools/generate_genre_skills.py --check` is what keeps the copy honest:
 it exits 1 and names the files that no longer follow from the rules document.
 
+layoutgen/model/handoff.py  adapts what the skill emits into a spec the pipeline can
+                            run, checking every ID against the parsed tables and
+                            recomputing the route rather than believing the block.
+                            `results/routing/skill/` holds blocks agents have emitted
+
 results/                    the evidence. The runs, routing picks and judge scores are
                             committed; the 700 MB of renders are not - they live in
                             S3 and are fetched on demand
