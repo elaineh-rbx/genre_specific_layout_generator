@@ -62,11 +62,19 @@ labelled A/B/C, so position cannot correlate with arm.
 | `needs` | an older model: per-sub-genre Hard Needs, injected as mandatory demands. |
 | `rules` | this repo: one shape plus the options the router picked, nothing mandatory. |
 
-An arm is an entry in `layoutgen/arms.py` - a name, a colour, where its run lives and what
-it demands - and a *comparison* is a set of arms judged together. Nothing counts to
+An arm is an entry in `layoutgen/arms.py` - a name, a colour, where its run lives and
+what it demands - and a *comparison* is a set of arms judged together. Nothing counts to
 three: the judge asks about however many images it is handed, the pages draw a column
 per arm, and the card sizes its tiles to fit. Adding a fourth arm is one entry plus its
 images under `results/scenes/<id>/`.
+
+These results were generated before this repo existed, in a scratch tree, and were
+brought across rather than rerun - the images cost about 900 model calls and none of
+the arms changed. Two things were renamed on the way, which is worth knowing if you
+compare against anything older: the arms `original` and `guided` became `raw` and
+`needs`, and every arm's files became `{scene}.png` where one of them used to prefix
+`scene_`. The judge output was later rewritten from one set of keys per comparison to
+the generic `present`/`met` form, without rejudging, since both say the same thing.
 
 Against the raw baseline on the features it asked for, the rules arm lands 82% of them
 on the isometric and 83% on the top-down, where the baseline manages 63% of the same
@@ -107,10 +115,9 @@ layoutgen/web/playground.html    the playground itself
 layoutgen/web/build.py           rebuild every page from results/
 layoutgen/web/pages/             the static pages under site/
 
-scripts/                    only what is not part of the program: a shell launcher,
-                            and the one-off migrations that record how results/ and
-                            the score files reached their current shape. Anything
-                            importable lives in the package and runs with -m.
+scripts/serve.sh            keep 8887 and 8888 up, with a supervisor each - the one
+                            thing here that is not Python. Anything importable lives
+                            in the package and runs with -m.
 
 results/                    the evidence: scenes, runs, routing picks, judge scores
 site/                       the built pages
