@@ -86,6 +86,21 @@ def _rows(block: dict, key: str) -> list[dict]:
     return [e for e in (block.get(key) or []) if isinstance(e, dict)]
 
 
+def _modifiers(claimed: list) -> list[str]:
+    """Split however the block wrote its route into individual modifiers.
+
+    The field is meant to be a list of them. It has also arrived as `["P0 + tiered"]`,
+    one string holding two - which would otherwise diff as a whole modifier added and
+    another dropped, rather than as the single `tiered` that actually differs.
+    """
+    out: list[str] = []
+    for part in claimed:
+        for m in re.split(r"[+,]", str(part)):
+            if (m := m.strip()) and m not in out:
+                out.append(m)
+    return out
+
+
 def _sentence(text: str) -> str:
     """End on punctuation. Every line in the document does, and the prompt builder
     appends the camera wording straight after the last bullet - so a tailored line
@@ -105,7 +120,7 @@ def _ids(rows: list[dict]) -> list[str]:
 
 def adapt(block: dict, source: str = "", keep_free_text: bool = True) -> Handoff:
     """Adapt one emitted block. Never raises on bad content; see ``.problems``."""
-    h = Handoff(claimed_route=list(block.get("pipeline") or []),
+    h = Handoff(claimed_route=_modifiers(block.get("pipeline") or []),
                 notes=list(block.get("notes") or []))
 
     genres = block.get("genres") or []
