@@ -18,11 +18,11 @@
 set -u
 
 REPO=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
-PY="${GSLG_PYTHON:-$(command -v python3)}"
+PY="${LAYOUTGEN_PYTHON:-$(command -v python3)}"
 LOGS="$REPO/run/logs"
 PORTS=(8887 8888)
 HOMES=(playground viewers)
-TAG=gslg-serve           # appears in each supervisor's command line, so they can be
+TAG=layoutgen-serve           # appears in each supervisor's command line, so they can be
                          # found again without a pid file to go stale
 
 bound()    { ss -tln 2>/dev/null | awk '{print $4}' | grep -qE "[:.]${1}\$"; }
@@ -42,7 +42,7 @@ supervise() {
         cd "'"$REPO"'"
         while true; do
             echo "[$(date -Is)] '"$TAG"' watching :'"$port"' ('"$home"')" >> "'"$log"'"
-            "'"$PY"'" -m gslg.web.server --port '"$port"' --home '"$home"' >> "'"$log"'" 2>&1
+            "'"$PY"'" -m layoutgen.web.server --port '"$port"' --home '"$home"' >> "'"$log"'" 2>&1
             echo "[$(date -Is)] :'"$port"' exited $?, restarting in 5s" >> "'"$log"'"
             sleep 5
         done
@@ -90,7 +90,7 @@ stop_all() {
     pkill -f "$TAG watching" 2>/dev/null
     # Matches the module path loosely, so a server started before the package was
     # reorganised is still adopted rather than left holding the port.
-    pkill -f "gslg[.a-z]*server --port" 2>/dev/null
+    pkill -f "layoutgen[.a-z]*server --port" 2>/dev/null
     sleep 1
     rmdir /tmp/${TAG}-*.lock 2>/dev/null
     return 0

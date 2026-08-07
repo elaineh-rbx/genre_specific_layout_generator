@@ -2,6 +2,9 @@
 
 Turn a game prompt into a scene whose **layout** is right, not just its art.
 
+The Python package is `layoutgen`, after the source document it is built from
+(`LayoutGen - Build.md`).
+
 Ask an image model for "a racing game map" and you get something that looks like one:
 tarmac, kerbs, grandstands, and a road that forks, dead-ends, or quietly stops being a
 loop. The picture is fine and the map is unplayable. This repo puts a layout model
@@ -19,10 +22,10 @@ Part II is a menu rather than a specification:
 | **Option** | Additive on top of the shape, combined freely. Nothing is mandatory. |
 | **Preset** | A shape plus a few option IDs, modelled on a real game - a starting point, not a constraint. |
 
-`gslg/model/rules.py` parses that document at import, so the model in code cannot drift from
-the model in prose. A router (`gslg/model/router.py`) reads a prompt and picks a genre, a
-shape and whatever options the prompt gives a reason to want - and picking almost
-nothing is a legitimate answer.
+`layoutgen/model/rules.py` parses that document at import, so the model in code cannot
+drift from the model in prose. A router (`layoutgen/model/router.py`) reads a prompt
+and picks a genre, a shape and whatever options the prompt gives a reason to want - and
+picking almost nothing is a legitimate answer.
 
 Each option carries a **Goes to** field, and it is enforced. Geometry a segmenter
 could recover (`image`) is injected into the prompt; an invisible trigger volume or
@@ -41,9 +44,9 @@ layout   blueprint -> top-down -> isometric     when we can author the topology 
 ```
 
 The `layout` order is the strongest guarantee available. A maze carved by
-`gslg/layouts/maze.py` is a perfect maze - exactly one route between any two cells, so
+`layoutgen/layouts/maze.py` is a perfect maze - exactly one route between any two cells, so
 it is solvable by construction rather than by luck. A circuit from
-`gslg/layouts/track.py` is one continuous closed loop with no spurs and no ambiguous
+`layoutgen/layouts/track.py` is one continuous closed loop with no spurs and no ambiguous
 self-crossings. The image model is handed that plan and asked to dress it, not to
 invent it.
 
@@ -59,7 +62,7 @@ labelled A/B/C, so position cannot correlate with arm.
 | `needs` | an older model: per-sub-genre Hard Needs, injected as mandatory demands. |
 | `rules` | this repo: one shape plus the options the router picked, nothing mandatory. |
 
-An arm is an entry in `gslg/arms.py` - a name, a colour, where its run lives and what
+An arm is an entry in `layoutgen/arms.py` - a name, a colour, where its run lives and what
 it demands - and a *comparison* is a set of arms judged together. Nothing counts to
 three: the judge asks about however many images it is handed, the pages draw a column
 per arm, and the card sizes its tiles to fit. Adding a fourth arm is one entry plus its
@@ -78,29 +81,29 @@ scene in a sub-genre gets the same demands whether or not its prompt called for 
 docs/build.md               the layout rules; rules.py parses this, nothing hardcodes it
 docs/subgenre-catalogue.html the 44 sub-genres of the older Hard Needs model
 
-gslg/paths.py               where everything lives
-gslg/arms.py                what an arm is, which exist, and which sets get compared
+layoutgen/paths.py               where everything lives
+layoutgen/arms.py                what an arm is, which exist, and which sets get compared
 
-gslg/model/rules.py         Build.md Part II -> genres, shapes, options, presets
-gslg/model/router.py        prompt -> genre, shape, options (two constrained LLM calls)
-gslg/model/hardneeds/       the older per-sub-genre model, kept for the comparison
+layoutgen/model/rules.py         Build.md Part II -> genres, shapes, options, presets
+layoutgen/model/router.py        prompt -> genre, shape, options (two constrained LLM calls)
+layoutgen/model/hardneeds/       the older per-sub-genre model, kept for the comparison
 
-gslg/backends/images.py     the image backend: generation and reference-conditioned edits
-gslg/backends/llm.py        the text/vision model behind one JSON-schema call
+layoutgen/backends/images.py     the image backend: generation and reference edits
+layoutgen/backends/llm.py        the text/vision model behind one JSON-schema call
 
-gslg/pipeline/prompts.py    every wrapper sent to the image model, in one file
-gslg/pipeline/spec.py       a playground spec -> the prompts it produces
-gslg/pipeline/carve.py      authored layouts, and the overlays that check them
-gslg/pipeline/run.py        one spec all the way to images, in any of the three orders
-gslg/layouts/               authored topology: mazes, racing circuits
+layoutgen/pipeline/prompts.py    every wrapper sent to the image model, in one file
+layoutgen/pipeline/spec.py       a playground spec -> the prompts it produces
+layoutgen/pipeline/carve.py      authored layouts, and the overlays that check them
+layoutgen/pipeline/run.py        one spec all the way to images, in any of the three orders
+layoutgen/layouts/               authored topology: mazes, racing circuits
 
-gslg/evaluate/judge.py      one blinded judge, any number of arms
-gslg/evaluate/score.py      run a comparison over the golden set
-gslg/evaluate/card.py       one downloadable sheet per prompt: the arms and the checklist
+layoutgen/evaluate/judge.py      one blinded judge, any number of arms
+layoutgen/evaluate/score.py      run a comparison over the golden set
+layoutgen/evaluate/card.py       one sheet per prompt: the arms and the checklist
 
-gslg/web/server.py          the HTTP layer, and the page/results host
-gslg/web/playground.html    the playground itself
-gslg/web/pages/             the static pages under site/
+layoutgen/web/server.py          the HTTP layer, and the page/results host
+layoutgen/web/playground.html    the playground itself
+layoutgen/web/pages/             the static pages under site/
 
 scripts/generate_golden.py  regenerate the 75 scenes
 scripts/build_site.py       rebuild every page from results/
@@ -128,24 +131,24 @@ nothing needs a second origin.
 Regenerating from scratch, in order:
 
 ```bash
-python -m gslg.model.router --golden  # route all 75 prompts
+python -m layoutgen.model.router --golden  # route all 75 prompts
 python scripts/generate_golden.py     # generate the rules arm
-python -m gslg.evaluate.score         # judge every comparison, blind, both stages
+python -m layoutgen.evaluate.score         # judge every comparison, blind, both stages
 python scripts/build_site.py          # rebuild the pages
 ```
 
 A single card, without a server:
 
 ```bash
-python -m gslg.evaluate.card --scene 0025
+python -m layoutgen.evaluate.card --scene 0025
 ```
 
 ## Credentials
 
 One Azure key covers both the image deployment and the text/vision model. It is read
 from `~/.cache/i2l/gpt-image-2-token`, or from `GPT_IMAGE_2_API_KEY` and
-`GSLG_LLM_KEY`. Endpoints and deployment names are environment-overridable; see the
-constants at the top of `gslg/backends/images.py` and `gslg/backends/llm.py`.
+`LAYOUTGEN_LLM_KEY`. Endpoints and deployment names are environment-overridable; see the
+constants at the top of `layoutgen/backends/images.py` and `layoutgen/backends/llm.py`.
 
 The judge deployment rejects `temperature` and `top_p` and accepts `seed`, so
 determinism is best-effort: a repeat that differs is possible rather than a bug.

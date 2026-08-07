@@ -22,7 +22,7 @@ import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
 
-from gslg import paths  # noqa: E402
+from layoutgen import paths  # noqa: E402
 
 #: old file -> (comparison, stage, how its verdict keys map onto arm ids)
 OLD = {

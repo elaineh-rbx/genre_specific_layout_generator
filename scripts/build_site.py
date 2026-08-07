@@ -19,8 +19,8 @@ import time
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
 
-from gslg import paths  # noqa: E402
-from gslg.web.pages import (  # noqa: E402
+from layoutgen import paths  # noqa: E402
+from layoutgen.web.pages import (  # noqa: E402
     catalogue, comparison, index, requirements, roadmap, shared,
 )
 
