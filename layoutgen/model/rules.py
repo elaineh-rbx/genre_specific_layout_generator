@@ -1,4 +1,4 @@
-"""Parse `docs/build.md` Part II into the routing model the rest of the repo uses.
+"""Parse `docs/LayoutGen - Build.md` Part II into the routing model the repo uses.
 
 This is the model the pipeline runs on today, and it replaced a sub-genre model in
 which every sub-genre carried mandatory Hard Needs. Part II is a *menu*:

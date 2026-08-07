@@ -5,14 +5,9 @@ Turn a game prompt into a scene whose **layout** is right, not just its art.
 The Python package is `layoutgen`, after the source document it is built from
 (`LayoutGen - Build.md`).
 
-Both source documents are mirrored here byte-for-byte from
-mpalleschi/3D-LayoutBuild-Rules, under shorter names, so re-syncing either one stays a
-straight copy. They cite each other by their names over there:
-
-| There | Here |
-|---|---|
-| `LayoutGen - Build.md` | `docs/build.md` |
-| `LayoutGen - Pipeline.md` | `docs/pipeline.md` |
+Both source documents under `docs/` are mirrored byte-for-byte from
+mpalleschi/3D-LayoutBuild-Rules, keeping the names they carry there. Re-syncing either
+is then a straight copy, and the references they make to each other resolve here.
 
 Ask an image model for "a racing game map" and you get something that looks like one:
 tarmac, kerbs, grandstands, and a road that forks, dead-ends, or quietly stops being a
@@ -22,8 +17,8 @@ play in.
 
 ## The idea
 
-Layout knowledge is genre-specific. `docs/build.md` is the source document, and its
-Part II is a menu rather than a specification:
+Layout knowledge is genre-specific. `docs/LayoutGen - Build.md` is the source document,
+and its Part II is a menu rather than a specification:
 
 | | |
 |---|---|
@@ -95,8 +90,8 @@ scene in a sub-genre gets the same demands whether or not its prompt called for 
 ## Layout
 
 ```
-docs/build.md               the layout rules; rules.py parses this, nothing hardcodes it
-docs/pipeline.md            the companion: how a layout gets generated, and when the
+docs/LayoutGen - Build.md   the layout rules; rules.py parses this, nothing hardcodes it
+docs/LayoutGen - Pipeline.md  the companion: how a layout gets generated, and when the
                             approach has to change. Reference only so far - nothing in
                             the package reads it yet
 docs/subgenre-catalogue.html the 44 sub-genres of the older Hard Needs model
@@ -141,13 +136,13 @@ layoutgen/assets.py         finds a scene's images, on this disk or in the bucke
 .cursor/skills/layout-intake/ the front door above it: read a free-text prompt, work out
                             which concerns are in play, send genre to genre-choice, and
                             assemble one handoff with theme and scale alongside
-tools/generate_genre_skills.py  writes those 15 genre files from docs/build.md, and
-                            --check says whether they still match. This is the drift
-                            guard for the three copied items above
+tools/generate_genre_skills.py  writes those 15 genre files from the rules document,
+                            and --check says whether they still match. This is the
+                            drift guard for the three copied items above
 
 All three are copied from mpalleschi/3D-LayoutBuild-Rules @ 61d65ed, where they were
 written. `python tools/generate_genre_skills.py --check` is what keeps the copy honest:
-it exits 1 and names the files that no longer follow from `docs/build.md`.
+it exits 1 and names the files that no longer follow from the rules document.
 
 results/                    the evidence. The runs, routing picks and judge scores are
                             committed; the 700 MB of renders are not - they live in

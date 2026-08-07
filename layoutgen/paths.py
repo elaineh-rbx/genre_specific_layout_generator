@@ -13,7 +13,11 @@ import pathlib
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 
 DOCS = ROOT / "docs"
-BUILD_DOC = DOCS / "build.md"                       # the layout rules, Part II
+
+#: The two source documents, kept under the names they carry in the repo they are
+#: written in, so that the references they make to each other resolve here too.
+BUILD_DOC = DOCS / "LayoutGen - Build.md"           # the layout rules, Part II
+PIPELINE_DOC = DOCS / "LayoutGen - Pipeline.md"     # the companion, not read yet
 SUBGENRE_DOC = DOCS / "subgenre-catalogue.html"     # the 44 sub-genres, for Hard Needs
 
 SITE = ROOT / "site"                                # the built viewer pages
