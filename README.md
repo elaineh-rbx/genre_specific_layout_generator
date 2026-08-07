@@ -121,6 +121,13 @@ scripts/serve.sh            keep 8887 and 8888 up, with a supervisor each - the 
 
 layoutgen/assets.py         finds a scene's images, on this disk or in the bucket
 
+.cursor/skills/genre-choice/  the agent-facing version of the same model: classify a
+                            prompt, offer the genre's options as a menu, emit the picks
+                            split into an image stream and a layout stream. Copied from
+                            mpalleschi/3D-LayoutBuild-Rules @ 61d65ed; it covers the
+                            same 15 genres this repo parses, so the two agree on what
+                            exists, but it is a copy and can drift
+
 results/                    the evidence. The runs, routing picks and judge scores are
                             committed; the 700 MB of renders are not - they live in
                             S3 and are fetched on demand
