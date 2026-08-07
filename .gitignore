@@ -3,6 +3,22 @@ __pycache__/
 .venv/
 .ruff_cache/
 
-# Everything the server writes while it runs: generated scenes, cards, zips, logs.
-# Results worth keeping live under results/ and are committed.
+# Everything the server writes while it runs: generated scenes, cards, zips, logs,
+# and the cache of images pulled from the bucket.
 run/
+
+# The renders themselves - 700 MB, and about 900 model calls to make again. They live
+# in S3 and are fetched on demand by layoutgen/assets.py, so a clone is a few MB and
+# still shows every page. The scores, runs and routing picks under results/ ARE
+# committed: they are small, and they are what the pages are actually built from.
+results/scenes/
+results/thumbs/
+
+# Credentials never belong here. The image and text models read a key from
+# ~/.cache/i2l/ or the environment; AWS reads ~/.aws/credentials.
+.env
+.env.*
+*.pem
+*.key
+credentials
+*_token

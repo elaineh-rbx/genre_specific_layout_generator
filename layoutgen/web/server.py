@@ -41,7 +41,7 @@ import uuid
 from concurrent.futures import ThreadPoolExecutor
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
-from layoutgen import arms, paths
+from layoutgen import arms, assets, paths
 from layoutgen.backends import images
 from layoutgen.evaluate import card as pc
 from layoutgen.model import rules as br
@@ -193,21 +193,32 @@ class Handler(BaseHTTPRequestHandler):
                 return self._send(200, f.read_bytes(), kind)
             return self._send(404, b"not found", "text/plain")
         if path == "/api/health":
-            return self._json({"ok": True, "genres": len(br.GENRES)})
+            return self._json({"ok": True, "genres": len(br.GENRES),
+                               "images": assets.status()})
         return self._static(path)
 
     def _static(self, path: str):
         """The built pages, and the results they point at, from one origin.
 
         Two roots rather than one because they have different lifetimes: `site/` is
-        rebuilt from the scripts whenever the data changes, while `results/` is the
-        evidence itself. Serving them together means a page can reference an image
-        with an ordinary relative URL and the browser needs no second port.
+        rebuilt whenever the data changes, while `results/` is the evidence itself.
+        Serving them together means a page can reference an image with an ordinary
+        relative URL and the browser needs no second port.
+
+        An image the clone does not carry is fetched from the bucket and cached. That
+        is why the pages ask this server for images rather than addressing storage
+        directly: the bucket blocks public access, so the credentials have to live on
+        this side of the request.
         """
         import mimetypes
         rel = path.lstrip("/") or "index.html"
-        root, rel = ((paths.RESULTS, rel[len("results/"):])
-                     if rel.startswith("results/") else (paths.SITE, rel))
+        if rel.startswith("results/"):
+            f = assets.fetch(rel[len("results/"):])
+            if f is None:
+                return self._send(404, b"not found", "text/plain")
+            ctype = mimetypes.guess_type(f.name)[0] or "application/octet-stream"
+            return self._send(200, f.read_bytes(), ctype)
+        root, rel = paths.SITE, rel
         f = (root / rel).resolve()
         if f.is_dir():
             f = f / "index.html"

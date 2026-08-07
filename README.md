@@ -119,9 +119,13 @@ scripts/serve.sh            keep 8887 and 8888 up, with a supervisor each - the 
                             thing here that is not Python. Anything importable lives
                             in the package and runs with -m.
 
-results/                    the evidence: scenes, runs, routing picks, judge scores
+layoutgen/assets.py         finds a scene's images, on this disk or in the bucket
+
+results/                    the evidence. The runs, routing picks and judge scores are
+                            committed; the 700 MB of renders are not - they live in
+                            S3 and are fetched on demand
 site/                       the built pages
-run/                        anything a live server writes; not committed
+run/                        anything a live server writes, plus the image cache
 ```
 
 ## Running it
@@ -151,11 +155,30 @@ A single card, without a server:
 python -m layoutgen.evaluate.card --scene 0025
 ```
 
+## Where the images live
+
+The renders are about 700 MB and cost roughly 900 model calls to make, so they are
+kept in S3 rather than in git:
+
+```
+s3://3dfm-data/users/elaineh/layoutgen/results/{scenes,thumbs}/
+```
+
+The bucket blocks public access, so the pages do not address it directly. They ask
+this server for `/results/...` as they always have, and the server fetches anything
+the clone does not carry, caching it under `run/cache/`. A page URL is therefore never
+a presigned link with an expiry date, and a fresh clone works as soon as the machine
+running the server can read the bucket.
+
+Point it somewhere else with `LAYOUTGEN_S3` and `LAYOUTGEN_S3_PROFILE`, or set
+`LAYOUTGEN_S3_OFF=1` to refuse the network and serve only what is on disk.
+
 ## Credentials
 
-One Azure key covers both the image deployment and the text/vision model. It is read
-from `~/.cache/i2l/gpt-image-2-token`, or from `GPT_IMAGE_2_API_KEY` and
-`LAYOUTGEN_LLM_KEY`. Endpoints and deployment names are environment-overridable; see the
+No credential is stored in this repo, and none should ever be. One Azure key covers
+both the image deployment and the text/vision model; it is read at run time from
+`~/.cache/i2l/gpt-image-2-token`, or from `GPT_IMAGE_2_API_KEY` and
+`LAYOUTGEN_LLM_KEY`. AWS reads `~/.aws/credentials` in the usual way. Endpoints and deployment names are environment-overridable; see the
 constants at the top of `layoutgen/backends/images.py` and `layoutgen/backends/llm.py`.
 
 The judge deployment rejects `temperature` and `top_p` and accepts `seed`, so
