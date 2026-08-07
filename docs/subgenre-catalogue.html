@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LayoutGen — Pipeline Flowchart Viewer</title>
+<style>
+  :root {
+    --bg:#0f1220; --panel:#171b2e; --panel-2:#1e2340; --line:#2b3153;
+    --text:#e7e9f3; --muted:#9aa0c0; --accent:#6c8cff;
+    --green:#35c88b; --green-bg:#123528;
+    --orange:#f2a54c;--orange-bg:#3a2a12;
+    --red:#ff5d6c;   --red-bg:#3a1420;
+    --dim:#39406b;   --dim-bg:#161a2c;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:radial-gradient(1200px 700px at 20% -10%,#1a1f38 0%,var(--bg) 60%); color:var(--text); min-height:100vh; }
+  header { padding:20px 28px 12px; border-bottom:1px solid var(--line); }
+  header h1 { margin:0 0 4px; font-size:20px; }
+  header p { margin:0; color:var(--muted); font-size:13px; max-width:1000px; }
+  .wrap { display:flex; align-items:stretch; }
+  .sidebar { width:300px; flex:0 0 300px; padding:20px; border-right:1px solid var(--line); }
+  .sidebar label { font-size:12px; text-transform:uppercase; letter-spacing:.8px; color:var(--muted); }
+  select { width:100%; margin-top:8px; padding:11px 12px; border-radius:10px; background:var(--panel-2);
+    color:var(--text); border:1px solid var(--line); font-size:14px; cursor:pointer; }
+  .verdict-card { margin-top:18px; padding:14px; border-radius:12px; background:var(--panel); border:1px solid var(--line); }
+  .verdict-badge { display:inline-block; padding:5px 11px; border-radius:999px; font-size:12px; font-weight:700; }
+  .b-green  { background:var(--green-bg);  color:var(--green);  border:1px solid var(--green); }
+  .b-orange { background:var(--orange-bg); color:var(--orange); border:1px solid var(--orange); }
+  .b-red    { background:var(--red-bg);    color:var(--red);    border:1px solid var(--red); }
+  .verdict-card h3 { margin:12px 0 6px; font-size:15px; }
+  .verdict-card .brk { font-size:12.5px; color:var(--muted); line-height:1.5; }
+  .chips { margin-top:12px; display:flex; flex-wrap:wrap; gap:6px; }
+  .chip { font-size:11.5px; padding:4px 9px; border-radius:8px; background:var(--panel-2);
+    color:#c3bbff; border:1px solid var(--line); cursor:help; }
+  .attrs { margin-top:20px; }
+  .attrs h4 { margin:0 0 10px; font-size:12px; text-transform:uppercase; letter-spacing:.8px; color:var(--muted); }
+  .attr { display:flex; align-items:center; gap:9px; padding:7px 9px; border-radius:9px; margin:5px 0;
+    background:var(--panel); border:1px solid var(--line); font-size:12.5px; }
+  .attr.dev { background:var(--panel-2); }
+  .a-dot { width:10px; height:10px; border-radius:3px; flex:0 0 10px; }
+  .a-name { color:var(--muted); flex:0 0 78px; }
+  .a-val { margin-left:auto; font-weight:600; text-align:right; }
+  .a-val b { font-size:10px; padding:1px 5px; border-radius:5px; background:rgba(255,255,255,.07); margin-left:6px; font-weight:800; }
+  .attrs .key { margin-top:12px; font-size:11px; color:var(--muted); line-height:1.6; }
+  .attrs .key i { font-style:normal; font-weight:700; }
+
+  .main { flex:1; padding:20px 24px; overflow-x:auto; }
+  .banner { margin-bottom:14px; padding:10px 14px; border-radius:10px; font-size:13px; border:1px solid var(--line); background:var(--panel); }
+  .banner.green  { border-color:var(--green);  background:linear-gradient(90deg,rgba(53,200,139,.14),transparent); color:#a9e9cf; }
+  .banner.orange { border-color:var(--orange); background:linear-gradient(90deg,rgba(242,165,76,.16),transparent); color:#f2cfa0; }
+  .banner.red    { border-color:var(--red);    background:linear-gradient(90deg,rgba(255,93,108,.16),transparent); color:#f6b8bf; }
+  .chart { position:relative; width:1900px; height:640px; }
+  .edges { position:absolute; inset:0; width:1900px; height:640px; pointer-events:none; }
+  .node { position:absolute; width:158px; transform:translate(-50%,-50%);
+    border-radius:12px; padding:9px 11px; border:1.5px solid var(--dim); background:var(--dim-bg);
+    display:flex; flex-direction:column; gap:3px; transition:all .2s ease; }
+  .node .tag { font-size:10px; letter-spacing:.5px; text-transform:uppercase; color:var(--muted); }
+  .node .title { font-size:13.5px; font-weight:700; line-height:1.2; }
+  .node .sub { font-size:11px; color:var(--muted); line-height:1.35; }
+  .node .step { position:absolute; top:-10px; left:-10px; width:22px; height:22px; border-radius:50%;
+    background:var(--accent); color:#0b0e1c; font-size:11px; font-weight:800; display:none;
+    align-items:center; justify-content:center; }
+  .node.on .step { display:flex; }
+
+  .n-dim { opacity:.45; }
+  .n-green  { border-color:var(--green);  background:var(--green-bg); }
+  .n-green .step  { background:var(--green); }
+  .n-orange { border-color:var(--orange); background:var(--orange-bg); }
+  .n-orange .step { background:var(--orange); color:#241d05; }
+  .n-red    { border-color:var(--red);    background:var(--red-bg); box-shadow:0 0 0 0 rgba(255,93,108,0); animation:pulse 1.5s ease-in-out infinite; }
+  .n-red .step    { background:var(--red); }
+  .n-green .title,.n-orange .title,.n-red .title { color:var(--text); }
+  @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(255,93,108,0);} 50%{box-shadow:0 0 0 6px rgba(255,93,108,.18);} }
+
+  code { background:var(--panel-2); padding:1px 5px; border-radius:5px; font-size:12px; }
+
+  /* ---- tabs ---- */
+  .tabs { display:flex; gap:6px; padding:12px 28px 0; border-bottom:1px solid var(--line); }
+  .tab { padding:9px 16px; border:1px solid var(--line); border-bottom:none; border-radius:10px 10px 0 0;
+    background:var(--panel); color:var(--muted); font-size:13px; font-weight:600; cursor:pointer; }
+  .tab.active { background:var(--panel-2); color:var(--text); border-color:var(--accent); }
+  .tabpane { display:none; }
+  .tabpane.active { display:block; }
+
+  /* ---- intake funnel ---- */
+  .funnel-wrap { display:flex; align-items:stretch; min-height:520px; }
+  .funnel { flex:1; padding:22px 28px; }
+  .crumbs { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:18px; font-size:12.5px; }
+  .crumb { padding:6px 12px; border-radius:999px; background:var(--panel); border:1px solid var(--line); color:var(--muted); }
+  .crumb.on { border-color:var(--accent); color:var(--text); }
+  .crumb.done { border-color:var(--green); color:var(--green); cursor:pointer; }
+  .step-title { font-size:16px; font-weight:700; margin:0 0 4px; }
+  .step-sub { color:var(--muted); font-size:13px; margin:0 0 16px; max-width:720px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(216px,1fr)); gap:10px; }
+  .card { text-align:left; padding:12px 14px; border-radius:12px; background:var(--panel); border:1px solid var(--line);
+    color:var(--text); cursor:pointer; transition:all .15s; display:flex; flex-direction:column; gap:5px; }
+  .card:hover { border-color:var(--accent); transform:translateY(-1px); }
+  .card .title { font-size:13.5px; font-weight:700; }
+  .card .c-tag { font-size:11px; color:var(--muted); display:flex; align-items:center; gap:6px; }
+  .card.custom { border-style:dashed; }
+  .cdot { width:9px; height:9px; border-radius:3px; flex:0 0 9px; }
+  .attr-form { display:flex; flex-direction:column; gap:10px; max-width:640px; }
+  .attr-row { display:grid; grid-template-columns:150px 1fr auto; align-items:center; gap:12px;
+    padding:9px 12px; border-radius:11px; background:var(--panel); border:1px solid var(--line); }
+  .attr-row.dev { background:var(--panel-2); }
+  .attr-row .lbl { font-size:13px; font-weight:600; }
+  .attr-row select { margin:0; }
+  .pill { font-size:11px; font-weight:800; padding:4px 10px; border-radius:999px; white-space:nowrap; }
+  .pill.green  { background:var(--green-bg);  color:var(--green);  border:1px solid var(--green); }
+  .pill.orange { background:var(--orange-bg); color:var(--orange); border:1px solid var(--orange); }
+  .pill.red    { background:var(--red-bg);    color:var(--red);    border:1px solid var(--red); }
+  .btn { padding:10px 15px; border-radius:10px; background:var(--accent); color:#0b0e1c; border:none;
+    font-weight:700; font-size:12.5px; cursor:pointer; }
+  .btn.ghost { background:transparent; color:var(--muted); border:1px solid var(--line); }
+  .btnrow { display:flex; gap:10px; margin-top:20px; flex-wrap:wrap; }
+
+  /* ---- build spec panel ---- */
+  .spec { width:370px; flex:0 0 370px; padding:22px; border-left:1px solid var(--line); background:rgba(0,0,0,.14); }
+  .spec h3 { margin:0 0 12px; font-size:14px; }
+  .spec .empty { color:var(--muted); font-size:13px; line-height:1.5; }
+  .spec .sec { font-size:11px; text-transform:uppercase; letter-spacing:.7px; color:var(--muted); margin:16px 0 6px; }
+  .spec .val { font-size:13.5px; line-height:1.45; }
+  .spec .attr-row { grid-template-columns:120px 1fr auto; margin:5px 0; padding:7px 10px; }
+  .spec pre { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:11px;
+    font-size:11.5px; white-space:pre-wrap; color:#bfe6d6; margin:0; }
+  .warns { list-style:none; padding:0; margin:6px 0 0; }
+  .warns li { font-size:12.5px; padding:7px 10px; border-radius:9px; margin:6px 0; border:1px solid var(--line); line-height:1.4; }
+  .warns li.red    { color:var(--red);    border-color:var(--red);    background:var(--red-bg); }
+  .warns li.orange { color:var(--orange); border-color:var(--orange); background:var(--orange-bg); }
+  .warns li.green  { color:var(--green);  border-color:var(--green);  background:var(--green-bg); }
+</style>
+</head>
+<body>
+<header>
+  <h1>LayoutGen — Pipeline Viewer</h1>
+  <p>The whole graph is drawn once. Pick a genre/variation to light its true path.
+  <b style="color:var(--green)">Green</b> = fits the current pipeline (<code>Prompt → Isometric → Top-down → Layout</code>).
+  <b style="color:var(--orange)">Orange</b> = supported but not the pure happy path (P6 reorder, or a tiered elevation-capture flag).
+  <b style="color:var(--red)">Red</b> = a deviation that <b>breaks</b> the current pipeline and needs a new path (P2 / P3 / P4). Volumetric play-space is a <b>check</b> (see the attributes panel): fine over a framed surface, red (→P2) only if the volume self-occludes. The <b>attributes panel</b> on the left shows which axes deviate.</p>
+</header>
+
+<nav class="tabs">
+  <button class="tab active" data-tab="flow">Pipeline flowchart</button>
+  <button class="tab" data-tab="intake">Intake funnel</button>
+</nav>
+
+<section id="tab-flow" class="tabpane active">
+<div class="wrap">
+  <aside class="sidebar">
+    <label for="picker">Prompt → Genre (your choice)</label>
+    <select id="picker"></select>
+
+    <div class="verdict-card">
+      <span id="verdictBadge" class="verdict-badge"></span>
+      <h3 id="variationName"></h3>
+      <div class="brk"><span id="brkInfo"></span></div>
+      <div class="chips" id="chips"></div>
+    </div>
+
+    <div class="attrs">
+      <h4>Layout attributes — this variation</h4>
+      <div id="attrs"></div>
+      <div class="key">
+        <i style="color:var(--green)">green</i> = supported (default or P0) ·
+        <i style="color:var(--orange)">orange</i> = variant / flag (P6 or tiered) ·
+        <i style="color:var(--red)">red</i> = breaks / gap.<br>
+        Highlighted rows are the deviations that route this game off the happy path.
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="banner green" id="banner"></div>
+    <div class="chart" id="chart">
+      <svg class="edges" id="edges" viewBox="0 0 1900 640" preserveAspectRatio="none"></svg>
+    </div>
+  </main>
+</div>
+</section>
+
+<section id="tab-intake" class="tabpane">
+  <div class="funnel-wrap">
+    <div class="funnel">
+      <div class="crumbs" id="crumbs"></div>
+      <div id="stepBody"></div>
+    </div>
+    <aside class="spec" id="spec"></aside>
+  </div>
+</section>
+
+<script>
+const HALF_W = 79, HALF_H = 34;
+
+const NODES = {
+  prompt: { x:100,  y:300, tag:"Input",           title:"Prompt",           sub:"user free-text" },
+  genre:  { x:280,  y:300, tag:"User choice",     title:"Genre",            sub:"selected variation" },
+  route:  { x:460,  y:300, tag:"Route",           title:"Route",            sub:"current path by default" },
+  p4:     { x:640,  y:300, tag:"P4 · Multi-Zone", title:"Zone graph",       sub:"multi-zone" },
+  iso:    { x:850,  y:150, tag:"Phase 2",         title:"Isometric image",  sub:"whole game" },
+  top:    { x:1040, y:150, tag:"Phase 3",         title:"Top-down",         sub:"projection" },
+  elev:   { x:1040, y:300, tag:"P2 · Elevation",  title:"Elevation layers", sub:"stacked / vertical" },
+  params: { x:850,  y:480, tag:"P6",              title:"Extract params",   sub:"size / laps / spacing" },
+  proc:   { x:1040, y:480, tag:"P6",              title:"Procedural gen",   sub:"structural plan" },
+  seg:    { x:1250, y:300, tag:"Phase 4",         title:"Segmentation",     sub:"paths, walls, props…" },
+  p3:     { x:1370, y:470, tag:"P3 · 2nd top-down", title:"Interior top-down", sub:"exterior → interior" },
+  build:  { x:1500, y:300, tag:"Phase 5",         title:"3D build + assets",sub:"assemble layout" },
+  out:    { x:1700, y:300, tag:"Output",          title:"Playable layout",  sub:"ready" }
+};
+
+const MASTER_EDGES = [
+  ["prompt","genre"],["genre","route"],
+  ["route","p4"],["route","iso"],["route","params"],
+  ["p4","iso"],["p4","params"],
+  ["iso","top"],["iso","elev"],
+  ["top","iso"],["elev","iso"],
+  ["params","proc"],["proc","top"],["proc","elev"],
+  ["top","seg"],["elev","seg"],["iso","seg"],
+  ["seg","p3"],["seg","build"],["p3","build"],
+  ["build","out"]
+];
+
+// category → color. base=current pipeline (green), variant=P6 (orange), break=new path (red)
+const CAT = {
+  prompt:"base", genre:"base", route:"base", iso:"base", top:"base", seg:"base", build:"base", out:"base",
+  params:"variant", proc:"variant",
+  p4:"break", elev:"break", p3:"break"
+};
+const CATCOLOR = { base:"green", variant:"orange", break:"red" };
+const RANK = { base:0, variant:1, break:2 };
+const RANKCOLOR = ["green","orange","red"];
+
+const MODIFIER_NAMES = {
+  P2:"P2 · Elevation-Layer Decomposition (BREAKS — vertical)",
+  P3:"P3 · Interior transition — 2 top-downs (BREAKS — outside→inside)",
+  P4:"P4 · Multi-Zone (BREAKS — multiple maps)",
+  P6:"P6 · Procedural-First (VARIANT — reordered)"
+};
+
+// Key distinction: INTERIOR-ONLY games generate fine as a single roofless top-down (green).
+// Only OUTSIDE→INSIDE transitions break (they need 2 linked top-downs) → P3.
+const VARIATIONS = [
+  { genre:"Action", variation:"Flat arena", modifiers:[], brk:"Single flat exterior arena — fits the current pipeline as-is." },
+  { genre:"Action", variation:"Tiered stadium arena (relief, no overhang)", modifiers:[], tiered:true, brk:"Stepped seating/relief but nothing overhangs — still one top-down surface. Supported on the normal path; just flag it so the elevation is captured, not flattened." },
+  { genre:"Action", variation:"Multi-tier arena (floors overhang)", modifiers:["P2"], brk:"Stacked platforms overhang and occlude in top-down (F1) → needs the P2 elevation path." },
+
+  { genre:"Adventure", variation:"Single-level linear trail (surface only)", modifiers:[], brk:"One contiguous outdoor path, no interiors/zones — fits the current pipeline." },
+  { genre:"Adventure", variation:"Cave-only exploration (interior only)", modifiers:[], roofless:true, brk:"Whole game is inside the cave → generate it roofless as one top-down. Fits the current pipeline." },
+  { genre:"Adventure", variation:"Overworld → enter caves (outside→inside)", modifiers:["P4","P3"], brk:"Chapter gates = multi-zone (F4) AND you go outside→inside caves → 2 top-downs (P3)." },
+
+  { genre:"Obby & Platformer", variation:"Flat difficulty-chart obby", modifiers:[], brk:"Course laid out on one surface — fits the current pipeline." },
+  { genre:"Obby & Platformer", variation:"Flat vehicle obby", modifiers:[], brk:"Single-surface course; spacing is wide but planar — still fits." },
+  { genre:"Obby & Platformer", variation:"Terraced / amphitheater obby (relief, no overhang)", modifiers:[], tiered:true, brk:"Course climbs stepped terraces but nothing overhangs — one top-down surface. Supported; flag it so the elevation is captured (not built flat)." },
+  { genre:"Obby & Platformer", variation:"Tower / spiral obby (surfaces overhang)", modifiers:["P2"], brk:"Levels overhang each other (F1) → needs the P2 elevation path." },
+
+  { genre:"Party & Casual", variation:"Single flat minigame arena", modifiers:[], brk:"One stage, flat, exterior — fits the current pipeline." },
+  { genre:"Party & Casual", variation:"Lobby + separate stage", modifiers:["P4"], brk:"Lobby and match are distinct maps (F4) → multi-zone path." },
+  { genre:"Party & Casual", variation:"Hide-and-seek maze", modifiers:["P6"], brk:"Maze must be traversable → P6 procedural variant (orange)." },
+
+  { genre:"Puzzle", variation:"Open flat puzzle plaza", modifiers:[], brk:"Single open exterior space — fits the current pipeline." },
+  { genre:"Puzzle", variation:"Escape room (interior only)", modifiers:[], roofless:true, brk:"The whole game is inside → one roofless interior top-down. This now FITS the current pipeline." },
+  { genre:"Puzzle", variation:"Maze", modifiers:["P6"], brk:"Solvable maze can't be guaranteed by an image → P6 procedural variant." },
+
+  { genre:"RPG", variation:"Single-map RPG (no dungeons/interiors)", modifiers:[], brk:"One exterior map, NPCs on the surface — fits the current pipeline." },
+  { genre:"RPG", variation:"Dungeon-crawler (interior only)", modifiers:[], roofless:true, brk:"Entire run is inside the dungeon → roofless top-down. Fits the current pipeline." },
+  { genre:"RPG", variation:"Hub + enter dungeons (outside→inside)", modifiers:["P4","P3"], brk:"Separate dungeons (F4) + surface→dungeon entry → 2 top-downs (P3)." },
+
+  { genre:"Roleplay & Avatar Sim", variation:"Static town (exteriors only)", modifiers:[], brk:"Walk the streets, no enterable buildings — fits the current pipeline." },
+  { genre:"Roleplay & Avatar Sim", variation:"Enter houses (Brookhaven, outside→inside)", modifiers:["P3"], brk:"Street → house interior transition → exterior + interior top-downs (P3)." },
+
+  { genre:"Shooter", variation:"Arcade lanes / arena (flat)", modifiers:[], brk:"Single-level lanes on one surface — fits the current pipeline." },
+  { genre:"Shooter", variation:"Indoor-only room-clearing (single building)", modifiers:[], roofless:true, brk:"Whole match is inside one building → roofless interior top-down. Fits the current pipeline." },
+  { genre:"Shooter", variation:"Multi-floor arena", modifiers:["P2"], brk:"Floors stack (F1) → P2 elevation path." },
+  { genre:"Shooter", variation:"Compound raid (approach outside → breach)", modifiers:["P3"], brk:"Outdoor approach then breach inside → exterior + interior top-downs (P3)." },
+
+  { genre:"Simulation", variation:"Flat tycoon plots", modifiers:[], brk:"Equal flat plots on one map — fits the current pipeline." },
+  { genre:"Simulation", variation:"Vehicle sim (single open map)", modifiers:[], brk:"One large open surface, drive around — fits the current pipeline." },
+  { genre:"Simulation", variation:"Mining tycoon (surface → underground)", modifiers:["P2","P3"], brk:"Surface base then descend underground → stacked layers (F1, P2) + outside→inside (P3)." },
+
+  { genre:"Strategy", variation:"RTS (open terrain)", modifiers:[], brk:"One open battlefield, dynamic units — fits the current pipeline." },
+  { genre:"Strategy", variation:"Tower Defense (Actor Track)", modifiers:["P6"], brk:"The enemy lane must be one valid path → P6 procedural variant." },
+
+  { genre:"Survival", variation:"Flat map w/ hiding props", modifiers:[], brk:"Single exterior map, props for cover — fits the current pipeline." },
+  { genre:"Survival", variation:"Indoor mascot-horror (interior only)", modifiers:[], roofless:true, brk:"Trapped inside the building all game → roofless interior top-down. Fits the current pipeline." },
+  { genre:"Survival", variation:'Looping "zero dead-end" map', modifiers:["P6"], brk:"Guaranteed loops with no dead-ends → P6 procedural variant." },
+  { genre:"Survival", variation:"Flee outside → hide in buildings (outside→inside)", modifiers:["P3"], brk:"Move between outdoors and building interiors → 2 top-downs (P3)." },
+
+  { genre:"Sports", variation:"Regulation field", modifiers:[], brk:"Fixed flat field — fits the current pipeline." },
+
+  { genre:"Racing", variation:"Simple flat circuit", modifiers:["P6"], brk:"Even a simple loop must be a connected circuit → P6 procedural variant." },
+  { genre:"Racing", variation:"Multi-tier track w/ tunnels", modifiers:["P6","P2"], brk:"P6 for the circuit + P2 because tiers/tunnels stack (F1) → break." },
+
+  { genre:"Infinite Runner", variation:"Procedural auto-runner", modifiers:["P6"], brk:"Layout is procedural chunk rules → P6 variant by nature." },
+
+  { genre:"Entertainment", variation:"Showcase (single scene)", modifiers:[], brk:"One curated exterior scene — fits the current pipeline." },
+  { genre:"Entertainment", variation:"Interior walkthrough (building, interior only)", modifiers:[], roofless:true, brk:"Museum/building tour, all indoors → roofless interior top-down. Fits the current pipeline." },
+  { genre:"Entertainment", variation:"Hub (portals out)", modifiers:["P4"], brk:"Portals imply separate destinations (F4) → multi-zone path." },
+
+  { genre:"Racing", variation:"Flight circuit over terrain (open volume)", modifiers:[], playspace:"open", brk:"You fly through a volume, but it's captured over a terrain surface — that generates normally; the volume is just a play-height envelope. Fits the current pipeline (verify the whole area fits one image)." },
+  { genre:"Adventure", variation:"Underwater exploration over a seafloor (open volume)", modifiers:[], playspace:"open", brk:"Swim through a volume above a representable seafloor — the surface generates as a normal top-down; volume = play-height envelope. Fits the current pipeline." },
+  { genre:"Shooter", variation:"Space dogfight — dense asteroid field (self-occluding)", modifiers:["P2"], playspace:"occluding", brk:"Here the volume self-occludes (asteroids hide what's behind them). That's an occlusion problem (F7→F1) → route via the P2 elevation path." }
+];
+
+function pathFor(v) {
+  const has = id => v.modifiers.includes(id);
+  const p = ["prompt","genre","route"];
+  if (has("P4")) p.push("p4");
+  const struct = has("P2") ? "elev" : "top";
+  if (has("P6")) p.push("params","proc",struct,"iso","seg");
+  else           p.push("iso",struct,"seg");
+  if (has("P3")) p.push("p3");
+  p.push("build","out");
+  return p;
+}
+
+// The 5 orthogonal Layout Attributes, derived from a variation's modifiers/flags.
+// state → color: ok=green (supported), variant=orange (P6), break/gap=red.
+function attrsOf(v) {
+  const has = id => v.modifiers.includes(id);
+  return [
+    { name:"Enclosure",
+      val: v.roofless ? "Interior-only" : has("P3") ? "Outside↔Inside" : "Exterior",
+      state: has("P3") ? "break" : "ok", mod: has("P3") ? "P3" : "" },
+    { name:"Verticality",
+      val: v.tiered ? "Tiered (relief)" : has("P2") ? "Stacked" : "Single-surface",
+      state: v.tiered ? "variant" : has("P2") ? "break" : "ok",
+      mod: v.tiered ? "flag" : has("P2") ? "P2" : "" },
+    { name:"Zone count",
+      val: has("P4") ? "Multi-zone" : "Single",
+      state: has("P4") ? "break" : "ok", mod: has("P4") ? "P4" : "" },
+    { name:"Structure",
+      val: has("P6") ? "Must-be-valid" : "Dressed",
+      state: has("P6") ? "variant" : "ok", mod: has("P6") ? "P6" : "" },
+    { name:"Play-space",
+      val: v.playspace ? "Volumetric" : "Grounded",
+      state: v.playspace === "occluding" ? "break" : "ok",
+      mod: v.playspace === "occluding" ? "P2" : v.playspace === "open" ? "CHECK" : "" }
+  ];
+}
+const STATECOLOR = { ok:"green", variant:"orange", break:"red" };
+
+// geometry
+function boundary(N, tx, ty) {
+  const dx = tx - N.x, dy = ty - N.y;
+  if (Math.abs(dx) * HALF_H >= Math.abs(dy) * HALF_W) {
+    const sx = Math.sign(dx) || 1;
+    return { x:N.x + sx*HALF_W, y:N.y + dy*(HALF_W/Math.abs(dx||1)) };
+  } else {
+    const sy = Math.sign(dy) || 1;
+    return { x:N.x + dx*(HALF_H/Math.abs(dy||1)), y:N.y + sy*HALF_H };
+  }
+}
+function edgePath(a, b) {
+  const A = NODES[a], B = NODES[b];
+  const s = boundary(A, B.x, B.y), e = boundary(B, A.x, A.y);
+  const mx = (s.x+e.x)/2, my = (s.y+e.y)/2;
+  const dx = e.x-s.x, dy = e.y-s.y, len = Math.hypot(dx,dy) || 1;
+  const nx = -dy/len, ny = dx/len;
+  const sign = (A.x < B.x || (A.x === B.x && A.y < B.y)) ? 1 : -1;
+  const bow = 24 * sign;
+  return `M ${s.x} ${s.y} Q ${mx+nx*bow} ${my+ny*bow} ${e.x} ${e.y}`;
+}
+const key = (a,b) => a+">"+b;
+
+const picker  = document.getElementById("picker");
+const chart   = document.getElementById("chart");
+const edgesEl = document.getElementById("edges");
+const banner  = document.getElementById("banner");
+
+(function populate(){
+  const g = {};
+  VARIATIONS.forEach((v,i)=>{ (g[v.genre] ||= []).push({v,i}); });
+  Object.keys(g).forEach(genre=>{
+    const og = document.createElement("optgroup"); og.label = genre;
+    g[genre].forEach(({v,i})=>{ const o=document.createElement("option"); o.value=i; o.textContent=v.variation; og.appendChild(o); });
+    picker.appendChild(og);
+  });
+})();
+
+const MARKERS = { dim:"var(--dim)", green:"var(--green)", orange:"var(--orange)", red:"var(--red)" };
+function defs(){
+  return `<defs>${Object.entries(MARKERS).map(([k,col])=>
+    `<marker id="mk-${k}" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto">
+       <path d="M0,0 L8,3.2 L0,6.4 Z" fill="${col}"/></marker>`).join("")}</defs>`;
+}
+
+function render(idx){
+  const v = VARIATIONS[idx];
+  const path = pathFor(v);
+  const onPath = new Set(path);
+  const isP6 = v.modifiers.includes("P6");
+  const isTiered = !!v.tiered;
+  const isOpenVol = v.playspace === "open";
+  const hasBreak = ["P2","P3","P4"].some(m => v.modifiers.includes(m));
+
+  // active edges colored by the higher-rank endpoint category
+  const activeEdge = {};
+  for (let i=0;i<path.length-1;i++){
+    const a=path[i], b=path[i+1];
+    activeEdge[key(a,b)] = RANKCOLOR[Math.max(RANK[CAT[a]], RANK[CAT[b]])];
+  }
+
+  // sidebar verdict
+  const badge = document.getElementById("verdictBadge");
+  if (hasBreak)      { badge.className="verdict-badge b-red";    badge.textContent="✕ Breaks current pipeline — new path"; }
+  else if (isP6)     { badge.className="verdict-badge b-orange"; badge.textContent="◆ P6 variant (reordered, same tools)"; }
+  else if (isTiered) { badge.className="verdict-badge b-orange"; badge.textContent="◆ Tiered — supported, flag elevation capture"; }
+  else if (isOpenVol){ badge.className="verdict-badge b-green";  badge.textContent="✔ Fits current pipeline (volumetric — verify framing)"; }
+  else               { badge.className="verdict-badge b-green";  badge.textContent="✔ Fits current pipeline"; }
+  document.getElementById("variationName").textContent = `${v.genre} — ${v.variation}`;
+  document.getElementById("brkInfo").textContent = v.brk;
+
+  // live attributes panel — highlights the deviating axes
+  document.getElementById("attrs").innerHTML = attrsOf(v).map(a=>{
+    const col = STATECOLOR[a.state];
+    const dev = a.state !== "ok";
+    return `<div class="attr${dev?' dev':''}">
+      <span class="a-dot" style="background:var(--${col})"></span>
+      <span class="a-name">${a.name}</span>
+      <span class="a-val" style="color:var(--${col})">${a.val}${a.mod?` <b>${a.mod}</b>`:''}</span>
+    </div>`;
+  }).join("");
+
+  const chips = document.getElementById("chips"); chips.innerHTML = "";
+  const mods = v.tiered ? ["tiered"] : v.modifiers.length ? v.modifiers : ["current path"];
+  mods.forEach(m=>{ const c=document.createElement("span"); c.className="chip";
+    if (m==="current path"){ c.style.color="var(--green)"; c.style.borderColor="var(--green)"; c.textContent="Prompt→Iso→Top-down→Layout"; }
+    else if (m==="tiered"){ c.style.color="var(--orange)"; c.style.borderColor="var(--orange)"; c.textContent="tiered · elevation-capture flag"; c.title="Relief with no overhang — supported, but capture the height so it isn't built flat."; }
+    else { c.textContent=m; c.title=MODIFIER_NAMES[m];
+      const col = CATCOLOR[CAT[ m==="P2"?"elev":m==="P3"?"p3":m==="P4"?"p4":"proc" ]];
+      c.style.color=`var(--${col})`; c.style.borderColor=`var(--${col})`; }
+    chips.appendChild(c); });
+
+  // banner
+  if (hasBreak) {
+    banner.className = "banner red";
+    banner.innerHTML = "⚠ <b>New path required.</b> Red nodes are deviations the current pipeline can't produce: " +
+      v.modifiers.filter(m=>["P2","P3","P4"].includes(m)).map(m=>MODIFIER_NAMES[m].split(" (")[0]).join(" · ") + "." +
+      (v.playspace==="occluding" ? " Here the <b>volumetric play-space self-occludes</b>, so it collapses to the P2 occlusion path." : "");
+  } else if (isP6) {
+    banner.className = "banner orange";
+    banner.innerHTML = "◆ <b>P6 variant</b> — same tools, reordered: <b>Procedural gen → Top-down (ground truth) → Isometric (inspiration)</b> → segmentation. The Isometric↔Top-down edge points the other way.";
+  } else if (isTiered) {
+    banner.className = "banner orange";
+    banner.innerHTML = "◆ <b>Tiered — supported, but flagged.</b> The relief has <b>no overhang</b>, so it's still one top-down surface and runs the normal pipeline. The flag: <b>capture the elevation</b> (from the isometric / a heightmap) so it isn't built flat. Only <b>overhang</b> (surfaces sharing an (x,y)) breaks → P2.";
+  } else if (isOpenVol) {
+    banner.className = "banner green";
+    banner.innerHTML = "✔ <b>Volumetric, but it fits.</b> Play is in a 3D volume over a representable surface (terrain / seafloor), so the surface generates as a normal top-down and the volume becomes a <b>play-height envelope</b>. <b>Check:</b> the whole area must fit one image, and the volume must not self-occlude (that would push it to P2).";
+  } else {
+    banner.className = "banner green";
+    banner.innerHTML = v.roofless
+      ? "✔ <b>Interior-only — fits the current pipeline.</b> The whole game is inside, so we generate it <b>roofless as a single top-down</b>, exactly like any exterior map."
+      : "✔ <b>Fits the current pipeline</b> exactly: Prompt → Isometric → Top-down → Segmentation → Build.";
+  }
+
+  // edges
+  let svg = defs();
+  svg += "<g>";
+  MASTER_EDGES.forEach(([a,b])=>{
+    svg += `<path d="${edgePath(a,b)}" fill="none" stroke="var(--dim)" stroke-width="1.5" opacity="0.45" marker-end="url(#mk-dim)"/>`;
+  });
+  svg += "</g><g>";
+  Object.entries(activeEdge).forEach(([k,col])=>{
+    const [a,b] = k.split(">");
+    svg += `<path d="${edgePath(a,b)}" fill="none" stroke="var(--${col})" stroke-width="3" marker-end="url(#mk-${col})"/>`;
+  });
+  svg += "</g>";
+  edgesEl.innerHTML = svg;
+
+  // nodes
+  chart.querySelectorAll(".node").forEach(n=>n.remove());
+  const order = {}; path.forEach((id,i)=>order[id]=i+1);
+  Object.entries(NODES).forEach(([id,N])=>{
+    const div = document.createElement("div");
+    let col = CATCOLOR[CAT[id]];
+    if (isTiered && id === "top") col = "orange";
+    div.className = "node " + (onPath.has(id) ? ("n-"+col+" on") : "n-dim");
+    div.style.left = N.x + "px";
+    div.style.top  = N.y + "px";
+
+    let sub = N.sub;
+    if (isP6 && id === "iso")  sub = "inspiration only (from plan)";
+    if (isP6 && id === "top")  sub = "ground truth (locked)";
+    if (isP6 && id === "elev") sub = "ground truth layers (locked)";
+    if (v.roofless && id === "iso") sub = "interior scene (roofless)";
+    if (v.roofless && id === "top") sub = "roofless interior plan";
+    if (isOpenVol && id === "iso") sub = "area you fly / swim over";
+    if (isOpenVol && id === "top") sub = "surface + play-height envelope";
+    if (isTiered && id === "top") sub = "heightfield — capture elevation";
+
+    div.innerHTML = `<span class="step">${order[id]||""}</span>
+      <span class="tag">${N.tag}</span>
+      <span class="title">${N.title}</span>
+      <span class="sub">${sub}</span>`;
+    chart.appendChild(div);
+  });
+}
+
+picker.addEventListener("change", e => render(+e.target.value));
+render(0);
+
+/* ============================ TABS ============================ */
+document.querySelectorAll(".tab").forEach(t=>{
+  t.addEventListener("click", ()=>{
+    document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+    document.querySelectorAll(".tabpane").forEach(x=>x.classList.remove("active"));
+    t.classList.add("active");
+    document.getElementById("tab-"+t.dataset.tab).classList.add("active");
+  });
+});
+
+/* ======================= INTAKE FUNNEL ======================= */
+// Attribute options + their support status. Ids match attrsFromVariation() below.
+const ATTR_DEFS = {
+  enclosure: { label:"Enclosure", options:[
+    {id:"exterior",  label:"Exterior (outdoors)",      state:"ok"},
+    {id:"interior",  label:"Interior-only (roofless)", state:"ok",    note:"Supported — generated roofless as a single top-down."},
+    {id:"transition",label:"Outside \u2194 Inside",     state:"break", mod:"P3", note:"Moving outside\u2192inside needs two linked top-downs (P3) — a new path."}
+  ]},
+  verticality: { label:"Verticality", options:[
+    {id:"single",  label:"Single surface (flat / rolling)",  state:"ok"},
+    {id:"tiered",  label:"Tiered / terraced (no overhang)",  state:"variant", mod:"FLAG", note:"Relief with no overhang is still one surface — supported on the normal path, but flag it so the elevation is captured, not built flat."},
+    {id:"stacked", label:"Stacked / overhanging",            state:"break",   mod:"P2",   note:"Surfaces overhang and occlude in top-down (P2) — a new path."}
+  ]},
+  zones: { label:"Zone count", options:[
+    {id:"single", label:"Single map",            state:"ok"},
+    {id:"multi",  label:"Multiple zones / maps", state:"break", mod:"P4", note:"Separate maps can't share one image (P4) — a new path."}
+  ]},
+  structure: { label:"Structure-criticality", options:[
+    {id:"dressed", label:"Dressed (free-form)",             state:"ok"},
+    {id:"valid",   label:"Must be valid (maze/track/lane)", state:"variant", mod:"P6", note:"Uses procedural-first (P6) — a supported variant, same tools reordered."}
+  ]},
+  playspace: { label:"Play-space", options:[
+    {id:"grounded", label:"Grounded surface",                  state:"ok"},
+    {id:"open-vol", label:"Volumetric — open over a surface",  state:"check", mod:"CHECK", note:"Fine over a framed surface (P0 + play-height envelope) — verify the whole area fits one image."},
+    {id:"occ-vol",  label:"Volumetric — self-occluding",       state:"break", mod:"P2",    note:"A self-occluding volume collapses to occlusion (P2) — a new path."}
+  ]}
+};
+const ATTR_KEYS = Object.keys(ATTR_DEFS);
+const GENRES = [...new Set(VARIATIONS.map(v=>v.genre))];
+
+const intake = { genre:null, subIdx:null, custom:false,
+  attrs:{ enclosure:"exterior", verticality:"single", zones:"single", structure:"dressed", playspace:"grounded" } };
+
+const optOf = (k,id) => ATTR_DEFS[k].options.find(o=>o.id===id) || ATTR_DEFS[k].options[0];
+const attrColor = s => (s==="ok"||s==="check") ? "green" : s==="variant" ? "orange" : "red";
+
+function attrsFromVariation(v){
+  return {
+    enclosure:  v.roofless ? "interior" : v.modifiers.includes("P3") ? "transition" : "exterior",
+    verticality:v.tiered ? "tiered" : (v.modifiers.includes("P2") && v.playspace!=="occluding") ? "stacked" : "single",
+    zones:      v.modifiers.includes("P4") ? "multi" : "single",
+    structure:  v.modifiers.includes("P6") ? "valid" : "dressed",
+    playspace:  v.playspace==="open" ? "open-vol" : v.playspace==="occluding" ? "occ-vol" : "grounded"
+  };
+}
+function verdictFromAttrs(a){
+  const mods = new Set(), notes = []; let anyBreak = false, anyVariant = false;
+  ATTR_KEYS.forEach(k=>{ const o=optOf(k,a[k]);
+    if (o.mod && o.mod!=="CHECK" && o.mod!=="FLAG") mods.add(o.mod);
+    if (o.state==="break")   anyBreak = true;
+    if (o.state==="variant") anyVariant = true;
+    if (o.state!=="ok") notes.push({attr:ATTR_DEFS[k].label, state:o.state, note:o.note});
+  });
+  const breaks = ["P2","P3","P4"].filter(m=>mods.has(m));
+  const level = anyBreak ? "red" : anyVariant ? "orange" : "green";
+  return { mods:[...mods], breaks, level, notes, tiered:a.verticality==="tiered" };
+}
+function resolvedAttrs(){
+  if (intake.custom) return intake.attrs;
+  if (intake.subIdx!=null) return attrsFromVariation(VARIATIONS[intake.subIdx]);
+  return null;
+}
+function buildPrompt(a, subName, route){
+  const L = k => optOf(k,a[k]).label;
+  return `Genre: ${intake.genre}\nSub-genre: ${subName}\n`+
+         `Enclosure: ${L("enclosure")}\nVerticality: ${L("verticality")}\nZones: ${L("zones")}\n`+
+         `Structure: ${L("structure")}\nPlay-space: ${L("playspace")}\n`+
+         `Pipeline route: ${route}`;
+}
+
+const crumbsEl = document.getElementById("crumbs");
+const bodyEl   = document.getElementById("stepBody");
+const specEl   = document.getElementById("spec");
+
+function renderCrumbs(){
+  const parts = [{ label: intake.genre?`Genre: ${intake.genre}`:"1 · Genre", cls: intake.genre?"done":"on", act:"reset" }];
+  if (intake.genre){
+    const resolved = intake.custom || intake.subIdx!=null;
+    const sub = intake.custom ? "Sub-genre: Custom" : intake.subIdx!=null ? `Sub-genre: ${VARIATIONS[intake.subIdx].variation}` : "2 · Sub-genre";
+    parts.push({ label:sub, cls: resolved?"done":"on", act:"back" });
+  }
+  if (intake.custom) parts.push({ label:"3 · Attributes", cls:"on" });
+  crumbsEl.innerHTML = parts.map(p=>`<span class="crumb ${p.cls}" ${p.act?`data-act="${p.act}"`:""}>${p.label}</span>`)
+                            .join('<span style="color:var(--muted)">\u203a</span>');
+}
+
+function renderBody(){
+  if (!intake.genre){
+    bodyEl.innerHTML = `<p class="step-title">1 · Pick your genre</p>
+      <p class="step-sub">What kind of game is this?</p>
+      <div class="grid">` + GENRES.map(g=>{
+        const n = VARIATIONS.filter(v=>v.genre===g).length;
+        return `<button class="card" data-act="genre" data-v="${g}"><span class="title">${g}</span><span class="c-tag">${n} sub-genre${n>1?'s':''}</span></button>`;
+      }).join("") + `</div>`;
+    return;
+  }
+  if (intake.subIdx===null && !intake.custom){
+    const subs = VARIATIONS.map((v,i)=>({v,i})).filter(x=>x.v.genre===intake.genre);
+    bodyEl.innerHTML = `<p class="step-title">2 · Pick your sub-genre</p>
+      <p class="step-sub">${intake.genre} — choose the closest match, or build a custom one if yours isn't listed.</p>
+      <div class="grid">` + subs.map(({v,i})=>{
+        const vd = verdictFromAttrs(attrsFromVariation(v));
+        const tag = vd.level==="green" ? "fits" : vd.level==="orange" ? "variant / flag" : "breaks \u2192 "+vd.breaks.join("+");
+        return `<button class="card" data-act="sub" data-v="${i}"><span class="title">${v.variation}</span>
+          <span class="c-tag"><span class="cdot" style="background:var(--${vd.level})"></span>${tag}</span></button>`;
+      }).join("") +
+      `<button class="card custom" data-act="custom"><span class="title">+ Not listed — build custom</span><span class="c-tag">pick attributes yourself</span></button>`
+      + `</div>`;
+    return;
+  }
+  let html = "";
+  if (intake.custom){
+    html += `<p class="step-title">3 · Build a custom ${intake.genre} sub-genre</p>
+      <p class="step-sub">Set each attribute. The build spec on the right updates live and flags any choice that isn't supported.</p>
+      <div class="attr-form">` + ATTR_KEYS.map(k=>{
+        const o = optOf(k,intake.attrs[k]); const col = attrColor(o.state);
+        const opts = ATTR_DEFS[k].options.map(op=>`<option value="${op.id}" ${op.id===intake.attrs[k]?"selected":""}>${op.label}</option>`).join("");
+        return `<div class="attr-row ${o.state!=='ok'?'dev':''}">
+          <span class="lbl">${ATTR_DEFS[k].label}</span>
+          <select data-attr="${k}">${opts}</select>
+          <span class="pill ${col}">${o.mod||"OK"}</span></div>`;
+      }).join("") + `</div>`;
+  } else {
+    const v = VARIATIONS[intake.subIdx];
+    html += `<p class="step-title">Review — ${intake.genre}</p>
+      <p class="step-sub">${v.variation}</p>
+      <p class="val" style="max-width:660px;color:var(--muted);line-height:1.5">${v.brk}</p>`;
+  }
+  html += `<div class="btnrow"><button class="btn ghost" data-act="back">\u2190 Change sub-genre</button><button class="btn ghost" data-act="reset">Start over</button></div>`;
+  bodyEl.innerHTML = html;
+}
+
+function renderSpec(){
+  const a = resolvedAttrs();
+  if (!a){ specEl.innerHTML = `<h3>Build spec</h3><p class="empty">Pick a genre and a sub-genre (or build a custom one) and your build spec assembles here — resolved attributes, pipeline route, and any unsupported choices.</p>`; return; }
+  const vd = verdictFromAttrs(a);
+  const badgeClass = vd.level==="red" ? "b-red" : vd.level==="orange" ? "b-orange" : "b-green";
+  const badgeText  = vd.level==="red" ? "\u2715 Breaks — new path" : vd.level==="orange" ? "\u25c6 Supported — variant / flag"
+                    : (a.playspace==="open-vol" ? "\u2714 Fits — P0 (verify framing)" : "\u2714 Fits — P0");
+  const subName = intake.custom ? "Custom" : intake.subIdx!=null ? VARIATIONS[intake.subIdx].variation : "—";
+  const rows = ATTR_KEYS.map(k=>{ const o=optOf(k,a[k]); const col=attrColor(o.state);
+    return `<div class="attr-row ${o.state!=='ok'?'dev':''}"><span class="lbl">${ATTR_DEFS[k].label}</span>
+      <span class="val">${o.label}</span><span class="pill ${col}">${o.mod||"OK"}</span></div>`;
+  }).join("");
+  const warns = vd.notes.length
+    ? `<ul class="warns">` + vd.notes.map(n=>`<li class="${n.state==='variant'?'orange':n.state==='check'?'green':'red'}"><b>${n.attr}:</b> ${n.note}</li>`).join("") + `</ul>`
+    : `<p class="val" style="color:var(--green)">All attributes on the happy path — nothing to flag.</p>`;
+  let route = vd.mods.length ? vd.mods.join(" + ") : "P0 (happy path)";
+  if (vd.tiered) route += " + tiered flag (capture elevation)";
+  const openBtn = (!intake.custom && intake.subIdx!=null) ? `<button class="btn" data-act="open">Open in flowchart \u2192</button>` : "";
+  specEl.innerHTML = `<h3>Build spec</h3>
+    <span class="verdict-badge ${badgeClass}">${badgeText}</span>
+    <div class="sec">Game</div><div class="val"><b>${intake.genre}</b> — ${subName}</div>
+    <div class="sec">Layout attributes</div>${rows}
+    <div class="sec">Pipeline route</div><div class="val">${route}</div>
+    <div class="sec">Support notes</div>${warns}
+    <div class="sec">Prompt starter</div><pre>${buildPrompt(a, subName, route)}</pre>
+    <div class="btnrow">${openBtn}<button class="btn ghost" data-act="copy">Copy spec</button></div>`;
+}
+
+function renderIntake(){ renderCrumbs(); renderBody(); renderSpec(); }
+
+function handleIntake(e){
+  const el = e.target.closest("[data-act]"); if (!el) return;
+  const act = el.dataset.act;
+  if      (act==="genre") { intake.genre=el.dataset.v; intake.subIdx=null; intake.custom=false; }
+  else if (act==="sub")   { intake.subIdx=+el.dataset.v; intake.custom=false; }
+  else if (act==="custom"){ intake.custom=true; intake.subIdx=null; }
+  else if (act==="back")  { intake.subIdx=null; intake.custom=false; }
+  else if (act==="reset") { intake.genre=null; intake.subIdx=null; intake.custom=false; }
+  else if (act==="open")  { picker.value=intake.subIdx; render(intake.subIdx); document.querySelector('.tab[data-tab="flow"]').click(); return; }
+  else if (act==="copy")  { const pre=specEl.querySelector("pre"); if(pre&&navigator.clipboard) navigator.clipboard.writeText(pre.textContent); el.textContent="Copied \u2713"; setTimeout(()=>el.textContent="Copy spec",1200); return; }
+  renderIntake();
+}
+crumbsEl.addEventListener("click", handleIntake);
+bodyEl.addEventListener("click", handleIntake);
+specEl.addEventListener("click", handleIntake);
+bodyEl.addEventListener("change", e=>{ const s=e.target.closest("select[data-attr]"); if(!s) return; intake.attrs[s.dataset.attr]=s.value; renderIntake(); });
+
+renderIntake();
+</script>
+</body>
+</html>
