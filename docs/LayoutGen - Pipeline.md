@@ -16,7 +16,7 @@ It is a **companion** to `LayoutGen - Build.md`. That doc defines *what* a game 
 Everything upstream of the image model is handled by two skills before the pipeline proper starts.
 
 1. **`layout-intake`** reads the prompt and decides which *concerns* it touches — genre, visual theme, and spatial scale today, with goal / win-condition still unassigned. It dispatches each and assembles one handoff.
-2. **`genre-choice`** classifies the prompt in two stages. Stage A matches a genre (Genre / Mixed / Unrecognised / None). Stage B asks *does the player move through a space?* of every outcome and routes **P5** when the answer is no — this is where the non-spatial cutoff now lives, replacing the `Q0` node in Part IV's tree.
+2. **`genre-choice`** classifies the prompt in two stages. Stage A matches a genre (Genre / Mixed / Unrecognised / None). Stage B asks two questions of every outcome — *is there a space at all?*, which routes **P5** when the answer is no, and then *does anyone walk through it?*, which appends **`SET`** when the answer is no. This is where the non-spatial cutoff now lives, replacing the `Q0` node in Part IV's tree.
 3. The user is offered a **preset** (one decision), can tune the **shape** and `Core` options, and gets one open question. Caps are one clarifying question, five items on screen, one open question.
 4. The skill emits a JSON block: the genre, the shape, the pipeline route, and the picks **split into two streams**.
 
@@ -149,8 +149,13 @@ The **Layout Attributes** defined in `LayoutGen - Build.md` are the router's inp
 | **P3** | **Interior Transition — Dual Top-down** | F2 (**outside → inside** transition only) | Generate **two linked top-downs**: the exterior map, and a **roofless interior top-down** for each enterable structure, joined by a door/entry link. Each interior top-down runs the ordinary pipeline (an interior is just a roofless single surface), so this is effectively P4 applied to interiors. *(Interior-**only** games do not need P3 at all — they are a single roofless top-down and route as P0.)* |
 | **P4** | **Multi-Zone / Per-Zone Passes** | F4 (multiple maps/levels) | Decompose the game into a **zone graph** (levels, biomes, dungeons, interiors-as-zones). Run the pipeline once per zone; wire zones together with `Teleporter`s / transitions. |
 | **P6** | **Procedural-First (Structure-First Inversion)** | F3 / F6 where **structural validity *is* the game** (maze, race circuit, TD path, obby path) | **Invert the pipeline.** Instead of trusting an image to define structure, generate the structural plan with a **procedural/parametric generator** that is valid by construction (solvable maze, connected circuit, single-path TD lane). That plan becomes the **top-down ground truth**. Image models are demoted from *defining* structure to *dressing* it: optionally render an isometric **from the plan** purely as visual inspiration, then generate/segment the **supporting layer** (walls, props, set dressing, buildings, terrain). See the detailed flow below. |
-| **P5** | **Non-Spatial / No-Build** | Prompt needs no 3D map (music/audio, chat-only quiz) | Skip layout generation; route out or produce a minimal shell. |
+| **P5** | **Non-Spatial / No-Build** | Prompt is not a 3D game at all — a chat-only quiz, a 2D screen game, a bare music player with no room | Skip layout generation; route out or produce a minimal shell. **Narrow.** A space nobody walks through is `SET`, not P5. |
+| **`SET`** | **Set, No Locomotion** | Real geometry that no avatar ever crosses — a floating board game, a chess table, an idle screen, a gallery shooter on rails | Build normally. **Skip traversal segmentation, path connectivity, and jump-gap validation** — nothing has to be reachable. Frame the camera on the whole set rather than over a spawn. Combines with any route: `["P0", "SET"]`, `["P3", "SET"]`. |
 | **RESHAPE** | **Reject & reshape** | Concept fundamentally can't be captured even after decomposition | Return to Decision Tree B to reshape the prompt with the user. |
+
+**Readiness: P0 and P6 are built and running. P2, P3, P4 and `CHECK` are not production-ready yet.** So a modifier is not a slower build of the same game, it is one that cannot be delivered today, and intake treats it accordingly — **when nothing in the prompt requires a modifier, the route that stays on P0 or P6 wins.** `SET` is exempt; it only removes validation from a P0 build.
+
+Against 620 real prompts, **404 (65%) already route entirely on the proven pipeline**, and of the 260 modifier instances among the rest, 186 were required by the prompt against 74 taken from a default — so the rule moves about 9% of rows. Two guards, both in Build.md's *Pipeline costs*: it steers judgements about scale and structure, never the presence of a feature the game obviously has (interiors are the common trap — "houses you sleep in" needs `P3` without saying so), and the deferral is always stated to the user rather than applied silently.
 
 > **Support status.** **P2** (elevation), **P4** (multi-zone), and **P6** (procedural-first) are real, buildable pipeline **phases**. **Interior-only games are fully supported** — they are generated **roofless as a single top-down** and route as P0 (no special handling). **P3** covers only the harder **outside → inside transition**, which needs a **second, linked top-down** for the interior; this is a genuine deviation from the single-top-down current pipeline (a P4-style extra pass), not an impossible capability. The remaining open question is only how the exterior and interior top-downs are *linked* (door registration), not whether the interior can be generated.
 
@@ -197,7 +202,8 @@ flowchart TD
 
 ### **Reading the tree**
 
-* **`Q0` is already answered before the tree runs.** The non-spatial cutoff now lives in `genre-choice` stage B (Part 0), which asks *does the player move through a space?* and emits `pipeline: ["P5"]` without offering options. The node stays in the diagram because the tree should remain readable standalone, but in practice a concept reaching Tree A has passed it.
+* **`Q0` is already answered before the tree runs.** The non-spatial cutoff lives in `genre-choice` stage B (Part 0). It is now **two** questions, not one: *is there a space at all?* — no means `pipeline: ["P5"]` with no options offered — and then *does anyone walk through it?* — no means the build proceeds normally with `SET` appended. The node stays in the diagram because the tree should remain readable standalone, but in practice a concept reaching Tree A has passed it, `SET` included.
+* **A `SET` still runs the whole tree.** It can be tiered, have interiors, or be several boards; the flag suppresses reachability checking, not routing.
 * **`Q1`–`Q3` are usually answered by the shape, not asked.** The shape the user picked in Part 0 carries its own modifiers (Part VI), so the tree's job shifts from interrogating to verifying — confirming the prompt does not contradict the shape it was routed to.
 * Order matters: **zones → elevation → interiors → topology**. Zone decomposition (P4) runs first because each resulting zone is then independently evaluated for stacking, interiors, and topology risk (the tree effectively recurses per zone).
 * The default is P0. Modifiers are only added when a question is answered "yes."
@@ -306,16 +312,18 @@ Read it as: **genre route ∪ shape route ∪ every picked option's route.** Opt
 | **Puzzle** | `puzzle-open` P0 · `puzzle-rooms` P0 · `puzzle-maze` **P6** | — | — |
 | **RPG** | `world-single` P0 · `world-open-biomes` **P4** · `world-hub-dungeon` **P4+P3** | — | `building-interior` **P3** |
 | **Roleplay & Avatar Sim** | `settlement-static` P0 · `wilderness-open` P0 · `stage-runway` P0 · `settlement-claimable` **P3** · `settlement-buildable` **P3** | — | `building-interior` **P3** |
-| **Shooter** | `lane-network` P0 · `breach-sequence` P0 · `open-battlefield` P0 | — | multi-floor **P2** · breach interior **P3** · tiered |
-| **Simulation** | `plot-isolated` P0 · `plot-shared` P0 · `world-shared` P0 · `world-underground` **P2+P3** | — | — |
-| **Strategy** | `terrain-open` P0 · `board-grid` P0 · `lane-actor-track` **P6** | — | tiered |
+| **Shooter** | `lane-network` P0 · `breach-sequence` P0 · `open-battlefield` P0 · `range-directed` P0 | — | multi-floor **P2** · breach interior **P3** · tiered |
+| **Simulation** | `plot-isolated` P0 · `plot-shared` P0 · `world-shared` P0 · `tier-ladder` P0 · `world-underground` **P2+P3** | — | — |
+| **Strategy** | `terrain-open` P0 · `board-grid` P0 **+`SET`** · `lane-actor-track` **P6** | — | tiered |
 | **Survival** | `arena-contained` P0 · `warren-looping` **P6** · `world-biomes` **P4** | — | enter buildings **P3** · tiered |
 | **Sports** | `field-bounded` P0 · `range-directed` P0 | — | tiered (stands) |
 | **Racing** | `route-point-to-point` · `route-circuit` · `route-multitier` +**P2** | **P6** | volumetric course `CHECK` |
 | **Infinite Runner** | `lane-snap` · `lane-free` | **P6** | — |
-| **Entertainment** | `showcase-route` P0 · `showcase-freeroam` P0 · `hub-portals` **P4** | — | portal destinations **P4** |
+| **Entertainment** | `showcase-route` P0 · `showcase-freeroam` P0 · `venue-stage` P0 · `hub-portals` **P4** | — | portal destinations **P4** · `spectator-bleachers` tiered · `backstage-support` **P3** |
 
 > **Reminder:** a **P3** means an **outside→inside transition** (2 linked top-downs). Interior-**only** games are *not* P3 — they route as P0 (single roofless top-down). Note that Puzzle's `puzzle-rooms` is P0 for exactly this reason: a sealed sequence of rooms is interior-only.
+
+**The `P4` entries in this table are defaults, not facts.** A shape describes the space and routes the build in a single pick, so a prompt that wants graded biomes on **one continuous map** would otherwise be split into separate maps by `world-biomes`. When the prompt says one map outright, the shape stands and the route drops to P0; see *Shape comes first* in Build.md for the full rule and the shapes it covers. **`P6` is never a default** — structural validity is the game, and an image model cannot guarantee it. Measured against 620 prompts this fired on 4 rows, so it is a correction for an explicit contradiction, not a licence to re-derive routes the prompt never mentioned.
 
 **Two corrections this rekeying forced.** Sports previously read `P6-lite (template field)`, which is not a real modifier and is not what Build.md specifies — Sports is P0. Infinite Runner previously read `P6 / P5-adjacent`, but a runner has a very real 3D map; it is P6, and nothing about it is non-spatial.
 

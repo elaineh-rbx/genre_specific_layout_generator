@@ -11,6 +11,7 @@
 | `lane-network` | **Lane (Lane Network)** | Parallel routes, classically three, channelling team traffic into predictable engagement fronts. | |
 | `breach-sequence` | **Path (Breach Sequence)** | A raid site of rooms that dead-end into breach points, cleared in a defined order rather than looped. | |
 | `open-battlefield` | **Zone (Open Battlefield)** | One large contiguous map with dispersed points of interest instead of defined lanes. | |
+| `range-directed` | **Lane (Directed Practice Range)** | A firing line facing downrange into a target field, with no opposing team and no route through — everything the player shoots at is in front of them and the space behind the line is safe. | |
 
 **Options** — combine freely on top of the chosen shape.
 
@@ -27,6 +28,8 @@
 | `path-flank-tunnel` | **Path (Flanker Tunnel)** | Subterranean or interior routes letting fast players bypass the main-lane standoff. | | `image` | `P2` |
 | `building-interior` | **Zone (Breachable Structure)** | A house, apartment, or compound entered from outside. | | `image` | `P3` |
 | `spawner-npc` | **Spawner (Enemy Wave Origin)** | Where hostile AI enters the map, sited so defenders have a readable direction to hold against. | | `layout` | |
+| `target-practice` | **Target (Practice Targets)** | Static and popping targets set at graded distances downrange — plates, silhouettes, bullseyes — arranged so the player can read which distance they are hitting. | | `both` | |
+| `station-loadout` | **TriggerZone (Weapon Bench)** | A bench or rack behind the firing line where players pick and swap the weapon they are practising with. | | `both` | |
 | `boundary-shrinking` | **BoundaryZone (Closing Play Area)** | A play boundary that contracts over the match, compressing survivors toward a shifting centre. | | `layout` | |
 | `collectible-loot` | **Collectible (Scattered Loot)** | Weapons and equipment distributed across the map so players arm themselves from the world. | | `layout` | |
 | `powerup-buffs` | **PowerUp (Armour & Weapon Spawns)** | Fixed-position pickups on a respawn timer that players fight to control. | | `layout` | |
@@ -43,6 +46,7 @@
 | **Tactical Shooter** | Rainbow Six Siege; [BODYCAM: SWAT Simulator](https://www.roblox.com/games/16404660684/BODYCAM-SWAT-Simulator) (Roblox) | `breach-sequence` | `building-interior`, `cover-los` |
 | **PvE Shooter** | Left 4 Dead, Killing Floor | `lane-network` | `spawner-npc`, `choke-bottleneck`, `building-interior` |
 | **Battle Royale** | PUBG, Fortnite, Apex Legends | `open-battlefield` | `boundary-shrinking`, `collectible-loot`, `building-interior` |
+| **Aim Trainer** | Aimlabs, Kovaak's; Roblox aim-training and gun-testing places | `range-directed` | `target-practice`, `station-loadout` |
 
 **Genre notes**
 
@@ -54,4 +58,36 @@
 * **Four options exist because the presets demanded them.** The Genre List has always named Battle Royale and PvE shooters, and Roblox's official taxonomy has both as subgenres, yet the table could express neither — no contracting boundary, no scattered loot, no enemy emitter. `boundary-shrinking`, `collectible-loot`, `powerup-buffs`, and `spawner-npc` were added when the preset list made the gaps obvious.
 * **Roblox's own subgenres for Shooter are Battle Royale, Deathmatch Shooter, and PvE Shooter.** That taxonomy is too coarse for layout: Team Deathmatch, Capture the Flag, King of the Hill, and free-for-all are all *Deathmatch Shooter* to Roblox but need four different maps. The presets use the standard mode names instead, which is the one place a Roblox subgenre name is deliberately not used.
 * **The contracting boundary is the cleanest example of an invisible pick.** It has no geometry at all, so it cannot be segmented out of a render and must never enter the image prompt. It is computed and placed against the finished layout.
-* **Still uncovered.** Rail and gallery shooters with no player movement at all (Duck Hunt) have no meaningful layout job and probably route to P5. Hero shooters are served by the Hill Control preset today, but class-specific spawn rooms and ability-traversal geometry are not represented — flag it if one comes up.
+* **Not every shooter is a match.** The other eight presets are all competitive modes with two sides, so a solo aim-training range, a gun-testing place, or a target gallery had no preset at all and had to emit `preset: null` — a large Roblox category with nothing to land on. **Aim Trainer** is the single-player case: no opposing team, no route through the map, everything downrange of one firing line. `range-directed` is shared with Sports, where it is a bowling or archery lane; same shape, same P0, different words.
+* **A rail or gallery shooter is an Aim Trainer that moves the camera, not a P5.** It has a real set — a firing line, targets, a backdrop — even though the player never walks. Build it and flag `SET`; see *Pipeline costs* in Build.md. Hero shooters are served by the King of the Hill preset today, but class-specific spawn rooms and ability-traversal geometry are not represented — flag it if one comes up.
+
+## Universal Options
+
+Six features that belong to **no genre in particular because they belong to all of them**. Every genre inherits this table on top of its own.
+
+They exist because the alternative is worse. Each was measured against 620 real prompts and requested in eleven to fifteen different genres, so filing them per-genre would restate the same row seventy-eight times — and leaving them out is what produced the largest hole in the system, with *who is in the world* having no home anywhere.
+
+| ID | Option | What it is | Core | Goes to | Pipeline |
+| :---- | :---- | :---- | :--: | :---- | :---- |
+| `npc-population` | **Zone (Ambient Population)** | The non-hostile characters who inhabit the space — shopkeepers, wandering crowds, ambient animals, a named figure players come to see — and the ground they occupy. | | `both` | |
+| `building-interior` | **Zone (Enterable Interior)** | Buildings players actually go inside rather than interact with from the street. | | `image` | `P3` |
+| `water-body` | **Zone (Water Body)** | Standing or flowing water as a real feature of the map — a lake, river, sea, or pool — whether swum through or treated as a barrier. | | `image` | `CHECK` |
+| `settlement-density` | **Zone (Settlement)** | Built-up ground at a stated density — a hamlet, a town, or a dense city block grid — rather than scattered individual buildings. | | `image` | |
+| `terrain-relief` | **Zone (Terrain Relief)** | Natural landform shaping the ground: hills, mountains, cliffs, a valley, or a canyon. | | `image` | `P0 + tiered` |
+| `island-cluster` | **Zone (Island Cluster)** | Several separate landmasses with water or open air between them, crossed by bridge, boat, or flight. | | `image` | `CHECK` |
+
+**None of these is `Core`, and that is deliberate.** They must never appear in the tune menu, which shows `Core` options only, and no preset includes one. A universal option is a **landing place for a request the user actually made** — reached from the open question in step 5 when a free-text ask matches it — never a default and never a suggestion. Measured against 620 prompts, each of the six would fire on 6–15% of them, so a run that applies one unasked is wrong far more often than it is right.
+
+**A genre's own wording wins.** Four genres already define `building-interior` in their own terms — Shooter's is a breachable structure, Survival's is a shelter to hide in. Those rows are the definition for those genres; the universal row is the fallback for the other eleven. Dedupe by ID exactly as with any shared ID.
+
+**Bend the wording to the prompt.** These are written generically because they are genre-neutral, which makes the instruction to rewrite them *more* important than usual, not less. `water-body` for a pirate game is "open sea between the islands, deep enough to sail"; for a park it is "a duck pond at the centre of the green." Ship the prompt's water, not the word "water."
+
+**Two pipeline notes.** `terrain-relief` is `P0 + tiered` for hills and cliffs, but **caves, overhangs, and tunnels push it to `P2`** — say so when the prompt asks for them. `water-body` and `island-cluster` are `CHECK` because swimming and flight are volumetric: usually fine as a play-height envelope over a representable surface, and only a real problem when the volume self-occludes (layered floating islands, 3D cave networks). See *Layout Attributes* in Build.md for the underlying axis.
+
+**`npc-population` is not `spawner-npc`.** `spawner-npc` is where hostiles enter a fight — an emitter, wired to combat. `npc-population` is who lives here. A market crowd, a quest giver, and a herd of deer are not spawners, and filing them as one produces enemy waves in a town square.
+
+### **Counts and quantities**
+
+Any pick may carry a **count** when the prompt states one. "Five islands," "a village of about twenty houses," "three floors" — the number is part of the request and there is nowhere else for it to live. The scale band is a four-value enum and destroys exact figures by design, so a stated quantity that is dropped here is gone.
+
+Record the number the user gave, not a normalised one. If they said "a few," that is not a count — carry it in the text and leave the count empty.

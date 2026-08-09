@@ -32,7 +32,8 @@
 
 | Preset | Modelled on *(internal)* | Shape | Options |
 | :---- | :---- | :---- | :---- |
-| **Life** | Brookhaven, Bloxburg (Roblox) | `settlement-buildable` | `path-road-vehicle`, `district-zoned`, `building-interior` |
+| **Life** | Brookhaven (Roblox) | `settlement-claimable` | `path-road-vehicle`, `district-zoned`, `building-interior` |
+| **Home Builder** | Bloxburg (Roblox) | `settlement-buildable` | `path-road-vehicle`, `building-interior`, `social-hub` |
 | **Pet Care** | Adopt Me! (Roblox) | `settlement-claimable` | `building-interior`, `social-hub`, `path-street` |
 | **Morph Roleplay** | [Welcome to The Town of Robloxia](https://www.roblox.com/games/13213733678/Welcome-to-The-Town-of-Robloxia) (Roblox) | `settlement-static` | `social-hub`, `vignette-photo`, `landmark-focal` |
 | **Animal Sim** | Wolves' Life, Warrior Cats (Roblox) | `wilderness-open` | `den-shelter`, `landmark-focal`, `social-hub` |
@@ -42,8 +43,40 @@
 
 * **References.** [Adventure Time: Land of Ooo Showcase](https://www.roblox.com/games/11753761261/Adventure-Time-Land-of-Ooo-Showcase) for static map. [Welcome to The Town of Robloxia](https://www.roblox.com/games/13213733678/Welcome-to-The-Town-of-Robloxia) for claimable houses. Bloxburg and Brookhaven for full personalized building.
 * **Pick the housing model before assuming a plot.** Full player-constructed housing is common on front-page hits, which makes it look like the default — but it's actually the *least* common of the three models across the genre. Check which one the game really is before laying out a grid of empty lots.
+* **Life and Home Builder are two presets because Brookhaven and Bloxburg are two games.** They were one preset citing both, and it defaulted to buildable plots — so all three prompts in a 620-prompt evaluation that named Brookhaven outright got a grid of empty lots. **Brookhaven hands players a finished house to claim.** The note directly above already said so; a single preset spanning both models was what overrode it. When a prompt names neither game, "move into a house" is Life and "build your own house" is Home Builder; if it is genuinely unclear, Life is the safer default because claiming is the more common model.
 * **Boundaries.** Roleplay is open-ended social storytelling. If the loop is a defined, repeatable set of job tasks — pilot, doctor, trucker, farmer — it's Simulation's Role Sim bundle instead.
 * **Vehicle roads are conditional.** 15- and 30-stud streets exist so car meshes can turn. A walking-only roleplay town doesn't need them, and Build's original version wrongly demanded them of every game in the genre.
 * **This genre is P3 by default in practice.** Every housing model except Static Settlement involves enterable interiors, which is a real and unavoidable pipeline cost — worth surfacing to the user early rather than at build time.
 * **Roblox's own subgenres here are Animal Sim, Dress Up, Life, Morph Roleplay, and Pet Care** — all five are presets above, and building them forced two shapes and one option that did not exist. **An animal sim has no town**, so it needed `wilderness-open` and `den-shelter`; **a dress-up game has no settlement either**, just a runway and preparation booths, so it needed `stage-runway`. The genre had silently assumed a human town.
 * **Two of the five presets are among the largest games on the platform.** Adopt Me! and Dress to Impress are Pet Care and Dress Up respectively, so these are not fringe cases — they were simply unrepresented.
+
+## Universal Options
+
+Six features that belong to **no genre in particular because they belong to all of them**. Every genre inherits this table on top of its own.
+
+They exist because the alternative is worse. Each was measured against 620 real prompts and requested in eleven to fifteen different genres, so filing them per-genre would restate the same row seventy-eight times — and leaving them out is what produced the largest hole in the system, with *who is in the world* having no home anywhere.
+
+| ID | Option | What it is | Core | Goes to | Pipeline |
+| :---- | :---- | :---- | :--: | :---- | :---- |
+| `npc-population` | **Zone (Ambient Population)** | The non-hostile characters who inhabit the space — shopkeepers, wandering crowds, ambient animals, a named figure players come to see — and the ground they occupy. | | `both` | |
+| `building-interior` | **Zone (Enterable Interior)** | Buildings players actually go inside rather than interact with from the street. | | `image` | `P3` |
+| `water-body` | **Zone (Water Body)** | Standing or flowing water as a real feature of the map — a lake, river, sea, or pool — whether swum through or treated as a barrier. | | `image` | `CHECK` |
+| `settlement-density` | **Zone (Settlement)** | Built-up ground at a stated density — a hamlet, a town, or a dense city block grid — rather than scattered individual buildings. | | `image` | |
+| `terrain-relief` | **Zone (Terrain Relief)** | Natural landform shaping the ground: hills, mountains, cliffs, a valley, or a canyon. | | `image` | `P0 + tiered` |
+| `island-cluster` | **Zone (Island Cluster)** | Several separate landmasses with water or open air between them, crossed by bridge, boat, or flight. | | `image` | `CHECK` |
+
+**None of these is `Core`, and that is deliberate.** They must never appear in the tune menu, which shows `Core` options only, and no preset includes one. A universal option is a **landing place for a request the user actually made** — reached from the open question in step 5 when a free-text ask matches it — never a default and never a suggestion. Measured against 620 prompts, each of the six would fire on 6–15% of them, so a run that applies one unasked is wrong far more often than it is right.
+
+**A genre's own wording wins.** Four genres already define `building-interior` in their own terms — Shooter's is a breachable structure, Survival's is a shelter to hide in. Those rows are the definition for those genres; the universal row is the fallback for the other eleven. Dedupe by ID exactly as with any shared ID.
+
+**Bend the wording to the prompt.** These are written generically because they are genre-neutral, which makes the instruction to rewrite them *more* important than usual, not less. `water-body` for a pirate game is "open sea between the islands, deep enough to sail"; for a park it is "a duck pond at the centre of the green." Ship the prompt's water, not the word "water."
+
+**Two pipeline notes.** `terrain-relief` is `P0 + tiered` for hills and cliffs, but **caves, overhangs, and tunnels push it to `P2`** — say so when the prompt asks for them. `water-body` and `island-cluster` are `CHECK` because swimming and flight are volumetric: usually fine as a play-height envelope over a representable surface, and only a real problem when the volume self-occludes (layered floating islands, 3D cave networks). See *Layout Attributes* in Build.md for the underlying axis.
+
+**`npc-population` is not `spawner-npc`.** `spawner-npc` is where hostiles enter a fight — an emitter, wired to combat. `npc-population` is who lives here. A market crowd, a quest giver, and a herd of deer are not spawners, and filing them as one produces enemy waves in a town square.
+
+### **Counts and quantities**
+
+Any pick may carry a **count** when the prompt states one. "Five islands," "a village of about twenty houses," "three floors" — the number is part of the request and there is nowhere else for it to live. The scale band is a four-value enum and destroys exact figures by design, so a stated quantity that is dropped here is gone.
+
+Record the number the user gave, not a normalised one. If they said "a few," that is not a count — carry it in the text and leave the count empty.

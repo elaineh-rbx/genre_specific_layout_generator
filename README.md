@@ -24,6 +24,7 @@ and its Part II is a menu rather than a specification:
 |---|---|
 | **Shape** | Exactly one per game, mutually exclusive. Usually the decision that routes the pipeline: a flat arena and a stacked interior need different treatment. |
 | **Option** | Additive on top of the shape, combined freely. Nothing is mandatory. |
+| **Universal option** | Six that belong to every genre rather than one - who inhabits the space, water, terrain relief. Never offered, only landed on when a prompt asks. |
 | **Preset** | A shape plus a few option IDs, modelled on a real game - a starting point, not a constraint. |
 
 `layoutgen/model/rules.py` parses that document at import, so the model in code cannot
@@ -140,7 +141,7 @@ tools/generate_genre_skills.py  writes those 15 genre files from the rules docum
                             and --check says whether they still match. This is the
                             drift guard for the three copied items above
 
-All three are copied from mpalleschi/3D-LayoutBuild-Rules @ 61d65ed, where they were
+All three are copied from mpalleschi/3D-LayoutBuild-Rules @ 5a3c636, where they were
 written. `python tools/generate_genre_skills.py --check` is what keeps the copy honest:
 it exits 1 and names the files that no longer follow from the rules document.
 

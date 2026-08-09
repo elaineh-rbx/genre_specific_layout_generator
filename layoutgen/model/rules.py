@@ -9,6 +9,11 @@ which every sub-genre carried mandatory Hard Needs. Part II is a *menu*:
     Presets    one shape plus a few option IDs, modelled on a real game - this is
                what stands in for what earlier drafts called sub-genres
 
+Six of the options belong to every genre rather than to one - who inhabits the space,
+water, terrain relief - and live in their own table. They are merged into each genre
+here, so nothing downstream has to know they arrived differently, except that they
+carry `universal` and are never `core`.
+
 The single most important field for us is `Goes to`. Pipeline step 4 recovers
 geometry from the isometric render, so anything invisible - a trigger volume, a
 spawn marker, a pickup - cannot be recovered and must never reach the image model.
@@ -98,6 +103,10 @@ class Option:
     core: bool
     goes_to: str
     pipeline: str
+    #: From the Universal Options table rather than this genre's own. Never `core`,
+    #: so it stays out of the tune menu - the document is explicit that these are a
+    #: landing place for something the user asked for, never a default.
+    universal: bool = False
 
     @property
     def label(self) -> str:
@@ -138,7 +147,31 @@ class Genre:
         return next((p for p in self.presets if p.name == name), None)
 
 
-def _parse() -> tuple[dict[str, Genre], list[tuple[str, str]]]:
+def _universal(lines: list[str]) -> list[Option]:
+    """The Universal Options table, which sits outside the numbered genres.
+
+    Six features that belong to no genre in particular because they belong to all of
+    them - who inhabits the space, water, terrain relief. They are a separate table
+    because filing them per genre would restate the same row seventy-eight times.
+    """
+    try:
+        i = next(n for n, x in enumerate(lines)
+                 if x.strip() == "## **Universal Options**")
+    except StopIteration:
+        return []
+    rows, _ = _table(lines, i + 1)
+    out = []
+    for r in rows:
+        if len(r) < 6:
+            continue
+        full, typ, flav = _split_name(r[1])
+        out.append(Option(id=_clean(r[0]), name=full, type=typ, flavor=flav,
+                          what=_clean(r[2]), core="●" in r[3], goes_to=_clean(r[4]),
+                          pipeline=_clean(r[5]), universal=True))
+    return out
+
+
+def _parse() -> tuple[dict[str, Genre], list[tuple[str, str]], list[Option]]:
     lines = DOC.read_text().splitlines()
 
     # The Genre List gives the one-line description for each of the fifteen.
@@ -211,16 +244,27 @@ def _parse() -> tuple[dict[str, Genre], list[tuple[str, str]]]:
             i += 1
         genres[name] = g
 
-    return genres, descs
+    # Every genre inherits the universal table on top of its own, and its own row wins
+    # on a collision - four genres word `building-interior` their own way, and those
+    # definitions are the ones that hold for them.
+    universal = _universal(lines)
+    for g in genres.values():
+        own = {o.id for o in g.options}
+        g.options.extend(o for o in universal if o.id not in own)
+
+    return genres, descs, universal
 
 
-GENRES, GENRE_DESCS = _parse()
+GENRES, GENRE_DESCS, UNIVERSAL = _parse()
 
 #: Every option ID that appears in more than one genre, per the shared registry.
+#: Universal options are excluded: they are in all fifteen by construction, so listing
+#: them here would say nothing and drown the IDs that are genuinely shared.
 SHARED_IDS: dict[str, list[str]] = {}
 for _g in GENRES.values():
     for _o in _g.options:
-        SHARED_IDS.setdefault(_o.id, []).append(_g.name)
+        if not _o.universal:
+            SHARED_IDS.setdefault(_o.id, []).append(_g.name)
 SHARED_IDS = {k: v for k, v in SHARED_IDS.items() if len(v) > 1}
 
 

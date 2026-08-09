@@ -45,32 +45,64 @@ Ask at most one clarifying question, and only for Unrecognised. Do not
 interrogate. A prompt that is merely brief is not unrecognised — "make me a
 zombie game" is Survival with a theme attached.
 
+**When the user names a genre, start from what they named.** Prompts often
+self-declare — "Genre: Open-world Action RPG / Survival", "a casual strategy
+auto-battler", "a 1+ speed clicker". That is the strongest single signal
+available and it is routinely lost to a more vivid detail further down the
+prompt. A parkour course described inside a clicker does not make the game an
+obby; it makes it both, with the clicker named first.
+
+Override a self-declared genre only when the described gameplay plainly
+contradicts it, and **say so in `notes`** when you do. If the declaration names
+two genres, that is a mix and both go in `genres` — the user already did the
+classification.
+
+**Match the user's words to the index, not to the genre name.** Users write
+"clicker", "tycoon", "simulator", "grinder", "escape", "tower" — the *Recognise
+from* column exists for exactly this. `clicker` is Simulation. Do not route a
+clicker to P5 on the strength of the word alone; see stage B.
+
 **Skip the question if stage B is plainly going to answer No.** Asking a user
 to elaborate on their origami game, only to tell them there is no map to build,
 wastes a round trip. Go straight to stage B.
 
 ### Stage B — is there a space?
 
-One question, asked of every outcome including Genre:
+**Two questions in this order, and do not merge them.** They used to be one,
+and collapsing them is what made this the least accurate step in the skill.
 
-> **Does the player move through a space?**
+> **1. Is there a space at all?**
+> **No** → route **P5**, emit the block in step 6, and stop. Do not offer options.
+> **Yes** → ask question 2.
 
-**No** → route **P5**, emit the block in step 6, and stop. Do not offer options.
-**Yes** → step 2, carrying the stage A outcome.
+> **2. Does anyone walk through it?**
+> **No** → continue to step 2 as normal, and add **`SET`** to `pipeline`.
+> **Yes** → continue to step 2.
 
-Concepts that usually have no space: idle and incremental clickers, coloring
-and drawing, match-and-merge, word games, rhythm games, video watching, and
-chat-only quizzes with no physical set.
+**Almost everything has a space.** P5 is for a prompt that is not a 3D game —
+a chat-only quiz, a 2D screen game, a bare music player with no room around it.
+Nothing else. In an evaluation of 620 real prompts **not one was a 2D game**,
+so if you are about to emit P5, you are very probably wrong.
+
+`SET` is the answer for the large middle: a space that is real and built and
+never walked on. A floating board game, a chess table with two chairs, a
+click-to-earn idle screen, a shooting gallery on rails, a diorama the camera
+orbits. **Build all of it.** `SET` tells the pipeline to skip traversal
+segmentation and jump-gap validation, because nothing needs to be reachable —
+it does not skip the build.
+
+`SET` sits alongside the route, it does not replace it: `["P0", "SET"]`,
+`["P3", "SET"]`.
 
 **Judge the concept, not the keyword.** "A music game where you hit notes to a
-beat" has no space and is P5. "A music venue where people hang out and listen"
-has a room, a stage, and a crowd — it is a place, so it goes to Entertainment
-or no-genre. Routing it to P5 would refuse to build something perfectly
-buildable.
+beat" is `SET` if there is a stage to look at and P5 only if it is bare UI. "A
+music venue where people hang out and listen" is an ordinary walkable place —
+Entertainment's `venue-stage`. An idle clicker is a `SET`, and usually a
+Simulation tycoon you happen to leave running.
 
 **When genuinely torn, build.** An unnecessary map costs less than a wrongly
-refused one. "A game where you fold origami" has no space and is P5; "a game
-where you fold origami in a little paper studio" has one, and is no-genre.
+refused one, and `SET` makes the cheap version available — you no longer have
+to choose between a full traversal build and nothing.
 
 ### Genre index
 
@@ -83,14 +115,14 @@ where you fold origami in a little paper studio" has one, and is no-genre.
 | Puzzle | `genres/puzzle.md` | puzzles, escape room, maze, riddles, logic |
 | RPG | `genres/rpg.md` | levels, stats, quests plus combat, dungeons, loot, grinding |
 | Roleplay & Avatar Sim | `genres/roleplay-avatar-sim.md` | roleplay, town life, houses, pets, dress up, animal sim |
-| Shooter | `genres/shooter.md` | guns, FPS, deathmatch, battle royale, tactical, PvE waves |
-| Simulation | `genres/simulation.md` | tycoon, simulator, farming, jobs, vehicles, mining, sandbox |
+| Shooter | `genres/shooter.md` | guns, FPS, deathmatch, battle royale, tactical, PvE waves, **aim trainer, shooting range, gun testing** |
+| Simulation | `genres/simulation.md` | tycoon, simulator, farming, jobs, vehicles, mining, sandbox, **clicker, idle, incremental, rebirth, upgrade grind, "+1 speed", speed/strength training** |
 | Strategy | `genres/strategy.md` | tower defense, RTS, unit placement, base defense, board games |
 | Survival | `genres/survival.md` | survive, escape, killer, disaster, horror chase, resources |
 | Sports | `genres/sports.md` | football, basketball, golf, stadium, scoring, teams on a field |
 | Racing | `genres/racing.md` | race, laps, track, finish line, speed, driving competitively |
 | Infinite Runner | `genres/infinite-runner.md` | endless runner, auto-run, dodge obstacles, subway-surfers style |
-| Entertainment | `genres/entertainment.md` | showcase, hub, portals, environment demo, hangout to look at |
+| Entertainment | `genres/entertainment.md` | showcase, hub, portals, environment demo, hangout to look at, **concert, festival, talent show, club, any stage with an audience** |
 
 Two taxonomy notes, because users echo Roblox's own wording:
 
@@ -99,24 +131,52 @@ Two taxonomy notes, because users echo Roblox's own wording:
 - Roblox has one **Sports & Racing** genre. Split them by finish condition: a
   lap or finish line is Racing, a scored field or court is Sports.
 
+**One family that hides behind other genres.** "+1 speed" games — grind a stat,
+break a barrier the stat unlocks, buy upgrades, rebirth — borrow their activity
+from whatever is convenient, so they read as an obby if the grind is a parkour
+course, a puzzle if it is a keyboard escape, a racer if it is a lane. **They
+are Simulation**, preset *Stat Grinder*, and the tell is that the number going
+up is the game. Getting this wrong is not cosmetic: leading with Obby imports a
+genre-wide P6 these games never needed. Name the second genre; do not let it
+lead.
+
 ## 2. Load
 
 **A stage A outcome of None loads `no-genre.md` and nothing else.** It has the
-same four sections as a genre file and the rest of this skill applies to it
-unchanged.
+same sections as a genre file, Universal Options included, and the rest of this
+skill applies to it unchanged. It was the right answer on 7% of 620 real
+prompts, so treat it as an ordinary destination rather than a last resort —
+inventing a genre to avoid it builds a map the user never asked for.
 
 Otherwise: **load the dominant genre first, and check its presets before
 loading anything else.** A genre's presets often already cover what looked like
-a second genre —
-Obby's *Vehicle Obby* covers "you can drive cars," so "an obby where you drive
-cars" is not a mix. Only load a second file for something the first genuinely
-cannot express. Never read all fifteen.
+a second genre — Obby's *Vehicle Obby* covers "you can drive cars," so "an obby
+where you drive cars" is not a mix.
+
+**If a second genre is still doing real work after that check, load it.** The
+cost of loading one more file is one more table; the cost of skipping it is
+that every option only that genre can express becomes invisible for the rest of
+the run. Two files is normal and costs nothing that matters. Three is rare.
+Never read all fifteen.
+
+**Read every preset in a loaded file before deciding none fits.** Presets are
+named from published taxonomies, so the name often will not echo the user's
+words — a prompt asking to "spell the word that shows up on the screen" is the
+*Word / Quiz Puzzle* preset even though it never says puzzle or quiz. Match on
+what the preset builds, not on whether its name appears in the prompt.
 
 Each file holds a **Shape** table (pick exactly one), an **Options** table
-(combine freely), **Presets**, and **Genre notes**. The notes carry boundary
-rules worth checking your classification against, and sometimes cite Build.md
-Part I for the engine baseline behind a number — that is background, not
-something you need to read to execute this.
+(combine freely), **Presets**, **Genre notes**, and a **Universal Options**
+table. The notes carry boundary rules worth checking your classification
+against, and sometimes cite Build.md Part I for the engine baseline behind a
+number — that is background, not something you need to read to execute this.
+
+**Universal Options are part of every genre's menu.** The same six rows are
+appended to all fifteen files — who inhabits the space, enterable interiors,
+water, settlement density, terrain relief, and island clusters. They are
+genre-neutral environment features, so their wording is generic and **must** be
+bent to the prompt's subject before it is emitted. Where a genre defines the
+same ID in its own words, the genre's row wins.
 
 ### Reading the tables
 
@@ -130,24 +190,51 @@ something you need to read to execute this.
 Pipeline codes: `P0 + tiered` elevation with no overhang · `P2` overhanging
 surfaces · `P3` outside↔inside transition · `P4` separate maps · `P6`
 structure must be valid by construction · `CHECK` only a problem if the play
-volume self-occludes.
+volume self-occludes · `SET` real geometry that nobody walks on, so traversal
+and jump-gap checks are skipped.
 
 ### Mixing genres
 
-**The dominant genre owns the shape and the preset.** Shape answers compete
-across genres, and honouring several stacks pipeline cost out of one sentence.
-The preset follows the shape for the same reason — a preset is a shape plus
-options, so taking one from a secondary genre would smuggle its shape in.
+**Naming a second genre is free. Taking a second shape is not.** Keep these
+apart — only the second one costs anything, and conflating them is the most
+common classification error there is.
+
+**The dominant genre owns the shape.** Shape answers compete across genres, and
+honouring several stacks pipeline cost out of one sentence. **The dominant
+genre also owns any genre-wide route** — Obby, Racing and Infinite Runner are
+P6 whatever shape is chosen, and that P6 does not follow the genre into a mix
+it does not lead.
 
 Secondary genres contribute **options only**. Union them and **drop duplicate
 IDs**, presenting each concept once using the dominant genre's wording. If a
 secondary genre's shape carried something the user clearly wants, offer it as
 an ordinary option instead of a shape.
 
+A secondary genre's **preset** is available too — see step 3. Its options come
+across; its shape does not.
+
+**But name it in `genres` regardless.** A game that is honestly two things is
+recorded as two things. Losing the shape contest does not make a genre untrue,
+and the downstream pipeline reads that list. Under-naming is not the safe
+default it looks like: it also means the secondary genre's options table never
+gets loaded, so features only it could express are gone before anyone notices.
+
 The dominant genre is the one the sentence is *about*. "An obby but also you
 can drive cars" is an obby. "A zombie shooter where you hold out against waves"
 is a shooter. When a prompt is genuinely balanced, prefer the genre whose shape
 is cheapest, and say in `notes` that it was close.
+
+Four cases that need two genres, all drawn from real prompts that got one:
+
+| Prompt, in brief | Emit |
+| :---- | :---- |
+| Stack milk crates into a staircase, then **race to climb to the top and back down** without it collapsing | `["simulation", "obby-platformer"]` — the stacking is the sim, the climb is the win condition |
+| Self-described **"Open-world Action RPG / Survival"**, with quests, leveling, bosses, crafting, dungeon raids | `["rpg", "survival"]` — both stated in the prompt's own words |
+| "An exact replica of the **Blox Fruits first sea**" | `["rpg", "adventure"]` — the reference is a leveling combat RPG, not just an explorable region |
+| A **"1+ speed clicker"** where you buy anime characters with wins earned on a parkour course | `["simulation", "obby-platformer"]` — an upgrade progression wrapped around an obby earning loop |
+
+**Two is the normal ceiling.** Three is rare and usually means the prompt is
+being over-read. More than three means the dominant genre was never found.
 
 ## 3. Offer a preset
 
@@ -166,6 +253,39 @@ in the offer so accepting covers them. A preset is a starting point, not a
 ceiling. If the prompt asked for something no option covers, carry it to step 5
 rather than dropping it.
 
+**Drop preset options the prompt contradicts.** Do not carry one through just
+because the preset lists it. Keeping `obstacle-maze` on a house-decorating
+prompt builds a maze into the house — the wrong option is not inert, it is an
+instruction to the image model.
+
+### The preset's shape is a default you may replace
+
+A preset is a shape **plus** options, and the two are independent. Options can
+be added and dropped one at a time; shape is exclusive, so a preset whose mode
+fits and whose shape does not would otherwise force a choice between a
+contradicted map and no preset at all.
+
+**Swap in any other shape from the same genre's table and keep the options.**
+Then say so:
+
+- Tell the user, in the offer, which shape you took instead.
+- Quote the pipeline cost of **the shape you actually used**, not the preset's.
+- Put a line in `notes` naming the preset, the substituted shape, and why.
+
+> A prompt describing dispersed points of interest still gets *Team Deathmatch*
+> — team bases, cover arrays, chokepoints — but on `open-battlefield` rather
+> than the preset's `lane-network`, because the prompt said the opposite of
+> lanes.
+
+**Stop when the preset is no longer recognisable.** If you have swapped the
+shape *and* dropped most of the options, you are building from scratch: say so
+and emit `preset: null`. Keep the shape or keep most of the options, not
+neither.
+
+A **secondary genre's preset is fair game** for the same reason — taking its
+options no longer drags its shape along. The dominant genre still owns the
+shape.
+
 If nothing fits well, skip to step 4.
 
 ## 4. Tune
@@ -183,6 +303,63 @@ Confirm briefly instead of asking.
 
 Say the pipeline cost in plain language when a pick carries one — "that needs
 interiors generated separately, which is a slower build" — not as a code.
+
+### Prefer the routes that are built: P0 and P6
+
+**P0 and P6 are running today. P2, P3, P4 and `CHECK` are not ready yet.** A
+modifier is therefore not a slower version of the same build, it is one that
+cannot be delivered now. `SET` is fine — it only removes steps from a P0 build.
+
+**When nothing in the prompt requires a modifier, take the route that stays on
+P0 or P6.** This is a tie-breaker for genuine silence, not a filter: 65% of 620
+real prompts already routed entirely on the proven pipeline, and most of the
+rest earned their modifier.
+
+**Read for the feature, not for the keyword.** This is where the rule goes
+wrong if you rush it. A prompt never has to say "interior" to need `P3` —
+"houses you sleep in", "shops you buy from", "temples with a boss inside" all
+require going indoors. About half of the rows that look like an assumed `P3`
+are really this. **If the game plainly has the feature, the modifier is
+required.** What you are steering is the judgement calls — *is this several
+maps or one*, *does anything overhang*, *is the play volume 3D* — not whether a
+stated feature exists.
+
+**Never push away from P6.** It is proven. An obby stays P6.
+
+**Say what you did and offer the upgrade.** Never downgrade silently:
+
+> Building this as one continuous map. Separate zones per biome is possible but
+> isn't ready yet — say the word and I'll note it for when it is.
+
+Put the deferral in `notes` so the pipeline knows what was set aside.
+
+### When the shape's route contradicts the prompt
+
+A shape row says what the space is like *and* how to build it. If the prompt
+matches the description but rules out the build, **keep the shape and change
+the route** — the shape was not wrong about the space.
+
+This is rare and the bar is high. **Silence is not a contradiction**; when the
+prompt says nothing about the route, take the default. Only act on an explicit
+statement, and only for these:
+
+| Route | Override when |
+| :---- | :---- |
+| `P4` on `world-biomes`, `world-open-biomes`, `world-chaptered`, `space-staged`, `world-hub-dungeon`, `hub-portals` | The prompt says one continuous map — "one big map", "seamless", zones joined by bridges or roads. Route `P0`. |
+| `P3` on `settlement-claimable`, `settlement-buildable` | Nobody goes inside; the houses are facades. |
+| `P2` on `arena-stacked`, `world-underground`, `route-multitier` | Nothing actually overhangs anything. |
+
+**Never override a `P6`**, from a shape or from a genre. Obby, Racing and
+Infinite Runner are P6 whatever shape they take, and `warren-looping`,
+`lane-actor-track` and `puzzle-maze` carry it individually. In all of them the
+structure has to be valid or the game does not work — an image model cannot
+guarantee a solvable maze or a connected circuit, so dropping the P6 does not
+make the build cheaper, it makes it broken.
+
+Put the override and its justification in `notes`, and tell the user:
+
+> Graded danger zones, but built as one continuous map since you asked for one
+> big world — so it's a single-pass build rather than a separate map per zone.
 
 ## 5. Ask the open question
 
@@ -224,7 +401,8 @@ Output this block. It is the handoff to the pipeline.
   "pipeline": ["P0"],
   "image_prompt": [
     { "id": "cover-los", "text": "Waist-high and full-body cover distributed evenly across every lane" },
-    { "id": "capture-zone", "text": "An open bomb site with clear approaches to attack and hold" }
+    { "id": "capture-zone", "text": "An open bomb site with clear approaches to attack and hold" },
+    { "id": "island-cluster", "text": "Five rocky islets ringing the harbour", "count": 5 }
   ],
   "layout_placement": [
     { "id": "spawn-teambase", "type": "SpawnZone", "text": "Balanced bases at opposite ends, shielded from sniper lines" },
@@ -240,11 +418,12 @@ Output this block. It is the handoff to the pipeline.
 | :---- | :---- |
 | `genres` | Slugs matching the loaded filenames, **dominant first**. `[]` for no-genre and P5. |
 | `shape` | `id`, `type`, and `name` split from the shape row's `**Type (Flavor Name)**`. A shape with no type emits `"type": null`. |
-| `preset` | The generic display name, or `null` if the user tuned from scratch. **Never the *Modelled on* text.** |
-| `pipeline` | `["P0"]` when nothing adds cost. Otherwise **list only the modifiers** — P0 is the baseline and is dropped once anything else is present. |
+| `preset` | The generic display name, or `null` if the user tuned from scratch. **Never the *Modelled on* text.** If you substituted a shape or dropped one of its options, keep the name and record what you changed in `notes`. |
+| `pipeline` | `["P0"]` when nothing adds cost. Otherwise **list only the modifiers** — P0 is the baseline and is dropped once anything else is present. `SET` is the exception: it is a build-mode flag rather than a cost, so it is appended to whatever route applies and keeps `P0` alongside it — `["P0", "SET"]`. |
 | `image_prompt` | One entry per `image` or `both` pick. |
 | `layout_placement` | One entry per `layout` or `both` pick. `type` is the Shared Vocabulary term — the part before the parenthesis in the option name. |
 | `text` | The option's **What it is**, which is written to be lifted more or less directly into a prompt. Trim it to the visible half for `image_prompt` and the functional half for `layout_placement` when a `both` option splits cleanly. |
+| `count` | **Optional.** The number the prompt stated for this pick — "five islands", "three floors", "about twenty houses". Omit it entirely when no number was given. Record what the user said, not a normalised value; "a few" is not a count, so leave it out and keep the words in `text`. Nothing else in the handoff can hold a number — the scale band is a four-value enum — so a stated quantity dropped here is lost. |
 | `notes` | Anything the pipeline should know but cannot act on: a close shape call, a `CHECK` to look at, a request no option covered, and any **preset caveat** from the loaded file. |
 
 **Bend `text` toward the prompt's subject.** The wording is a template, not a

@@ -224,6 +224,24 @@ Each genre opens with a short **Shape** table. These are answers to a single que
 
 Shape is separated out because it is almost always the **pipeline-routing decision**. A flat arena is P0 and a multi-level one is P2; static roleplay housing is P0 and claimable housing is P3. Asking it first puts the expensive choice where its cost is visible, and it removes any chance of a user selecting two contradictory answers.
 
+#### **The route in a shape row is sometimes a default**
+
+A shape row makes two claims at once: what the space is *like*, and how the pipeline has to *build* it. Usually they agree. Occasionally a prompt matches the first and contradicts the second, and because the row is a single pick, the contradicted half comes along anyway.
+
+The clearest case: Survival's `world-biomes` is the only shape in the genre expressing danger that scales with distance. Its route is `P4` — *separate maps*. A prompt asking for exactly that on **one big map** has no way to take the description without the build instruction, and the map gets split.
+
+**Which routes may be overridden depends on why the shape carries them.** Three kinds, and only the last is negotiable:
+
+| Kind | Shapes | Overridable |
+| :---- | :---- | :---- |
+| **A structural law.** Validity *is* the game — a maze must be solvable, a tower-defense lane must be one continuous route, a warren must have no dead ends. An image cannot guarantee any of them. | Every `P6` shape, and the genre-wide `P6` on Obby, Racing and Infinite Runner | **No.** Dropping it produces a broken game, not a cheaper one. |
+| **A consequence of a feature that is actually present.** Claimable houses have interiors, so `P3`. Stacked surfaces overhang, so `P2`. | `settlement-claimable`, `settlement-buildable`, `arena-stacked`, `world-underground`, `route-multitier` | **Only if the feature is absent.** A claimable house nobody enters is not `P3`. Say so when you drop it. |
+| **An estimate about scale.** `P4` claims several zones cannot share one surface. That is a judgement about size, and the prompt frequently settles it. | `world-biomes`, `world-open-biomes`, `world-chaptered`, `space-staged`, `world-hub-dungeon`, `hub-portals` | **Yes.** When the prompt says one continuous map, keep the shape and route `P0`. |
+
+**Keep the shape, change the route** — the shape was never wrong about the space. Record the override and what in the prompt justified it.
+
+**How often this actually bit:** in 620 real prompts, **4 rows**. Forty-seven prompts explicitly described one continuous map and forty-three were routed correctly. So this is a rule for a rare case, and it must not become a reason to second-guess a route the prompt never mentioned — **silence is not a contradiction.** When the prompt says nothing, take the default.
+
 **A shape carries a Shared Vocabulary type when it is itself a region**, using the same `Type (Flavor Name)` form as an option — an arena is a `CombatZone` whatever form it takes, and segmentation needs it typed like anything else. Shapes that describe **map topology** rather than a place — *Open World* versus *Chaptered Journey* — carry no type, because there is no single region to name.
 
 ### **`Goes to` — image or layout**
@@ -263,10 +281,69 @@ From `LayoutGen - Pipeline.md`. Shown per-option so the cost of a pick is visibl
 | `P4` | Several distinct maps that don't co-exist on one surface. Needs per-zone passes. |
 | `P6` | Structure must be valid by construction. Layout is generated procedurally first, then dressed. |
 | `CHECK` | Usually fine; only breaks if the play volume self-occludes. |
+| `SET` | There is a space, but nobody walks through it. Build the geometry; skip traversal segmentation and jump-gap validation. |
+
+#### **Not all of these are built yet — prefer P0 and P6**
+
+**P0 and P6 are proven and running. P2, P3, P4 and `CHECK` are not production-ready.** That changes what a modifier means. It is not a slower build of the same thing; it is a build that **cannot be delivered today**. `SET` is safe — it only removes validation steps from a P0 build, so it adds no machinery.
+
+The consequence for intake: **when the prompt does not require a modifier, take the route that stays on P0 or P6.** A modifier the user never asked for is not a harmless default, it is a deferral they did not choose.
+
+Measured against 620 real prompts, **404 (65%) already route entirely on P0 or P6.** Of the 216 that carry a modifier, most earned it — 186 modifier instances are required by something the prompt says, against 74 taken from a shape or preset default. So this rule moves roughly **54 rows, 9%**, and leaves the majority untouched. It is a tie-breaker, not a filter.
+
+**Three things it must not do.**
+
+**It must not strip a feature the game obviously has.** Interiors are the trap: "houses to sleep in," "shops you can buy from," "temples with bosses inside" all require `P3` without ever using the word *interior*. Roughly half of the apparently-assumed `P3` rows are like this. **Read for the feature, not for the keyword** — and if the game plainly needs it, the modifier is required. This rule steers judgements about *scale and structure* — is this several maps, does anything overhang, is the play volume 3D — not the presence of a feature.
+
+**It must not silently downgrade.** Say what you built and offer the upgrade, in plain language:
+
+> Building this as one continuous map. Separate zones per biome is possible but isn't ready yet — say the word and I'll note it for when it is.
+
+That turns an invisible assumption into a choice the user can correct, which is the whole reason the nudge is safe.
+
+**It must not push away from P6.** P6 is proven, and this is a readiness rule, not a cost rule. An obby stays P6. Only move off P6 when the structure genuinely does not need to be valid by construction.
+
+#### **`SET` — a space with no locomotion**
+
+Some games have a perfectly real 3D space that no avatar ever crosses. A floating board game, a click-to-earn idle screen, a shooting gallery on rails, a chess table with two chairs — there is a set, it needs to be built and lit and framed, and **not one metre of it is walked on**.
+
+Until now these routed to **P5**, which skips layout generation entirely. That is the wrong answer twice over: it refuses to build something perfectly buildable, and P5 was designed for a different problem — the prompt that is not a 3D game at all. Measured against 620 real prompts, **the corpus contained zero 2D games**, so P5-as-a-filter had almost nothing to catch, and when it did fire it discarded a buildable set two times out of three.
+
+`SET` separates the two claims:
+
+| | Is there geometry? | Does anyone walk on it? |
+| :---- | :---- | :---- |
+| **P0 and the rest** | Yes | Yes |
+| **`SET`** | Yes | **No** |
+| **P5** | **No** | No |
+
+**What `SET` changes downstream.** The image and segmentation passes run normally — this is still a built space. What is skipped is everything that exists to serve a moving avatar: traversal segmentation, path connectivity, and jump-gap validation. Nothing has to be reachable, so nothing has to be checked for reachability. The camera is framed on the whole set rather than over a spawn point, because there is no spawn point.
+
+**`SET` is orthogonal to the route, not a replacement for it.** A set can still be tiered, still have interiors, still be several boards. Emit it alongside whatever else applies — `["P0", "SET"]`, `["P3", "SET"]`.
+
+**Strategy's `board-grid` is the precedent.** A tabletop board that players act on rather than move through has always been P0 with a real layout job, and nobody proposed routing chess to P5. `SET` generalises what that shape was already doing.
+
+**What is left for P5** is the genuinely non-spatial: a chat-only quiz, a 2D screen game, a music player with no room around it. Ask *is there a space?* — not *does the player move?* If the answer to the first is yes and the second is no, that is `SET`.
 
 ### **Presets**
 
 A preset is **one shape answer plus a few option IDs**, modelled on a real game. It exists so the common case is a single decision rather than a dozen, and it replaces what earlier drafts called sub-genres. Picking a preset is picking its contents in one action; the user can add or drop anything afterward.
+
+#### **The shape is a default, not part of the bundle**
+
+Measured against 620 real prompts, **182 — nearly a third — got a preset that either did not fit or actively fought the prompt.** The cause was structural rather than a matching bug. Options can be kept, dropped, and reworded one at a time; **shape is exclusive**. So a preset whose mode was right and whose shape was wrong left only two bad answers: accept a contradicted shape, or throw the whole preset away and rebuild it by hand.
+
+Neither is necessary, because the two halves are independent.
+
+**Swap the shape, keep the options.** When the prompt contradicts a preset's shape but its option set still describes the game, take any other shape from the same genre's table and keep the rest. Say which shape you used and why, and quote the pipeline cost of **the shape you actually took**, never the preset's default.
+
+> Seven of Shooter's eight presets are lane networks. A prompt describing dispersed points of interest used to have to accept a lane network or emit no preset at all; now it takes *Team Deathmatch* on `open-battlefield` and keeps the team bases, the cover arrays, and the chokepoints, all of which it wanted.
+
+**Drop preset options the prompt contradicts.** 145 rows kept one, and it is not cosmetic — a house-decorating prompt that keeps `obstacle-maze` gets a maze built into the house. A preset is a starting set, not a package: add what the prompt asked for and the preset lacks, drop what the prompt rules out, keep the rest.
+
+**A preset can come from a secondary genre.** Once shape is separable, taking one no longer smuggles in a second shape. Take the options, use the dominant genre's shape.
+
+**What is not negotiable is that the preset is still recognisable.** If you have swapped the shape *and* dropped half the options, you are not tuning a preset — you are building from scratch, and you should say so and emit `preset: null`. Roughly: keep the shape or keep most of the options, not neither.
 
 **Presets carry two names.** The *Modelled on* column names real games and is **internal reference for the LLM only** — it grounds the preset in something concrete and makes the intent unambiguous. What gets shown to a user is the generic style name. A Counter-Strike map is offered as "round-based bomb defusal," never by the game's name.
 
@@ -290,7 +367,20 @@ Never truncate the list silently. Five options plus an open question is safe; th
 
 Load each genre's table, union the rows, **drop duplicate IDs**. Present each option once, using the phrasing from whichever genre dominates the prompt.
 
-**The dominant genre owns the shape.** Secondary genres contribute additive options only. Shape answers are mutually exclusive *within* a genre and they compete *across* genres — "an action RPG with a tower section" makes three shape claims, and honouring all three stacks P2, P3, and P4 out of a single sentence. Pick one shape, and offer the others' distinguishing features as ordinary options.
+**The dominant genre owns the shape.** Shape answers are mutually exclusive *within* a genre and they compete *across* genres — "an action RPG with a tower section" makes three shape claims, and honouring all three stacks P2, P3, and P4 out of a single sentence. Pick one shape, and offer the others' distinguishing features as ordinary options.
+
+**Naming a second genre is free. Taking a second shape is not.** These are different decisions and only the second one costs anything. A game that is honestly two things should be recorded as two things — the constraint is that one of them wins the shape slot, not that the other stops being true. Under-naming has its own cost: the secondary genre's whole options table never gets loaded, so every feature only it could express is silently unavailable.
+
+Measured against 620 real prompts, **14% were genuinely two genres**, and the most common single classification error was naming one where the prompt meant two. Four worked cases:
+
+| Prompt, in brief | Correct | Why one genre is not enough |
+| :---- | :---- | :---- |
+| Stack milk crates into a staircase, then **race to climb to the top and back down** without it collapsing | Simulation **+** Obby & Platformer | The stacking is a physics sim; the win condition is a traversal challenge. Naming only the sim loses the climb, which is what the player actually does. |
+| Self-described **"Open-world Action RPG / Survival"** with quests, leveling, bosses, crafting and dungeon raids | RPG **+** Survival | Both are stated outright in the prompt's own words. |
+| "An exact replica of the **Blox Fruits first sea**" | RPG **+** Adventure | The reference is a leveling combat RPG; the first sea is its low-level questing region. Adventure alone understates the progression the reference implies. |
+| A **"1+ speed clicker"** where you buy anime characters with wins earned on a parkour course | Simulation **+** Obby & Platformer | An upgrade-and-multiplier progression wrapped around an obby earning loop. Either alone describes half the game. |
+
+**Two genres is the normal ceiling.** Three is rare and usually means the prompt is being over-read; anything past three means the dominant genre was never identified. Order the list so the dominant genre is first — that is the one whose shape and preset are in force.
 
 ## **Genre List**
 
@@ -308,7 +398,7 @@ Load each genre's table, union the rows, **drop duplicate IDs**. Present each op
 12. **Sports** — stadium sports, court and field games, and physics-based athletics.  
 13. **Racing** — competitive racing over a finite track or lap count (cars, track, swimming).  
 14. **Infinite Runner** — procedural auto-runners centered on automated forward translation and reaction timing.  
-15. **Entertainment (Showcase & Hub)** — experiences built to be consumed or explored rather than "won." Covers art and graphics Showcases and Hub worlds that portal players onward. The Music & Audio and Video subgenres rarely involve a 3D environment and route out to P5.
+15. **Entertainment (Showcase & Hub)** — experiences built to be consumed, explored, or performed in rather than "won." Covers art and graphics Showcases, Hub worlds that portal players onward, and performance venues with a stage and an audience. Only the Video subgenre reliably has no 3D environment and routes out to P5.
 
 ## **Shared ID registry**
 
@@ -316,6 +406,12 @@ Which IDs appear in more than one genre, so dedupe is a set union. **This is an 
 
 | ID | Concept | Appears in |
 | :---- | :---- | :---- |
+| `npc-population` | Who inhabits the space, non-hostile | **Universal** |
+| `building-interior` | A structure players go inside | **Universal**; RPG, Roleplay, Shooter, Survival override the wording |
+| `water-body` | Water as a real map feature | **Universal** |
+| `settlement-density` | Built-up ground at a stated density | **Universal** |
+| `terrain-relief` | Natural landform relief | **Universal** |
+| `island-cluster` | Separate landmasses with gaps between | **Universal** |
 | `collectible-nodes` | Scattered pickups | Adventure, Obby, Puzzle, RPG, Simulation, Survival, Infinite Runner, Entertainment |
 | `hazard-kill` | A region that damages or kills | Action, Adventure, Obby, Simulation, Survival, Racing, Infinite Runner |
 | `teleporter-link` | Paired point-to-point transport | Adventure, Obby, Party, RPG, Roleplay, Entertainment |
@@ -324,7 +420,6 @@ Which IDs appear in more than one genre, so dedupe is a set union. **This is an 
 | `social-hub` | A shared space sized for crowds | Party, RPG, Roleplay, Simulation, Entertainment |
 | `spawner-npc` | Where NPCs enter the space | Action, RPG, Shooter, Strategy, Survival |
 | `spectator-zone` | A non-play area to watch from | Action, Obby, Party, Sports, Racing |
-| `building-interior` | A structure players go inside | RPG, Roleplay, Shooter, Survival |
 | `landmark-focal` | A large orienting structure visible from distance | Adventure, RPG, Roleplay, Entertainment |
 | `powerup-buffs` | Timed pickups | Action, Obby, Shooter, Infinite Runner |
 | `spawn-protected` | Start points shielded from immediate threat | Action, Party, Shooter, Survival |
@@ -338,8 +433,41 @@ Which IDs appear in more than one genre, so dedupe is a set union. **This is an 
 | `obstacle-moving` | Moving or rotating obstacles | Obby, Infinite Runner |
 | `path-loop` | Routes that circle back, no dead ends | Puzzle, Shooter |
 | `path-road-vehicle` | Vehicle-width road network | Roleplay, Simulation |
+| `range-directed` | A directed lane facing a target, no route through *(shape)* | Shooter, Sports |
+| `spectator-bleachers` | Raked seating framing a space | Sports, Entertainment |
 | `trigger-scoring` | A detection region registering a point | Party, Sports |
 | `vignette-photo` | A spot composed for screenshots | Roleplay, Entertainment |
+
+## **Universal Options**
+
+Six features that belong to **no genre in particular because they belong to all of them**. Every genre inherits this table on top of its own.
+
+They exist because the alternative is worse. Each was measured against 620 real prompts and requested in eleven to fifteen different genres, so filing them per-genre would restate the same row seventy-eight times — and leaving them out is what produced the largest hole in the system, with *who is in the world* having no home anywhere.
+
+| ID | Option | What it is | Core | Goes to | Pipeline |
+| :---- | :---- | :---- | :--: | :---- | :---- |
+| `npc-population` | **Zone (Ambient Population)** | The non-hostile characters who inhabit the space — shopkeepers, wandering crowds, ambient animals, a named figure players come to see — and the ground they occupy. | | `both` | |
+| `building-interior` | **Zone (Enterable Interior)** | Buildings players actually go inside rather than interact with from the street. | | `image` | `P3` |
+| `water-body` | **Zone (Water Body)** | Standing or flowing water as a real feature of the map — a lake, river, sea, or pool — whether swum through or treated as a barrier. | | `image` | `CHECK` |
+| `settlement-density` | **Zone (Settlement)** | Built-up ground at a stated density — a hamlet, a town, or a dense city block grid — rather than scattered individual buildings. | | `image` | |
+| `terrain-relief` | **Zone (Terrain Relief)** | Natural landform shaping the ground: hills, mountains, cliffs, a valley, or a canyon. | | `image` | `P0 + tiered` |
+| `island-cluster` | **Zone (Island Cluster)** | Several separate landmasses with water or open air between them, crossed by bridge, boat, or flight. | | `image` | `CHECK` |
+
+**None of these is `Core`, and that is deliberate.** They must never appear in the tune menu, which shows `Core` options only, and no preset includes one. A universal option is a **landing place for a request the user actually made** — reached from the open question in step 5 when a free-text ask matches it — never a default and never a suggestion. Measured against 620 prompts, each of the six would fire on 6–15% of them, so a run that applies one unasked is wrong far more often than it is right.
+
+**A genre's own wording wins.** Four genres already define `building-interior` in their own terms — Shooter's is a breachable structure, Survival's is a shelter to hide in. Those rows are the definition for those genres; the universal row is the fallback for the other eleven. Dedupe by ID exactly as with any shared ID.
+
+**Bend the wording to the prompt.** These are written generically because they are genre-neutral, which makes the instruction to rewrite them *more* important than usual, not less. `water-body` for a pirate game is "open sea between the islands, deep enough to sail"; for a park it is "a duck pond at the centre of the green." Ship the prompt's water, not the word "water."
+
+**Two pipeline notes.** `terrain-relief` is `P0 + tiered` for hills and cliffs, but **caves, overhangs, and tunnels push it to `P2`** — say so when the prompt asks for them. `water-body` and `island-cluster` are `CHECK` because swimming and flight are volumetric: usually fine as a play-height envelope over a representable surface, and only a real problem when the volume self-occludes (layered floating islands, 3D cave networks). See *Layout Attributes* in Build.md for the underlying axis.
+
+**`npc-population` is not `spawner-npc`.** `spawner-npc` is where hostiles enter a fight — an emitter, wired to combat. `npc-population` is who lives here. A market crowd, a quest giver, and a herd of deer are not spawners, and filing them as one produces enemy waves in a town square.
+
+### **Counts and quantities**
+
+Any pick may carry a **count** when the prompt states one. "Five islands," "a village of about twenty houses," "three floors" — the number is part of the request and there is nowhere else for it to live. The scale band is a four-value enum and destroys exact figures by design, so a stated quantity that is dropped here is gone.
+
+Record the number the user gave, not a normalised one. If they said "a few," that is not a count — carry it in the text and leave the count empty.
 
 ---
 
@@ -388,7 +516,7 @@ Which IDs appear in more than one genre, so dedupe is a set union. **This is an 
 * **Spawn safety is mostly inherited.** Part I §6 already mandates a hazard-free spawn isolated from gameplay risk, at 5×5 studs per player slot. The Action-specific part is *only* the anti-camp placement — don't restate the baseline.
 * **Verticality is optional here and often assumed mandatory.** A flat arena is a perfectly valid Action map. Terracing and multi-level catwalks are style choices with real pipeline cost, not requirements.
 * **Two options exist because the presets demanded them.** Building the preset list surfaced that the genre could not express a hack-and-slash at all — no linear room-to-room form and no combat lock-in, despite both being staples. `arena-chain` and `arena-lockin` were added for it.
-* **Roblox's own subgenres for Action are Battlegrounds & Fighting, Music & Rhythm, and Open World Action.** Two of the three are presets above. *Music & Rhythm* has no meaningful 3D layout job and routes to **P5**.
+* **Roblox's own subgenres for Action are Battlegrounds & Fighting, Music & Rhythm, and Open World Action.** Two of the three are presets above. *Music & Rhythm* is usually a **`SET`** rather than a P5 — a rhythm game normally has a stage, a performer, and a crowd to look at even though the player never walks anywhere. Build that and skip the traversal checks. Only a bare note highway with no room behind it is P5.
 * **Battlegrounds is a Roblox-native format.** The Strongest Battlegrounds effectively created it, and the flat bounded arena with ring-out edges is the shape the whole wave of imitators inherited. When a user asks for an anime fighting game, this is almost always the layout they are picturing.
 
 ---
@@ -545,7 +673,7 @@ Which IDs appear in more than one genre, so dedupe is a set union. **This is an 
 * **Boundaries.** A chat-quiz game with no logic rooms or physical puzzle elements belongs here rather than in Puzzle — the layout job is just hosting the question and the crowd. If forward progress is gated on solving something spatial, it's Puzzle.
 * **The isolated stage is conditional, not structural.** Single continuous-space party games — tag, freeze tag, a shared playground — don't need one, and forcing one costs `P4` for nothing.
 * **The lobby carries the genre.** Of everything here, the gathering space is what makes a game read as "party." It's also the highest-density space in the build, so size it for peak concurrency.
-* **Roblox's own subgenres here are Childhood Game, Coloring & Drawing, Minigame, and Quiz.** Three are presets above. *Coloring & Drawing* is a UI-surface game with no meaningful 3D layout and routes to **P5**.
+* **Roblox's own subgenres here are Childhood Game, Coloring & Drawing, Minigame, and Quiz.** Three are presets above. *Coloring & Drawing* routes to **P5** only when it is genuinely a UI surface. If the prompt puts the drawing in a room — an art class, a studio, easels in a park — that room is a **`SET`** and gets built.
 
 ---
 
@@ -589,7 +717,8 @@ Which IDs appear in more than one genre, so dedupe is a set union. **This is an 
 * **The requirement is the gate, not the enclosure.** Build's original version demanded sealed hermetic rooms, which described escape rooms specifically and excluded every open-air puzzle. A garden with a locked bridge is a puzzle.
 * **Non-spatial answers shrink the layout job.** When the answer is typed into chat or a UI box there's no slot to build — the layout only has to house the clue and gate the path once a correct answer registers. Verification itself is Mechanics/UI, out of scope here.
 * **Why mazes invert the pipeline.** A traversable maze with a reachable exit cannot be guaranteed by a free image — the reference failure case (`topdown_k`) produced a maze with no exit at all. So the topology is generated procedurally first and dressed afterward.
-* **Roblox's own subgenres here are Escape Room, Match & Merge, and Word.** Escape Room and Word are presets above. *Match & Merge* is a grid-of-tiles UI game with no 3D layout and routes to **P5** — which resolves the Genre List's old "match-and-merge" wording, since it names a real Roblox subgenre that this genre simply routes out.
+* **Roblox's own subgenres here are Escape Room, Match & Merge, and Word.** All three are presets above — *Word / Quiz Puzzle* covers the third. *Match & Merge* routes to **P5** when the grid is a flat UI overlay, and is a **`SET`** when it is physical: a board on a table, tiles the camera looks down on, a merge yard with the pieces built as objects.
+* **Check the Word / Quiz preset before falling through to another genre.** It exists and was chosen zero times in a 620-prompt evaluation, while a spelling game went to Party & Casual instead. The preset name comes from Roblox's taxonomy, so it will not echo the user's words — "type the word that appears," "guess the answer before the timer," and trivia with a physical set all land here.
 
 ---
 
@@ -674,7 +803,8 @@ Which IDs appear in more than one genre, so dedupe is a set union. **This is an 
 
 | Preset | Modelled on *(internal)* | Shape | Options |
 | :---- | :---- | :---- | :---- |
-| **Life** | Brookhaven, Bloxburg (Roblox) | `settlement-buildable` | `path-road-vehicle`, `district-zoned`, `building-interior` |
+| **Life** | Brookhaven (Roblox) | `settlement-claimable` | `path-road-vehicle`, `district-zoned`, `building-interior` |
+| **Home Builder** | Bloxburg (Roblox) | `settlement-buildable` | `path-road-vehicle`, `building-interior`, `social-hub` |
 | **Pet Care** | Adopt Me! (Roblox) | `settlement-claimable` | `building-interior`, `social-hub`, `path-street` |
 | **Morph Roleplay** | [Welcome to The Town of Robloxia](https://www.roblox.com/games/13213733678/Welcome-to-The-Town-of-Robloxia) (Roblox) | `settlement-static` | `social-hub`, `vignette-photo`, `landmark-focal` |
 | **Animal Sim** | Wolves' Life, Warrior Cats (Roblox) | `wilderness-open` | `den-shelter`, `landmark-focal`, `social-hub` |
@@ -684,6 +814,7 @@ Which IDs appear in more than one genre, so dedupe is a set union. **This is an 
 
 * **References.** [Adventure Time: Land of Ooo Showcase](https://www.roblox.com/games/11753761261/Adventure-Time-Land-of-Ooo-Showcase) for static map. [Welcome to The Town of Robloxia](https://www.roblox.com/games/13213733678/Welcome-to-The-Town-of-Robloxia) for claimable houses. Bloxburg and Brookhaven for full personalized building.
 * **Pick the housing model before assuming a plot.** Full player-constructed housing is common on front-page hits, which makes it look like the default — but it's actually the *least* common of the three models across the genre. Check which one the game really is before laying out a grid of empty lots.
+* **Life and Home Builder are two presets because Brookhaven and Bloxburg are two games.** They were one preset citing both, and it defaulted to buildable plots — so all three prompts in a 620-prompt evaluation that named Brookhaven outright got a grid of empty lots. **Brookhaven hands players a finished house to claim.** The note directly above already said so; a single preset spanning both models was what overrode it. When a prompt names neither game, "move into a house" is Life and "build your own house" is Home Builder; if it is genuinely unclear, Life is the safer default because claiming is the more common model.
 * **Boundaries.** Roleplay is open-ended social storytelling. If the loop is a defined, repeatable set of job tasks — pilot, doctor, trucker, farmer — it's Simulation's Role Sim bundle instead.
 * **Vehicle roads are conditional.** 15- and 30-stud streets exist so car meshes can turn. A walking-only roleplay town doesn't need them, and Build's original version wrongly demanded them of every game in the genre.
 * **This genre is P3 by default in practice.** Every housing model except Static Settlement involves enterable interiors, which is a real and unavoidable pipeline cost — worth surfacing to the user early rather than at build time.
@@ -703,6 +834,7 @@ Which IDs appear in more than one genre, so dedupe is a set union. **This is an 
 | `lane-network` | **Lane (Lane Network)** | Parallel routes, classically three, channelling team traffic into predictable engagement fronts. | |
 | `breach-sequence` | **Path (Breach Sequence)** | A raid site of rooms that dead-end into breach points, cleared in a defined order rather than looped. | |
 | `open-battlefield` | **Zone (Open Battlefield)** | One large contiguous map with dispersed points of interest instead of defined lanes. | |
+| `range-directed` | **Lane (Directed Practice Range)** | A firing line facing downrange into a target field, with no opposing team and no route through — everything the player shoots at is in front of them and the space behind the line is safe. | |
 
 **Options** — combine freely on top of the chosen shape.
 
@@ -719,6 +851,8 @@ Which IDs appear in more than one genre, so dedupe is a set union. **This is an 
 | `path-flank-tunnel` | **Path (Flanker Tunnel)** | Subterranean or interior routes letting fast players bypass the main-lane standoff. | | `image` | `P2` |
 | `building-interior` | **Zone (Breachable Structure)** | A house, apartment, or compound entered from outside. | | `image` | `P3` |
 | `spawner-npc` | **Spawner (Enemy Wave Origin)** | Where hostile AI enters the map, sited so defenders have a readable direction to hold against. | | `layout` | |
+| `target-practice` | **Target (Practice Targets)** | Static and popping targets set at graded distances downrange — plates, silhouettes, bullseyes — arranged so the player can read which distance they are hitting. | | `both` | |
+| `station-loadout` | **TriggerZone (Weapon Bench)** | A bench or rack behind the firing line where players pick and swap the weapon they are practising with. | | `both` | |
 | `boundary-shrinking` | **BoundaryZone (Closing Play Area)** | A play boundary that contracts over the match, compressing survivors toward a shifting centre. | | `layout` | |
 | `collectible-loot` | **Collectible (Scattered Loot)** | Weapons and equipment distributed across the map so players arm themselves from the world. | | `layout` | |
 | `powerup-buffs` | **PowerUp (Armour & Weapon Spawns)** | Fixed-position pickups on a respawn timer that players fight to control. | | `layout` | |
@@ -735,6 +869,7 @@ Which IDs appear in more than one genre, so dedupe is a set union. **This is an 
 | **Tactical Shooter** | Rainbow Six Siege; [BODYCAM: SWAT Simulator](https://www.roblox.com/games/16404660684/BODYCAM-SWAT-Simulator) (Roblox) | `breach-sequence` | `building-interior`, `cover-los` |
 | **PvE Shooter** | Left 4 Dead, Killing Floor | `lane-network` | `spawner-npc`, `choke-bottleneck`, `building-interior` |
 | **Battle Royale** | PUBG, Fortnite, Apex Legends | `open-battlefield` | `boundary-shrinking`, `collectible-loot`, `building-interior` |
+| **Aim Trainer** | Aimlabs, Kovaak's; Roblox aim-training and gun-testing places | `range-directed` | `target-practice`, `station-loadout` |
 
 **Genre notes**
 
@@ -746,7 +881,8 @@ Which IDs appear in more than one genre, so dedupe is a set union. **This is an 
 * **Four options exist because the presets demanded them.** The Genre List has always named Battle Royale and PvE shooters, and Roblox's official taxonomy has both as subgenres, yet the table could express neither — no contracting boundary, no scattered loot, no enemy emitter. `boundary-shrinking`, `collectible-loot`, `powerup-buffs`, and `spawner-npc` were added when the preset list made the gaps obvious.
 * **Roblox's own subgenres for Shooter are Battle Royale, Deathmatch Shooter, and PvE Shooter.** That taxonomy is too coarse for layout: Team Deathmatch, Capture the Flag, King of the Hill, and free-for-all are all *Deathmatch Shooter* to Roblox but need four different maps. The presets use the standard mode names instead, which is the one place a Roblox subgenre name is deliberately not used.
 * **The contracting boundary is the cleanest example of an invisible pick.** It has no geometry at all, so it cannot be segmented out of a render and must never enter the image prompt. It is computed and placed against the finished layout.
-* **Still uncovered.** Rail and gallery shooters with no player movement at all (Duck Hunt) have no meaningful layout job and probably route to P5. Hero shooters are served by the Hill Control preset today, but class-specific spawn rooms and ability-traversal geometry are not represented — flag it if one comes up.
+* **Not every shooter is a match.** The other eight presets are all competitive modes with two sides, so a solo aim-training range, a gun-testing place, or a target gallery had no preset at all and had to emit `preset: null` — a large Roblox category with nothing to land on. **Aim Trainer** is the single-player case: no opposing team, no route through the map, everything downrange of one firing line. `range-directed` is shared with Sports, where it is a bowling or archery lane; same shape, same P0, different words.
+* **A rail or gallery shooter is an Aim Trainer that moves the camera, not a P5.** It has a real set — a firing line, targets, a backdrop — even though the player never walks. Build it and flag `SET`; see *Pipeline costs* in Build.md. Hero shooters are served by the King of the Hill preset today, but class-specific spawn rooms and ability-traversal geometry are not represented — flag it if one comes up.
 
 ---
 
@@ -762,6 +898,7 @@ Which IDs appear in more than one genre, so dedupe is a set union. **This is an 
 | `plot-shared` | **BuildZone (Shared Team Plot)** | One right-sized plot shared by a team, with buttons and upgrades spread across the single structure benefiting everyone jointly. | |
 | `world-shared` | **Zone (Shared Persistent World)** | No personal plot at all — one common world everybody operates in together. | |
 | `world-underground` | **Zone (Surface and Underground Layers)** | A multi-level mine or facility descending beneath the surface map. | `P2 + P3` |
+| `tier-ladder` | **Zone (Tiered Training Grounds)** | A run of training areas of rising tier laid out in a readable line or spiral, each walled off from the next until a stat crosses a threshold, so the number going up is visible as ground gained. | |
 
 **Options** — combine freely on top of the chosen shape.
 
@@ -776,12 +913,15 @@ Which IDs appear in more than one genre, so dedupe is a set union. **This is an 
 | `collectible-nodes` | **Collectible (Extractable Resources)** | The ore, timber, or crops the loop is built on. | | `layout` | |
 | `hazard-kill` | **HazardZone (Environmental Event)** | Dynamic hazards layered over the shared space — a rising-lava evacuation, a mine collapse. | | `image` | |
 | `physics-rig` | **Destructible (Physics Contraption)** | Ramps, ragdoll props, and breakable assemblies whose reactions are the entertainment. | | `image` | |
+| `station-training` | **TriggerZone (Stat Training Station)** | The repeatable thing that raises the number — a treadmill, a weight rack, a punching bag, a click pad, a short run of speed boosters. Dense enough that a player is always standing on one. | ● | `both` | |
+| `trigger-rebirth` | **TriggerZone (Rebirth Pad)** | A marked pad that trades all current progress for a permanent multiplier, sited at the far end of the last tier a player can reach. | | `layout` | |
 
 **Presets** — show the generic name, not the reference.
 
 | Preset | Modelled on *(internal)* | Shape | Options |
 | :---- | :---- | :---- | :---- |
 | **Tycoon** | [2 Player Secret Hideout Tycoon](https://www.roblox.com/games/136258770/2-Player-Secret-Hideout-Tycoon) (Roblox) | `plot-shared` | `gate-progression`, `social-hub`, `path-circulation` |
+| **Stat Grinder** | Roblox "+1 speed", strength and speed-run simulators | `tier-ladder` | `station-training`, `gate-progression`, `trigger-rebirth`, `social-hub` |
 | **Sandbox** | Minecraft; Build a Boat for Treasure (Roblox) | `plot-isolated` | `collectible-nodes`, `social-hub` |
 | **Vehicle Sim** | [Mega Miners](https://www.roblox.com/games/17541179/Mega-Miners) (Roblox); Euro Truck Simulator | `world-shared` | `path-road-vehicle`, `resource-shared` |
 | **Incremental Simulator** | Roblox "simulator" games | `world-shared` | `social-hub`, `gate-progression`, `path-circulation` |
@@ -796,7 +936,10 @@ Which IDs appear in more than one genre, so dedupe is a set union. **This is an 
 * **The isolated plot is not universal, despite being the genre's mental default.** Role Sim and Vehicle Sim have no plot at all; co-op tycoons share one; the extraction hybrid pairs a personal plot with a shared field. Check which before laying out a grid.
 * **The shared resource field is not a plot.** In the extraction hybrid it's common ground the whole server mines and hauls from. Building it as somebody's plot breaks the loop.
 * **Role sims are often cooperative.** A shared farm several players work together is more typical than per-player isolation — pilot, doctor, trucker, and medieval farmer sims all tend this way.
-* **Roblox's own subgenres here are Idle, Incremental Simulator, Physics Sim, Sandbox, Tycoon, and Vehicle Sim** — the widest subgenre list of any genre, which matches how much this label covers. Five are presets above. ***Idle* routes to P5**, since Roblox defines it as games with little to no player input, and that has no layout job at all.
+* **The "+1 speed" family lives here, and it did not used to live anywhere.** Walk or click to raise a stat, break through a barrier the stat unlocks, spend the winnings, rebirth for a multiplier — the number going up *is* the game. It is a large, well-known Roblox family, and in a 620-prompt evaluation its members scattered across four genres and five presets, because each instance looks locally like whatever it borrowed: a parkour course reads as Obby, a keyboard-escape puzzle reads as Puzzle, a racing lane reads as Racing. **What they share is the layout, not the activity** — tiers in a line, a wall between each pair, a training station you stand on, and a rebirth pad at the end. That is `tier-ladder` plus **Stat Grinder**, and it is P0.
+* **`tier-ladder` is not an obby, even when you jump on it.** An obby's difficulty is in the geometry and the route has to be physics-legal, which is why Obby & Platformer routes P6 whatever shape it takes. Here the barrier is a number, the geometry is just ground, and nothing has to be validated — so a "+1 speed" game that also has a parkour section is Simulation first, and it stays P0. Naming Obby second is right; letting it lead is what imported a P6 these games never needed.
+* **`gate-progression` covers both kinds of wall.** A tycoon's gate opens when you pay; a stat ladder's opens when you are fast enough. Same geometry, same ID, different sentence — bend the wording, do not add a row.
+* **Roblox's own subgenres here are Idle, Incremental Simulator, Physics Sim, Sandbox, Tycoon, and Vehicle Sim** — the widest subgenre list of any genre, which matches how much this label covers. Five are presets above. ***Idle* is a `SET`, not a P5.** Roblox defines it as games with little to no player input, and the old rule read that as no layout job — but an idle game still has a space you watch, and most Roblox ones are a tycoon you happen to leave running. Build the set; see *Pipeline costs* in Build.md. Only route P5 when there is genuinely no room, just a screen of numbers.
 * **Physics Sim needed an option that did not exist.** Ramps, ragdoll props, and breakable assemblies are the entire point of that subgenre, so `physics-rig` was added. It reuses `Destructible`, which Part I §4 already governs through the debris rule.
 
 ---
@@ -811,7 +954,7 @@ Which IDs appear in more than one genre, so dedupe is a set union. **This is an 
 | :---- | :---- | :---- | :---- |
 | `lane-actor-track` | **Path (Enemy Lane)** | A single continuous, unchanging lane winding from spawn to the core that enemy waves are hard-coded to follow — no dead-end branches, no ambiguous self-crossings. | `P6` |
 | `terrain-open` | **Zone (Open Contested Terrain)** | No lane at all — units path dynamically across open ground between symmetrically distributed bases. | |
-| `board-grid` | **Zone (Board Grid)** | A tabletop-scale grid or board that players act on rather than move through. | |
+| `board-grid` | **Zone (Board Grid)** | A tabletop-scale grid or board that players act on rather than move through. | `SET` |
 
 **Options** — combine freely on top of the chosen shape.
 
@@ -845,7 +988,7 @@ Which IDs appear in more than one genre, so dedupe is a set union. **This is an 
 * **The core base reframes between styles.** In tower defense it sits at the literal end of one enemy path, so it only needs defending from one approach. In RTS it's the fixed heart of a player's own territory with no lane funnelling attackers, so it has to be defensible from every direction.
 * **RTS placement is rule-gated, not grid-gated.** Buildable land is usually constrained by proximity — must be near your own structures, can't be too close to an enemy's — rather than by a narrow strip flanking a lane.
 * **Why the track inverts the pipeline.** A tower defense lane has to be one valid continuous route or the game doesn't function. An image can't guarantee that, so the lane is generated procedurally first and dressed after.
-* **Roblox's own subgenres here are Board & Card Games and Tower Defense**, both presets above. *Board & Card Games* has the smallest layout job of anything in this document — a table, a board, and seating — and could reasonably route to P5 if the board is a UI surface rather than physical geometry.
+* **Roblox's own subgenres here are Board & Card Games and Tower Defense**, both presets above. *Board & Card Games* has the smallest layout job of anything in this document — a table, a board, and seating — but it is a layout, and `board-grid` is the original `SET`: real geometry that nobody walks on. Build it and skip the traversal checks. Only a board that is genuinely a flat UI surface with no room around it is P5.
 * **Two IDs are shared with other genres but written locally.** `tile-grid` also appears in Party & Casual and `collectible-nodes` in five other genres. The ID is the dedupe key; the wording here is Strategy's own, because a contested ore site and an RPG herb patch are not described the same way even though a mixed-genre menu should only offer one of them.
 
 ---
@@ -1047,7 +1190,7 @@ Regulation fields are fixed templates, so parametric placement of a known field 
 
 ## **15\. Entertainment (Showcase & Hub)**
 
-*Environments built to be explored or consumed rather than "won." Music & Audio and Video subgenres rarely involve a 3D environment at all — route those to **P5**.*
+*Environments built to be explored, consumed, or performed in rather than "won."*
 
 **Shape — pick one.**
 
@@ -1056,6 +1199,7 @@ Regulation fields are fixed templates, so parametric placement of a known field 
 | `showcase-route` | **Path (Guided Route)** | A single clear walking route, or a small set of connected vignettes, sequencing the visitor through the environment's key compositions. | |
 | `showcase-freeroam` | **Zone (Free-Roam Space)** | An open explorable space with no prescribed order. | |
 | `hub-portals` | **Zone (Portal Hub)** | A layout whose purpose is to send visitors onward to separate experiences. | `P4` |
+| `venue-stage` | **Zone (Stage and Audience)** | A raised performance stage with the audience floor spread in front of it, every sightline in the build oriented toward the stage rather than through the space. | |
 
 **Options** — combine freely on top of the chosen shape.
 
@@ -1068,6 +1212,8 @@ Regulation fields are fixed templates, so parametric placement of a known field 
 | `zone-graphics` | **Zone (Graphics-Scaling Set Piece)** | High-fidelity detail clusters — particles, reflections, dense foliage — isolated from the main route so they can be streamed or toggled without hurting performance elsewhere. | | `image` | |
 | `social-hub` | **SocialZone (Gathering Area)** | An open space where visitors congregate rather than move through. | | `image` | |
 | `teleporter-link` | **Teleporter (Hub Portal Gate)** | Physical, clearly identifiable portal markers at logical endpoints of the layout, each linking out to a separate experience. | | `both` | `P4` |
+| `spectator-bleachers` | **SpectatorZone (Raked Audience Seating)** | Stepped seating, terraces, or balconies lifting the back of the crowd so the stage stays visible from the rear of the room. | | `image` | `P0 + tiered` |
+| `backstage-support` | **Zone (Backstage)** | Performer-only space behind or beneath the stage — wings, green rooms, and an entrance the audience never uses. | | `image` | `P3` |
 
 **Presets** — show the generic name, not the reference.
 
@@ -1076,6 +1222,7 @@ Regulation fields are fixed templates, so parametric placement of a known field 
 | **Showcase** | [Adventure Time: Land of Ooo](https://www.roblox.com/games/11753761261/Adventure-Time-Land-of-Ooo-Showcase) (Roblox) | `showcase-route` | `landmark-focal`, `spawn-first-reveal`, `vignette-photo` |
 | **Free-Roam Showcase** | Roblox architectural and environment showcases | `showcase-freeroam` | `landmark-focal`, `spawn-first-reveal`, `collectible-nodes` |
 | **Hub** | Roblox portal hubs | `hub-portals` | `teleporter-link`, `social-hub`, `landmark-focal` |
+| **Performance Venue** | Roblox concert, festival and talent-show places; Fortnite live events | `venue-stage` | `spectator-bleachers`, `social-hub`, `spawn-first-reveal` |
 
 **Genre notes**
 
@@ -1084,7 +1231,63 @@ Regulation fields are fixed templates, so parametric placement of a known field 
 * **The spawn shot is the highest-leverage single decision.** A showcase gets one uncontrolled first impression. Exact camera framing belongs to the Mechanics/Camera doc; placement and orientation belong here.
 * **Badges mirror real showcase behaviour.** Actual Roblox showcases commonly award badges for finding side details, which is why hidden collectibles read as native to the genre rather than bolted on.
 * **Open question on hub portals.** They're tagged `P4` because the Pipeline treats portals as zone transitions. If portals lead to genuinely separate Roblox *places* rather than zones of this build, the hub itself may be a single-zone P0 layout with teleport markers. Worth confirming.
-* **Roblox's own subgenres here are Music & Audio, Showcase & Hub, and Video.** *Showcase & Hub* is a single Roblox subgenre but two presets here, because a showcase and a hub have different shapes and different pipeline costs. **Music & Audio and Video both route to P5** — they are content-consumption surfaces with no 3D layout job.
+* **A stage with an audience is a layout, and it had no home.** In a 620-prompt evaluation, nine workers independently coined the phrase *performance venue* for concerts, festivals, talent shows and a dance institution. Every other shape here is architecture you walk around and look at, so the stage kept getting forced into `landmark-focal` — which builds the stage and loses the thing that makes a venue a venue: **the crowd faces one way.** Orientation is the whole design. Sightlines converge, the floor is sized for density rather than circulation, and there is a side of the stage the audience never sees.
+* **Roblox's own subgenres here are Music & Audio, Showcase & Hub, and Video.** *Showcase & Hub* is a single Roblox subgenre but two presets here, because a showcase and a hub have different shapes and different pipeline costs. **Video routes to P5** — it is a content-consumption surface with no 3D layout job. **Music & Audio usually does not.** A concert venue, a club, and a listening lounge are all rooms; only a bare music player with no room around it is P5. Judge the space, not the subgenre label.
+
+---
+
+## **No Genre**
+
+Used when the prompt names no recognisable game type, or when a clarifying question failed to land on one. **This is a legitimate outcome, not a failure.** A user who wants "a floating island city" is describing a place, not a genre, and the layout can be built without ever naming one.
+
+This is not a rare fallback. Measured against 620 real prompts it was the right answer **46 times (7%)**, and its *Explorable Place* preset was chosen 19 times — more often than most of the 77 genre presets.
+
+Every ID here is shared with the genre tables, so if a genre is identified later the picks merge by set union with nothing lost.
+
+**Shape — answer each axis.** There is no genre prior to infer from, so the routing axes are asked directly. Each axis has a default; **the default costs nothing and needs no question.** Only ask about an axis the prompt leaves genuinely open and that would change the route.
+
+| ID | Shape | What it is | Pipeline |
+| :---- | :---- | :---- | :---- |
+| `axis-enclosure` | **Enclosure** | `exterior` (default) · `interior-only`, play happens entirely inside one enclosed space · `transition`, play moves between outside and inside. | `P3` for `transition` only |
+| `axis-verticality` | **Verticality** | `single-surface` (default) · `tiered`, real elevation with nothing overhanging · `stacked`, surfaces above each other — floors, bridges, tunnels. | `P0 + tiered` for `tiered`, `P2` for `stacked` |
+| `axis-zone-count` | **Zone count** | `single` (default) · `multi-zone`, several distinct maps that don't co-exist on one surface. | `P4` |
+| `axis-structure` | **Structure-criticality** | `dressed` (default) · `must-be-valid`, where the exact topology *is* the game: a solvable maze, a connected circuit, a physics-legal jump path. | `P6` |
+| `axis-play-space` | **Play-space** | `grounded-surface` (default) · `volumetric`, movement through a 3D volume — flight, swimming, space. Fine over one representable surface as a play-height envelope; a problem only if the volume self-occludes. | `CHECK` |
+
+Phrase these as plain questions, never as attribute names. "Does the player go inside buildings?" not "what is your Enclosure value?" **Only the non-default value carries the pipeline cost shown.**
+
+**Options** — combine freely on top of the chosen axes.
+
+| ID | Option | What it is | Core | Goes to | Pipeline |
+| :---- | :---- | :---- | :--: | :---- | :---- |
+| `landmark-focal` | **Landmark (Orientation Anchor)** | A large distinct structure visible from a distance that tells the player where they are. | ● | `image` | |
+| `path-circulation` | **Path (Circulation Route)** | Walkable routes threading the space so movement has an obvious grain. | ● | `image` | |
+| `social-hub` | **SocialZone (Gathering Area)** | An open space sized for a crowd to congregate in. | ● | `image` | |
+| `boundary-edge` | **BoundaryZone (Map Limit)** | The edge of the world, hidden behind natural barriers wherever possible. | | `image` | |
+| `cover-los` | **Cover (Sightline Breakers)** | Geometry that interrupts long views, for concealment or just visual interest. | | `image` | |
+| `hazard-kill` | **HazardZone (Dangerous Region)** | An area that damages or kills — water, a drop, a burning field. | | `image` | |
+| `vignette-photo` | **SocialZone (Scenic Spot)** | Composed views built to look good from a specific vantage point. | | `image` | |
+| `building-interior` | **Zone (Enterable Building)** | Structures the player actually goes inside. | | `image` | `P3` |
+| `collectible-nodes` | **Collectible (Scattered Pickups)** | Things to find and gather across the space. | | `layout` | |
+| `teleporter-link` | **Teleporter (Fast Travel)** | Paired markers moving players between distant points. | | `both` | |
+| `spawn-area` | **SpawnZone (Arrival Point)** | Where players enter the world, placed so the first thing they see is composed. | | `both` | |
+
+**Presets** — show the generic name, not the reference.
+
+| Preset | Modelled on *(internal)* | Shape | Options |
+| :---- | :---- | :---- | :---- |
+| **Explorable Place** | Any environment showcase | `axis-enclosure` | `landmark-focal`, `path-circulation`, `vignette-photo` |
+| **Social Space** | Roblox hangouts | `axis-enclosure` | `social-hub`, `spawn-area`, `landmark-focal` |
+| **Open Sandbox** | Unstructured creative worlds | `axis-enclosure` | `path-circulation`, `boundary-edge`, `collectible-nodes` |
+
+All three presets leave every axis at its default, which routes `P0`. The shape column names an axis only because the table requires one.
+
+**Genre notes**
+
+* **Do not invent a genre to escape this file.** Guessing "probably an obby" from a prompt that never said so produces a map the user did not ask for. Building what they described and offering these options is the better answer.
+* **All defaults is a complete, valid answer.** It routes P0 and builds a single-surface exterior map, which is exactly right for most place prompts.
+* **If the prompt later reveals a genre** — the user mentions scoring, or enemies, or a finish line — switch to that genre file and merge. Shared IDs mean nothing already picked is lost.
+* **The Universal Options matter more here than anywhere else.** A prompt with no genre is usually describing a *place*, and water, terrain, settlement density, islands and who lives there are what a place is made of.
 
 ---
 
