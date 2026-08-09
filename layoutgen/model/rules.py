@@ -469,14 +469,25 @@ def preset_menu_text(g: Genre) -> str:
 
 
 def route_of(genre: Genre, shape: Shape | None, option_ids: list[str]) -> list[str]:
-    """The pipeline modifiers this combination forces, in document order."""
+    """The pipeline modifiers this combination forces, in document order.
+
+    ``SET`` is included and is not like the others: it says there is a space but
+    nobody walks through it, so it sits alongside whatever route applies rather than
+    replacing it - `P0 + SET` and `P3 + SET` are both ordinary answers.
+
+    A base pass is always present. `tiered`, `CHECK` and `SET` each modify a build
+    rather than being one, so a combination that names only those is a P0 build with
+    that modification - which is how the document writes it, `["P0", "SET"]`.
+    """
     tags: list[str] = []
     for text in ([genre.route, shape.pipeline if shape else ""]
                  + [o.pipeline for oid in option_ids if (o := genre.option(oid))]):
-        for tag in re.findall(r"\bP\d\b|\btiered\b|\bCHECK\b", text or ""):
+        for tag in re.findall(r"\bP\d\b|\btiered\b|\bCHECK\b|\bSET\b", text or ""):
             if tag not in tags:
                 tags.append(tag)
-    return tags or ["P0"]
+    if not any(re.fullmatch(r"P\d", t) for t in tags):
+        tags.insert(0, "P0")
+    return tags
 
 
 if __name__ == "__main__":

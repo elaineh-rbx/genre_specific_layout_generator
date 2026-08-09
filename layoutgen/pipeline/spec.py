@@ -10,6 +10,11 @@ stage recovers geometry from the render, and an invisible trigger volume or spaw
 marker cannot be recovered, so it is placed against the segmented layout afterwards.
 The filter is applied here rather than in the browser, so what is previewed cannot
 drift from what is sent.
+
+The route the picks force is read off the document here too, for the same reason. One
+of its modifiers changes what is sent: `SET` means the space is looked at rather than
+walked through, so the frame holds the whole set and the traversal checks downstream
+have nothing to validate.
 """
 
 from __future__ import annotations
@@ -55,12 +60,26 @@ def addendum_from(spec: dict) -> tuple[str, list[str]]:
     return br.render(g.name, shape, bullets), withheld
 
 
+def route_from(spec: dict) -> list[str]:
+    """The pipeline modifiers this spec forces, read off the document."""
+    g = br.GENRES.get(spec.get("genre", ""))
+    if g is None:
+        return []
+    return br.route_of(g, g.shape(spec.get("shape") or ""), spec.get("options") or [])
+
+
 def build(spec: dict) -> dict:
     add, withheld = addendum_from(spec)
     source = (spec.get("source") or "").strip()
     body = source + (f"\n\n{add}" if add else "")
     mode = spec.get("mode", "std")
-    out = {"addendum": add, "withheld": withheld}
+    route = route_from(spec)
+    # `SET` is orthogonal to the order rather than one of its alternatives: the space
+    # is looked at rather than crossed, so the frame holds all of it and the traversal
+    # checks downstream have nothing to validate. It cannot apply to an authored maze
+    # or track, both of which exist precisely to be moved along.
+    set_piece = "SET" in route and mode != "layout"
+    out = {"addendum": add, "withheld": withheld, "route": route, "set": set_piece}
     if mode == "layout":
         kind = layout_kind(spec.get("genre", ""), spec.get("shape") or "",
                            spec.get("options"))
@@ -76,11 +95,12 @@ def build(spec: dict) -> dict:
                        iso=f"{body}\n\n{prompts.MAZE_ISO_FROM_TOPDOWN}",
                        plan=None, kind="maze")
     elif mode == "p6":
-        out.update(plan=prompts.plan(body), iso=prompts.isometric_from_plan(body),
+        out.update(plan=prompts.plan(body),
+                   iso=prompts.isometric_from_plan(body, set_piece=set_piece),
                    topdown=None)
     else:
-        out.update(iso=prompts.isometric(body), topdown=prompts.topdown(source),
-                   plan=None)
+        out.update(iso=prompts.isometric(body, set_piece=set_piece),
+                   topdown=prompts.topdown(source), plan=None)
     return out
 
 

@@ -25,8 +25,18 @@ PREFIX = "Generate directly from this text prompt only, with no reference image:
 TAIL = (" Polished square Roblox-like 3D environment concept, isometric three-quarter "
         "view, no captions or watermark.")
 
+#: A `SET` route says there is real geometry that no avatar ever crosses - a rhythm
+#: stage with a crowd, a board on a table, a shooting gallery on rails. The image is
+#: still drawn and still segmented; what changes here is only the framing, because
+#: there is no spawn point to sit the camera over. The saving is downstream, where
+#: traversal segmentation and jump-gap validation have nothing to check.
+SET_FRAMING = (
+    " Frame the whole set at once, composed as something looked at rather than walked "
+    "into: there is no entrance to arrive through and no route across it."
+)
 
-def isometric(source: str, addendum: str = "") -> str:
+
+def isometric(source: str, addendum: str = "", set_piece: bool = False) -> str:
     """Stage A: the scene, with any guidance inserted before the style tail.
 
     The guidance goes inside the wrapper rather than after it so that every arm ends
@@ -36,7 +46,7 @@ def isometric(source: str, addendum: str = "") -> str:
     body = source.strip()
     if addendum.strip():
         body = f"{body}\n\n{addendum.strip()}"
-    return f"{PREFIX}{body}{TAIL}"
+    return f"{PREFIX}{body}{SET_FRAMING if set_piece else ''}{TAIL}"
 
 
 # ------------------------------------------------------------ isometric -> top-down
@@ -84,11 +94,13 @@ def plan(source: str, addendum: str = "") -> str:
     return f"{PLAN_PREFIX}{body}{PLAN_TAIL}"
 
 
-def isometric_from_plan(source: str, addendum: str = "") -> str:
+def isometric_from_plan(source: str, addendum: str = "",
+                        set_piece: bool = False) -> str:
     body = source.strip()
     if addendum.strip():
         body = f"{body}\n\n{addendum.strip()}"
-    return f"{ISO_FROM_PLAN_PREFIX}{body}{ISO_FROM_PLAN_TAIL}"
+    return f"{ISO_FROM_PLAN_PREFIX}{body}{SET_FRAMING if set_piece else ''}"\
+           f"{ISO_FROM_PLAN_TAIL}"
 
 
 # ------------------------------------------------------------- authored maze layout
