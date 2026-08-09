@@ -236,6 +236,16 @@ COMPARISONS: dict[str, Comparison] = {
                   "arm asked for. Identical wrapper and style tail on both sides.",
             arms=("raw", "rules"),
         ),
+        Comparison(
+            id="skill_vs_rules", page="skill_compare.html",
+            title="Who chose: an agent following the skill, or the router",
+            blurb="The same menu and the same generator on both sides, so the only "
+                  "difference is who read the prompt. Judged on the union of what "
+                  "each asked for, which is where they part company: the skill asks "
+                  "for more, words it for the scene, and on fifteen prompts declines "
+                  "to call the thing a game at all.",
+            arms=("rules", "skill"),
+        ),
     )
 }
 
