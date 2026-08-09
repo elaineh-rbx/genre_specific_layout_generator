@@ -88,6 +88,36 @@ def _rules_asks(row: dict) -> list[dict]:
     return out
 
 
+def _skill_asks(row: dict) -> list[dict]:
+    """The skill's arm asked for the same kinds of thing, in its own words.
+
+    The difference worth seeing is that last part. The router injects an option's
+    document wording on every prompt that picks it; the skill rewrote each one for the
+    scene in front of it, so `edits` is preferred over the generic text wherever it has
+    something to say. A scene with no genre has axes where the others have a shape.
+    """
+    from layoutgen.model import rules as br
+
+    g = br.genre(row.get("genre", ""))
+    if g is None:
+        return []
+    edits = row.get("edits") or {}
+    out = []
+    if (s := g.shape(row.get("shape") or "")) is not None:
+        out.append({"label": s.label, "text": s.what, "kind": "shape"})
+    for line in br.axis_lines(g, row.get("axes") or {}):
+        out.append({"label": "the space itself", "kind": "shape",
+                    "text": line.split(" - ", 1)[-1]})
+    for oid in row.get("options", []):
+        if (o := g.option(oid)) is not None and o.drawn:
+            out.append({"label": o.label, "kind": o.goes_to,
+                        "text": edits.get(oid) or br.visible_text(g.name, o)})
+    for e in row.get("extras", []):
+        if e.get("goes_to") == "image":
+            out.append({"label": "unlisted request", "text": e["text"], "kind": "extra"})
+    return out
+
+
 def _needs_chips(row: dict) -> list[str]:
     return [x for x in [row.get("subgenre_id", "")] if x]
 
@@ -97,6 +127,12 @@ def _rules_chips(row: dict) -> list[str]:
     if (p := row.get("preset", "")) and p != "none":
         bits.insert(0, p)
     return [x for x in bits if x] + list(row.get("route", []))
+
+
+def _skill_chips(row: dict) -> list[str]:
+    """As the rules arm, plus a mark on the scenes it declined to call a game."""
+    chips = _rules_chips(row)
+    return (["no genre"] + chips) if row.get("genre") == "No Genre" else chips
 
 
 ARMS: dict[str, Arm] = {
@@ -120,6 +156,17 @@ ARMS: dict[str, Arm] = {
               "mandatory, so a short list is a legitimate answer.",
         sub="one shape plus its options",
         run="rules", asks=_rules_asks, chips=_rules_chips,
+        sent=(("isometric", "iso_prompt"), ("top-down", "td_prompt")),
+        group=lambda row: (row.get("preset", "") if row.get("preset", "none") != "none"
+                           else row.get("genre", "")),
+    ),
+    "skill": Arm(
+        id="skill", title="genre-choice skill", short="skil", accent="#3fb950",
+        blurb="The same menu, chosen by an agent following the skill one scene at a "
+              "time - which can also decline to name a genre, and rewrites every "
+              "option for the scene in front of it.",
+        sub="an agent following the skill",
+        run="skill", asks=_skill_asks, chips=_skill_chips,
         sent=(("isometric", "iso_prompt"), ("top-down", "td_prompt")),
         group=lambda row: (row.get("preset", "") if row.get("preset", "none") != "none"
                            else row.get("genre", "")),

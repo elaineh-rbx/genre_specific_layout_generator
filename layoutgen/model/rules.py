@@ -51,6 +51,7 @@ def _clean(s: str) -> str:
     s = _LINK.sub(r"\1", s)
     s = s.replace("\\", "").strip()
     s = _BOLD.sub(r"\1", s)
+    s = _ITAL.sub(r"\1", s)
     s = _CODE.sub(r"\1", s)
     return s.strip()
 
@@ -508,23 +509,33 @@ PLACE_HEADER = (
     "another, and keep the whole layout legible in one view."
 )
 SHAPE_LINE = "SHAPE OF THE SPACE - {label}: {what}"
+AXIS_LINE = "SHAPE OF THE SPACE - {what}"
+
+#: Axes whose non-default value decides how the layout is generated rather than what it
+#: looks like. `must-be-valid` says the topology is the deliverable, which is what buys
+#: `P6` and draws the plan before the picture; its wording - "a solvable maze, a
+#: connected circuit, a physics-legal jump path" - defines the category for whoever is
+#: answering the question, and describes no particular space. The order it forces
+#: already carries it, so injecting the sentence as well would only spend the image
+#: model's attention on a decision that has been made.
+ROUTING_ONLY_AXES = {"axis-structure"}
 
 
 def axis_lines(g: Genre, axes: dict[str, str]) -> list[str]:
-    """The chosen axis values, worded as the document words them.
+    """The chosen axis values, worded as the document words them, as one line.
 
     Defaults are skipped. They are the absence of a choice rather than one, the
     document gives them no clause to inject, and saying "exterior, single surface" on
     every place prompt would spend the image model's attention on nothing.
     """
-    out = []
+    said = []
     for key, value in (axes or {}).items():
         a = g.axis(key)
-        if a is None or value == a.default:
+        if a is None or value == a.default or a.id in ROUTING_ONLY_AXES:
             continue
         if clause := a.clauses.get(value, ""):
-            out.append(SHAPE_LINE.format(label=value, what=clause))
-    return out
+            said.append(clause.rstrip("."))
+    return [AXIS_LINE.format(what="; ".join(said) + ".")] if said else []
 
 
 def render(genre_name: str, shape: Shape | None, bullets: list[tuple[str, str]],
