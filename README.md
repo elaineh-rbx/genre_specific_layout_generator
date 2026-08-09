@@ -141,7 +141,15 @@ tools/generate_genre_skills.py  writes those 15 genre files from the rules docum
                             and --check says whether they still match. This is the
                             drift guard for the three copied items above
 
-All three are copied from mpalleschi/3D-LayoutBuild-Rules @ 5a3c636, where they were
+evaluation/                 upstream's study behind that document: 620 real user
+                            prompts graded for genre and coverage, the clustering of
+                            what they asked for, the report, and the tools that
+                            produced it. Mirrored at the path its tools expect, and
+                            read-only here - it is evidence for the rules, not a
+                            thing this pipeline runs. Not to be confused with
+                            `layoutgen/evaluate/`, which judges our own renders
+
+All four are copied from mpalleschi/3D-LayoutBuild-Rules @ 5a3c636, where they were
 written. `python tools/generate_genre_skills.py --check` is what keeps the copy honest:
 it exits 1 and names the files that no longer follow from the rules document.
 
