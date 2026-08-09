@@ -42,6 +42,8 @@ class Row:
     genre_s: str = ""
     shape_r: str = ""
     shape_s: str = ""
+    #: What a no-genre block says instead of a shape. Empty on every other row.
+    axes: dict[str, str] = field(default_factory=dict)
     preset_r: str = ""
     preset_s: str = ""
     route_r: list[str] = field(default_factory=list)
@@ -66,6 +68,17 @@ class Row:
     def same_preset(self) -> bool:
         return (self.preset_r or "none") == (self.preset_s or "none")
 
+    @property
+    def no_genre(self) -> bool:
+        return self.genre_s == br.NO_GENRE_NAME
+
+    @property
+    def shape_label(self) -> str:
+        """What to show in the shape column, which a no-genre row fills with axes."""
+        if not self.no_genre:
+            return self.shape_s
+        return ", ".join(self.axes.values()) or "all defaults"
+
 
 def router_picks() -> dict[str, dict]:
     if not ROUTER.is_file():
@@ -79,7 +92,8 @@ def compare(scene: str, pick: dict) -> Row:
     h = handoff.adapt(block, source=source or handoff.golden_source(scene))
     row = Row(scene=scene, ok=h.ok,
               genre_r=pick.get("genre", ""), genre_s=h.genre,
-              shape_r=pick.get("shape", ""), shape_s=h.spec.get("shape", ""),
+              shape_r=pick.get("shape", ""), shape_s=h.spec.get("shape") or "",
+              axes=dict(h.axes),
               preset_r=pick.get("preset") or "", preset_s=h.preset,
               route_r=pick.get("route") or [], route_s=h.route,
               free_text=len(h.free_text),
@@ -107,7 +121,7 @@ def collect(only: str = "") -> list[Row]:
 def _line(row: Row) -> str:
     mark = lambda same: "=" if same else "*"  # noqa: E731 - a two-character legend
     return (f"  {row.scene}  {mark(row.same_genre)} {row.genre_s[:22]:<22} "
-            f"{mark(row.same_shape)} {row.shape_s[:20]:<20} "
+            f"{mark(row.same_shape)} {row.shape_label[:20]:<20} "
             f"{mark(row.same_preset)} {(row.preset_s or 'none')[:20]:<20} "
             f"+{len(row.only_skill)} -{len(row.only_router)}"
             + ("" if row.ok else "  INVALID"))
@@ -129,7 +143,8 @@ def main() -> None:
         print(f"  genre   router {r.genre_r or '-'}\n"
               f"          skill  {r.genre_s or '-'}")
         print(f"  shape   router {r.shape_r or '-'}\n"
-              f"          skill  {r.shape_s or '-'}")
+              f"          skill  {r.shape_label or '-'}"
+              + ("   (axes, not a shape)" if r.no_genre else ""))
         print(f"  preset  router {r.preset_r or 'none'}\n"
               f"          skill  {r.preset_s or 'none'}")
         print(f"  route   router {' + '.join(r.route_r) or '-'}\n"
@@ -160,7 +175,16 @@ def main() -> None:
     bad = [r for r in rows if not r.ok]
     route_diff = sum(1 for r in rows if any(p.startswith("[route]") for p in r.problems))
 
+    ng = [r for r in rows if r.no_genre]
+
     print(f"\nagreement   genre {same_g}/{n}   shape {same_s}/{n}   preset {same_p}/{n}")
+    if ng:
+        # The router is a fifteen-way choice and cannot produce this answer, so these
+        # rows can only ever read as a disagreement. Said once, so the line above is
+        # not mistaken for the skill getting them wrong.
+        print(f"            {len(ng)} of those are scenes the skill calls a place rather "
+              f"than a game,\n            which the router has no way to say: "
+              + ", ".join(r.scene for r in ng))
     print(f"options     {added} the router did not pick, {dropped} it picked and the "
           f"skill did not")
     print(f"universal   {len(uni)} picks across {sum(1 for r in rows if r.universal)} "

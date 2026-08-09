@@ -26,11 +26,18 @@ and its Part II is a menu rather than a specification:
 | **Option** | Additive on top of the shape, combined freely. Nothing is mandatory. |
 | **Universal option** | Six that belong to every genre rather than one - who inhabits the space, water, terrain relief. Never offered, only landed on when a prompt asks. |
 | **Preset** | A shape plus a few option IDs, modelled on a real game - a starting point, not a constraint. |
+| **Axis** | What a prompt with no genre answers instead of picking a shape. Five questions, each with a default that costs nothing, so leaving all five alone is a complete answer. |
 
 `layoutgen/model/rules.py` parses that document at import, so the model in code cannot
 drift from the model in prose. A router (`layoutgen/model/router.py`) reads a prompt
 and picks a genre, a shape and whatever options the prompt gives a reason to want - and
 picking almost nothing is a legitimate answer.
+
+Naming no genre at all is also a legitimate answer, and a common one: a prompt for a
+haunted lobby or a swamp is describing a place rather than a game. That destination has
+its own options and presets and is reached through `rules.NO_GENRE`. The router cannot
+get there - it chooses among fifteen and always names one - but the skill can, and on
+this repository's golden set it does on fifteen scenes out of seventy-five.
 
 Each option carries a **Goes to** field, and it is enforced. Geometry a segmenter
 could recover (`image`) is injected into the prompt; an invisible trigger volume or

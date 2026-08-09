@@ -6,6 +6,13 @@ layout stream. `model/router.py` answers the same question in two LLM calls and 
 conversation. Both end at a genre, one shape and some options, so both can feed
 `pipeline.spec.build` - this is the translation for the first one.
 
+The skill can also end somewhere the router cannot. Asked to choose among fifteen
+genres, the router always names one; the skill is allowed to say the prompt describes
+a place rather than a game, and on this repository's golden set it said so fifteen
+times out of seventy-five. That answer arrives with no genre and no shape, and says
+what it is building through the five routing axes instead. It is adapted here the
+same way, because it is just as complete - see `rules.NO_GENRE`.
+
 What it will not do is take the block at its word. The block is prose-shaped output
 from an agent, not a validated payload, and two of its fields have already been seen
 wrong: `pipeline` arrived as `["P0 + tiered"]` on one scene, a single string where a
@@ -48,7 +55,13 @@ GENRE_BY_SLUG = {slug(name): name for name in br.GENRES}
 
 #: Problems that mean there is no spec to build. Everything else is worth reporting
 #: and generating anyway.
-FATAL = {"no-genre", "unknown-genre", "unknown-shape", "p5"}
+#:
+#: `no-genre` is deliberately not here. The skill is explicit that naming no genre is
+#: "a legitimate outcome, not a failure" - the prompt describes a place rather than a
+#: game - and the document gives that outcome its own options, presets and five
+#: routing axes. A block that takes it is fully specified; it just says what it is
+#: building with axes where a genre block would name a shape.
+FATAL = {"unknown-genre", "unknown-shape", "p5"}
 
 
 @dataclass
@@ -68,6 +81,8 @@ class Handoff:
     genre: str = ""
     preset: str = ""
     options: list[str] = field(default_factory=list)
+    #: Non-default axis answers, on a no-genre block only. Empty everywhere else.
+    axes: dict[str, str] = field(default_factory=dict)
     route: list[str] = field(default_factory=list)      #: recomputed here
     claimed_route: list[str] = field(default_factory=list)   #: what the block said
     free_text: list[str] = field(default_factory=list)
@@ -109,6 +124,28 @@ def _sentence(text: str) -> str:
     return text if not text or text[-1] in ".!?:;" else text + "."
 
 
+def _axes(g: br.Genre, claimed, h: "Handoff") -> dict[str, str]:
+    """Check the axis answers a no-genre block gave against the document's own.
+
+    Every axis has a default and the default costs nothing, so an unrecognised answer
+    is dropped rather than fatal: the build falls back to the default, which the
+    document says is a complete and valid answer on its own.
+    """
+    if not isinstance(claimed, dict):
+        return {}
+    out: dict[str, str] = {}
+    for key, value in claimed.items():
+        a = g.axis(str(key))
+        if a is None:
+            h.add("unknown-axis", f"{key!r} is not one of the five routing axes, dropped")
+        elif value not in a.clauses:
+            h.add("unknown-axis", f"{value!r} is not a value of {a.id} "
+                                  f"({', '.join(a.clauses)}), dropped")
+        elif value != a.default:
+            out[a.key] = value
+    return out
+
+
 def _ids(rows: list[dict]) -> list[str]:
     seen: list[str] = []
     for e in rows:
@@ -123,30 +160,35 @@ def adapt(block: dict, source: str = "", keep_free_text: bool = True) -> Handoff
     h = Handoff(claimed_route=_modifiers(block.get("pipeline") or []),
                 notes=list(block.get("notes") or []))
 
+    sh = block.get("shape") if isinstance(block.get("shape"), dict) else {}
     genres = block.get("genres") or []
+    shape: br.Shape | None = None
+
     if not genres:
-        # The skill's two special cases. Both are real answers, neither is a spec:
-        # P5 says there is no space to build, no-genre says there is one but no
-        # genre file describes it, and the shape then lives in five axes instead.
-        kind = "p5" if "P5" in h.claimed_route else "no-genre"
-        h.add(kind, "the block names no genre, so there is no shape table to build from")
-        return h
+        # P5 is the one answer with nothing to build: it says there is no space at
+        # all. No genre is the opposite - there is a space, and the document
+        # describes it well enough to build, just without naming a game type.
+        if "P5" in h.claimed_route:
+            h.add("p5", "the block routes P5: there is no space to build")
+            return h
+        name, g = br.NO_GENRE_NAME, br.NO_GENRE
+        h.genre = name
+        h.axes = _axes(g, sh.get("axes"), h)
+    else:
+        name = GENRE_BY_SLUG.get(genres[0])
+        if name is None:
+            h.add("unknown-genre",
+                  f"{genres[0]!r} is not one of the {len(br.GENRES)} genres")
+            return h
+        g = br.GENRES[name]
+        h.genre = name
+        if len(genres) > 1:
+            h.notes.append("secondary genres named: " + ", ".join(genres[1:]))
 
-    name = GENRE_BY_SLUG.get(genres[0])
-    if name is None:
-        h.add("unknown-genre", f"{genres[0]!r} is not one of the {len(br.GENRES)} genres")
-        return h
-    g = br.GENRES[name]
-    h.genre = name
-    if len(genres) > 1:
-        h.notes.append("secondary genres named: " + ", ".join(genres[1:]))
-
-    sh = block.get("shape") or {}
-    shape_id = sh.get("id") if isinstance(sh, dict) else None
-    shape = g.shape(shape_id or "")
-    if shape is None:
-        h.add("unknown-shape", f"{shape_id!r} is not a shape of {name}")
-        return h
+        shape = g.shape(sh.get("id") or "")
+        if shape is None:
+            h.add("unknown-shape", f"{sh.get('id')!r} is not a shape of {name}")
+            return h
 
     image, layout = _rows(block, "image_prompt"), _rows(block, "layout_placement")
     in_image, in_layout = _ids(image), _ids(layout)
@@ -186,7 +228,15 @@ def adapt(block: dict, source: str = "", keep_free_text: bool = True) -> Handoff
             if gone:
                 h.notes.append("dropped from the preset: " + ", ".join(gone))
 
-    h.route = br.route_of(g, shape, picks)
+    h.route = br.route_of(g, shape, picks, h.axes)
+    # `SET` is the one modifier the tables cannot produce. It answers "is there anybody
+    # walking through this", which is a reading of the prompt rather than a property of
+    # a picked row, and exactly one shape in the whole document carries it in a cell.
+    # Everywhere else the block's judgement is the only evidence there is, so recomputing
+    # over the top of it would silently turn a diorama back into a place with a route
+    # through it. It is kept, and it is the only claim that is.
+    if "SET" in h.claimed_route and "SET" not in h.route:
+        h.route.append("SET")
     if h.claimed_route and h.claimed_route != h.route:
         # Which way it differs is the useful part. A modifier the block invented is a
         # judgement it made about the scene that no picked row carries; one it left out
@@ -215,7 +265,9 @@ def adapt(block: dict, source: str = "", keep_free_text: bool = True) -> Handoff
 
     h.spec = {
         "genre": name,
-        "shape": shape.id,
+        "shape": shape.id if shape else None,
+        "axes": h.axes,
+        "set": "SET" in h.route,
         "options": picks,
         "edits": edits,
         "custom": list(h.free_text) if keep_free_text else [],
@@ -259,7 +311,10 @@ def main() -> None:
     h = adapt(block, source=source, keep_free_text=not args.drop_free_text)
     print(f"genre     {h.genre or '(none)'}")
     print(f"preset    {h.preset or 'none'}")
-    print(f"shape     {h.spec.get('shape', '(none)')}")
+    print(f"shape     {h.spec.get('shape') or '(none)'}")
+    if h.genre == br.NO_GENRE_NAME:
+        print("axes      " + (", ".join(f"{k}={v}" for k, v in h.axes.items())
+                              or "all five at their default, which routes P0"))
     print(f"options   {', '.join(h.options) or '(none)'}")
     print(f"route     {' + '.join(h.route) or '(none)'}"
           + (f"   [block said {' + '.join(h.claimed_route)}]"

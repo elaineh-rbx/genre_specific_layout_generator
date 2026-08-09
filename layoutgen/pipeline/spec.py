@@ -1,7 +1,9 @@
 """A spec is what the playground sends; this turns it into prompts.
 
-    genre    one of the 15 in Build.md's Genre List
+    genre    one of the 15 in Build.md's Genre List, or `No Genre`
     shape    exactly one, and almost always the pipeline-routing decision
+    axes     what a `No Genre` spec carries instead of a shape: up to five answers,
+             each of which costs nothing unless it is the non-default one
     options  any number, each with its own wording, plus anything typed in
     order    isometric first, plan first, or an authored layout first
 
@@ -40,7 +42,7 @@ def addendum_from(spec: dict) -> tuple[str, list[str]]:
     that cannot survive segmentation can never reach the image model regardless of
     what the client sends.
     """
-    g = br.GENRES.get(spec.get("genre", ""))
+    g = br.genre(spec.get("genre", ""))
     if g is None:
         return "", []
     shape = g.shape(spec.get("shape") or "")
@@ -57,15 +59,23 @@ def addendum_from(spec: dict) -> tuple[str, list[str]]:
         else:
             withheld.append(f"{o.label} ({o.goes_to})")
     bullets += [("", c.strip()) for c in (spec.get("custom") or []) if c.strip()]
-    return br.render(g.name, shape, bullets), withheld
+    axis_text = br.axis_lines(g, spec.get("axes") or {})
+    return br.render(g.name, shape, bullets, axis_text), withheld
 
 
 def route_from(spec: dict) -> list[str]:
-    """The pipeline modifiers this spec forces, read off the document."""
-    g = br.GENRES.get(spec.get("genre", ""))
+    """The pipeline modifiers this spec forces, read off the document.
+
+    ``set`` is the exception the document leaves no room to derive: see ``build``.
+    """
+    g = br.genre(spec.get("genre", ""))
     if g is None:
         return []
-    return br.route_of(g, g.shape(spec.get("shape") or ""), spec.get("options") or [])
+    route = br.route_of(g, g.shape(spec.get("shape") or ""),
+                        spec.get("options") or [], spec.get("axes") or {})
+    if spec.get("set") and "SET" not in route:
+        route.append("SET")
+    return route
 
 
 def build(spec: dict) -> dict:
@@ -78,6 +88,11 @@ def build(spec: dict) -> dict:
     # is looked at rather than crossed, so the frame holds all of it and the traversal
     # checks downstream have nothing to validate. It cannot apply to an authored maze
     # or track, both of which exist precisely to be moved along.
+    #
+    # It is also the one modifier a caller may assert, which `route_from` has already
+    # folded in. Only `Strategy/board-grid` carries it in a cell, so for every other
+    # build it is a judgement about the prompt that no combination of picks can
+    # express - and one nothing here could recompute.
     set_piece = "SET" in route and mode != "layout"
     out = {"addendum": add, "withheld": withheld, "route": route, "set": set_piece}
     if mode == "layout":

@@ -14,6 +14,14 @@ water, terrain relief - and live in their own table. They are merged into each g
 here, so nothing downstream has to know they arrived differently, except that they
 carry `universal` and are never `core`.
 
+A sixteenth destination has no genre at all. A prompt describing a place rather than a
+game - a lobby, a swamp, a farm scene - routes to `No Genre`, which the document says
+was right on 7% of 620 real prompts and is "a legitimate outcome, not a failure". It
+has options and presets like any genre, but no shape table: with no genre prior to
+infer from, the five routing axes are asked directly, each with a default that costs
+nothing. `NO_GENRE` carries it, and `route_of` takes those axes where it would
+otherwise take a shape.
+
 The single most important field for us is `Goes to`. Pipeline step 4 recovers
 geometry from the isometric render, so anything invisible - a trigger volume, a
 spawn marker, a pickup - cannot be recovered and must never reach the image model.
@@ -119,6 +127,35 @@ class Option:
 
 
 @dataclass
+class Axis:
+    """One of the five routing questions asked when there is no genre to infer from.
+
+    An axis is not a shape. A shape is chosen once from a table and usually decides the
+    route on its own; an axis is a question with a default answer, and *only the
+    non-default answer costs anything*. So a build that leaves all five alone is a
+    complete answer that routes `P0`, which the document says is right for most place
+    prompts.
+    """
+
+    id: str
+    name: str
+    what: str
+    pipeline: str
+    default: str
+    #: Every value the document offers, mapped to its own wording. The default's
+    #: wording is empty - the document gives it no clause, because it is the absence
+    #: of a choice rather than one.
+    clauses: dict[str, str] = field(default_factory=dict)
+    #: Value -> the pipeline code it forces. Defaults never appear here.
+    routes: dict[str, str] = field(default_factory=dict)
+
+    @property
+    def key(self) -> str:
+        """``axis-enclosure`` -> ``enclosure``, which is how a block names it."""
+        return self.id[5:] if self.id.startswith("axis-") else self.id
+
+
+@dataclass
 class Preset:
     name: str
     modelled_on: str
@@ -136,9 +173,16 @@ class Genre:
     options: list[Option] = field(default_factory=list)
     presets: list[Preset] = field(default_factory=list)
     notes: list[str] = field(default_factory=list)
+    #: Only `No Genre` has these, and it has them instead of shapes.
+    axes: list[Axis] = field(default_factory=list)
 
     def shape(self, sid: str) -> Shape | None:
         return next((s for s in self.shapes if s.id == sid), None)
+
+    def axis(self, key: str) -> Axis | None:
+        """By either spelling: the document's ``axis-enclosure`` or a block's
+        ``enclosure``."""
+        return next((a for a in self.axes if key in (a.id, a.key)), None)
 
     def option(self, oid: str) -> Option | None:
         return next((o for o in self.options if o.id == oid), None)
@@ -171,7 +215,124 @@ def _universal(lines: list[str]) -> list[Option]:
     return out
 
 
-def _parse() -> tuple[dict[str, Genre], list[tuple[str, str]], list[Option]]:
+#: ``exterior`` (default), or ``interior-only, play happens entirely inside...``.
+_AXIS_VALUE = re.compile(r"^`([^`]+)`\s*(\(default\))?\s*(?:,\s*(.*))?$", re.S)
+#: ``P3` for `transition` only`` - a code that applies to one named value.
+_AXIS_FOR = re.compile(r"`([^`]+)`\s+for\s+`([^`]+)`")
+
+
+def _axes(rows: list[list[str]]) -> list[Axis]:
+    """The No Genre shape table, which asks five questions instead of offering shapes.
+
+    Both halves have to be read off the raw cells rather than the cleaned ones, because
+    the values are marked by their backticks and that is the only thing distinguishing
+    them from the prose describing them.
+    """
+    out: list[Axis] = []
+    for r in rows:
+        if len(r) < 4 or not _clean(r[0]).startswith("axis-"):
+            continue
+        clauses: dict[str, str] = {}
+        default = ""
+        for part in r[2].split("·"):
+            m = _AXIS_VALUE.match(part.strip().rstrip("."))
+            if m is None:
+                continue
+            clauses[m.group(1)] = _clean(m.group(3) or "")
+            if m.group(2):
+                default = m.group(1)
+
+        # A cost is either attached to a named value, or - where the axis has only one
+        # non-default value - stated bare, with the value left implied.
+        routes = {v: c for c, v in _AXIS_FOR.findall(r[3])}
+        if not routes and (codes := _CODE.findall(r[3])):
+            routes = {v: codes[0] for v in clauses if v != default}
+
+        out.append(Axis(id=_clean(r[0]), name=_clean(r[1]), what=_clean(r[2]),
+                        pipeline=_clean(r[3]), default=default,
+                        clauses=clauses, routes=routes))
+    return out
+
+
+def _fill(g: Genre, body: list[str]) -> None:
+    """Read one genre's tables and notes out of its section of the document."""
+    i = 1
+    while i < len(body):
+        line = body[i].strip()
+        if not g.tagline and line.startswith("*") and not line.startswith("**"):
+            g.tagline = _clean(line).rstrip(".")
+        if line.startswith("**Genre route:"):
+            g.route = _clean(line)
+        if line.startswith("**Shape"):
+            rows, i = _table(body, i + 1)
+            for r in rows:
+                if len(r) < 4:
+                    continue
+                full, typ, flav = _split_name(r[1])
+                g.shapes.append(Shape(id=_clean(r[0]), name=full, type=typ,
+                                      flavor=flav, what=_clean(r[2]),
+                                      pipeline=_clean(r[3])))
+            continue
+        if line.startswith("**Options**"):
+            rows, i = _table(body, i + 1)
+            for r in rows:
+                if len(r) < 6:
+                    continue
+                full, typ, flav = _split_name(r[1])
+                g.options.append(Option(id=_clean(r[0]), name=full, type=typ,
+                                        flavor=flav, what=_clean(r[2]),
+                                        core="●" in r[3], goes_to=_clean(r[4]),
+                                        pipeline=_clean(r[5])))
+            continue
+        if line.startswith("**Presets**"):
+            rows, i = _table(body, i + 1)
+            for r in rows:
+                if len(r) < 4:
+                    continue
+                g.presets.append(Preset(
+                    name=_clean(r[0]), modelled_on=_clean(r[1]),
+                    shape=_clean(r[2]),
+                    options=[x for x in (_clean(o) for o in r[3].split(",")) if x]))
+            continue
+        if line.startswith("**Genre notes**"):
+            for nl in body[i + 1:]:
+                # The last genre is followed by Themes and the Appendix; stop at
+                # the section break rather than absorbing them.
+                if nl.startswith("#") or nl.strip() == "---":
+                    break
+                if nl.strip().startswith("* "):
+                    g.notes.append(_clean(nl.strip()[2:]))
+            break
+        i += 1
+
+
+def _no_genre(lines: list[str]) -> Genre:
+    """The `No Genre` section, which has the shape of a genre and no shapes.
+
+    Its shape table is really the five routing axes, so it is re-read as those and the
+    shape list left empty - there is no shape to pick, and code that asks for one
+    should get nothing rather than an axis wearing a shape's name.
+    """
+    g = Genre(num=0, name=NO_GENRE_NAME, tagline="", route="")
+    try:
+        start = next(i for i, x in enumerate(lines)
+                     if re.match(r"^## \*\*No Genre\*\*\s*$", x))
+    except StopIteration:
+        return g
+    end = next((i for i in range(start + 1, len(lines))
+                if lines[i].startswith("## ")), len(lines))
+    body = lines[start:end]
+
+    _fill(g, body)
+    j = next((n for n, x in enumerate(body) if x.strip().startswith("**Shape")), -1)
+    if j >= 0:
+        rows, _ = _table(body, j + 1)
+        g.axes = _axes(rows)
+    g.shapes = []
+    return g
+
+
+def _parse() -> tuple[dict[str, Genre], list[tuple[str, str]], list[Option], Genre]:
     lines = DOC.read_text().splitlines()
 
     # The Genre List gives the one-line description for each of the fifteen.
@@ -193,69 +354,38 @@ def _parse() -> tuple[dict[str, Genre], list[tuple[str, str]], list[Option]]:
         body = lines[start:end]
         name = _clean(m.group(2))
         g = Genre(num=int(m.group(1)), name=name, tagline="", route="")
-
-        i = 1
-        while i < len(body):
-            line = body[i].strip()
-            if not g.tagline and line.startswith("*") and not line.startswith("**"):
-                g.tagline = _clean(line).rstrip(".")
-            if line.startswith("**Genre route:"):
-                g.route = _clean(line)
-            if line.startswith("**Shape"):
-                rows, i = _table(body, i + 1)
-                for r in rows:
-                    if len(r) < 4:
-                        continue
-                    full, typ, flav = _split_name(r[1])
-                    g.shapes.append(Shape(id=_clean(r[0]), name=full, type=typ,
-                                          flavor=flav, what=_clean(r[2]),
-                                          pipeline=_clean(r[3])))
-                continue
-            if line.startswith("**Options**"):
-                rows, i = _table(body, i + 1)
-                for r in rows:
-                    if len(r) < 6:
-                        continue
-                    full, typ, flav = _split_name(r[1])
-                    g.options.append(Option(id=_clean(r[0]), name=full, type=typ,
-                                            flavor=flav, what=_clean(r[2]),
-                                            core="●" in r[3], goes_to=_clean(r[4]),
-                                            pipeline=_clean(r[5])))
-                continue
-            if line.startswith("**Presets**"):
-                rows, i = _table(body, i + 1)
-                for r in rows:
-                    if len(r) < 4:
-                        continue
-                    g.presets.append(Preset(
-                        name=_clean(r[0]), modelled_on=_clean(r[1]),
-                        shape=_clean(r[2]),
-                        options=[x for x in (_clean(o) for o in r[3].split(",")) if x]))
-                continue
-            if line.startswith("**Genre notes**"):
-                for nl in body[i + 1:]:
-                    # The last genre is followed by Themes and the Appendix; stop at
-                    # the section break rather than absorbing them.
-                    if nl.startswith("#") or nl.strip() == "---":
-                        break
-                    if nl.strip().startswith("* "):
-                        g.notes.append(_clean(nl.strip()[2:]))
-                break
-            i += 1
+        _fill(g, body)
         genres[name] = g
 
     # Every genre inherits the universal table on top of its own, and its own row wins
     # on a collision - four genres word `building-interior` their own way, and those
-    # definitions are the ones that hold for them.
+    # definitions are the ones that hold for them. No Genre inherits it too, and the
+    # document says it matters more there than anywhere: a prompt with no genre is
+    # usually describing a place, and these are what a place is made of.
     universal = _universal(lines)
-    for g in genres.values():
+    no_genre = _no_genre(lines)
+    for g in list(genres.values()) + [no_genre]:
         own = {o.id for o in g.options}
         g.options.extend(o for o in universal if o.id not in own)
 
-    return genres, descs, universal
+    return genres, descs, universal, no_genre
 
 
-GENRES, GENRE_DESCS, UNIVERSAL = _parse()
+#: The document's own name for the sixteenth destination, which is not a genre.
+NO_GENRE_NAME = "No Genre"
+
+GENRES, GENRE_DESCS, UNIVERSAL, NO_GENRE = _parse()
+
+
+def genre(name: str) -> Genre | None:
+    """Any of the fifteen, or the No Genre fallback.
+
+    Callers that route a spec should use this rather than indexing `GENRES`: No Genre
+    is a real answer with real options, and it is deliberately kept out of that dict so
+    that anything enumerating the genres - the catalogue, the router's fifteen-way
+    choice - does not offer it as a sixteenth.
+    """
+    return NO_GENRE if name == NO_GENRE_NAME else GENRES.get(name)
 
 #: Every option ID that appears in more than one genre, per the shared registry.
 #: Universal options are excluded: they are in all fifteen by construction, so listing
@@ -370,28 +500,56 @@ HEADER = (
     "the space rather than as set dressing, keep them visually distinct from one "
     "another, and keep the whole layout legible in one view."
 )
+#: No Genre names no game type, so there is none to name here either. The rest of the
+#: instruction is unchanged - what the space is for does not change how it is built.
+PLACE_HEADER = (
+    "LAYOUT FEATURES for this map. Build these as the actual structure of "
+    "the space rather than as set dressing, keep them visually distinct from one "
+    "another, and keep the whole layout legible in one view."
+)
 SHAPE_LINE = "SHAPE OF THE SPACE - {label}: {what}"
 
 
-def render(genre_name: str, shape: Shape | None,
-           bullets: list[tuple[str, str]]) -> str:
+def axis_lines(g: Genre, axes: dict[str, str]) -> list[str]:
+    """The chosen axis values, worded as the document words them.
+
+    Defaults are skipped. They are the absence of a choice rather than one, the
+    document gives them no clause to inject, and saying "exterior, single surface" on
+    every place prompt would spend the image model's attention on nothing.
+    """
+    out = []
+    for key, value in (axes or {}).items():
+        a = g.axis(key)
+        if a is None or value == a.default:
+            continue
+        if clause := a.clauses.get(value, ""):
+            out.append(SHAPE_LINE.format(label=value, what=clause))
+    return out
+
+
+def render(genre_name: str, shape: Shape | None, bullets: list[tuple[str, str]],
+           axis_text: list[str] | None = None) -> str:
     """Assemble the addendum from an explicit shape and feature list.
 
     Picking nothing is a legitimate outcome and returns an empty string - the user
     gets a simple map, which Build.md is explicit is not a failure.
     """
-    if shape is None and not bullets:
+    axis_text = axis_text or []
+    if shape is None and not bullets and not axis_text:
         return ""
-    parts = [HEADER.format(genre=genre_name)]
+    parts = [PLACE_HEADER if genre_name == NO_GENRE_NAME
+             else HEADER.format(genre=genre_name)]
     if shape is not None:
         parts.append(SHAPE_LINE.format(label=shape.label, what=shape.what))
+    parts.extend(axis_text)
     if bullets:
         parts.append("INCLUDE:\n" + "\n".join(
             f"- {lab}: {txt}" if lab else f"- {txt}" for lab, txt in bullets))
     return "\n\n".join(parts)
 
 
-def injection(genre: Genre, shape: Shape | None, option_ids: list[str]) -> str:
+def injection(genre: Genre, shape: Shape | None, option_ids: list[str],
+              axes: dict[str, str] | None = None) -> str:
     """The Stage A addendum for one shape and a set of picked options.
 
     Only what a segmenter could recover from a render is injected: options marked
@@ -399,7 +557,8 @@ def injection(genre: Genre, shape: Shape | None, option_ids: list[str]) -> str:
     """
     picks = [o for oid in option_ids if (o := genre.option(oid)) and o.drawn]
     return render(genre.name, shape,
-                  [(o.label, visible_text(genre.name, o)) for o in picks])
+                  [(o.label, visible_text(genre.name, o)) for o in picks],
+                  axis_lines(genre, axes or {}))
 
 
 def dropped(genre: Genre, option_ids: list[str]) -> list[Option]:
@@ -468,8 +627,13 @@ def preset_menu_text(g: Genre) -> str:
     return "\n".join(out)
 
 
-def route_of(genre: Genre, shape: Shape | None, option_ids: list[str]) -> list[str]:
+def route_of(genre: Genre, shape: Shape | None, option_ids: list[str],
+             axes: dict[str, str] | None = None) -> list[str]:
     """The pipeline modifiers this combination forces, in document order.
+
+    ``axes`` is how a No Genre build says what a shape would otherwise say. Only a
+    non-default value carries anything, so an empty mapping and a mapping that names
+    every default are the same answer, and both route `P0`.
 
     ``SET`` is included and is not like the others: it says there is a space but
     nobody walks through it, so it sits alongside whatever route applies rather than
@@ -480,7 +644,9 @@ def route_of(genre: Genre, shape: Shape | None, option_ids: list[str]) -> list[s
     that modification - which is how the document writes it, `["P0", "SET"]`.
     """
     tags: list[str] = []
-    for text in ([genre.route, shape.pipeline if shape else ""]
+    axis_costs = [a.routes.get(v, "") for k, v in (axes or {}).items()
+                  if (a := genre.axis(k)) is not None]
+    for text in ([genre.route, shape.pipeline if shape else ""] + axis_costs
                  + [o.pipeline for oid in option_ids if (o := genre.option(oid))]):
         for tag in re.findall(r"\bP\d\b|\btiered\b|\bCHECK\b|\bSET\b", text or ""):
             if tag not in tags:
@@ -499,3 +665,9 @@ if __name__ == "__main__":
               f"{len(g.presets)} presets  {len(g.notes)} notes"
               + (f"  route={g.route.split(':')[1].strip().rstrip('.')}" if g.route else ""))
     print(f"\nshared option ids: {len(SHARED_IDS)}")
+    ng = NO_GENRE
+    print(f"\n{ng.name}: {len(ng.axes)} axes, {len(ng.options)} options, "
+          f"{len(ng.presets)} presets, {len(ng.notes)} notes")
+    for a in ng.axes:
+        costs = ", ".join(f"{v} -> {c}" for v, c in a.routes.items()) or "free"
+        print(f"  {a.id:<16} default {a.default:<16} {costs}")
