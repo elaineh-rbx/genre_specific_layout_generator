@@ -1,34 +1,31 @@
 {
   "scene": "0003",
-  "produced_by": "genre-choice skill, run by an agent with the repo as its working directory",
+  "produced_by": "genre-choice skill, run by a Claude Opus 5 agent with the repo as its working directory",
   "block": {
     "genres": ["shooter"],
     "shape": { "id": "lane-network", "type": "Lane", "name": "Lane Network" },
     "preset": "Team Deathmatch",
-    "pipeline": ["P2", "P3"],
+    "pipeline": ["P3", "P0 + tiered"],
     "image_prompt": [
-      { "id": "cover-los", "text": "Scattered shipping crates, concrete barricades, and metal barriers — waist-high (3–4 studs) and full-body (7–8 studs) — distributed evenly across every lane" },
-      { "id": "spawn-teambase", "text": "Two mirrored team bases at opposite ends of the industrial yard, walled off from the sniper towers' firing lines" },
-      { "id": "choke-bottleneck", "text": "Narrow transitions where the symmetrical lanes meet — alley mouths and gaps between the buildings — concentrating fights into contested ground" },
-      { "id": "cover-elevated", "text": "Sniper towers at opposite ends of the map, plus steel catwalks and elevated platforms spanning between buildings, reachable only through exposed, predictable stairs and ladders" },
-      { "id": "building-interior", "text": "Multiple concrete-and-metal warehouse buildings entered from the street through doorways, with window openings to fire out of" },
-      { "id": null, "text": "Modern industrial urban-warfare aesthetic throughout: poured concrete walls, corrugated and riveted metal, steel railings, rust and grime" }
+      { "id": "spawn-teambase", "text": "Balanced team bases at opposite ends of the industrial arena, completely shielded from the opposing sniper tower's sightlines" },
+      { "id": "cover-los", "text": "Waist-high (3-4 studs) concrete barriers and full-body (7-8 studs) metal cover crates distributed evenly across every lane" },
+      { "id": "choke-bottleneck", "text": "Narrow transitions where the symmetrical lanes meet between the buildings, concentrating team fights onto contested middle ground" },
+      { "id": "cover-elevated", "text": "Metal catwalks, elevated platforms, and a sniper tower at each end, reachable only through exposed, predictable stairs and ladders" },
+      { "id": "building-interior", "text": "Several concrete-and-steel industrial structures entered from the street through doorways, with windows to fight out of" }
     ],
     "layout_placement": [
-      { "id": "spawn-teambase", "type": "SpawnZone", "text": "Balanced team spawn zones at opposite ends, shielded from the sniper towers' sightlines" },
-      { "id": null, "text": "Expose wall height, building count, and cover density as tunable attributes on the generated map" }
+      { "id": "spawn-teambase", "type": "SpawnZone", "text": "Mirrored team spawns at opposite ends of the map, placed out of the sniper towers' firing lines" }
     ],
     "notes": [
-      "Medium-sized map; scale it for two teams rather than a large-player-count battlefield.",
-      "cover-elevated routes P2 rather than P0 + tiered because the catwalks overhang the floor below; if the catwalks are dropped in favour of solid tiered platforms it falls back to P0 + tiered.",
-      "building-interior adds P3 for the outside-to-inside transition.",
-      "Preset caveat: the prompt says 'tactical', but the genre notes' MilSim reading (breach-sequence raid site, no mirrored bases, clear-in-sequence) is contradicted by the requested symmetrical lanes, team-vs-team balance, and opposite-end bases. Team Deathmatch was taken instead; the Tactical Shooter preset was deliberately not used.",
-      "choke-bottleneck came in with the preset rather than being named in the prompt; it follows naturally from lanes converging, but drop it if the pipeline treats preset options as strictly opt-in.",
-      "Request no option covered: exposing wall height, building count, and cover density as tunable attributes. Emitted as free text in layout_placement, but it is a parameterisation request rather than a placed element.",
-      "No option enforces mirror symmetry; it is carried only as wording in the lane and spawn text. If lane-network generation does not guarantee a symmetric result, this needs handling downstream.",
-      "would have asked: whether to take the team deathmatch layout — mirrored bases at opposite ends, lanes between them, and cover through the middle — with the buildings, catwalks, and sniper towers added on top, or to build it up from scratch.",
-      "would have asked: whether the buildings should be genuinely enterable interiors (a slower build) or solid façades with window openings only, which would drop the P3 cost.",
-      "would have asked: anything else you want in the space?"
+      "would have asked: sounds like a round-based team deathmatch map - mirrored bases at opposite ends, symmetrical lanes between them, crates and barriers for cover through every lane - plus the sniper towers and catwalks as elevated firing positions and the buildings as breachable structures you can go inside. Want that, or would you rather build it up yourself?",
+      "would have asked: the catwalks and elevated platforms are taken as supported tiered walkways rather than suspended over playable floor. Is anyone meant to fight underneath them? That makes it an overhanging build, which isn't ready yet.",
+      "would have asked: anything else you want in the space?",
+      "cover-elevated routed P0 + tiered rather than P2: its P2 is conditional on an actual overhang, and the prompt names catwalks and towers without saying play happens beneath them.",
+      "building-interior forces P3 because the buildings have doorways to pass through and windows to shoot from, so players go inside. P3 is not ready yet - if this has to ship now the buildings become facades with recessed doorways on P0 and the interiors are deferred.",
+      "\"Tactical\" here did not route to the Tactical Shooter preset. That preset is MilSim - a breach sequence of dead-end rooms with no mirrored bases - and this prompt asks for symmetrical lanes and bases at opposite ends, which is the arcade Team Deathmatch layout.",
+      "No option covers the request to expose tunable attributes for wall height, building count, and cover density; that is a generator parameter surface rather than anything placed in the map.",
+      "Modern industrial / urban warfare aesthetic in concrete and metal is a theme directive rather than a layout option, carried here so it reaches the image prompt.",
+      "building-interior used Shooter's own breachable-structure wording, which wins over the identical universal ID. No Universal Option was applied."
     ]
   }
 }
