@@ -96,6 +96,9 @@ docs/LayoutGen - Pipeline.md  the companion: how a layout gets generated, and wh
                             approach has to change. Reference only so far - nothing in
                             the package reads it yet
 docs/subgenre-catalogue.html the 44 sub-genres of the older Hard Needs model
+docs/skill-run-findings.md  what broke when the genre-choice skill was executed as
+                            written, by an agent, on all 75 golden-set scenes. A report
+                            on the document rather than the scenes, for upstream
 
 layoutgen/paths.py               where everything lives
 layoutgen/arms.py                what an arm is, which exist, and which sets get compared
