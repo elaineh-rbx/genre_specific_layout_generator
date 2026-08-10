@@ -222,12 +222,14 @@ class Comparison:
 COMPARISONS: dict[str, Comparison] = {
     c.id: c for c in (
         Comparison(
-            id="three_way", page="three_way.html",
-            title="Raw vs Hard Needs vs Build.md Part II",
-            blurb="Every arm on the union of what both guided arms asked for, so a "
+            id="all_arms", page="all_arms.html",
+            title="Every arm on the same scene",
+            blurb="Each arm on the union of what all the guided arms asked for, so a "
                   "row read across shows whether an arm delivered a feature it never "
-                  "requested.",
-            arms=("raw", "needs", "rules"),
+                  "requested. The union is not evenly owned - an arm that asks for "
+                  "more of it will lead on the total while losing on someone else's "
+                  "requirements - so the split by who asked is the honest column.",
+            arms=("raw", "needs", "rules", "skill"),
         ),
         Comparison(
             id="rules_vs_raw", page="rules_compare.html",

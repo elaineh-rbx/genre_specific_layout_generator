@@ -43,7 +43,7 @@ CARDS = paths.RUN / "cards"
 
 #: Which arms a card shows, unless one is passed in. The widest comparison, because a
 #: card is a thing you hand someone, and the more arms it holds the more it settles.
-DEFAULT = "three_way"
+DEFAULT = "all_arms"
 STAGES = paths.STAGES
 STAGE_LABEL = {"iso": "isometric", "td": "top-down"}
 

@@ -10,7 +10,7 @@ Adding a fourth arm changes the width of a row, not the file.
 
 Usage:
     python -m layoutgen.web.pages.comparison            # every comparison
-    python -m layoutgen.web.pages.comparison three_way
+    python -m layoutgen.web.pages.comparison all_arms
 """
 
 from __future__ import annotations
@@ -272,8 +272,10 @@ function given(s){{
       ${{g.addendum?`<pre style="margin-top:7px">${{esc(g.addendum)}}</pre>`
         :`<p class="note">nothing injected</p>`}}${{sent}}</div>`;
   }}).join("");
-  return `<div class="given" style="grid-template-columns:repeat(${{
-    Math.min(ARMS.length,3)}},1fr)">${{box}}</div>`;
+  // Four arms read better as a square than as a row of three and a widow.
+  const cols=ARMS.length===4?2:Math.min(ARMS.length,3);
+  return `<div class="given" style="grid-template-columns:repeat(${{cols}},1fr)">${{
+    box}}</div>`;
 }}
 
 function render(i){{
@@ -331,8 +333,26 @@ list(); render(0);
     return out
 
 
+#: Pages that used to exist under another name, and the page that replaced them. A
+#: bookmark is the only copy of a URL most people keep, and the alternative to three
+#: lines of redirect is someone reading a page that stopped being rebuilt.
+MOVED = {"three_way.html": "all_arms.html"}
+
+
+def redirects() -> list[pathlib.Path]:
+    out = []
+    for old, new in MOVED.items():
+        dest = paths.SITE / old
+        dest.write_text(f'<!doctype html><meta charset="utf-8">'
+                        f'<meta http-equiv="refresh" content="0; url={new}">'
+                        f'<title>moved</title><p>This page is now '
+                        f'<a href="{new}">{new}</a>.</p>\n')
+        out.append(dest)
+    return out
+
+
 def build_all() -> list[pathlib.Path]:
-    return [build(c) for c in A.COMPARISONS.values()]
+    return [build(c) for c in A.COMPARISONS.values()] + redirects()
 
 
 if __name__ == "__main__":

@@ -9,9 +9,9 @@ survive the isometric and be lost when it is converted to a top-down, and report
 one number would have to pick a stage silently.
 
 Usage:
-    python -m layoutgen.evaluate.score three_way
+    python -m layoutgen.evaluate.score all_arms
     python -m layoutgen.evaluate.score rules_vs_raw --stage iso --workers 8
-    python -m layoutgen.evaluate.score three_way --only 0053,0054
+    python -m layoutgen.evaluate.score all_arms --only 0053,0054
 """
 
 from __future__ import annotations
