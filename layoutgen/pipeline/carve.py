@@ -129,6 +129,10 @@ def carve_track(complexity: int, seed: int, crossings: int = 0,
     return {"layout": plan.name, "solution": plan.name, "kind": "track",
             "cells": t["complexity"], "seed": t["seed"],
             "masks": {"plan": road, "solution": None},
+            # Which generator drew it. Two are in play and they do not look alike, so
+            # a caller comparing one carve against another wants to be told rather
+            # than left to infer it from the picture.
+            "method": t["method"],
             "closed": closed, "crossings": t["crossings"], "steps": t["length"]}
 
 

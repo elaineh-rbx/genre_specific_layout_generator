@@ -478,7 +478,9 @@ function modeChanged(){
   $("stageBwrap").style.display=on?"none":"";
   $("lab1").textContent=on?"Isometric \u2014 step 3, from the top-down":"Isometric";
   $("lab2").textContent=on?"Top-down \u2014 step 2, locked to the layout":"Top-down";
-  $("celllab").firstChild.textContent=track?"corners ":"cells ";
+  // Not "corners" any more: on a folded circuit this number buys simulation steps,
+  // and so how far the loop doubles back, not a count of anything you can see.
+  $("celllab").firstChild.textContent=track?"complexity ":"cells ";
   $("cells").min=track?6:4; $("cells").max=track?20:28;
   if(track&&+$("cells").value>20) $("cells").value=13;
   const s=G().shapes.find(x=>x.id===shape);
@@ -504,10 +506,14 @@ function describeLayout(l){
   $("cells").value=l.cells; $("seed").value=l.seed;
   if(l.kind==="track"){
     $("crossings").value=l.crossings;
-    $("laymeta").textContent=`${l.cells} corners \u00b7 seed ${l.seed}`;
-    $("laynote").textContent=(l.closed
-      ? `one closed loop by construction \u00b7 ${l.steps} track-widths round`
-      : `one course, start to finish, by construction \u00b7 ${l.steps} track-widths`)+
+    $("laymeta").textContent=`complexity ${l.cells} \u00b7 seed ${l.seed}`+
+      (l.method?` \u00b7 ${l.method}`:"");
+    $("laynote").textContent=(!l.closed
+      ? `one course, start to finish, by construction \u00b7 ${l.steps} track-widths`
+      : l.method==="repulsive"
+      ? `one closed loop, folded until the road stopped fitting \u00b7 ${
+          l.steps} track-widths round`
+      : `one closed loop by construction \u00b7 ${l.steps} track-widths round`)+
       (l.crossings?` \u00b7 ${l.crossings} bridge`+(l.crossings>1?"s":""):"");
   }else{
     $("laymeta").textContent=`${l.cells}\u00d7${l.cells} \u00b7 seed ${l.seed}`;
@@ -529,21 +535,29 @@ function drawLayHist(){
   const shown=layHist.map((l,i)=>({l,i})).filter(x=>(x.l.kind||"maze")===k);
   $("layhist").innerHTML=shown.slice(0,12).map(({l,i})=>
     `<div data-l="${i}" class="${LAY&&l.seed===LAY.seed&&l.cells===LAY.cells?"on":""}"
-      title="${l.kind==="track"?l.cells+" corners":l.cells+"\u00d7"+l.cells}, seed ${
+      title="${l.kind==="track"?"complexity "+l.cells:l.cells+"\u00d7"+l.cells}, seed ${
         l.seed}"><img src="/out/${l.layout}"><span>seed ${l.seed}</span></div>`).join("");
   $("layhist").querySelectorAll("[data-l]").forEach(el=>
     el.onclick=()=>showLayout(layHist[+el.dataset.l]));
 }
+// A maze comes back instantly, but growing a folded circuit takes about ten seconds,
+// and an await with nothing on screen is indistinguishable from a broken button.
 async function carveLayout(){
   const s=G().shapes.find(x=>x.id===shape);
   const body={kind:layoutKind()||"maze", genre:G().name, shape:shape,
     cells:+$("cells").value||12, seed:+$("seed").value||0,
     closed:!(s&&s.track&&!s.closed), crossings:+$("crossings").value||0};
-  const r=await (await fetch("/api/layout",{method:"POST",
-    headers:{"Content-Type":"application/json"},body:JSON.stringify(body)})).json();
-  if(r.error){ $("laynote").textContent=r.error; return; }
-  if(!layHist.some(l=>l.seed===r.seed&&l.cells===r.cells)) layHist.unshift(r);
-  showLayout(r);
+  const slow=body.kind==="track"&&body.closed&&!body.crossings;
+  $("newlay").disabled=true;
+  if(slow) $("laynote").textContent=
+    "growing the loop, and folding it as far as the road allows\u2026";
+  try{
+    const r=await (await fetch("/api/layout",{method:"POST",
+      headers:{"Content-Type":"application/json"},body:JSON.stringify(body)})).json();
+    if(r.error){ $("laynote").textContent=r.error; return; }
+    if(!layHist.some(l=>l.seed===r.seed&&l.cells===r.cells)) layHist.unshift(r);
+    showLayout(r);
+  }finally{ $("newlay").disabled=false; }
 }
 // Generating without a carve is fine - the server carves from the same numbers this
 // panel shows - so the button no longer waits for one, and the result is written back
