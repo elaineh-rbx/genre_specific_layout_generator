@@ -5,9 +5,17 @@ connected route, legible from plan view, with no broken or ambiguously self-cros
 segments. A free image can't guarantee that." So the loop is generated here and the
 image model is handed a finished plan to dress, rather than asked to invent one.
 
+A closed circuit's shape comes from `layoutgen.layouts.repulsive`, which grows a loop
+by pushing it away from itself until it folds back into corridors and hairpins. The
+angle-sorted generator it replaced could not fold at all - points at strictly
+increasing angles about a centre cannot double back - so every circuit was an oval
+with dents. It is still here, and still used for the two cases the folded curve
+cannot serve: an open point-to-point course, and a circuit asked for a crossing.
+
 Guaranteed by construction:
-  - one continuous closed loop, because the control points are sorted by angle, which
-    makes a simple polygon, and Chaikin smoothing preserves simplicity
+  - one continuous closed loop, from either generator
+  - a road that does not touch itself: the folded curve is relaxed against the width
+    it is about to be drawn at, so a hairpin cannot close up into a blob
   - no dead ends, no forks, no unreachable spurs
   - a start/finish placed on the loop
   - self-crossings only when asked for, and then drawn with a real gap so the plan
@@ -166,6 +174,51 @@ def _marker(d: ImageDraw.ImageDraw, p0, p1, width: int, fill) -> None:
            fill=fill, width=max(6, width // 7))
 
 
+#: What `complexity` buys on the repulsive path: simulation steps, and so length, and
+#: so how far the loop folds back into itself. Below about 40 it is still a blob; much
+#: above 220 it stops gaining shape and only costs seconds.
+STEPS = (40, 220)
+
+
+def _steps_for(complexity: int) -> int:
+    return round(STEPS[0] + (complexity - 6) / 14 * (STEPS[1] - STEPS[0]))
+
+
+#: How wide the road is drawn, against the canvas. A folded circuit needs a far
+#: slimmer one than an oval does: the corridors have to pass each other, so the road
+#: plus its gap is the pitch the loop can be packed at, and at the old 0.085 only
+#: about seven corridors fit across a canvas - too few for the loop to fold at all.
+WIDTH_FRAC = {"radial": 0.085, "repulsive": 0.022}
+
+#: The dark gap left between two corridors that pass each other, against the road.
+#: Without it the loop is still legible as a curve but not as a *route* - two roads
+#: meeting with no seam read as one wide piece of tarmac.
+GAP_FRAC = 0.6
+
+
+def _repulsive_loop(seed: int, complexity: int, size: int, pitch: float,
+                    margin: int) -> tuple[list[tuple[float, float]], int]:
+    """A folded circuit from `layoutgen.layouts.repulsive`, fitted to the canvas.
+
+    How much room the road needs is worked out here rather than in that package
+    because it is a fact about this canvas, not about the curve: the optimizer
+    promises a centreline that does not cross itself, and only the renderer knows how
+    wide a carriageway is about to be hung on it. `_fit` scales the loop's longer side
+    to `size - 2 * margin`, so `pitch` - the road, its edging and the dark gap either
+    side of it - converts straight into the fraction of its own span the loop has to
+    keep clear.
+    """
+    from layoutgen.layouts import repulsive as rc
+
+    curve = rc.centreline(seed, _steps_for(complexity),
+                          road_half=pitch / 2 / (size - 2 * margin))
+    pts = _fit([(float(x), float(y)) for x, y in curve], size, margin)
+    # Belt and braces: the spline through the evolved vertices can bow slightly closer
+    # than they did, so the offsets get a chance to push the last of it apart.
+    relaxed, rounds = rc.relax_offsets(pts, pitch / 2)
+    return _fit([(float(x), float(y)) for x, y in relaxed], size, margin), rounds
+
+
 def _route_points(rng: random.Random, n: int, size: float) -> list[tuple[float, float]]:
     """An open course from one corner to another, for a point-to-point race.
 
@@ -197,7 +250,7 @@ def _route_points(rng: random.Random, n: int, size: float) -> list[tuple[float, 
 
 
 def generate(seed: int = 7, complexity: int = 11, size: int = 1024,
-             crossings: int = 0, width_frac: float = 0.085,
+             crossings: int = 0, width_frac: float | None = None,
              closed: bool = True) -> dict:
     """One track - a closed circuit, or an open point-to-point course.
 
@@ -206,27 +259,43 @@ def generate(seed: int = 7, complexity: int = 11, size: int = 1024,
     """
     complexity = max(6, min(20, int(complexity)))
     want = 0 if not closed else max(0, int(crossings))
+    method = "repulsive" if closed and not want else "radial"
+    if width_frac is None:
+        width_frac = WIDTH_FRAC[method]
     rng = random.Random(int(seed))
+    track_w = max(14, int(size * width_frac))
+    edge_w = max(3, round(track_w * 0.115))
+    margin = max(int(size * width_frac * 1.4), track_w)
+    relaxed = 0
     if not closed:
         raw = _route_points(rng, complexity, size)
         pts = _chaikin_open(raw, 4)
-    else:
+    elif method == "radial":
+        # A crossing is made by reversing a run of the loop, which needs a coarse
+        # polyline to search over and undoes the spacing a folded curve was relaxed
+        # for. The angle-sorted generator is the one that can take one.
         raw = _control_points(rng, complexity, size / 2, size / 2, size * 0.40)
         pts = chaikin(raw, 4)
+    else:
+        pts, relaxed = _repulsive_loop(
+            int(seed), complexity, size,
+            track_w + edge_w + max(8, round(track_w * GAP_FRAC)), margin)
     if want:
         # Cross after smoothing, then round the two new corners without undoing them.
         pts = _cross(pts, rng, want)
         smoothed = chaikin(pts, 1)
         if len(find_crossings(smoothed)) >= want:
             pts = smoothed
-    pts = _fit(pts, size, int(size * width_frac * 1.4))
+    pts = _fit(pts, size, margin)
 
-    track_w = max(14, int(size * width_frac))
-    hits = find_crossings(pts) if closed else []
+    # The repulsive loop is crossing-free by construction and carries a few thousand
+    # points, so asking would cost an O(n^2) search to confirm what relaxing the
+    # offsets already guaranteed.
+    hits = find_crossings(pts) if closed and method == "radial" else []
 
     img = Image.new("RGB", (size, size), BG)
     d = ImageDraw.Draw(img)
-    _band(d, pts, track_w + 10, EDGE, closed)
+    _band(d, pts, track_w + edge_w, EDGE, closed)
     _band(d, pts, track_w, ROAD, closed)
 
     # Break the lower-numbered edge at each crossing so one road clearly passes over.
@@ -234,18 +303,21 @@ def generate(seed: int = 7, complexity: int = 11, size: int = 1024,
         r = track_w * 0.95
         d.ellipse([x - r, y - r, x + r, y + r], fill=BG)
         over = _sub(pts, j, track_w * 2.4)
-        d.line(over, fill=EDGE, width=track_w + 10, joint="curve")
+        d.line(over, fill=EDGE, width=track_w + edge_w, joint="curve")
         d.line(over, fill=ROAD, width=track_w, joint="curve")
 
-    _marker(d, pts[0], pts[1], track_w, START)
+    # Across the edging as well as the road, or on a folded circuit's slim
+    # carriageway the start is a tick too short to find.
+    _marker(d, pts[0], pts[1], track_w + 2 * edge_w, START)
     if not closed:
-        _marker(d, pts[-1], pts[-2], track_w, FINISH)
+        _marker(d, pts[-1], pts[-2], track_w + 2 * edge_w, FINISH)
 
     n = len(pts)
     length = sum(math.dist(pts[i], pts[(i + 1) % n])
                  for i in range(n if closed else n - 1))
     return {"image": img, "points": pts, "seed": int(seed), "closed": closed,
-            "complexity": complexity, "crossings": len(hits),
+            "complexity": complexity, "crossings": len(hits), "method": method,
+            "relaxed": relaxed,
             "length": round(length / track_w, 1), "width": track_w}
 
 
@@ -262,7 +334,8 @@ def main() -> int:
     t = generate(a.seed, a.complexity, a.size, a.crossings, closed=not a.open)
     t["image"].save(a.out)
     print(f"{a.out}  seed {t['seed']}  {'circuit' if t['closed'] else 'course'}  "
-          f"{t['complexity']} control points  {t['crossings']} crossing(s)  "
+          f"{t['method']}  complexity {t['complexity']}  "
+          f"{t['crossings']} crossing(s)  {t['relaxed']} relax round(s)  "
           f"{t['length']} track-widths long")
     return 0
 

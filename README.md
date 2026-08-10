@@ -62,6 +62,14 @@ it is solvable by construction rather than by luck. A circuit from
 self-crossings. The image model is handed that plan and asked to dress it, not to
 invent it.
 
+A circuit's shape comes from `layoutgen/layouts/repulsive/`, ported from
+[rschmidt/trackgen](https://github.rbx.com/rschmidt/trackgen) at `69dfd36`: a loop is
+grown while being pushed away from itself, so it folds back into hairpins and long
+parallel corridors instead of staying a ring. How far it is allowed to fold is decided
+by the road it is about to be drawn with - the evolution keeps the last shape whose
+carriageway still fits without two corridors merging - which is also why a folded
+circuit is drawn with a much slimmer road than the old one was.
+
 ## What is in `results/`
 
 75 prompts, each generated three ways, judged blind by a vision model against the
@@ -123,6 +131,7 @@ layoutgen/pipeline/carve.py      authored layouts, and the overlays that check t
 layoutgen/pipeline/run.py        one spec all the way to images, in any of the three orders
 layoutgen/pipeline/golden.py     the same, batched over the 75 golden prompts
 layoutgen/layouts/               authored topology: mazes, racing circuits
+layoutgen/layouts/repulsive/     the folded-loop centreline, vendored from trackgen
 
 layoutgen/evaluate/judge.py      one blinded judge, any number of arms
 layoutgen/evaluate/score.py      run a comparison over the golden set
@@ -181,10 +190,15 @@ run/                        anything a live server writes, plus the image cache
 ## Running it
 
 ```bash
-pip install -e .                     # pillow, numpy, httpx, matplotlib
+pip install -e .                     # pillow, numpy, httpx, matplotlib, scipy, numba
 scripts/serve.sh                     # 8887 the playground, 8888 the viewers
 scripts/serve.sh status
 ```
+
+Install into a virtual environment made with `--system-site-packages`, or torch and the
+rest of the system packages disappear. `serve.sh` runs `.venv/bin/python` when there is
+one, because carving a circuit needs scipy and numba and the interpreter on `PATH` is
+usually not the one they were installed for.
 
 After rebuilding the pages, and before believing one:
 

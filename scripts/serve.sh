@@ -18,7 +18,12 @@
 set -u
 
 REPO=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
-PY="${LAYOUTGEN_PYTHON:-$(command -v python3)}"
+# The repo's own venv first: carving a racing circuit needs scipy and numba, and the
+# interpreter on PATH is not the one they were installed for. Falling back to it keeps
+# a checkout without a venv serving pages, which is most of what these ports do.
+PY="${LAYOUTGEN_PYTHON:-}"
+[ -z "$PY" ] && [ -x "$REPO/.venv/bin/python" ] && PY="$REPO/.venv/bin/python"
+[ -z "$PY" ] && PY="$(command -v python3)"
 LOGS="$REPO/run/logs"
 PORTS=(8887 8888)
 HOMES=(playground viewers)
