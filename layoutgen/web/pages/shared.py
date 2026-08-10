@@ -32,7 +32,9 @@ def thumbs() -> int:
             for stage in paths.STAGES:
                 jobs.append((paths.scene(arm, stage, scene),
                              paths.thumb(arm, stage, scene)))
-        jobs.append((paths.plan(scene), paths.thumb("rules", "plan", scene)))
+            # Only the arms that route a scene layout-first have one of these, and
+            # they disagree about which scenes those are, so every arm is asked.
+            jobs.append((paths.plan(scene, arm), paths.thumb(arm, "plan", scene)))
     with ThreadPoolExecutor(max_workers=8) as pool:
         return sum(pool.map(lambda j: thumb(*j), jobs))
 

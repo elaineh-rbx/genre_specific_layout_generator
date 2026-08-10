@@ -45,9 +45,13 @@ def scene(arm: str, stage: str, sid: str) -> pathlib.Path:
     return SCENES / arm / stage / f"{sid}.png"
 
 
-def plan(sid: str) -> pathlib.Path:
-    """The blueprint a layout-first scene was carved from, where there was one."""
-    return SCENES / "rules" / "plan" / f"{sid}.png"
+def plan(sid: str, arm: str = "rules") -> pathlib.Path:
+    """The blueprint a layout-first scene was carved from, where there was one.
+
+    Per arm, because which scenes get one is a consequence of the picks: two arms
+    reading the same prompt can disagree about whether the topology is the game.
+    """
+    return SCENES / arm / "plan" / f"{sid}.png"
 
 
 def thumb(arm: str, stage: str, sid: str) -> pathlib.Path:

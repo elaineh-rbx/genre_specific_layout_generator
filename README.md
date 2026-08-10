@@ -150,6 +150,9 @@ layoutgen/assets.py         finds a scene's images, on this disk or in the bucke
 tools/generate_genre_skills.py  writes those 15 genre files from the rules document,
                             and --check says whether they still match. This is the
                             drift guard for the three copied items above
+tools/check_pages.py        opens every built page in a browser and fails on an
+                            uncaught error, a broken image or an empty panel - the
+                            faults a page can have while still building cleanly
 
 evaluation/                 upstream's study behind that document: 620 real user
                             prompts graded for genre and coverage, the clustering of
@@ -181,6 +184,13 @@ run/                        anything a live server writes, plus the image cache
 pip install -e .                     # pillow, numpy, httpx, matplotlib
 scripts/serve.sh                     # 8887 the playground, 8888 the viewers
 scripts/serve.sh status
+```
+
+After rebuilding the pages, and before believing one:
+
+```bash
+pip install -e '.[check]' && python -m playwright install --with-deps chromium
+python -m layoutgen.web.build && python tools/check_pages.py
 ```
 
 Both ports run the same program and answer every path identically; they differ only in

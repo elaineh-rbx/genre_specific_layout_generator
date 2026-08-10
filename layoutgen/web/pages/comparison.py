@@ -61,14 +61,39 @@ def collect(cmp: A.Comparison) -> list[dict]:
             feats.append({**q, "marks": marks, "note": note})
 
         anchor = next((r for r in rows.values() if r), {})
+        # What each arm decided, rather than one arm's answer standing for the scene.
+        # On a page whose whole subject is two arms disagreeing, borrowing the header
+        # from whichever happened to be first would report the disagreement as fact.
+        # A field an arm has no concept of is not a dissent, and is held as null rather
+        # than as a blank: the hard-needs arm predates both presets and generation
+        # orders, and if its silence read as "none" it would disagree with an arm that
+        # genuinely fitted no preset. Only stated answers are compared - and for an arm
+        # that has presets, "none" is one of them.
+        called = {}
+        for a in cmp:
+            row = rows.get(a.id, {})
+            if not row.get("genre"):
+                continue
+            modelled = bool(row.get("order"))
+            called[a.id] = {"genre": row["genre"],
+                            "preset": row.get("preset", "none") if modelled else None,
+                            "order": row.get("order") or None,
+                            "plan": row.get("plan")}
+        agreed = all(len({c[f] for c in called.values() if c[f] is not None}) <= 1
+                     for f in ("genre", "preset", "order"))
         out.append({
             "scene": scene,
             "title": anchor.get("title", ""),
             "prompt": anchor.get("prompt", ""),
-            "genre": anchor.get("genre", ""),
-            "order": rows.get("rules", {}).get("order", "std"),
-            "preset": rows.get("rules", {}).get("preset", "none"),
-            "plan": rows.get("rules", {}).get("plan"),
+            # Every answer given, so that filtering for a genre finds the scenes any
+            # arm called that even when another arm called them something else.
+            "genre": " / ".join(dict.fromkeys(c["genre"] for c in called.values()))
+                     or anchor.get("genre", ""),
+            "genres": list(dict.fromkeys(c["genre"] for c in called.values())),
+            "orders": list(dict.fromkeys(c["order"] for c in called.values()
+                                         if c["order"])),
+            "called": called,
+            "agreed": agreed,
             "total": len(feats),
             "met": {st: (judged[st]["met"] if judged[st]
                          else {a: 0 for a in cmp.arms}) for st in paths.STAGES},
@@ -130,7 +155,7 @@ def build(cmp: A.Comparison) -> pathlib.Path:
     scenes = collect(cmp)
     arms = [{"id": a.id, "title": a.title, "short": a.short, "accent": a.accent,
              "blurb": a.blurb} for a in cmp]
-    genres = sorted({s["genre"] for s in scenes if s["genre"]})
+    genres = sorted({g for s in scenes for g in s["genres"]})
 
     html = f"""<!doctype html><meta charset="utf-8">
 <title>{cmp.title}</title>
@@ -201,6 +226,40 @@ function table(s){{
     ${{rows}}</table>`;
 }}
 
+function called(s){{
+  // One line per arm when they disagree, one shared line when they do not - so a
+  // scene every arm read the same way does not look like an argument.
+  const arms=ARMS.filter(a=>s.called[a.id]);
+  if(!arms.length) return "";
+  const chips=c=>(c.preset==null?""
+      :c.preset==="none"?`<span class="chip">no preset fitted</span>`
+      :`<span class="chip acc">${{esc(c.preset)}}</span>`)+
+    (c.order?`<span class="chip">${{esc(c.order)}}</span>`:"");
+  if(s.agreed){{
+    const pick=f=>{{for(const a of arms){{const v=s.called[a.id][f];
+      if(v!=null) return v;}} return null;}};
+    return `<div>${{chips({{preset:pick("preset"),order:pick("order")}})}}${{
+      arms.length>1?`<span class="chip">all agree</span>`:""}}</div>`;
+  }}
+  return arms.map(a=>{{
+    const c=s.called[a.id];
+    return `<div style="margin:3px 0"><span class="chip" style="color:${{a.accent}}">${{
+      esc(a.short)}}</span> <b>${{esc(c.genre)}}</b> ${{chips(c)}}</div>`;
+  }}).join("");
+}}
+
+function plans(s){{
+  const has=ARMS.filter(a=>s.called[a.id]&&s.called[a.id].plan);
+  if(!has.length) return "";
+  const figs=has.map(a=>`<div class="fig">
+    <h5 style="color:${{a.accent}}">${{esc(a.title)}}</h5>
+    <img src="${{thumb(a.id,"plan",s.scene)}}"
+      data-full="${{shot(a.id,"plan",s.scene)}}"></div>`).join("");
+  return `<div class="sect"><h3>plan drawn first, before any picture</h3>
+    <div class="strip" style="grid-template-columns:repeat(${{
+      has.length}},minmax(0,420px))">${{figs}}</div></div>`;
+}}
+
 function given(s){{
   const box=ARMS.map(a=>{{
     const g=s.given[a.id]||{{}};
@@ -221,17 +280,13 @@ function render(i){{
   cur=i; const s=S[i];
   $("main").innerHTML = HEAD + `
   <div class="sect">
-    <h2>${{esc(s.scene)}} &mdash; ${{esc(s.genre)}}
-      ${{s.preset!=="none"?`<span class="chip acc">${{esc(s.preset)}}</span>`
-        :`<span class="chip">no preset fitted</span>`}}
-      <span class="chip">${{esc(s.order)}}</span></h2>
+    <h2>${{esc(s.scene)}}${{s.agreed&&s.genre?` &mdash; ${{esc(s.genre)}}`:""}}</h2>
+    ${{called(s)}}
     <p class="note">${{esc(s.prompt)}}</p>
   </div>
   ${{STAGES.map(([st,label])=>`<div class="sect"><h3>${{label}}</h3>
     ${{strip(s,st)}}</div>`).join("")}}
-  ${{s.plan?`<div class="sect"><h3>plan the rules arm drew first</h3>
-    <div class="fig" style="max-width:420px"><img src="${{thumb("rules","plan",s.scene)}}"
-      data-full="${{shot("rules","plan",s.scene)}}"></div></div>`:""}}
+  ${{plans(s)}}
   <div class="sect"><h3>Requirements &mdash; ${{s.total}} checked in each image</h3>
     ${{table(s)}}</div>
   <div class="sect"><h3>What each arm was given</h3>${{given(s)}}</div>`;
@@ -243,7 +298,7 @@ function render(i){{
 function shown(){{
   const g=$("fg").value,o=$("fo").value;
   return S.map((s,i)=>({{s,i}})).filter(({{s}})=>
-    (!g||s.genre===g)&&(!o||s.order===o));
+    (!g||s.genres.includes(g))&&(!o||s.orders.includes(o)));
 }}
 
 function list(){{
