@@ -60,7 +60,12 @@ def collect(cmp: A.Comparison) -> list[dict]:
                          if (s := judged[st]) and i < len(s["items"])), "")
             feats.append({**q, "marks": marks, "note": note})
 
-        anchor = next((r for r in rows.values() if r), {})
+        # Per field, not per row. The scene's prompt and title are the same whichever
+        # arm is asked, but not every arm records them - the hard-needs run predates
+        # the field - and taking them all from the first row that happened to exist
+        # silently emptied the prompt the moment that row was the one without it.
+        def said(field: str) -> str:
+            return next((r[field] for r in rows.values() if r.get(field)), "")
         # What each arm decided, rather than one arm's answer standing for the scene.
         # On a page whose whole subject is two arms disagreeing, borrowing the header
         # from whichever happened to be first would report the disagreement as fact.
@@ -83,12 +88,12 @@ def collect(cmp: A.Comparison) -> list[dict]:
                      for f in ("genre", "preset", "order"))
         out.append({
             "scene": scene,
-            "title": anchor.get("title", ""),
-            "prompt": anchor.get("prompt", ""),
+            "title": said("title"),
+            "prompt": said("prompt"),
             # Every answer given, so that filtering for a genre finds the scenes any
             # arm called that even when another arm called them something else.
             "genre": " / ".join(dict.fromkeys(c["genre"] for c in called.values()))
-                     or anchor.get("genre", ""),
+                     or said("genre"),
             "genres": list(dict.fromkeys(c["genre"] for c in called.values())),
             "orders": list(dict.fromkeys(c["order"] for c in called.values()
                                          if c["order"])),
@@ -306,13 +311,13 @@ function shown(){{
 function list(){{
   $("list").innerHTML=shown().map(({{s,i}})=>{{
     const tally=ARMS.map(a=>s.met.iso[a.id]).join("/");
-    return `<div class="row">${{pickBox(s.scene)}}
+    return `<div class="row">
       <a href="#" data-i="${{i}}">${{s.scene}} &mdash; ${{esc(s.genre)}}
-        <i>${{tally}} of ${{s.total}} visible</i></a></div>`;
+        <i>${{tally}} of ${{s.total}} visible</i></a>${{cardBtn(s.scene)}}</div>`;
   }}).join("");
   $("list").querySelectorAll("a").forEach(a=>a.onclick=e=>{{
     e.preventDefault(); render(+a.dataset.i);}});
-  bindPicks();
+  bindCards();
 }}
 
 $("fg").onchange=$("fo").onchange=()=>{{list();

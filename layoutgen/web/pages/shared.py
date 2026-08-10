@@ -128,8 +128,16 @@ CARD_CSS = """
 .cardbar a{color:var(--acc);font-size:11px;text-decoration:none}
 .cardbar .note{font-size:10.5px;color:var(--dim2);margin-top:4px}
 .nav .row{display:flex;align-items:flex-start;gap:6px}
-.nav .row input{margin:7px 0 0;accent-color:var(--acc)}
 .nav .row a{flex:1;min-width:0}
+/* One per prompt, and quiet until the row is under the pointer: the list is read far
+   more often than a card is taken, so the button should not compete with the scene. */
+.nav .row .cardbtn{flex:0 0 auto;margin-top:4px;background:transparent;
+  color:var(--dim2);border:1px solid var(--ln);border-radius:5px;padding:2px 6px;
+  font-size:10px;cursor:pointer;opacity:0;transition:opacity .12s}
+.nav .row:hover .cardbtn,.nav .row .cardbtn:focus{opacity:1}
+.nav .row .cardbtn:hover{color:#cfe6ff;background:#16324f;border-color:#2f4a7a}
+.nav .row .cardbtn:disabled{opacity:1;color:var(--dim2);background:var(--pan);
+  cursor:default}
 .dl{background:#16324f;color:#cfe6ff;border:1px solid #2f4a7a;border-radius:6px;
   padding:3px 10px;font-size:11.5px;cursor:pointer;margin-left:8px}
 .dl:disabled{color:var(--dim2);background:var(--pan);border-color:var(--ln);
@@ -137,10 +145,9 @@ CARD_CSS = """
 """
 
 CARD_BAR = """<div class="f cardbar">
-      <button id="dlpick" disabled>download cards</button>
-      <a href="#" id="pickall">all shown</a> &middot;
-      <a href="#" id="picknone">none</a>
-      <div class="note" id="picknote">tick scenes to take their cards as a zip</div>
+      <button id="dlall">download every scene shown</button>
+      <div class="note" id="cardnote">or take one from the card button on a
+        prompt</div>
     </div>"""
 
 #: Expects the page to define `shown()`, returning the scenes the filters allow, and
@@ -168,25 +175,24 @@ async function card(body,as,btn,note){
     else note.textContent=" "+(c.error||"failed");
   },1200);
 }
-const picked=new Set();
-const pickBox=scene=>`<input type="checkbox" data-s="${scene}" ${
-  picked.has(scene)?"checked":""}>`;
-function bindPicks(){
-  document.querySelectorAll(".nav input[data-s]").forEach(c=>c.onchange=()=>{
-    c.checked?picked.add(c.dataset.s):picked.delete(c.dataset.s); updatePick(); });
-  updatePick();
+// Taking a card is nearly always about the one prompt being read, so the button that
+// does it sits on the prompt. Progress goes to the bar rather than into the button's
+// own label, which would resize the row it lives in while the sheet is drawn.
+const cardBtn=scene=>`<button class="cardbtn" data-s="${scene}"`+
+  ` title="download this scene's card">card</button>`;
+function bindCards(){
+  document.querySelectorAll(".nav button[data-s]").forEach(b=>b.onclick=e=>{
+    e.preventDefault(); e.stopPropagation();
+    const s=b.dataset.s;
+    card({scenes:[s]},`card_${s}.png`,b,$("cardnote"));
+  });
 }
-function updatePick(){
-  $("dlpick").disabled=!picked.size;
-  $("dlpick").textContent=picked.size>1?`download ${picked.size} cards as a zip`
-    :picked.size?"download 1 card":"download cards";
-}
-$("pickall").onclick=e=>{ e.preventDefault();
-  shown().forEach(x=>picked.add(x.s.scene)); list(); };
-$("picknone").onclick=e=>{ e.preventDefault(); picked.clear(); list(); };
-$("dlpick").onclick=()=>card({scenes:[...picked].sort()},
-  picked.size>1?"cards.zip":`card_${[...picked][0]}.png`,
-  $("dlpick"),$("picknote"));
+$("dlall").onclick=()=>{
+  const scenes=shown().map(x=>x.s.scene);
+  if(!scenes.length) return;
+  card({scenes},scenes.length>1?"cards.zip":`card_${scenes[0]}.png`,
+    $("dlall"),$("cardnote"));
+};
 """
 
 #: Every page in this set, so each one can link to the others. The comparison pages
