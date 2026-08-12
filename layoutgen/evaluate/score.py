@@ -52,7 +52,7 @@ def thumb(src: pathlib.Path, dest: pathlib.Path) -> bool:
 
 def score_scene(cmp: A.Comparison, scene: str, rows: dict[str, dict],
                 stage: str) -> dict | None:
-    reqs = cmp.requirements(rows)
+    reqs = cmp.requirements(rows, scene)
     if not reqs:
         return None
     thumbs = {}
@@ -62,7 +62,7 @@ def score_scene(cmp: A.Comparison, scene: str, rows: dict[str, dict],
             return None
         thumbs[arm] = dest
 
-    marked = J.judge(reqs, thumbs, int(scene))
+    marked = J.judge(reqs, thumbs, J.key_for(scene))
     if marked is None:
         print(f"  {scene}: judging failed", flush=True)
         return None
@@ -91,7 +91,9 @@ def report(cmp: A.Comparison, results: list[dict], stage: str) -> None:
         met = sum(r["met"].get(arm.id, 0) for r in results)
         print(f"  {arm.title:34s} {met:4d}/{tot}  {100 * met / tot:5.1f}%")
 
-    if len(cmp.asking) > 1:
+    # Only meaningful when the arms wrote the checklist. A comparison judged on an
+    # outside basis has one owner for every requirement, so there is nothing to split.
+    if cmp.basis is None and len(cmp.asking) > 1:
         print("\nsplit by which arm asked for the requirement:")
         for asker in cmp.asking:
             its = [it for r in results for it in r["items"]

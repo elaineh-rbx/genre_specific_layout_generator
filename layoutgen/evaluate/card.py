@@ -157,7 +157,8 @@ def stored(scene: str, cmp: A.Comparison | None = None) -> dict:
     items = merge_stages(iso.get("items", []), td.get("items", []), cmp.arms)
     if not items:
         # Unjudged, so show what was asked for without pretending to a verdict.
-        items = [{**r, "iso": {}, "td": {}} for r in cmp.requirements(run_rows)]
+        items = [{**r, "iso": {}, "td": {}}
+                 for r in cmp.requirements(run_rows, scene)]
 
     rules = run_rows.get("rules", {})
     needs = run_rows.get("needs", {})

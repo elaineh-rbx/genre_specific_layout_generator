@@ -38,6 +38,18 @@ and arrangement, nothing else."""
 LETTERS = "ABCDEFGH"
 
 
+def key_for(scene: str) -> int:
+    """The blinding key for a scene id, whatever it is called.
+
+    The ids are not all numbers: the original golden set counts from `0001` and the
+    imported upstream set is prefixed, `P0089`. Taking the digits keeps the permutation
+    reproducible for both, and keeps it *the same* permutation a scene had before it was
+    renamed, so re-scoring does not silently reshuffle who was shown where.
+    """
+    digits = "".join(c for c in scene if c.isdigit())
+    return int(digits) if digits else sum(map(ord, scene))
+
+
 def order_for(arms: tuple[str, ...], key: int) -> list[str]:
     """Which arm is shown in which position, for this scene.
 

@@ -33,6 +33,13 @@ SCORES = RESULTS / "scores"                         # what the judges found
 SCENES = RESULTS / "scenes"                         # the images themselves
 THUMBS = RESULTS / "thumbs"
 
+#: Per-scene checklists of the layout features a prompt asked for, each traced back to
+#: the words it came from and marked as the author's own or an arm's injection. One file
+#: per scene and shared by every arm, so two arms are compared on a list neither wrote.
+#: Written by `pipeline.golden` at the end of a render, and by `tools/extract_checklist.py`
+#: for scenes generated before that was true.
+EVAL = RESULTS / "eval"
+
 #: The two stages every arm produces. Which arms exist is `layoutgen.arms`, not here: an
 #: arm is a thing with a name, a colour and a set of demands, and this module only
 #: knows where files sit.

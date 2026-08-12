@@ -118,6 +118,75 @@ def _skill_asks(row: dict) -> list[dict]:
     return out
 
 
+def _blob_spec(scene: str) -> dict:
+    """The structured spec the blob arm was built from.
+
+    Read from the routing file rather than the run row because the row stores option
+    *ids* only, and the ids are the least of what this arm asked for: the wording is
+    per-scene, and the zones, paths and props it invented have no counterpart in any
+    other arm's row to be stored alongside.
+    """
+    import json
+
+    path = paths.ROUTING / "blob" / f"{scene}.json"
+    if not path.is_file():
+        return {}
+    d = json.loads(path.read_text(encoding="utf-8"))
+    return d.get("spec") or {}
+
+
+def _blob_asks(row: dict) -> list[dict]:
+    """The blob arm asked for its shape and its drawn options, in the document's words.
+
+    The same list, from the same tables, in the same wording as the router's arms - so a
+    requirement is comparable across arms and the only thing that varies is which ones
+    got picked. The spec's zones, paths and props are deliberately not here: they are
+    recorded but no longer sent, so scoring the images against them would be marking an
+    arm on text no image model ever read.
+    """
+    from layoutgen.model import rules as br
+
+    spec = _blob_spec(row.get("scene", ""))
+    if not spec:
+        return []
+    g = br.genre(spec.get("genre", ""))
+    if g is None:
+        return []
+    out: list[dict] = []
+    if (s := g.shape(spec.get("shape") or "")) is not None:
+        out.append({"label": s.label, "text": s.what, "kind": "shape"})
+    for o in spec.get("options") or []:
+        opt = g.option(o.get("id", ""))
+        if opt is not None and opt.drawn:
+            out.append({"label": opt.label, "kind": opt.goes_to,
+                        "text": br.visible_text(g.name, opt)})
+    return out
+
+
+def _author_asks(scene: str) -> list[dict]:
+    """What the *author* asked for, according to nobody's arm.
+
+    Every checklist in `results/eval` marks each feature as coming from the prompt or
+    from the injection that was bolted onto it. Keeping only the prompt-origin features
+    leaves a list written before any of these arms existed, each item carrying the
+    author's own words as its evidence - which is the only checklist two arms can be
+    held to without one of them having set the exam.
+    """
+    import json
+
+    path = paths.EVAL / f"{scene}.json"
+    if not path.is_file():
+        return []
+    out = []
+    for f in json.loads(path.read_text(encoding="utf-8")).get("features", []):
+        if f.get("origin") != "prompt":
+            continue
+        out.append({"label": f.get("name", "feature"),
+                    "text": (f.get("notes") or f.get("name") or "").strip(),
+                    "kind": "author", "quote": f.get("quote", "")})
+    return out
+
+
 def _needs_chips(row: dict) -> list[str]:
     return [x for x in [row.get("subgenre_id", "")] if x]
 
@@ -133,6 +202,17 @@ def _skill_chips(row: dict) -> list[str]:
     """As the rules arm, plus a mark on the scenes it declined to call a game."""
     chips = _rules_chips(row)
     return (["no genre"] + chips) if row.get("genre") == "No Genre" else chips
+
+
+def _blob_chips(row: dict) -> list[str]:
+    """As the rules arm, plus which image this arm decided to draw first.
+
+    Worth a chip of its own because it is the one pick no other arm makes deliberately:
+    the others infer the order from whether some option happened to carry `P6`.
+    """
+    order = {"p6": "top-down first", "layout": "authored plan first",
+             "std": "isometric first"}.get(row.get("order", ""), "")
+    return _rules_chips(row) + [x for x in [order] if x]
 
 
 ARMS: dict[str, Arm] = {
@@ -171,6 +251,29 @@ ARMS: dict[str, Arm] = {
         group=lambda row: (row.get("preset", "") if row.get("preset", "none") != "none"
                            else row.get("genre", "")),
     ),
+    "answered": Arm(
+        id="answered", title="router plus intake answers", short="ansr", accent="#a371f7",
+        blurb="The upstream genre classification, with the router's intake questions "
+              "answered per scene by an agent that had read the prompt.",
+        sub="the router, told the answers",
+        run="answered", asks=_skill_asks, chips=_skill_chips,
+        sent=(("isometric", "iso_prompt"), ("top-down", "td_prompt")),
+        group=lambda row: (row.get("preset", "") if row.get("preset", "none") != "none"
+                           else row.get("genre", "")),
+    ),
+    "blob": Arm(
+        id="blob", title="skills, blob, spec", short="blob", accent="#f78166",
+        blurb="Four stages: an agent uprezzes the prompt into a scene, a second writes "
+              "a prose blob about its shape, the gateway decouples that into a spec, and "
+              "the image prompts are composed from the spec in code. The author's words "
+              "are never sent.",
+        sub="a spec, composed in code",
+        run="blob", asks=_blob_asks, chips=_blob_chips,
+        sent=(("scene prompt", "scene_prompt"), ("isometric", "iso_prompt"),
+              ("top-down", "td_prompt")),
+        group=lambda row: (row.get("preset", "") if row.get("preset", "none") != "none"
+                           else row.get("genre", "")),
+    ),
 }
 
 
@@ -183,6 +286,9 @@ class Comparison:
     blurb: str
     arms: tuple[str, ...]
     page: str
+    #: Where the checklist comes from, if not from the arms themselves. Given a scene,
+    #: returns the requirements to judge it on. See `requirements` for why.
+    basis: Callable[[str], list[dict]] | None = None
 
     def __iter__(self):
         return (ARMS[a] for a in self.arms)
@@ -199,14 +305,24 @@ class Comparison:
     def scores(self, stage: str):
         return paths.SCORES / f"{self.id}_{stage}.jsonl"
 
-    def requirements(self, rows: dict[str, dict]) -> list[dict]:
-        """The union of what every asking arm wanted, each item tagged with who asked.
+    def requirements(self, rows: dict[str, dict], scene: str = "") -> list[dict]:
+        """What to judge this comparison's images on, for one scene.
 
-        The union rather than each arm's own list, because scoring an arm only on its
-        own asks tells you it followed instructions, not whether the instructions were
-        worth following. Deduplicated on the text, so two arms wording the same demand
-        differently do not double-count - the first to ask keeps it.
+        Two arms can be compared on the union of what they each demanded, which is the
+        default below, or on a checklist neither of them wrote, which is `basis`. The
+        difference matters when the arms are not asking for comparable amounts. The
+        union rewards volume: an arm that demands twenty features and delivers fifteen
+        outscores one that demands five and delivers all five, on a list three quarters
+        of which it wrote itself. That is fine for arms picking from the same menu and
+        useless for an arm that composes its own scene, so such a comparison supplies a
+        `basis` instead and both sides answer to the same outside list.
+
+        A live prompt from the playground has no scene id and so no stored checklist;
+        it falls back to the union, which is the only thing available in that case.
         """
+        if self.basis is not None and scene:
+            return [{**item, "source": "author"} for item in self.basis(scene)]
+
         out: list[dict] = []
         seen: set[str] = set()
         for arm in self.asking:
@@ -247,6 +363,28 @@ COMPARISONS: dict[str, Comparison] = {
                   "for more, words it for the scene, and on fifteen prompts declines "
                   "to call the thing a game at all.",
             arms=("rules", "skill"),
+        ),
+        Comparison(
+            id="blob_vs_answered", page="blob_compare.html",
+            title="The four-stage pipeline vs the router it replaces",
+            blurb="Judged on the features the *author* asked for, taken from the eval "
+                  "checklists and filtered to the ones traceable to the prompt itself. "
+                  "Neither arm wrote this list, which is the point: the new pipeline "
+                  "asks for several times more than the router does, so any checklist "
+                  "built from the arms' own demands would be won by whoever demanded "
+                  "most. It is also the harder test for the new arm, which never sends "
+                  "the author's words at all - anything its spec dropped cannot appear.",
+            arms=("answered", "blob"), basis=_author_asks,
+        ),
+        Comparison(
+            id="blob_own_asks", page="blob_asks.html",
+            title="Did each arm deliver what it asked for",
+            blurb="The diagnostic beside the headline, on the union of both arms' own "
+                  "demands. Not a fair race - the new arm names every zone, route and "
+                  "prop and so writes most of the list - but it answers a different "
+                  "question: when this pipeline specifies a space in detail, does the "
+                  "image model build it, or does the detail get ignored?",
+            arms=("answered", "blob"),
         ),
     )
 }

@@ -285,3 +285,65 @@ def track_isometric(crossings: int = 0, closed: bool = True) -> str:
         f"the near side. Keep the angle steep enough that the whole {r} stays visible "
         "end to end rather than hidden behind scenery. No characters, labels, UI, "
         "borders or watermark.")
+
+
+# ------------------------------------------------------------------ taking one apart
+
+#: Every wrapper a composed prompt can open with, longest first so that one which is a
+#: prefix of another cannot match the shorter.
+_OPENERS = sorted({PREFIX, ISO_FROM_PLAN_PREFIX, PLAN_PREFIX, TOPDOWN},
+                  key=len, reverse=True)
+
+
+def decompose(text: str, addendum: str = "",
+              body: str = "") -> list[tuple[str, str]]:
+    """Take a composed prompt apart into the three things it is made of.
+
+    Composing lives in this file, so taking one apart belongs here too: anything else
+    would be reimplementing a split against constants defined above it, and would drift
+    the first time one of them was reworded.
+
+    Returns `(kind, text)` spans covering the whole string in order, where kind is
+    `frame` for the fixed camera and style wording, `body` for the scene description and
+    `addendum` for the generated feature list. Useful for showing where a prompt's
+    length actually comes from - which is mostly not the author.
+
+    `body` is optional. Given, it is located exactly; omitted, it is inferred as
+    whatever sits between the opening wrapper and the addendum, which is only sound for
+    a prompt that opens with one of the wrappers above. An authored maze or track prompt
+    does not, so its scene text stays in the frame rather than being guessed at:
+    over-claiming which words came from the author is worse than not marking them.
+    """
+    opened = next((o for o in _OPENERS if text.startswith(o)), "")
+    start, end = len(opened), len(text)
+    for tail in (TAIL, PLAN_TAIL):
+        if text.endswith(tail):
+            end -= len(tail)
+            break
+    if text[:end].endswith(SET_FRAMING):
+        end -= len(SET_FRAMING)
+
+    spans: list[tuple[int, int, str]] = []
+    if (a := addendum.strip()) and (i := text.find(a, start)) >= 0:
+        spans.append((i, i + len(a), "addendum"))
+    if b := body.strip():
+        if (i := text.find(b, start)) >= 0:
+            spans.append((i, i + len(b), "body"))
+    elif opened:
+        stop = min((s for s, _, _ in spans), default=end)
+        if inferred := text[start:stop].strip():
+            i = text.index(inferred, start)
+            spans.append((i, i + len(inferred), "body"))
+
+    out: list[tuple[str, str]] = []
+    at = 0
+    for s, e, kind in sorted(spans):
+        if s < at:                        # overlapping or repeated - leave it framed
+            continue
+        if s > at:
+            out.append(("frame", text[at:s]))
+        out.append((kind, text[s:e]))
+        at = e
+    if at < len(text):
+        out.append(("frame", text[at:]))
+    return out

@@ -61,6 +61,34 @@ def text_part(text: str) -> dict:
     return {"type": "text", "text": text}
 
 
+#: Which service `ask` talks to. The LLM Gateway is the supported path and the default;
+#: Azure is kept because the older results in `results/` were produced through it, and a
+#: comparison between two arms means nothing if what answered them changed unrecorded.
+#:
+#: Both serve `gpt-5.6-terra`, so the default swap is transport-only - deliberately, since
+#: changing transport and model together would leave every difference with two possible
+#: causes. `tools/run_blob_pipeline.py` folds whichever answered into its version hash.
+PROVIDER = os.getenv("LAYOUTGEN_LLM_PROVIDER", "gateway").strip().lower()
+
+#: Set by the last `ask` when the provider would not enforce the schema and it had to be
+#: enforced locally. Worth checking after a batch: a run of loosely-enforced answers is
+#: not the same contract as a run of strict ones.
+degraded_calls = 0
+
+
+def served_by() -> str:
+    """Which service and model would answer right now, for a record to store.
+
+    Both providers serve the same model, so the difference is transport - but a result
+    set half-answered through one and half through the other is not one set, and nothing
+    else on disk would say which record came from where.
+    """
+    if PROVIDER == "gateway":
+        from layoutgen.backends import gateway
+        return f"gateway/{gateway.ENV}/{gateway.MODEL}"
+    return f"azure/{DEPLOYMENT}"
+
+
 def ask(system: str, user: str | list[dict], schema: dict, *, retries: int = 3,
         timeout: int = 300) -> dict:
     """One question, answered as JSON matching `schema`.
@@ -69,6 +97,17 @@ def ask(system: str, user: str | list[dict], schema: dict, *, retries: int = 3,
     attached. The schema is enforced by the provider rather than parsed out of prose,
     so a malformed answer is a transport failure and worth retrying.
     """
+    if PROVIDER == "gateway":
+        global degraded_calls
+        from layoutgen.backends import gateway
+        out, degraded = gateway.ask(system, user, schema, retries=retries,
+                                    timeout=timeout)
+        if degraded:
+            degraded_calls += 1
+        return out
+    if PROVIDER != "azure":
+        raise LLMError(f"unknown LAYOUTGEN_LLM_PROVIDER {PROVIDER!r}: "
+                       f"expected 'gateway' or 'azure'")
     body = {"messages": [{"role": "system", "content": system},
                          {"role": "user", "content": user}],
             "response_format": {"type": "json_schema", "json_schema": schema},
