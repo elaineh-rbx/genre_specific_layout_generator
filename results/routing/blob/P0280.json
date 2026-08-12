@@ -1,0 +1,194 @@
+{
+  "scene": "P0280",
+  "source": "Roblox AI Prompt - \"RUN\" (Prey vs Predators Survival Game)\nCopy and paste the prompt below into the Roblox Studio AI Assistant / Creator Hub AI chat.\nPROMPT\nCreate a Roblox survival game called \"RUN\", a Prey vs Predators experience, similar in spirit to games like \"Doors\" or \"Flee the Facility\" but with multiple large maps and a role-swap system. Build it fully in English (all UI text, instructions, and in-game dialogue must be in English).\nCore Concept\nAt the start of each round, players are randomly split into two teams:\nPrey (majority of players) - must survive and avoid being caught.\nPredators (minority, 1-3 players depending on lobby size) - must hunt down and eliminate the Prey.\nEach round has an estimated survival timer (example: 6-8 minutes) displayed on screen (a HUD countdown).\nImportant rule: when the timer runs out, the round does NOT end. Instead, all players swap roles - Prey become Predators and Predators become Prey - and a new timer starts. The match continues with these swapped roles for another timed segment.\nThe overall match can consist of multiple role-swap cycles (e.g., 2-3 swaps) before the round fully ends and scores are tallied.\nTrack a scoring system: Prey earn points for time survived and objectives completed; Predators earn points for eliminations. Total score across all role phases determines the round winner(s).\nMaps\nDesign multiple large, distinct maps with different layouts, hiding spots, chokepoints, and escape routes:\nBig School - large school building with classrooms, hallways, gym, cafeteria, rooftop access, and lockers to hide in.\nShopping Mall - multi-floor mall with stores, food court, escalators, parking garage, and security rooms.\nAbandoned Neighborhood - outdoor residential area with empty houses, backyards, alleyways, and a small park.\n(Optional extra maps) Hospital, Subway Station, Office Building, Summer Camp - each with a unique theme and layout logic.\nEach map should support:\nMultiple hiding spots (closets, lockers, dumpsters, under furniture).\nSprint/stamina mechanics for Prey.\nChase mechanics and detection radius for Predators.\nEnvironmental hazards or interactive objects (doors that lock, vents, alarms) that can help Prey escape or slow down Predators.\nRoles & Mechanics\nPrey:\nNo combat ability, must rely on stealth, speed, and environment use.\nCan perform quick tasks/objectives on the map for bonus points (e.g., generators, keycards).\nCan be eliminated (caught) by Predators, which removes them from that phase (but they return as Predators in the next swap, or are respawned as spectators/next phase depending on design).\nPredators:\nEnhanced speed or a special ability (e.g., short detection burst, sprint, or map sense) to hunt Prey.\nLimited-use abilities on a cooldown to keep the chase balanced.\nCannot camp in one spot indefinitely - add a mechanic like a shrinking safe zone or periodic \"reveal ping\" to keep the game moving.\nMain Menu\nDesign a main menu screen that plays when the player first joins the game:\nBackground scene: a dark forest at night - tall silhouetted trees, thick fog/mist near the ground, dim moonlight filtering through the branches. Very low ambient lighting to create a tense, eerie atmosphere.\nCampfire: a lit campfire in the middle of the scene (either as the visual centerpiece behind the UI or in a 3D background behind the menu camera), with flickering flame particles and a warm orange glow that contrasts with the dark surroundings.\nAmbient sound: looping night forest ambience - crickets chirping, occasional distant wind, and a soft crackling campfire sound layered in.\nLogo: a bold, rough, hand-drawn/sketchy style \"RUN\" title logo (thick uneven strokes, slightly jagged edges, like it was scratched or drawn in a hurry) - should feel raw and unsettling rather than clean or corporate.\nButtons: two main rounded rectangular buttons below the logo, hand-drawn/sketch style to match the logo:\nPLAY - takes the player into matchmaking/lobby.\nSETTINGS - opens a settings menu (audio volume, graphics quality, controls/keybinds).\nButtons should have a subtle hover/press animation (slight scale-up or wobble) to match the sketchy, handmade art style of the logo.\nUI/UX Requirements\nCountdown timer clearly visible at the top of the screen.\nRole indicator (Prey/Predator) shown to each player with distinct color coding (e.g., blue for Prey, red for Predator).\nEnd-of-phase announcement: \"Roles have switched!\" with a short transition/respawn sequence.\nScoreboard accessible mid-game showing points per player.\nAdditional Notes for the AI\nPrioritize balance: adjust Predator count and speed based on total player count.\nMake role swaps feel like a natural game beat, not a jarring reset - consider a short cinematic transition or safe countdown before the next phase starts.\nKeep matches replayable with randomized spawn points and rotating map selection between rounds.\nFeel free to ask for a specific map layout, a scripting breakdown (Lua) for the timer/role-swap system, or a UI mockup next.",
+  "answers": [
+    {
+      "field": "theme",
+      "ask": "Should the maps themselves be horror-lit like the menu, or ordinary daylight spaces that only feel tense during a chase?",
+      "answer": "Use horror-lit maps to match the dark, tense menu atmosphere: low or moody lighting, shadows, and unsettling ambience while keeping routes and interactive objects readable."
+    },
+    {
+      "field": "shape",
+      "ask": "Which map should be built first - the school, the mall, or the neighbourhood?",
+      "answer": "Build the Big School first; it is the clearest compact vertical slice for hallways, classrooms, lockers, chokepoints, and multiple escape routes."
+    }
+  ],
+  "scene_prompt": "Create the first large playable map for a tense horror-lit Prey-versus-Predators survival game: a Big School building under low, moody lighting with deep shadows and unsettling ambience, while routes and interactive objects remain readable. Build a connected school interior with classroom wings and hallways, a gym, cafeteria, rooftop access, lockers for hiding, chokepoints, and multiple escape routes; include physical hiding places such as closets, lockers, dumpsters, and space beneath furniture. Arrange the building as a compact vertical slice with distinct routes between its major rooms and varied spawn locations. Other rotating map layouts include a multi-floor shopping mall with stores, food court, escalators, parking garage, and security rooms; an abandoned outdoor neighborhood of empty houses, backyards, alleyways, and a small park; plus optional hospital, subway station, office building, and summer camp maps. For the menu’s 3D background, show a dark nighttime forest with tall silhouetted trees, thick ground fog, dim moonlight through branches, and a glowing campfire centered in the scene.",
+  "blob": "### Genre\nThe dominant genre is Survival, specifically asymmetric Prey-versus-Predators chase survival. The first build is the hunted school map, not the menu UI or the later rotating maps.\n\n### Shape and preset\nUse `warren-looping`: a dense, connected school interior whose hallways and rooms create chase loops rather than terminal dead ends. Match the 1 vs All preset, retaining its looping escape-oriented circulation, hiding cover, and separated role starts; add the explicitly requested school interior. The timed survival structure means the listed escape routes are traversal alternatives, not a round-winning `gate-escape`.\n\n### Config requirements\n`cover-los` is visible geometry: banks of lockers, supply closets, dumpsters near service exits, and desks or furniture with crawl-under clearance break predator sightlines. `spawn-protected` is invisible layout geometry: varied, separated prey and predator start locations positioned so neither role begins directly on the other’s route. `building-interior` is visible geometry: the fully enterable school building, including its classrooms and major facilities.\n\n### Layout components\nMake one large compact school as the playable zone. A central main hall sits near the middle and branches into two classroom wings, with classrooms of varied sizes, locker-lined hallways, closet recesses, and furniture hiding spaces. Put the gym at one end as a broad, open risk zone, and the cafeteria at the opposite end with tables, kitchen-side service passages, and rear exits. Connect these major rooms through at least two distinct hall routes plus narrower connector corridors that form readable chokepoints without sealing prey into corners. Add rooftop access through a stairwell as a high-risk alternate route, with a second stair/service route elsewhere to preserve loops. Place varied spawn locations in screened classrooms, side halls, and facility edges. Bound the playable school with locked exterior doors, walls, and fenced service edges, while retaining multiple internal escape routes. Render the school in a readable horror-lit register: dim institutional lights, deep shadows, worn surfaces, and clear route silhouettes. Build the menu background as a separate non-walkable nighttime forest set: tall silhouetted trees around thick ground fog, sparse moonlight through branches, and one glowing campfire centered as the focal point.\n\n### Render order\nUse `topdown`: the school plan must be authoritative first because an invalid corridor loop or sealed chase route would make the survival match unfair; dress the isometric render from that validated plan.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by the school’s several major facilities, branching classroom wings, and alternate chase routes. Theme is moody institutional horror with an eerie moonlit forest menu set. Use `P6` for valid looping chase topology, `P3` for enterable interior capture, `P4` because the menu forest set is separate from the school map, and `SET` for that non-walkable menu-background geometry.",
+  "spec": {
+    "genre": "Survival",
+    "secondary": [],
+    "shape": "warren-looping",
+    "preset": "1 vs All",
+    "axes": {},
+    "options": [
+      {
+        "id": "cover-los",
+        "text": "Banks of lockers, supply closets, dumpsters near service exits, and desks or furniture with crawl-under clearance break predator sightlines.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "spawn-protected",
+        "text": "Varied, separated prey and predator start locations positioned so neither role begins directly on the other’s route.",
+        "visible": false,
+        "count": -1
+      },
+      {
+        "id": "building-interior",
+        "text": "The fully enterable school building, including its classrooms and major facilities.",
+        "visible": true,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "A compact large school interior fills the playable frame: the central main hall sits near the middle, with two classroom wings branching from it; the gym anchors one end and the cafeteria anchors the opposite end. Rooftop stair access provides a high-risk alternate route, while a separate nighttime forest menu set holds a centered campfire focal point.",
+      "zones": [
+        {
+          "name": "School interior",
+          "role": "Large compact playable hunted school map with connected chase loops.",
+          "where": "main playable map",
+          "size": "large"
+        },
+        {
+          "name": "Central main hall",
+          "role": "Central circulation hub branching into classroom wings and major facilities.",
+          "where": "near the middle",
+          "size": ""
+        },
+        {
+          "name": "Classroom wings",
+          "role": "Varied classrooms, locker-lined hallways, closet recesses, furniture hiding spaces, and screened spawn locations.",
+          "where": "branching from the central main hall",
+          "size": ""
+        },
+        {
+          "name": "Gym",
+          "role": "Broad open risk zone.",
+          "where": "one end of the school",
+          "size": "broad"
+        },
+        {
+          "name": "Cafeteria",
+          "role": "Table-filled facility with kitchen-side service passages and rear exits.",
+          "where": "opposite end from the gym",
+          "size": ""
+        },
+        {
+          "name": "Rooftop access",
+          "role": "High-risk alternate chase route.",
+          "where": "through a stairwell",
+          "size": ""
+        },
+        {
+          "name": "Menu forest set",
+          "role": "Separate non-walkable nighttime menu-background geometry.",
+          "where": "separate from the school map",
+          "size": ""
+        }
+      ],
+      "paths": [
+        {
+          "from": "Central main hall",
+          "to": "Classroom wings",
+          "kind": "corridor"
+        },
+        {
+          "from": "Gym",
+          "to": "Cafeteria",
+          "kind": "corridor"
+        },
+        {
+          "from": "Major rooms",
+          "to": "Major rooms",
+          "kind": "corridor"
+        },
+        {
+          "from": "Major rooms",
+          "to": "Major rooms",
+          "kind": "corridor"
+        },
+        {
+          "from": "Classroom wings",
+          "to": "Major rooms",
+          "kind": "corridor"
+        },
+        {
+          "from": "School interior",
+          "to": "Rooftop access",
+          "kind": "stair"
+        },
+        {
+          "from": "School interior",
+          "to": "Rooftop access",
+          "kind": "service route"
+        }
+      ],
+      "terrain": "Worn institutional school surfaces under dim lights and deep shadows; the separate forest set has thick ground fog beneath tall silhouetted trees and sparse moonlight through branches.",
+      "props": [
+        {
+          "name": "Lockers",
+          "count": -1,
+          "where": "locker-lined hallways"
+        },
+        {
+          "name": "Supply closets",
+          "count": -1,
+          "where": "classroom wings and hall recesses"
+        },
+        {
+          "name": "Dumpsters",
+          "count": -1,
+          "where": "near service exits"
+        },
+        {
+          "name": "Desks and furniture",
+          "count": -1,
+          "where": "classrooms and hiding spaces"
+        },
+        {
+          "name": "Cafeteria tables",
+          "count": -1,
+          "where": "cafeteria"
+        },
+        {
+          "name": "Glowing campfire",
+          "count": 1,
+          "where": "centered in the menu forest set"
+        },
+        {
+          "name": "Tall silhouetted trees",
+          "count": -1,
+          "where": "around the menu forest set"
+        }
+      ],
+      "boundary": "Locked exterior doors, school walls, and fenced service edges bound the playable school while multiple internal escape routes remain open.",
+      "scale_band": "large",
+      "theme": "Moody institutional horror with a separate eerie moonlit forest menu set."
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "an invalid corridor loop or sealed chase route would make the survival match unfair.",
+      "set_piece": true
+    },
+    "route": [
+      "P6",
+      "P3",
+      "P4",
+      "SET"
+    ],
+    "notes": [],
+    "scene_prompt": "Create the first large playable map for a tense horror-lit Prey-versus-Predators survival game: a Big School building under low, moody lighting with deep shadows and unsettling ambience, while routes and interactive objects remain readable. Build a connected school interior with classroom wings and hallways, a gym, cafeteria, rooftop access, lockers for hiding, chokepoints, and multiple escape routes; include physical hiding places such as closets, lockers, dumpsters, and space beneath furniture. Arrange the building as a compact vertical slice with distinct routes between its major rooms and varied spawn locations. Other rotating map layouts include a multi-floor shopping mall with stores, food court, escalators, parking garage, and security rooms; an abandoned outdoor neighborhood of empty houses, backyards, alleyways, and a small park; plus optional hospital, subway station, office building, and summer camp maps. For the menu’s 3D background, show a dark nighttime forest with tall silhouetted trees, thick ground fog, dim moonlight through branches, and a glowing campfire centered in the scene."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "p6",
+  "first": "topdown",
+  "mapper_notes": []
+}

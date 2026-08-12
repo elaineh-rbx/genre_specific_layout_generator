@@ -1,0 +1,142 @@
+{
+  "scene": "P0267",
+  "source": "make a game that is scary and there are monsters in the forest 3D. And its like a hide an seek game but when they find you there are items all across the map to defeat them. They have 1000 health and the players have 200 health.",
+  "answers": [
+    {
+      "field": "goal",
+      "ask": "Is the round won by killing the monsters, by surviving a timer, or by escaping the forest?",
+      "answer": "The round is won by defeating the monsters using the items scattered across the map."
+    },
+    {
+      "field": "genre",
+      "ask": "How many monsters hunt at once, and are they AI or other players?",
+      "answer": "Use one AI-controlled monster hunting the players at a time, keeping the hide-and-seek gameplay focused and playable."
+    },
+    {
+      "field": "scale",
+      "ask": "Should the forest be a few hundred studs across or a large open woodland?",
+      "answer": "Make it a few hundred studs across: a compact 3D forest with enough hiding spots and scattered items."
+    }
+  ],
+  "scene_prompt": "Create a compact 3D scary forest map a few hundred studs across, with dense woodland, hiding spots throughout, and items scattered across the forest.",
+  "blob": "### Genre\nThe dominant genre is Survival: one AI-controlled monster hunts players through a scary forest, while players hide and collect items to defeat it. The monster and player health values are mechanics and do not alter the layout.\n\n### Shape and preset\nUse `warren-looping`, interpreted as a compact woodland of interlinked clearings and looping trails with no trapping dead ends. The nearest preset is none: 1 vs All contributes the chase-and-hide structure, but its role-spawn and escape assumptions do not fit a cooperative hunt against one AI monster.\n\n### Config requirements\nUse `cover-los` as visible geometry: dense tree trunks, boulder clusters, fallen logs, brush thickets, and small hollowed hiding pockets repeatedly break sightlines. Use `spawner-npc` as invisible layout data: one monster origin placed in a central or slightly offset forest clearing with navigable approaches. Use `collectible-nodes` as invisible layout data: the scattered combat-item placements distributed across risky outer clearings, trail junctions, and partially concealed forest pockets.\n\n### Layout components\nBuild a compact 3D forest a few hundred studs across. Place a broad central clearing as the main orientation space, surrounded by four to six smaller clearings connected by branching dirt trails that always loop back through another route. Make the outer clearings denser and more obscured, with the most concealed item locations behind log piles, rock outcrops, brush, and ruined-looking forest debris. Keep every hiding pocket open to at least two trail directions so players cannot be cornered by the monster. Terrain is mostly uneven leaf-littered soil with shallow rises, roots, stones, and dense woodland; avoid major elevation changes or water. Use an impassable perimeter of tightly packed trees, dark undergrowth, and rock to enclose the play space. Frame the map as an overhead-readable forest network, with the central clearing visually distinct and trail loops legible beneath the canopy.\n\n### Render order\nUse `topdown`: the looping trail network and multiple escape routes must remain connected and traversable, since a sealed forest pocket would make hiding play unfair; this is not a carveable maze.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by a few-hundred-stud compact forest with several interconnected hiding areas. Theme: dark, ominous 3D woodland horror, foggy and claustrophobic under dense canopy. Apply `P6` because the chase-space topology must be valid, with no dead-end traps in the playable trail network.",
+  "spec": {
+    "genre": "Survival",
+    "secondary": [],
+    "shape": "warren-looping",
+    "preset": "none",
+    "axes": {},
+    "options": [
+      {
+        "id": "cover-los",
+        "text": "Dense tree trunks, boulder clusters, fallen logs, brush thickets, and small hollowed hiding pockets repeatedly break sightlines.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "spawner-npc",
+        "text": "One monster origin placed in a central or slightly offset forest clearing with navigable approaches.",
+        "visible": false,
+        "count": 1
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "Scattered combat-item placements distributed across risky outer clearings, trail junctions, and partially concealed forest pockets.",
+        "visible": false,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "An overhead-readable forest network beneath dense canopy, with a visually distinct broad central clearing surrounded by obscured outer clearings and legible looping dirt trails.",
+      "zones": [
+        {
+          "name": "Central clearing",
+          "role": "Main orientation space and monster-origin clearing.",
+          "where": "centre or slightly offset centre",
+          "size": "broad"
+        },
+        {
+          "name": "Outer clearings",
+          "role": "Riskier, denser, more obscured hiding and combat-item areas; every hiding pocket remains open to at least two trail directions.",
+          "where": "surrounding the central clearing",
+          "size": "four to six smaller clearings"
+        },
+        {
+          "name": "Concealed forest pockets",
+          "role": "Hiding areas and the most concealed item locations behind natural and ruined debris.",
+          "where": "outer clearings and trail edges",
+          "size": ""
+        }
+      ],
+      "paths": [
+        {
+          "from": "Central clearing",
+          "to": "Outer clearings",
+          "kind": "branching dirt trails"
+        },
+        {
+          "from": "Outer clearings",
+          "to": "Other outer clearings",
+          "kind": "looping dirt trails"
+        }
+      ],
+      "terrain": "Mostly uneven leaf-littered soil with shallow rises, roots, stones, and dense woodland; no major elevation changes or water.",
+      "props": [
+        {
+          "name": "Dense tree trunks",
+          "count": -1,
+          "where": "throughout the woodland and tightly packed at the perimeter"
+        },
+        {
+          "name": "Boulder clusters",
+          "count": -1,
+          "where": "clearings and trail edges"
+        },
+        {
+          "name": "Fallen logs",
+          "count": -1,
+          "where": "hiding pockets and outer clearings"
+        },
+        {
+          "name": "Brush thickets",
+          "count": -1,
+          "where": "throughout the forest and around concealed pockets"
+        },
+        {
+          "name": "Rock outcrops",
+          "count": -1,
+          "where": "outer clearings and concealed item locations"
+        },
+        {
+          "name": "Ruined-looking forest debris",
+          "count": -1,
+          "where": "around the most concealed outer item locations"
+        }
+      ],
+      "boundary": "An impassable perimeter of tightly packed trees, dark undergrowth, and rock encloses the play space.",
+      "scale_band": "medium",
+      "theme": "dark, ominous 3D woodland horror; foggy and claustrophobic under dense canopy"
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "the looping trail network and multiple escape routes must remain connected and traversable.",
+      "set_piece": false
+    },
+    "route": [
+      "P6"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a compact 3D scary forest map a few hundred studs across, with dense woodland, hiding spots throughout, and items scattered across the forest."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "p6",
+  "first": "topdown",
+  "mapper_notes": []
+}

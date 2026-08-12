@@ -1,0 +1,148 @@
+{
+  "scene": "P0492",
+  "source": "Let's make a 3D tower defense game viewed from an elevated first-person camera, like I'm standing on a hill overlooking the battlefield, not a top-down view. Enemies march down a winding dirt path through a valley toward my base. I can place different towers along the path to stop them, earn coins for each enemy defeated, and survive increasingly tough waves.\n\nArt direction: a low-poly, stylized fantasy look with warm, saturated colors - think chunky, hand-painted textures rather than realistic materials. The valley has rolling green hills, a rocky dirt path, and scattered pine trees. Towers should feel like sturdy little fantasy structures - a wooden archer post, a stone cannon turret, a crystal-topped mage spire - each with a distinct silhouette so they're easy to tell apart at a glance. Enemies are goblin-like creatures with exaggerated, slightly cartoonish proportions - bigger heads, small bodies - in earthy greens and browns so they stand out against the path. Lighting should feel warm and inviting, like golden-hour sun, with soft shadows rather than harsh realism.",
+  "answers": [
+    {
+      "field": "scale",
+      "ask": "How long should the path be - a short valley you take in at a glance, or a long march with several switchbacks?",
+      "answer": "Use a short valley path that the player can take in at a glance, with a few gentle bends rather than a long march."
+    },
+    {
+      "field": "shape",
+      "ask": "One lane, or does the path fork so waves can arrive from two directions?",
+      "answer": "Use one winding lane; the prompt calls for enemies marching down a single path toward the base."
+    }
+  ],
+  "scene_prompt": "Create a 3D tower defense battlefield viewed from an elevated first-person hillside vantage, overlooking a compact fantasy valley. A single short, winding rocky dirt lane with a few gentle bends crosses between rolling green hills, starting in the background and leading toward the player base in the foreground. Leave clear build spaces along both sides of the path for distinct sturdy fantasy towers: wooden archer posts, stone cannon turrets, and crystal-topped mage spires. Scatter pine trees across the hillsides, with goblin-like enemy figures marching along the lane. Use a low-poly, hand-painted stylized look with warm saturated colors, golden-hour lighting, and soft shadows.",
+  "blob": "### Genre\nThe dominant genre is Strategy, specifically a tower-defense battlefield: enemy waves follow one lane toward a defendable base while players place towers beside it.\n\n### Shape and preset\nUse `lane-actor-track`, matching the Tower Defense preset. Here it is a single compact winding dirt lane through a valley, readable at a glance from the elevated hillside viewpoint. The preset remains recognisable; retain its lane, tower ground, base, and enemy-entry logic, but do not add a pinch point because the requested bends are gentle rather than constricted.\n\n### Config requirements\n`buildzone-grid` is visible geometry: clear, flat build pads or subtly defined tower plots line both sides of the dirt lane without obstructing it. `tracker-core` is both: the foreground player base is visible as a compact fortified fantasy core, with its health-tracking volume placed invisibly. `spawner-npc` is layout-only: an invisible wave-origin marker sits at the background head of the lane; goblin figures visibly emerge and march from that end. `terrain-relief` is visible geometry: rolling grassy hills form the enclosing valley slopes.\n\n### Layout components\nMake one small-to-medium contiguous valley. The lane begins in the distant background between hills, takes a few broad gentle bends across the middle ground, and terminates at the player base in the foreground. Keep generous buildable shoulders along each side, alternating enough open ground for wooden archer posts, squat stone cannon turrets, and taller crystal-topped mage spires, each with a clearly distinct silhouette. Place the base slightly below the elevated viewer-side hill so the whole approach remains legible. Terrain is green rolling grass, exposed rock, and a rocky packed-dirt path. Scatter pine trees across the hillsides, avoiding the tower plots and lane edges. Include a small visible procession of exaggerated goblin-like enemies on the path, with large heads, small bodies, and earthy green-brown coloring. Hills close the lateral boundaries; the path origin and base end define the two longitudinal ends. Compose from an elevated first-person hillside overlook, with the lane receding from foreground base to background origin.\n\n### Render order\nUse `authored_plan`: the enemy lane must be generated as one continuous valid route from wave origin to core before the image dressing is applied.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by a compact valley and short lane that remains visible in one overview. Theme is warm saturated low-poly fantasy, with chunky hand-painted surfaces, golden-hour light, and soft shadows. Use `P6` because the tower-defense lane must be valid by construction, and `tiered` because the rolling valley relief needs elevation captured without overhangs.",
+  "spec": {
+    "genre": "Strategy",
+    "secondary": [],
+    "shape": "lane-actor-track",
+    "preset": "Tower Defense",
+    "axes": {},
+    "options": [
+      {
+        "id": "buildzone-grid",
+        "text": "clear, flat build pads or subtly defined tower plots line both sides of the dirt lane without obstructing it",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "tracker-core",
+        "text": "the foreground player base is visible as a compact fortified fantasy core, with its health-tracking volume placed invisibly",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "spawner-npc",
+        "text": "an invisible wave-origin marker sits at the background head of the lane; goblin figures visibly emerge and march from that end",
+        "visible": false,
+        "count": -1
+      },
+      {
+        "id": "terrain-relief",
+        "text": "rolling grassy hills form the enclosing valley slopes",
+        "visible": true,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "Elevated first-person hillside overlook, with the foreground player base below the viewer-side hill and the lane receding through the middle ground to the background origin between hills.",
+      "zones": [
+        {
+          "name": "Player base",
+          "role": "Defendable compact fortified fantasy core at the lane terminus.",
+          "where": "foreground",
+          "size": "compact"
+        },
+        {
+          "name": "Winding enemy lane",
+          "role": "One continuous route for enemy waves from the origin to the core.",
+          "where": "background through middle ground to foreground",
+          "size": "short"
+        },
+        {
+          "name": "Tower build shoulders",
+          "role": "Clear buildable ground for wooden archer posts, squat stone cannon turrets, and taller crystal-topped mage spires.",
+          "where": "both sides of the lane",
+          "size": "generous"
+        },
+        {
+          "name": "Wave origin",
+          "role": "Invisible enemy wave-entry marker where goblins emerge and begin marching.",
+          "where": "distant background between hills",
+          "size": ""
+        },
+        {
+          "name": "Valley hillsides",
+          "role": "Enclosing rolling valley slopes with scattered pine trees.",
+          "where": "left and right lateral boundaries",
+          "size": "small-to-medium contiguous valley"
+        }
+      ],
+      "paths": [
+        {
+          "from": "Wave origin",
+          "to": "Player base",
+          "kind": "track"
+        }
+      ],
+      "terrain": "Green rolling grass, exposed rock, rocky packed dirt, and rolling grassy hills forming the valley relief.",
+      "props": [
+        {
+          "name": "wooden archer posts",
+          "count": -1,
+          "where": "alternating along open tower ground beside both sides of the lane"
+        },
+        {
+          "name": "squat stone cannon turrets",
+          "count": -1,
+          "where": "alternating along open tower ground beside both sides of the lane"
+        },
+        {
+          "name": "taller crystal-topped mage spires",
+          "count": -1,
+          "where": "alternating along open tower ground beside both sides of the lane"
+        },
+        {
+          "name": "pine trees",
+          "count": -1,
+          "where": "across the hillsides, avoiding tower plots and lane edges"
+        },
+        {
+          "name": "goblin-like enemy figures",
+          "count": -1,
+          "where": "marching along the lane from the background origin"
+        }
+      ],
+      "boundary": "Hills close the lateral boundaries; the path origin and player base define the longitudinal ends.",
+      "scale_band": "medium",
+      "theme": "Warm saturated low-poly fantasy, chunky hand-painted surfaces, golden-hour light, and soft shadows."
+    },
+    "render": {
+      "first": "authored_plan",
+      "then": "topdown",
+      "authoritative": "authored_plan",
+      "why": "the enemy lane must be one continuous valid route from wave origin to core before dressing.",
+      "set_piece": false
+    },
+    "route": [
+      "P6",
+      "tiered"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a 3D tower defense battlefield viewed from an elevated first-person hillside vantage, overlooking a compact fantasy valley. A single short, winding rocky dirt lane with a few gentle bends crosses between rolling green hills, starting in the background and leading toward the player base in the foreground. Leave clear build spaces along both sides of the path for distinct sturdy fantasy towers: wooden archer posts, stone cannon turrets, and crystal-topped mage spires. Scatter pine trees across the hillsides, with goblin-like enemy figures marching along the lane. Use a low-poly, hand-painted stylized look with warm saturated colors, golden-hour lighting, and soft shadows."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "p6",
+  "first": "topdown",
+  "mapper_notes": [
+    "blob asked for authored_plan first; the route ['P6', 'P0', 'tiered'] gives topdown"
+  ]
+}

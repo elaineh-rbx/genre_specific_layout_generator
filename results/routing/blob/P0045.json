@@ -1,0 +1,137 @@
+{
+  "scene": "P0045",
+  "source": "Crée un mode Battle Royale en mode Zéro Construction entièrement inspiré de Fortnite pour 100 joueurs (si c'est possible) : les joueurs commencent sur une île de départ inspirée de Fortnite avec un compte à rebours, puis montent dans un bus (lui aussi inspiré de Fortnite) qui les emmène sur une grande map inspirée de la map actuelle de Fortnite, entourée d'eau et remplie de bâtiments. Ajoute des coffres d'armes, des boîtes de munitions, une tempête (la zone) avec un minuteur, ainsi qu'un compteur affichant le nombre de joueurs restants.",
+  "answers": [
+    {
+      "field": "scale",
+      "ask": "A hundred-player island is a very large build - should the whole island be one map, or should the starting island and the main island be generated separately?",
+      "answer": "Générez l'île de départ séparément de l'île principale afin de garder le mode lisible et performant ; le bus transporte ensuite les joueurs vers la grande map de match."
+    },
+    {
+      "field": "theme",
+      "ask": "How closely should the buildings echo the reference game's look, given that assets cannot be copied?",
+      "answer": "Utilisez un style cartoon coloré de battle royale, avec des bâtiments originaux et variés inspirés de l'ambiance générale, sans copier les assets ni les lieux exacts de Fortnite."
+    }
+  ],
+  "scene_prompt": "Create two separate 3D battle-royale spaces for up to 100 players: a distinct starting island and a much larger main match island reached by a flying battle bus. The starting island is a compact waterfront staging area. The main island is surrounded by water and filled with original, varied colorful cartoon-style battle-royale buildings, with weapon chests and ammunition boxes distributed through the built areas. Include a visible storm-zone boundary enclosing the playable island.",
+  "blob": "### Genre\nLe genre dominant est Shooter, précisément un battle royale compétitif. Il n’y a pas de genre secondaire : les règles de survie et de zone mobile identifient le mode, tandis que les deux îles sont sa géographie.\n\n### Forme et preset\nChoisir la forme `open-battlefield`, correspondant au preset Battle Royale. Le preset est conservé pour son grand terrain de combat ouvert et sa dispersion de ressources, mais la demande de deux espaces séparés ajoute une île de préparation distincte de l’île de match.\n\n### Exigences de configuration\n`boundary-shrinking` est invisible : la limite de tempête mobile est une zone calculée autour de l’île principale et ne doit pas apparaître dans le rendu comme un objet fixe. `collectible-loot` est invisible : réserver des emplacements de coffres d’armes et de boîtes de munitions dans les bâtiments et leurs abords, sans les faire lire comme une interface. `water-body` est de la géométrie visible : une mer continue encercle l’île principale et borde l’île de départ. Aucun intérieur accessible n’est imposé ; les bâtiments restent des volumes extérieurs variés avec des zones de butin associées.\n\n### Composants de layout\nConstruire deux cartes séparées. La première est une île de départ compacte, aménagée comme une zone de rassemblement littorale, avec quais, sol dégagé et une aire d’embarquement dominée par un bus de bataille volant original. Elle doit être assez ouverte pour accueillir jusqu’à 100 joueurs sans congestion visuelle.\n\nLa seconde est une île principale beaucoup plus vaste, de silhouette irrégulière, entièrement entourée d’eau. Répartir plusieurs secteurs bâtis colorés sur ses côtes et son intérieur : petits groupes de maisons, bâtiments commerciaux, entrepôts et structures singulières, tous originaux et variés. Laisser entre eux des terrains ouverts, routes et chemins lisibles pour connecter les zones bâties. Distribuer les emplacements invisibles de coffres et de munitions à travers ces secteurs. La mer forme la limite physique extérieure ; la zone de tempête runtime enserre l’aire jouable. Composer l’île principale en vue d’ensemble diagonale, avec des amas urbains reconnaissables et de larges respirations de terrain.\n\n### Ordre de rendu\nUtiliser `isometric` : le style cartoon coloré et la lecture panoramique de l’île guident d’abord l’image, puis le plan top-down est projeté depuis cette composition. La carte n’est ni un circuit ni un labyrinthe à générer par code.\n\n### Échelle, thème et coût pipeline\nÉchelle énorme, déterminée par la capacité de 100 joueurs, la très grande île de match et la seconde carte de préparation. Thème : battle royale cartoon coloré, bâtiments originaux, énergique et sans reprise d’assets ou de lieux existants. Appliquer `P4`, car l’île de départ et l’île principale sont deux cartes séparées. Appliquer `CHECK` pour les étendues d’eau entourant les îles.",
+  "spec": {
+    "genre": "Shooter",
+    "secondary": [],
+    "shape": "open-battlefield",
+    "preset": "Battle Royale",
+    "axes": {},
+    "options": [
+      {
+        "id": "boundary-shrinking",
+        "text": "La limite de tempête mobile est une zone calculée autour de l’île principale et ne doit pas apparaître dans le rendu comme un objet fixe.",
+        "visible": false,
+        "count": -1
+      },
+      {
+        "id": "collectible-loot",
+        "text": "Réserver des emplacements de coffres d’armes et de boîtes de munitions dans les bâtiments et leurs abords, distribués à travers les secteurs bâtis.",
+        "visible": false,
+        "count": -1
+      },
+      {
+        "id": "water-body",
+        "text": "Une mer continue encercle l’île principale et borde l’île de départ.",
+        "visible": true,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "Vue d’ensemble diagonale de l’île principale, avec des amas urbains colorés reconnaissables sur les côtes et dans l’intérieur, séparés par de larges respirations de terrain, routes et chemins lisibles.",
+      "zones": [
+        {
+          "name": "Île de départ",
+          "role": "Zone de rassemblement littorale et aire d’embarquement pour les joueurs avant le match.",
+          "where": "Carte séparée, bordée par la mer.",
+          "size": "Compacte, ouverte pour accueillir jusqu’à 100 joueurs sans congestion visuelle."
+        },
+        {
+          "name": "Île principale de match",
+          "role": "Terrain de combat battle royale avec secteurs bâtis, terrains ouverts et emplacements de butin.",
+          "where": "Carte séparée, entièrement entourée d’eau.",
+          "size": "Beaucoup plus vaste, de silhouette irrégulière."
+        }
+      ],
+      "paths": [
+        {
+          "from": "Île de départ",
+          "to": "Île principale de match",
+          "kind": "open ground"
+        },
+        {
+          "from": "Secteurs bâtis de l’île principale",
+          "to": "Secteurs bâtis de l’île principale",
+          "kind": "road"
+        },
+        {
+          "from": "Secteurs bâtis de l’île principale",
+          "to": "Secteurs bâtis de l’île principale",
+          "kind": "open ground"
+        }
+      ],
+      "terrain": "Mer continue autour de l’île principale et le long de l’île de départ ; île principale irrégulière avec larges terrains ouverts entre les secteurs bâtis.",
+      "props": [
+        {
+          "name": "Bus de bataille volant original",
+          "count": 1,
+          "where": "Aire d’embarquement de l’île de départ."
+        },
+        {
+          "name": "Quais",
+          "count": -1,
+          "where": "Île de départ littorale."
+        },
+        {
+          "name": "Petits groupes de maisons",
+          "count": -1,
+          "where": "Côtes et intérieur de l’île principale."
+        },
+        {
+          "name": "Bâtiments commerciaux",
+          "count": -1,
+          "where": "Côtes et intérieur de l’île principale."
+        },
+        {
+          "name": "Entrepôts",
+          "count": -1,
+          "where": "Côtes et intérieur de l’île principale."
+        },
+        {
+          "name": "Structures singulières",
+          "count": -1,
+          "where": "Côtes et intérieur de l’île principale."
+        }
+      ],
+      "boundary": "La mer forme la limite physique extérieure ; la zone de tempête runtime enserre l’aire jouable sans objet fixe visible.",
+      "scale_band": "huge",
+      "theme": "Battle royale cartoon coloré, énergique, bâtiments originaux et variés, sans reprise d’assets ou de lieux existants."
+    },
+    "render": {
+      "first": "isometric",
+      "then": "topdown",
+      "authoritative": "isometric",
+      "why": "Le style cartoon coloré et la lecture panoramique de l’île guident d’abord l’image, car la carte n’est ni un circuit ni un labyrinthe à générer par code.",
+      "set_piece": false
+    },
+    "route": [
+      "P4",
+      "CHECK"
+    ],
+    "notes": [],
+    "scene_prompt": "Create two separate 3D battle-royale spaces for up to 100 players: a distinct starting island and a much larger main match island reached by a flying battle bus. The starting island is a compact waterfront staging area. The main island is surrounded by water and filled with original, varied colorful cartoon-style battle-royale buildings, with weapon chests and ammunition boxes distributed through the built areas. Include a visible storm-zone boundary enclosing the playable island."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": []
+}

@@ -1,0 +1,165 @@
+{
+  "scene": "P0367",
+  "source": "Build a stylized alpine snowboarding game in Roblox. CORE LOOP Player rides a snowboard down an endless-feeling groomed slope, carving turns, hitting jumps, and chaining tricks for score. Run ends on wipeout or reaching the base village. Score = trick points x combo multiplier x speed bonus. MOVEMENT / PHYSICS - Board-based locomotion, not walking. Character is locked to a board. - Slope-aligned gravity: speed builds on steeper pitch, bleeds on flats. - Carving: A/D (or thumbstick) leans the board; hold to arc, tap to skid. Edge angle drives turn radius. Hard edge = spray of snow particles and speed scrub. - Crouch to tuck (higher top speed, worse turning). Release at a lip to pop/ollie - hold-and-release charge jump with a visible compression on the character rig. - Air control: rotation on yaw for spins, pitch/roll for flips. Landing angle must be within ~40 degrees of travel direction or the player eats it. - Grabs bound to face buttons while airborne (indy, method, nose, tail), each with a distinct pose. - Rail grinding: proximity snap to rail splines, balance meter that drifts and needs counter-input. TERRAIN - Groomed corduroy piste as the main line, with visible parallel ridge lines in the snow texture and normal map. - Off-piste powder pockets that slow the board but allow deep-snow spray and float; tree runs as risk/reward shortcuts. - Natural features: rollers, banked walls, cliff drops, cat-track gaps. - Built features: kickers, boxes, rails, halfpipe section. - Procedurally stitched chunk system so the mountain can extend, with hand-authored set-piece chunks mixed in. ART DIRECTION - Low-poly stylized vector look. Flat, hand-painted-feeling surfaces with minimal texture detail; form reads through silhouette and shading, not texture. - Palette: near-white snow with cool blue-lavender shadows, layered mountain silhouettes fading from mid-blue to pale desaturated blue with distance (aerial perspective is the main depth cue). - Sky is a clean bright gradient, no clouds or very simple ones. - Chunky conifers with rounded snow caps sitting on the branches - treat the snow as its own simple geometry on top, not a texture. - Alpine chalet village in the mid-ground: warm ochre wood, red-brown roofs under thick snow caps, glowing amber windows and chimney smoke as the only warm accents in an otherwise cold frame. - Long soft blue-tinted shadows from a low sun. No hard realistic shadowing. - Character: chibi proportions, oversized helmet and goggles, bright red/orange snowsuit that pops against the white. Blue board. CAMERA - Third-person chase camera, slightly above and behind, moderate FOV that widens with speed. Camera lags on carves for a sense of weight. Pulls back and tilts on big airs. Subtle screen shake on landing. FEEL / JUICE - Snow spray particles scaled to edge angle and speed. - Wind-rush audio that rises with velocity; board-on-snow scrape layer that changes between corduroy, powder, and ice. - Speed lines / slight vignette at high velocity. - Trick name text pops on landing with combo counter. - Ragdoll wipeout with a puff of snow. UI - Minimal, top corners only: speed, score, combo timer. Clean sans-serif, white with soft shadow. Nothing should obstruct the mountain view. PROGRESSION - Multiple runs of increasing difficulty (green/blue/black). - Cosmetic unlocks: boards, suits, helmets. No stat-changing pay items. - Leaderboard per run for best score and fastest time.",
+  "answers": [
+    {
+      "field": "shape",
+      "ask": "Is this one authored descent from summit to village, or an endlessly extending mountain? The two build very differently.",
+      "answer": "Use one authored descent from summit to the base village, assembled from procedurally stitched chunks so it feels long and varied; the run ends at the village as specified."
+    },
+    {
+      "field": "shape",
+      "ask": "Green, blue, and black runs - separate maps, or branching lines down the same mountain?",
+      "answer": "Make them branching lines down the same mountain, with green as the forgiving main piste and blue/black taking progressively riskier shortcuts and feature routes."
+    }
+  ],
+  "scene_prompt": "Create a stylized low-poly alpine snowboarding map: one long authored descent from a snowy summit to a warm chalet base village, assembled from stitched terrain chunks for varied pacing. A wide groomed corduroy piste forms the forgiving green main line, while blue and black routes branch into progressively riskier powder tree runs, steeper shortcuts, banked walls, cliff drops, cat-track gaps, and feature routes with kickers, boxes, rails, and a halfpipe section before rejoining lower on the mountain. Use near-white snow with cool blue-lavender shadows, chunky conifers capped with separate rounded snow geometry, and layered blue mountain silhouettes fading into a clean bright gradient sky. Place the village in the lower midground/base area with ochre wooden chalets, red-brown snow-capped roofs, amber windows, and chimney smoke; frame the descent with long soft blue-tinted low-sun shadows. Compose for a third-person chase view behind a chibi rider in a bright red-orange snowsuit, oversized helmet and goggles, riding a blue snowboard.",
+  "blob": "### Genre\nDominant genre: Racing. The original message defines a timed/score-driven snowboard descent with a definite end at the base village; trick systems inform the sport’s feel but do not add layout mechanics. There is no secondary genre.\n\n### Shape and preset\nUse `route-point-to-point`: one continuous downhill route descends from the summit to the chalet village, with green, blue, and black lines branching and rejoining on the same mountain. This matches the Downhill Descent preset in its authored A-to-B mountain course, while retaining only the explicitly depicted route risks rather than adding its unrequested recovery points or distance markers.\n\n### Config requirements\n`hazard-kill` is visible geometry: black-route cliff-drop margins, exposed cat-track gaps, and severe fall-away terrain distinguish the highest-risk lines from the broad green piste. `terrain-relief` is visible geometry: the whole course is a descending alpine slope with rollers, banks, steeper pitches, and carved route shelves. No invisible configuration options are required.\n\n### Layout components\nAt the upper summit, place the broad starting head of the descent, immediately feeding a wide, forgiving groomed green corduroy piste. It should occupy the central and most legible line down the mountain, its parallel ridge texture visibly following the fall line. Blue branches peel into intermediate powder pockets, banked walls, kickers, boxes, and rail features, then merge back into the main route at lower terrain shelves. Black branches take narrower tree runs through chunky snow-capped conifers, steeper shortcuts, cliff-drop lines, cat-track gaps, and a dedicated halfpipe section before rejoining below.\n\nBuild the mountain as a long sequence of stitched terrain chunks, with authored set-piece feature chunks distributed through the middle and lower descent. Use near-white snow, cool blue-lavender shadowed relief, and layered fading blue mountain silhouettes beyond the playable slope. The base village sits prominently in the lower midground at the terminal end: a compact cluster of warm ochre chalets with red-brown roofs, thick snow caps, amber windows, and chimney smoke. Natural mountain edges, dense tree bands, and fall-away cliffs bound the playable descent. Compose the presentation behind and slightly above the red-orange chibi rider on a blue board, looking downhill toward the warm village, with long soft low-sun shadows leading through the frame.\n\n### Render order\nUse `authored_plan`: this is a point-to-point racing track whose branching routes must remain continuous, readable, and valid from summit to village; generate the route blueprint first, then dress it with terrain chunks and alpine scenery.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by one long multi-route mountain descent and its base village. Theme: stylized low-poly alpine snowboarding, cool aerial-perspective blues with restrained warm chalet accents. Modifiers: `tiered` for the non-overhanging descending mountain relief, and `P6` because every green, blue, and black branch must be connected and valid by construction.",
+  "spec": {
+    "genre": "Racing",
+    "secondary": [],
+    "shape": "route-point-to-point",
+    "preset": "Downhill Descent",
+    "axes": {},
+    "options": [
+      {
+        "id": "hazard-kill",
+        "text": "Black-route cliff-drop margins, exposed cat-track gaps, and severe fall-away terrain distinguish the highest-risk lines from the broad green piste.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "terrain-relief",
+        "text": "The whole course is a descending alpine slope with rollers, banks, steeper pitches, and carved route shelves.",
+        "visible": true,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "Third-person chase view behind and slightly above the red-orange chibi rider on a blue board, looking downhill through the long descent toward the warm base village in the lower midground; long soft low-sun shadows lead through the frame.",
+      "zones": [
+        {
+          "name": "Summit starting head",
+          "role": "Broad start of the downhill descent, immediately feeding the forgiving main line.",
+          "where": "upper summit",
+          "size": "broad"
+        },
+        {
+          "name": "Green main piste",
+          "role": "Wide, forgiving groomed corduroy route forming the central and most legible line down the mountain.",
+          "where": "central descent",
+          "size": "wide"
+        },
+        {
+          "name": "Blue branches",
+          "role": "Intermediate powder pockets and feature routes with banked walls, kickers, boxes, and rails that merge back into the main route at lower terrain shelves.",
+          "where": "branching from and rejoining the central descent",
+          "size": ""
+        },
+        {
+          "name": "Black branches",
+          "role": "Highest-risk narrow tree runs, steeper shortcuts, cliff-drop lines, cat-track gaps, and a dedicated halfpipe section that rejoin below.",
+          "where": "alongside the main route through lower rejoin terrain",
+          "size": "narrower"
+        },
+        {
+          "name": "Set-piece feature chunks",
+          "role": "Authored terrain feature chunks distributed through the descent for varied pacing.",
+          "where": "middle and lower descent",
+          "size": ""
+        },
+        {
+          "name": "Base village",
+          "role": "Terminal end of the route at the chalet village.",
+          "where": "lower midground at the mountain base",
+          "size": "compact cluster"
+        }
+      ],
+      "paths": [
+        {
+          "from": "Summit starting head",
+          "to": "Green main piste",
+          "kind": "track"
+        },
+        {
+          "from": "Green main piste",
+          "to": "Blue branches",
+          "kind": "track"
+        },
+        {
+          "from": "Blue branches",
+          "to": "Green main piste",
+          "kind": "track"
+        },
+        {
+          "from": "Green main piste",
+          "to": "Black branches",
+          "kind": "track"
+        },
+        {
+          "from": "Black branches",
+          "to": "Base village",
+          "kind": "track"
+        },
+        {
+          "from": "Green main piste",
+          "to": "Base village",
+          "kind": "track"
+        }
+      ],
+      "terrain": "A long stitched sequence of descending alpine terrain chunks: near-white snow, cool blue-lavender shadowed relief, rollers, banks, steeper pitches, carved route shelves, dense chunky conifer bands, natural mountain edges, and severe fall-away cliffs. Layered fading blue mountain silhouettes sit beyond the playable slope beneath a clean bright gradient sky.",
+      "props": [
+        {
+          "name": "red-orange chibi rider with oversized helmet and goggles on a blue snowboard",
+          "count": 1,
+          "where": "foreground, viewed from behind on the descent"
+        },
+        {
+          "name": "chunky snow-capped conifers",
+          "count": -1,
+          "where": "black tree runs and dense boundary bands"
+        },
+        {
+          "name": "banked walls, kickers, boxes, and rail features",
+          "count": -1,
+          "where": "blue branches"
+        },
+        {
+          "name": "halfpipe section",
+          "count": 1,
+          "where": "black branches"
+        },
+        {
+          "name": "warm ochre chalets with red-brown snow-capped roofs, amber windows, and chimney smoke",
+          "count": -1,
+          "where": "base village in the lower midground"
+        }
+      ],
+      "boundary": "Natural mountain edges, dense tree bands, and fall-away cliffs bound the playable descent.",
+      "scale_band": "large",
+      "theme": "Stylized low-poly alpine snowboarding, cool aerial-perspective blues with restrained warm chalet accents."
+    },
+    "render": {
+      "first": "authored_plan",
+      "then": "topdown",
+      "authoritative": "authored_plan",
+      "why": "Branching point-to-point routes must remain continuous, readable, and valid from summit to village.",
+      "set_piece": false
+    },
+    "route": [
+      "P6",
+      "tiered"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a stylized low-poly alpine snowboarding map: one long authored descent from a snowy summit to a warm chalet base village, assembled from stitched terrain chunks for varied pacing. A wide groomed corduroy piste forms the forgiving green main line, while blue and black routes branch into progressively riskier powder tree runs, steeper shortcuts, banked walls, cliff drops, cat-track gaps, and feature routes with kickers, boxes, rails, and a halfpipe section before rejoining lower on the mountain. Use near-white snow with cool blue-lavender shadows, chunky conifers capped with separate rounded snow geometry, and layered blue mountain silhouettes fading into a clean bright gradient sky. Place the village in the lower midground/base area with ochre wooden chalets, red-brown snow-capped roofs, amber windows, and chimney smoke; frame the descent with long soft blue-tinted low-sun shadows. Compose for a third-person chase view behind a chibi rider in a bright red-orange snowsuit, oversized helmet and goggles, riding a blue snowboard."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "layout",
+  "first": "authored_plan",
+  "mapper_notes": []
+}

@@ -1,0 +1,199 @@
+{
+  "scene": "P0410",
+  "source": "Create a complete Roblox simulator game inspired by the progression style of +1 Keyboard Escape, but with a completely original theme.\n\nTheme: +1 Volcano Escape\n\nThe player starts at the bottom of a giant active volcano. Instead of running across keyboard keys, the player jumps across lava rocks, broken bridges, volcano platforms, giant crystals, and floating magma islands.\n\nFeatures:\n- +1 Speed every second.\n- Speed is also increased by collecting glowing lava crystals.\n- Reach the summit of the volcano to earn Wins.\n- Wins can be spent on permanent upgrades.\n- Rebirth system that multiplies speed gain.\n- Pets that increase speed and crystal collection.\n- Egg hatching system with common, rare, epic, legendary, and mythical pets.\n- Daily rewards.\n- Playtime rewards.\n- Global leaderboard for Wins and Rebirths.\n- Checkpoints throughout the volcano.\n- Multiple worlds:\n 1. Volcano\n 2. Ice Mountain\n 3. Sky Islands\n 4. Crystal Caverns\n 5. Space Volcano\n- Teleport portals between worlds.\n- Gamepasses:\n - 2x Speed\n - 2x Wins\n - Auto Collect\n - VIP\n- Clean modern UI with animations.\n- Sound effects, particles, lava effects, glowing crystals, and polished lighting.\n- Mobile, PC, and console support.\n- Anti-lag optimization.\n- Save all player progress with DataStore.\n- Organized folder structure and clean scripts.\n- Use Roblox best practices and scalable code.\n\nThe game should feel satisfying, addictive, colorful, polished, and highly replayable, while being completely original and not copying assets from any existing game.",
+  "answers": [
+    {
+      "field": "scale",
+      "ask": "How tall is the volcano - a two-minute climb or a twenty-minute one?",
+      "answer": "Make the starting Volcano a compact, roughly two-minute climb so the progression loop is quick and replayable."
+    },
+    {
+      "field": "shape",
+      "ask": "Are the other four worlds separate courses, or the same climb re-skinned?",
+      "answer": "The other worlds should be separate courses with their own themed obstacle layouts, reached through teleport portals."
+    },
+    {
+      "field": "goal",
+      "ask": "Is there any failure state other than falling?",
+      "answer": "No; falling is the only failure state, and checkpoints should respawn the player at their latest reached checkpoint."
+    }
+  ],
+  "scene_prompt": "Create a 3D vertical escape-course map beginning at the bottom of a giant active volcano and rising to its summit as a compact, roughly two-minute climb. The Volcano course ascends through lava rocks, broken bridges, volcanic platforms, giant glowing crystals, and floating magma islands, with checkpoints spaced along the route and lava-filled drops below. Place teleport portals connecting this starting world to four separate themed courses: Ice Mountain, Sky Islands, Crystal Caverns, and Space Volcano, each with its own distinct obstacle layout. Use vivid lava, glowing crystals, particles, and polished volcanic lighting.",
+  "blob": "### Genre\nThe dominant genre is `Simulation`, with `Obby & Platformer` as a secondary genre for the climb’s visible jumping route. The original progression loop makes this a simulator first, so its tiered progression structure owns the layout rather than importing an obby-wide procedural jump-validation route.\n\n### Shape and preset\nUse `tier-ladder`, matched from the Stat Grinder preset. Here the tiers are successive altitude bands of a volcano rather than flat training zones: each ascent segment visibly leads toward the summit. The five separate themed worlds extend this progression as distinct courses, while retaining the simulator’s compact, replayable route structure.\n\n### Config requirements\nUse `checkpoint-respawn`: visible flat checkpoint pads sit at safe intermediate landings, with invisible respawn markers attached to them. Use `collectible-nodes`: the explicitly requested giant glowing lava crystals are visible route props, with invisible collection nodes placed at them. Use `teleporter-link`: visible portal arches or rings connect worlds, with invisible destination links. Do not add training stations, shops, rebirth pads, pets, eggs, or UI geometry because they were not specified in the scene space.\n\n### Layout components\nThe main Volcano world is a compact, roughly two-minute vertical course. Start in a broad lower caldera at the bottom of the giant active volcano, with a portal cluster for the four additional worlds near the arrival area. Ascend through sequential volcanic tiers: lava rocks and broken bridges low down, wider volcanic platforms and giant glowing crystal formations in the middle, then floating magma islands and a final summit platform at the top. Checkpoint pads punctuate safe landings along this route. Lava-filled drops occupy the gaps below all elevated route pieces; falling is the only failure condition.\n\nBuild four separate courses reached through the portals: Ice Mountain, Sky Islands, Crystal Caverns, and Space Volcano. Give each a distinct themed obstacle layout rather than reskinning the Volcano climb. Keep each course self-contained with readable edges and its own arrival and return portal. The Volcano is bounded laterally by steep inner crater walls and vertically by the lava basin below; the other worlds use their natural themed edges and fall-away gaps. Compose the primary view as a tall diagonal ascent from caldera foreground to glowing summit background.\n\n### Render order\nUse `topdown`: each course needs a coherent climb route with checkpoint sequencing and clear portal endpoints before the isometric volcanic dressing is applied, but this remains an image-authored simulator layout rather than a procedurally validated obby.\n\n### Scale, theme, and pipeline cost\nScale is huge overall because it contains five separate courses, despite the starting climb being compact. Theme: vivid stylized volcanic fantasy, saturated lava, glowing crystals, drifting particles, and polished warm lighting. Use `P4` because the five worlds are separate maps linked by portals. Use `tiered` because the volcano and mountain-like climbs have real rising relief without requiring stacked overlapping route surfaces.",
+  "spec": {
+    "genre": "Simulation",
+    "secondary": [
+      "Obby & Platformer"
+    ],
+    "shape": "tier-ladder",
+    "preset": "Stat Grinder",
+    "axes": {},
+    "options": [
+      {
+        "id": "collectible-nodes",
+        "text": "Giant glowing lava crystals are visible route props, with invisible collection nodes placed at them.",
+        "visible": false,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "Tall diagonal ascent from the lower caldera in the foreground to the glowing summit in the background; the portal cluster sits near the arrival area at the base.",
+      "zones": [
+        {
+          "name": "Volcano world",
+          "role": "Compact roughly two-minute vertical climb from the caldera to the summit.",
+          "where": "primary foreground-to-background ascent",
+          "size": "compact"
+        },
+        {
+          "name": "Lower caldera",
+          "role": "Arrival area with the portal cluster and the start of the climb.",
+          "where": "bottom of the giant active volcano, foreground",
+          "size": "broad"
+        },
+        {
+          "name": "Lower volcanic tiers",
+          "role": "Sequential ascent through lava rocks and broken bridges.",
+          "where": "above the caldera",
+          "size": ""
+        },
+        {
+          "name": "Middle volcanic tiers",
+          "role": "Climb across wider volcanic platforms and giant glowing crystal formations.",
+          "where": "middle of the volcano",
+          "size": ""
+        },
+        {
+          "name": "Summit tiers",
+          "role": "Final climb over floating magma islands to the summit platform.",
+          "where": "upper volcano and background",
+          "size": ""
+        },
+        {
+          "name": "Ice Mountain",
+          "role": "Separate self-contained themed obstacle course with its own arrival and return portal.",
+          "where": "reached through a portal from the Volcano world",
+          "size": ""
+        },
+        {
+          "name": "Sky Islands",
+          "role": "Separate self-contained themed obstacle course with its own arrival and return portal.",
+          "where": "reached through a portal from the Volcano world",
+          "size": ""
+        },
+        {
+          "name": "Crystal Caverns",
+          "role": "Separate self-contained themed obstacle course with its own arrival and return portal.",
+          "where": "reached through a portal from the Volcano world",
+          "size": ""
+        },
+        {
+          "name": "Space Volcano",
+          "role": "Separate self-contained themed obstacle course with its own arrival and return portal.",
+          "where": "reached through a portal from the Volcano world",
+          "size": ""
+        }
+      ],
+      "paths": [
+        {
+          "from": "Lower caldera",
+          "to": "Lower volcanic tiers",
+          "kind": "track"
+        },
+        {
+          "from": "Lower volcanic tiers",
+          "to": "Middle volcanic tiers",
+          "kind": "broken bridges"
+        },
+        {
+          "from": "Middle volcanic tiers",
+          "to": "Summit tiers",
+          "kind": "track"
+        },
+        {
+          "from": "Summit tiers",
+          "to": "summit platform",
+          "kind": "track"
+        },
+        {
+          "from": "Lower caldera portal cluster",
+          "to": "Ice Mountain",
+          "kind": "portal"
+        },
+        {
+          "from": "Lower caldera portal cluster",
+          "to": "Sky Islands",
+          "kind": "portal"
+        },
+        {
+          "from": "Lower caldera portal cluster",
+          "to": "Crystal Caverns",
+          "kind": "portal"
+        },
+        {
+          "from": "Lower caldera portal cluster",
+          "to": "Space Volcano",
+          "kind": "portal"
+        }
+      ],
+      "terrain": "Volcanic altitude bands with lava rocks, volcanic platforms, floating magma islands, steep inner crater walls, and lava-filled drops beneath every elevated route piece; the other courses use distinct natural themed edges and fall-away gaps.",
+      "props": [
+        {
+          "name": "portal arches or rings",
+          "count": -1,
+          "where": "clustered near the lower caldera arrival area and at each separate course arrival and return point"
+        },
+        {
+          "name": "flat checkpoint pads",
+          "count": -1,
+          "where": "safe intermediate landings along each climb route"
+        },
+        {
+          "name": "giant glowing lava crystals",
+          "count": -1,
+          "where": "middle volcanic tiers and along the route"
+        },
+        {
+          "name": "broken bridges",
+          "count": -1,
+          "where": "lower volcanic tiers"
+        },
+        {
+          "name": "floating magma islands",
+          "count": -1,
+          "where": "upper volcanic tiers"
+        }
+      ],
+      "boundary": "The Volcano is enclosed laterally by steep inner crater walls and below by a lava basin; the other self-contained worlds use natural themed edges and fall-away gaps.",
+      "scale_band": "huge",
+      "theme": "vivid stylized volcanic fantasy, saturated lava, glowing crystals, drifting particles, polished warm lighting"
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "each course needs a coherent climb route with checkpoint sequencing and clear portal endpoints before volcanic dressing.",
+      "set_piece": false
+    },
+    "route": [
+      "P4",
+      "tiered"
+    ],
+    "notes": [
+      "Dropped `checkpoint-respawn`: it is not a canonical Simulation option ID.",
+      "Dropped `teleporter-link`: it is not a canonical Simulation option ID."
+    ],
+    "scene_prompt": "Create a 3D vertical escape-course map beginning at the bottom of a giant active volcano and rising to its summit as a compact, roughly two-minute climb. The Volcano course ascends through lava rocks, broken bridges, volcanic platforms, giant glowing crystals, and floating magma islands, with checkpoints spaced along the route and lava-filled drops below. Place teleport portals connecting this starting world to four separate themed courses: Ice Mountain, Sky Islands, Crystal Caverns, and Space Volcano, each with its own distinct obstacle layout. Use vivid lava, glowing crystals, particles, and polished volcanic lighting."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P0'] gives isometric"
+  ]
+}

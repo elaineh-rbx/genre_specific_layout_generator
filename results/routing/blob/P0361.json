@@ -1,0 +1,108 @@
+{
+  "scene": "P0361",
+  "source": "I want to build a 3D racing game where the player controls a dragon flying through a sequence of rings to complete a course.\n\nHere are the core requirements for the game:\n1. Player Controller:\n • The player controls a 3D dragon character.\n • Flight controls should include pitch (up/down), yaw (left/right), and roll.\n • Include a forward thrust/speed mechanic, and gravity that pulls the dragon down slightly if they aren't actively flying.\n2. Camera System:\n • Implement a third-person follow camera that stays behind and slightly above the dragon, smoothly rotating as the dragon turns.\n3. Course & Ring Mechanics:\n • Create a system for placing floating rings in the environment.\n • The player must fly through the rings in a specific, numbered order.\n • When the player passes through the correct active ring, play a sound, change the ring's color (e.g., from yellow to green), and activate the next ring in the sequence.\n4. Win/Loss State & UI:\n • Include a simple HUD (Heads Up Display) showing a countdown timer and a ring counter (e.g., \"Rings: 3/10\").\n • Win State: Passing through the final ring before time runs out.\n • Loss State: The timer hitting zero before the course is finished, or crashing into the ground/terrain.",
+  "answers": [
+    {
+      "field": "theme",
+      "ask": "No theme was stated - should the world below read as high fantasy, or something else?",
+      "answer": "Use a simple high-fantasy environment below the course, fitting the dragon flight premise."
+    },
+    {
+      "field": "ring count",
+      "ask": "How many rings should the course have? The HUD example implies ten.",
+      "answer": "Use 10 rings, as implied by the HUD example."
+    }
+  ],
+  "scene_prompt": "Create a 3D dragon flight-racing map with a sequential aerial course of 10 large floating rings, each clearly numbered and arranged as a continuous route through the sky. Frame the course from a third-person view behind and slightly above the flying dragon. Below the course, build a simple high-fantasy landscape with varied terrain forming a visible ground layer beneath the open air route.",
+  "blob": "### Genre\nThe dominant genre is Racing: the author specifies player-controlled speed through a designated aerial route with completion at the final ring. The dragon and fantasy setting are theme, not a secondary genre.\n\n### Shape and preset\nUse `route-point-to-point`, interpreted as a one-way airborne dragon course whose 10 rings form an unbroken forward sequence through open sky. The closest preset is Swimming Lanes because it supports volumetric movement, but the course has no lanes or turnaround, so the matched preset is `none`.\n\n### Config requirements\nUse `volume-open` as visible geometry: the route occupies a readable open-air flight volume above the terrain. Use `trigger-finish` as both visible and invisible: the tenth numbered ring is the visible terminal landmark, with its completion detection volume placed invisibly within it. No other racing options are implied.\n\n### Layout components\nBuild one long aerial course of exactly 10 large floating rings, clearly numbered 1 through 10 and spaced in continuous order so each next ring is visible or naturally revealed from the previous one. Begin at ring 1 in the near foreground and carry the route forward through gentle rises, dips, and turns, ending at ring 10 as the distant terminal ring. Keep broad unobstructed air around every ring for dragon flight. Below, make a simple high-fantasy ground layer: rolling green hills, rocky ridges, scattered conifers, and a few distant castle-like ruins or towers as scenic landmarks. The terrain remains beneath the airborne route rather than obstructing it; the ground is the crash boundary. Leave the sky open with no enclosing walls. Frame from behind and slightly above the dragon, aligned down the ring sequence, with several upcoming rings and the fantasy landscape visible in depth.\n\n### Render order\nUse `topdown`: the flight sequence must remain a valid, legible connected route through all 10 rings, and a plan-first layout prevents ambiguous ordering, while `authored_plan` is reserved for racing circuits rather than this point-to-point course.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by the extended 10-ring aerial route and visible landscape beneath it. Theme is simple high fantasy dragon-flight adventure: bright sky, green highlands, ancient stone ruins. Apply `CHECK` because flight occurs through a volumetric open-air space; it must remain readable without self-occluding layers. Apply `P6` because the ordered racing route must be valid by construction.",
+  "spec": {
+    "genre": "Racing",
+    "secondary": [],
+    "shape": "route-point-to-point",
+    "preset": "none",
+    "axes": {},
+    "options": [
+      {
+        "id": "volume-open",
+        "text": "A readable open-air flight volume above the terrain, with broad unobstructed air around every ring for dragon flight.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "trigger-finish",
+        "text": "The tenth numbered ring is the visible terminal landmark, with its completion detection volume placed invisibly within it.",
+        "visible": true,
+        "count": 1
+      }
+    ],
+    "layout": {
+      "composition": "Third-person view from behind and slightly above the dragon, aligned down the ring sequence, with several upcoming rings and the fantasy landscape visible in depth.",
+      "zones": [
+        {
+          "name": "Aerial ring course",
+          "role": "One-way airborne dragon flight route through the numbered rings.",
+          "where": "From the near foreground forward through open sky to the distant background.",
+          "size": "One long course of exactly 10 large floating rings."
+        },
+        {
+          "name": "High-fantasy ground layer",
+          "role": "Scenic landscape beneath the route and crash boundary.",
+          "where": "Below the airborne route.",
+          "size": "Large visible landscape beneath the course."
+        }
+      ],
+      "paths": [
+        {
+          "from": "Ring 1",
+          "to": "Ring 10",
+          "kind": "track"
+        }
+      ],
+      "terrain": "Rolling green hills, rocky ridges, scattered conifers, and distant castle-like ruins or towers beneath the open-air route; the ground is the crash boundary.",
+      "props": [
+        {
+          "name": "Large floating numbered rings",
+          "count": 10,
+          "where": "In a continuous forward sequence through the open sky, numbered 1 through 10."
+        },
+        {
+          "name": "Scattered conifers",
+          "count": -1,
+          "where": "Across the rolling green hills below the route."
+        },
+        {
+          "name": "Distant castle-like ruins or towers",
+          "count": -1,
+          "where": "In the fantasy landscape beneath and beyond the route."
+        }
+      ],
+      "boundary": "Open sky with no enclosing walls; terrain below forms the crash boundary.",
+      "scale_band": "large",
+      "theme": "Simple high fantasy dragon-flight adventure: bright sky, green highlands, ancient stone ruins."
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "the flight sequence must remain a valid, legible connected route through all 10 rings.",
+      "set_piece": false
+    },
+    "route": [
+      "CHECK",
+      "P6"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a 3D dragon flight-racing map with a sequential aerial course of 10 large floating rings, each clearly numbered and arranged as a continuous route through the sky. Frame the course from a third-person view behind and slightly above the flying dragon. Below the course, build a simple high-fantasy landscape with varied terrain forming a visible ground layer beneath the open air route."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "layout",
+  "first": "authored_plan",
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P6', 'CHECK', 'P2'] gives authored_plan"
+  ]
+}

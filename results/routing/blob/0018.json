@@ -1,0 +1,117 @@
+{
+  "scene": "0018",
+  "source": "A massive dense cyberpunk city spanning 500x500 studs. 15 interconnected skyscrapers ranging from 40 to 200 studs tall, with glass skybridges connecting them at multiple heights. Narrow alleyways between buildings for wall jumping. Dark futuristic architecture with neon cyan, magenta, orange accents. Flat rooftops with yellow glowing pads. Ground level has dark asphalt with neon grid lines. A large open plaza in the center (100x100 studs) for spawning with a futuristic circular design and glowing perimeter. No floating platforms outside the city bounds. All buildings form a connected parkour circuit. NO cubes or strange platforms - only buildings, bridges, and the central plaza.",
+  "answers": [],
+  "scene_prompt": "Create a massive, dense cyberpunk city map spanning 500x500 studs. Arrange 15 interconnected dark futuristic skyscrapers, ranging from 40 to 200 studs tall, around a central 100x100-stud open spawning plaza with a circular futuristic design and glowing perimeter. Connect the towers at multiple heights with glass skybridges, forming a continuous parkour circuit; leave narrow alleyways between buildings for wall-jumping routes. Use flat rooftops with yellow glowing pads, dark asphalt streets at ground level with neon grid lines, and neon cyan, magenta, and orange architectural accents. Keep all traversal structures within the city bounds: only buildings, bridges, and the central plaza, with no floating platforms, cubes, or other standalone structures.",
+  "blob": "### Genre\nThe dominant genre is Obby & Platformer: the stated connected parkour circuit and wall-jumping routes make traversal skill, rather than the city setting, the game-defining activity.\n\n### Shape and preset\nUse `course-tower`, interpreted as a dense vertical city ascent distributed across interconnected skyscrapers rather than a single freestanding spiral tower. Preset: none; the city uses the tower shape but does not retain the Tower Obby preset’s timed obstacles, climb props, or end-reward area.\n\n### Config requirements\n`path-track` is visible geometry: an ordered, continuous parkour route across rooftops, skybridges, building faces, and narrow alleys. `obstacle-jump` is visible geometry: wall-jump gaps and roof-to-bridge jumps form the traversal challenges. No invisible config requirements are requested.\n\n### Layout components\nBuild one 500x500-stud city block containing exactly 15 dark futuristic skyscrapers, each 40–200 studs tall, arranged densely around a central 100x100-stud open plaza. The plaza is circular in design, with a glowing perimeter and clear open floor for spawning, positioned at the city center as the circuit’s visual and spatial anchor.\n\nPlace towers around the plaza with narrow asphalt alleyways between them, deliberately sized as wall-jumping channels. Link the towers at multiple heights with glass skybridges, making every building part of one continuous route. Flat rooftops provide landing and transition surfaces, each marked by yellow glowing pads. Ground-level streets use dark asphalt traced with neon grid lines. Use only the towers, their bridges, streets, alleys, rooftops, and central plaza; keep every traversal element inside the city boundary, with no standalone floating platforms, cubes, or extraneous structures. The outer tower ring and city edge form the boundary. Frame the full block in an elevated isometric view, with the plaza centered and the varied tower heights clearly legible.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because the full parkour chain must remain connected and physically playable; an invalid gap or disconnected bridge would make progression impossible.\n\n### Scale, theme, and pipeline cost\nScale is huge, driven by the 500x500-stud footprint, 15-tower count, and 200-stud maximum height. Theme: dense dark cyberpunk metropolis, glass, neon cyan, magenta, orange, and yellow lighting. Pipeline modifiers: `P6` because the critical parkour route must be valid by construction, and `P2` because towers and skybridges create stacked, overlapping traversal surfaces that a single top-down surface would occlude.",
+  "spec": {
+    "genre": "Obby & Platformer",
+    "secondary": [],
+    "shape": "course-tower",
+    "preset": "none",
+    "axes": {},
+    "options": [
+      {
+        "id": "path-track",
+        "text": "An ordered, continuous parkour route across rooftops, skybridges, building faces, and narrow alleys.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "obstacle-jump",
+        "text": "Wall-jump gaps and roof-to-bridge jumps form the traversal challenges.",
+        "visible": true,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "Elevated isometric frame of the full city block, with the circular central plaza centered and the dense, varied tower heights clearly legible around it.",
+      "zones": [
+        {
+          "name": "Central spawning plaza",
+          "role": "Open spawning floor and the circuit's visual and spatial anchor.",
+          "where": "city center",
+          "size": "100x100 studs"
+        },
+        {
+          "name": "Skyscraper ring",
+          "role": "Interconnected vertical parkour circuit across buildings, rooftops, faces, bridges, and alleys.",
+          "where": "densely surrounding the central plaza within the city block",
+          "size": "500x500-stud block; exactly 15 towers, each 40–200 studs tall"
+        },
+        {
+          "name": "Narrow alleyways",
+          "role": "Wall-jumping channels between towers.",
+          "where": "between densely arranged skyscrapers",
+          "size": "narrow"
+        },
+        {
+          "name": "Ground-level streets",
+          "role": "Dark asphalt circulation ground traced with neon grid lines.",
+          "where": "at ground level between the towers and plaza",
+          "size": ""
+        }
+      ],
+      "paths": [
+        {
+          "from": "Central spawning plaza",
+          "to": "skyscraper ring",
+          "kind": "open ground"
+        },
+        {
+          "from": "Skyscraper rooftops",
+          "to": "skyscraper rooftops",
+          "kind": "bridge"
+        },
+        {
+          "from": "Skyscraper rooftops",
+          "to": "building faces and narrow alleys",
+          "kind": "track"
+        }
+      ],
+      "terrain": "Dark asphalt streets traced with neon grid lines; flat rooftops marked by yellow glowing pads; glass skybridges at multiple heights.",
+      "props": [
+        {
+          "name": "dark futuristic skyscrapers",
+          "count": 15,
+          "where": "densely arranged around the central plaza"
+        },
+        {
+          "name": "glass skybridges",
+          "count": -1,
+          "where": "linking towers at multiple heights"
+        },
+        {
+          "name": "yellow glowing pads",
+          "count": -1,
+          "where": "on flat rooftops"
+        }
+      ],
+      "boundary": "The outer tower ring and city edge form the boundary; all traversal elements remain inside the city bounds.",
+      "scale_band": "huge",
+      "theme": "Dense dark cyberpunk metropolis with glass and neon cyan, magenta, orange, and yellow lighting."
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "the full parkour chain must remain connected and physically playable.",
+      "set_piece": false
+    },
+    "route": [
+      "P6",
+      "P2"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a massive, dense cyberpunk city map spanning 500x500 studs. Arrange 15 interconnected dark futuristic skyscrapers, ranging from 40 to 200 studs tall, around a central 100x100-stud open spawning plaza with a circular futuristic design and glowing perimeter. Connect the towers at multiple heights with glass skybridges, forming a continuous parkour circuit; leave narrow alleyways between buildings for wall-jumping routes. Use flat rooftops with yellow glowing pads, dark asphalt streets at ground level with neon grid lines, and neon cyan, magenta, and orange architectural accents. Keep all traversal structures within the city bounds: only buildings, bridges, and the central plaza, with no floating platforms, cubes, or other standalone structures."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "p6",
+  "first": "topdown",
+  "mapper_notes": []
+}

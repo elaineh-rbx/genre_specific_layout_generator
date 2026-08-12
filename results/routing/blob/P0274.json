@@ -1,0 +1,124 @@
+{
+  "scene": "P0274",
+  "source": "Create a multiplayer Roblox horror survival game. Players are divided into two teams: Runners and Hunters. Hunters must eliminate Runners before the timer ends. Every few minutes, roles are randomly reassigned, so Hunters can become Runners and vice versa. The game focuses on psychological tension, betrayal, and survival rather than jump scares.\nRunners are more agile, with faster turning, better jumping, and smoother movement like deer. If they sprint for too long, their footsteps become much louder, making them easier to track.\nHunters are physically stronger and have a 10-second speed boost ability with a cooldown. They rely on sound, tracking, and strategy rather than constant speed.\nThe map is very dark, with no background music, only ambient sounds such as footsteps, doors, distant noises, breathing, and flickering lights. Players can close doors, sometimes sacrificing teammates to survive.\nThe lobby is interactive, and matches begin unexpectedly without a visible countdown.\nDuring the final minute, the environment becomes even darker, Hunters gain a visible glowing outline, and the atmosphere becomes more intense. The goal is to create suspense, uncertainty, and memorable player interactions instead of scripted horror.",
+  "answers": [
+    {
+      "field": "scale",
+      "ask": "How large is the complex - a single building, or something big enough that Hunters can lose Runners for minutes?",
+      "answer": "Use a single, compact dark building complex with enough rooms, corridors, doors, and hiding routes for short escapes, not a map where players stay lost for minutes."
+    },
+    {
+      "field": "goal",
+      "ask": "Can Runners win by surviving the timer, or only by outlasting individual rounds?",
+      "answer": "Runners win by surviving until the timer ends; Hunters win by eliminating all Runners before then."
+    }
+  ],
+  "scene_prompt": "Create a 3D horror survival map set inside a single compact, very dark building complex. Arrange a dense network of rooms, corridors, closeable doors, and intersecting hiding routes so players can break line of sight and make short escapes without remaining lost for minutes. Use sparse flickering lights and deep shadowed corners, with the interior framed as an oppressive enclosed space rather than an outdoor map.",
+  "blob": "### Genre\nThe dominant genre is Survival, specifically the asymmetric Runner-versus-Hunter format. The survival timer identifies the 1 vs All style; its tension comes from pursuit and evasion inside a compact navigable warren.\n\n### Shape and preset\nUse `warren-looping`, matched from the 1 vs All preset. Keep its dense looping circulation and separated role starts, but drop the preset’s escape exit: this scene’s runners survive in place rather than reaching an exit, so an escape gate would misdescribe the map.\n\n### Config requirements\n`cover-los` is visible geometry: short side rooms, deep shadowed recesses, closet-like hideaways, doorways, and intersecting corridors repeatedly break direct sightlines without becoming long-term dead ends. `spawn-protected` is invisible layout data: place separated Runner and Hunter role-start points behind initial sightline screens, outside immediate confrontation range. No other gameplay markers need rendering.\n\n### Layout components\nBuild one compact enclosed building complex, organized around a small central junction with several branching rooms and cross-corridors that reconnect into loops. Keep every escape route short: a Runner should be able to turn through a side room, close a door, cross an intersecting hall, and re-emerge elsewhere, but never remain lost for minutes. Include closeable doors at key corridor thresholds and room entrances, with some doors creating temporary separation rather than sealing the entire complex. Use small hiding rooms, alcoves, utility spaces, and shadowed corners as localized cover. The ground is continuous interior flooring; the boundary is opaque exterior walls around the full complex, with no outdoor space. Sparse flickering ceiling or wall lights punctuate otherwise deep darkness. Frame the isometric view to show the central junction, branching loops, doors, and the oppressive enclosing wall mass.\n\n### Render order\nUse `topdown` first and make it authoritative, because the looping pursuit routes must remain connected and avoid trapping players in unfair dead ends; the isometric render then dresses that validated plan.\n\n### Scale, theme, and pipeline cost\nScale is small: a single dense building sized for short, tense pursuits. Theme is oppressive psychological horror—near-black interiors, weak flickering light, heavy shadow, worn institutional surfaces. Use `P6` because the looping chase topology must be valid by construction; use `P0` otherwise, since the complex is one enclosed surface with no overhangs or outside-to-inside transition.",
+  "spec": {
+    "genre": "Survival",
+    "secondary": [],
+    "shape": "warren-looping",
+    "preset": "1 vs All",
+    "axes": {},
+    "options": [
+      {
+        "id": "cover-los",
+        "text": "Short side rooms, deep shadowed recesses, closet-like hideaways, doorways, and intersecting corridors repeatedly break direct sightlines without becoming long-term dead ends.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "spawn-protected",
+        "text": "Separated Runner and Hunter role-start points behind initial sightline screens, outside immediate confrontation range.",
+        "visible": false,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "Isometric framing shows the small central junction, branching reconnecting loops, closeable doors, and oppressive enclosing wall mass.",
+      "zones": [
+        {
+          "name": "Central junction",
+          "role": "Small hub where branching rooms and cross-corridors meet.",
+          "where": "centre",
+          "size": "small"
+        },
+        {
+          "name": "Branching rooms and cross-corridors",
+          "role": "Short pursuit and evasion routes that reconnect into loops.",
+          "where": "around the central junction",
+          "size": "compact"
+        },
+        {
+          "name": "Hiding rooms and utility spaces",
+          "role": "Localized cover for breaking line of sight and making short escapes.",
+          "where": "off corridor thresholds and room entrances",
+          "size": "small"
+        }
+      ],
+      "paths": [
+        {
+          "from": "Central junction",
+          "to": "Branching rooms and cross-corridors",
+          "kind": "corridor"
+        },
+        {
+          "from": "Branching rooms and cross-corridors",
+          "to": "Hiding rooms and utility spaces",
+          "kind": "corridor"
+        },
+        {
+          "from": "Branching rooms and cross-corridors",
+          "to": "Branching rooms and cross-corridors",
+          "kind": "corridor"
+        }
+      ],
+      "terrain": "Continuous interior flooring with near-black worn institutional surfaces, weak flickering ceiling or wall lights, and deep shadows.",
+      "props": [
+        {
+          "name": "Closeable doors",
+          "count": -1,
+          "where": "Key corridor thresholds and room entrances"
+        },
+        {
+          "name": "Sparse flickering ceiling or wall lights",
+          "count": -1,
+          "where": "Throughout the enclosed complex"
+        },
+        {
+          "name": "Shadowed corners",
+          "count": -1,
+          "where": "Localized hiding rooms, alcoves, and utility spaces"
+        }
+      ],
+      "boundary": "Opaque exterior walls enclose the full building complex; there is no outdoor space.",
+      "scale_band": "small",
+      "theme": "Oppressive psychological horror; near-black interiors, weak flickering light, heavy shadow, worn institutional surfaces."
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "Looping pursuit routes must remain connected and avoid unfair dead ends.",
+      "set_piece": false
+    },
+    "route": [
+      "P6",
+      "P0"
+    ],
+    "notes": [
+      "The 1 vs All preset is matched, but its escape exit is intentionally omitted because runners survive in place rather than reaching an exit."
+    ],
+    "scene_prompt": "Create a 3D horror survival map set inside a single compact, very dark building complex. Arrange a dense network of rooms, corridors, closeable doors, and intersecting hiding routes so players can break line of sight and make short escapes without remaining lost for minutes. Use sparse flickering lights and deep shadowed corners, with the interior framed as an oppressive enclosed space rather than an outdoor map."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "p6",
+  "first": "topdown",
+  "mapper_notes": []
+}

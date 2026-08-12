@@ -1,0 +1,162 @@
+{
+  "scene": "P0620",
+  "source": "I want you to create a visual game about a runaway train, it speeds through towns and into objects in its way, you have to speed in reverse to catch up, hook up, and floor it in the other direction, make there be a 10 minute timer and if the timer runs out and the train dosent stop, it derails on a sharp curve and into a river",
+  "answers": [
+    {
+      "field": "theme",
+      "ask": "What do the towns look like — modern, old-west, industrial?",
+      "answer": "Use small industrial railroad towns, with warehouses, loading yards, modest buildings, and trackside obstacles."
+    },
+    {
+      "field": "scale",
+      "ask": "How many towns does the track pass through before the river, given ten minutes of running time?",
+      "answer": "Use three small towns before the river; that keeps the route readable and playable within the ten-minute timer."
+    }
+  ],
+  "scene_prompt": "Create a 3D runaway-train route along a continuous railroad line passing through three small industrial railroad towns before reaching a sharp curve above a river. The train moves through warehouses, loading yards, modest trackside buildings, and obstacles positioned on or beside the rails. Leave a clear stretch of track for a second train to approach, couple behind it, and reverse direction; the far end of the route culminates in the tight riverside curve and derailment area.",
+  "blob": "### Genre\nThe dominant genre is `Simulation`, specifically a train-operation task loop; `Racing` is secondary because the experience depends on a finite, continuous rail route rather than open vehicle driving. The simulation genre owns the shape.\n\n### Shape and preset\nUse `world-shared`: one continuous rail corridor containing all three towns and the terminal river bend. Match the Vehicle Sim preset in its shared-world scale, but drop its road and extraction options because this is a railroad route rather than a road-and-hauling map.\n\n### Config requirements\nUse `water-body` as visible geometry: a river runs beneath the final elevated sharp curve. Use `settlement-density` as visible geometry: three compact industrial railroad towns are built directly along the line. No invisible option geometry is required; coupling, train behavior, timing, and derailment logic are mechanics rather than rendered layout.\n\n### Layout components\nBuild one long, connected railroad line running left-to-right through three small towns in sequence. Give each town a compact trackside zone: modest industrial buildings, warehouses, loading yards, sidings, utility poles, freight clutter, and distinct obstacles positioned on or close beside the rails. Keep the central portions of the route readable, with enough uninterrupted straight track for a second train to approach and couple behind the runaway train. The third town thins into a more exposed industrial fringe before the track rises or hugs a bank toward the terminal terrain feature: a tight riverside curve above the river, with a visibly hazardous derailment area beyond the bend. The main rail is the only critical path; sidings and yard spurs remain secondary and clearly reconnect or terminate visibly. Enclose the route with town edges, warehouse backs, embankments, scrub, and the riverbank rather than a hard arena wall. Frame the full route diagonally so all three towns read as milestones and the river curve is visible as the far-end destination.\n\n### Render order\nUse `topdown`: the continuous rail alignment, clear reverse-approach stretch, and terminal curve must remain connected and readable for play before the isometric dressing pass.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by the continuous line crossing three separate small towns plus the final river approach. Theme: grounded small industrial railroad towns, weathered freight infrastructure, and trackside clutter. Apply `P6` because the rail route must be valid and continuously connected by construction, and `CHECK` because the river is a real water feature beneath the elevated track curve.",
+  "spec": {
+    "genre": "Simulation",
+    "secondary": [
+      "Racing"
+    ],
+    "shape": "world-shared",
+    "preset": "Vehicle Sim",
+    "axes": {},
+    "options": [
+      {
+        "id": "water-body",
+        "text": "A river runs beneath the final elevated sharp curve.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "settlement-density",
+        "text": "Three compact industrial railroad towns are built directly along the line.",
+        "visible": true,
+        "count": 3
+      }
+    ],
+    "layout": {
+      "composition": "Frame the full railroad route diagonally from left to right so all three towns read as milestones, with the tight riverside curve visible as the far-end destination.",
+      "zones": [
+        {
+          "name": "First industrial railroad town",
+          "role": "Compact trackside town along the main rail, with industrial buildings, warehouses, loading yards, sidings, utility poles, freight clutter, and obstacles on or close beside the rails.",
+          "where": "left end of the connected route",
+          "size": "small"
+        },
+        {
+          "name": "Second industrial railroad town",
+          "role": "Compact trackside town along the main rail, with a clear uninterrupted straight track stretch for a second train to approach and couple behind the runaway train.",
+          "where": "central route",
+          "size": "small"
+        },
+        {
+          "name": "Third industrial railroad town",
+          "role": "Compact trackside town thinning into an exposed industrial fringe before the terminal terrain feature.",
+          "where": "right side, before the river approach",
+          "size": "small"
+        },
+        {
+          "name": "Terminal riverside curve",
+          "role": "Tight elevated or bank-hugging curve above the river, with a visibly hazardous derailment area beyond the bend.",
+          "where": "far-right end of the route",
+          "size": ""
+        }
+      ],
+      "paths": [
+        {
+          "from": "First industrial railroad town",
+          "to": "Second industrial railroad town",
+          "kind": "track"
+        },
+        {
+          "from": "Second industrial railroad town",
+          "to": "Third industrial railroad town",
+          "kind": "track"
+        },
+        {
+          "from": "Third industrial railroad town",
+          "to": "Terminal riverside curve",
+          "kind": "track"
+        },
+        {
+          "from": "Main rail",
+          "to": "sidings and yard spurs",
+          "kind": "track"
+        }
+      ],
+      "terrain": "Industrial rail ground with embankments, scrub, riverbank, and a river beneath the final elevated sharp curve.",
+      "props": [
+        {
+          "name": "modest industrial buildings",
+          "count": -1,
+          "where": "trackside zones in all three towns"
+        },
+        {
+          "name": "warehouses",
+          "count": -1,
+          "where": "along the main rail in the towns"
+        },
+        {
+          "name": "loading yards",
+          "count": -1,
+          "where": "in each compact trackside town"
+        },
+        {
+          "name": "sidings and yard spurs",
+          "count": -1,
+          "where": "secondary to the main rail"
+        },
+        {
+          "name": "utility poles",
+          "count": -1,
+          "where": "along the route through the towns"
+        },
+        {
+          "name": "freight clutter",
+          "count": -1,
+          "where": "trackside in the towns"
+        },
+        {
+          "name": "obstacles",
+          "count": -1,
+          "where": "on or close beside the rails"
+        },
+        {
+          "name": "derailment area",
+          "count": -1,
+          "where": "beyond the terminal riverside bend"
+        }
+      ],
+      "boundary": "Enclosed by town edges, warehouse backs, embankments, scrub, and the riverbank rather than a hard arena wall.",
+      "scale_band": "large",
+      "theme": "grounded small industrial railroad towns, weathered freight infrastructure, and trackside clutter"
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "the continuous rail alignment, reverse-approach stretch, and terminal curve must remain connected and readable for play.",
+      "set_piece": false
+    },
+    "route": [
+      "P6",
+      "CHECK"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a 3D runaway-train route along a continuous railroad line passing through three small industrial railroad towns before reaching a sharp curve above a river. The train moves through warehouses, loading yards, modest trackside buildings, and obstacles positioned on or beside the rails. Leave a clear stretch of track for a second train to approach, couple behind it, and reverse direction; the far end of the route culminates in the tight riverside curve and derailment area."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P0', 'CHECK'] gives isometric"
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "scene": "P0063",
+  "source": "Create a Roblox R15 NPC Fighting Arena.\nFeatures:\nSpawn the player in a small arena.\nSpawn 5-10 enemy NPCs around the map.\nNPCs patrol until a player is nearby.\nWhen a player gets close, NPCs chase and attack.\nPlayer has a simple M1 punch attack with a short cooldown.\nPunches deal 10 damage and have a small knockback.\nNPCs have 100 health.\nNPCs play a hit animation when damaged and disappear when defeated.\nDefeated NPCs respawn after 10 seconds.\nShow a health bar above every NPC.\nShow the player's health and a kill counter on the screen.\nAward 10 coins for each NPC defeated.\nInclude a basic shop where players can upgrade:\nDamage\nMax Health\nWalk Speed\nSave coins and upgrades using DataStore.\nOrganize the project into separate scripts, modules, animations, and UI. Use Roblox best practices and optimize for performance.\nYou can expand this later by adding stronger NPCs, waves, bosses, special abilities, and better animations once the basic arena works.",
+  "answers": [
+    {
+      "field": "theme",
+      "ask": "No theme was stated - should the arena read as a stylized toon dojo, a gritty modern fight pit, or something else?",
+      "answer": "Use a simple stylized toon dojo arena theme; it fits the basic Roblox fighting setup and keeps the first build clear and lightweight."
+    },
+    {
+      "field": "shop",
+      "ask": "Is the upgrade shop a physical kiosk placed in the map, or a screen-only menu?",
+      "answer": "Make the shop a screen-only menu for the initial build, keeping the arena uncluttered and the upgrade flow simple."
+    }
+  ],
+  "scene_prompt": "Create a 3D Roblox R15 fighting arena as a small, simple stylized toon dojo. The compact arena has an open central combat floor with dojo-style boundary walls and clear open space around the player spawn, with 5–10 enemy NPC spawn positions distributed around the perimeter and across the map. Keep the arena uncluttered; the upgrade shop is screen-only and has no physical kiosk.",
+  "blob": "### Genre\nThis is Action, specifically a compact NPC combat arena. The combat loop makes `arena-flat` the dominant shape; no secondary genre is needed.\n\n### Shape and preset\nUse `arena-flat`, matching the Boss Raid preset in its single enclosed fighting space, but retain only the prompt-supported hostile-emitter aspect rather than its extra breakable cover or ring-out edges. The small open dojo floor is the entire combat space.\n\n### Config requirements\nUse `spawner-npc` as invisible layout geometry: place 5–10 enemy NPC spawn positions around the perimeter and distributed across the arena floor, outside the clear player-entry area. Use `spawn-protected` as invisible/both geometry: the player spawn is a small open, hazard-free area with boundary screening and no immediate enemy spawn line. Do not add a physical shop, pickups, hazards, cover, spectators, or other unrequested arena features.\n\n### Layout components\nBuild one compact square-to-octagonal dojo arena zone, with a broad, unobstructed central combat floor occupying most of the footprint. Put the player spawn slightly inset from one side or at the center, surrounded by a clear buffer of empty floor. Distribute 5–10 enemy spawn positions around the outer perimeter and at widely separated points across the map so enemies approach through open space rather than clustering at spawn. Frame the floor with low-to-mid-height stylized dojo boundary walls, timber posts, simple roof-eave accents, and corner lanterns; these define the edge without filling the fighting floor. Use flat warm wood or tan training mats for the ground, with a simple dark border strip at the walls. The arena is enclosed by the dojo wall perimeter, with no exterior routes, water, terrain relief, interior rooms, or physical vendor area. Compose the frame from an elevated three-quarter isometric view, centered on the empty central floor and showing the perimeter spawn distribution.\n\n### Render order\nUse `isometric`: render the stylized dojo view first and derive the top-down plan from it, because this is a simple open arena whose topology does not need procedural validation.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by one compact combat floor for a single basic fighting encounter and 5–10 NPC positions. Theme is lightweight stylized toon dojo, with readable Roblox-like timber framing, warm mats, and restrained ornamental detail. Use `P0`; the flat single-surface arena forces no additional pipeline pass.",
+  "spec": {
+    "genre": "Action",
+    "secondary": [],
+    "shape": "arena-flat",
+    "preset": "Boss Raid",
+    "axes": {},
+    "options": [
+      {
+        "id": "spawner-npc",
+        "text": "place 5–10 enemy NPC spawn positions around the perimeter and distributed across the arena floor, outside the clear player-entry area",
+        "visible": false,
+        "count": 10
+      },
+      {
+        "id": "spawn-protected",
+        "text": "the player spawn is a small open, hazard-free area with boundary screening and no immediate enemy spawn line",
+        "visible": true,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "Elevated three-quarter isometric view centered on the empty broad central combat floor, showing the perimeter enemy spawn distribution; the player spawn sits slightly inset from one side or at the center with a clear empty buffer.",
+      "zones": [
+        {
+          "name": "dojo arena",
+          "role": "Single enclosed compact combat space with an unobstructed central fighting floor and screened player entry area.",
+          "where": "entire map, centered in frame",
+          "size": "small, compact square-to-octagonal footprint"
+        }
+      ],
+      "paths": [],
+      "terrain": "Flat warm wood or tan training mats across the arena floor, with a simple dark border strip at the dojo walls.",
+      "props": [
+        {
+          "name": "low-to-mid-height stylized dojo boundary walls",
+          "count": -1,
+          "where": "around the arena perimeter"
+        },
+        {
+          "name": "timber posts",
+          "count": -1,
+          "where": "along the boundary walls"
+        },
+        {
+          "name": "simple roof-eave accents",
+          "count": -1,
+          "where": "above the boundary walls"
+        },
+        {
+          "name": "corner lanterns",
+          "count": -1,
+          "where": "arena corners"
+        }
+      ],
+      "boundary": "Low-to-mid-height stylized dojo wall perimeter enclosing the arena; no exterior routes.",
+      "scale_band": "small",
+      "theme": "lightweight stylized toon dojo, readable Roblox-like timber framing, warm mats, restrained ornamental detail"
+    },
+    "render": {
+      "first": "isometric",
+      "then": "topdown",
+      "authoritative": "isometric",
+      "why": "this is a simple open arena whose topology does not need procedural validation.",
+      "set_piece": false
+    },
+    "route": [
+      "P0"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a 3D Roblox R15 fighting arena as a small, simple stylized toon dojo. The compact arena has an open central combat floor with dojo-style boundary walls and clear open space around the player spawn, with 5–10 enemy NPC spawn positions distributed around the perimeter and across the map. Keep the arena uncluttered; the upgrade shop is screen-only and has no physical kiosk."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": []
+}

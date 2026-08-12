@@ -1,0 +1,143 @@
+{
+  "scene": "P0124",
+  "source": "a gun game where at the start there will be three maps and whichever one has the most votes they will all teleport to and then be separated into 2 teams with all players each have 1 sniper infinite grenades 1 normal gun and a mini gun that can only be used for 30 secs and there will be a 130 second timer so whatever team has the most kills when the timer is out wins",
+  "answers": [
+    {
+      "field": "theme",
+      "ask": "What should the maps look like - military, urban, sci-fi, something else?",
+      "answer": "Use a military theme for all three maps, matching the gun-game combat."
+    },
+    {
+      "field": "shape",
+      "ask": "Should all three maps share a lane layout, or should they differ (open, close-quarters, vertical)?",
+      "answer": "Have the three maps differ: one open, one close-quarters, and one with vertical areas, so the vote gives players distinct choices."
+    }
+  ],
+  "scene_prompt": "Create three distinct military-themed combat maps for players to choose between: one open map with broad sightlines and sparse cover, one close-quarters map built from tightly connected structures and narrow passages, and one map with elevated areas and multiple vertical routes.",
+  "blob": "### Genre\nThe dominant genre is Shooter. This is a team gun-combat game, and the three alternatives are distinct match arenas rather than separate game genres.\n\n### Shape and preset\nUse the Shooter shape `lane-network` as the common combat skeleton: each map must offer connected approaches rather than a single dead-end firing line. The closest preset is Team Deathmatch, but it is adapted rather than copied: retain its general opposing-side combat logic while giving the three maps deliberately different spatial character and omitting dense, evenly distributed cover where the open map contradicts it.\n\n### Config requirements\nUse `cover-los` as visible geometry only on the open map, where sparse military barriers and a few hard cover pieces break otherwise broad sniper sightlines. Use `path-loop` as visible geometry in the close-quarters map: tightly connected structures and narrow passages need multiple linked routes rather than isolated rooms. Use `cover-elevated` as visible geometry in the vertical map, with raised platforms, towers, balconies, and exposed stairs creating several vertical approaches. No invisible gameplay volumes are requested.\n\n### Layout components\nBuild three separate military combat maps. The open map is a broad outdoor military yard or battlefield, with a mostly flat central expanse, long cross-map views, and only sparse cover such as concrete barriers, sandbag clusters, wrecked equipment, and low defensive walls. The close-quarters map is a compact military compound of tightly connected barracks, service buildings, corridors, alleys, and narrow passageways; several short loops reconnect its rooms and prevent a single dominant route. The vertical map is a military installation arranged around multiple levels, with ground courtyards below elevated walkways, guard towers, rooflines, balconies, stairways, and raised platforms. Keep each map bounded by believable military perimeter walls, fencing, rock berms, or out-of-bounds terrain. Compose each as a readable self-contained arena, with the open map emphasizing horizontal breadth, the compound emphasizing dense interior-like circulation, and the vertical installation emphasizing height layers.\n\n### Render order\nUse `isometric`: the requested arena variants need strong military atmosphere and readable spatial character, but none requires a procedurally validated maze, circuit, or fixed traversal chain.\n\n### Scale, theme, and pipeline cost\nScale is medium per map, driven by three complete but compact combat spaces rather than one huge battlefield. Theme: grounded military training grounds, fortified compounds, and tactical installations. Use `P4` because the three alternatives are separate maps, each needing its own rendered layout. The vertical map also forces `P2` because elevated routes and structures sit above lower playable surfaces.",
+  "spec": {
+    "genre": "Shooter",
+    "secondary": [],
+    "shape": "lane-network",
+    "preset": "Team Deathmatch",
+    "axes": {},
+    "options": [
+      {
+        "id": "cover-los",
+        "text": "Sparse military barriers and a few hard cover pieces break otherwise broad sniper sightlines on the open map.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "path-loop",
+        "text": "Tightly connected structures and narrow passages in the close-quarters map use several short loops that reconnect rooms and prevent a single dominant route.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "cover-elevated",
+        "text": "Raised platforms, towers, balconies, and exposed stairs create several vertical approaches in the vertical map.",
+        "visible": true,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "Three readable self-contained military arenas: the open map emphasizes horizontal breadth and long cross-map views; the close-quarters compound emphasizes dense interior-like circulation; the vertical installation emphasizes height layers above lower courtyards.",
+      "zones": [
+        {
+          "name": "Open military yard",
+          "role": "Broad outdoor combat arena with sparse cover and long sniper sightlines.",
+          "where": "separate map",
+          "size": "medium"
+        },
+        {
+          "name": "Close-quarters military compound",
+          "role": "Compact combat arena of connected barracks, service buildings, corridors, alleys, and narrow passages.",
+          "where": "separate map",
+          "size": "medium"
+        },
+        {
+          "name": "Vertical military installation",
+          "role": "Multi-level combat arena with ground courtyards beneath elevated routes and structures.",
+          "where": "separate map",
+          "size": "medium"
+        }
+      ],
+      "paths": [
+        {
+          "from": "Open military yard",
+          "to": "Open military yard",
+          "kind": "open ground"
+        },
+        {
+          "from": "Close-quarters military compound",
+          "to": "Close-quarters military compound",
+          "kind": "corridor"
+        },
+        {
+          "from": "Vertical military installation courtyards",
+          "to": "Elevated walkways, towers, balconies, rooflines, and raised platforms",
+          "kind": "stair"
+        }
+      ],
+      "terrain": "Mostly flat central expanse in the open yard; military compound ground and dense structures; lower courtyards beneath elevated installation routes.",
+      "props": [
+        {
+          "name": "Concrete barriers",
+          "count": -1,
+          "where": "open military yard"
+        },
+        {
+          "name": "Sandbag clusters",
+          "count": -1,
+          "where": "open military yard"
+        },
+        {
+          "name": "Wrecked equipment",
+          "count": -1,
+          "where": "open military yard"
+        },
+        {
+          "name": "Low defensive walls",
+          "count": -1,
+          "where": "open military yard"
+        },
+        {
+          "name": "Barracks and service buildings",
+          "count": -1,
+          "where": "close-quarters military compound"
+        },
+        {
+          "name": "Guard towers, rooflines, balconies, and raised platforms",
+          "count": -1,
+          "where": "vertical military installation"
+        }
+      ],
+      "boundary": "Each map is bounded by believable military perimeter walls, fencing, rock berms, or out-of-bounds terrain.",
+      "scale_band": "medium",
+      "theme": "Grounded military training grounds, fortified compounds, and tactical installations."
+    },
+    "render": {
+      "first": "isometric",
+      "then": "topdown",
+      "authoritative": "isometric",
+      "why": "Strong military atmosphere and readable spatial character matter, while no arena requires a procedurally validated maze, circuit, or fixed traversal chain.",
+      "set_piece": false
+    },
+    "route": [
+      "P4",
+      "P2"
+    ],
+    "notes": [],
+    "scene_prompt": "Create three distinct military-themed combat maps for players to choose between: one open map with broad sightlines and sparse cover, one close-quarters map built from tightly connected structures and narrow passages, and one map with elevated areas and multiple vertical routes."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": []
+}

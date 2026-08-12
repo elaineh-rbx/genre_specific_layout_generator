@@ -1,0 +1,101 @@
+{
+  "scene": "P0361",
+  "source": "I want to build a 3D racing game where the player controls a dragon flying through a sequence of rings to complete a course.\\n\\nHere are the core requirements for the game:\\n1. Player Controller:\\n • The player controls a 3D dragon character.\\n • Flight controls should include pitch (up/down), yaw (left/right), and roll.\\n • Include a forward thrust/speed mechanic, and gravity that pulls the dragon down slightly if they aren't actively flying.\\n2. Camera System:\\n • Implement a third-person follow camera that stays behind and slightly above the dragon, smoothly rotating as the dragon turns.\\n3. Course & Ring Mechanics:\\n • Create a system for placing floating rings in the environment.\\n • The player must fly through the rings in a specific, numbered order.\\n • When the player passes through the correct active ring, play a sound, change the ring's color (e.g., from yellow to green), and activate the next ring in the sequence.\\n4. Win/Loss State & UI:\\n • Include a simple HUD (Heads Up Display) showing a countdown timer and a ring counter (e.g., \"Rings: 3/10\").\\n • Win State: Passing through the final ring before time runs out.\\n • Loss State: The timer hitting zero before the course is finished, or crashing into the ground/terrain.",
+  "block": {
+    "genres": [
+      "racing"
+    ],
+    "shape": {
+      "id": "route-point-to-point",
+      "type": "Path",
+      "name": "Point to Point"
+    },
+    "preset": "Obstacle Race",
+    "pipeline": [
+      "P6",
+      "CHECK"
+    ],
+    "image_prompt": [
+      {
+        "id": "hazard-kill",
+        "text": "The ground and terrain below the course, lethal on contact - crashing into it ends the run"
+      },
+      {
+        "id": "trigger-finish",
+        "text": "The final ring of the sequence, where passing through ends the course"
+      },
+      {
+        "id": "volume-open",
+        "text": "An open sky volume above varied terrain, flown through rather than walked across"
+      },
+      {
+        "id": null,
+        "text": "floating rings placed at varying heights and distances along an aerial course"
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "trigger-finish",
+        "type": "TriggerZone",
+        "text": "Detection at the last ring that ends the race if the timer has not expired"
+      },
+      {
+        "id": "checkpoint-respawn",
+        "type": "Checkpoint",
+        "text": "A recovery point restoring a crashed flyer with position, orientation and zeroed velocity"
+      },
+      {
+        "id": null,
+        "text": "the rings must be passed in a specific numbered order, each one activating the next"
+      }
+    ],
+    "notes": [
+      "Preset caveat: Obstacle Race contributes a course recovery point, but the prompt makes crashing a loss state rather than a setback - kept in the handoff and flagged as rejected.",
+      "The numbered ring sequence is the whole course and no Racing option covers ordered pass-through gates, so it is carried as free text in both streams.",
+      "P6 was taken from the genre route, but there is no ground track to validate here - the route to keep coherent is a line through open air.",
+      "The dragon hints at a fantasy look, but the prompt never states a theme."
+    ]
+  },
+  "open_questions": [
+    {
+      "field": "theme",
+      "ask": "No theme was stated - should the world below read as high fantasy, or something else?"
+    },
+    {
+      "field": "ring count",
+      "ask": "How many rings should the course have? The HUD example implies ten."
+    }
+  ],
+  "theme": "",
+  "scale": {
+    "band": "district",
+    "assumed": true
+  },
+  "coverage_missing": [
+    {
+      "field": "theme",
+      "ask": "What should the world below the course look like?"
+    },
+    {
+      "field": "ring count",
+      "ask": "How many rings, and how long is the timer?"
+    },
+    {
+      "field": "player count",
+      "ask": "Is this a solo time trial, or do several players race the course at once?"
+    }
+  ],
+  "answers": [
+    {
+      "field": "theme",
+      "ask": "No theme was stated - should the world below read as high fantasy, or something else?",
+      "answer": "Use a simple high-fantasy environment below the course, fitting the dragon flight premise."
+    },
+    {
+      "field": "ring count",
+      "ask": "How many rings should the course have? The HUD example implies ten.",
+      "answer": "Use 10 rings, as implied by the HUD example."
+    }
+  ],
+  "answers_missing": 0
+}

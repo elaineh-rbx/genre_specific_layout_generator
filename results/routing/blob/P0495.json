@@ -1,0 +1,121 @@
+{
+  "scene": "P0495",
+  "source": "Game: Last Rogent (prototype)\nBuild a simple Roblox tower-defense / wave-survival game. A base sits at the end of a fixed path. Enemies spawn and walk the path toward the base. The player deploys and upgrades AI \"agents\" that fight the enemies. Survive escalating waves.\nCore loop (this is the whole game for now):\n 1. Prep - between waves, the player spends orbs (currency) to place or upgrade agents on fixed slots along the path.\n 2. Fight - press \"Start Wave.\" Enemies spawn and march the path. Placed agents auto-attack enemies in range. Enemies that reach the base deal damage to base health.\n 3. Loot - killed enemies drop orbs. Orb count ticks up on screen.\n 4. Repeat for the next, harder wave.\nv1 scope - keep it minimal:\n • One agent type: place it on a slot, it auto-shoots the nearest enemy. Upgradable 1→2→3 (more damage / range each level).\n • One enemy type: walks the path, has HP, drops orbs on death, damages the base if it reaches the end.\n • 10 waves, each with more enemies and slightly more HP than the last.\n • Base health (e.g. 20). Hit 0 = game over. Survive wave 10 = win.\n • Simple UI: base health, current orb count, current wave number, and a \"Start Wave\" button.\nFeel: fast, readable, satisfying. Orbs pop out of dead enemies. Placing/upgrading an agent is one tap on a slot. No menus, no accounts, no data saving yet - just the loop working in Play mode.\nStart with a flat baseplate, a straight path of parts from a spawn point to the base, agent slots along the path, and get one wave fully working before adding the rest.",
+  "answers": [
+    {
+      "field": "theme",
+      "ask": "No visual theme was given beyond a grey baseplate prototype — should the finished map read as sci-fi, fantasy, or stylized toon?",
+      "answer": "Use a stylized toon prototype look: clean, colorful, highly readable shapes on the flat baseplate."
+    }
+  ],
+  "scene_prompt": "Create a simple stylized-toon tower-defense map on a flat grey baseplate, using clean colorful, highly readable shapes. A straight path made of parts runs from an enemy spawn point at one end to a base at the opposite end. Arrange fixed agent placement slots at intervals along both sides of the path, with open space around them for clear visibility; the base is the path endpoint.",
+  "blob": "### Genre\nThe dominant genre is Strategy, specifically a tower-defense wave-survival game: enemies follow a fixed path from a spawn origin to the base while players place defenders beside it.\n\n### Shape and preset\nUse `lane-actor-track`, matching the Tower Defense preset. Here it is a deliberately simple, straight enemy lane across one flat prototype baseplate. Retain the preset’s base, enemy-origin, and placement-ground logic, but omit its chokepoint because the prompt specifies an uninterrupted straight path.\n\n### Config requirements\n`buildzone-grid` is visible geometry: fixed, cleanly marked agent placement slots at regular intervals on both sides of the path, with ample open ground around each slot. `tracker-core` is both visible and invisible: the visible endpoint base is a colorful, easily recognized defended structure; its base-health tracking region is placed afterward and does not enter the image. `spawner-npc` is invisible layout logic: place the enemy wave origin at the path’s far end, represented visually only by a simple spawn-point marker.\n\n### Layout components\nBuild one small rectangular flat grey baseplate. Run a broad, straight path of modular parts down its long central axis, from the enemy spawn point at one narrow end to the base at the opposite narrow end. Place the base centered on the path endpoint, slightly larger and taller than the path pieces so it is unmistakably the destination. Set evenly spaced fixed agent slots in mirrored rows along both sides of the entire path, leaving clear open margins around the slots and between them for readability. Terrain is completely flat with no water, relief, buildings, or clutter. The baseplate edge is the simple outer boundary. Compose the isometric view diagonally along the lane so spawn, every slot row, and the base remain legible in a single glance.\n\n### Render order\nUse `authored_plan`: the straight enemy route must be valid by construction, continuously connecting its spawn origin to the base without breaks.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the minimal single-lane prototype scope. Theme is stylized toon prototype: flat grey ground, clean colorful path, slots, spawn marker, and base with strong readable silhouettes. Pipeline modifier: `P6`, forced by the tower-defense lane’s required continuous enemy path.",
+  "spec": {
+    "genre": "Strategy",
+    "secondary": [],
+    "shape": "lane-actor-track",
+    "preset": "Tower Defense",
+    "axes": {},
+    "options": [
+      {
+        "id": "buildzone-grid",
+        "text": "Fixed, cleanly marked agent placement slots at regular intervals on both sides of the path, with ample open ground around each slot.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "tracker-core",
+        "text": "The visible endpoint base is a colorful, easily recognized defended structure; its base-health tracking region is placed afterward and does not enter the image.",
+        "visible": true,
+        "count": 1
+      },
+      {
+        "id": "spawner-npc",
+        "text": "Place the enemy wave origin at the path’s far end, represented visually only by a simple spawn-point marker.",
+        "visible": false,
+        "count": 1
+      }
+    ],
+    "layout": {
+      "composition": "Isometric view diagonally along the lane so the spawn, every slot row, and the base remain legible in a single glance.",
+      "zones": [
+        {
+          "name": "Flat grey baseplate",
+          "role": "Single flat prototype play surface.",
+          "where": "Entire map",
+          "size": "small rectangular"
+        },
+        {
+          "name": "Enemy spawn point",
+          "role": "Enemy wave origin.",
+          "where": "One narrow end of the baseplate",
+          "size": ""
+        },
+        {
+          "name": "Straight enemy lane",
+          "role": "Continuously connects the spawn origin to the defended base.",
+          "where": "Down the long central axis",
+          "size": "broad"
+        },
+        {
+          "name": "Mirrored agent slot rows",
+          "role": "Fixed defender placement ground.",
+          "where": "Both sides of the entire path",
+          "size": ""
+        },
+        {
+          "name": "Defended base",
+          "role": "Endpoint destination and visible core base.",
+          "where": "Opposite narrow end, centered on the path endpoint",
+          "size": "slightly larger and taller than the path pieces"
+        }
+      ],
+      "paths": [
+        {
+          "from": "Enemy spawn point",
+          "to": "Defended base",
+          "kind": "track"
+        }
+      ],
+      "terrain": "Completely flat grey ground with a clean colorful modular path; no water, relief, buildings, or clutter.",
+      "props": [
+        {
+          "name": "Simple spawn-point marker",
+          "count": 1,
+          "where": "At the enemy spawn point at the far end of the path"
+        },
+        {
+          "name": "Fixed agent placement slots",
+          "count": -1,
+          "where": "Mirrored rows along both sides of the path"
+        }
+      ],
+      "boundary": "The baseplate edge is the simple outer boundary.",
+      "scale_band": "small",
+      "theme": "Stylized toon prototype; flat grey ground, clean colorful path, slots, spawn marker, and base with strong readable silhouettes."
+    },
+    "render": {
+      "first": "authored_plan",
+      "then": "topdown",
+      "authoritative": "authored_plan",
+      "why": "the straight enemy route must continuously connect its spawn origin to the base without breaks.",
+      "set_piece": false
+    },
+    "route": [
+      "P6"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a simple stylized-toon tower-defense map on a flat grey baseplate, using clean colorful, highly readable shapes. A straight path made of parts runs from an enemy spawn point at one end to a base at the opposite end. Arrange fixed agent placement slots at intervals along both sides of the path, with open space around them for clear visibility; the base is the path endpoint."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "p6",
+  "first": "topdown",
+  "mapper_notes": [
+    "blob asked for authored_plan first; the route ['P6'] gives topdown"
+  ]
+}

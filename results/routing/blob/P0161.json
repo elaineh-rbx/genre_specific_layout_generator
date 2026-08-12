@@ -1,0 +1,135 @@
+{
+  "scene": "P0161",
+  "source": "can you make a 1v1v1v1v1v1 first person 3d game about who can find the exit first in the arcade? In the arcade there will be rooms hinting or tricking you into finding the exit! who ever finds it last loses! The game also has multiple maps ( you can decide on what they are going to be ) and everyone has to decide which map they want to play!",
+  "answers": [
+    {
+      "field": "scale",
+      "ask": "How long should a round last - is finding the exit a minute of searching, or five?",
+      "answer": "Make each round a quick one-minute search so the game stays fast and replayable."
+    },
+    {
+      "field": "goal",
+      "ask": "Does the round end when the first player is out, or does everyone keep going until only the loser is left inside?",
+      "answer": "Everyone keeps going after finding the exit; the round ends once only the last player is still inside, and that player loses."
+    }
+  ],
+  "scene_prompt": "Create a first-person 3D arcade escape map for six players, built as a compact maze of interconnected arcade rooms. Each room contains arcade machines, corridors, doorways, and misleading routes that hint at or trick players searching for the exit; place the true exit beyond the room network. Support multiple distinct arcade map layouts for players to choose from.",
+  "blob": "### Genre\nThe dominant genre is Party & Casual: this is a fast, competitive round of escape searching rather than a puzzle chain. The six-player, first-person arcade maze uses a last-out condition, but rules and timing do not alter the physical layout.\n\n### Shape and preset\nUse `space-staged`, separating a compact map-selection lobby from the selected arcade maze map. The closest preset is Minigame, but the explicit maze focus and map-choice requirement replace most of that preset’s bundle, so the preset is none.\n\n### Config requirements\nUse visible `social-hub` for a small pre-round arcade selection lobby where all six players can gather and inspect the available map entrances. Use `teleporter-link` as both visible, clearly distinct map-selection portals and invisible linked transport markers leading into and back from each separate layout. Use visible `obstacle-maze` for the interconnected arcade-room warren; it is a true navigable maze rather than decorative clutter.\n\n### Layout components\nBuild a compact central selection lobby, sized for six players, with a ring or row of distinct portal entrances representing several separate arcade map layouts. Each selected map is an enclosed arcade interior: a dense network of arcade-machine rooms joined by short corridors and doorways, with loops, branches, dead ends, and misleading visual cues. The true exit sits at the far outer edge of the room network, reached only through a valid continuous route. Vary each map’s room arrangement, machine clusters, corridor turns, and false-looking or tempting branches while retaining the same arcade identity. Use carpeted arcade floors, glowing cabinets, prize-counter-like accents, wall signage, and low ceiling lighting. Enclose each maze in opaque arcade walls; do not expose the solution from above. Compose the rendered view from a readable elevated three-quarter angle, with the lobby and one maze layout presented clearly as separate spaces.\n\n### Render order\nUse `authored_plan`: each maze needs a generated, connected route from its entrance through the room network to its exit, because an invalid or sealed maze would make the round unplayable. Dress the computed plan with arcade interiors afterward.\n\n### Scale, theme, and pipeline cost\nScale is medium: the spaces are compact for one-minute searches, but several distinct selectable maps require separate builds. Theme: neon retro arcade, dense indoor corridors, playful deceptive signage. Apply `P4` because the selectable layouts are separate maps, and `P6` because every maze topology must be valid by construction.",
+  "spec": {
+    "genre": "Party & Casual",
+    "secondary": [],
+    "shape": "space-staged",
+    "preset": "none",
+    "axes": {},
+    "options": [
+      {
+        "id": "social-hub",
+        "text": "A small pre-round arcade selection lobby where all six players can gather and inspect the available map entrances.",
+        "visible": true,
+        "count": 6
+      },
+      {
+        "id": "teleporter-link",
+        "text": "Clearly distinct map-selection portals, with linked transport markers leading into and back from each separate layout.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "obstacle-maze",
+        "text": "An interconnected arcade-room warren: a true navigable maze of rooms, short corridors, doorways, loops, branches, dead ends, and misleading visual cues.",
+        "visible": true,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "Readable elevated three-quarter view with the compact central selection lobby and one enclosed arcade maze layout presented clearly as separate spaces.",
+      "zones": [
+        {
+          "name": "Central selection lobby",
+          "role": "Pre-round gathering and arcade map selection.",
+          "where": "centre",
+          "size": "compact; sized for six players"
+        },
+        {
+          "name": "Selected arcade maze",
+          "role": "Competitive escape-searching round, with a valid route from entrance through the room network to the true exit.",
+          "where": "separate from the lobby",
+          "size": "compact"
+        },
+        {
+          "name": "True exit",
+          "role": "Round escape destination.",
+          "where": "far outer edge of the maze room network",
+          "size": ""
+        }
+      ],
+      "paths": [
+        {
+          "from": "Central selection lobby",
+          "to": "Selected arcade maze",
+          "kind": "portal"
+        },
+        {
+          "from": "Maze entrance",
+          "to": "True exit",
+          "kind": "corridor"
+        }
+      ],
+      "terrain": "Carpeted arcade floors inside opaque arcade walls; dense indoor room-and-corridor network.",
+      "props": [
+        {
+          "name": "arcade machines",
+          "count": -1,
+          "where": "throughout maze rooms in clusters"
+        },
+        {
+          "name": "glowing cabinets",
+          "count": -1,
+          "where": "throughout maze rooms"
+        },
+        {
+          "name": "prize-counter-like accents",
+          "count": -1,
+          "where": "arcade interiors"
+        },
+        {
+          "name": "wall signage",
+          "count": -1,
+          "where": "arcade interiors and misleading branches"
+        },
+        {
+          "name": "low ceiling lighting",
+          "count": -1,
+          "where": "throughout enclosed maze interiors"
+        }
+      ],
+      "boundary": "Each maze is enclosed by opaque arcade walls and low ceilings; the solution is not exposed from above.",
+      "scale_band": "medium",
+      "theme": "neon retro arcade, dense indoor corridors, playful deceptive signage"
+    },
+    "render": {
+      "first": "authored_plan",
+      "then": "topdown",
+      "authoritative": "authored_plan",
+      "why": "an invalid or sealed maze would make the round unplayable.",
+      "set_piece": false
+    },
+    "route": [
+      "P4",
+      "P6"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a first-person 3D arcade escape map for six players, built as a compact maze of interconnected arcade rooms. Each room contains arcade machines, corridors, doorways, and misleading routes that hint at or trick players searching for the exit; place the true exit beyond the room network. Support multiple distinct arcade map layouts for players to choose from."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "p6",
+  "first": "topdown",
+  "mapper_notes": [
+    "blob asked for authored_plan first; the route ['P4', 'P6'] gives topdown"
+  ]
+}

@@ -1,0 +1,190 @@
+{
+  "scene": "P0107",
+  "source": "I want to add a new map to my tactical shooter. Can you create a map that looks like Gaza?",
+  "answers": [
+    {
+      "field": "goal",
+      "ask": "What mode does the map serve - team deathmatch, bomb defusal, squad-versus-objective? The shape depends on it.",
+      "answer": "Use bomb defusal; it best fits a compact tactical-shooter map with clear lanes and two objective sites."
+    },
+    {
+      "field": "scale",
+      "ask": "How big are the existing maps in your shooter, and how many players per match?",
+      "answer": "Build it as a small, compact 5v5 map, sized for short tactical rounds rather than a large open area."
+    },
+    {
+      "field": "theme",
+      "ask": "Should the district read as intact and lived-in, or war-damaged?",
+      "answer": "Make it war-damaged, with dense urban streets and visibly damaged buildings."
+    }
+  ],
+  "scene_prompt": "Create a compact 5v5 tactical-shooter bomb-defusal map set in a fictional war-damaged, dense urban district. Arrange tight streets and alleys between visibly damaged buildings, with clear lanes converging on two distinct objective-site courtyards or building interiors; include rubble, broken walls, and partially collapsed structures as physical cover and route connections.",
+  "blob": "### Genre\nDominant genre: Shooter. The original request specifies a compact 5v5 tactical-shooter bomb-defusal mode, so the map is organized around balanced lanes and two attackable sites rather than an unstructured war-zone environment.\n\n### Shape and preset\nUse `lane-network`, matched to the Bomb Defusal preset. It is a small, dense district whose interconnected street lanes converge on two distinct bomb sites. Retain the preset’s lane-based competitive structure and add the explicitly requested damaged enterable site architecture.\n\n### Config requirements\nUse `spawn-teambase` as both visible, screened team staging pockets at opposite map edges and invisible 5v5 spawn placements. Use `cover-los` as visible rubble piles, broken masonry walls, collapsed facades, and damaged building shells that break firing sightlines along streets. Use `choke-bottleneck` as visible narrow alleys, breached walls, and tight street junctions where lanes meet. Use `capture-zone` as visible, clearly readable objective-site courtyards or rooms plus invisible bomb-site detection volumes. Use `building-interior` as a visibly damaged, enterable building interior containing one objective site and connected to exterior routes.\n\n### Layout components\nPlace an attacking team base at one short edge and a defending team base at the opposite edge, each recessed behind damaged walls so neither directly overlooks a central lane. Between them, build three short, readable routes: a central rubble-strewn street, a tighter alley flank, and a broader broken-wall route through damaged structures. The routes cross-connect at partial building breaches rather than ending in dead ends. Put one objective site in a compact open courtyard off one lane and the other inside a partially collapsed building off another; both need at least two viable approaches. Use dense damaged urban blocks as the boundary, with impassable ruined facades and debris defining the outer edge. Ground is cracked pavement, dust, and rubble, with no open terrain. Frame the district as a compact isometric block: both sites legible as distinct anchors, while lane entrances remain visible.\n\n### Render order\nUse `topdown` first and make it authoritative, because balanced, continuously reachable lanes from both teams to both objective sites are necessary for a playable defusal round, while an image-led plan cannot reliably preserve that topology.\n\n### Scale, theme, and pipeline cost\nScale band: small, driven by the requested compact 5v5 format and short tactical rounds. Theme: fictional war-damaged dense urban district, dusty concrete, broken masonry, and collapsed structures. Pipeline modifier: `P3`, forced by traversal between exterior streets and the enterable damaged objective building; capture linked outside and inside plans.",
+  "spec": {
+    "genre": "Shooter",
+    "secondary": [],
+    "shape": "lane-network",
+    "preset": "Bomb Defusal",
+    "axes": {},
+    "options": [
+      {
+        "id": "spawn-teambase",
+        "text": "Visible, screened team staging pockets at opposite map edges, with invisible 5v5 spawn placements.",
+        "visible": true,
+        "count": 10
+      },
+      {
+        "id": "cover-los",
+        "text": "Rubble piles, broken masonry walls, collapsed facades, and damaged building shells break firing sightlines along streets.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "choke-bottleneck",
+        "text": "Narrow alleys, breached walls, and tight street junctions where lanes meet.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "capture-zone",
+        "text": "Clearly readable objective-site courtyards or rooms, plus invisible bomb-site detection volumes.",
+        "visible": true,
+        "count": 2
+      },
+      {
+        "id": "building-interior",
+        "text": "A visibly damaged, enterable building interior contains one objective site and connects to exterior routes.",
+        "visible": true,
+        "count": 1
+      }
+    ],
+    "layout": {
+      "composition": "Compact isometric district block with both objective sites legible as distinct anchors and lane entrances remaining visible; the attacking and defending bases sit at opposite short edges.",
+      "zones": [
+        {
+          "name": "Attacking team base",
+          "role": "Screened attacking team staging pocket and spawn area.",
+          "where": "one short map edge",
+          "size": ""
+        },
+        {
+          "name": "Defending team base",
+          "role": "Screened defending team staging pocket and spawn area.",
+          "where": "opposite short map edge",
+          "size": ""
+        },
+        {
+          "name": "Central rubble-strewn street",
+          "role": "Central readable route between the team bases.",
+          "where": "centre",
+          "size": "short"
+        },
+        {
+          "name": "Tighter alley flank",
+          "role": "Flanking route between the team bases.",
+          "where": "between the bases",
+          "size": "short"
+        },
+        {
+          "name": "Broader broken-wall route",
+          "role": "Route through damaged structures between the team bases.",
+          "where": "between the bases",
+          "size": "short"
+        },
+        {
+          "name": "Open courtyard objective site",
+          "role": "Bomb objective site with at least two viable approaches.",
+          "where": "off one lane",
+          "size": "compact"
+        },
+        {
+          "name": "Partially collapsed building objective site",
+          "role": "Bomb objective site inside an enterable damaged building with at least two viable approaches.",
+          "where": "off another lane",
+          "size": ""
+        }
+      ],
+      "paths": [
+        {
+          "from": "Attacking team base",
+          "to": "Defending team base",
+          "kind": "road"
+        },
+        {
+          "from": "Attacking team base",
+          "to": "Defending team base",
+          "kind": "corridor"
+        },
+        {
+          "from": "Attacking team base",
+          "to": "Defending team base",
+          "kind": "corridor"
+        },
+        {
+          "from": "Central rubble-strewn street",
+          "to": "Tighter alley flank",
+          "kind": "breach"
+        },
+        {
+          "from": "Central rubble-strewn street",
+          "to": "Broader broken-wall route",
+          "kind": "breach"
+        }
+      ],
+      "terrain": "Cracked pavement, dust, and rubble, with no open terrain.",
+      "props": [
+        {
+          "name": "rubble piles",
+          "count": -1,
+          "where": "along streets"
+        },
+        {
+          "name": "broken masonry walls",
+          "count": -1,
+          "where": "along streets and routes"
+        },
+        {
+          "name": "collapsed facades",
+          "count": -1,
+          "where": "damaged urban blocks"
+        },
+        {
+          "name": "damaged building shells",
+          "count": -1,
+          "where": "along streets"
+        },
+        {
+          "name": "partially collapsed structures",
+          "count": -1,
+          "where": "route connections and objective building"
+        }
+      ],
+      "boundary": "Dense damaged urban blocks form the boundary, with impassable ruined facades and debris defining the outer edge.",
+      "scale_band": "small",
+      "theme": "Fictional war-damaged dense urban district; dusty concrete, broken masonry, and collapsed structures."
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "balanced, continuously reachable lanes from both teams to both objective sites are necessary for a playable defusal round.",
+      "set_piece": false
+    },
+    "route": [
+      "P3"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a compact 5v5 tactical-shooter bomb-defusal map set in a fictional war-damaged, dense urban district. Arrange tight streets and alleys between visibly damaged buildings, with clear lanes converging on two distinct objective-site courtyards or building interiors; include rubble, broken walls, and partially collapsed structures as physical cover and route connections."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P3'] gives isometric"
+  ]
+}

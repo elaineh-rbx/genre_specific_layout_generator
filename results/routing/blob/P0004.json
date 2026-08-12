@@ -1,0 +1,132 @@
+{
+  "scene": "P0004",
+  "source": "Build a medieval castle dungeon with stone corridors, torch lighting, and three distinct rooms. Room 1 has small skeleton enemies, Room 2 has a puzzle room with floor pressure plates that open a iron gate, and Room 3 has a big boss arena with a giant chest at the end that awards gold coins.",
+  "answers": [
+    {
+      "field": "scale",
+      "ask": "How large should each chamber be - a tight 40-stud room or a big open boss hall?",
+      "answer": "Keep Rooms 1 and 2 as tight roughly 40-stud chambers, and make Room 3 a larger open boss hall suitable for the giant chest."
+    },
+    {
+      "field": "goal",
+      "ask": "Does the run end at the chest, or does it loop or lead deeper?",
+      "answer": "The run ends at the giant chest after the boss arena; it awards gold coins and serves as the dungeon’s finish."
+    }
+  ],
+  "scene_prompt": "Build a medieval castle dungeon with stone corridors lit by torches, connecting three distinct rooms in sequence. Room 1 is a tight roughly 40-stud chamber containing small skeleton enemies; Room 2 is another tight roughly 40-stud puzzle chamber with floor pressure plates leading to an iron gate. Beyond the gate, Room 3 opens into a larger boss hall, with a giant chest at the far end as the dungeon finish.",
+  "blob": "## Genre\nThe dominant genre is RPG, with Puzzle as a secondary genre because the dungeon’s main run is combat-oriented and ends at a reward chest, while its middle chamber requires a spatial solve. The dungeon’s overall form is owned by RPG.\n\n## Shape and preset\nUse the RPG shape `world-single`: this is one contiguous indoor castle-dungeon map, progressing through three linked chambers rather than a hub plus separate dungeon maps. The closest preset is Dungeon Crawler, but the prompt explicitly replaces its hub-and-dungeons structure with one linear dungeon and does not retain most of its bundle, so the preset is none.\n\n## Config requirements\nUse `gate-solve` as visible geometry: the iron gate visibly blocks the only onward corridor until the Room 2 floor-plate puzzle is completed. Use `button-solve` as both visible and invisible: the pressure plates are visible inset stone tiles in the floor, with their activation regions placed after segmentation and excluded from the image. No extra RPG economy, progression, loot-node, or mob-emitter geometry is required.\n\n## Layout components\nBuild three sequential interior zones. Room 1 is a tight, roughly 40-stud square stone chamber near the entrance, populated by small skeleton enemies and torch sconces along the walls. A narrow torchlit stone corridor leads directly into Room 2, another tight roughly 40-stud chamber. Its central floor contains a clear arrangement of pressure plates, with an iron gate set into the far wall as the sole exit. Beyond that gate, a second stone corridor opens into Room 3, a substantially larger open boss hall. Keep its center clear for the boss encounter and set one giant chest prominently against the far end wall as the visible dungeon finish. Use rough medieval masonry floors, thick stone walls, arched doorways, iron fittings, and repeated wall torches. The enclosing boundary is the dungeon’s continuous exterior walls; there is no exterior landscape. Compose the map as a readable left-to-right or foreground-to-background progression, with the chest visibly terminating the final hall.\n\n## Render order\nUse `topdown` first, then dress the isometric view from that plan, because the ordered corridor-and-gate connection between all three rooms must remain traversable for the dungeon run to function.\n\n## Scale, theme, and pipeline cost\nScale is medium, driven by two roughly 40-stud chambers plus a larger boss hall and linking corridors. Theme is a torchlit medieval stone castle dungeon, dark and warm-lit. Pipeline modifier: `P0`; all rooms occupy one connected interior surface with no stacked floors, exterior-to-interior transition, separate maps, or procedurally carved topology.",
+  "spec": {
+    "genre": "RPG",
+    "secondary": [
+      "Puzzle"
+    ],
+    "shape": "world-single",
+    "preset": "none",
+    "axes": {},
+    "options": [],
+    "layout": {
+      "composition": "Readable left-to-right or foreground-to-background progression: Room 1 at the entrance leads through a narrow corridor to Room 2, then through the gated corridor into the larger final boss hall, with the giant chest visibly terminating the far end.",
+      "zones": [
+        {
+          "name": "Room 1",
+          "role": "Entrance combat chamber populated by small skeleton enemies.",
+          "where": "Near the entrance, first in the sequence.",
+          "size": "Tight, roughly 40-stud square chamber."
+        },
+        {
+          "name": "Corridor 1",
+          "role": "Direct torchlit connection from Room 1 to Room 2.",
+          "where": "Between Room 1 and Room 2.",
+          "size": "Narrow."
+        },
+        {
+          "name": "Room 2",
+          "role": "Puzzle chamber containing floor pressure plates; the iron gate in its far wall blocks the only onward exit until the puzzle is completed.",
+          "where": "Middle chamber, after Corridor 1.",
+          "size": "Tight, roughly 40-stud chamber."
+        },
+        {
+          "name": "Corridor 2",
+          "role": "Connection beyond the iron gate into the final hall.",
+          "where": "Beyond the Room 2 gate, before Room 3.",
+          "size": "Stone corridor."
+        },
+        {
+          "name": "Room 3",
+          "role": "Open boss encounter hall with a clear center and the visible dungeon finish.",
+          "where": "Final chamber at the far end of the sequence.",
+          "size": "Substantially larger open boss hall."
+        }
+      ],
+      "paths": [
+        {
+          "from": "Room 1",
+          "to": "Room 2",
+          "kind": "corridor"
+        },
+        {
+          "from": "Room 2",
+          "to": "Room 3",
+          "kind": "corridor"
+        }
+      ],
+      "terrain": "Rough medieval masonry floors with thick stone walls, arched doorways, iron fittings, and repeated torch sconces; no exterior landscape.",
+      "props": [
+        {
+          "name": "small skeleton enemies",
+          "count": -1,
+          "where": "Room 1"
+        },
+        {
+          "name": "torch sconces",
+          "count": -1,
+          "where": "Along the walls and through the stone corridors"
+        },
+        {
+          "name": "pressure plates",
+          "count": -1,
+          "where": "Central floor of Room 2"
+        },
+        {
+          "name": "iron gate",
+          "count": 1,
+          "where": "Far wall of Room 2"
+        },
+        {
+          "name": "giant chest",
+          "count": 1,
+          "where": "Prominently against the far end wall of Room 3"
+        }
+      ],
+      "boundary": "The dungeon's continuous exterior walls enclose the entire interior map; there is no exterior landscape.",
+      "scale_band": "medium",
+      "theme": "Torchlit medieval stone castle dungeon, dark and warm-lit."
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "the ordered corridor-and-gate connection between all three rooms must remain traversable for the dungeon run to function.",
+      "set_piece": false
+    },
+    "route": [
+      "P0"
+    ],
+    "notes": [
+      "`gate-solve` and `button-solve` were named in the blob but are Puzzle option IDs, not valid canonical option IDs for the dominant RPG genre, so they were dropped from options.",
+      "The visible iron gate and pressure plates are retained in the layout as described."
+    ],
+    "scene_prompt": "Build a medieval castle dungeon with stone corridors lit by torches, connecting three distinct rooms in sequence. Room 1 is a tight roughly 40-stud chamber containing small skeleton enemies; Room 2 is another tight roughly 40-stud puzzle chamber with floor pressure plates leading to an iron gate. Beyond the gate, Room 3 opens into a larger boss hall, with a giant chest at the far end as the dungeon finish."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P0'] gives isometric"
+  ]
+}

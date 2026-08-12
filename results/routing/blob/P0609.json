@@ -1,0 +1,173 @@
+{
+  "scene": "P0609",
+  "source": "🌪️ Implementando Sistemas e Mapa: Project: Horizon\n​1. O Mapa: Estilo \"Expirado\" do Twisted com Cidades de El Reno\n​A Inspiração: Em vez de usar o mapa claustrofóbico do Severity, usaremos a estética de mundo aberto plano e vasto inspirada nos mapas clássicos \"removidos/expirados\" do Twisted (estradas longas de asfalto cinza, campos de plantação abertos, fazendas isoladas e torres de energia ao longe).\n​O Layout (Estilo El Reno):\n​Uma grande cidade central com quarteirões em grade, casas suburbanas de um andar, postos de gasolina e um entroncamento rodoviário complexo.\n​Ao redor da cidade principal, estradas rurais cruzando campos abertos onde os tornados ganham muita velocidade e força.\n​2. Sistema dos Interceptadores (Veículos)\n​Para simular a caça às tempestades com desempenho fluido no A32, os veículos devem usar o sistema clássico de física do Roblox (CylindricalConstraint ou chassi leve).\n​Veículos Disponíveis:\n​TIV (Tornado Intercept Vehicle): Pesado, blindado, com garras hidráulicas que descem para fixar o carro no chão. Menos velocidade, mas não voa se for pego na borda do tornado.\n​Probe Car (Carro Sonda): Muito rápido, ágil, usado para lançar instrumentos científicos na frente do funil e pontuar mais.\n​3. Sistema de Vida e Loja (Scripting Rápido)\n​🛡️ Barra de Vida e Dano\n​Coloque este script local (LocalScript) dentro de StarterPlayer > StarterPlayerScripts para controlar a barra de vida da interface (ScreenGui):-- Script (Server): Gerenciador de Moedas e Loja simples\ngame.Players.PlayerAdded:Connect(function(player)\n local leaderstats = Instance.new(\"Folder\")\n leaderstats.Name = \"leaderstats\"\n leaderstats.Parent = player\n \n local cash = Instance.new(\"IntValue\")\n cash.Name = \"Cash\"\n cash.Value = 500 -- Dinheiro inicial para comprar o primeiro carro\n cash.Parent = leaderstats\nend)\n-- LocalScript: Gerenciador de Vida e UI\nlocal player = game.Players.LocalPlayer\nlocal playerGui = player:WaitForChild(\"PlayerGui\")\n\n-- Criação simples da interface de vida\nlocal screenGui = Instance.new(\"ScreenGui\", playerGui)\nscreenGui.Name = \"HUD\"\n\nlocal healthBarBg = Instance.new(\"Frame\", screenGui)\nhealthBarBg.Size = UDim2.new(0, 200, 0, 20)\nhealthBarBg.Position = UDim2.new(0.5, -100, 0, 20)\nhealthBarBg.BackgroundColor3 = Color3.fromRGB(50, 50, 50)\n\nlocal healthBar = Instance.new(\"Frame\", healthBarBg)\nhealthBar.Size = UDim2.new(1, 0, 1, 0)\nhealthBar.BackgroundColor3 = Color3.fromRGB(0, 255, 0)\nhealthBar.Name = \"Fill\"\n\n-- Atualização baseada no Humanoid\nlocal character = player.Character or player.CharacterAdded:Wait()\nlocal humanoid = character:WaitForChild(\"Humanoid\")\n\nhumanoid.HealthChanged:Connect(function(health)\n local maxHealth = humanoid.MaxHealth\n local percent = math.clamp(health / maxHealth, 0, 1)\n healthBar.Size = UDim2.new(percent, 0, 1, 0)\n \n if percent < 0.3 then\n healthBar.BackgroundColor3 = Color3.fromRGB(255, 0, 0)\n else\n healthBar.BackgroundColor3 = Color3.fromRGB(0, 255, 0)\n end\nend)\n🛒 Sistema de Loja (Shop)\n​Crie um Folder chamado Leaderstats no ServerScriptService para gerenciar a moeda do jogo (Pontos de Pesquisa/Dinheiro) e uma peça Part no mapa que serve como o menu da Loja:Para a Loja de Interceptadores, crie um ProximityPrompt em uma peça no lobby/garagem:-- Script (Server): Parte da Loja\nlocal marketPart = script.Parent\nlocal prompt = Instance.new(\"ProximityPrompt\", marketPart)\nprompt.ActionText = \"Abrir Garagem\"\nprompt.ObjectText = \"Loja de Veículos\"\n\nprompt.Triggered:Connect(function(player)\n local cash = player:FindFirstChild(\"leaderstats\") and player.leaderstats:FindFirstChild(\"Cash\")\n \n if cash and cash.Value >= 1000 then\n cash.Value = cash.Value - 1000\n print(player.Name ..\" comprou um novo Interceptador!\")\n -- Aqui você pode clonar o veículo para o inventário ou Team do jogador\n else\n print(\"Dinheiro insuficiente! Você precisa de $1000.\")\n end\nend)\n4. Dica de Ouro para o A32 no Mapa \"Expirado\"\n​Como o mapa estilo Twisted é aberto e tem poucos obstáculos bloqueando a visão, utilize o Terrain do Roblox para criar colinas suaves. Esconder partes da cidade atrás de relevos naturais faz com que o mecanismo de StreamingEnabled do Roblox descarregue o que está longe, mantendo o jogo rodando a 60 FPS cravados no seu celular.",
+  "answers": [
+    {
+      "field": "scale",
+      "ask": "How far out should the rural roads run before the map ends - a few minutes of driving, or much more?",
+      "answer": "A few minutes of driving from the central city is enough; keep the map compact for smooth mobile performance while still giving rural intercept space."
+    },
+    {
+      "field": "goal",
+      "ask": "Is the goal scoring probe drops on the funnel, or surviving a set number of storms?",
+      "answer": "The goal is scoring probe drops near/in front of the tornado funnel, as the Probe Car is specifically meant to launch scientific instruments and earn more points."
+    }
+  ],
+  "scene_prompt": "Create a compact open-world storm-chasing map centered on a large El Reno–style city. The central city has grid-block streets, one-story suburban houses, gas stations, and a complex highway interchange. Long gray asphalt rural roads extend a few minutes’ drive from the city through broad, flat crop fields, isolated farms, and distant power transmission towers, leaving wide open intercept space around tornado funnels. Use gentle terrain hills around and beyond the city to break sightlines while preserving the vast plains feel. Include a lobby or garage area with a physical vehicle-shop point, plus space for heavy armored interceptor vehicles and fast probe cars to access the road network.",
+  "blob": "### Genre\nDominant genre: `Simulation`, specifically a vehicle-operating storm-chase world with a probe-scoring loop; no secondary genre is needed.\n\n### Shape and preset\nUse `world-shared`, matching the Vehicle Sim preset. This is one compact persistent driving world rather than separate plots: the city, garage, fields, and intercept roads coexist on one surface. The prompt’s highway-and-rural-road focus supports the preset unchanged.\n\n### Config requirements\nUse visible `path-road-vehicle`: a connected hierarchy of city streets, highway ramps, and long rural asphalt roads sized for vehicles. Use visible `resource-shared` as broad shared open intercept ground: the crop fields around the roads are communal storm-chasing space, not player plots. Use visible `social-hub`: a compact lobby/garage forecourt beside the city road network, with a physical vehicle-shop point. The shop interaction itself is invisible and is not rendered. Use visible `terrain-relief`: gentle low hills around and beyond town break distant sightlines without turning the plains into mountainous terrain.\n\n### Layout components\nPlace the large central El Reno–style city slightly forward of center, occupying the densest portion of the map. Lay out rectilinear grid blocks with one-story suburban houses, several gas stations, and a complex multi-ramp highway interchange at one city edge. Put the lobby/garage at the city’s outward-facing edge near the interchange: it has vehicle bays for heavy armored interceptor vehicles and fast probe cars, a paved forecourt, and one clearly marked physical vehicle-shop kiosk or garage counter.\n\nFrom the city, extend several long gray asphalt rural roads in different directions for a few minutes of driving, creating broad loops and outward spokes rather than dead-end scenery. These roads cross expansive flat crop fields that provide unobstructed tornado-intercept space. Distribute isolated farms along the outer roads and set power transmission towers far apart across the horizon. Shape only soft, shallow hills around the city perimeter and farther field edges; retain mostly level, open farmland. The outer boundary is a distant natural limit of low hills and fields, with no dense wall. Compose the city and interchange as the visual anchor, with roads visibly radiating into open plains.\n\n### Render order\nUse `topdown`: valid, connected vehicle access from the garage through the interchange and across the rural intercept roads is necessary for playable driving, so establish the road topology before dressing the isometric view.\n\n### Scale, theme, and pipeline cost\nScale band: large, driven by a large city plus multi-minute rural driving space, though kept compact for mobile performance. Theme: weathered, expired-classic Roblox tornado plains; gray asphalt, sun-faded suburbia, broad agricultural horizons. Pipeline modifiers: `tiered` for the shallow non-overhanging hills; otherwise `P0`.",
+  "spec": {
+    "genre": "Simulation",
+    "secondary": [],
+    "shape": "world-shared",
+    "preset": "Vehicle Sim",
+    "axes": {},
+    "options": [
+      {
+        "id": "path-road-vehicle",
+        "text": "A connected hierarchy of city streets, highway ramps, and long gray asphalt rural roads sized for vehicles, forming broad loops and outward spokes from the city.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "resource-shared",
+        "text": "Broad shared open intercept ground: expansive communal flat crop fields around the roads for storm chasing, not player plots.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "social-hub",
+        "text": "A compact lobby/garage forecourt beside the city road network, with vehicle bays and one clearly marked physical vehicle-shop kiosk or garage counter; the shop interaction itself is invisible.",
+        "visible": true,
+        "count": 1
+      },
+      {
+        "id": "terrain-relief",
+        "text": "Gentle low, soft shallow hills around and beyond town that break distant sightlines while preserving mostly level open farmland and plains.",
+        "visible": true,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "The large central El Reno-style city sits slightly forward of centre as the dense visual anchor. Its city grid and a complex interchange at one edge lead outward into broad open plains, with long roads visibly radiating through fields toward the horizon.",
+      "zones": [
+        {
+          "name": "Central city",
+          "role": "Dense shared driving hub with rectilinear streets, suburban blocks, gas stations, and access to the rural intercept network.",
+          "where": "Slightly forward of centre",
+          "size": "Large"
+        },
+        {
+          "name": "Highway interchange",
+          "role": "Multi-ramp vehicle connection between the city road grid and outward rural routes.",
+          "where": "At one edge of the city",
+          "size": "Complex multi-ramp"
+        },
+        {
+          "name": "Lobby and garage forecourt",
+          "role": "Vehicle staging, vehicle bays for heavy armored interceptor vehicles and fast probe cars, and the physical vehicle-shop point.",
+          "where": "At the city's outward-facing edge near the interchange",
+          "size": "Compact"
+        },
+        {
+          "name": "Shared crop-field intercept ground",
+          "role": "Communal open tornado-intercept space surrounding the road network.",
+          "where": "Around the city and along outer rural roads",
+          "size": "Expansive"
+        },
+        {
+          "name": "Outer rural farmland",
+          "role": "Open driving landscape with isolated farms and distant transmission towers.",
+          "where": "Beyond the city perimeter along the outward roads",
+          "size": "Large"
+        }
+      ],
+      "paths": [
+        {
+          "from": "Lobby and garage forecourt",
+          "to": "Highway interchange",
+          "kind": "road"
+        },
+        {
+          "from": "Highway interchange",
+          "to": "Central city",
+          "kind": "road"
+        },
+        {
+          "from": "Central city",
+          "to": "Shared crop-field intercept ground",
+          "kind": "road"
+        },
+        {
+          "from": "Shared crop-field intercept ground",
+          "to": "Outer rural farmland",
+          "kind": "road"
+        }
+      ],
+      "terrain": "Mostly level, open crop fields and farmland with soft shallow low hills around the city perimeter and farther field edges; gray asphalt roads cross the plains.",
+      "props": [
+        {
+          "name": "One-story suburban houses",
+          "count": -1,
+          "where": "Rectilinear city grid blocks"
+        },
+        {
+          "name": "Gas stations",
+          "count": -1,
+          "where": "Central city"
+        },
+        {
+          "name": "Heavy armored interceptor vehicle bays",
+          "count": -1,
+          "where": "Lobby and garage forecourt"
+        },
+        {
+          "name": "Fast probe car bays",
+          "count": -1,
+          "where": "Lobby and garage forecourt"
+        },
+        {
+          "name": "Physical vehicle-shop kiosk or garage counter",
+          "count": 1,
+          "where": "Lobby and garage forecourt"
+        },
+        {
+          "name": "Isolated farms",
+          "count": -1,
+          "where": "Along the outer rural roads"
+        },
+        {
+          "name": "Power transmission towers",
+          "count": -1,
+          "where": "Far apart across the outer farmland horizon"
+        }
+      ],
+      "boundary": "A distant natural limit of low hills and fields, with no dense wall.",
+      "scale_band": "large",
+      "theme": "Weathered, expired-classic Roblox tornado plains; gray asphalt, sun-faded suburbia, and broad agricultural horizons."
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "connected vehicle access from the garage through the interchange and across rural intercept roads must be valid for playable driving.",
+      "set_piece": false
+    },
+    "route": [
+      "P0",
+      "tiered"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a compact open-world storm-chasing map centered on a large El Reno–style city. The central city has grid-block streets, one-story suburban houses, gas stations, and a complex highway interchange. Long gray asphalt rural roads extend a few minutes’ drive from the city through broad, flat crop fields, isolated farms, and distant power transmission towers, leaving wide open intercept space around tornado funnels. Use gentle terrain hills around and beyond the city to break sightlines while preserving the vast plains feel. Include a lobby or garage area with a physical vehicle-shop point, plus space for heavy armored interceptor vehicles and fast probe cars to access the road network."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P0', 'tiered'] gives isometric"
+  ]
+}

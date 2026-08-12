@@ -1,0 +1,128 @@
+{
+  "scene": "P0511",
+  "source": "Crie um jogo de Tower Defense completo e original para Roblox, inspirado na fórmula de jogos como Tower Defense Simulator, mas sem copiar mapas, personagens, nomes, modelos, sons ou assets protegidos.\n\nOBJETIVO\n\nO jogador deve defender uma base contra ondas de inimigos que seguem um caminho até o objetivo. Se muitos inimigos chegarem ao final, a base perde vida. Sobreviva a todas as ondas para vencer.\n\nSISTEMA DE TORRES\n\n- Permita colocar torres em locais válidos do mapa.\n- Cada torre deve atacar inimigos automaticamente.\n- Torres devem possuir:\n - Dano\n - Alcance\n - Velocidade de ataque\n - Tipo de alvo\n - Preço\n - Vários níveis de upgrade\n- Criar uma interface para selecionar, colocar, melhorar e vender torres.\n- Mostrar claramente alcance, dano, cooldown e preço.\n- Adicionar diferentes torres com funções distintas, como:\n - Torre de ataque rápido\n - Torre de longo alcance\n - Torre explosiva\n - Torre que desacelera inimigos\n - Torre de suporte que melhora outras torres\n\nINIMIGOS\n\nCrie vários tipos de inimigos originais:\n\n- Normal\n- Rápido\n- Tanque\n- Blindado\n- Chefe\n- Inimigo especial com habilidade própria\n\nCada inimigo deve possuir vida, velocidade e recompensas diferentes.\n\nONDAS\n\n- Criar pelo menos 30 ondas.\n- A dificuldade deve aumentar progressivamente.\n- Mostrar a onda atual na interface.\n- Mostrar quantos inimigos ainda existem.\n- Adicionar pequenos intervalos entre as ondas.\n- A cada determinadas ondas, gerar inimigos mais fortes.\n- Criar um chefe em ondas especiais.\n\nECONOMIA\n\n- O jogador ganha dinheiro ao derrotar inimigos.\n- Também pode receber dinheiro ao começar uma nova onda.\n- Usar dinheiro para comprar, colocar e melhorar torres.\n- Vender uma torre deve devolver apenas parte do valor investido.\n\nMULTIPLAYER\n\nO jogo deve funcionar para vários jogadores no mesmo servidor.\n\n- Cada jogador deve ter seu próprio dinheiro.\n- Todos devem defender a mesma base.\n- Permitir que jogadores coloquem suas próprias torres.\n- Garantir que o sistema seja seguro no servidor e que o cliente não consiga simplesmente alterar dinheiro ou dano.\n\nMAPA\n\nCrie um mapa original de Tower Defense com:\n\n- Caminho claramente visível para os inimigos.\n- Áreas próprias para colocar torres.\n- Base no final do caminho.\n- Cenário bonito e otimizado para Roblox.\n- Iluminação e efeitos simples.\n- Interface indicando a vida da base.\n\nINTERFACE\n\nCriar uma UI moderna e fácil de entender contendo:\n\n- Dinheiro\n- Vida da base\n- Onda atual\n- Botão para iniciar a próxima onda\n- Menu de torres\n- Informações da torre selecionada\n- Botões de upgrade e venda\n- Indicador de inimigos restantes\n\nANIMAÇÕES E EFEITOS\n\nAdicionar:\n\n- Animações simples para inimigos.\n- Efeitos visuais dos ataques.\n- Efeitos diferentes para cada tipo de torre.\n- Animação de morte dos inimigos.\n- Efeitos para upgrades e chefes.\n- Sons simples e originais.\n\nORGANIZAÇÃO DO CÓDIGO\n\nOrganize o projeto corretamente usando ModuleScripts, RemoteEvents e Scripts separados.\n\nCrie sistemas separados para:\n\n- TowerManager\n- EnemyManager\n- WaveManager\n- EconomyManager\n- TargetingSystem\n- UpgradeSystem\n- UI\n- Map\n- Multiplayer\n\nEvite colocar todo o código em um único Script.\n\nIMPORTANTE\n\nFaça o jogo funcionar de verdade, não apenas crie uma aparência de Tower Defense. Implemente os sistemas principais, conecte os scripts corretamente e corrija erros.\n\nSe não for possível criar tudo de uma vez, construa primeiro uma versão jogável contendo:\n\n1. Mapa\n2. Caminho dos inimigos\n3. Inimigos seguindo o caminho\n4. Sistema de ondas\n5. Colocação de torres\n6. Torres atacando inimigos\n7. Dinheiro\n8. Upgrades\n9. Vitória e derrota\n\nDepois continue adicionando os sistemas restantes.",
+  "answers": [
+    {
+      "field": "theme",
+      "ask": "No setting was given - should the map read as medieval, modern military, or bright cartoon?",
+      "answer": "Use a bright cartoon style, which fits a clear, accessible Roblox Tower Defense map while keeping the presentation original."
+    },
+    {
+      "field": "scale",
+      "ask": "How many players share one map, and how long should the path be?",
+      "answer": "Support up to 4 players sharing one map. Use a compact, clearly readable path with roughly 8–10 turns/waypoints, long enough for tower strategy without making matches drag on."
+    }
+  ],
+  "scene_prompt": "Crie um mapa 3D original de Tower Defense em estilo cartoon brilhante, compacto e legível, para até 4 jogadores defenderem uma base compartilhada. Um caminho inimigo claramente visível atravessa o cenário em cerca de 8–10 curvas ou pontos de passagem, começando em uma entrada distante e terminando na base destacada no fim do trajeto. Disponha áreas abertas e próprias para posicionar torres ao longo dos dois lados do caminho, com visibilidade clara sobre trechos retos e curvas; mantenha o cenário bonito, otimizado e com iluminação e efeitos simples.",
+  "blob": "### 1. Gênero\nO gênero dominante é Strategy, pois a defesa compartilhada depende de ondas seguindo uma rota até uma base e de torres posicionadas para as deter.\n\n### 2. Forma e preset\nUse a forma `lane-actor-track`, uma única rota inimiga contínua que atravessa o mapa compacto da entrada distante até a base. O preset correspondente é Tower Defense; ele permanece reconhecível e adequado ao pedido.\n\n### 3. Requisitos de configuração\n`buildzone-grid` é geometria visível: faixas abertas, planas e claramente demarcadas nos dois lados da rota, próprias para a colocação de torres sem invadir o caminho. `tracker-core` é ambos: uma base final grande e visualmente destacada, com a área de detecção/vida da base colocada de modo invisível. `spawner-npc` é invisível: a origem das ondas fica na entrada remota do caminho e não deve aparecer como elemento de imagem.\n\n### 4. Componentes do layout\nA zona principal é um campo compacto de defesa para até 4 jogadores, organizado em torno de uma estrada inimiga larga e muito legível. A rota começa numa entrada distante em uma extremidade, percorre aproximadamente 8–10 curvas ou pontos de passagem, alternando retas de boa visibilidade e curvas estratégicas, e termina na base compartilhada na extremidade oposta. Em ambos os lados, disponha grandes clareiras de posicionamento de torres, especialmente voltadas para curvas e trechos retos longos. O terreno é suave e simples, com gramado colorido, pequenas elevações decorativas que não bloqueiem a leitura da rota, rochas baixas, árvores esparsas e arbustos como moldura visual. A base ocupa a zona final e domina a composição; a entrada de inimigos fica pequena e distante. O limite do mapa é formado por relevo baixo, vegetação e bordas naturais, sem competir com o percurso.\n\n### 5. Ordem de renderização\nUse `topdown`: a conectividade contínua e legível da rota é necessária para o jogo funcionar, portanto o plano deve ser estabelecido antes da visão isométrica, sem recorrer a um blueprint `authored_plan` reservado a labirintos e circuitos de corrida.\n\n### 6. Escala, tema e custo de pipeline\nEscala média, guiada pelo suporte a 4 jogadores e uma rota compacta com 8–10 pontos de passagem. Tema cartoon brilhante, acessível e original para Roblox, com cores saturadas, iluminação suave e efeitos simples. Use `P6`, pois a rota de inimigos deve ser válida e contínua por construção.",
+  "spec": {
+    "genre": "Strategy",
+    "secondary": [],
+    "shape": "lane-actor-track",
+    "preset": "Tower Defense",
+    "axes": {},
+    "options": [
+      {
+        "id": "buildzone-grid",
+        "text": "faixas abertas, planas e claramente demarcadas nos dois lados da rota, próprias para a colocação de torres sem invadir o caminho",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "tracker-core",
+        "text": "uma base final grande e visualmente destacada, com a área de detecção/vida da base colocada de modo invisível",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "spawner-npc",
+        "text": "a origem das ondas fica na entrada remota do caminho e não deve aparecer como elemento de imagem",
+        "visible": false,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "A base compartilhada ocupa e domina a zona final em uma extremidade; a entrada inimiga é pequena e distante na extremidade oposta. A estrada larga e legível atravessa o campo compacto entre elas, com clareiras de torres nos dois lados, enquadradas por vegetação e relevo baixo.",
+      "zones": [
+        {
+          "name": "Campo principal de defesa",
+          "role": "Campo compacto para até 4 jogadores defenderem a base compartilhada em torno da rota inimiga.",
+          "where": "centro do mapa, entre a entrada distante e a base final",
+          "size": "compacto; para até 4 jogadores"
+        },
+        {
+          "name": "Entrada de inimigos",
+          "role": "Origem remota das ondas inimigas.",
+          "where": "uma extremidade distante do mapa",
+          "size": "pequena e distante"
+        },
+        {
+          "name": "Faixas de posicionamento de torres",
+          "role": "Áreas abertas para posicionar torres com visibilidade sobre retas longas e curvas estratégicas.",
+          "where": "em ambos os lados da estrada inimiga, especialmente junto a curvas e trechos retos longos",
+          "size": "grandes clareiras"
+        },
+        {
+          "name": "Base compartilhada",
+          "role": "Destino da rota inimiga e base final a ser defendida.",
+          "where": "extremidade oposta à entrada inimiga, zona final",
+          "size": "grande e visualmente destacada"
+        }
+      ],
+      "paths": [
+        {
+          "from": "Entrada de inimigos",
+          "to": "Base compartilhada",
+          "kind": "road"
+        }
+      ],
+      "terrain": "Terreno suave e simples, com gramado colorido, pequenas elevações decorativas que não bloqueiam a leitura da rota, rochas baixas, árvores esparsas e arbustos como moldura visual.",
+      "props": [
+        {
+          "name": "pequenas elevações decorativas",
+          "count": -1,
+          "where": "pelo terreno, sem bloquear a leitura da rota"
+        },
+        {
+          "name": "rochas baixas",
+          "count": -1,
+          "where": "pelo terreno"
+        },
+        {
+          "name": "árvores esparsas",
+          "count": -1,
+          "where": "ao redor do campo como moldura visual"
+        },
+        {
+          "name": "arbustos",
+          "count": -1,
+          "where": "ao redor do campo como moldura visual"
+        }
+      ],
+      "boundary": "O limite do mapa é formado por relevo baixo, vegetação e bordas naturais, sem competir com o percurso.",
+      "scale_band": "medium",
+      "theme": "cartoon brilhante, acessível e original para Roblox, com cores saturadas, iluminação suave e efeitos simples"
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "a conectividade contínua e legível da rota é necessária para o jogo funcionar.",
+      "set_piece": false
+    },
+    "route": [
+      "P6"
+    ],
+    "notes": [],
+    "scene_prompt": "Crie um mapa 3D original de Tower Defense em estilo cartoon brilhante, compacto e legível, para até 4 jogadores defenderem uma base compartilhada. Um caminho inimigo claramente visível atravessa o cenário em cerca de 8–10 curvas ou pontos de passagem, começando em uma entrada distante e terminando na base destacada no fim do trajeto. Disponha áreas abertas e próprias para posicionar torres ao longo dos dois lados do caminho, com visibilidade clara sobre trechos retos e curvas; mantenha o cenário bonito, otimizado e com iluminação e efeitos simples."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "p6",
+  "first": "topdown",
+  "mapper_notes": []
+}

@@ -1,0 +1,161 @@
+{
+  "scene": "P0148",
+  "source": "Option 1: The High-Speed Sprint Chase (Classic Viral Vibe)\n\"Rebuild the map into bright, iconic yellow Backrooms corridors. Give the player a fast sprint ability with a dynamic camera FOV zoom when running. Add a visible entity that chases the player at high speed, plays a loud distinctive sound effect when agro'd, and resets the player upon touch. Keep lighting simple, bright, and clean.\"\nOption 2: The Sound-Cued Jumpscare Stalker\n\"Set up clean 3D corridors with 3 glowing fuse items to collect. Add a visible stalking monster that patrols the halls. When the monster spots the player, play an intense chasing sound effect and make the monster sprint towards them. Add a simple UI counter showing 'Fuses: 0/3' at the top.\"\nOption 3: Fast-Paced Escape Round\n\"Create a fast-paced escape game layout. The player must run through clean liminal maze corridors to collect 3 keys and reach the exit elevator. Make a fast, red-glowing visible monster hunt the player, with dramatic speed boosts when it gets close. Keep the player movement responsive and smooth for mobile.\"",
+  "answers": [
+    {
+      "field": "goal",
+      "ask": "Which of the three options should be built? They differ on win condition - endless chase, collect 3 fuses, or collect 3 keys and reach an exit elevator.",
+      "answer": "Build Option 3: Fast-Paced Escape Round. Players collect 3 keys in the liminal maze corridors and then reach the exit elevator while the red-glowing monster hunts them."
+    },
+    {
+      "field": "scale",
+      "ask": "How large should the corridor network be - a tight loop or a sprawling maze?",
+      "answer": "Use a tight, compact maze network so rounds stay fast-paced and plainly playable."
+    }
+  ],
+  "scene_prompt": "Create a fast-paced escape map set in a tight, compact network of clean liminal maze corridors. Place three collectible keys in separate corridor sections throughout the maze, with an exit elevator positioned as the final destination. A visible red-glowing monster stalks the corridors and pursues players through the maze. Keep the lighting simple, bright, and clean.",
+  "blob": "### Genre\nThe dominant genre is Survival, specifically an escape round driven by a pursuing threat rather than puzzle solving. The compact maze must provide a reachable exit while supporting the stalker’s patrol and chase routes.\n\n### Shape and preset\nUse `warren-looping`, a tight indoor liminal corridor warren with loops rather than dead-end traps, so players can evade and reroute around the monster. The closest preset is Escape, but use **none** because its enterable-shelter and dedicated hiding-cutout emphasis is not requested; retain only the escape structure actually described.\n\n### Config requirements\n`gate-escape` is visible geometry and invisible trigger geometry: the final exit elevator sits in the outer maze boundary and becomes the round’s destination after the keys are gathered. `collectible-nodes` is invisible layout placement: place the three keys in separate maze sections. `spawner-npc` is invisible layout geometry: establish a monster origin and patrol ground within the connected corridors. The visible red-glowing monster itself belongs in the rendered scene as the active corridor threat, but its pursuit behavior is not rendered.\n\n### Layout components\nBuild one compact, roughly square maze zone of clean, bright yellow liminal corridors, large enough for three distinct key sections but deliberately dense for fast rounds. Organize it as a looping network: a central junction connects several short branches and alternate return corridors, with no player-facing corridor sealed off from the rest of the warren. Put one key in each separated corridor section: one near an outer wing, one off a side loop, and one in a deeper branch opposite the elevator. Set the exit elevator into the far outer wall as the final destination, visibly distinct from the corridor walls. Use simple clean flooring, fluorescent ceiling lighting, repeated wall panels, and sparse structural turns rather than clutter. The maze walls fully enclose the play area; frame the layout in a readable angled overview that shows the elevator, branching loops, and a red-glowing monster occupying a corridor.\n\n### Render order\nUse `authored_plan`: this is a maze whose loops, key reachability, monster patrol ground, and elevator route must be valid by construction before it is dressed.\n\n### Scale, theme, and pipeline cost\nScale band: small, driven by the stated tight, compact network and fast escape rounds. Theme: bright clean yellow Backrooms liminal horror, with a vivid red threat accent. Pipeline modifier: `P6`, forced by the solvable, connected maze topology.",
+  "spec": {
+    "genre": "Survival",
+    "secondary": [],
+    "shape": "warren-looping",
+    "preset": "none",
+    "axes": {},
+    "options": [
+      {
+        "id": "gate-escape",
+        "text": "The final exit elevator sits in the outer maze boundary and becomes the round's destination after the keys are gathered.",
+        "visible": true,
+        "count": 1
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "Place the three keys in separate maze sections: one near an outer wing, one off a side loop, and one in a deeper branch opposite the elevator.",
+        "visible": false,
+        "count": 3
+      },
+      {
+        "id": "spawner-npc",
+        "text": "Establish a monster origin and patrol ground within the connected corridors.",
+        "visible": false,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "Readable angled overview of the compact square corridor warren, showing the central branching loops, the far outer-wall elevator, and a red-glowing monster occupying a corridor.",
+      "zones": [
+        {
+          "name": "Central junction",
+          "role": "Connects several short branches and alternate return corridors.",
+          "where": "centre",
+          "size": "compact"
+        },
+        {
+          "name": "Outer wing key section",
+          "role": "Holds one key near an outer wing.",
+          "where": "outer maze section",
+          "size": "short"
+        },
+        {
+          "name": "Side loop key section",
+          "role": "Holds one key off a side loop.",
+          "where": "side of the looping network",
+          "size": "short"
+        },
+        {
+          "name": "Deep branch key section",
+          "role": "Holds one key opposite the elevator.",
+          "where": "deep branch opposite the elevator",
+          "size": "short"
+        },
+        {
+          "name": "Exit elevator",
+          "role": "Final destination after the keys are gathered.",
+          "where": "far outer wall",
+          "size": ""
+        }
+      ],
+      "paths": [
+        {
+          "from": "Central junction",
+          "to": "Outer wing key section",
+          "kind": "corridor"
+        },
+        {
+          "from": "Central junction",
+          "to": "Side loop key section",
+          "kind": "corridor"
+        },
+        {
+          "from": "Central junction",
+          "to": "Deep branch key section",
+          "kind": "corridor"
+        },
+        {
+          "from": "Short branches",
+          "to": "Central junction",
+          "kind": "corridor"
+        },
+        {
+          "from": "Alternate return corridors",
+          "to": "Central junction",
+          "kind": "corridor"
+        },
+        {
+          "from": "Deep branch key section",
+          "to": "Exit elevator",
+          "kind": "corridor"
+        }
+      ],
+      "terrain": "Simple clean flooring in bright yellow liminal corridors, with fluorescent ceiling lighting and repeated wall panels.",
+      "props": [
+        {
+          "name": "exit elevator",
+          "count": 1,
+          "where": "far outer maze wall"
+        },
+        {
+          "name": "red-glowing monster",
+          "count": 1,
+          "where": "occupying a corridor"
+        },
+        {
+          "name": "fluorescent ceiling lighting",
+          "count": -1,
+          "where": "throughout the corridors"
+        },
+        {
+          "name": "repeated wall panels",
+          "count": -1,
+          "where": "throughout the maze"
+        }
+      ],
+      "boundary": "Maze walls fully enclose the play area.",
+      "scale_band": "small",
+      "theme": "bright clean yellow Backrooms liminal horror with a vivid red threat accent"
+    },
+    "render": {
+      "first": "authored_plan",
+      "then": "topdown",
+      "authoritative": "authored_plan",
+      "why": "The maze loops, key reachability, monster patrol ground, and elevator route must be valid by construction.",
+      "set_piece": false
+    },
+    "route": [
+      "P6"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a fast-paced escape map set in a tight, compact network of clean liminal maze corridors. Place three collectible keys in separate corridor sections throughout the maze, with an exit elevator positioned as the final destination. A visible red-glowing monster stalks the corridors and pursues players through the maze. Keep the lighting simple, bright, and clean."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "p6",
+  "first": "topdown",
+  "mapper_notes": [
+    "blob asked for authored_plan first; the route ['P6'] gives topdown"
+  ]
+}

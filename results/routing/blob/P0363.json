@@ -1,0 +1,139 @@
+{
+  "scene": "P0363",
+  "source": "Make a Mario kart style racer where players race on random maps by drifting and using items. players can pick up coins to gain slight speed increases, but getting hit by an item causes players to lose coins. Make a map in a mall, a map in a mushroom first, and a map in the clouds. For the items, make a throwable shell, a droppable banana, a mushroom that gives a speed boost, triple mushrooms that give a speed boost 3 times, a red shell that homes in on the target in front, and a lightning that strikes all enemies in front",
+  "answers": [
+    {
+      "field": "scale",
+      "ask": "How long should a lap be on each track?",
+      "answer": "Keep each lap short, around 60–90 seconds for an average player, so races stay quick and replayable."
+    },
+    {
+      "field": "free",
+      "ask": "Is the mall track fully indoors, which needs interiors generated separately?",
+      "answer": "Yes, make the mall track fully indoors, racing through recognizable mall corridors, storefront areas, and open atrium spaces."
+    },
+    {
+      "field": "free",
+      "ask": "How many laps per race, and how many racers?",
+      "answer": "Use 3 laps per race with up to 8 racers, which is a standard, manageable Mario Kart-style race size."
+    }
+  ],
+  "scene_prompt": "Create three short arcade kart-racing tracks, each sized for a 60–90 second lap and built for up to eight racers. The first track is fully indoors in a shopping mall, routing through recognizable retail corridors and storefront areas before opening into broad atrium spaces. The second track runs through a giant mushroom environment, with the course winding around and through oversized mushroom forms. The third track is set among clouds, with a suspended race route crossing cloud-filled open space.",
+  "blob": "### Genre\nThe dominant genre is Racing: this is an arcade kart racer with three-lap races, not an obstacle course. There is no secondary genre.\n\n### Shape and preset\nUse the `route-circuit` shape for each of the three separate maps: every course is a short, closed kart circuit designed for a 60–90 second average lap. This matches the Circuit Racing preset. Retain its requested starting-grid and lap structure, but do not add unrequested guardrails or turnaround features.\n\n### Config requirements\nUse `spawn-grid` as visible eight-slot starting grids at each track’s start line, with the associated racer start positions invisible. Use `trigger-lap` as invisible start/finish and split detection regions supporting exactly 3 laps per race. Use `building-interior` as visible, fully indoor mall geometry: the mall course is an interior map with retail corridors, storefront façades, and atrium spaces, not an exterior mall approach.\n\n### Layout components\nBuild three distinct circuit maps. The mall circuit is entirely indoors, moving from narrower recognizable shopping corridors past storefronts into broad open atriums, then returning to its start/finish grid through a continuous drivable route. The giant-mushroom circuit winds around and passes through oversized mushroom forms, using their stems, caps, and sheltered openings as the defining course-side structures. The cloud circuit is a suspended route in open, cloud-filled space, with the track clearly readable against the sky and cloud banks below and around it. Each circuit has one eight-racer grid and a clearly legible start/finish location; all routes must close cleanly for three laps. Keep each map compact enough for the stated 60–90 second lap. Frame each map independently, emphasizing the full loop, its major turns, and its defining setting rather than combining the three maps into one image.\n\n### Render order\nUse `authored_plan`: each racing circuit must be generated as a valid closed route before dressing, since a broken or ambiguous loop would make the race unplayable. The generated blueprint is authoritative, followed by top-down and then isometric renders.\n\n### Scale, theme, and pipeline cost\nScale is large overall because it contains three separate maps, though each individual circuit is compact. Theme: bright, playful Mario-kart-style arcade spectacle, shifting from colorful retail interior to fantastical giant mushrooms to airy clouds. Use `P6` because all three circuits require valid continuous routes by construction; use `P3` for the separately captured fully indoor mall; and use `P4` because the mall, mushroom, and cloud circuits are separate maps.",
+  "spec": {
+    "genre": "Racing",
+    "secondary": [],
+    "shape": "route-circuit",
+    "preset": "Circuit Racing",
+    "axes": {},
+    "options": [
+      {
+        "id": "spawn-grid",
+        "text": "Visible eight-slot starting grids at each track’s start line, with associated racer start positions invisible.",
+        "visible": true,
+        "count": 8
+      },
+      {
+        "id": "trigger-lap",
+        "text": "Invisible start/finish and split detection regions supporting exactly 3 laps per race.",
+        "visible": false,
+        "count": 3
+      },
+      {
+        "id": "building-interior",
+        "text": "Fully indoor mall geometry with retail corridors, storefront façades, and atrium spaces, not an exterior mall approach.",
+        "visible": true,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "Frame each map independently, emphasizing its complete closed loop, major turns, start/finish grid, and defining setting rather than combining the three circuits into one image.",
+      "zones": [
+        {
+          "name": "Mall circuit",
+          "role": "A fully indoor closed kart circuit that moves through narrower recognizable shopping corridors and storefront façades into broad open atriums before returning to the start/finish grid.",
+          "where": "separate indoor map",
+          "size": "compact circuit sized for a 60–90 second average lap"
+        },
+        {
+          "name": "Giant-mushroom circuit",
+          "role": "A closed kart circuit winding around and through oversized mushroom forms, using stems, caps, and sheltered openings as defining course-side structures.",
+          "where": "separate map",
+          "size": "compact circuit sized for a 60–90 second average lap"
+        },
+        {
+          "name": "Cloud circuit",
+          "role": "A suspended closed kart route in open cloud-filled space, clearly readable against the sky and cloud banks below and around it.",
+          "where": "separate open-sky map",
+          "size": "compact circuit sized for a 60–90 second average lap"
+        }
+      ],
+      "paths": [
+        {
+          "from": "Mall start/finish grid",
+          "to": "Mall start/finish grid",
+          "kind": "track"
+        },
+        {
+          "from": "Giant-mushroom start/finish grid",
+          "to": "Giant-mushroom start/finish grid",
+          "kind": "track"
+        },
+        {
+          "from": "Cloud start/finish grid",
+          "to": "Cloud start/finish grid",
+          "kind": "track"
+        }
+      ],
+      "terrain": "Indoor mall floors and atrium spaces; giant mushroom forms with stems, caps, and sheltered openings; suspended cloud route with cloud banks below and around it.",
+      "props": [
+        {
+          "name": "retail corridors and storefront façades",
+          "count": -1,
+          "where": "mall circuit"
+        },
+        {
+          "name": "broad atrium spaces",
+          "count": -1,
+          "where": "mall circuit"
+        },
+        {
+          "name": "oversized mushroom forms",
+          "count": -1,
+          "where": "giant-mushroom circuit"
+        },
+        {
+          "name": "cloud banks",
+          "count": -1,
+          "where": "below and around the cloud circuit"
+        }
+      ],
+      "boundary": "Each circuit is a cleanly closed route; the mall is fully enclosed indoors, while the mushroom and cloud circuits are open to their defining settings.",
+      "scale_band": "large",
+      "theme": "Bright, playful Mario-kart-style arcade spectacle: colorful retail interior, fantastical giant mushrooms, and airy clouds."
+    },
+    "render": {
+      "first": "authored_plan",
+      "then": "topdown",
+      "authoritative": "authored_plan",
+      "why": "A broken or ambiguous closed loop would make the race unplayable.",
+      "set_piece": false
+    },
+    "route": [
+      "P6",
+      "P3",
+      "P4"
+    ],
+    "notes": [],
+    "scene_prompt": "Create three short arcade kart-racing tracks, each sized for a 60–90 second lap and built for up to eight racers. The first track is fully indoors in a shopping mall, routing through recognizable retail corridors and storefront areas before opening into broad atrium spaces. The second track runs through a giant mushroom environment, with the course winding around and through oversized mushroom forms. The third track is set among clouds, with a suspended race route crossing cloud-filled open space."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "layout",
+  "first": "authored_plan",
+  "mapper_notes": []
+}

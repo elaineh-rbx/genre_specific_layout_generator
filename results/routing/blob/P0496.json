@@ -1,0 +1,130 @@
+{
+  "scene": "P0496",
+  "source": "let's start a new tower defense game. you have 20 health. draw enemies coming from a portal and moving over a dirt path to a castle. rest of the field is grass. if they touch the castle, they disappear and you lose 1 health. in the ui, show health remaining. Enemies come in waves. After some time has passed, start the next wave. Show \"Round X\" in the UI each time a wave starts. Towers are pre-positioned on the map. start with 5 towers, spaced near the road but spread along the path. There are 10 waves. towers shoot arrows at the enemies. enemy types include goblins, spiders, wolves, ogres, knights, dragons. waves can include a mix of both with earlier waves having mostly goblins spiders etc. and later waves having higher level enemies like knights and dragons. use mesh_generation for all meshes, including enemies, towers, portal and castle",
+  "answers": [
+    {
+      "field": "scale",
+      "ask": "How long should the path be - a short field crossing, or a long winding route the towers only partly cover?",
+      "answer": "Use a short field crossing so the full path is visible and the five pre-positioned towers can cover it clearly."
+    },
+    {
+      "field": "shape",
+      "ask": "Does the path branch or fork later, or is it one route for all ten waves?",
+      "answer": "Use one unbranched route for all ten waves."
+    }
+  ],
+  "scene_prompt": "Create a 3D tower defense map as a short, fully visible grassy field crossing. A single unbranched dirt path runs from a portal at one end of the field to a castle at the opposite end. Place five pre-positioned arrow towers spaced near the road and distributed along its length, with clear coverage over the entire route. Use generated meshes for the portal, castle, towers, and enemy creatures, including goblin-, spider-, wolf-, ogre-, knight-, and dragon-like forms.",
+  "blob": "### Genre\nThis is Strategy, specifically a tower defense game: enemy waves travel a fixed route toward a defended castle.\n\n### Shape and preset\nUse `lane-actor-track`, matching the Tower Defense preset. The scene is a compact, fully visible grassy field with one continuous, unbranched dirt lane running directly from portal to castle; retain the preset’s route-focused structure.\n\n### Config requirements\nUse visible `buildzone-grid` as subtly defined grass-side placement ground around the lane, expressed here by the five already installed towers rather than a large empty grid. Use `tracker-core` as the visible castle at the path terminus, with its associated invisible castle-contact health detection volume. Use invisible `spawner-npc` at the portal mouth, where enemy waves enter the lane. Add visible `choke-bottleneck` only through the path’s deliberate narrowing near the middle, keeping the single route readable and ensuring the five towers can cover it. The five pre-positioned arrow towers are visible geometry; enemy spawn points and castle-contact detection are invisible layout elements.\n\n### Layout components\nThe map is one short rectangular field crossing, mostly flat green grass. Put the portal at one narrow end and the castle at the opposite end, each large enough to read clearly as the start and goal. A single compact dirt path crosses the entire field without forks, loops, or ambiguous crossings; it curves gently once through the central pinch point but remains completely visible in frame. Distribute exactly five arrow towers beside the road: one near the portal approach, three staggered along the middle and bend, and one near the castle approach. Keep tower firing views open across the path. Show generated-mesh enemy creature forms on the route, with goblin-, spider-, wolf-, ogre-, knight-, and dragon-like silhouettes distributed as a representative procession. Use the field edge as a simple natural grass boundary, without additional buildings or terrain. Compose in a high three-quarter isometric view that includes portal, full path, all five towers, and castle in one legible image.\n\n### Render order\nUse `authored_plan`: the continuous enemy lane must be valid by construction, with a reachable castle endpoint and no broken or branching route.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the author’s short field crossing and requirement that the full path and all five towers remain visible together. Theme is bright stylized fantasy tower defense: green grass, warm dirt, stone castle, magical portal, and chunky generated meshes. Apply `P6` because the enemy track must be a single connected, playable route generated procedurally before visual dressing.",
+  "spec": {
+    "genre": "Strategy",
+    "secondary": [],
+    "shape": "lane-actor-track",
+    "preset": "Tower Defense",
+    "axes": {},
+    "options": [
+      {
+        "id": "buildzone-grid",
+        "text": "Subtly defined grass-side placement ground around the lane, expressed by the five already installed arrow towers rather than a large empty grid.",
+        "visible": true,
+        "count": 5
+      },
+      {
+        "id": "tracker-core",
+        "text": "The visible stone castle at the path terminus, with an invisible castle-contact health detection volume.",
+        "visible": true,
+        "count": 1
+      },
+      {
+        "id": "spawner-npc",
+        "text": "Enemy spawn points at the portal mouth, where enemy waves enter the lane.",
+        "visible": false,
+        "count": -1
+      },
+      {
+        "id": "choke-bottleneck",
+        "text": "The path's deliberate narrowing near the middle, keeping the single route readable and within coverage of the five towers.",
+        "visible": true,
+        "count": 1
+      }
+    ],
+    "layout": {
+      "composition": "High three-quarter isometric view showing the portal at one narrow end, the full gently curving dirt lane across the compact field, all five towers beside it, and the castle at the opposite end.",
+      "zones": [
+        {
+          "name": "Portal approach",
+          "role": "Enemy wave entry at the portal mouth.",
+          "where": "one narrow end of the field",
+          "size": ""
+        },
+        {
+          "name": "Central pinch point",
+          "role": "The lane gently curves and deliberately narrows while remaining fully visible.",
+          "where": "middle of the field",
+          "size": ""
+        },
+        {
+          "name": "Castle approach",
+          "role": "Final defended approach to the castle endpoint.",
+          "where": "opposite end of the field",
+          "size": ""
+        }
+      ],
+      "paths": [
+        {
+          "from": "Portal approach",
+          "to": "Castle approach",
+          "kind": "track"
+        }
+      ],
+      "terrain": "Mostly flat green grass with a compact warm dirt lane; no additional terrain.",
+      "props": [
+        {
+          "name": "arrow towers",
+          "count": 5,
+          "where": "One near the portal approach, three staggered along the middle and bend, and one near the castle approach beside the road."
+        },
+        {
+          "name": "portal",
+          "count": 1,
+          "where": "One narrow end of the field."
+        },
+        {
+          "name": "stone castle",
+          "count": 1,
+          "where": "Opposite end of the field at the path terminus."
+        },
+        {
+          "name": "enemy creature forms",
+          "count": -1,
+          "where": "Distributed along the route as goblin-, spider-, wolf-, ogre-, knight-, and dragon-like silhouettes."
+        }
+      ],
+      "boundary": "Simple natural grass field edge, without additional buildings or terrain.",
+      "scale_band": "small",
+      "theme": "Bright stylized fantasy tower defense: green grass, warm dirt, stone castle, magical portal, and chunky generated meshes."
+    },
+    "render": {
+      "first": "authored_plan",
+      "then": "topdown",
+      "authoritative": "authored_plan",
+      "why": "the continuous enemy lane must be valid by construction, with a reachable castle endpoint and no broken or branching route.",
+      "set_piece": false
+    },
+    "route": [
+      "P6"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a 3D tower defense map as a short, fully visible grassy field crossing. A single unbranched dirt path runs from a portal at one end of the field to a castle at the opposite end. Place five pre-positioned arrow towers spaced near the road and distributed along its length, with clear coverage over the entire route. Use generated meshes for the portal, castle, towers, and enemy creatures, including goblin-, spider-, wolf-, ogre-, knight-, and dragon-like forms."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "p6",
+  "first": "topdown",
+  "mapper_notes": [
+    "blob asked for authored_plan first; the route ['P6'] gives topdown"
+  ]
+}

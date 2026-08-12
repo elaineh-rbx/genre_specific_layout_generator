@@ -1,0 +1,158 @@
+{
+  "scene": "P0504",
+  "source": "make a 3d game about clock people vs couchs and I want a giant high detail map and that will be the lobby I also want you to make platforms for which if you step on you teleport to another map and defend your base city that has 200 health also you can pick which difficulty you want to do with nightmare being the hardest and make a summon area on which you spend 100 counts to summon a unit the chances of the units are:common -75% rare-20% epic-3% legendary-0.9% mythic-0.1%",
+  "answers": [
+    {
+      "field": "scale",
+      "ask": "How giant is the lobby — a large plaza you can cross in half a minute, or a town-sized hub?",
+      "answer": "Make it a town-sized high-detail lobby hub."
+    },
+    {
+      "field": "goal",
+      "ask": "Do the couches attack the base in waves you survive, or is it a straight fight between the two sides?",
+      "answer": "The couches attack the base city in waves, and players defend its 200 health."
+    },
+    {
+      "field": "shape",
+      "ask": "Do attackers follow one fixed path to the base, or come from anywhere across open ground?",
+      "answer": "Use one fixed path leading to the base city so the defense gameplay is clear and playable."
+    }
+  ],
+  "scene_prompt": "Create a 3D game map with a town-sized, high-detail lobby hub themed around clock people versus couches. Arrange teleport platforms around the hub as gateways to separate maps. Include a summon area within the lobby. One destination is a base-defense city: a defended city base sits at the end of a single clear approach path, with open ground along the route for incoming couch attackers and defensive placement around the city.",
+  "blob": "### Genre\nThe dominant genre is Strategy: a tower-defense game, established by couch attackers arriving in waves along one fixed path to a base city. The lobby is a supporting hub, not a secondary genre.\n\n### Shape and preset\nUse `lane-actor-track`, matching the Tower Defense preset. Here it is a single, readable couch-attack route from the outer arrival edge to the defended clock-people city. The separate lobby and defense destination are explicitly requested, so retain the preset’s lane form while adding the hub-to-map transition.\n\n### Config requirements\nUse visible `buildzone-grid`: broad, clearly marked defensive placement strips and pads flank the approach, especially near bends and the city entrance. Use `tracker-core`: the defended city base is visible geometry at the route endpoint, with its health tracker placed invisibly on that structure. Use invisible `spawner-npc`: a couch-themed wave origin sits at the far start of the route beyond the first defensive ground. The teleport platforms and summon area are visible geometry; their destination links and summon trigger are invisible placement data and must not enter the image.\n\n### Layout components\nBuild a town-sized high-detail lobby hub as a large clockwork plaza. Put the summon area at its center as a circular ritual/platform plaza, with open circulation around it. Arrange several distinct teleport platforms evenly around the outer plaza, each framed as a gateway to a separate map; one prominent platform leads to the base-defense city. The defense map begins at a couch-themed outer approach, then carries one continuous, unambiguous route across open ground toward the city. Defensive placement ground runs beside the route without blocking it, becoming denser around the final city gate. The city occupies the far end as the large defended landmark and base core. Use paved plaza surfaces in the hub, a clear road or track for the enemy route, and a contained outer boundary around both spaces. Compose the lobby as a radial hub, while the defense map reads strongly from path origin to city endpoint.\n\n### Render order\nUse `authored_plan`: generate the fixed enemy route, wave origin, placement ground, and reachable city endpoint as a valid blueprint first, then build top-down and isometric renders from it, because a broken or ambiguous attack path makes tower defense unplayable.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by the town-sized high-detail lobby plus its separate city-defense destination. Theme: stylized clockwork people versus upholstered couch invaders, with ornate clock-city architecture and surreal furniture siege elements. Apply `P6` because the enemy lane must be valid by construction, and `P4` because the lobby hub and teleport destinations are separate maps.",
+  "spec": {
+    "genre": "Strategy",
+    "secondary": [],
+    "shape": "lane-actor-track",
+    "preset": "Tower Defense",
+    "axes": {},
+    "options": [
+      {
+        "id": "buildzone-grid",
+        "text": "Broad, clearly marked defensive placement strips and pads flank the approach, especially near bends and the city entrance.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "tracker-core",
+        "text": "The defended clock-people city base is visible geometry at the route endpoint, with its health tracker placed invisibly on that structure.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "spawner-npc",
+        "text": "A couch-themed wave origin sits at the far start of the route beyond the first defensive ground.",
+        "visible": false,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "A radial clockwork lobby plaza contains the central summon area and teleport gateways around its outer edge; the separate defense map reads from the couch-themed outer approach along a clear route to the defended city at the far endpoint.",
+      "zones": [
+        {
+          "name": "Clockwork lobby hub",
+          "role": "Town-sized high-detail lobby and circulation hub.",
+          "where": "separate lobby map",
+          "size": "large"
+        },
+        {
+          "name": "Summon area",
+          "role": "Central circular ritual/platform plaza for summoning.",
+          "where": "center of the lobby hub",
+          "size": ""
+        },
+        {
+          "name": "Teleport platform ring",
+          "role": "Gateway platforms leading to separate maps, including the base-defense city.",
+          "where": "evenly around the outer lobby plaza",
+          "size": ""
+        },
+        {
+          "name": "Couch-themed outer approach",
+          "role": "Wave arrival ground and beginning of the enemy attack route.",
+          "where": "outer start of the defense map",
+          "size": ""
+        },
+        {
+          "name": "Defensive placement ground",
+          "role": "Tower placement strips and pads beside the enemy route, densest near the city gate.",
+          "where": "along the route, especially around bends and the city entrance",
+          "size": ""
+        },
+        {
+          "name": "Defended clock-people city",
+          "role": "Defense destination, landmark, and base core at the endpoint of the attack lane.",
+          "where": "far end of the defense map",
+          "size": "large"
+        }
+      ],
+      "paths": [
+        {
+          "from": "Clockwork lobby hub",
+          "to": "Summon area",
+          "kind": "open ground"
+        },
+        {
+          "from": "Clockwork lobby hub",
+          "to": "Teleport platform ring",
+          "kind": "open ground"
+        },
+        {
+          "from": "Teleport platform ring",
+          "to": "Defended clock-people city",
+          "kind": "portal"
+        },
+        {
+          "from": "Couch-themed outer approach",
+          "to": "Defended clock-people city",
+          "kind": "track"
+        }
+      ],
+      "terrain": "Paved plaza surfaces in the lobby; open ground with a clear road or track for the enemy route in the defense map.",
+      "props": [
+        {
+          "name": "teleport platforms",
+          "count": -1,
+          "where": "evenly around the outer lobby plaza"
+        },
+        {
+          "name": "couch-themed wave origin",
+          "count": -1,
+          "where": "far start of the defense route"
+        },
+        {
+          "name": "defensive placement strips and pads",
+          "count": -1,
+          "where": "flanking the route and dense around the final city gate"
+        }
+      ],
+      "boundary": "A contained outer boundary surrounds both the lobby and defense spaces.",
+      "scale_band": "large",
+      "theme": "Stylized clockwork people versus upholstered couch invaders; ornate clock-city architecture and surreal furniture siege elements."
+    },
+    "render": {
+      "first": "authored_plan",
+      "then": "topdown",
+      "authoritative": "authored_plan",
+      "why": "A broken or ambiguous fixed attack path would make tower defense unplayable.",
+      "set_piece": false
+    },
+    "route": [
+      "P6",
+      "P4"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a 3D game map with a town-sized, high-detail lobby hub themed around clock people versus couches. Arrange teleport platforms around the hub as gateways to separate maps. Include a summon area within the lobby. One destination is a base-defense city: a defended city base sits at the end of a single clear approach path, with open ground along the route for incoming couch attackers and defensive placement around the city."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "p6",
+  "first": "topdown",
+  "mapper_notes": [
+    "blob asked for authored_plan first; the route ['P6'] gives topdown"
+  ]
+}

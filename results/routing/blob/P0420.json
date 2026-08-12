@@ -1,0 +1,141 @@
+{
+  "scene": "P0420",
+  "source": "a 3D game where you explore an island and collect hidden treasures",
+  "answers": [
+    {
+      "field": "theme",
+      "ask": "What kind of island - tropical and sunny, pirate-weathered, or something stranger?",
+      "answer": "Make it a tropical, sunny island with beaches, palm trees, rocky cliffs, and simple jungle areas."
+    },
+    {
+      "field": "scale",
+      "ask": "How big should the island be - a few minutes to cross, or a long hike?",
+      "answer": "Keep it small: the island should take only a few minutes to cross so exploration stays focused and playable."
+    },
+    {
+      "field": "free",
+      "ask": "How many treasures, and does finding them all end the game?",
+      "answer": "Include 10 hidden treasures, and finding all of them completes the game."
+    }
+  ],
+  "scene_prompt": "Create a 3D game map showing a small, sunny tropical island that takes only a few minutes to cross. Beaches ring the shoreline with palm trees, while rocky cliffs and simple jungle areas form the interior; hide 10 treasures across these island zones.",
+  "blob": "### Genre\nAdventure is the dominant genre: players explore a compact island to find hidden treasures, with all 10 discoveries completing the experience.\n\n### Shape and preset\nUse `world-open`, a single freely explorable tropical island rather than a corridor or separate chapters. Match the Scavenger Hunt preset: its open search-focused structure fits, while its unrequested quest board is omitted.\n\n### Config requirements\nUse `collectible-nodes` as invisible layout placements for the 10 hidden treasure locations, each attached to a distinct physical hiding site. Use visible `alcove-secret` for tucked-away cliff recesses, dense jungle pockets, and beachside hiding places. Use visible `water-body` for the sea surrounding the island, and visible `terrain-relief` for the rocky cliff interior. No additional gameplay infrastructure is needed.\n\n### Layout components\nBuild one small island, crossable on foot in only a few minutes. A continuous pale-sand beach rings the full shoreline, broken by rocky outcrops and backed by scattered palms. The center is a compact raised interior of weathered rocky cliffs with simple jungle clearings and palm-dotted slopes. Place the 10 treasures across all island zones: several partially concealed among beach rocks and palms, several in jungle clearings or vegetation pockets, and several in cliff alcoves or on reachable ledges. Keep each hiding place visually distinct and connected by natural walkable sand, dirt, and rock routes without turning the island into a formal road network. The sea is the natural outer boundary; cliff faces and dense foliage shape interior edges. Frame the whole island clearly in an elevated three-quarter view, with the bright shoreline readable around the darker green center.\n\n### Render order\nUse `isometric`: the compact scenic island composition leads, and no topology failure would make this exploration space unplayable.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the stated few-minutes-crossing travel time and exactly 10 treasures. Theme: sunny tropical adventure, bright beaches, lush simple jungle, weathered rock. Use `tiered` for the non-overhanging cliff relief and `CHECK` for the surrounding water surface; no stacked layers, interiors, separate maps, or validity-by-construction route are required.",
+  "spec": {
+    "genre": "Adventure",
+    "secondary": [],
+    "shape": "world-open",
+    "preset": "Scavenger Hunt",
+    "axes": {},
+    "options": [
+      {
+        "id": "collectible-nodes",
+        "text": "10 hidden treasure locations, each attached to a distinct physical hiding site across all island zones.",
+        "visible": false,
+        "count": 10
+      },
+      {
+        "id": "alcove-secret",
+        "text": "Tucked-away cliff recesses, dense jungle pockets, and beachside hiding places.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "water-body",
+        "text": "The sea surrounding the island.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "terrain-relief",
+        "text": "The compact raised interior of weathered rocky cliffs, palm-dotted slopes, and reachable ledges.",
+        "visible": true,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "Elevated three-quarter view framing the whole compact island, with a bright pale-sand shoreline clearly readable around the darker green raised center.",
+      "zones": [
+        {
+          "name": "Shoreline beach",
+          "role": "Foot-traversable beach ring with beachside treasure hiding places among rocks and palms.",
+          "where": "Around the full island shoreline",
+          "size": "Continuous narrow ring"
+        },
+        {
+          "name": "Jungle interior",
+          "role": "Simple jungle clearings and vegetation pockets containing treasure hiding places.",
+          "where": "Centre of the island behind the beach",
+          "size": "Compact"
+        },
+        {
+          "name": "Rocky cliff interior",
+          "role": "Raised weathered cliffs with alcoves, reachable ledges, and treasure hiding sites.",
+          "where": "Central interior and rocky outcrops along the shoreline",
+          "size": "Compact raised area"
+        }
+      ],
+      "paths": [
+        {
+          "from": "Shoreline beach",
+          "to": "Jungle interior",
+          "kind": "open ground"
+        },
+        {
+          "from": "Jungle interior",
+          "to": "Rocky cliff interior",
+          "kind": "open ground"
+        },
+        {
+          "from": "Shoreline beach",
+          "to": "Rocky cliff interior",
+          "kind": "open ground"
+        }
+      ],
+      "terrain": "A continuous pale-sand beach rings the shoreline, broken by rocky outcrops and backed by scattered palms. The center is raised weathered rocky cliff relief with simple jungle clearings, palm-dotted slopes, and natural walkable sand, dirt, and rock routes. Surrounding sea encircles the island.",
+      "props": [
+        {
+          "name": "rocky outcrops",
+          "count": -1,
+          "where": "Breaking up the shoreline beach"
+        },
+        {
+          "name": "palm trees",
+          "count": -1,
+          "where": "Scattered behind the beach and across jungle slopes"
+        },
+        {
+          "name": "hidden treasures",
+          "count": 10,
+          "where": "Several among beach rocks and palms, several in jungle clearings or vegetation pockets, and several in cliff alcoves or on reachable ledges"
+        }
+      ],
+      "boundary": "The surrounding sea is the natural outer boundary; cliff faces and dense foliage shape interior edges.",
+      "scale_band": "small",
+      "theme": "Sunny tropical adventure, bright beaches, lush simple jungle, weathered rock."
+    },
+    "render": {
+      "first": "isometric",
+      "then": "topdown",
+      "authoritative": "isometric",
+      "why": "the compact scenic island composition leads, and no topology failure would make this exploration space unplayable.",
+      "set_piece": false
+    },
+    "route": [
+      "tiered",
+      "CHECK"
+    ],
+    "notes": [
+      "The Scavenger Hunt preset is matched, but its unrequested quest board (`tracker-quest`) is omitted."
+    ],
+    "scene_prompt": "Create a 3D game map showing a small, sunny tropical island that takes only a few minutes to cross. Beaches ring the shoreline with palm trees, while rocky cliffs and simple jungle areas form the interior; hide 10 treasures across these island zones."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": []
+}

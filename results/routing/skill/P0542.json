@@ -1,0 +1,111 @@
+{
+  "scene": "P0542",
+  "source": "Role: Expert Game Developer and Roblox/Tycoon Scripter\\nTask: Generate a fully functional, multiplayer Tycoon game featuring 6 distinct player plots, custom color themes per player, and a robust weapon progression system.\\n\\n### 1. Game Structure & Layout\\n* **Total Plots:** Exactly 6 plots, arranged in a balanced layout around a central hub or spawn area. Each plot is assigned to a specific player upon joining.\\n* **Plot Assignments & Color Themes:**\\n 1. **Valeti's Plot:** Primary color theme is **Purple** (neon accents, purple buttons, and purple tycoon walls).\\n 2. **Joanna's Plot:** Primary color theme is **Green** (neon accents, green buttons, and green tycoon walls).\\n 3. **Elina's Plot:** Primary color theme is **Pink** (neon accents, pink buttons, and pink tycoon walls).\\n 4. **Lose's Plot:** Primary color theme is **Red** (neon accents, red buttons, and red tycoon walls).\\n 5. **Viliami's Plot:** Primary color theme is **Blue** (neon accents, blue buttons, and blue tycoon walls).\\n 6. **Sabrina's Plot:** Primary color theme is **Yellow** (neon accents, yellow buttons, and yellow tycoon walls).\\n\\n### 2. Core Tycoon Mechanics\\n* **Claim System:** Players walk onto an empty plot's \"Claim\" button to lock it in. Once claimed, the plot spawns the initial droppers and a cash collection pad matching their designated color theme.\\n* **Droppers & Conveyors:** Droppers generate cash over time. Cash flows along conveyors into a collector to increase the player's currency balance.\\n* **Upgradable Buttons:** Players use cash to purchase buttons that build walls, upgrade droppers, unlock defensive barriers, and buy gear. Buttons must be color-coded to match the player's specific theme.\\n\\n### 3. Weapon & Gear System\\n* **Progression Tree:** Each tycoon must feature a weapon purchasing branch (at least 4 tiers per plot, scaling in price and power):\\n * **Tier 1 (Starter):** Basic melee weapon (e.g., themed energy dagger).\\n * **Tier 2:** Mid-range projectile weapon (e.g., elemental blaster).\\n * **Tier 3:** Heavy area-of-effect weapon (e.g., plasma launcher).\\n * **Tier 4 (Endgame):** Legendary weapon with custom particle effects and high damage output.\\n* **Equipment Handling:** Purchased weapons are automatically added to the player's backpack/inventory and equipped with custom tool scripts for combat.\\n\\n### 4. Technical Requirements\\n* **Data Persistence:** Implement auto-saving for player cash, purchased buttons, and unlocked weapons so progress isn't lost if a player leaves.\\n* **UI/UX:** Clean, intuitive UI displaying current cash, income per second, and active weapons. \\n* **Error-Free Code:** Provide clean, well-commented, modular scripts (server-side scripts for data and economy, client-side scripts for UI and tools) to ensure the game is fully functional out-of-the-box.",
+  "block": {
+    "genres": [
+      "simulation"
+    ],
+    "shape": {
+      "id": "plot-isolated",
+      "type": "BuildZone",
+      "name": "Isolated Per-Player Plots"
+    },
+    "preset": "Tycoon",
+    "pipeline": [
+      "P0"
+    ],
+    "image_prompt": [
+      {
+        "id": "social-hub",
+        "text": "A central hub at the middle of the map that every plot faces onto and every player returns to"
+      },
+      {
+        "id": "path-circulation",
+        "text": "Walkways chaining the central hub out to each of the six plots and through each plot's buttons"
+      },
+      {
+        "id": "gate-progression",
+        "text": "Purchasable walls, dropper upgrades, and defensive barriers that animate away or build in when their colour-coded button is bought"
+      },
+      {
+        "id": null,
+        "text": "Six equally spaced plots arranged symmetrically around the central hub, each carrying one player's colour - purple, green, pink, red, blue, yellow - in its walls, buttons, and neon accents"
+      },
+      {
+        "id": null,
+        "text": "A dropper-and-conveyor line in each plot: droppers producing cash that rides a conveyor to a collection pad"
+      },
+      {
+        "id": null,
+        "text": "A weapon purchase branch in each plot, four tiers laid out in ascending order from a starter melee weapon to a legendary endgame weapon"
+      },
+      {
+        "id": null,
+        "text": "A colour-matched Claim button pad at the entrance to each empty plot"
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "trigger-task",
+        "type": "TriggerZone",
+        "text": "The cash collection pad each plot's conveyor feeds, where the owner banks their balance"
+      },
+      {
+        "id": null,
+        "text": "An ownership trigger on each plot's Claim button that locks the plot to the first player who steps on it and spawns that plot's starting droppers"
+      },
+      {
+        "id": null,
+        "text": "A spawn area at the central hub where joining players arrive before claiming a plot"
+      }
+    ],
+    "notes": [
+      "The Tycoon preset carries a shared team plot, which the prompt positively contradicts - it asks for exactly six plots each assigned to one player - so the shape was switched to isolated per-player plots. A contradicted preset option can be kept and labelled; a contradicted preset shape cannot, since exactly one shape is emitted.",
+      "No option covers the dropper / conveyor / collector chain, which is the entire economic loop of a tycoon.",
+      "'Exactly 6' plots and 'at least 4' weapon tiers are hard counts with nowhere in the block to live.",
+      "Most of this prompt - data persistence, tool scripts, UI, modular server code - is not layout."
+    ]
+  },
+  "open_questions": [
+    {
+      "field": "scale",
+      "ask": "How big is one plot - a small hideout footprint or a full factory floor? Six of them plus a hub sets the whole map size."
+    },
+    {
+      "field": "goal",
+      "ask": "Do players fight each other with the purchased weapons on their own plots, in the hub, or is there a separate arena?"
+    }
+  ],
+  "theme": "Bright neon-accented tycoon: flat coloured tycoon walls with neon trim, one saturated hue per plot against a neutral hub",
+  "scale": {
+    "band": "district",
+    "assumed": true
+  },
+  "coverage_missing": [
+    {
+      "field": "scale",
+      "ask": "How large is a single plot?"
+    },
+    {
+      "field": "shape",
+      "ask": "Are the plots walled off from each other, or open so players can walk onto a neighbour's ground with their weapons?"
+    },
+    {
+      "field": "goal",
+      "ask": "What ends a round, if anything - is this persistent free-build or is there a winner?"
+    }
+  ],
+  "answers": [
+    {
+      "field": "scale",
+      "ask": "How big is one plot - a small hideout footprint or a full factory floor? Six of them plus a hub sets the whole map size.",
+      "answer": "Use a small hideout-sized tycoon footprint for each plot, with enough room for conveyors, upgrade buttons, walls, and the weapon branch. Keep the central hub compact and balanced around the six plots."
+    },
+    {
+      "field": "goal",
+      "ask": "Do players fight each other with the purchased weapons on their own plots, in the hub, or is there a separate arena?",
+      "answer": "Use a separate small arena connected to the central hub for player combat. Plots remain protected building and income areas rather than PvP zones."
+    }
+  ],
+  "answers_missing": 0
+}

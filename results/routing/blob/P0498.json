@@ -1,0 +1,148 @@
+{
+  "scene": "P0498",
+  "source": "make a tower defence game the has cool guns and make teleporters to host games and make people start with scout and wall and make scout have a gun and make it so the path in the hosted game if you place a wall on the path it changes ways and make futuristic stuff like the moonbuster from rapid infection | 2 | the rapid expansion and other stuff like the bulwark mech and normal mech from elite mech pilot and mech pilot and other stuff from that game",
+  "answers": [
+    {
+      "field": "shape",
+      "ask": "When a wall reroutes the path, should the enemies find any route across open ground, or only follow a few pre-authored alternate lanes?",
+      "answer": "Enemies should dynamically find a route across the open ground when walls block their current path, so wall placement genuinely changes their route."
+    },
+    {
+      "field": "theme",
+      "ask": "The named mechs are from other games - should these be generic futuristic stand-ins?",
+      "answer": "Use generic futuristic stand-ins inspired by the broad role and feel of those units, not direct copies of the named mechs or items."
+    }
+  ],
+  "scene_prompt": "Create a futuristic tower-defense map on open ground, designed around a start-to-goal enemy route that can dynamically reroute across the terrain when player-built wall barriers block it. Include a hosting area with teleporters for entering game sessions. Populate the playable battlefield with generic sci-fi defensive units and large mech stand-ins, including standard mechs and heavier armored mech forms; avoid direct copies of named game items or units.",
+  "blob": "### Genre\nThe dominant genre is Strategy, specifically a tower-defense game. The build must preserve the author’s open-ground, player-reroutable defense concept rather than force a fixed-lane tower-defense map.\n\n### Shape and preset\nUse `terrain-open`, matched from the Real-Time Strategy spatial model rather than the Tower Defense preset because enemies dynamically cross open terrain when walls obstruct them. The closest preset is Tower Defense, but its `lane-actor-track` shape is overridden by the explicit dynamic-routing requirement; retain its start-to-goal defensive relationship without drawing one immutable lane.\n\n### Config requirements\nUse `buildzone-plot` as visible geometry: broad, clear buildable battlefield ground where defensive walls and sci-fi units can be placed and where alternate enemy routes remain possible. Use `tracker-core` as both visible geometry and invisible state: a prominent fortified futuristic goal structure at one battlefield edge. Use `spawner-npc` as invisible layout placement: an enemy entry origin at the opposite edge, supported by a visible arrival gate or emitter structure. The hosting teleporters are visible physical portal pads in a separate arrival area; their session-link behavior is invisible and must not be rendered as UI.\n\n### Layout components\nPlace a large open battlefield at the center, with the enemy origin on one side and the fortified core goal on the far side. Keep the ground broadly traversable across its width, with several naturally readable approach bands but no pre-authored fixed alternate lanes; walls may redirect movement across the entire navigable field. Reserve broad build zones around likely approaches for player barriers and defense placements. Scatter generic futuristic turret-like defensive units and two readable mech prop classes: standard combat mechs and fewer, bulkier armored heavy mechs. Set a compact hosting plaza just outside the battlefield entrance, with several teleport portal pads grouped around a central platform. Connect it to the field with a wide direct approach. Use a clean outer boundary of rocky lunar embankments, energy fencing, and distant industrial structures, without closing off valid rerouting ground. Frame the core, battlefield, and enemy entry in one legible plan-view axis.\n\n### Render order\nUse `topdown` first and make it authoritative, because wall placement and open-ground rerouting require a readable connected navigation surface; an invalid route would make the defense game unplayable.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by the wide reroutable battlefield plus a separate hosting plaza. Theme: lunar-industrial futuristic defense base, cool sci-fi guns, generic armored mechs, glowing portals, and clean hard-surface technology. Use `P6` because the start-to-goal navigation surface must remain valid under barrier-driven rerouting; use `P0` otherwise, since the battlefield is one continuous ground surface with no required interiors, stacked layers, or separate maps.",
+  "spec": {
+    "genre": "Strategy",
+    "secondary": [],
+    "shape": "terrain-open",
+    "preset": "Tower Defense",
+    "axes": {},
+    "options": [
+      {
+        "id": "buildzone-plot",
+        "text": "broad, clear buildable battlefield ground where defensive walls and sci-fi units can be placed and where alternate enemy routes remain possible",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "tracker-core",
+        "text": "a prominent fortified futuristic goal structure at one battlefield edge",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "spawner-npc",
+        "text": "an enemy entry origin at the opposite edge, supported by a visible arrival gate or emitter structure",
+        "visible": false,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "A legible plan-view axis frames the enemy entry on one side, the large open battlefield at centre, and the fortified core on the far side; a compact hosting plaza sits just outside the battlefield entrance and connects by a wide direct approach.",
+      "zones": [
+        {
+          "name": "Hosting plaza",
+          "role": "Arrival area for entering game sessions, with portal pads around a central platform.",
+          "where": "Just outside the battlefield entrance.",
+          "size": "Compact"
+        },
+        {
+          "name": "Open battlefield",
+          "role": "Broadly traversable reroutable defense ground for player walls, defenses, and dynamically redirected enemy movement.",
+          "where": "Centre, between enemy origin and core goal.",
+          "size": "Large"
+        },
+        {
+          "name": "Enemy origin",
+          "role": "Enemy entry origin, visually supported by an arrival gate or emitter structure.",
+          "where": "One battlefield edge.",
+          "size": ""
+        },
+        {
+          "name": "Fortified core goal",
+          "role": "Start-to-goal defensive objective and prominent futuristic goal structure.",
+          "where": "Far battlefield edge, opposite the enemy origin.",
+          "size": ""
+        }
+      ],
+      "paths": [
+        {
+          "from": "Hosting plaza",
+          "to": "Open battlefield",
+          "kind": "open ground"
+        },
+        {
+          "from": "Enemy origin",
+          "to": "Fortified core goal",
+          "kind": "open ground"
+        }
+      ],
+      "terrain": "Open lunar-industrial ground, broadly traversable across its width with naturally readable approach bands and broad build zones; rocky lunar embankments ring the outer edges.",
+      "props": [
+        {
+          "name": "Futuristic turret-like defensive units",
+          "count": -1,
+          "where": "Scattered across the playable battlefield."
+        },
+        {
+          "name": "Standard combat mechs",
+          "count": -1,
+          "where": "Playable battlefield."
+        },
+        {
+          "name": "Armored heavy mechs",
+          "count": -1,
+          "where": "Playable battlefield, fewer than the standard combat mechs."
+        },
+        {
+          "name": "Teleport portal pads",
+          "count": -1,
+          "where": "Grouped around the central platform in the hosting plaza."
+        },
+        {
+          "name": "Energy fencing",
+          "count": -1,
+          "where": "Outer boundary."
+        },
+        {
+          "name": "Distant industrial structures",
+          "count": -1,
+          "where": "Beyond the outer boundary."
+        }
+      ],
+      "boundary": "Clean outer boundary of rocky lunar embankments, energy fencing, and distant industrial structures, without closing off valid rerouting ground.",
+      "scale_band": "large",
+      "theme": "Lunar-industrial futuristic defense base; cool sci-fi guns, generic armored mechs, glowing portals, and clean hard-surface technology."
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "wall placement and open-ground rerouting require a readable connected navigation surface; an invalid route would make the defense game unplayable.",
+      "set_piece": false
+    },
+    "route": [
+      "P6",
+      "P0"
+    ],
+    "notes": [
+      "dropped option 'teleporter-link': not in Strategy"
+    ],
+    "scene_prompt": "Create a futuristic tower-defense map on open ground, designed around a start-to-goal enemy route that can dynamically reroute across the terrain when player-built wall barriers block it. Include a hosting area with teleporters for entering game sessions. Populate the playable battlefield with generic sci-fi defensive units and large mech stand-ins, including standard mechs and heavier armored mech forms; avoid direct copies of named game items or units."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P0'] gives isometric"
+  ]
+}

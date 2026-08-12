@@ -1,0 +1,213 @@
+{
+  "scene": "P0275",
+  "source": "Mapa: Crea un pueblo abandonado de noche con casas, callejones, una escuela, una iglesia, una estación de servicio, una tienda, una comisaría, un parque, alcantarillas, edificios explorables, múltiples rutas, atajos, ventanas, puertas y escondites. El mapa debe estar optimizado para partidas multijugador.\nRoles: Crea dos equipos: Runner y Chaser. Los jugadores son asignados aleatoriamente al comenzar cada ronda.\nRunner: Debe ser más ágil, girar más rápido, saltar mejor y moverse con mayor fluidez. Utiliza animaciones del catálogo oficial de Roblox (R15) para caminar, correr, saltar, caer e inactivo. No dejes al personaje sin animaciones.\nChaser: Debe verse más intimidante y tener una habilidad que aumente su velocidad durante 10 segundos, seguida de un tiempo de recarga. Utiliza también animaciones oficiales del catálogo de Roblox para caminar, correr, saltar e inactivo. No dejes al personaje estático.\nPanel de administrador: Agrega un panel para pruebas que permita cambiar el rol de cualquier jugador entre Runner y Chaser, iniciar o finalizar rondas, reiniciar la partida y forzar el cambio de roles.\nJugabilidad: Las rondas comienzan desde un lobby interactivo. Los jugadores pueden caminar por el lobby y la partida inicia automáticamente. Durante la partida, los Chasers deben eliminar a los Runners antes de que termine el tiempo. Al finalizar una ronda, los roles pueden cambiar aleatoriamente para la siguiente.\nAtmósfera: No agregues música de fondo. Utiliza solo sonidos ambientales como viento, puertas, pasos y luces parpadeantes.\nÚltimo minuto: Cuando quede un minuto, el mapa debe volverse mucho más oscuro y los Chasers deben emitir un brillo visible para aumentar la tensión.\nCalidad: Utiliza únicamente recursos oficiales de Roblox cuando sea posible. Si no puedes crear animaciones personalizadas, utiliza las animaciones oficiales del catálogo. No dejes personajes sin animaciones. El juego debe ser funcional, organizado y fácil de ampliar con nuevas mecánicas en el futuro.",
+  "answers": [
+    {
+      "field": "scale",
+      "ask": "How big should the village be - a few blocks a Runner can cross in half a minute, or a full town?",
+      "answer": "Un pueblo compacto de unas pocas manzanas, que un Runner pueda cruzar en alrededor de medio minuto; debe priorizar rutas, atajos y edificios explorables sobre tamaño."
+    },
+    {
+      "field": "goal",
+      "ask": "If no Runner is caught before the timer runs out, do the Runners simply win, or is there somewhere they have to reach?",
+      "answer": "Si termina el tiempo y queda al menos un Runner sin eliminar, los Runners ganan; no hace falta una zona de extracción."
+    },
+    {
+      "field": "sewers",
+      "ask": "Should the sewers be a walkable underground network, or just short connector tunnels between two manholes?",
+      "answer": "Las alcantarillas deben ser una red subterránea transitable y compacta, con accesos por algunas alcantarillas y conexiones útiles como atajos."
+    }
+  ],
+  "scene_prompt": "Crea un mapa 3D de un pueblo abandonado nocturno, compacto y de unas pocas manzanas, cruzable en alrededor de medio minuto. Organiza casas y callejones conectados por calles con rutas múltiples, atajos, ventanas, puertas y escondites; incluye edificios explorables como una escuela, una iglesia, una estación de servicio, una tienda y una comisaría, además de un parque. Bajo el pueblo, construye una red de alcantarillas transitable y compacta, accesible desde varias tapas de alcantarilla y conectada con zonas útiles del pueblo como atajo. Añade un lobby físico separado para el inicio de las partidas. La composición debe sentirse oscura y tensa, con iluminación nocturna tenue, luces parpadeantes y un oscurecimiento aún mayor hacia el final de la ronda.",
+  "blob": "### Género\nEl género dominante es Survival, específicamente una persecución asimétrica de `1 vs All`; Party & Casual es secundario solo por el lobby y las rondas. La supervivencia y evasión gobiernan la forma, no hay salida de extracción.\n\n### Forma y preset\nUsa la forma `warren-looping`: un pueblo compacto cuyo tejido de calles, interiores y alcantarillas debe ofrecer bucles y más de una ruta de escape. Parte del preset 1 vs All, pero elimina `gate-escape` porque sobrevivir hasta el fin de la ronda, no llegar a una salida, es la condición espacial indicada.\n\n### Requisitos de configuración\nIncluye `cover-los` como geometría visible: escondites localizados, esquinas ciegas, casetas, mobiliario abandonado y recovecos que rompen líneas de visión. Incluye `building-interior` como geometría visible: escuela, iglesia, gasolinera, tienda y comisaría con entradas y salas transitables. Incluye `spawn-protected` como elemento invisible de layout: puntos iniciales separados y protegidos para los dos roles, sin mostrarlos como marcadores en la imagen. No se añaden otros sistemas o elementos no solicitados.\n\n### Componentes de layout\nEl espacio principal es un pueblo abandonado nocturno de unas pocas manzanas, lo bastante compacto para cruzarse en alrededor de medio minuto. Una red de calles conecta grupos de casas, callejones estrechos, el parque y los cinco edificios cívicos/comerciales explorables: escuela, iglesia, estación de servicio, tienda y comisaría. Dispón puertas, ventanas accesibles y pasajes entre patios para crear rutas alternativas y atajos, evitando corredores terminales sin escapatoria. El parque ocupa una manzana o borde central como área abierta de transición, con vegetación, juegos y estructuras bajas que cortan vistas.\n\nBajo el pueblo, una red de alcantarillas compacta conecta varios sectores mediante túneles transitables, cámaras de cruce y accesos por varias tapas de alcantarilla; debe servir como atajo útil entre zonas de superficie, no como decoración aislada. El lobby físico queda separado del área de partida, como una pequeña plaza o sala de espera cerrada conectada mediante un umbral de inicio. El límite exterior del pueblo se resuelve con edificios cerrados, vallas, vegetación oscura y bordes urbanos inaccesibles. Composición isométrica oblicua, mostrando tejados, calles, entradas y al menos algunos cortes visuales hacia accesos de alcantarilla; iluminación nocturna tenue y luces parpadeantes.\n\n### Orden de render\nUsa `topdown`: primero un plano superior autoritativo para comprobar que las rutas de persecución forman bucles conectados y que los atajos de alcantarilla no crean encierros injustos; después se viste en isométrico.\n\n### Escala, tema y coste\nEscala media, impulsada por un pueblo de pocas manzanas con dos capas navegables. Tema: horror urbano abandonado, noche fría, tensión y luz escasa. Aplican `P2` porque la red subterránea queda bajo la superficie; `P3` por el cruce exterior-interior en los edificios explorables; y `P6` porque la conectividad sin callejones de captura debe ser válida por construcción.",
+  "spec": {
+    "genre": "Survival",
+    "secondary": [
+      "Party & Casual"
+    ],
+    "shape": "warren-looping",
+    "preset": "1 vs All",
+    "axes": {},
+    "options": [
+      {
+        "id": "cover-los",
+        "text": "Escondites localizados, esquinas ciegas, casetas, mobiliario abandonado y recovecos que rompen líneas de visión.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "building-interior",
+        "text": "Escuela, iglesia, gasolinera, tienda y comisaría con entradas y salas transitables.",
+        "visible": true,
+        "count": 5
+      },
+      {
+        "id": "spawn-protected",
+        "text": "Puntos iniciales separados y protegidos para los dos roles, sin mostrarlos como marcadores en la imagen.",
+        "visible": false,
+        "count": 2
+      }
+    ],
+    "layout": {
+      "composition": "Composición isométrica oblicua mostrando tejados, calles y entradas, con algunos cortes visuales hacia accesos de alcantarilla; el parque ocupa una manzana o borde central y el lobby queda separado del área de partida.",
+      "zones": [
+        {
+          "name": "Pueblo abandonado",
+          "role": "Espacio principal de persecución y evasión con bucles y rutas de escape múltiples.",
+          "where": "Superficie principal",
+          "size": "Unas pocas manzanas; cruzable en alrededor de medio minuto."
+        },
+        {
+          "name": "Grupos de casas y callejones",
+          "role": "Rutas conectadas con atajos, ventanas, puertas y escondites.",
+          "where": "Entre las calles del pueblo",
+          "size": ""
+        },
+        {
+          "name": "Escuela",
+          "role": "Edificio explorable con entradas y salas transitables.",
+          "where": "Pueblo",
+          "size": ""
+        },
+        {
+          "name": "Iglesia",
+          "role": "Edificio explorable con entradas y salas transitables.",
+          "where": "Pueblo",
+          "size": ""
+        },
+        {
+          "name": "Gasolinera",
+          "role": "Edificio explorable con entradas y salas transitables.",
+          "where": "Pueblo",
+          "size": ""
+        },
+        {
+          "name": "Tienda",
+          "role": "Edificio explorable con entradas y salas transitables.",
+          "where": "Pueblo",
+          "size": ""
+        },
+        {
+          "name": "Comisaría",
+          "role": "Edificio explorable con entradas y salas transitables.",
+          "where": "Pueblo",
+          "size": ""
+        },
+        {
+          "name": "Parque",
+          "role": "Área abierta de transición con vegetación, juegos y estructuras bajas que cortan vistas.",
+          "where": "Una manzana o borde central",
+          "size": "Una manzana"
+        },
+        {
+          "name": "Red de alcantarillas",
+          "role": "Atajo útil entre sectores de superficie mediante túneles transitables, cámaras de cruce y accesos por tapas.",
+          "where": "Bajo el pueblo",
+          "size": "Compacta"
+        },
+        {
+          "name": "Lobby físico",
+          "role": "Sala de espera cerrada y separada para el inicio de las partidas.",
+          "where": "Separado del área de partida",
+          "size": "Pequeña plaza o sala de espera"
+        }
+      ],
+      "paths": [
+        {
+          "from": "Grupos de casas",
+          "to": "Parque",
+          "kind": "road"
+        },
+        {
+          "from": "Calles",
+          "to": "Edificios explorables",
+          "kind": "open ground"
+        },
+        {
+          "from": "Patios",
+          "to": "Patios",
+          "kind": "corridor"
+        },
+        {
+          "from": "Superficie del pueblo",
+          "to": "Red de alcantarillas",
+          "kind": "tunnel"
+        },
+        {
+          "from": "Red de alcantarillas",
+          "to": "Varios sectores de superficie",
+          "kind": "tunnel"
+        },
+        {
+          "from": "Lobby físico",
+          "to": "Área de partida",
+          "kind": "corridor"
+        }
+      ],
+      "terrain": "Pueblo urbano abandonado nocturno, con superficie de calles, patios y parque; alcantarillas bajo la superficie.",
+      "props": [
+        {
+          "name": "Casas",
+          "count": -1,
+          "where": "Grupos conectados por calles"
+        },
+        {
+          "name": "Callejones estrechos",
+          "count": -1,
+          "where": "Entre casas y calles"
+        },
+        {
+          "name": "Escondites y mobiliario abandonado",
+          "count": -1,
+          "where": "Calles, interiores y recovecos"
+        },
+        {
+          "name": "Vegetación",
+          "count": -1,
+          "where": "Parque y límite exterior"
+        },
+        {
+          "name": "Juegos",
+          "count": -1,
+          "where": "Parque"
+        },
+        {
+          "name": "Tapas de alcantarilla",
+          "count": -1,
+          "where": "Varios sectores del pueblo"
+        },
+        {
+          "name": "Luces parpadeantes",
+          "count": -1,
+          "where": "Pueblo e interiores"
+        }
+      ],
+      "boundary": "Edificios cerrados, vallas, vegetación oscura y bordes urbanos inaccesibles cierran el límite exterior del pueblo.",
+      "scale_band": "medium",
+      "theme": "Horror urbano abandonado, noche fría, tensión y luz escasa."
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "Las rutas de persecución deben formar bucles conectados y los atajos de alcantarilla no pueden crear encierros injustos.",
+      "set_piece": false
+    },
+    "route": [
+      "P2",
+      "P3",
+      "P6"
+    ],
+    "notes": [],
+    "scene_prompt": "Crea un mapa 3D de un pueblo abandonado nocturno, compacto y de unas pocas manzanas, cruzable en alrededor de medio minuto. Organiza casas y callejones conectados por calles con rutas múltiples, atajos, ventanas, puertas y escondites; incluye edificios explorables como una escuela, una iglesia, una estación de servicio, una tienda y una comisaría, además de un parque. Bajo el pueblo, construye una red de alcantarillas transitable y compacta, accesible desde varias tapas de alcantarilla y conectada con zonas útiles del pueblo como atajo. Añade un lobby físico separado para el inicio de las partidas. La composición debe sentirse oscura y tensa, con iluminación nocturna tenue, luces parpadeantes y un oscurecimiento aún mayor hacia el final de la ronda."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "p6",
+  "first": "topdown",
+  "mapper_notes": []
+}

@@ -1,0 +1,153 @@
+{
+  "scene": "P0056",
+  "source": "make a game where everyone gets a role fighter, giant, and shapeshifter make the game have 12 people for each server shapeshifter can shake into anything so they can hide from fighter and giant. giant has ability to throw cars to eliminate every to win fighter has the ability to fight with super nature powers they have to buy powers in the shop and also make coins laying around the whole map when you pick them up make it have a sound affect and a bag for them the limit for how much coins is 50 for new people who is new to this game give them a tutorial on how to play it and also make it playable so they can explore and walk around",
+  "answers": [
+    {
+      "field": "theme",
+      "ask": "Cars and streets suggest a modern city - is that right, or did you have another setting in mind?",
+      "answer": "Yes, use a small modern city setting with streets and cars for the giant to throw."
+    },
+    {
+      "field": "shape",
+      "ask": "Should the map have real upper levels - rooftops and walkways - or is one ground level enough?",
+      "answer": "Include real rooftops and a few walkways so shapeshifters have places to hide and players can explore."
+    }
+  ],
+  "scene_prompt": "Create a 3D game map set in a small modern city, with streets and cars distributed around the playable area. Arrange city buildings along the streets with accessible rooftops and a few elevated walkways, creating upper-level hiding and exploration spaces as well as ground-level routes between buildings.",
+  "blob": "### Genre\nThe dominant genre is Survival, specifically an asymmetric pursuit game: the shapeshifter’s hiding and evasion role is the strongest spatial requirement. No secondary genre is needed.\n\n### Shape and preset\nUse `warren-looping`, a dense small-city street network whose blocks, alleys, rooftop links, and alternate crossings prevent pursuit routes from ending in dead ends. Match the 1 vs All preset: retain its concealment-focused circulation, but omit its escape gate and role-spawn assumptions because neither is described.\n\n### Config requirements\n`cover-los` is visible geometry: stagger building corners, parked cars, alley recesses, street furniture, and rooftop utility structures repeatedly interrupt long sightlines and create hiding pockets. `settlement-density` is visible geometry: the playable ground is a compact, built-up modern city rather than isolated structures. No invisible configuration elements are requested; do not render markers, triggers, pickups, or role-specific effects.\n\n### Layout components\nBuild a compact city district with a central multi-block street grid as the main ground-level play zone. Place closely spaced modern commercial and apartment-like building facades along both sides of the streets, leaving several alleys and cut-throughs between blocks. Distribute cars along curbs, parking bays, and a few intersections as prominent movable-looking street props and as partial visual cover.\n\nMake each building roof accessible from exterior stairs, fire escapes, or short rooftop access structures. Treat the roofscape as a connected upper exploration zone, with a few elevated walkways crossing narrow streets between selected neighboring roofs. Keep multiple routes between ground streets and roofs so elevated positions do not become sealed traps. Use paved asphalt roads, concrete sidewalks, curbside parking, and small planted strips; avoid natural terrain relief. Enclose the playable district with a continuous outer ring of taller facades, closed street ends, and distant city skyline dressing rather than an open edge. Compose the map as a readable rectangular district: central crossroads in the middle, denser building masses around the perimeter, and visible rooftop bridges breaking up the skyline.\n\n### Render order\nUse `topdown` first and treat that plan as authoritative, because the street, alley, stair, roof, and walkway network must preserve continuous escape loops; a sealed pursuit route would make play invalid. Dress the isometric render from the validated plan.\n\n### Scale, theme, and pipeline cost\nUse a medium scale, driven by a small but fully navigable city district with both street and rooftop circulation. The theme is compact modern urban action: asphalt, concrete, glass, parked cars, fire escapes, and utilitarian rooftop equipment. Apply `P2` because walkways and rooftops overhang streets and lower routes, and `P6` because the looping pursuit topology must be valid by construction.",
+  "spec": {
+    "genre": "Survival",
+    "secondary": [],
+    "shape": "warren-looping",
+    "preset": "1 vs All",
+    "axes": {},
+    "options": [
+      {
+        "id": "cover-los",
+        "text": "Stagger building corners, parked cars, alley recesses, street furniture, and rooftop utility structures repeatedly interrupt long sightlines and create hiding pockets.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "settlement-density",
+        "text": "The playable ground is a compact, built-up modern city rather than isolated structures.",
+        "visible": true,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "A readable rectangular city district with a central crossroads in the middle, a central multi-block street grid as the ground-level play zone, denser building masses around the perimeter, and visible rooftop bridges breaking up the skyline.",
+      "zones": [
+        {
+          "name": "Central multi-block street grid",
+          "role": "Main ground-level play zone for looping pursuit, hiding, and evasion routes.",
+          "where": "centre of the district",
+          "size": "compact"
+        },
+        {
+          "name": "Alleys and block cut-throughs",
+          "role": "Alternate ground-level circulation that prevents pursuit routes from ending in dead ends.",
+          "where": "between street blocks",
+          "size": ""
+        },
+        {
+          "name": "Accessible roofscape",
+          "role": "Connected upper exploration, hiding, and evasion zone with multiple returns to ground streets.",
+          "where": "above the building blocks",
+          "size": ""
+        },
+        {
+          "name": "Outer facade ring",
+          "role": "Encloses the playable district and closes street ends.",
+          "where": "perimeter",
+          "size": ""
+        }
+      ],
+      "paths": [
+        {
+          "from": "Central multi-block street grid",
+          "to": "Alleys and block cut-throughs",
+          "kind": "road"
+        },
+        {
+          "from": "Central multi-block street grid",
+          "to": "Accessible roofscape",
+          "kind": "stair"
+        },
+        {
+          "from": "Alleys and block cut-throughs",
+          "to": "Accessible roofscape",
+          "kind": "stair"
+        },
+        {
+          "from": "Accessible roofscape",
+          "to": "Accessible roofscape",
+          "kind": "bridge"
+        }
+      ],
+      "terrain": "Paved asphalt roads, concrete sidewalks, curbside parking, and small planted strips; avoid natural terrain relief.",
+      "props": [
+        {
+          "name": "Modern commercial and apartment-like building facades",
+          "count": -1,
+          "where": "closely spaced along both sides of the streets and around the perimeter"
+        },
+        {
+          "name": "Cars",
+          "count": -1,
+          "where": "along curbs, in parking bays, and at a few intersections"
+        },
+        {
+          "name": "Street furniture",
+          "count": -1,
+          "where": "along streets and within hiding pockets"
+        },
+        {
+          "name": "Fire escapes and rooftop access structures",
+          "count": -1,
+          "where": "on building exteriors leading to roofs"
+        },
+        {
+          "name": "Elevated rooftop walkways",
+          "count": -1,
+          "where": "crossing narrow streets between selected neighboring roofs"
+        },
+        {
+          "name": "Rooftop utility structures",
+          "count": -1,
+          "where": "across the roofscape"
+        },
+        {
+          "name": "Distant city skyline dressing",
+          "count": -1,
+          "where": "beyond the enclosing outer ring"
+        }
+      ],
+      "boundary": "A continuous outer ring of taller facades, closed street ends, and distant city skyline dressing encloses the playable district.",
+      "scale_band": "medium",
+      "theme": "Compact modern urban action: asphalt, concrete, glass, parked cars, fire escapes, and utilitarian rooftop equipment."
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "the street, alley, stair, roof, and walkway network must preserve continuous escape loops or pursuit play becomes invalid.",
+      "set_piece": false
+    },
+    "route": [
+      "P2",
+      "P6"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a 3D game map set in a small modern city, with streets and cars distributed around the playable area. Arrange city buildings along the streets with accessible rooftops and a few elevated walkways, creating upper-level hiding and exploration spaces as well as ground-level routes between buildings."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "p6",
+  "first": "topdown",
+  "mapper_notes": []
+}

@@ -1,0 +1,178 @@
+{
+  "scene": "P0533",
+  "source": "Create a polished 3D Roblox creature-collecting adventure RPG game inspired by the exploration, monster bonding, egg hatching, riding, crafting, and turn-based combat of creature-rider RPGs.\n\nEverything must be original. Do not copy existing monster designs, names, locations, interfaces, music, characters, or storylines.\n\nThe player is a young Warden who explores a fantasy wilderness, finds creature eggs, hatches creatures called Wildkin, builds a party, crafts equipment, and investigates a magical corruption called the Shattering.\n\nCreate a playable vertical slice with:\n\n* One central village.\n* One large wilderness region.\n* One small dungeon.\n* Six original Wildkin species.\n* A short introductory storyline.\n* Turn-based battles.\n* Egg collecting and hatching.\n* Creature party management.\n* Creature riding.\n* Crafting and equipment.\n* Saving and loading.\n* PC, mobile, and controller support.\n\nPrioritize functional gameplay over map size. Avoid placeholder buttons and unfinished systems.",
+  "answers": [
+    {
+      "field": "shape",
+      "ask": "Is the dungeon a separate instance you load into, or a cave on the same map? That choice roughly doubles the build cost.",
+      "answer": "Make it a cave on the same map, entered directly from the wilderness; keep the slice compact and seamless."
+    },
+    {
+      "field": "scale",
+      "ask": "How long should crossing the wilderness take on foot, given you want map size traded away for finished systems?",
+      "answer": "About 2–3 minutes on foot from the village edge to the far side, with meaningful points of interest along the way."
+    },
+    {
+      "field": "goal",
+      "ask": "Does the vertical slice end when the Shattering intro storyline resolves, or when the dungeon is cleared?",
+      "answer": "The vertical slice ends when the dungeon is cleared; that clear provides the introductory Shattering story beat, not a full resolution."
+    }
+  ],
+  "scene_prompt": "Create a compact, seamless 3D fantasy creature-collecting adventure map with a central village opening into one large wilderness region. The wilderness takes roughly 2–3 minutes to cross on foot from the village edge to its far side, with clear paths and meaningful points of interest along the way, habitats for six original Wildkin species, and places to find creature eggs and crafting materials. At the far side, a small cave dungeon is entered directly from the wilderness rather than loaded as a separate area; its interior forms the final location of the introductory Shattering story beat.",
+  "blob": "### Genre\n`RPG` is dominant: character progression, creature party growth, crafting, and turn-based combat define the slice. `Adventure` is secondary through its exploration-led wilderness journey and final dungeon destination.\n\n### Shape and preset\nUse `world-single`: the village, wilderness, and dungeon are one contiguous seamless map, with the cave entered directly from the far wilderness rather than as a separate instance. Match the Turn-based RPG preset for its single-map town-and-overworld structure, while dropping its unrequested level gates and generic mob-emitter treatment.\n\n### Config requirements\n`safezone-town` is visible geometry: a compact central village, protected in character and clearly separated from the surrounding wild ground. `hazard-aggro` is visible geometry: six distinct Wildkin habitat clearings or nests set off the main travel routes, each with its own terrain and vegetation identity. `collectible-nodes` is both visible and invisible: visible egg nests and crafting-resource outcrops occupy habitat edges and side paths; invisible pickup placements sit at those locations.\n\n### Layout components\nPlace one central village at the near edge of the map as the opening hub, with a central square, small service buildings, a village exit, and a clear outward-facing trailhead. Beyond it, build one large wilderness region, sized for roughly 2–3 minutes of on-foot travel from the village edge to the far side. A branching but readable main trail crosses the wilderness toward the cave, with short side routes leading to meaningful points of interest, egg nests, resource outcrops, and six habitat pockets for six original Wildkin species. Keep each habitat visually distinct through ground cover, rocks, trees, and local landmark props without splitting the world into separate biomes or maps. Put the small cave dungeon at the far side, entered through a visible wilderness cave mouth; it progresses through a compact sequence of chambers to a final corrupted-looking inner chamber. Natural woodland, stone outcrops, and enclosing ridges form the outer boundary, while cave walls enclose the dungeon. Compose the village-to-cave route as a long diagonal read, with the distant cave-side ridge drawing the eye across the map.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because the village route, wilderness branches, habitat access, and directly connected cave must remain traversable as one playable journey.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by the 2–3 minute wilderness crossing while retaining a compact vertical slice. Theme: polished original fantasy wilderness, warm village craftwork, and subtly corrupted cave magic. Use `P3` because travel crosses directly from the exterior wilderness into the cave interior, requiring linked exterior and interior top-down captures.",
+  "spec": {
+    "genre": "RPG",
+    "secondary": [
+      "Adventure"
+    ],
+    "shape": "world-single",
+    "preset": "Turn-based RPG",
+    "axes": {},
+    "options": [
+      {
+        "id": "safezone-town",
+        "text": "a compact central village, protected in character and clearly separated from the surrounding wild ground",
+        "visible": true,
+        "count": 1
+      },
+      {
+        "id": "hazard-aggro",
+        "text": "six distinct Wildkin habitat clearings or nests set off the main travel routes, each with its own terrain and vegetation identity",
+        "visible": true,
+        "count": 6
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "visible egg nests and crafting-resource outcrops occupy habitat edges and side paths; invisible pickup placements sit at those locations",
+        "visible": true,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "The village sits at the near edge as the opening hub, with a long diagonal wilderness route leading across the map toward the distant cave-side ridge at the far side. Branches and habitat pockets sit off the readable main trail, while the cave dungeon terminates the journey beyond the wilderness.",
+      "zones": [
+        {
+          "name": "Central village",
+          "role": "Opening sanctuary hub with a central square, small service buildings, village exit, and outward-facing trailhead.",
+          "where": "Near edge of the map",
+          "size": "Compact"
+        },
+        {
+          "name": "Wilderness region",
+          "role": "Exploration region crossed by the branching main trail, with points of interest, egg nests, resource outcrops, and Wildkin habitats.",
+          "where": "Between the village and far-side cave",
+          "size": "Large; roughly 2–3 minutes of on-foot travel from the village edge to the far side"
+        },
+        {
+          "name": "Wildkin habitat pockets",
+          "role": "Six distinct clearings or nests for six original Wildkin species, with individual ground cover, rocks, trees, and local landmark props.",
+          "where": "Off the main travel routes throughout the wilderness",
+          "size": "-"
+        },
+        {
+          "name": "Cave dungeon",
+          "role": "Directly connected final dungeon, progressing through a compact chamber sequence for the introductory Shattering story beat.",
+          "where": "Far side of the wilderness, entered through a visible cave mouth",
+          "size": "Small"
+        },
+        {
+          "name": "Final inner chamber",
+          "role": "Final corrupted-looking chamber within the cave dungeon.",
+          "where": "Deepest end of the cave dungeon",
+          "size": "Compact"
+        }
+      ],
+      "paths": [
+        {
+          "from": "Central village",
+          "to": "Wilderness region",
+          "kind": "trail"
+        },
+        {
+          "from": "Wilderness region",
+          "to": "Wildkin habitat pockets",
+          "kind": "trail"
+        },
+        {
+          "from": "Wilderness region",
+          "to": "Cave dungeon",
+          "kind": "trail"
+        },
+        {
+          "from": "Cave dungeon",
+          "to": "Final inner chamber",
+          "kind": "corridor"
+        }
+      ],
+      "terrain": "Natural woodland, distinct habitat ground cover, rocks, trees, stone outcrops, enclosing ridges, and cave walls; subtly corrupted cave magic in the inner dungeon.",
+      "props": [
+        {
+          "name": "central square",
+          "count": 1,
+          "where": "Central village"
+        },
+        {
+          "name": "small service buildings",
+          "count": -1,
+          "where": "Central village"
+        },
+        {
+          "name": "village exit",
+          "count": 1,
+          "where": "Village edge facing the wilderness"
+        },
+        {
+          "name": "trailhead",
+          "count": 1,
+          "where": "Village exit"
+        },
+        {
+          "name": "egg nests",
+          "count": -1,
+          "where": "Habitat edges and wilderness side paths"
+        },
+        {
+          "name": "crafting-resource outcrops",
+          "count": -1,
+          "where": "Habitat edges and wilderness side paths"
+        },
+        {
+          "name": "local landmark props",
+          "count": -1,
+          "where": "Within Wildkin habitat pockets"
+        },
+        {
+          "name": "visible wilderness cave mouth",
+          "count": 1,
+          "where": "Far side of the wilderness"
+        }
+      ],
+      "boundary": "Natural woodland, stone outcrops, and enclosing ridges form the outer boundary; cave walls enclose the dungeon.",
+      "scale_band": "medium",
+      "theme": "Polished original fantasy wilderness, warm village craftwork, subtly corrupted cave magic"
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "the village route, wilderness branches, habitat access, and directly connected cave must remain traversable as one playable journey",
+      "set_piece": false
+    },
+    "route": [
+      "P3"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a compact, seamless 3D fantasy creature-collecting adventure map with a central village opening into one large wilderness region. The wilderness takes roughly 2–3 minutes to cross on foot from the village edge to its far side, with clear paths and meaningful points of interest along the way, habitats for six original Wildkin species, and places to find creature eggs and crafting materials. At the far side, a small cave dungeon is entered directly from the wilderness rather than loaded as a separate area; its interior forms the final location of the introductory Shattering story beat."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P0'] gives isometric"
+  ]
+}

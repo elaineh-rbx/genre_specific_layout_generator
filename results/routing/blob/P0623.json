@@ -1,0 +1,99 @@
+{
+  "scene": "P0623",
+  "source": "crea un sistema de motos donde sea realista y se pueda jalar caballito en un mapa muy grande con una moto que se pueda manejar",
+  "answers": [
+    {
+      "field": "scale",
+      "ask": "How big is 'muy grande' - a few kilometres of open road, or a city-sized world?",
+      "answer": "Un mapa de unos pocos kilómetros con carreteras abiertas; que se sienta grande pero siga siendo manejable para una primera versión."
+    },
+    {
+      "field": "goal",
+      "ask": "Is this free riding, or are there stunt challenges or races to complete?",
+      "answer": "Es conducción libre para manejar la moto y hacer caballitos; el prompt no incluye carreras ni desafíos."
+    }
+  ],
+  "scene_prompt": "Create a large open-road 3D map spanning a few kilometres for free motorcycle riding. Lay out connected open roads across a spacious landscape, with long clear stretches that support maneuvering and wheelies; keep the world feeling expansive but manageable for a first version.",
+  "blob": "### Género\nEl género dominante es Simulation: un simulador de vehículos de conducción libre, no Racing, porque no hay carrera, vueltas ni línea de meta. La conducción y los caballitos definen el uso del espacio, pero no añaden retos ni reglas al trazado.\n\n### Forma y preset\nUsa la forma `world-shared`, un mundo continuo compartido para recorrer libremente en moto. El preset correspondiente es Vehicle Sim; se conserva su mundo abierto y red vial, pero se omite el campo de recursos porque el encargo no describe extracción ni tareas.\n\n### Requisitos de configuración\nIncluye `path-road-vehicle` como geometría visible: una red de carreteras anchas, lisas y conectadas, con rectas largas y curvas amplias que permitan conducir y levantar la rueda delantera sin obstáculos cercanos. No se requieren otros componentes de configuración; no hay elementos invisibles solicitados.\n\n### Componentes de layout\nConstruye un único mapa exterior de unos pocos kilómetros, amplio pero manejable para una primera versión. El núcleo es una red vial continua: una carretera principal larga que atraviesa el mapa, varios ramales abiertos y circuitos de retorno para que el jugador pueda cambiar de dirección sin callejones sin salida. Reserva varios tramos rectos, despejados y especialmente largos para maniobras y caballitos; une estos tramos con curvas de radio generoso y cruces simples. El terreno debe ser una extensión paisajística espaciosa y poco poblada, subordinada a mantener la legibilidad y amplitud de las carreteras. No añadir edificios, recursos, carreras, señales de puntuación ni obstáculos no solicitados. El borde del mundo queda a distancia, cerrado de forma discreta por el final natural del paisaje. En composición, la red debe leerse como una gran ruta abierta, con la recta principal dominando la vista isométrica.\n\n### Orden de render\nUsa `isometric`: se renderiza primero la vista isométrica como referencia autoritativa y después se proyecta la vista superior. La conectividad vial es importante, pero un trazado imperfecto no vuelve injugable la conducción libre ni requiere una ruta generada por código.\n\n### Escala, tema y coste de pipeline\nEscala grande, impulsada por los pocos kilómetros de carreteras abiertas. Tema: simulador de moto realista, paisaje abierto y asfalto limpio. Modificador `P0`: una sola superficie exterior continua, sin interiores, niveles superpuestos ni topología que deba validarse por construcción.",
+  "spec": {
+    "genre": "Simulation",
+    "secondary": [],
+    "shape": "world-shared",
+    "preset": "Vehicle Sim",
+    "axes": {},
+    "options": [
+      {
+        "id": "path-road-vehicle",
+        "text": "Una red de carreteras anchas, lisas y conectadas, con rectas largas y curvas amplias que permitan conducir y levantar la rueda delantera sin obstáculos cercanos.",
+        "visible": true,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "La red debe leerse como una gran ruta abierta, con la recta principal dominando la vista isométrica.",
+      "zones": [
+        {
+          "name": "Mapa exterior continuo",
+          "role": "Mundo compartido para recorrer libremente en moto.",
+          "where": "Todo el mapa",
+          "size": "Unos pocos kilómetros; amplio pero manejable para una primera versión."
+        },
+        {
+          "name": "Carretera principal",
+          "role": "Atravesar el mapa y ofrecer conducción libre en una recta dominante.",
+          "where": "A través del mapa, dominante en la vista isométrica",
+          "size": "Larga"
+        },
+        {
+          "name": "Tramos de maniobra y caballitos",
+          "role": "Permitir maniobras y levantar la rueda delantera sin obstáculos cercanos.",
+          "where": "Varios puntos de la red vial",
+          "size": "Especialmente largos y despejados"
+        }
+      ],
+      "paths": [
+        {
+          "from": "Carretera principal",
+          "to": "Ramales abiertos",
+          "kind": "road"
+        },
+        {
+          "from": "Ramales abiertos",
+          "to": "Circuitos de retorno",
+          "kind": "road"
+        },
+        {
+          "from": "Tramos de maniobra y caballitos",
+          "to": "Curvas de radio generoso y cruces simples",
+          "kind": "road"
+        }
+      ],
+      "terrain": "Extensión paisajística espaciosa y poco poblada, subordinada a mantener la legibilidad y amplitud de las carreteras; asfalto limpio.",
+      "props": [],
+      "boundary": "El borde del mundo queda a distancia, cerrado de forma discreta por el final natural del paisaje.",
+      "scale_band": "large",
+      "theme": "Simulador de moto realista, paisaje abierto y asfalto limpio."
+    },
+    "render": {
+      "first": "isometric",
+      "then": "topdown",
+      "authoritative": "isometric",
+      "why": "la conectividad vial es importante, pero un trazado imperfecto no vuelve injugable la conducción libre.",
+      "set_piece": false
+    },
+    "route": [
+      "P0"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a large open-road 3D map spanning a few kilometres for free motorcycle riding. Lay out connected open roads across a spacious landscape, with long clear stretches that support maneuvering and wheelies; keep the world feeling expansive but manageable for a first version."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": []
+}

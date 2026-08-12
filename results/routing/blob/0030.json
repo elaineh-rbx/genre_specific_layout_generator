@@ -1,0 +1,188 @@
+{
+  "scene": "0030",
+  "source": "Create a top-down RPG adventure map featuring multiple characters placed around a detailed terrain. The map should include:\n\nCHARACTERS (each as a small pixel-art figure on the map):\n- A warrior character (red/orange) near the town area\n- A mage character (purple/blue) near a mystical area\n- An archer character (green) in the forest zone\n- Villagers (brown/tan) near houses\n- A merchant (gold/yellow) at a market stall\n- Guards (silver/gray) at town entrances\n- A king (gold with crown) in a castle area\n- A dragon (red/dark) on a mountain peak\n\nTERRAIN:\n- A central town with houses and a castle\n- Forest area with trees\n- Mountain area with the dragon\n- Paths connecting all areas\n- A mystical/magical zone with glowing effects\n- Water features (river or lake)\n\nEach character should be a small blocky figure (2-3 studs tall) standing on the terrain. The map should be viewed from a slight isometric angle so characters are visible.\n\nConfigurable attributes:\n- CharacterScale: size of characters (default 1)\n- TerrainDetail: level of terrain detail (1-3)\n- NumberOfCharacters: how many characters to place (default 8)\n- MapSize: grid size of the map (default 32)\n- ColorTheme: \"Medieval\" or \"Fantasy\" color scheme",
+  "answers": [],
+  "scene_prompt": "Create a top-down RPG adventure map on a 32-grid-sized terrain, viewed from a slight isometric angle. A central town contains clustered houses, a market stall, and a castle; place brown/tan villagers by the houses, a gold/yellow merchant at the stall, silver/gray guards at the town entrances, a red/orange warrior near town, and a gold-crowned king within the castle area. Forest terrain with trees lies in one zone with a green archer, while a separate glowing mystical area holds a purple/blue mage. A mountain area rises at the map edge with a red/dark dragon on its peak. Rivers or a lake add water features, and paths connect the town, forest, mystical zone, and mountains. All characters are small blocky pixel-art figures, about 2–3 studs tall, standing visibly on the terrain.",
+  "blob": "### Genre\nThe dominant genre is RPG, signalled by the explicitly requested RPG adventure setting and its populated town, wilderness regions, and character classes.\n\n### Shape and preset\nUse `world-single`: one contiguous 32-grid fantasy map with the town at its center and the forest, mystical ground, mountain, and water joined around it. The closest preset is MMO Town Hub for its populated town core, but the broader wilderness layout overrides that preset’s hub-only emphasis.\n\n### Config requirements\nUse `npc-population` as visible geometry: place eight small, blocky pixel-art character figures, each about 2–3 studs tall, on their named terrain. Use `settlement-density` as visible geometry for the clustered central houses, market stall, castle, and town entrances. Use `terrain-relief` as visible geometry for the edge mountain and its peak. Use `water-body` as visible geometry for a river or lake. No invisible gameplay volumes are required.\n\n### Layout components\nMake the central town the largest zone, occupying the middle of the 32-grid map. Cluster houses around local streets; place brown/tan villagers beside them, the gold/yellow merchant at one market stall, silver/gray guards at the town entrances, and the red/orange warrior near town. Put the castle within or immediately behind the town core, with the gold-crowned king in its castle area.\n\nPlace a dense green forest zone on one side with trees enclosing clear ground for the green archer. Put a separate glowing mystical zone on another side, with luminous ground effects framing the purple/blue mage. Raise the mountain zone along the outer map edge, culminating in a visible peak occupied by the red/dark dragon. Run readable paths from town to every outer zone, with water crossing or bordering the terrain without severing those routes. Keep the outer boundary natural, using the mountain edge, forest density, and water as limits. Compose the map as a slightly isometric top-down overview, with all eight figures readable against their local ground.\n\n### Render order\nUse `topdown`: the connected town-to-region path topology is authoritative, then dress it into the requested slight-isometric view.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by the 32-grid terrain and five distinct regional zones. Theme is colorful medieval fantasy pixel art with blocky figures and magical glow. Use `tiered` for the mountain relief and `CHECK` for the water feature; no overlapping surfaces, interiors, separate maps, or procedural-validity requirement are forced.",
+  "spec": {
+    "genre": "RPG",
+    "secondary": [],
+    "shape": "world-single",
+    "preset": "MMO Town Hub",
+    "axes": {},
+    "options": [
+      {
+        "id": "npc-population",
+        "text": "Eight small, blocky pixel-art character figures, about 2–3 studs tall, standing visibly on their named terrain: villagers, merchant, guards, warrior, king, archer, mage, and dragon.",
+        "visible": true,
+        "count": 8
+      },
+      {
+        "id": "settlement-density",
+        "text": "Clustered central town houses around local streets, with a market stall, castle, and town entrances.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "terrain-relief",
+        "text": "A mountain zone along the outer map edge, rising to a visible peak occupied by the red/dark dragon.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "water-body",
+        "text": "A river or lake crossing or bordering the terrain without severing the town-to-region routes.",
+        "visible": true,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "Slightly isometric top-down overview of a contiguous 32-grid fantasy map: the largest central town occupies the middle, with forest, glowing mystical ground, mountain edge, and water arranged around it; all eight figures read clearly against their local ground.",
+      "zones": [
+        {
+          "name": "Central town",
+          "role": "Largest central settlement containing houses, local streets, market stall, entrances, castle, and town-side characters.",
+          "where": "middle of the map",
+          "size": "largest zone"
+        },
+        {
+          "name": "Forest",
+          "role": "Dense green tree zone enclosing clear ground for the green archer.",
+          "where": "one side of town",
+          "size": "-1"
+        },
+        {
+          "name": "Mystical zone",
+          "role": "Separate glowing ground-effects area framing the purple/blue mage.",
+          "where": "another side of town",
+          "size": "-1"
+        },
+        {
+          "name": "Mountain zone",
+          "role": "Outer-edge mountain relief culminating in a peak for the red/dark dragon.",
+          "where": "outer map edge",
+          "size": "-1"
+        },
+        {
+          "name": "Water feature",
+          "role": "River or lake bordering or crossing terrain while preserving routes.",
+          "where": "around the regional terrain",
+          "size": "-1"
+        },
+        {
+          "name": "Castle area",
+          "role": "Castle within or immediately behind the town core, occupied by the gold-crowned king.",
+          "where": "within or immediately behind the central town core",
+          "size": "-1"
+        }
+      ],
+      "paths": [
+        {
+          "from": "Central town",
+          "to": "Forest",
+          "kind": "path"
+        },
+        {
+          "from": "Central town",
+          "to": "Mystical zone",
+          "kind": "path"
+        },
+        {
+          "from": "Central town",
+          "to": "Mountain zone",
+          "kind": "path"
+        }
+      ],
+      "terrain": "32-grid fantasy terrain with dense green forest, luminous mystical ground effects, mountain relief and peak, and a river or lake.",
+      "props": [
+        {
+          "name": "small blocky pixel-art character figures",
+          "count": 8,
+          "where": "on their named local terrain across town, forest, mystical zone, mountain peak, and castle area"
+        },
+        {
+          "name": "clustered houses",
+          "count": -1,
+          "where": "central town around local streets"
+        },
+        {
+          "name": "market stall",
+          "count": 1,
+          "where": "central town"
+        },
+        {
+          "name": "castle",
+          "count": 1,
+          "where": "within or immediately behind the town core"
+        },
+        {
+          "name": "brown/tan villagers",
+          "count": -1,
+          "where": "beside town houses"
+        },
+        {
+          "name": "gold/yellow merchant",
+          "count": 1,
+          "where": "at the market stall"
+        },
+        {
+          "name": "silver/gray guards",
+          "count": -1,
+          "where": "at town entrances"
+        },
+        {
+          "name": "red/orange warrior",
+          "count": 1,
+          "where": "near town"
+        },
+        {
+          "name": "gold-crowned king",
+          "count": 1,
+          "where": "castle area"
+        },
+        {
+          "name": "green archer",
+          "count": 1,
+          "where": "forest clear ground"
+        },
+        {
+          "name": "purple/blue mage",
+          "count": 1,
+          "where": "glowing mystical zone"
+        },
+        {
+          "name": "red/dark dragon",
+          "count": 1,
+          "where": "mountain peak"
+        }
+      ],
+      "boundary": "Natural outer boundary formed by the mountain edge, forest density, and water.",
+      "scale_band": "medium",
+      "theme": "colorful medieval fantasy pixel art with blocky figures and magical glow"
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "connected town-to-region path topology is authoritative before dressing the slight-isometric view.",
+      "set_piece": false
+    },
+    "route": [
+      "tiered",
+      "CHECK"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a top-down RPG adventure map on a 32-grid-sized terrain, viewed from a slight isometric angle. A central town contains clustered houses, a market stall, and a castle; place brown/tan villagers by the houses, a gold/yellow merchant at the stall, silver/gray guards at the town entrances, a red/orange warrior near town, and a gold-crowned king within the castle area. Forest terrain with trees lies in one zone with a green archer, while a separate glowing mystical area holds a purple/blue mage. A mountain area rises at the map edge with a red/dark dragon on its peak. Rivers or a lake add water features, and paths connect the town, forest, mystical zone, and mountains. All characters are small blocky pixel-art figures, about 2–3 studs tall, standing visibly on the terrain."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P0', 'tiered', 'CHECK'] gives isometric"
+  ]
+}

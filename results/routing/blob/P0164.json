@@ -1,0 +1,109 @@
+{
+  "scene": "P0164",
+  "source": "crea una un mapa inspirado en el de escapa del tsunami por brainrots",
+  "answers": [
+    {
+      "field": "theme",
+      "ask": "Which part of the Brainrots reference matters - the meme characters as props, or just the tsunami map layout?",
+      "answer": "Solo importa el diseño del mapa de escape del tsunami; no incluyas personajes meme ni props de Brainrots."
+    },
+    {
+      "field": "scale",
+      "ask": "How long should the run from the waterline to safe high ground take?",
+      "answer": "Que sea un recorrido corto, de unos 20–30 segundos corriendo, para que el mapa sea pequeño y jugable."
+    },
+    {
+      "field": "goal",
+      "ask": "Do players win by outlasting the wave on high ground, or by reaching a specific exit?",
+      "answer": "Los jugadores ganan al sobrevivir la ola en terreno alto; no hace falta una salida específica."
+    }
+  ],
+  "scene_prompt": "Create a compact 3D tsunami-escape map focused on the layout of a short run from the waterline to safe high ground, taking roughly 20–30 seconds to cross. The low coastal starting area leads inland along a clear ascending route toward elevated terrain where players can shelter from an incoming wave; no meme characters or themed props.",
+  "blob": "### Género\nEl género dominante es Survival, concretamente supervivencia ante desastre: se gana resistiendo la ola desde terreno alto, no llegando a una meta. No hay género secundario.\n\n### Forma y preset\nUsa la forma `arena-contained`, una franja costera compacta y contenida donde toda la evacuación visible conduce desde la costa baja a un refugio elevado. El preset es Disaster Survival: se conserva su amenaza de desastre y su relieve de altura segura, pero se omiten estructuras colapsables porque no fueron solicitadas.\n\n### Requisitos de configuración\n`hazard-kill` es geometría visible: un frente de tsunami ancho entra desde el mar y amenaza la zona costera baja. `terrain-tiered` es geometría visible: el terreno asciende en terrazas naturales hasta una cresta seca y segura. `water-body` es geometría visible: mar abierto y línea de agua ocupan el borde costero. No se seleccionan elementos invisibles de configuración.\n\n### Componentes de layout\nLa zona inicial ocupa el borde frontal, baja, abierta y costera, con arena o roca húmeda junto a la línea de agua. Desde ella, una única ruta clara se dirige hacia el interior y asciende de manera continua durante un recorrido corto de aproximadamente 20–30 segundos corriendo. La ruta puede alternar entre una pendiente amplia y dos o tres terrazas rocosas bajas, siempre legibles y sin desvíos principales.\n\nLa zona de refugio ocupa el fondo del mapa: una meseta o cresta alta, amplia para agrupar jugadores y claramente por encima del nivel de la ola. El mar queda en un lateral o en el primer plano, con el tsunami avanzando perpendicularmente hacia tierra. El límite terrestre se cierra con acantilados, laderas rocosas y vegetación costera escasa; no usar personajes meme ni props de Brainrots. Componer la vista para que el agua, la subida y la altura segura se lean en una sola mirada diagonal.\n\n### Orden de render\nUsa `topdown`: primero se valida el plano de la ruta continua entre la costa y la altura segura, porque una conexión rota haría imposible sobrevivir; después se viste la vista isométrica.\n\n### Escala, tema y coste de pipeline\nEscala pequeña, determinada por la carrera de solo 20–30 segundos. Tema: costa rocosa compacta, desastre natural, oleaje amenazante y refugio elevado limpio. Aplica `tiered` por las terrazas y la cresta sin voladizos, y `CHECK` por el mar y la ola como volumen de agua visible junto al mapa; no debe autoocluir la ruta ni el refugio.",
+  "spec": {
+    "genre": "Survival",
+    "secondary": [],
+    "shape": "arena-contained",
+    "preset": "Disaster Survival",
+    "axes": {},
+    "options": [
+      {
+        "id": "hazard-kill",
+        "text": "Un frente de tsunami ancho entra desde el mar y amenaza la zona costera baja.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "terrain-tiered",
+        "text": "El terreno asciende en terrazas naturales hasta una cresta seca y segura.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "water-body",
+        "text": "Mar abierto y línea de agua ocupan el borde costero.",
+        "visible": true,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "El mar queda en un lateral o en el primer plano, con el tsunami avanzando perpendicularmente hacia tierra; la subida conduce en diagonal desde la costa baja frontal hasta el refugio elevado del fondo, de modo que agua, ascenso y altura segura se lean en una sola mirada.",
+      "zones": [
+        {
+          "name": "zona inicial costera",
+          "role": "Área baja y abierta donde comienza la evacuación junto a la línea de agua.",
+          "where": "borde frontal",
+          "size": ""
+        },
+        {
+          "name": "ruta ascendente",
+          "role": "Conduce de forma clara y continua desde la costa hacia la altura segura, sin desvíos principales.",
+          "where": "desde el borde frontal hacia el interior",
+          "size": "recorrido corto de aproximadamente 20–30 segundos corriendo"
+        },
+        {
+          "name": "zona de refugio",
+          "role": "Meseta o cresta seca y segura, amplia para agrupar jugadores y claramente por encima del nivel de la ola.",
+          "where": "fondo del mapa",
+          "size": "amplia"
+        }
+      ],
+      "paths": [
+        {
+          "from": "zona inicial costera",
+          "to": "zona de refugio",
+          "kind": "ramp"
+        }
+      ],
+      "terrain": "Costa rocosa compacta con arena o roca húmeda junto a la línea de agua; pendiente amplia alternada con dos o tres terrazas rocosas bajas que ascienden hasta una cresta seca y segura. Mar abierto y tsunami visibles junto al borde costero.",
+      "props": [],
+      "boundary": "El límite terrestre se cierra con acantilados, laderas rocosas y vegetación costera escasa.",
+      "scale_band": "small",
+      "theme": "Costa rocosa compacta, desastre natural, oleaje amenazante y refugio elevado limpio."
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "una conexión rota entre la costa y la altura segura haría imposible sobrevivir.",
+      "set_piece": false
+    },
+    "route": [
+      "tiered",
+      "CHECK"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a compact 3D tsunami-escape map focused on the layout of a short run from the waterline to safe high ground, taking roughly 20–30 seconds to cross. The low coastal starting area leads inland along a clear ascending route toward elevated terrain where players can shelter from an incoming wave; no meme characters or themed props."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P0', 'tiered', 'CHECK'] gives isometric"
+  ]
+}

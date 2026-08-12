@@ -1,0 +1,140 @@
+{
+  "scene": "P0153",
+  "source": "Game Title: Echoes of Silence\nGenre: Horror / Multiplayer Survival / Echolocation Puzzle\nCore Concept:\nA pitch-black horror puzzle game where players are entirely blind and must rely on sound-based vision (Echolocation). Every action that generates noise-footsteps, clapping, or throwing objects-sends out a visible wave of light that temporarily reveals the surrounding environment and map geometry.\nKey Gameplay Features:\nVisual Echolocation: Walking or using a pulse ability emits expanding sound rings that highlight nearby walls, obstacles, and doors for a brief second before returning to total darkness.\nSound Hierarchy:\nSprinting: High visibility for the player, but instantly alerts the monster and nearby enemies.\nCrouching: Zero noise and 0% visibility, making navigation dangerous but safe from enemies.\nThe Blind Monster: An AI entity (or player-controlled monster) that is completely attracted to noise sources.\nDecoy Mechanics: Players can collect items like alarm clocks or rocks to throw across the room, creating false sound pulses to distract the monster or trick other players.\nEnvironment: A shifting, claustrophobic underground facility or labyrinth filled with traps that can only be spotted right before stepping on them.",
+  "answers": [
+    {
+      "field": "goal",
+      "ask": "Do survivors escape through an exit, or outlast a timer? The preset assumed an exit.",
+      "answer": "Survivors escape through an exit; reaching it is the round objective."
+    },
+    {
+      "field": "scale",
+      "ask": "How large is the facility - one floor of corridors, or several levels?",
+      "answer": "Use one compact floor of claustrophobic corridors for the initial build."
+    },
+    {
+      "field": "shape",
+      "ask": "The labyrinth is described as shifting - does the geometry actually rearrange during a round?",
+      "answer": "Yes, the facility geometry rearranges during a round, keeping routes unreliable and reinforcing the labyrinth feel."
+    }
+  ],
+  "scene_prompt": "Create a 3D horror survival map set in a pitch-black, claustrophobic underground facility on one compact floor. Build a labyrinth of narrow corridors, small connecting rooms, walls, doors, obstacles, and floor traps, with routes able to rearrange during a round. Scatter throwable decoy objects such as rocks and alarm clocks through rooms and corridors. Place a distinct exit at the far end of the facility, reached through the unreliable maze.",
+  "blob": "### Genre\n`Survival` is dominant: survivors evade a noise-attracted monster and must reach an exit. `Puzzle` is secondary, contributing the labyrinthine navigation premise without changing the survival-owned escape topology.\n\n### Shape and preset\nUse `warren-looping`, a compact single-floor underground warren whose narrow corridors and small rooms form reliable loops rather than trapping survivors in dead ends. Match the Escape preset: retain its looping escape structure and exit, while replacing its generic shelter emphasis with a shifting industrial labyrinth.\n\n### Config requirements\n`gate-escape` is both visible and invisible: a distinct, visibly secured exit door anchors the far end of the facility, with its round-win trigger volume placed at the threshold but omitted from the render. `spawner-npc` is invisible: locate the blind monster’s origin or re-entry point in a navigable remote room, not in the image. `hazard-kill` is visible: floor traps are embedded along corridor and room edges, readable only at close range. `collectible-nodes` is invisible: distribute pickup locations for rocks and alarm clocks through rooms, side passages, and obstacle pockets; render the physical decoy props but not their pickup markers.\n\n### Layout components\nBuild one compact, enclosed underground facility. A small arrival room sits near one edge and feeds into a dense central labyrinth occupying most of the footprint. The maze consists of claustrophobic narrow corridors, short connecting passages, and small square or rectangular rooms, with heavy industrial walls, doors, scattered obstacles, and several movable wall or door segments that can rearrange routes during a round. Preserve multiple looped routes from the arrival side toward a distinct exit chamber at the far opposite end, so every rearranged state retains a reachable escape path. Place rocks and alarm clocks sparsely on floors, shelves, and in room corners. Use dark concrete, corroded metal, sealed doors, exposed utility details, and trap-marked floor panels. The boundary is fully enclosed by facility walls. Compose the map as a readable top-down maze with the exit as the strongest terminal landmark.\n\n### Render order\nUse `topdown`: valid loop connectivity and a reachable exit are essential to play, while the shifting wall states require a coherent plan before the isometric dressing pass.\n\n### Scale, theme, and pipeline cost\nScale is medium: one compact floor, but densely partitioned into many corridors and rooms. Theme is pitch-black industrial horror, oppressive and utilitarian. Use `P6` because each facility configuration must preserve a valid, non-stranding escape topology.",
+  "spec": {
+    "genre": "Survival",
+    "secondary": [
+      "Puzzle"
+    ],
+    "shape": "warren-looping",
+    "preset": "Escape",
+    "axes": {},
+    "options": [
+      {
+        "id": "gate-escape",
+        "text": "A distinct, visibly secured exit door anchors the far end of the facility, with its round-win trigger volume placed at the threshold but omitted from the render.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "spawner-npc",
+        "text": "The blind monster’s origin or re-entry point is in a navigable remote room, not in the image.",
+        "visible": false,
+        "count": -1
+      },
+      {
+        "id": "hazard-kill",
+        "text": "Floor traps are embedded along corridor and room edges, readable only at close range.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "Pickup locations for rocks and alarm clocks are distributed through rooms, side passages, and obstacle pockets; render the physical decoy props but not their pickup markers.",
+        "visible": false,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "Readable top-down maze: a small arrival room near one edge leads through a dense central labyrinth filling most of the footprint toward a distinct exit chamber at the far opposite end, with the exit as the strongest terminal landmark.",
+      "zones": [
+        {
+          "name": "Arrival room",
+          "role": "Survivor arrival side feeding into the maze.",
+          "where": "near one edge",
+          "size": "small"
+        },
+        {
+          "name": "Central labyrinth",
+          "role": "Claustrophobic navigation through narrow corridors, short connecting passages, small rooms, obstacles, and shifting wall or door segments; multiple loops preserve a reachable escape path.",
+          "where": "centre, occupying most of the footprint",
+          "size": "dense and compact"
+        },
+        {
+          "name": "Exit chamber",
+          "role": "Terminal escape destination with the secured exit door and omitted round-win threshold trigger.",
+          "where": "far opposite end from the arrival room",
+          "size": "distinct"
+        }
+      ],
+      "paths": [
+        {
+          "from": "Arrival room",
+          "to": "Central labyrinth",
+          "kind": "corridor"
+        },
+        {
+          "from": "Central labyrinth",
+          "to": "Exit chamber",
+          "kind": "corridor"
+        }
+      ],
+      "terrain": "One compact underground floor of dark concrete and corroded metal, with trap-marked floor panels, sealed doors, exposed utility details, heavy industrial walls, and scattered obstacles.",
+      "props": [
+        {
+          "name": "Rocks",
+          "count": -1,
+          "where": "sparsely on floors, shelves, and in room corners through rooms and corridors"
+        },
+        {
+          "name": "Alarm clocks",
+          "count": -1,
+          "where": "sparsely on floors, shelves, and in room corners through rooms and corridors"
+        },
+        {
+          "name": "Movable wall or door segments",
+          "count": -1,
+          "where": "throughout the central labyrinth"
+        },
+        {
+          "name": "Scattered obstacles",
+          "count": -1,
+          "where": "corridors and small rooms"
+        }
+      ],
+      "boundary": "Fully enclosed by facility walls.",
+      "scale_band": "medium",
+      "theme": "pitch-black industrial horror, oppressive and utilitarian"
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "Valid loop connectivity and a reachable exit are essential to play while shifting wall states require a coherent plan.",
+      "set_piece": false
+    },
+    "route": [
+      "P6"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a 3D horror survival map set in a pitch-black, claustrophobic underground facility on one compact floor. Build a labyrinth of narrow corridors, small connecting rooms, walls, doors, obstacles, and floor traps, with routes able to rearrange during a round. Scatter throwable decoy objects such as rocks and alarm clocks through rooms and corridors. Place a distinct exit at the far end of the facility, reached through the unreliable maze."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "p6",
+  "first": "topdown",
+  "mapper_notes": []
+}

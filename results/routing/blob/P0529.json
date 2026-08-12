@@ -1,0 +1,124 @@
+{
+  "scene": "P0529",
+  "source": "CREA UNA \"TORRE DE AURA\" COMPLETA CON PAREDES Y TODO:\n\n=== MAPA ===\nHaz una TORRE de 20 PISOS cerrada con PAREDES hacia arriba estilo Roblox low poly.\nCada piso es un CUARTO cerrado con temática de AURA: luces moradas, partículas brillantes, neblina oscura, piso de piedra.\n\n=== ESTRUCTURA DE CADA PISO ===\n- 4 PAREDES que encierran el piso completo\n- 1 PUERTA que se abre cuando matas la aura\n- Suelo con obstáculos: lava, pinchos, plataformas que SE QUITAN cada 3 segundos\n- Techo en cada piso\n\n=== MECÁNICA DE AURA ===\nEn el centro de cada cuarto hay una AURA con forma de MANO GIGANTE flotando.\nPara pasar tienes que GOLPEARLA hasta matarla.\n- Cada golpe le quita vida\n- La aura te ataca y te quita vida si te toca\n- Cuando muere se abre la puerta y puedes subir\n\n=== DIFICULTAD EXTREMA ===\n- La aura tiene DEMASIADA vida\n- Cada 5 pisos la aura es más grande, más rápida y pega más duro\n- Pon trampas dentro del cuarto\n- Pocos checkpoints. Si mueres vuelves al inicio del piso\n\n=== SISTEMA DE REINICIO ===\nCuando mates la aura del piso 20:\n1. Sale \"TORRE COMPLETADA\" \n2. Espera 3 segundos\n3. REINICIA SOLO al piso 1 automáticamente\n\n=== UI ===\nBarra de vida arriba, \"PISO: X/20\", botón de golpear grande para móvil.\n\nHazla cabrona con paredes, cuartos cerrados y todo lo que tenga una torre. Sin bugs.\nAhí está bro.",
+  "answers": [
+    {
+      "field": "scale",
+      "ask": "How big is one room - a small chamber, or a wide arena? Twenty of them stacked sets the tower height.",
+      "answer": "Haz cada piso como una cámara pequeña, aproximadamente 40x40 studs, suficiente para la mano gigante, las trampas y moverse sin que la torre se haga enorme."
+    }
+  ],
+  "scene_prompt": "Create a complete Roblox-style low-poly Aura Tower: a sealed vertical tower of 20 stacked floors. Each floor is a compact 40x40-stud enclosed stone chamber with four walls, a ceiling, and one exit door leading upward. Every chamber has a dark mystical aura theme with purple lighting, glowing particles, dark fog, and a giant floating hand-shaped aura centered in the room. Arrange physical hazards across the stone floor, including lava sections, spike traps, and removable platforms; make the hand larger on every fifth floor. Keep the tower fully enclosed, with sparse checkpoint areas at selected floors.",
+  "blob": "### Género\nEl género dominante es Action: combate físico de avance por salas contra una amenaza central. No se añade género secundario; la torre no es un obby, ya que el progreso lo domina el combate en cámaras cerradas.\n\n### Forma y preset\nUsa la forma `arena-chain`: una cadena vertical de 20 cámaras de combate, con una salida ascendente entre cada una. El preset de referencia es Hack & Slash; conserva su sucesión de arenas y el cierre de combate, pero omite emisores y cobertura destruible porque no están descritos.\n\n### Requisitos de configuración\n`arena-lockin` es geometría visible: cada cámara tiene una única puerta de salida ascendente, cerrada como parte del recinto hasta que se libera la sala. `hazard-kill` es geometría visible: secciones de lava y trampas de pinchos repartidas por el suelo de piedra. Las plataformas removibles también son geometría visible, como plataformas suspendidas o secciones discontinuas del suelo. Las áreas de checkpoint son invisibles: coloca pocos marcadores de reaparición sobre pequeñas plataformas seguras seleccionadas, sin representarlos en la imagen.\n\n### Componentes de layout\nConstruye una torre completamente cerrada de 20 pisos apilados. Cada piso es una cámara compacta de aproximadamente 40x40 studs, con suelo de piedra, cuatro paredes completas y techo; no debe haber vistas abiertas al exterior. En el centro de cada sala deja una zona libre para una mano gigante flotante de aura, visible como la pieza focal. Las manos de los pisos 5, 10, 15 y 20 son perceptiblemente más grandes que las demás. Distribuye lava, pinchos y plataformas removibles alrededor del perímetro y en líneas que obliguen a circular, sin bloquear completamente el área central ni la ruta hacia la puerta. Sitúa la puerta de cada piso en una pared y alinéala con el acceso vertical al siguiente nivel; el piso 20 termina en una cámara final sin otra planta encima. La composición debe mostrar la torre como corte isométrico o volumen vertical, dejando legibles varias cámaras apiladas, sus techos y sus puertas.\n\n### Orden de render\nUsa `topdown`: primero un plano superior que mantenga la alineación válida de las 20 puertas, accesos verticales y zonas transitables; después se viste la torre en isométrico. Una conexión vertical mal alineada haría imposible progresar entre cámaras.\n\n### Escala, tema y coste de pipeline\nEscala grande por los 20 pisos, aunque cada sala es compacta de 40x40 studs. Tema: Roblox low-poly, piedra oscura mística, luz púrpura, partículas brillantes y niebla oscura. Aplica `P2` porque los 20 suelos y techos se apilan unos sobre otros y se ocluyen en una sola captura superior.",
+  "spec": {
+    "genre": "Action",
+    "secondary": [],
+    "shape": "arena-chain",
+    "preset": "Hack & Slash",
+    "axes": {},
+    "options": [
+      {
+        "id": "arena-lockin",
+        "text": "Cada cámara tiene una única puerta de salida ascendente, cerrada como parte del recinto hasta que se libera la sala.",
+        "visible": true,
+        "count": 20
+      },
+      {
+        "id": "hazard-kill",
+        "text": "Secciones de lava y trampas de pinchos repartidas por el suelo de piedra.",
+        "visible": true,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "Corte isométrico o volumen vertical de una torre cerrada, con varias cámaras apiladas legibles, sus techos y sus puertas visibles; cada sala centra la mano de aura flotante y mantiene los peligros alrededor del perímetro.",
+      "zones": [
+        {
+          "name": "Torre Aura sellada",
+          "role": "Cadena vertical de 20 cámaras de combate cerradas, conectadas por salidas ascendentes.",
+          "where": "volumen vertical completo",
+          "size": "20 pisos apilados; cada cámara mide aproximadamente 40x40 studs"
+        },
+        {
+          "name": "Cámara final",
+          "role": "Última cámara de combate, sin otra planta encima.",
+          "where": "piso 20, cima de la torre",
+          "size": "aproximadamente 40x40 studs"
+        },
+        {
+          "name": "Área central de cada cámara",
+          "role": "Espacio libre alrededor de la pieza focal, una mano gigante flotante de aura.",
+          "where": "centro de cada uno de los 20 pisos",
+          "size": ""
+        },
+        {
+          "name": "Plataformas seguras seleccionadas",
+          "role": "Áreas de checkpoint con marcadores de reaparición invisibles.",
+          "where": "pisos seleccionados de la torre",
+          "size": "pocas"
+        }
+      ],
+      "paths": [
+        {
+          "from": "cada cámara",
+          "to": "cámara del piso siguiente",
+          "kind": "stair"
+        }
+      ],
+      "terrain": "Suelo de piedra oscura con secciones de lava, trampas de pinchos y plataformas removibles suspendidas o discontinuidades del suelo alrededor del perímetro y en líneas de circulación.",
+      "props": [
+        {
+          "name": "manos gigantes flotantes de aura",
+          "count": 20,
+          "where": "centro de cada cámara"
+        },
+        {
+          "name": "manos de aura perceptiblemente más grandes",
+          "count": 4,
+          "where": "pisos 5, 10, 15 y 20"
+        },
+        {
+          "name": "secciones de lava",
+          "count": -1,
+          "where": "perímetro y líneas de circulación de las cámaras"
+        },
+        {
+          "name": "trampas de pinchos",
+          "count": -1,
+          "where": "perímetro y líneas de circulación de las cámaras"
+        },
+        {
+          "name": "plataformas removibles",
+          "count": -1,
+          "where": "alrededor del perímetro y en líneas que obligan a circular"
+        }
+      ],
+      "boundary": "Torre completamente cerrada: cada piso tiene cuatro paredes completas y techo, sin vistas abiertas al exterior.",
+      "scale_band": "large",
+      "theme": "Roblox low-poly, piedra oscura mística, luz púrpura, partículas brillantes y niebla oscura"
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "una conexión vertical mal alineada haría imposible progresar entre cámaras",
+      "set_piece": false
+    },
+    "route": [
+      "P2"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a complete Roblox-style low-poly Aura Tower: a sealed vertical tower of 20 stacked floors. Each floor is a compact 40x40-stud enclosed stone chamber with four walls, a ceiling, and one exit door leading upward. Every chamber has a dark mystical aura theme with purple lighting, glowing particles, dark fog, and a giant floating hand-shaped aura centered in the room. Arrange physical hazards across the stone floor, including lava sections, spike traps, and removable platforms; make the hand larger on every fifth floor. Keep the tower fully enclosed, with sparse checkpoint areas at selected floors."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P0'] gives isometric"
+  ]
+}

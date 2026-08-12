@@ -1,0 +1,282 @@
+{
+  "scene": "P0090",
+  "source": "Crea un juego completo de Roblox en 3D inspirado en la idea de \"Escapa de Teclado\", pero con mapas, mecánicas y modelos originales. No hagas un juego 2D. Debe ser una experiencia totalmente 3D con gráficos modernos y optimizada para PC y celular.\n\nConcepto:\nLos jugadores son personas miniatura atrapadas sobre un enorme escritorio. Deben escapar atravesando un teclado gigante mientras evitan obstáculos y peligros. El teclado debe sentirse enorme, con teclas gigantes que funcionan como plataformas.\n\nCaracterísticas:\n\n- Mapa completamente 3D.\n- Un teclado gigante como escenario principal.\n- Varias zonas:\n - Teclas normales.\n - Teclas que desaparecen.\n - Teclas que rebotan.\n - Teclas que se hunden.\n - Zona del mouse.\n - Zona del monitor.\n - Zona de cables.\n - Zona del escritorio.\n - Zona de la CPU.\n- Checkpoints automáticos.\n- Sistema de guardado de progreso.\n- Cronómetro para terminar el recorrido.\n- Tabla de mejores tiempos (Leaderboard).\n- Efectos de sonido al pisar teclas.\n- Partículas en algunas zonas.\n- Animaciones suaves.\n- Música de fondo.\n- Interfaz moderna.\n\nObstáculos:\n\n- Láseres.\n- Ventiladores.\n- Teclas móviles.\n- Plataformas giratorias.\n- Cables eléctricos.\n- Barras que empujan.\n- Objetos que caen del escritorio.\n- Zonas que eliminan al jugador.\n\nExtras:\n\n- Monedas coleccionables.\n- Tienda de efectos cosméticos.\n- Mascotas opcionales.\n- Logros.\n- Recompensas diarias.\n- Sistema de niveles por experiencia.\n- Botón para reiniciar desde el último checkpoint.\n\nEl estilo debe ser divertido, colorido y parecido a un obby moderno de Roblox, pero con identidad propia. Usa buenas prácticas, organiza correctamente el Explorer, separa Scripts, LocalScripts y ModuleScripts cuando sea necesario y evita código desordenado. El juego debe funcionar tanto en computadora como en dispositivos móviles.",
+  "answers": [
+    {
+      "field": "scale",
+      "ask": "How big is one key relative to the player - a single platform, or a whole area you walk around on?",
+      "answer": "Cada tecla debe ser una plataforma gigante individual, lo bastante grande para que un jugador miniatura se mueva sobre ella y salte entre teclas."
+    },
+    {
+      "field": "shape",
+      "ask": "Are the nine zones one continuous route across the desk, or separate stages you teleport between?",
+      "answer": "Las nueve zonas forman una ruta continua sobre el mismo escritorio, sin teletransportes entre etapas."
+    },
+    {
+      "field": "goal",
+      "ask": "Does the run end at the CPU, or somewhere else on the desk?",
+      "answer": "El recorrido termina en la zona de la CPU, que funciona como la meta final de escape."
+    }
+  ],
+  "scene_prompt": "Crea un mapa 3D de obby colorido sobre un enorme escritorio, visto a escala de personas miniatura. Una ruta continua atraviesa nueve zonas sin teletransportes: teclas normales gigantes, teclas que desaparecen, rebotan o se hunden, seguida por las zonas del mouse, monitor, cables, escritorio y CPU. Cada tecla es una plataforma individual lo bastante grande para caminar sobre ella y saltar hacia las teclas vecinas; integra láseres, ventiladores, teclas móviles, plataformas giratorias, cables eléctricos, barras de empuje, objetos que caen y zonas peligrosas a lo largo del recorrido. El trayecto termina en la zona de la CPU, presentada como la meta final de escape. Coloca monedas coleccionables sobre rutas, saltos y zonas de riesgo.",
+  "blob": "### 1. Género\nEl género dominante es Obby & Platformer: el recorrido consiste en saltos discretos y obstáculos físicos a ritmo propio, no en una carrera por vueltas. No hay género secundario.\n\n### 2. Forma y preset\nUsa la forma `course-flat`: las nueve zonas forman una sola cadena continua sobre la superficie del mismo escritorio gigante. El preset de referencia es Classic Obby; se conserva su ruta secuencial de plataformas, saltos y elementos móviles, pero se sustituye su énfasis en pads de control por las zonas temáticas concretas del teclado y escritorio solicitadas.\n\n### 3. Requisitos de configuración\n`path-track` es geometría visible: una secuencia legible de teclas-plataforma y plataformas de escritorio que conduce sin teletransportes desde el teclado hasta la CPU. `obstacle-jump` es visible en los saltos entre teclas gigantes y las teclas de rebote. `obstacle-timing` es visible en las teclas que desaparecen y se hunden. `obstacle-moving` es visible en teclas móviles, plataformas giratorias, ventiladores, barras de empuje y objetos que caen. `hazard-kill` es visible en láseres, cables eléctricos y zonas peligrosas. `winner-zone` combina la geometría visible de la CPU-meta con su marcador final invisible. `collectible-nodes` son las ubicaciones invisibles de recogida; sus monedas doradas correspondientes sí deben verse sobre la ruta y en líneas de salto riesgosas.\n\n### 4. Componentes de layout\nConstruye un escritorio enorme a escala de personas miniatura, organizado como nueve tramos consecutivos: teclas normales gigantes al inicio; teclas que desaparecen; teclas de rebote; teclas que se hunden; zona del mouse; zona del monitor; zona de cables; zona abierta del escritorio; y la zona final de la CPU. Cada tecla es una plataforma individual suficientemente amplia para caminar encima y saltar hacia teclas vecinas. La ruta debe serpentear de forma clara entre estos tramos, usando plataformas, cables cruzables y superficies de escritorio como conexiones. Sitúa láseres, ventiladores, cables electrificados, barras y caídas fuera de la línea segura o cruzándola con timing claro. La CPU ocupa el extremo final como gran portal/meta de escape. El borde del escritorio y las caídas entre objetos funcionan como límite peligroso. Compón el conjunto en una vista amplia de tres cuartos, con el teclado dominando el primer plano y la CPU visible como destino distante.\n\n### 5. Orden de render\nRenderiza primero `topdown`, que es la vista autoritativa, porque la cadena de saltos debe mantener una conectividad y espaciado jugables antes de vestir el escenario isométrico.\n\n### 6. Escala, tema y coste\nEscala grande, impulsada por nueve zonas continuas y por teclas individuales del tamaño de áreas caminables. Tema: obby Roblox moderno, divertido, colorido y tecnológico de escritorio gigante. Modificadores: `P6`, porque la ruta crítica de plataformas y saltos debe ser válida por construcción; no se requieren otros pases geométricos.",
+  "spec": {
+    "genre": "Obby & Platformer",
+    "secondary": [],
+    "shape": "course-flat",
+    "preset": "Classic Obby",
+    "axes": {},
+    "options": [
+      {
+        "id": "path-track",
+        "text": "Una secuencia legible de teclas-plataforma y plataformas de escritorio que conduce sin teletransportes desde el teclado hasta la CPU.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "obstacle-jump",
+        "text": "Saltos entre teclas gigantes y teclas de rebote.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "obstacle-timing",
+        "text": "Teclas que desaparecen y se hunden.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "obstacle-moving",
+        "text": "Teclas móviles, plataformas giratorias, ventiladores, barras de empuje y objetos que caen.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "hazard-kill",
+        "text": "Láseres, cables eléctricos y zonas peligrosas, situados fuera de la línea segura o cruzándola con timing claro.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "winner-zone",
+        "text": "La CPU-meta combina la geometría visible de la CPU con su marcador final invisible.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "Ubicaciones invisibles de recogida; sus monedas doradas correspondientes se ven sobre la ruta y en líneas de salto riesgosas.",
+        "visible": false,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "Vista amplia de tres cuartos, con el teclado dominando el primer plano y la CPU visible como destino distante al extremo final.",
+      "zones": [
+        {
+          "name": "Teclas normales gigantes",
+          "role": "Inicio del recorrido sobre teclas-plataforma individuales.",
+          "where": "primer tramo, primer plano",
+          "size": "-1"
+        },
+        {
+          "name": "Teclas que desaparecen",
+          "role": "Tramo de plataformas temporales.",
+          "where": "después de las teclas normales gigantes",
+          "size": "-1"
+        },
+        {
+          "name": "Teclas de rebote",
+          "role": "Tramo de saltos con teclas de rebote.",
+          "where": "después de las teclas que desaparecen",
+          "size": "-1"
+        },
+        {
+          "name": "Teclas que se hunden",
+          "role": "Tramo de plataformas que se hunden.",
+          "where": "después de las teclas de rebote",
+          "size": "-1"
+        },
+        {
+          "name": "Zona del mouse",
+          "role": "Tramo temático del mouse conectado a la ruta.",
+          "where": "después de las teclas que se hunden",
+          "size": "-1"
+        },
+        {
+          "name": "Zona del monitor",
+          "role": "Tramo temático del monitor conectado a la ruta.",
+          "where": "después de la zona del mouse",
+          "size": "-1"
+        },
+        {
+          "name": "Zona de cables",
+          "role": "Tramo con cables cruzables y cables eléctricos.",
+          "where": "después de la zona del monitor",
+          "size": "-1"
+        },
+        {
+          "name": "Zona abierta del escritorio",
+          "role": "Tramo de superficies abiertas del escritorio como conexión.",
+          "where": "después de la zona de cables",
+          "size": "-1"
+        },
+        {
+          "name": "Zona final de la CPU",
+          "role": "Meta final de escape presentada como una gran CPU-portal.",
+          "where": "extremo final, destino distante",
+          "size": "-1"
+        }
+      ],
+      "paths": [
+        {
+          "from": "Teclas normales gigantes",
+          "to": "Teclas que desaparecen",
+          "kind": "track"
+        },
+        {
+          "from": "Teclas que desaparecen",
+          "to": "Teclas de rebote",
+          "kind": "track"
+        },
+        {
+          "from": "Teclas de rebote",
+          "to": "Teclas que se hunden",
+          "kind": "track"
+        },
+        {
+          "from": "Teclas que se hunden",
+          "to": "Zona del mouse",
+          "kind": "track"
+        },
+        {
+          "from": "Zona del mouse",
+          "to": "Zona del monitor",
+          "kind": "track"
+        },
+        {
+          "from": "Zona del monitor",
+          "to": "Zona de cables",
+          "kind": "track"
+        },
+        {
+          "from": "Zona de cables",
+          "to": "Zona abierta del escritorio",
+          "kind": "track"
+        },
+        {
+          "from": "Zona abierta del escritorio",
+          "to": "Zona final de la CPU",
+          "kind": "track"
+        }
+      ],
+      "terrain": "Un enorme escritorio a escala de personas miniatura; teclas gigantes individuales, plataformas de escritorio y cables cruzables forman una ruta serpenteante continua.",
+      "props": [
+        {
+          "name": "teclas gigantes normales",
+          "count": -1,
+          "where": "inicio y a lo largo de la ruta"
+        },
+        {
+          "name": "teclas que desaparecen",
+          "count": -1,
+          "where": "segundo tramo"
+        },
+        {
+          "name": "teclas de rebote",
+          "count": -1,
+          "where": "tercer tramo"
+        },
+        {
+          "name": "teclas que se hunden",
+          "count": -1,
+          "where": "cuarto tramo"
+        },
+        {
+          "name": "mouse",
+          "count": -1,
+          "where": "zona del mouse"
+        },
+        {
+          "name": "monitor",
+          "count": -1,
+          "where": "zona del monitor"
+        },
+        {
+          "name": "cables cruzables",
+          "count": -1,
+          "where": "zona de cables y conexiones"
+        },
+        {
+          "name": "láseres",
+          "count": -1,
+          "where": "fuera de la línea segura o cruzando la ruta"
+        },
+        {
+          "name": "ventiladores",
+          "count": -1,
+          "where": "a lo largo del recorrido"
+        },
+        {
+          "name": "teclas móviles",
+          "count": -1,
+          "where": "a lo largo del recorrido"
+        },
+        {
+          "name": "plataformas giratorias",
+          "count": -1,
+          "where": "a lo largo del recorrido"
+        },
+        {
+          "name": "cables eléctricos",
+          "count": -1,
+          "where": "zona de cables y zonas peligrosas"
+        },
+        {
+          "name": "barras de empuje",
+          "count": -1,
+          "where": "a lo largo del recorrido"
+        },
+        {
+          "name": "objetos que caen",
+          "count": -1,
+          "where": "a lo largo del recorrido"
+        },
+        {
+          "name": "monedas doradas",
+          "count": -1,
+          "where": "sobre la ruta y en líneas de salto riesgosas"
+        },
+        {
+          "name": "CPU-portal",
+          "count": -1,
+          "where": "extremo final del escritorio"
+        }
+      ],
+      "boundary": "El borde del escritorio y las caídas entre objetos funcionan como límite peligroso.",
+      "scale_band": "large",
+      "theme": "obby Roblox moderno, divertido, colorido y tecnológico de escritorio gigante"
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "la cadena de saltos debe mantener conectividad y espaciado jugables antes de vestir el escenario isométrico.",
+      "set_piece": false
+    },
+    "route": [
+      "P6"
+    ],
+    "notes": [],
+    "scene_prompt": "Crea un mapa 3D de obby colorido sobre un enorme escritorio, visto a escala de personas miniatura. Una ruta continua atraviesa nueve zonas sin teletransportes: teclas normales gigantes, teclas que desaparecen, rebotan o se hunden, seguida por las zonas del mouse, monitor, cables, escritorio y CPU. Cada tecla es una plataforma individual lo bastante grande para caminar sobre ella y saltar hacia las teclas vecinas; integra láseres, ventiladores, teclas móviles, plataformas giratorias, cables eléctricos, barras de empuje, objetos que caen y zonas peligrosas a lo largo del recorrido. El trayecto termina en la zona de la CPU, presentada como la meta final de escape. Coloca monedas coleccionables sobre rutas, saltos y zonas de riesgo."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "p6",
+  "first": "topdown",
+  "mapper_notes": []
+}

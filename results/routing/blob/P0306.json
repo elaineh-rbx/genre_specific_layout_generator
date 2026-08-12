@@ -1,0 +1,182 @@
+{
+  "scene": "P0306",
+  "source": "Atue como um desenvolvedor sênior de Roblox e especialista em criar jogos estilo RPG de grande sucesso inspirados em \"Blox Fruits\" e no universo de \"One Piece\". \n\nPreciso que você crie a estrutura inicial completa, scripts otimizados e a configuração de um sistema modular para um jogo de RPG de mundo aberto com as seguintes diretrizes exatas:\n\n1. ESTÉTICA E DIREÇÃO DE ARTE (VISUAL 3D BONITO):\n- Estilo visual vibrante, limpo e polido (estilo anime moderno 3D, similar ao Blox Fruits).\n- Iluminação realista combinada com um toque estilizado: ative o sistema Future Is Bright, use efeitos de \"Bloom\", \"ColorCorrection\" com saturação vibrante, e sombras suaves.\n- Design de UI (Interface de Usuário) moderno, minimalista e com temática marinha/pirata (usando cantos arredondados, cores douradas/azuladas, fontes limpas e barras de vida/energia estilizadas).\n\n2. SISTEMA DE COMBATE E JOGABILIDADE (RPG):\n- Sistema de combate fluido baseado em cliques (M1 Combo) com efeitos visuais de partículas (Slash/Aura).\n- Árvore de Level e Experiência (EXP): Sistema que salva o progresso do jogador (DataStoreService robusto).\n- Estatísticas (Stats) para distribuir pontos: Combat (Melee), Defense, Sword, Gun e Blox Fruit.\n- Sistema de Frutas do Diabo (Blox Fruits): Estrutura para frutas com habilidades especiais (poderes elementais, tempo de recarga/cooldown e animações dedicadas).\n\n3. ESTRUTURA DO MUNDO:\n- Crie um script de gerenciamento para ilhas procedimentais ou uma ilha inicial detalhada (Starter Island) com NPCs de missões (Quest Givers), baús espalhados pelo mapa que dão dinheiro (Beli) e áreas de treino com inimigos (Bandits) que possuem IA básica de perseguição e ataque.\n\n4. ORGANIZAÇÃO DO CÓDIGO:\n- Siga as melhores práticas do Roblox: use ModuleScripts, RemoteEvents centralizados no ReplicatedStorage, e mantenha o código limpo, comentado em português e otimizado para evitar lag (memory leaks).\n\nPor favor, comece gerando o script principal do sistema de salvamento de dados (DataStore) e a estrutura base do sistema de níveis e atributos dos jogadores.",
+  "answers": [
+    {
+      "field": "shape",
+      "ask": "Build the whole archipelago now, or just a detailed starter island and add islands later?",
+      "answer": "Comece apenas com uma Starter Island detalhada; as demais ilhas serão adicionadas posteriormente pela estrutura modular."
+    },
+    {
+      "field": "scale",
+      "ask": "How large should the starter island be relative to a player's walk speed - a couple of minutes across?",
+      "answer": "Mantenha-a compacta, atravessável em cerca de 1 a 2 minutos de caminhada, para servir bem como vertical slice inicial."
+    }
+  ],
+  "scene_prompt": "Create a polished, vibrant 3D anime-inspired pirate RPG map centered on one detailed Starter Island, compact enough to cross on foot in about 1–2 minutes. Arrange a coastal island with clear beach approaches, a small central settlement or quest hub containing quest-giver NPC locations, scattered treasure chests across the island, and dedicated outdoor training areas populated by bandit enemy locations. Use lush stylized terrain, ocean surrounding the island, and a clean, readable layout with paths connecting the shore, settlement, training zones, and elevated or peripheral exploration areas; leave the surrounding sea open for future modular islands.",
+  "blob": "### Gênero\nO gênero dominante é RPG, definido pela progressão, combate e economia do pedido original. Não há gênero secundário necessário.\n\n### Forma e preset\nUse exatamente a forma `world-single`: uma única Starter Island contínua, compacta e plenamente conectada, sem masmorras ou mapas separados. O preset Action RPG permanece reconhecível pelas áreas de inimigos e pontos de NPC, mas a forma do prompt substitui seu hub-e-dungeons; não adicionar masmorras nesta fase.\n\n### Requisitos de configuração\nUse `safezone-town` como geometria visível: uma pequena vila central livre de bandits, que concentra os pontos de quest givers. Use `hazard-aggro` como geometria visível: clareiras e acampamentos externos reservados aos bandits, afastados das estradas principais. Use `npc-population` visível para os quest givers posicionados na vila. Use `spawner-npc` invisível para os marcadores de origem dos bandits dentro das áreas de treino. Use `collectible-nodes` invisível para os pontos de coleta dos baús, enquanto os baús em si permanecem props visíveis. Use `water-body` visível para o oceano contínuo em torno da ilha e `terrain-relief` visível para colinas, falésias baixas e pontos elevados estilizados.\n\n### Componentes de layout\nA ilha tem escala compacta, atravessável em cerca de 1–2 minutos a pé. Na borda frontal, disponha duas ou três aproximações de praia largas, com areia clara e pequenas formações rochosas. No centro, coloque a vila/hub como zona principal, ocupando aproximadamente um quarto da ilha: praça aberta, edifícios baixos decorativos, pontos claros para quest givers e cruzamentos de circulação. Partindo dela, trilhas de terra e pedra seguem para duas áreas externas de treino de bandits, uma em cada lado da ilha, compostas por clareiras, ruínas simples ou acampamentos de madeira. Espalhe baús visíveis em praias, detrás de rochas, junto a ruínas e em caminhos periféricos. Ao fundo e nas laterais, eleve o terreno em mirantes, penhascos suaves e pequenas áreas de exploração com vegetação tropical densa. O oceano forma o limite natural, mas permanece visualmente aberto rumo ao horizonte para futuras ilhas modulares. Enquadre a vila no centro, com praias legíveis na frente e relevo verde emoldurando os lados e o fundo.\n\n### Ordem de renderização\nUse `topdown`: o plano superior é autoritativo para garantir que praia, vila, trilhas, áreas de treino e rotas periféricas permaneçam conectadas e navegáveis antes da composição isométrica.\n\n### Escala, tema e custo de pipeline\nEscala média, motivada por uma ilha compacta com vila, múltiplas zonas de treino e exploração periférica. Tema: pirata anime 3D vibrante, tropical, limpo e polido. A topografia força `tiered` pelas elevações sem sobreposições. O mar aberto força `CHECK` como superfície aquática ao redor da ilha; não há estruturas empilhadas, interiores nem mapas separados.",
+  "spec": {
+    "genre": "RPG",
+    "secondary": [],
+    "shape": "world-single",
+    "preset": "Action RPG",
+    "axes": {},
+    "options": [
+      {
+        "id": "safezone-town",
+        "text": "uma pequena vila central livre de bandits, que concentra os pontos de quest givers",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "hazard-aggro",
+        "text": "clareiras e acampamentos externos reservados aos bandits, afastados das estradas principais",
+        "visible": true,
+        "count": 2
+      },
+      {
+        "id": "npc-population",
+        "text": "quest givers posicionados na vila",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "spawner-npc",
+        "text": "marcadores de origem dos bandits dentro das áreas de treino",
+        "visible": false,
+        "count": -1
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "pontos de coleta dos baús, enquanto os baús em si permanecem props visíveis",
+        "visible": false,
+        "count": -1
+      },
+      {
+        "id": "water-body",
+        "text": "o oceano contínuo em torno da ilha, visualmente aberto rumo ao horizonte para futuras ilhas modulares",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "terrain-relief",
+        "text": "colinas, falésias baixas, pontos elevados estilizados e mirantes com vegetação tropical densa",
+        "visible": true,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "A vila fica enquadrada no centro; duas ou três aproximações de praia largas e legíveis ocupam a borda frontal, enquanto relevo verde tropical enquadra as laterais e o fundo.",
+      "zones": [
+        {
+          "name": "Aproximações de praia",
+          "role": "Entradas costeiras com areia clara e pequenas formações rochosas.",
+          "where": "borda frontal",
+          "size": "duas ou três aproximações largas"
+        },
+        {
+          "name": "Vila / hub central",
+          "role": "Zona principal segura, com praça aberta, edifícios baixos decorativos, quest givers e cruzamentos de circulação.",
+          "where": "centro da ilha",
+          "size": "aproximadamente um quarto da ilha"
+        },
+        {
+          "name": "Área de treino de bandits esquerda",
+          "role": "Clareiras, ruínas simples ou acampamentos de madeira reservados aos bandits.",
+          "where": "lado esquerdo da ilha",
+          "size": ""
+        },
+        {
+          "name": "Área de treino de bandits direita",
+          "role": "Clareiras, ruínas simples ou acampamentos de madeira reservados aos bandits.",
+          "where": "lado direito da ilha",
+          "size": ""
+        },
+        {
+          "name": "Exploração periférica elevada",
+          "role": "Mirantes, penhascos suaves e pequenas áreas de exploração com vegetação tropical densa.",
+          "where": "fundo e laterais",
+          "size": ""
+        }
+      ],
+      "paths": [
+        {
+          "from": "Vila / hub central",
+          "to": "Aproximações de praia",
+          "kind": "path"
+        },
+        {
+          "from": "Vila / hub central",
+          "to": "Área de treino de bandits esquerda",
+          "kind": "path"
+        },
+        {
+          "from": "Vila / hub central",
+          "to": "Área de treino de bandits direita",
+          "kind": "path"
+        },
+        {
+          "from": "Vila / hub central",
+          "to": "Exploração periférica elevada",
+          "kind": "path"
+        },
+        {
+          "from": "Aproximações de praia",
+          "to": "Exploração periférica elevada",
+          "kind": "open ground"
+        }
+      ],
+      "terrain": "Ilha tropical compacta de areia clara, vegetação tropical densa, colinas, falésias baixas, penhascos suaves e pontos elevados estilizados; oceano contínuo ao redor.",
+      "props": [
+        {
+          "name": "baús visíveis",
+          "count": -1,
+          "where": "em praias, detrás de rochas, junto a ruínas e em caminhos periféricos"
+        },
+        {
+          "name": "pequenas formações rochosas",
+          "count": -1,
+          "where": "aproximações de praia na borda frontal"
+        },
+        {
+          "name": "edifícios baixos decorativos",
+          "count": -1,
+          "where": "vila central"
+        },
+        {
+          "name": "ruínas simples ou acampamentos de madeira",
+          "count": -1,
+          "where": "áreas externas de treino de bandits"
+        }
+      ],
+      "boundary": "O oceano forma o limite natural da ilha, visualmente aberto rumo ao horizonte para futuras ilhas modulares.",
+      "scale_band": "medium",
+      "theme": "pirata anime 3D vibrante, tropical, limpo e polido"
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "para garantir que praia, vila, trilhas, áreas de treino e rotas periféricas permaneçam conectadas e navegáveis antes da composição isométrica.",
+      "set_piece": false
+    },
+    "route": [
+      "P0",
+      "tiered",
+      "CHECK"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a polished, vibrant 3D anime-inspired pirate RPG map centered on one detailed Starter Island, compact enough to cross on foot in about 1–2 minutes. Arrange a coastal island with clear beach approaches, a small central settlement or quest hub containing quest-giver NPC locations, scattered treasure chests across the island, and dedicated outdoor training areas populated by bandit enemy locations. Use lush stylized terrain, ocean surrounding the island, and a clean, readable layout with paths connecting the shore, settlement, training zones, and elevated or peripheral exploration areas; leave the surrounding sea open for future modular islands."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['CHECK', 'P0', 'tiered'] gives isometric"
+  ]
+}

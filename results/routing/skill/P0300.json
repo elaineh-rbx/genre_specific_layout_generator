@@ -1,0 +1,118 @@
+{
+  "scene": "P0300",
+  "source": "制作一款 3D 第三人称动作 Roguelike 探险游戏《深渊回响》，\\n使用 3D 场景、3D 角色模型和 3D 战斗表现，\\n镜头跟随主角背后，明确采用 3D 视角而非俯视或 2D 横版。\\n玩家扮演一位被困在废弃神殿地下的探险者，需要向下探索 5 层地宫，\\n最终击败最底层的\"回响之王\"逃出神殿。\\n\\n【核心玩法】\\n· 每一层由 6～10 个 3D 房间组成，房间布局每次进入随机生成\\n· 房间类型包括：战斗房、宝箱房、商店房、精英怪房、休息房\\n· 玩家同时携带远程武器（默认魔法法杖，发射能量弹）和近战武器\\n （默认短剑），可自由切换：远程用于风筝和精英怪压制，近战用于\\n 快速清杂兵和处决残血敌人\\n· 远程武器有弹药或冷却限制，鼓励与近战交替使用\\n· 玩家可通过跳跃、翻滚闪避敌人攻击和弹幕\\n· 击败敌人掉落\"回响碎片\"（货币）和随机符文\\n\\n【成长与随机性】\\n· 每层结束后玩家可从 3 个随机符文中选 1 个，符文可叠加改变玩法，\\n 例如\"每次翻滚释放冲击波\"\"近战命中回血\"\"射击弹返弹\"\"连击加速\"等\\n· 商店房可用回响碎片购买血瓶、临时增益或武器升级（远程/近战独立升级）\\n· 死亡后掉落所有符文，但保留少量永久强化点数用于下一局起始加强\\n\\n【Boss 战】\\n· 第 5 层 Boss\"回响之王\"具有 3 阶段：召唤小怪 → 全屏弹幕 → 狂暴突进\\n· 击败后播放逃出神殿的结局动画\\n\\n【氛围】\\n· 昏暗神秘的地下神殿 3D 场景，石质墙壁与火把光影，蓝紫色调\\n· 3D 角色带布料与武器建模，敌人为 3D 生物模型\\n· 背景音乐为低沉的管弦乐 + 神秘音效",
+  "block": {
+    "genres": [
+      "action",
+      "rpg"
+    ],
+    "shape": {
+      "id": "arena-chain",
+      "type": "CombatZone",
+      "name": "Arena Chain"
+    },
+    "preset": "Hack & Slash",
+    "pipeline": [
+      "P0"
+    ],
+    "image_prompt": [
+      {
+        "id": "arena-lockin",
+        "text": "Stone shutters that seal a chamber's exits until every creature in it is dead"
+      },
+      {
+        "id": "destructible-cluster",
+        "text": "Breakable temple fixtures - urns, braziers and cracked pillars that fracture during a fight"
+      },
+      {
+        "id": "social-hub",
+        "text": "A merchant chamber on each floor, a single counter and stock clustered in one spot, where shards buy potions, temporary buffs and weapon upgrades"
+      },
+      {
+        "id": null,
+        "text": "a large final chamber at the bottom of the temple, open enough for a three-phase boss to summon minions, fill the floor with projectiles, and charge across it"
+      },
+      {
+        "id": null,
+        "text": "a rest chamber with no enemies, where a run can be paused between fights"
+      },
+      {
+        "id": null,
+        "text": "a treasure chamber holding chests"
+      },
+      {
+        "id": null,
+        "text": "an elite chamber, larger than a standard fight room, holding a single tougher creature"
+      },
+      {
+        "id": null,
+        "text": "tight connecting corridors alternating with open chambers, so a ranged weapon can kite in the open and a melee weapon dominates the narrow stretches"
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "spawner-npc",
+        "type": "Spawner",
+        "text": "Entry points inside each combat chamber where the temple's creatures come from, including the elite chambers and the boss's summoned minions"
+      }
+    ],
+    "notes": [
+      "Close call on dominance: the prompt is an action roguelike, so Action owns the shape and the room-to-room chain; RPG contributed the in-dungeon merchant only. Its progression systems (shards, runes, permanent upgrades) have no layout footprint.",
+      "Five descending floors are five separate maps that cannot co-exist on one surface - the build is P4-shaped, but no picked option forces it and arena-chain has no way to say 'this shape repeats five times, getting harder'.",
+      "Every floor is randomly regenerated per run from 6-10 rooms. The emitted layout is a single fixed arrangement; nothing here expresses a room graph to be reshuffled.",
+      "Prompt states an explicit camera constraint (third-person behind the character, not top-down or 2D side-on) that the layout must not violate."
+    ],
+    "axes": null
+  },
+  "open_questions": [
+    {
+      "field": "scale",
+      "ask": "How big is one floor - are the 6-10 rooms tight chambers you cross in a few seconds, or full arenas?"
+    },
+    {
+      "field": "shape",
+      "ask": "Should the five floors be five distinct looks, or one temple style that gets darker as you descend?"
+    },
+    {
+      "field": "shape",
+      "ask": "Do the floors connect visibly (a stairwell you can see down) or is each descent a load into a new map?"
+    }
+  ],
+  "theme": "Dark fantasy underground temple - stone walls, torchlight and shadow, a blue-purple palette",
+  "scale": {
+    "band": "block",
+    "assumed": true
+  },
+  "coverage_missing": [
+    {
+      "field": "scale",
+      "ask": "Roughly how large should one room be - a duelling chamber or a full arena?"
+    },
+    {
+      "field": "shape",
+      "ask": "Is there a starting hub or safe area above floor one, or does the run begin in the first room?"
+    },
+    {
+      "field": "goal",
+      "ask": "Do floors connect with visible stairwells, or does each descent load a separate map?"
+    }
+  ],
+  "answers": [
+    {
+      "field": "scale",
+      "ask": "How big is one floor - are the 6-10 rooms tight chambers you cross in a few seconds, or full arenas?",
+      "answer": "采用紧凑型房间；每个房间是适合短时战斗与探索的小型 3D 场地，几秒即可穿过，战斗房仅需容纳一波敌人与翻滚周旋。"
+    },
+    {
+      "field": "shape",
+      "ask": "Should the five floors be five distinct looks, or one temple style that gets darker as you descend?",
+      "answer": "保持统一的废弃地下神殿风格，随着下潜逐层更昏暗、破败且蓝紫色调更强，以小幅环境变化体现深度。"
+    },
+    {
+      "field": "shape",
+      "ask": "Do the floors connect visibly (a stairwell you can see down) or is each descent a load into a new map?",
+      "answer": "每层结束后通过明显的向下石阶或升降通道进入下一层，并加载生成新的楼层地图。"
+    }
+  ],
+  "answers_missing": 0
+}

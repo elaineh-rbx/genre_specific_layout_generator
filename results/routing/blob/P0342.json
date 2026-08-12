@@ -1,0 +1,103 @@
+{
+  "scene": "P0342",
+  "source": "a true 3D first-person wave survival shooter set in an explorable 3D world (not a 2D, top-down, or UI/screen-based game): the player stands in the 3D scene with a first-person camera and shoots waves of creepy zombie-themed enemy vehicles that drive toward them through the world. Each enemy vehicle must be a unique, detailed 3D model that you generate from a text description of a creepy undead vehicle. The enemies are vehicles (such as cars or tanks) with an undead/creepy look, not humanoid zombies, not walking characters, and not flat 2D sprites or GUI images",
+  "answers": [
+    {
+      "field": "shape",
+      "ask": "Should the vehicles funnel down a few roads toward you, or come from any direction across open ground?",
+      "answer": "Have the undead vehicles funnel down a few roads toward the player, keeping the wave combat readable and focused in the 3D world."
+    },
+    {
+      "field": "scale",
+      "ask": "How far can the player roam - a defended pocket a few hundred studs across, or a genuinely large drivable world?",
+      "answer": "Use a defended pocket a few hundred studs across; it should be explorable on foot in first person, not a large drivable world."
+    }
+  ],
+  "scene_prompt": "Create a true 3D first-person wave-survival map set in an explorable defended pocket a few hundred studs across. Place the player’s defensive position near the center, with a few distinct roads funneling inward from the surrounding edges for approaching creepy undead-themed vehicle enemies; leave the ground and roadside areas walkable for on-foot exploration. The scene is fully volumetric and viewed from within the world, with no top-down, 2D sprite, or screen-based presentation.",
+  "blob": "### Genre\nThe dominant genre is Shooter, specifically a PvE wave-survival shooter. The authored wave combat establishes the genre; the explorable pocket is the combat setting rather than a separate open-world genre.\n\n### Shape and preset\nUse `lane-network`, matching the PvE Shooter preset. Here it is a compact radial road network: several approach roads converge on a central defensive pocket. The prompt retains the preset’s enemy approach and road concentration, but does not ask for enterable structures, so omit that preset option.\n\n### Config requirements\nUse `choke-bottleneck` as visible geometry: each incoming road narrows or bends through a readable final approach before it reaches the central defense area. Use `spawner-npc` as invisible layout: place enemy-wave origins at the far outer ends of the approach roads, beyond the player’s immediate defensive sightline. Do not render spawn markers or unrelated NPCs.\n\n### Layout components\nBuild one defended, on-foot-explorable pocket a few hundred studs across. Put a broad central defensive position near the middle, with enough open surrounding ground for the player to move around it in first person. Feed this center from a few distinct roads arriving from different surrounding map edges; each road is wide enough for vehicle approach, clearly separate at the perimeter, and funnels inward through a tighter final segment. Leave the ground between roads and the roadside margins walkable, creating short exploratory detours without breaking the clarity of the inward routes. Use rough, eerie ground, neglected road surfaces, sparse roadside debris, and low boundary terrain or barriers around the outer edge; keep the center legible from each approach. Compose the isometric view with the defense point central and multiple converging roads visible.\n\n### Render order\nUse `topdown`: the road network and every inbound route must remain connected and readable for the wave-survival space to function.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by a defended pocket a few hundred studs across rather than a large drivable world. Theme: eerie undead-vehicle apocalypse, grounded first-person 3D combat space. Use `P0`; this is one contiguous ground surface with no required interiors, overhangs, separate maps, or volumetric traversal.",
+  "spec": {
+    "genre": "Shooter",
+    "secondary": [],
+    "shape": "lane-network",
+    "preset": "PvE Shooter",
+    "axes": {},
+    "options": [
+      {
+        "id": "choke-bottleneck",
+        "text": "Each incoming road narrows or bends through a readable final approach before it reaches the central defense area.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "spawner-npc",
+        "text": "Enemy-wave origins at the far outer ends of the approach roads, beyond the player's immediate defensive sightline.",
+        "visible": false,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "Isometric view with the broad central defensive position near the middle and multiple converging roads visible from surrounding map edges.",
+      "zones": [
+        {
+          "name": "Central defensive pocket",
+          "role": "Broad defended on-foot position with open surrounding ground for first-person movement.",
+          "where": "centre",
+          "size": "a few hundred studs across with the overall pocket"
+        },
+        {
+          "name": "Approach roads",
+          "role": "Separate enemy approach routes that funnel inward toward the defense point.",
+          "where": "from surrounding map edges to the centre",
+          "size": "wide at the perimeter and tighter at the final approach"
+        },
+        {
+          "name": "Walkable roadside ground",
+          "role": "Short exploratory detours around the roads without obscuring the inward routes.",
+          "where": "between roads and along roadside margins",
+          "size": ""
+        }
+      ],
+      "paths": [
+        {
+          "from": "Outer map edges",
+          "to": "Central defensive pocket",
+          "kind": "road"
+        }
+      ],
+      "terrain": "Rough, eerie ground with neglected road surfaces, walkable roadside margins, sparse roadside debris, and low boundary terrain or barriers.",
+      "props": [
+        {
+          "name": "Sparse roadside debris",
+          "count": -1,
+          "where": "along the roadsides"
+        }
+      ],
+      "boundary": "Low boundary terrain or barriers around the outer edge.",
+      "scale_band": "medium",
+      "theme": "Eerie undead-vehicle apocalypse, grounded first-person 3D combat space."
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "the connected inbound road network must remain readable for wave-survival combat to function.",
+      "set_piece": false
+    },
+    "route": [
+      "P0"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a true 3D first-person wave-survival map set in an explorable defended pocket a few hundred studs across. Place the player’s defensive position near the center, with a few distinct roads funneling inward from the surrounding edges for approaching creepy undead-themed vehicle enemies; leave the ground and roadside areas walkable for on-foot exploration. The scene is fully volumetric and viewed from within the world, with no top-down, 2D sprite, or screen-based presentation."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P0'] gives isometric"
+  ]
+}

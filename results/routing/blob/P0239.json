@@ -1,0 +1,127 @@
+{
+  "scene": "P0239",
+  "source": "Create a minigolf game that can be played across devices. The game should allow players to create and discover lobbies, lobbies should have settings like enabling collision between player balls. The controls are basically being able to aim left and right and then hold and release for power of shot. While the ball can move in any direction, the shot will only move the ball on the golf course itself. Create 15 courses, have par scores for each course and track the score for each player through leaderboard.",
+  "answers": [
+    {
+      "field": "theme",
+      "ask": "No look was given — should these be classic mini-golf windmills-and-astroturf, or something stylized?",
+      "answer": "Use a classic mini-golf look with astroturf lanes, simple colorful obstacles, and windmill-style course decoration."
+    },
+    {
+      "field": "scale",
+      "ask": "Are the fifteen courses one connected park you walk between, or separate places you are teleported into?",
+      "answer": "Make the fifteen courses separate holes players are teleported into in sequence; this keeps the game compact and focused."
+    }
+  ],
+  "scene_prompt": "Create a classic mini-golf layout with fifteen separate compact holes, entered in sequence. Each hole is a self-contained astroturf lane with a tee area, cup, bordered course edges, and simple colorful obstacles; include windmill-style decorations where appropriate.",
+  "blob": "### Genre\nThe dominant genre is Sports, identified from the minigolf scoring and per-hole par structure. This is a target-sport layout rather than a racing course: each hole directs a ball from tee to cup.\n\n### Shape and preset\nUse `range-directed`, matching the Target Sport preset. Here it means a compact, bounded putting lane aimed at a single cup, repeated as fifteen separate sequential holes. Retain the preset’s target logic but omit distance markers, which were not requested; add tee and boundary requirements explicitly.\n\n### Config requirements\n`startpoint-play` is both visible geometry and invisible placement data: each hole has a clear tee pad and a ball-reset start position. `trigger-scoring` is both visible geometry and invisible data: every cup is a visible hole at the lane end with its scoring volume inside it. `trigger-bounds` is both visible geometry and invisible data: raised bordered edges visibly contain each astroturf lane while an aligned boundary detects balls leaving the legal course. Sequential transfer between holes is invisible layout linkage only and must not appear as a visible portal.\n\n### Layout components\nBuild fifteen separate compact hole maps, entered in numerical sequence. Each map contains one self-contained astroturf putting lane, beginning with a tee area at the near edge and terminating in a cup at the far end. Shape each lane as a short directed route with colorful simple obstacles placed between tee and cup: low block walls, banks, turns, ramps, tunnels, and occasional windmill-style decoration with a pass-through opening. Keep the route legible and clear around every obstacle. Use raised, colorful course borders around the full lane perimeter; there is no open terrain beyond the playable hole. Ground is bright green artificial turf with simple paved or colored obstacle surfaces. Frame each hole as a compact isometric-like diorama, with tee foreground, obstacles through the middle, and cup readable at the far end.\n\n### Render order\nUse `topdown`: render the top-down plan first and treat it as authoritative, then dress it isometrically, because every tee-to-cup lane must remain physically continuous and navigable around its obstacles.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by fifteen compact but separate hole maps. Theme is classic colorful miniature golf: astroturf lanes, painted borders, simple toy-like obstacles, and decorative windmills. Use `P4` because the fifteen holes are separate sequential maps rather than one coexisting park; no other pipeline modifier is forced.",
+  "spec": {
+    "genre": "Sports",
+    "secondary": [],
+    "shape": "range-directed",
+    "preset": "Target Sport",
+    "axes": {},
+    "options": [
+      {
+        "id": "startpoint-play",
+        "text": "Each hole has a clear tee pad and a ball-reset start position at the near edge.",
+        "visible": true,
+        "count": 15
+      },
+      {
+        "id": "trigger-scoring",
+        "text": "Every lane ends in a visible cup with its scoring volume inside it.",
+        "visible": true,
+        "count": 15
+      },
+      {
+        "id": "trigger-bounds",
+        "text": "Raised colorful bordered edges contain each astroturf lane, with aligned boundaries detecting balls leaving the legal course.",
+        "visible": true,
+        "count": 15
+      }
+    ],
+    "layout": {
+      "composition": "Each compact isometric-like hole diorama has its tee in the foreground, colorful obstacles through the middle, and a readable cup at the far end.",
+      "zones": [
+        {
+          "name": "Fifteen sequential hole maps",
+          "role": "Separate compact minigolf holes entered in numerical sequence; each is a self-contained directed tee-to-cup lane.",
+          "where": "Separate sequential maps",
+          "size": "compact"
+        }
+      ],
+      "paths": [
+        {
+          "from": "tee area",
+          "to": "cup",
+          "kind": "track"
+        }
+      ],
+      "terrain": "Bright green artificial turf with simple paved or colored obstacle surfaces.",
+      "props": [
+        {
+          "name": "low block walls",
+          "count": -1,
+          "where": "between tee and cup"
+        },
+        {
+          "name": "banks",
+          "count": -1,
+          "where": "between tee and cup"
+        },
+        {
+          "name": "turns",
+          "count": -1,
+          "where": "between tee and cup"
+        },
+        {
+          "name": "ramps",
+          "count": -1,
+          "where": "between tee and cup"
+        },
+        {
+          "name": "tunnels",
+          "count": -1,
+          "where": "between tee and cup"
+        },
+        {
+          "name": "windmill-style decorations with pass-through openings",
+          "count": -1,
+          "where": "occasional obstacles between tee and cup"
+        },
+        {
+          "name": "raised colorful course borders",
+          "count": -1,
+          "where": "around each full lane perimeter"
+        }
+      ],
+      "boundary": "Raised colorful course borders enclose each full lane perimeter; there is no open terrain beyond the playable hole.",
+      "scale_band": "medium",
+      "theme": "Classic colorful miniature golf with astroturf lanes, painted borders, simple toy-like obstacles, and decorative windmills."
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "every tee-to-cup lane must remain physically continuous and navigable around its obstacles.",
+      "set_piece": false
+    },
+    "route": [
+      "P4"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a classic mini-golf layout with fifteen separate compact holes, entered in sequence. Each hole is a self-contained astroturf lane with a tee area, cup, bordered course edges, and simple colorful obstacles; include windmill-style decorations where appropriate."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P0'] gives isometric"
+  ]
+}

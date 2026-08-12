@@ -1,0 +1,140 @@
+{
+  "scene": "P0157",
+  "source": "Make a scariest horror game where a black granny chases you down as you are trying to escape the facility",
+  "answers": [
+    {
+      "field": "goal",
+      "ask": "Does escaping just mean reaching the exit, or do you have to find keys or power up a door first?",
+      "answer": "Escaping means reaching the exit; no keys or power-up steps are needed."
+    },
+    {
+      "field": "scale",
+      "ask": "How big is the facility - one floor of corridors, or several wings?",
+      "answer": "Use one floor of corridors for a focused, playable horror escape."
+    },
+    {
+      "field": "players",
+      "ask": "Is the granny always AI, or can a player be the granny in a multiplayer round?",
+      "answer": "The granny is always AI and chases the player throughout the escape."
+    }
+  ],
+  "scene_prompt": "Create a 3D horror escape map set inside a single-floor facility: a tense network of corridors leading toward a clear exit, with enclosed rooms and connecting hallways arranged for pursuit.",
+  "blob": "### Genre\nThe dominant genre is Survival: a hostile AI pursues the player through a facility toward an escape. This is the Escape style rather than Puzzle because no keys or solve steps gate progress.\n\n### Shape and preset\nUse `warren-looping`, matched to the Escape preset. It is a single-floor indoor pursuit warren whose corridors loop through rooms and reconnect, ensuring the player can evade the pursuer while still progressing to the exit. The preset’s enterable-shelter option is dropped because the entire build is already one interior facility rather than exterior shelters.\n\n### Config requirements\nUse visible `cover-los`: corridor bends, side rooms, and short partitions interrupt the pursuer’s direct sightlines and create brief hiding or escape opportunities. Use `gate-escape` as both visible geometry and an invisible trigger: a clearly readable final exit door or security gate in the facility perimeter, with the completion volume immediately beyond it. Use invisible `spawner-npc`: a defined AI origin or patrol-start point within the corridor network, not rendered as a visual prop.\n\n### Layout components\nBuild one focused, single-floor facility. Place a small arrival corridor near one edge, feeding into a medium central network of enclosed rooms and connecting hallways. Arrange the main route as a readable sequence of turns toward the far-side exit, but add several loop-back connections through side rooms so no pursuit route terminates in an inescapable dead end. Use narrow institutional corridors, occasional wider junctions, and a few sparse utility or examination-like rooms as sightline breaks. Put the clear final exit in the outer wall at the opposite end of the facility from the arrival area. The boundary is a continuous opaque facility shell; all play remains indoors. Frame the map as a cutaway isometric view that shows the connected corridor structure, central loops, and distant exit without exposing exterior space.\n\n### Render order\nUse `authored_plan`: generate the looping corridor blueprint first and treat it as authoritative, then build the top-down and isometric views from it, because a sealed route or dead-end chase layout would make escape unplayable.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the author’s one-floor focused facility. Theme is claustrophobic abandoned institutional horror: dim, cold, worn, and oppressive. Pipeline modifier: `P6`, forced by the chase warren’s required valid loop connectivity and reachable exit.",
+  "spec": {
+    "genre": "Survival",
+    "secondary": [],
+    "shape": "warren-looping",
+    "preset": "Escape",
+    "axes": {},
+    "options": [
+      {
+        "id": "cover-los",
+        "text": "Corridor bends, side rooms, and short partitions interrupt the pursuer’s direct sightlines and create brief hiding or escape opportunities.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "gate-escape",
+        "text": "A clearly readable final exit door or security gate in the facility perimeter, with the completion volume immediately beyond it.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "spawner-npc",
+        "text": "A defined AI origin or patrol-start point within the corridor network, not rendered as a visual prop.",
+        "visible": false,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "Cutaway isometric view showing the arrival corridor near one edge, the connected central corridor-and-room loops in the middle, and the distant final exit in the opposite outer wall without exposing exterior space.",
+      "zones": [
+        {
+          "name": "Arrival corridor",
+          "role": "Player arrival area feeding into the facility pursuit route.",
+          "where": "Near one edge of the facility, opposite the exit.",
+          "size": "small"
+        },
+        {
+          "name": "Central corridor network",
+          "role": "Enclosed rooms and connecting hallways form the main pursuit route, with loop-back side-room connections for evasion.",
+          "where": "Centre of the facility.",
+          "size": "medium"
+        },
+        {
+          "name": "Utility and examination-like rooms",
+          "role": "Sparse side rooms that break sightlines and connect loops without creating inescapable dead ends.",
+          "where": "Off the central corridors and wider junctions.",
+          "size": ""
+        },
+        {
+          "name": "Final exit",
+          "role": "Escape endpoint with a final exit door or security gate and completion volume beyond it.",
+          "where": "Outer wall at the far side of the facility from the arrival area.",
+          "size": ""
+        }
+      ],
+      "paths": [
+        {
+          "from": "Arrival corridor",
+          "to": "Central corridor network",
+          "kind": "corridor"
+        },
+        {
+          "from": "Central corridor network",
+          "to": "Final exit",
+          "kind": "corridor"
+        },
+        {
+          "from": "Central corridor network",
+          "to": "Central corridor network",
+          "kind": "corridor"
+        }
+      ],
+      "terrain": "Single-floor indoor institutional flooring with narrow corridors, occasional wider junctions, and enclosed rooms.",
+      "props": [
+        {
+          "name": "Short partitions",
+          "count": -1,
+          "where": "Along corridors and in junctions"
+        },
+        {
+          "name": "Utility or examination-like rooms",
+          "count": -1,
+          "where": "Connected off the central corridor network"
+        },
+        {
+          "name": "Final exit door or security gate",
+          "count": -1,
+          "where": "Facility perimeter at the far end from arrival"
+        }
+      ],
+      "boundary": "Continuous opaque facility shell; all play remains indoors.",
+      "scale_band": "small",
+      "theme": "Claustrophobic abandoned institutional horror; dim, cold, worn, oppressive."
+    },
+    "render": {
+      "first": "authored_plan",
+      "then": "topdown",
+      "authoritative": "authored_plan",
+      "why": "A sealed route or dead-end chase layout would make escape unplayable.",
+      "set_piece": false
+    },
+    "route": [
+      "P6"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a 3D horror escape map set inside a single-floor facility: a tense network of corridors leading toward a clear exit, with enclosed rooms and connecting hallways arranged for pursuit."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "p6",
+  "first": "topdown",
+  "mapper_notes": [
+    "blob asked for authored_plan first; the route ['P6'] gives topdown"
+  ]
+}

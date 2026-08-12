@@ -1,0 +1,185 @@
+{
+  "scene": "P0387",
+  "source": "Subway Surfers-Style Endless Runner - Game Mechanics Spec\nCore Concept\nThird-person endless runner. Player character auto-runs forward along a train track corridor, dodging obstacles and collecting coins. Run ends on collision. Score scales with distance and coins.\n\nWorld Layout\nLane System\n • 3 parallel lanes, each 8 studs wide, centered at X = -8, 0, +8\n • Player snaps between lanes with a 0.15s lerp (not instant teleport)\n • Track runs along +Z axis infinitely\nChunk Streaming\n • World built from prefab \"chunks\" 100 studs long\n • Keep 6 chunks loaded ahead of player, 2 behind\n • Spawn new chunk when player crosses a chunk boundary, destroy chunks >200 studs behind\n • Chunk pool: reuse instances rather than Instance.new each time\n • Chunk types: Empty, TrainYard, BarrierRun, TunnelSection, RampSection\n • Weighted random selection, no repeating the same chunk type twice in a row\n\nPlayer Movement\nForward Speed\n • Base: 40 studs/sec\n • Increases by 1.5 studs/sec every 15 seconds\n • Hard cap: 110 studs/sec\n • Player is moved via a script setting position each frame (CFrame lerp or BodyVelocity on a HumanoidRootPart), not by Humanoid:Move - control must be scripted, not physics-driven\nActions\nAction\nInput (PC)\nInput (Mobile)\nEffect\nMove Left\nA / Left Arrow\nSwipe Left\nShift one lane left\nMove Right\nD / Right Arrow\nSwipe Right\nShift one lane right\nJump\nSpace / W\nSwipe Up\nVertical hop, 0.75s airtime, peak 9 studs\nRoll\nS / Down Arrow\nSwipe Down\nCrouch 0.6s, hitbox height halves\nMovement Rules\n • Lane change is blocked if already at outermost lane\n • Lane change during jump is allowed (air control)\n • Roll cancels a jump early (fast-fall)\n • Jump cannot be buffered mid-air (no double jump unless powerup active)\n • Input buffer window: 0.12s before landing, queued input executes on land\nSwipe Detection (Mobile)\n • Register swipe if touch delta > 40 pixels within 0.3s\n • Dominant axis determines direction\n\nObstacles\nObstacle\nSize (studs)\nAvoidance\nNotes\nLow Barrier\n8 x 3 x 2\nJump\nOccupies 1 lane\nHigh Barrier / Sign\n8 x 3 x 2, raised 4 studs\nRoll\nOccupies 1 lane\nFull Blocker\n8 x 10 x 2\nLane change only\nOccupies 1 lane\nStationary Train\n8 x 12 x 60\nLane change, or jump on top\nOccupies 1 lane, runnable roof\nMoving Train\n8 x 12 x 60\nLane change\nMoves toward player at +25 studs/sec relative\nTunnel/Overhang\nspans all 3 lanes, gap at 0-4 studs height\nRoll\nForces roll\nGeneration Rules (critical - spec this clearly for the AI builder)\n • Never generate an obstacle set that blocks all 3 lanes with no valid action\n • Minimum 25 studs of clear space between obstacle groups at base speed; scale this gap up proportionally with current speed\n • Moving trains only spawn in chunks flagged safe (adjacent lanes clear for 60 studs)\n • Difficulty tiers by distance: 0-500m easy (max 1 lane blocked), 500-1500m medium (max 2 lanes blocked), 1500m+ hard (2 lanes blocked, faster trains, tighter gaps)\n\nCollectibles\nCoins\n • Spawn in arcs, straight lines of 5-10, or in curves that trace jump arcs\n • Value: 1 coin = 1 currency, 1 currency = 10 score points\n • Rotate 90°/sec on Y axis for visual polish\n • Collected via distance check (< 3 studs) not touch events - touch events are unreliable at high speed\n • Play pickup sound and small particle burst\nPowerups (spawn ~1 per 300 studs, weighted)\nPowerup\nDuration\nEffect\nCoin Magnet\n8s\nAuto-collects coins within 15 studs, pulls them toward player\n2x Multiplier\n12s\nDoubles score gain\nJetpack\n6s\nPlayer flies above track at 20 studs height, auto-collects coin trail, invulnerable\nSuper Sneakers\n10s\nDouble jump enabled, jump height +50%\nHoverboard\n8s\nConsumed on collision instead of dying, then destroys itself with a brief 1s invulnerability\n • Powerup pickups do not stack duration; re-picking refreshes timer to full\n • Multiple different powerups can be active simultaneously\n • Active powerup shown as HUD icon with a radial countdown\n\nCollision & Death\nHitbox\n • Player hitbox: 4 x 6 x 4 studs, attached to root part\n • During roll: 4 x 3 x 4, offset down\n • Use Region3 or OverlapParams spatial query each frame against an Obstacles CollectionService tag, not .Touched\nDeath Sequence\n 1 Freeze forward movement\n 2 Play stumble/impact animation and sound\n 3 Camera pulls back over 0.5s\n 4 Show Game Over UI after 1s delay\nNear-Miss Bonus\n • If player passes within 2 studs of an obstacle without collision, award 5 bonus points and flash a \"Close Call!\" text\n\nScoring\nScore = floor(DistanceInStuds) + (CoinsCollected × 10) + NearMissBonus\nFinal Score = Score × ActiveMultiplier\n • Display live score in HUD, updating every frame\n • Track high score per player, save via DataStore\n • Coins persist across runs as a spendable currency\n\nCamera\n • Third-person, positioned behind and above player\n • Offset: (0, 12, -18) relative to player, looking at a point 10 studs ahead of player\n • Lerp camera position at alpha 0.15 per frame for smoothing - do not hard-attach\n • FOV: 70 base, lerps to 85 at max speed for speed sensation\n • Slight camera shake on lane change (0.3 stud amplitude, 0.1s)\n • Set Camera.CameraType = Enum.CameraType.Scriptable\n\nUI\nIn-Run HUD\n • Top-left: coin count with icon\n • Top-center: current score\n • Top-right: current multiplier\n • Below score: active powerup icons with countdown rings\n • Mobile: no on-screen buttons, swipe only\nGame Over Screen\n • Final score, high score, coins earned this run\n • \"Play Again\" and \"Shop\" buttons\n • If new high score, show a \"New Record!\" banner\nShop\n • Character skins (cosmetic only, no gameplay effect)\n • Permanent upgrades: starting powerup duration +1s per level, max 5 levels each\n • Purchasable revive (costs coins, resumes run from a safe position 20 studs back)\n\nAudio\n • Looping background music, pitch scales from 1.0 to 1.15 with speed\n • SFX: jump, land, roll, coin pickup (pitch rises with combo), powerup pickup, crash, near-miss whoosh\n • Duck music volume 50% during death sequence\n\nTechnical Notes for Roblox Implementation\n • All gameplay logic client-side for responsiveness; server validates final score before DataStore write\n • Use RunService.RenderStepped for camera, Heartbeat for movement and collision\n • Tag all obstacles with CollectionService tag Obstacle, coins with Coin, powerups with Powerup\n • Store chunk prefabs in ReplicatedStorage.Chunks\n • Anchor every part in chunks; set CanCollide = false on all obstacles (collision handled by spatial query)\n • Target 60 FPS: keep loaded part count under 2000, use StreamingEnabled on the Workspace\n\n\n • Single-player instance per server slot, or separate parallel tracks offset on X by 200 studs for multiple players",
+  "answers": [
+    {
+      "field": "theme",
+      "ask": "The five chunk types are named but not described visually - what should a TrainYard or RampSection chunk actually look like?",
+      "answer": "Use a bright, colorful cartoon urban subway theme. TrainYard chunks have parallel rails, parked subway trains, signals, and simple platform-side props; BarrierRun is open track with obstacle patterns, TunnelSection is a lit concrete tunnel with overhead signs/low clearance, and RampSection has simple ramps leading onto train roofs or raised track sections."
+    }
+  ],
+  "scene_prompt": "Create a 3D endless-runner map in a bright, colorful cartoon urban subway setting, viewed from a third-person camera behind and above the runner. A straight track corridor extends along the +Z axis as repeating 100-stud chunks, with three parallel 8-stud-wide lanes centered at X = -8, 0, and +8. Arrange open track sections, train-yard sections with parallel rails, parked subway trains, signals, and simple platform-side props; barrier-run sections with lane-based barriers and signs; lit concrete tunnel sections with overhead signs and low-clearance overhangs spanning the tracks; and ramp sections that lead onto train roofs or raised track. Place coins in straight lines, arcs, and curved trails above or between the lanes. Keep the track corridor readable ahead, with urban subway structures framing the sides and a clear forward route.",
+  "blob": "### Genre\nThe dominant genre is Infinite Runner: the original specifies automatic forward motion through an endless, lane-snapped obstacle path. No secondary genre is needed.\n\n### Shape and preset\nUse `lane-snap`, a fixed three-lane subway corridor with the runner shifting between parallel tracks rather than steering freely. This matches the Lane Runner preset; retain its modular chunk and collectible-trail character, while replacing its generic moving-traffic emphasis with the explicitly requested subway-yard, barrier, tunnel, and ramp chunk scenery.\n\n### Config requirements\nUse visible `chunk-modular`: repeating 100-stud straight segments align exactly end-to-end along +Z. Use visible `obstacle-jump` for low lane barriers, raised signs, low tunnel clearances, and ramps onto train roofs or raised track. Use `collectible-nodes` as invisible pickup placements, while their coin models remain visibly arranged as straight runs, arcs, and curved aerial trails over and between lanes. No unrequested universal options apply.\n\n### Layout components\nBuild one infinite straight corridor with three parallel, 8-stud-wide lanes centered at X = -8, 0, and +8. Each 100-stud chunk has a matching entrance and exit cross-section so chunks join without lateral drift. Alternate open track, TrainYard, BarrierRun, TunnelSection, and RampSection chunks without making adjacent chunks visually identical.\n\nOpen-track chunks are clear rails with colorful urban retaining walls, support posts, and distant city-subway framing. TrainYard chunks widen visually with parallel rails, parked subway trains, signal masts, platform edges, and simple platform-side props; train roofs can align with ramp approaches. BarrierRun chunks keep the three lane reads clear while placing low barriers, full-height blockers, and raised sign frames in individual lanes. TunnelSection chunks are lit concrete tubes with overhead signs and broad low-clearance overhangs spanning the corridor. RampSection chunks use simple aligned ramps rising from a lane onto a train roof or raised rail deck before returning to the main track. Keep side structures framing the corridor but never obscuring the forward read. Compose from behind and above the runner, with the three lanes converging toward a bright vanishing point.\n\n### Render order\nUse `topdown`: draw the authoritative plan first so every modular lane segment, obstacle pattern, ramp connection, and clear continuation is readable and physically continuous before dressing it isometrically.\n\n### Scale, theme, and pipeline cost\nScale is huge because this is an endlessly repeated chunk system rather than a finite course. Theme is bright, colorful cartoon urban subway. Use `P6` because modular obstacle sequences and speed-scaled clearances must remain valid by construction. No additional pipeline modifier is forced.",
+  "spec": {
+    "genre": "Infinite Runner",
+    "secondary": [],
+    "shape": "lane-snap",
+    "preset": "Lane Runner",
+    "axes": {},
+    "options": [
+      {
+        "id": "chunk-modular",
+        "text": "Repeating 100-stud straight subway-corridor segments aligned exactly end-to-end along +Z, each with matching entrance and exit cross-sections so chunks join without lateral drift.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "obstacle-jump",
+        "text": "Low lane barriers, raised signs, low tunnel clearances, and aligned ramps onto train roofs or raised track.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "Invisible pickup placements whose visible coin models form straight runs, arcs, and curved aerial trails over and between the lanes.",
+        "visible": false,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "Third-person view from behind and above the runner; three parallel lanes fill the foreground and converge toward a bright vanishing point ahead. Urban subway structures frame both sides without obscuring the clear forward route.",
+      "zones": [
+        {
+          "name": "Infinite straight corridor",
+          "role": "Endless lane-snapped runner route made from repeating modular chunks.",
+          "where": "Extending forward along +Z from the runner.",
+          "size": "Huge; repeating 100-stud chunks."
+        },
+        {
+          "name": "Open-track chunks",
+          "role": "Clear running segments between obstacle set pieces.",
+          "where": "Alternating along the corridor.",
+          "size": "100-stud chunk."
+        },
+        {
+          "name": "TrainYard chunks",
+          "role": "Widened visual sections with parallel rails and parked trains; train roofs can meet ramp approaches.",
+          "where": "Alternating along the corridor.",
+          "size": "100-stud chunk."
+        },
+        {
+          "name": "BarrierRun chunks",
+          "role": "Lane-based obstacle sections while preserving the three-lane read.",
+          "where": "Alternating along the corridor.",
+          "size": "100-stud chunk."
+        },
+        {
+          "name": "TunnelSection chunks",
+          "role": "Lit concrete tunnel obstacle sections with overhead signage and low-clearance spans.",
+          "where": "Alternating along the corridor.",
+          "size": "100-stud chunk."
+        },
+        {
+          "name": "RampSection chunks",
+          "role": "Aligned ramps rise from a lane onto a train roof or raised rail deck, then return to the main track.",
+          "where": "Alternating along the corridor.",
+          "size": "100-stud chunk."
+        }
+      ],
+      "paths": [
+        {
+          "from": "Runner start",
+          "to": "Infinite straight corridor",
+          "kind": "track"
+        },
+        {
+          "from": "Left lane",
+          "to": "Forward chunk exit",
+          "kind": "track"
+        },
+        {
+          "from": "Centre lane",
+          "to": "Forward chunk exit",
+          "kind": "track"
+        },
+        {
+          "from": "Right lane",
+          "to": "Forward chunk exit",
+          "kind": "track"
+        },
+        {
+          "from": "RampSection lane",
+          "to": "Train roof or raised rail deck",
+          "kind": "ramp"
+        },
+        {
+          "from": "Train roof or raised rail deck",
+          "to": "Main track",
+          "kind": "ramp"
+        }
+      ],
+      "terrain": "Straight subway track corridor running along +Z, with three parallel 8-stud-wide lanes centred at X = -8, 0, and +8; open rails, concrete tunnel surfaces, and colorful urban retaining walls.",
+      "props": [
+        {
+          "name": "Parallel runner lanes",
+          "count": 3,
+          "where": "Centred at X = -8, 0, and +8 along the full corridor."
+        },
+        {
+          "name": "Colorful urban retaining walls",
+          "count": -1,
+          "where": "Sides of open-track chunks."
+        },
+        {
+          "name": "Support posts",
+          "count": -1,
+          "where": "Along open-track chunk sides."
+        },
+        {
+          "name": "Parked subway trains",
+          "count": -1,
+          "where": "TrainYard chunks beside parallel rails."
+        },
+        {
+          "name": "Signal masts",
+          "count": -1,
+          "where": "TrainYard chunks."
+        },
+        {
+          "name": "Platform edges and simple platform-side props",
+          "count": -1,
+          "where": "TrainYard chunks."
+        },
+        {
+          "name": "Low barriers, full-height blockers, and raised sign frames",
+          "count": -1,
+          "where": "Individual lanes in BarrierRun chunks."
+        },
+        {
+          "name": "Overhead signs and broad low-clearance overhangs",
+          "count": -1,
+          "where": "TunnelSection chunks spanning the corridor."
+        },
+        {
+          "name": "Coin models",
+          "count": -1,
+          "where": "In straight runs, arcs, and curved aerial trails over or between lanes."
+        }
+      ],
+      "boundary": "Side structures, retaining walls, tunnel walls, and urban subway framing contain the corridor edges while leaving the forward route unobscured.",
+      "scale_band": "huge",
+      "theme": "Bright, colorful cartoon urban subway."
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "Modular lane segments, obstacle patterns, ramp connections, and clear continuation must remain physically continuous.",
+      "set_piece": false
+    },
+    "route": [
+      "P6"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a 3D endless-runner map in a bright, colorful cartoon urban subway setting, viewed from a third-person camera behind and above the runner. A straight track corridor extends along the +Z axis as repeating 100-stud chunks, with three parallel 8-stud-wide lanes centered at X = -8, 0, and +8. Arrange open track sections, train-yard sections with parallel rails, parked subway trains, signals, and simple platform-side props; barrier-run sections with lane-based barriers and signs; lit concrete tunnel sections with overhead signs and low-clearance overhangs spanning the tracks; and ramp sections that lead onto train roofs or raised track. Place coins in straight lines, arcs, and curved trails above or between the lanes. Keep the track corridor readable ahead, with urban subway structures framing the sides and a clear forward route."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "p6",
+  "first": "topdown",
+  "mapper_notes": []
+}

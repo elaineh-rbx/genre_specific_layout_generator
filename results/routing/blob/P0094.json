@@ -1,0 +1,128 @@
+{
+  "scene": "P0094",
+  "source": "Here's a game idea that's unusual enough that it would feel like it was \"designed by an AI,\" but you can still build it in Roblox.\nEcho Timeline Obby\nCore idea: Every time a player dies, they don't disappear. Instead, an AI-controlled \"echo\" of their previous run appears and repeats exactly what they did.\nGameplay\nYour past selves become moving platforms.\nThey accidentally press buttons for you.\nSome echoes open doors, while others block your path.\nLater levels require working with 10-50 previous versions of yourself.\nIf you make a mistake, it changes the puzzle for your next attempt.\nAI twist\nAdd an AI \"Director\" that watches how players perform and changes the level in real time:\nIf players keep failing jumps, it creates a different route.\nIf they're too fast, it adds harder obstacles.\nIt learns which paths players choose and generates new sections based on those choices.\nCool features\n🌀 Infinite procedurally generated stages.\n👻 Ghost replays of every attempt.\n🧠 AI-generated puzzle layouts.\n🏆 Daily challenge with a unique AI-created map that no one has seen before.\nThis kind of adaptive game would feel very different from a typical Roblox obby because the level evolves based on how people actually play.\nIf you'd like, I can also suggest an even more ambitious idea-something that looks like it took a team of professional developers and AI to create.",
+  "answers": [
+    {
+      "field": "theme",
+      "ask": "Nothing was said about how this looks — should the echoes read as ghostly and abstract, or is there a setting behind them?",
+      "answer": "Use a futuristic abstract sci-fi setting: clean floating platforms, glowing doors and buttons, and dark void surroundings. Echoes should be translucent ghostly versions of the player with a distinct glow."
+    },
+    {
+      "field": "shape",
+      "ask": "Should a stage be a flat course, a climb, or a tower? The description is all mechanics.",
+      "answer": "Make each stage a compact vertical climb/tower so previous-run echoes can visibly cross paths above and below the current player."
+    }
+  ],
+  "scene_prompt": "Create a 3D obby map in a futuristic abstract sci-fi setting: a compact vertical tower of clean floating platform sections suspended in a dark void, with routes visibly crossing above and below one another. Arrange glowing doors and floor buttons along the climb, with open gaps and clear sightlines between stacked sections so translucent, distinctly glowing ghostly player echoes can be seen retracing paths throughout the tower. Design the tower as an extendable sequence of procedurally generated stages.",
+  "blob": "### Genre\nThe dominant genre is Obby & Platformer: the original describes a death-and-retry movement course whose critical route consists of discrete jumps. There is no secondary genre.\n\n### Shape and preset\nUse `course-tower`, a compact vertical climb of stacked floating platform bays whose routes can be read across open air above and below the player. The matched preset is Tower Obby. The prompt confirms its tower shape, but only retains the platform-track and jump geometry rather than assuming the preset’s timed obstacles, ladders, or reward area.\n\n### Config requirements\n`path-track` is visible geometry: an ordered ascending chain of clean floating platforms through each tower stage. `obstacle-jump` is visible geometry: open, readable gaps between platform landings. `npc-population` is visible character geometry: translucent, distinctly glowing ghostly player-echo figures distributed on visible route segments; their replay/path behavior is invisible layout data and must not enter the render. Glowing doors and floor buttons are visible sci-fi props, not additional gameplay-option picks.\n\n### Layout components\nBuild one compact tower stage as a vertically stacked sequence of floating platform sections, with a lower entry bay, several mid-height crossing bays, and a high exit connection into the next generated stage. Keep broad void gaps and open side faces between tiers, so the player can see ghostly silhouettes moving on routes overhead and below. Arrange the main platform chain to rise around the tower’s center while short side platforms create visible crossings without blocking sightlines. Place glowing floor buttons on selected landings and glowing door frames at transitions between sections. Terrain is absent: all surfaces are clean modular sci-fi slabs suspended in a dark void. The boundary is the surrounding void, with the tower’s playable route visually isolated in frame. Compose the isometric view to show the full height of the current tower segment and its crossing paths.\n\n### Render order\nUse `topdown`: render a plan first and dress it isometrically afterward, because every stacked stage’s jump chain must remain connected and physically traversable; this is not `authored_plan`, which is reserved for mazes and racing circuits.\n\n### Scale, theme, and pipeline cost\nScale is medium per compact tower stage, with a repeatable vertical connection for an extendable stage sequence. Theme: minimalist futuristic abstract sci-fi, neon-glowing controls, translucent spectral echoes, and dark void contrast. Pipeline modifiers are `P2` because stacked platform surfaces overlap in plan view, and `P6` because the tower’s critical jump route must be valid by construction.",
+  "spec": {
+    "genre": "Obby & Platformer",
+    "secondary": [],
+    "shape": "course-tower",
+    "preset": "Tower Obby",
+    "axes": {},
+    "options": [
+      {
+        "id": "path-track",
+        "text": "an ordered ascending chain of clean floating platforms through each tower stage",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "obstacle-jump",
+        "text": "open, readable gaps between platform landings",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "npc-population",
+        "text": "translucent, distinctly glowing ghostly player-echo figures distributed on visible route segments",
+        "visible": true,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "Isometric view showing the full height of the current compact tower segment, with crossing paths visible through open air above and below the player.",
+      "zones": [
+        {
+          "name": "lower entry bay",
+          "role": "Entry section of the vertically stacked platform sequence.",
+          "where": "lower tower",
+          "size": ""
+        },
+        {
+          "name": "mid-height crossing bays",
+          "role": "Floating platform sections where short side platforms create visible crossings without blocking sightlines.",
+          "where": "middle of the tower",
+          "size": "several"
+        },
+        {
+          "name": "high exit connection",
+          "role": "Connection from the current tower segment into the next generated stage.",
+          "where": "top of the tower",
+          "size": ""
+        }
+      ],
+      "paths": [
+        {
+          "from": "lower entry bay",
+          "to": "mid-height crossing bays",
+          "kind": "track"
+        },
+        {
+          "from": "mid-height crossing bays",
+          "to": "high exit connection",
+          "kind": "track"
+        },
+        {
+          "from": "high exit connection",
+          "to": "next generated stage",
+          "kind": "track"
+        }
+      ],
+      "terrain": "Terrain is absent; clean modular sci-fi slabs are suspended in a dark void, with broad void gaps and open side faces between tiers.",
+      "props": [
+        {
+          "name": "glowing floor buttons",
+          "count": -1,
+          "where": "selected landings"
+        },
+        {
+          "name": "glowing door frames",
+          "count": -1,
+          "where": "transitions between sections"
+        },
+        {
+          "name": "translucent glowing ghostly player-echo figures",
+          "count": -1,
+          "where": "visible route segments throughout the tower"
+        }
+      ],
+      "boundary": "The surrounding dark void; the tower's playable route is visually isolated in frame.",
+      "scale_band": "medium",
+      "theme": "minimalist futuristic abstract sci-fi, neon-glowing controls, translucent spectral echoes, dark void contrast"
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "every stacked stage's jump chain must remain connected and physically traversable",
+      "set_piece": false
+    },
+    "route": [
+      "P2",
+      "P6"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a 3D obby map in a futuristic abstract sci-fi setting: a compact vertical tower of clean floating platform sections suspended in a dark void, with routes visibly crossing above and below one another. Arrange glowing doors and floor buttons along the climb, with open gaps and clear sightlines between stacked sections so translucent, distinctly glowing ghostly player echoes can be seen retracing paths throughout the tower. Design the tower as an extendable sequence of procedurally generated stages."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "p6",
+  "first": "topdown",
+  "mapper_notes": []
+}

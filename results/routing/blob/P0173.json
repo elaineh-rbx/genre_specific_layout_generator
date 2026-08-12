@@ -1,0 +1,100 @@
+{
+  "scene": "P0173",
+  "source": "a 3D first-person maze escape: you navigate a 3D maze of corridors and walls to find the exit before a countdown timer runs out. It is genuinely 3D (the maze walls, floor, and exit are 3D parts), using the built-in character movement and a first-person camera (WASD to move, mouse/drag to look). Optionally require finding a key to open the exit. Show the remaining time on a HUD; reaching the exit wins, and the timer reaching 0 is game over with a clear restart. DO NOT ASK ANY QUESTIONS JUST COMPLETE",
+  "answers": [
+    {
+      "field": "theme",
+      "ask": "What should the maze be made of - hedges, stone dungeon, sterile lab corridors?",
+      "answer": "Use a simple stone dungeon maze: solid stone walls and floor, with a clearly distinct 3D exit door."
+    },
+    {
+      "field": "scale",
+      "ask": "How long should a clean run take - the timer length implies the maze size.",
+      "answer": "Keep it small enough that a clean run takes about 60 seconds; set the countdown to 90 seconds so it is plainly playable."
+    }
+  ],
+  "scene_prompt": "Create a 3D first-person maze escape map as a compact stone dungeon. A network of solid stone-walled corridors and stone floors forms a maze sized for a clean route of about 60 seconds, with a clearly distinct 3D exit door at the maze’s far end.",
+  "blob": "### Genre\nThe dominant genre is Puzzle: the authored countdown and escape objective make this a maze challenge rather than a generic dungeon environment.\n\n### Shape and preset\nUse `puzzle-maze`, a compact, fully traversable stone-corridor labyrinth whose correct route leads from the entrance to a distant exit door. Match the Maze / Labyrinth preset, retaining its maze topology but dropping its collectible option because the optional key was not committed as scene geometry.\n\n### Config requirements\nUse `path-loop` as visible geometry: include a few looping corridor connections so wrong turns can rejoin the network rather than ending in excessive backtracking. No invisible layout options are required. The exit is visible geometry, expressed as a clearly distinct solid 3D stone-framed door at the far end of the valid route.\n\n### Layout components\nBuild one compact dungeon-maze zone, roughly sized so a direct, clean traversal takes about 60 seconds on foot. Place the entrance at one outer edge, leading immediately into narrow, solid stone-walled corridors. The route should branch into several short dead ends and reconnecting loops, with the successful path progressively carrying the player toward the opposite side of the plan. Put the exit chamber at the far end, slightly wider than the corridors, containing the unmistakable 3D exit door as the focal prop. Use continuous stone floor slabs and tall, opaque stone walls throughout; do not add exterior terrain, water, props, or decorative rooms not requested. Enclose the entire maze in a continuous outer stone boundary with no openings except the entrance and exit logic locations. Compose it as a readable compact overhead maze footprint while preserving an enclosed first-person dungeon feeling in the rendered perspective.\n\n### Render order\nUse `authored_plan`: a maze must be valid by construction, with a reachable exit and connected corridors, before it is dressed as a stone dungeon.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the requested approximately 60-second clean route. Theme: simple, austere stone dungeon, with solid masonry and a visually distinct exit door. Apply `P6` because the solvable corridor topology and reachable exit must be procedurally guaranteed.",
+  "spec": {
+    "genre": "Puzzle",
+    "secondary": [],
+    "shape": "puzzle-maze",
+    "preset": "Maze / Labyrinth",
+    "axes": {},
+    "options": [
+      {
+        "id": "path-loop",
+        "text": "A few looping stone-corridor connections let wrong turns rejoin the network rather than requiring excessive backtracking.",
+        "visible": true,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "A readable compact overhead maze footprint, with the entrance on one outer edge and the wider exit chamber at the far opposite end; rendered perspective preserves an enclosed first-person dungeon feeling.",
+      "zones": [
+        {
+          "name": "compact dungeon-maze",
+          "role": "A fully traversable stone-corridor labyrinth whose correct route leads from the entrance to the exit.",
+          "where": "Across one compact enclosed maze footprint, from one outer edge to the opposite side.",
+          "size": "Small; a direct clean traversal takes about 60 seconds on foot."
+        },
+        {
+          "name": "entrance",
+          "role": "Starting point leading immediately into the maze corridors.",
+          "where": "One outer edge of the maze.",
+          "size": ""
+        },
+        {
+          "name": "exit chamber",
+          "role": "The destination chamber containing the focal exit door.",
+          "where": "Far end of the valid route, on the opposite side of the plan.",
+          "size": "Slightly wider than the corridors."
+        }
+      ],
+      "paths": [
+        {
+          "from": "entrance",
+          "to": "exit chamber",
+          "kind": "corridor"
+        },
+        {
+          "from": "maze corridors",
+          "to": "maze corridors",
+          "kind": "corridor"
+        }
+      ],
+      "terrain": "Continuous stone floor slabs throughout, with tall opaque solid stone walls; no exterior terrain or water.",
+      "props": [
+        {
+          "name": "solid 3D stone-framed exit door",
+          "count": -1,
+          "where": "In the exit chamber at the far end of the valid route."
+        }
+      ],
+      "boundary": "A continuous outer stone boundary encloses the entire maze, with no openings except the entrance and exit logic locations.",
+      "scale_band": "small",
+      "theme": "Simple, austere stone dungeon with solid masonry and a visually distinct exit door."
+    },
+    "render": {
+      "first": "authored_plan",
+      "then": "topdown",
+      "authoritative": "authored_plan",
+      "why": "A reachable exit and connected solvable corridors must be valid by construction.",
+      "set_piece": false
+    },
+    "route": [
+      "P6"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a 3D first-person maze escape map as a compact stone dungeon. A network of solid stone-walled corridors and stone floors forms a maze sized for a clean route of about 60 seconds, with a clearly distinct 3D exit door at the maze’s far end."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "layout",
+  "first": "authored_plan",
+  "mapper_notes": []
+}

@@ -1,0 +1,140 @@
+{
+  "scene": "P0345",
+  "source": "A game where start at a stop with a train rail and every while or so there is a building with a gun inside. It has a 60 percent change of being a 1890s sawed off double barrel shotgun, 30 percent change of being a 1890s rifle, and a 10 pent chance of a 1890s bolt action rifle. There is a train that comes by every minute or so and you can hop on it. Some times you see a big green zombie. You can shoot it to hurt it and kill it.",
+  "answers": [
+    {
+      "field": "scale",
+      "ask": "How far does the rail run - a handful of buildings, or a line long enough that the train ride matters?",
+      "answer": "Make it a short line with a handful of buildings along it, so it stays small and playable."
+    },
+    {
+      "field": "goal",
+      "ask": "Is there an end to the line, or is it an endless ride with zombies along the way?",
+      "answer": "Use an endless ride with zombies appearing along the way; the prompt does not call for an ending."
+    }
+  ],
+  "scene_prompt": "Create a 3D game map set along a short, endless train rail line. Begin at a small rail stop, with a handful of buildings spaced along the track; each building contains an old-fashioned firearm. A train travels along the rail and provides a rideable moving platform. Place open ground and intermittent large green zombies beside and along the route, with the repeating rail corridor extending beyond view.",
+  "blob": "### Genre\nThe dominant genre is Shooter, specifically PvE combat against recurring hostile zombies. The firearm probabilities and train timing establish mechanics only and do not affect the map geometry.\n\n### Shape and preset\nUse the Shooter shape `lane-network`, expressed here as a narrow, linear rail corridor rather than a broad combat grid. Match the PvE Shooter preset: its enemy-emitter and breachable-building logic fit the zombie encounters and gun houses, while its usual chokepoint is omitted because the prompt describes open ground alongside the rail.\n\n### Config requirements\nUse `spawner-npc` as invisible layout markers in intermittent open encounter clearings beside and along the track; the markers must not appear in the render. Use `building-interior` as visible geometry: each of the handful of small trackside buildings has a simple accessible interior holding a firearm. Use `collectible-loot` as invisible placement data for one firearm pickup inside each building; do not render pickup markers. The rideable train is visible moving geometry following the rail.\n\n### Layout components\nStart at a small rail stop near one end of the authored segment, with a platform, shelter, and the rail entering from both directions. Run one straight-to-gently-curving continuous railway through the center of open, sparse ground. Place a handful of weathered 1890s frontier-style buildings at intervals along both sides of the rail, close enough to reach from the train but separated by open zombie encounter clearings. Each building has a door-facing trackside approach and a compact interior containing its firearm location. Reserve broad clear ground beside the rail for intermittent large green zombie appearances, without obstructing the train path. Continue the track and repeated corridor dressing beyond both frame edges to imply the endless ride. Keep the boundary visually open, fading into distant scrubland rather than using walls. Compose the rail as the dominant diagonal or receding centerline, with the stop foregrounded and the train and later buildings receding into view.\n\n### Render order\nUse `topdown`: the continuous rail, train clearance, building access, and encounter clearings must remain coherent along the playable corridor before the isometric scene is dressed.\n\n### Scale, theme, and pipeline cost\nScale is small: one short authored repeating rail segment with only a handful of buildings. Theme is sparse 1890s frontier rail stop, weathered timber structures, open scrub, and oversized green zombie threats. Use `P3` because players cross from the exterior rail corridor into the gun buildings; no other geometry forces an additional pipeline pass.",
+  "spec": {
+    "genre": "Shooter",
+    "secondary": [],
+    "shape": "lane-network",
+    "preset": "PvE Shooter",
+    "axes": {},
+    "options": [
+      {
+        "id": "spawner-npc",
+        "text": "Invisible layout markers in intermittent open encounter clearings beside and along the track for recurring hostile zombies.",
+        "visible": false,
+        "count": -1
+      },
+      {
+        "id": "building-interior",
+        "text": "Each of the handful of small weathered 1890s frontier-style trackside buildings has a simple accessible interior holding a firearm.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "collectible-loot",
+        "text": "One firearm pickup inside each building; do not render pickup markers.",
+        "visible": false,
+        "count": 1
+      }
+    ],
+    "layout": {
+      "composition": "The rail is the dominant diagonal or receding centerline, with the small rail stop foregrounded and the train and later buildings receding into view; repeated corridor dressing continues beyond both frame edges.",
+      "zones": [
+        {
+          "name": "rail stop",
+          "role": "Starting area with a platform, shelter, and rail entering from both directions.",
+          "where": "near one end of the authored segment, foreground",
+          "size": "small"
+        },
+        {
+          "name": "rail corridor",
+          "role": "Continuous rideable train route through the authored segment.",
+          "where": "through the center, extending beyond both frame edges",
+          "size": "one short authored repeating segment"
+        },
+        {
+          "name": "trackside gun buildings",
+          "role": "Accessible firearm houses with door-facing trackside approaches and compact interiors.",
+          "where": "at intervals along both sides of the rail",
+          "size": "a handful of small buildings"
+        },
+        {
+          "name": "zombie encounter clearings",
+          "role": "Open ground reserved for intermittent large green zombie appearances without obstructing the train path.",
+          "where": "beside and along the rail, between buildings",
+          "size": "broad clear ground"
+        }
+      ],
+      "paths": [
+        {
+          "from": "rail stop",
+          "to": "rail corridor",
+          "kind": "track"
+        },
+        {
+          "from": "rail corridor",
+          "to": "trackside gun buildings",
+          "kind": "open ground"
+        }
+      ],
+      "terrain": "Open, sparse scrub ground fading into distant scrubland.",
+      "props": [
+        {
+          "name": "platform",
+          "count": -1,
+          "where": "rail stop"
+        },
+        {
+          "name": "shelter",
+          "count": -1,
+          "where": "rail stop"
+        },
+        {
+          "name": "weathered 1890s frontier-style buildings",
+          "count": -1,
+          "where": "along both sides of the rail"
+        },
+        {
+          "name": "rideable moving train",
+          "count": -1,
+          "where": "following the rail"
+        },
+        {
+          "name": "large green zombies",
+          "count": -1,
+          "where": "intermittent open encounter clearings beside and along the route"
+        }
+      ],
+      "boundary": "Visually open, fading into distant scrubland rather than using walls.",
+      "scale_band": "small",
+      "theme": "Sparse 1890s frontier rail stop, weathered timber structures, open scrub, oversized green zombie threats."
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "The continuous rail, train clearance, building access, and encounter clearings must remain coherent along the playable corridor.",
+      "set_piece": false
+    },
+    "route": [
+      "P3"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a 3D game map set along a short, endless train rail line. Begin at a small rail stop, with a handful of buildings spaced along the track; each building contains an old-fashioned firearm. A train travels along the rail and provides a rideable moving platform. Place open ground and intermittent large green zombies beside and along the route, with the repeating rail corridor extending beyond view."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P3'] gives isometric"
+  ]
+}

@@ -1,0 +1,172 @@
+{
+  "scene": "P0416",
+  "source": "combine deep underground exploration, tool upgrades, and pet collecting. Players dig through blocks, gather rare ores, and unlock new worlds.Step into a vast underground world where every swing of your pickaxe brings you closer to untold riches and rare treasures. As you smash through layered blocks of stone, coal, and gleaming crystals, you will collect valuable ores in your backpack before racing back to the surface to sell your haul for massive profits. Use your hard-earned cash to upgrade to powerful new pickaxes, unlock deeper biomes with higher-tier minerals, and hatch loyal pets that boost your mining speed and multiplier stats. Whether you are playing solo or teaming up with friends to climb the global leaderboards, the thrill of the deep unknown keeps every expedition fresh and exciting.",
+  "answers": [
+    {
+      "field": "theme",
+      "ask": "Should the underground read as bright and cartoony in the usual simulator style, or as a gritty realistic mine?",
+      "answer": "Use a bright, cartoony simulator style with colorful layered blocks, glowing crystals, and readable ores."
+    },
+    {
+      "field": "scale",
+      "ask": "How many depth tiers should there be, and how far down does the deepest one go?",
+      "answer": "Start with 4 depth tiers, with the deepest tier at 1,000 blocks down, to keep the first build focused while still supporting progression."
+    }
+  ],
+  "scene_prompt": "Create a bright, cartoony underground mining map with a surface entry area leading into a vertical excavation that descends through four distinct depth tiers, reaching 1,000 blocks down. Layered breakable terrain transitions from stone and coal near the upper levels to increasingly colorful rock strata, rare ore deposits, and glowing crystal formations in deeper biomes. Include clear routes back toward the surface and open mining spaces within each tier, with deeper zones visually separated by their higher-tier minerals and richer crystal-filled surroundings.",
+  "blob": "### Genre\nSimulation is dominant: the mining, extraction, and upgrade loop identifies a `Simulation` game rather than an exploration adventure.\n\n### Shape and preset\nUse `world-underground`, with a surface entry over a vertically layered mine. The closest preset is Mining & Extraction, but the preset is `none`: the requested mine retains the surface-to-depth form and ore deposits, while omitting its shared extraction field and vehicle hauling roads.\n\n### Config requirements\nUse `collectible-nodes` as both visible geometry and invisible layout placement: readable rare-ore seams and crystal deposits appear in the strata, with extraction-node positions assigned within them. No other options are required; the stated routes are built directly as mine circulation rather than as vehicle roads.\n\n### Layout components\nBuild a compact surface entry zone at the top, opening directly onto the central vertical excavation. The mine descends through exactly four distinct depth tiers to a deepest floor 1,000 blocks down. Arrange each tier as a broad, walkable mining chamber branching from the central descent, with continuous ramps, stepped cuts, and clearly legible return routes climbing back toward the surface.\n\nUpper tiers use chunky stone blocks, coal seams, and lighter excavation walls. Successive tiers become visibly richer and more colorful, transitioning into saturated rock strata, denser rare-ore deposits, and increasingly large glowing crystal formations. The deepest fourth tier is the most crystal-filled and mineral-rich chamber. Keep each tier visually distinct through ground color, block material, ore frequency, and crystal density rather than through separate map loading zones. Enclose the space with solid bedrock walls around chamber edges and the shaft perimeter. Compose the view around the surface opening and central descending cut, with tier chambers readable as stacked layers around it.\n\n### Render order\nUse `topdown`: the vertical return routes and connections between all four mining tiers must remain traversable and unbroken, so the plan is authoritative before the isometric dressing is made.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by four full mining tiers spanning 1,000 blocks of depth. Theme is bright cartoony mining simulator: colorful layered blocks, clean readable ores, and luminous crystals. Use `P2` because the surface and underground chambers stack above and below one another, and `P3` because traversal crosses from the exterior surface entry into the enclosed mine.",
+  "spec": {
+    "genre": "Simulation",
+    "secondary": [],
+    "shape": "world-underground",
+    "preset": "none",
+    "axes": {},
+    "options": [
+      {
+        "id": "collectible-nodes",
+        "text": "Readable rare-ore seams and crystal deposits appear in the strata.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "Extraction-node positions assigned within the ore seams and crystal deposits.",
+        "visible": false,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "The surface opening sits at the top of the view and opens directly into a central vertical descending cut; broad tier chambers read as stacked layers branching around the descent.",
+      "zones": [
+        {
+          "name": "Surface entry zone",
+          "role": "Compact exterior entry opening directly onto the mine excavation.",
+          "where": "top of the map",
+          "size": "compact"
+        },
+        {
+          "name": "Central vertical excavation",
+          "role": "Main descent and return-route spine connecting the surface and all mining tiers.",
+          "where": "centre",
+          "size": "1,000 blocks deep"
+        },
+        {
+          "name": "Depth tier 1",
+          "role": "Broad walkable mining chamber with chunky stone blocks, coal seams, and lighter excavation walls.",
+          "where": "upper underground layer branching from the central descent",
+          "size": "broad"
+        },
+        {
+          "name": "Depth tier 2",
+          "role": "Broad walkable mining chamber with richer, more colorful strata and denser rare-ore deposits.",
+          "where": "below depth tier 1, branching from the central descent",
+          "size": "broad"
+        },
+        {
+          "name": "Depth tier 3",
+          "role": "Broad walkable mining chamber with saturated rock strata, rare ores, and increasingly large glowing crystal formations.",
+          "where": "below depth tier 2, branching from the central descent",
+          "size": "broad"
+        },
+        {
+          "name": "Depth tier 4",
+          "role": "Deepest, most crystal-filled and mineral-rich mining chamber.",
+          "where": "deepest floor, 1,000 blocks below the surface",
+          "size": "broad"
+        }
+      ],
+      "paths": [
+        {
+          "from": "Surface entry zone",
+          "to": "Central vertical excavation",
+          "kind": "open ground"
+        },
+        {
+          "from": "Central vertical excavation",
+          "to": "Depth tier 1",
+          "kind": "ramp"
+        },
+        {
+          "from": "Depth tier 1",
+          "to": "Depth tier 2",
+          "kind": "ramp"
+        },
+        {
+          "from": "Depth tier 2",
+          "to": "Depth tier 3",
+          "kind": "ramp"
+        },
+        {
+          "from": "Depth tier 3",
+          "to": "Depth tier 4",
+          "kind": "ramp"
+        },
+        {
+          "from": "Depth tier 1",
+          "to": "Surface entry zone",
+          "kind": "stair"
+        },
+        {
+          "from": "Depth tier 2",
+          "to": "Surface entry zone",
+          "kind": "stair"
+        },
+        {
+          "from": "Depth tier 3",
+          "to": "Surface entry zone",
+          "kind": "stair"
+        },
+        {
+          "from": "Depth tier 4",
+          "to": "Surface entry zone",
+          "kind": "stair"
+        }
+      ],
+      "terrain": "Vertically layered breakable terrain transitions from chunky stone blocks and coal seams in upper tiers to saturated colorful rock strata, denser rare-ore deposits, and large luminous crystal formations in deeper tiers; each tier differs by ground color, block material, ore frequency, and crystal density.",
+      "props": [
+        {
+          "name": "coal seams",
+          "count": -1,
+          "where": "upper mining tiers"
+        },
+        {
+          "name": "rare-ore seams and deposits",
+          "count": -1,
+          "where": "successively deeper strata"
+        },
+        {
+          "name": "glowing crystal formations",
+          "count": -1,
+          "where": "deeper tiers, densest in depth tier 4"
+        }
+      ],
+      "boundary": "Solid bedrock walls enclose chamber edges and the shaft perimeter.",
+      "scale_band": "large",
+      "theme": "Bright cartoony mining simulator with colorful layered blocks, clean readable ores, and luminous crystals."
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "the vertical return routes and connections between all four mining tiers must remain traversable and unbroken.",
+      "set_piece": false
+    },
+    "route": [
+      "P2",
+      "P3"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a bright, cartoony underground mining map with a surface entry area leading into a vertical excavation that descends through four distinct depth tiers, reaching 1,000 blocks down. Layered breakable terrain transitions from stone and coal near the upper levels to increasingly colorful rock strata, rare ore deposits, and glowing crystal formations in deeper biomes. Include clear routes back toward the surface and open mining spaces within each tier, with deeper zones visually separated by their higher-tier minerals and richer crystal-filled surroundings."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P2', 'P3'] gives isometric"
+  ]
+}

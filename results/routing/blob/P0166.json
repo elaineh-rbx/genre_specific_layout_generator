@@ -1,0 +1,128 @@
+{
+  "scene": "P0166",
+  "source": "Build me an escape room game prison escape",
+  "answers": [
+    {
+      "field": "theme",
+      "ask": "Should the prison read as a plain modern facility, or lean into Horror with fog, flicker and decay?",
+      "answer": "Use a plain modern prison facility theme; the prompt calls for a straightforward prison escape, not horror."
+    },
+    {
+      "field": "goal",
+      "ask": "What counts as escaped - reaching the yard, the gate, or leaving the map entirely?",
+      "answer": "Escaping means reaching and passing through the main prison gate to leave the map."
+    }
+  ],
+  "scene_prompt": "Build a 3D escape-room map set in a plain modern prison facility, with the escape route leading through the prison to the main gate at the map boundary. Include prison interior spaces and an exterior yard or approach immediately before the gate.",
+  "blob": "### Genre\nThe dominant genre is Puzzle: an escape-room prison escape whose objective is a physical route through the facility to its outer gate.\n\n### Shape and preset\nUse `puzzle-rooms`, matching the Escape Room preset. Retain its chained-room logic, but adapt the all-indoor expectation because the final approach passes outside through a prison yard before the exit.\n\n### Config requirements\nUse visible `gate-solve` for the main prison gate as the final structural escape barrier. Use visible `building-interior` for the prison’s enterable enclosed rooms and corridors; the route crosses from these interiors into the exterior yard, so this is a genuine outside-to-inside transition cost. No invisible emitters, pickups, or trigger volumes are specified for layout.\n\n### Layout components\nBuild a medium-sized, contiguous prison escape route. The starting portion is a sequence of modern institutional interior spaces: enclosed prison rooms and connecting corridors arranged as a clear forward chain toward the outer side of the facility. Keep the interiors plain, functional, and readable, with concrete or painted block walls, barred partitions where appropriate, secure doors, fluorescent ceiling lighting, and minimal utilitarian fixtures.\n\nThe interior route must discharge into one exterior yard or gate approach immediately before the escape boundary. This yard is a compact open-air transition zone, bounded by prison perimeter walls and fencing, with the main prison gate centered or strongly emphasized at the far map edge. The gate is the sole terminal landmark and visibly reads as the way out of the map. Use corridors and secured thresholds as the route connections; use a final straight or gently guided yard approach to prevent ambiguity about where escape lies. Frame the isometric composition with the interior rooms cut away in the foreground or side, the yard beyond them, and the main gate clearly visible at the boundary.\n\n### Render order\nUse `topdown`: render the connected room-and-corridor plan first and treat it as authoritative, because a sealed or disconnected prison route would make the escape objective unreachable. Dress the resulting valid plan as an isometric prison scene.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by a compact chain of prison interiors plus one exterior yard. Theme is plain modern prison facility: clean institutional concrete, steel bars, security doors, perimeter fencing, and restrained neutral lighting, with no horror fog, decay, or flicker. Use `P3` because traversal crosses between enclosed prison interiors and the exterior yard; no other geometry forces an additional pipeline modifier.",
+  "spec": {
+    "genre": "Puzzle",
+    "secondary": [],
+    "shape": "puzzle-rooms",
+    "preset": "Escape Room",
+    "axes": {},
+    "options": [
+      {
+        "id": "gate-solve",
+        "text": "Main prison gate as the final structural escape barrier at the map boundary.",
+        "visible": true,
+        "count": 1
+      },
+      {
+        "id": "building-interior",
+        "text": "Enterable enclosed prison rooms and connecting corridors, crossing out into the exterior yard before the exit.",
+        "visible": true,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "Isometric frame with cutaway interior rooms in the foreground or side, the exterior yard beyond them, and the main gate clearly visible at the far boundary.",
+      "zones": [
+        {
+          "name": "Prison interior chain",
+          "role": "Starting escape route through enclosed modern institutional rooms and connecting corridors.",
+          "where": "foreground or side, leading toward the outer side of the facility",
+          "size": "medium"
+        },
+        {
+          "name": "Exterior yard / gate approach",
+          "role": "Compact open-air transition zone immediately before the escape boundary.",
+          "where": "beyond the interiors, before the far map edge",
+          "size": "compact"
+        },
+        {
+          "name": "Main prison gate",
+          "role": "Sole terminal landmark and final escape barrier.",
+          "where": "centered or strongly emphasized at the far map edge",
+          "size": ""
+        }
+      ],
+      "paths": [
+        {
+          "from": "Prison interior chain",
+          "to": "Exterior yard / gate approach",
+          "kind": "corridor"
+        },
+        {
+          "from": "Exterior yard / gate approach",
+          "to": "Main prison gate",
+          "kind": "open ground"
+        }
+      ],
+      "terrain": "Plain institutional concrete and painted block surfaces; compact open-air yard bounded by perimeter walls and fencing.",
+      "props": [
+        {
+          "name": "barred partitions",
+          "count": -1,
+          "where": "interior rooms and corridors where appropriate"
+        },
+        {
+          "name": "secure doors",
+          "count": -1,
+          "where": "secured interior thresholds"
+        },
+        {
+          "name": "fluorescent ceiling lighting",
+          "count": -1,
+          "where": "interior rooms and corridors"
+        },
+        {
+          "name": "minimal utilitarian fixtures",
+          "count": -1,
+          "where": "interior spaces"
+        },
+        {
+          "name": "perimeter fencing",
+          "count": -1,
+          "where": "around the exterior yard"
+        }
+      ],
+      "boundary": "Prison perimeter walls and fencing enclose the exterior yard, with the main prison gate as the escape boundary at the far map edge.",
+      "scale_band": "medium",
+      "theme": "Plain modern prison facility; clean institutional concrete, steel bars, security doors, perimeter fencing, and restrained neutral lighting."
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "a sealed or disconnected prison route would make the escape objective unreachable.",
+      "set_piece": false
+    },
+    "route": [
+      "P3"
+    ],
+    "notes": [],
+    "scene_prompt": "Build a 3D escape-room map set in a plain modern prison facility, with the escape route leading through the prison to the main gate at the map boundary. Include prison interior spaces and an exterior yard or approach immediately before the gate."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P0', 'P3'] gives isometric"
+  ]
+}

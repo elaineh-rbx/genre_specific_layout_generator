@@ -1,0 +1,122 @@
+{
+  "scene": "P0054",
+  "source": "Create a multiplayer fighting game. Build a flat city arena map with concrete ground, destructible walls, a few tall buildings, and small tree around the edges",
+  "answers": [
+    {
+      "field": "scale",
+      "ask": "Assumed a block-scale arena of roughly 100-500 studs - how many fighters is the floor meant to hold at once?",
+      "answer": "Support up to 8 fighters at once; keep the arena compact and readable for that player count."
+    },
+    {
+      "field": "goal",
+      "ask": "Is this last-man-standing, round-based, or free-for-all with respawns? The win condition changes whether spawns and lock-in gates are needed.",
+      "answer": "Use a free-for-all with respawns, with no round lock-in gates."
+    },
+    {
+      "field": "shape",
+      "ask": "Are the tall buildings climbable, or purely edge dressing? Making them enterable or walkable adds real generation cost.",
+      "answer": "The tall buildings are purely edge dressing and should not be enterable or climbable."
+    }
+  ],
+  "scene_prompt": "Create a compact, readable block-scale city arena for up to 8 fighters, roughly 100–500 studs across. The arena has a broad flat concrete fighting ground, with destructible walls arranged as cover and boundaries, a few tall non-enterable, non-climbable buildings around the edges, and small trees lining the perimeter.",
+  "blob": "### Genre\nThis is an Action game, specifically a free-for-all fighting arena. The combat purpose makes `arena-flat` the dominant shape; no secondary genre is needed.\n\n### Shape and preset\nUse `arena-flat`, matching the Battlegrounds preset in its flat, bounded shared clash space. Retain the preset’s compact readable arena logic, but replace its generic pillar cover with the requested destructible wall cover; there are no ring-out edges or special lock-in barriers.\n\n### Config requirements\nUse `destructible-cluster` as visible geometry: low-to-mid-height destructible concrete walls are scattered across the fighting floor, creating breakable cover and partial boundary segments. Use `spawn-protected` as both visible geometry and invisible placement: place up to eight respawn points in screened perimeter recesses or behind intact wall segments, out of direct sightlines across the arena. Do not use `arena-lockin`; the arena remains open for free-for-all respawns.\n\n### Layout components\nMake one compact square-to-rectangular city-block arena, roughly within the stated 100–500-stud span and sized clearly for up to 8 fighters. Its dominant central zone is a broad, uninterrupted flat concrete fighting ground, occupying most of the footprint. Arrange destructible walls in several separated clusters across the center and near the sides, leaving wide routes between them and avoiding a maze-like layout. Set the eight protected respawn recesses evenly around the outer edge, each screened from the central floor by a wall turn or building corner.\n\nA few tall buildings form non-enterable, non-climbable edge dressing around the perimeter; use solid facades with no doors, accessible roofs, ladders, or interior openings. Small trees line remaining perimeter gaps between buildings and walls. The outer boundary is defined by the building facades, reinforced wall segments, and a clear hard map edge; keep the center open and legible from an elevated isometric view. Concrete is the continuous ground material throughout.\n\n### Render order\nUse `isometric`: render the authoritative isometric city-block arena first, then project its top-down plan. The topology is simple open combat space rather than a route whose validity determines playability.\n\n### Scale, theme, and pipeline cost\nScale is medium: a compact block-scale arena for eight simultaneous fighters, within roughly 100–500 studs. Theme is clean urban concrete battleground, with sparse trees and destructible city debris. Use `P0`; the flat single-surface arena, facade-only buildings, and breakable walls do not force additional capture passes.",
+  "spec": {
+    "genre": "Action",
+    "secondary": [],
+    "shape": "arena-flat",
+    "preset": "Battlegrounds",
+    "axes": {},
+    "options": [
+      {
+        "id": "destructible-cluster",
+        "text": "Low-to-mid-height destructible concrete walls scattered across the fighting floor, creating breakable cover and partial boundary segments.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "spawn-protected",
+        "text": "Up to eight respawn points in screened perimeter recesses or behind intact wall segments, out of direct sightlines across the arena.",
+        "visible": true,
+        "count": 8
+      }
+    ],
+    "layout": {
+      "composition": "An elevated isometric view holds a compact square-to-rectangular city-block arena: a broad open concrete fighting ground dominates the centre, with separated wall clusters across the centre and near the sides. Buildings, wall segments, trees, and screened respawn recesses ring the outer edge.",
+      "zones": [
+        {
+          "name": "Central fighting ground",
+          "role": "Broad, uninterrupted flat concrete combat floor for free-for-all fighting.",
+          "where": "centre, occupying most of the footprint",
+          "size": "broad; most of the footprint"
+        },
+        {
+          "name": "Destructible wall cover",
+          "role": "Separated breakable cover clusters and partial boundary segments, with wide routes between them.",
+          "where": "across the centre and near the sides",
+          "size": ""
+        },
+        {
+          "name": "Protected respawn recesses",
+          "role": "Screened respawn placement outside direct sightlines across the arena.",
+          "where": "evenly around the outer edge",
+          "size": "8 recesses"
+        },
+        {
+          "name": "Perimeter edge dressing",
+          "role": "Non-enterable, non-climbable facade-only buildings, reinforced wall segments, and small trees define the arena edge.",
+          "where": "around the perimeter",
+          "size": ""
+        }
+      ],
+      "paths": [
+        {
+          "from": "Protected respawn recesses",
+          "to": "Central fighting ground",
+          "kind": "open ground"
+        }
+      ],
+      "terrain": "Continuous flat concrete ground throughout.",
+      "props": [
+        {
+          "name": "Tall non-enterable, non-climbable buildings with solid facades",
+          "count": -1,
+          "where": "around the perimeter"
+        },
+        {
+          "name": "Destructible concrete wall clusters",
+          "count": -1,
+          "where": "across the centre, near the sides, and as partial perimeter segments"
+        },
+        {
+          "name": "Small trees",
+          "count": -1,
+          "where": "remaining perimeter gaps between buildings and walls"
+        }
+      ],
+      "boundary": "Building facades, reinforced wall segments, and a clear hard map edge enclose the arena.",
+      "scale_band": "medium",
+      "theme": "Clean urban concrete battleground with sparse trees and destructible city debris."
+    },
+    "render": {
+      "first": "isometric",
+      "then": "topdown",
+      "authoritative": "isometric",
+      "why": "The topology is simple open combat space rather than a route whose validity determines playability.",
+      "set_piece": false
+    },
+    "route": [
+      "P0"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a compact, readable block-scale city arena for up to 8 fighters, roughly 100–500 studs across. The arena has a broad flat concrete fighting ground, with destructible walls arranged as cover and boundaries, a few tall non-enterable, non-climbable buildings around the edges, and small trees lining the perimeter."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": []
+}

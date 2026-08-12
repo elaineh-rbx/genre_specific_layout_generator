@@ -1,0 +1,117 @@
+{
+  "scene": "P0070",
+  "source": "build me catan. DO NOT ASK ANY QUESTIONS JUST COMPLETE\n\nImplement EXACTLY this specification, do not redesign:\n\n=== spec.md ===\nTitle: Settlers (Catan-style Hex Board Game, Server-Authoritative)\nGenre: Turn-Based Strategy / Resource Management Board Game\nPlatform: Roblox (Luau), single CAS build; 3D hex board + ScreenGui HUD, mobile-friendly\n\n## 1. Global Settings & Architecture\n- Players: up to 4 seats (hot-seat on one client, or multiplayer). Minimum viable: 2-4 players cycling turns on one device.\n- Authority: Server owns the board, dice, all resource/structure state, turn order, robber, and rule validation (prevents illegal placements/rolls). Client renders the board + HUD and forwards intents.\n- Networking: `RemoteEvent` `RollDice`; `RemoteEvent` `PlaceStructure` (args `kind` \"settlement\"|\"city\"|\"road\", `nodeOrEdgeId`); `RemoteEvent` `MoveRobber` (args `tileId`, optional `victimSeat`); `RemoteEvent` `EndTurn`; `RemoteEvent` `StateSync` (server -> client: board, players' resources, structures, turn, phase, lastRoll, robberTile).\n- Camera: `Scriptable`, angled top-down over the board, static.\n\n## 2. Board Model (Hex Grid)\n- Standard 19-tile hex island (radii 1-2-3-2-1 rows: 3,4,5,4,3 tiles).\n- Tile fields: `tileId` 1..19, `resource` (\"wood\"|\"brick\"|\"sheep\"|\"wheat\"|\"ore\"|\"desert\"), `numberToken` (2..12 excluding 7; desert has none), `hasRobber` (bool).\n- Resource distribution: 4 wood, 3 brick, 4 sheep, 4 wheat, 3 ore, 1 desert (18 producing + desert). Number tokens: standard set 2,3,3,4,4,5,5,6,6,8,8,9,9,10,10,11,11,12 assigned to non-desert tiles.\n- Tile colors: wood/forest #2E7D32, brick #C0562B, sheep #9CCC65, wheat #F4C430, ore #78909C, desert #D8C79A.\n- Graph: 54 vertices (settlement/city nodes) and 72 edges (road slots) derived from the hex layout; each vertex stores adjacent tiles (for resource yield) and adjacent vertices (for distance rule); each edge stores its two endpoint vertices.\n\n## 3. Turn Structure & Phases\n- Setup phase: snake-order initial placement - each player places 2 settlements + 2 roads (2nd settlement grants starting resources from adjacent tiles). Enforced before main play.\n- Main turn sequence per active player:\n 1. `roll` - must `RollDice` first (2d6).\n 2. `produce/robber` - resolve the roll (Section 5).\n 3. `build` - optionally place roads/settlements/cities and/or trade.\n 4. `EndTurn` - advance to next seat.\n- `currentSeat` cycles 1→2→...→N→1. Only the active seat may act; the server rejects actions from other seats or out-of-phase actions.\n\n## 4. Dice Roll\n- `RollDice`: server generates two independent d6 (1..6 each), sum 2..12, sets `lastRoll`, animates dice, and applies the outcome (Section 5). Only allowed in `roll` phase for the active player; produces a visible value reflected in state within 5s.\n\n## 5. Resource Production & Robber\n- Non-7 roll: every tile whose `numberToken == roll` and does NOT have the robber produces its resource for each settlement (×1) or city (×2) on its adjacent vertices; resources added to the owning players. This can award resources to multiple players in one roll.\n- Roll of 7 (robber): NO normal production. Instead:\n 1. Every player with > 7 resource cards discards half (rounded down).\n 2. The active player must `MoveRobber` to a different tile; that tile is blocked (produces nothing while robbed).\n 3. The active player steals 1 random resource from a player with a structure adjacent to the new robber tile (if any).\n- Robber state (`robberTile`) is authoritative and visualized by a robber pawn on the tile.\n\n## 6. Building Costs & Rules\n- Costs: Road = 1 wood + 1 brick; Settlement = 1 wood + 1 brick + 1 sheep + 1 wheat; City = 2 wheat + 3 ore (upgrades an existing settlement).\n- On `PlaceStructure`, server validates and rejects if any fail:\n - Sufficient resources for the cost (else reject: insufficient resources).\n - Settlement: target vertex empty AND satisfies the distance rule (no settlement/city on any directly adjacent vertex) AND (after setup) connected to the player's own road.\n - Road: target edge empty AND connected to the player's own existing road/settlement/city.\n - City: target vertex currently holds the player's own settlement (upgrades it).\n- On success: deduct cost, register the structure to the seat, broadcast StateSync. Points: settlement = 1 VP, city = 2 VP. First to 10 VP wins.\n\n## 7. User Interface (UI) & HUD - ScreenGui layout\nRoot: `ScreenGui` (IgnoreGuiInset=true).\n- Top Center (Turn): \"TurnLabel\" \"Player 2's Turn\" in that player's color, TextSize 30 `GothamBold`, anchor (0.5,0)+(0,12).\n- Top Left (Last Roll): \"RollLabel\" showing two dice faces + sum, TextSize 28.\n- Bottom (Resource Bar `ResourceBar`): full-width, height 96px, #1E1230 85%; 5 resource counters (Wood/Brick/Sheep/Wheat/Ore) with icon + count via `UIListLayout`, for the ACTIVE player. Counts update live.\n- Bottom Right (Action buttons): \"RollButton\" (visible in roll phase), \"BuildSettlement\"/\"BuildRoad\"/\"BuildCity\" toggle buttons (build phase), \"EndTurnButton\". Laid out in a `UIListLayout`; if crowded, a `ScrollingFrame` keeps every action reachable.\n- Build mode: selecting \"BuildSettlement/Road/City\" highlights all LEGAL vertices/edges (translucent #FFD93D markers); tapping a marker confirms placement.\n- Victory Point tracker: small per-player VP chips top-right.\n- Game Over overlay: \"Player N Wins!\" + Restart.\n- Layout safety: turn/roll in top 72px, resource bar + actions in bottom ~150px, board in the middle; scroll ensures no counter/action clipped or off-screen.\n\n## 8. Input & Screen-to-Board Mapping\n- Placement uses discrete legal-target markers: in build mode the server sends the set of legal vertex/edge ids; the client shows a marker at each. A tap raycasts (`Camera:ScreenPointToRay`) and selects the nearest legal marker within 3 studs of the hit → `PlaceStructure(kind, id)`. Because each vertex/edge has a distinct marker and the ray uses the exact tapped pixel, the structure is placed at the tapped board location (intended vertex/edge), not a neighbor.\n- Dice: tapping RollButton (a discrete `TextButton`) fires `RollDice`.\n- Server re-validates every placement (Section 6) regardless of client markers, so illegal taps are rejected.\n\n## 9. Audio\n- `dice_roll.mp3` (0.5); `build.mp3` (0.5) on placement; `resource_gain.mp3` (0.4) on production; `robber.mp3` (0.5) on a 7; `steal.mp3` (0.4); `turn_change.mp3` (0.3); `victory.mp3` (0.6). Client-side.\n\n## 10. Visual Style & Polish\n- Palette: tiles per Section 2; player colors P1 #E74C3C, P2 #3498DB, P3 #F1C40F, P4 #2ECC71; legal-target markers #FFD93D; robber pawn #2C2C2C.\n- Dice: 3D tumble animation settling on the rolled faces (0.6s).\n- Settlement/city meshes in player color; roads as colored bars along edges.\n- Number tokens: circular tiles with the number; 6 and 8 rendered in red (high-probability), others black.\n- Resource gain: floating \"+1 wood\" text over producing vertices.\n\n## 11. Roblox Feasibility Notes\n- `ServerScriptService/CatanServer` holds the board graph (precomputed 19 tiles / 54 vertices / 72 edges adjacency), rules, and turn state; `StarterPlayerScripts/CatanClient` renders the board and HUD and does ScreenPointToRay placement. Turn-based → StateSync only on changes. Board graph is precomputed data (no runtime geometry solving). Scope (single island, core rules, no trading UI beyond bank optional) is realistic for one CAS build. Discrete markers make placement mobile-friendly.\n\n## 12. Acceptance Criteria (maps 1:1 to test_plan core + advanced items)\n- **AC-play_starts (core):** On Play, within 10s a hex board with resource tiles + number tokens AND a player/resource HUD are visible with no startup errors. (Sections 2, 7.)\n- **AC-roll_dice (core):** A dice roll (2d6) produces a visible value and updates game state within 5s (only in roll phase for the active player). (Sections 3, 4.)\n- **AC-place_settlement_road (core):** A settlement and/or road is placed at a valid vertex/edge and registered in state; invalid placements are rejected. (Sections 6, 8.)\n- **AC-resources_and_turns (advanced):** After a roll, resources are awarded to players by adjacent structures on matching tiles, and EndTurn advances currentSeat to a different player. (Sections 3, 5.)\n- **AC-robber_on_seven (advanced):** Rolling a 7 triggers the robber (no normal production; over-limit discards; robber moves/blocks a tile; steal) rather than distributing resources. (Section 5.)\n- **AC-building_costs_and_rules (advanced):** Building deducts the correct cost AND illegal placements (insufficient resources or violating adjacency/distance/connectivity) are rejected. (Section 6.)\n- **AC-input_mapping (advanced):** Discrete legal-target markers + exact-pixel raycast mean a settlement/road is placed at the tapped vertex/edge, not a neighbor. (Section 8.)\n- **AC-no_runtime_errors (core):** Server validates seat/phase/cost/adjacency and uses a precomputed bounds-safe graph; no red console output. (Sections 3, 6, 11.)\n- **AC-ui_layout_quality (polish):** Turn/roll (top 72px), resource bar + actions (bottom ~150px) never overlap and stay on-screen; scroll prevents clipping. (Section 7.)\n- **AC-gameplay_clarity (polish):** Whose turn it is, the active player's resources, and available actions (roll/build/end) are clear from the HUD with no wall-of-text. (Section 7.)\n\n\n=== plan.md ===\n# Settlers (Catan-style)\n\nA server-authoritative hex board game: roll 2d6 to produce resources, build roads/settlements/cities under cost and adjacency rules, handle the robber on a 7, and cycle turns toward 10 victory points.\n\n## Milestones\n1. **Board & Networking** - Precomputed 19-tile hex board with 54 vertices / 72 edges, resource/token distribution, and RemoteEvents (RollDice, PlaceStructure, MoveRobber, EndTurn, StateSync). Maps to spec §1, §2.\n2. **Turn Structure & Dice** - Setup snake placement, roll/produce/build/end phases, active-seat enforcement, 2d6 roll. Maps to spec §3, §4.\n3. **Production & Robber** - Resource yield by number token and adjacent structures, 7-roll robber (discard/move/steal). Maps to spec §5.\n4. **Building Rules** - Costs and validation for roads/settlements/cities (resources, distance, connectivity, upgrade), VP tracking and win at 10. Maps to spec §6.\n5. **HUD & Placement Input** - Turn/roll HUD, active-player resource bar, action buttons, legal-target markers, raycast placement mapping. Maps to spec §7, §8.\n6. **Audio & Polish** - Dice/build/resource/robber/turn/victory SFX, 3D dice tumble, colored structures, number-token styling, layout QA and acceptance pass. Maps to spec §9, §10, §12.\n\n\n=== tasks.json ===\n[\n {\n \"category\": \"Gameplay\",\n \"items\": [\n \"Precompute board graph: 19 tiles, 54 vertices, 72 edges with adjacency (spec §2)\",\n \"Implement resource + number-token distribution (4/3/4/4/3 + desert, standard tokens) (spec §2)\",\n \"Create RemoteEvents RollDice, PlaceStructure, MoveRobber, EndTurn, StateSync (spec §1)\",\n \"Implement setup snake placement (2 settlements + 2 roads, 2nd grants resources) (spec §3)\",\n \"Implement roll/produce/build/end phase sequence with active-seat enforcement (spec §3)\",\n \"Implement 2d6 RollDice producing a visible value in state (spec §4)\",\n \"Implement resource production by token match and adjacent settlements(x1)/cities(x2) (spec §5)\",\n \"Implement 7-roll robber: discard-half, move robber, steal from adjacent player (spec §5)\",\n \"Implement building costs and validation (resources, distance, connectivity, city upgrade) (spec §6)\",\n \"Implement VP tracking (settlement 1, city 2) and win at 10 VP (spec §6)\"\n ]\n },\n {\n \"category\": \"UI\",\n \"items\": [\n \"Add TurnLabel (top-center, player color) and RollLabel (top-left dice + sum) (spec §7)\",\n \"Build bottom ResourceBar with 5 resource counters for the active player (spec §7)\",\n \"Add Roll / Build (settlement/road/city) / End Turn action buttons in a scrollable list (spec §7)\",\n \"Implement build mode legal-target markers on vertices/edges (spec §7, §8)\",\n \"Add per-player VP chips and Game Over overlay with Restart (spec §6, §7)\",\n \"Implement raycast placement selecting nearest legal marker to tapped pixel (spec §8)\"\n ]\n },\n {\n \"category\": \"Audio\",\n \"items\": [\n \"Add dice roll, build, resource gain, robber, steal, turn change, and victory sounds (spec §9)\"\n ]\n },\n {\n \"category\": \"Assets\",\n \"items\": [\n \"Create hex tile meshes/materials per resource and desert (spec §2, §10)\",\n \"Create number-token art (6/8 red), robber pawn, dice, and player-colored structure meshes (spec §10)\",\n \"Create resource icons and legal-target markers (spec §7, §10)\",\n \"Source SFX assets for dice/build/robber/turn/victory (spec §9)\"\n ]\n },\n {\n \"category\": \"Polish\",\n \"items\": [\n \"3D dice tumble animation settling on rolled faces (spec §10)\",\n \"Floating '+1 resource' text over producing vertices (spec §10)\",\n \"Robber pawn move animation and turn-color transitions (spec §5, §10)\"\n ]\n },\n {\n \"category\": \"Testing\",\n \"items\": [\n \"Verify hex board with tiles/tokens + player/resource HUD within 10s (AC-play_starts)\",\n \"Verify a dice roll produces a visible value reflected in state (AC-roll_dice)\",\n \"Verify valid settlement/road placement registers; invalid rejected (AC-place_settlement_road)\",\n \"Verify roll awards resources by adjacency and turn advances players (AC-resources_and_turns)\",\n \"Force a 7 and verify robber mechanic instead of production (AC-robber_on_seven)\",\n \"Verify cost deduction and rejection of illegal placements (AC-building_costs_and_rules)\",\n \"Tap a vertex/edge by pixel and confirm placement at that location (AC-input_mapping)\",\n \"Monitor console for zero script errors (AC-no_runtime_errors)\",\n \"Layout QA: turn/roll/resource/actions no overlap or off-screen (AC-ui_layout_quality)\"\n ]\n }\n]",
+  "answers": [
+    {
+      "field": "scale",
+      "ask": "How big should the physical board be in studs - a table-sized board or a walkable arena-sized one?",
+      "answer": "Use a table-sized board; this is a static, top-down board game and does not need a walkable arena."
+    }
+  ],
+  "scene_prompt": "Create a static, table-sized 3D hex-board game map viewed by a fixed angled top-down camera. Arrange a standard 19-tile hexagonal island in five staggered rows of 3, 4, 5, 4, and 3 terrain hexes, with forest, brick-clay, pasture, wheat field, ore, and one central or near-central desert tile; each producing hex has a circular numbered token, with 6 and 8 tokens red. Place a dark robber pawn on the desert at the start. Surround the board edges with 54 settlement/city vertex positions and 72 road slots, visibly integrated along tile corners and borders. Show player-colored settlements, cities, and road bars when built, plus a pair of 3D dice beside the board. Keep the board unobstructed in the middle of the screen, with space around it for a top turn-and-roll HUD and bottom resource/action controls.",
+  "blob": "### Genre\nDominant genre: Strategy, specifically a turn-based tabletop resource-management board game. The board-game rules and turn structure establish this rather than a world-exploration genre.\n\n### Shape and preset\nUse `board-grid`, matching the Board & Card Games preset. Here it is a compact, table-sized hex board rather than a rectangular chess-like grid; the preset remains recognisable because the board is a static play surface viewed from above.\n\n### Config requirements\nUse `tile-grid` as visible geometry: the board surface is a tightly fitted array of terrain hexes with clearly readable individual spaces. No other configuration options are required. The robber, dice, number tokens, and future player pieces are visible props, not invisible gameplay markers for the render.\n\n### Layout components\nBuild one tabletop-scale board zone centered in frame, with a standard 19-hex island arranged in five staggered rows of 3, 4, 5, 4, and 3 tiles. Use forest green wood hexes, red-brown brick/clay hexes, light-green pasture hexes, golden wheat hexes, blue-gray ore hexes, and exactly one sandy desert hex, central or near-central. Place circular number tokens on all producing hexes; tokens numbered 6 and 8 are red and all other values are black. Put a single dark charcoal robber pawn on the desert at the start.\n\nIntegrate exactly 54 settlement/city vertex positions at shared hex corners and exactly 72 road slots along shared and outer hex edges. Make these positions legible as small corner pads and narrow edge channels without obscuring tile art. Include a few illustrative player-colored settlements, taller cities, and thin road bars in red, blue, yellow, and green, while leaving most vertices and edges visibly open. Place a pair of chunky 3D dice beside the board, outside its hex perimeter. The board is a single flat surface on a neutral tabletop or clean presentation ground, with an open boundary around it. Reserve clear empty upper screen space for a turn-and-roll HUD and a broad lower margin for resource and action controls; do not render the UI itself. Compose the entire board fully in view from a fixed angled top-down perspective.\n\n### Render order\nUse `isometric`: render the angled top-down board view first and derive the plan from it, since this is a static display set rather than a topology players traverse.\n\n### Scale, theme, and pipeline cost\nScale band: small, driven by the author’s table-sized, non-walkable board requirement. Theme: polished colorful tabletop strategy game, clean stylized 3D pieces and readable terrain. Modifier: `SET`, because this is real board geometry that nobody walks on; skip traversal and jump-gap checks.",
+  "spec": {
+    "genre": "Strategy",
+    "secondary": [],
+    "shape": "board-grid",
+    "preset": "Board & Card Games",
+    "axes": {},
+    "options": [
+      {
+        "id": "tile-grid",
+        "text": "The board surface is a tightly fitted array of terrain hexes with clearly readable individual spaces.",
+        "visible": true,
+        "count": 19
+      }
+    ],
+    "layout": {
+      "composition": "The entire compact hex board is centered and fully visible in a fixed angled top-down frame, with clear empty upper screen space reserved for a turn-and-roll HUD and a broad lower margin reserved for resource and action controls. A pair of dice sits beside the board outside its hex perimeter.",
+      "zones": [
+        {
+          "name": "tabletop hex board",
+          "role": "Static turn-based tabletop resource-management board-game play surface.",
+          "where": "centre of frame",
+          "size": "compact, table-sized"
+        }
+      ],
+      "paths": [],
+      "terrain": "A single flat hexagonal island on a neutral tabletop or clean presentation ground: forest green wood hexes, red-brown brick/clay hexes, light-green pasture hexes, golden wheat hexes, blue-gray ore hexes, and exactly one sandy desert hex central or near-central.",
+      "props": [
+        {
+          "name": "terrain hex tiles",
+          "count": 19,
+          "where": "five staggered board rows of 3, 4, 5, 4, and 3 tiles"
+        },
+        {
+          "name": "sandy desert hex",
+          "count": 1,
+          "where": "central or near-central on the board"
+        },
+        {
+          "name": "circular number tokens",
+          "count": -1,
+          "where": "on all producing hexes; 6 and 8 are red and all other values are black"
+        },
+        {
+          "name": "dark charcoal robber pawn",
+          "count": 1,
+          "where": "on the desert at the start"
+        },
+        {
+          "name": "settlement/city vertex positions",
+          "count": 54,
+          "where": "shared hex corners around the board, shown as small corner pads"
+        },
+        {
+          "name": "road slots",
+          "count": 72,
+          "where": "shared and outer hex edges, shown as narrow edge channels"
+        },
+        {
+          "name": "illustrative player-colored settlements",
+          "count": -1,
+          "where": "a few open vertex positions, in red, blue, yellow, and green"
+        },
+        {
+          "name": "illustrative taller cities",
+          "count": -1,
+          "where": "a few open vertex positions, in red, blue, yellow, and green"
+        },
+        {
+          "name": "thin road bars",
+          "count": -1,
+          "where": "a few road slots, in red, blue, yellow, and green"
+        },
+        {
+          "name": "chunky 3D dice",
+          "count": 2,
+          "where": "beside the board outside its hex perimeter"
+        }
+      ],
+      "boundary": "Open boundary around the board on the neutral tabletop or presentation ground.",
+      "scale_band": "small",
+      "theme": "polished colorful tabletop strategy game, clean stylized 3D pieces and readable terrain"
+    },
+    "render": {
+      "first": "isometric",
+      "then": "topdown",
+      "authoritative": "isometric",
+      "why": "this is a static display set rather than a topology players traverse.",
+      "set_piece": true
+    },
+    "route": [
+      "SET"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a static, table-sized 3D hex-board game map viewed by a fixed angled top-down camera. Arrange a standard 19-tile hexagonal island in five staggered rows of 3, 4, 5, 4, and 3 terrain hexes, with forest, brick-clay, pasture, wheat field, ore, and one central or near-central desert tile; each producing hex has a circular numbered token, with 6 and 8 tokens red. Place a dark robber pawn on the desert at the start. Surround the board edges with 54 settlement/city vertex positions and 72 road slots, visibly integrated along tile corners and borders. Show player-colored settlements, cities, and road bars when built, plus a pair of 3D dice beside the board. Keep the board unobstructed in the middle of the screen, with space around it for a top turn-and-roll HUD and bottom resource/action controls."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": []
+}

@@ -1,0 +1,106 @@
+{
+  "scene": "P0604",
+  "source": "Let's use generate_mesh and I'm going to mess around with generate_primitive for everything that we build in this game. Let's also use cube to generate objects.\n\nI want to make car in a city map that I can drive around",
+  "answers": [
+    {
+      "field": "theme",
+      "ask": "You said city - should it read as present-day asphalt and concrete, or something more stylized?",
+      "answer": "Make it a present-day city with asphalt roads, concrete buildings, and simple cube-based props."
+    },
+    {
+      "field": "goal",
+      "ask": "Is there anything to do while driving - deliveries, races, checkpoints - or is free roaming the whole point?",
+      "answer": "Free roaming is the whole point; just let the player drive the car around the city map."
+    }
+  ],
+  "scene_prompt": "Create a 3D present-day city map for free driving, with an open street grid of asphalt roads between concrete buildings. Place a drivable car on the streets, and use simple cube-based props throughout the city.",
+  "blob": "## Genre\nSimulation is dominant: this is free-roam vehicle operation with no race, finish, or task loop. Use the `world-shared` shape, matching the Vehicle Sim preset.\n\n## Shape and preset\n`world-shared` is one contiguous present-day city map in which the street network is the shared driving ground. The Vehicle Sim preset remains recognisable and is used without alteration.\n\n## Config requirements\nUse visible `path-road-vehicle` for the open asphalt street grid, wide and clear enough for the car to turn through intersections between blocks. Use visible `resource-shared` only as its shared-world spatial implication: the city is common open ground rather than isolated player plots; do not add an extraction field because none was requested. No other options apply. The car, roads, buildings, and props are visible geometry; no invisible markers, triggers, pickups, or emitters are needed.\n\n## Layout components\nBuild a single contiguous city zone, medium-to-large in footprint, organized as an open orthogonal grid of asphalt roads. Put several broad intersections and straight street segments through the center, with turning space at corners and a continuous route around each block. Concrete building masses line the blocks on both sides of the roads, varied in footprint and height but leaving the streets unobstructed. Place one drivable car on a central street. Dress sidewalks and road edges with simple cube-based urban props such as blocky bollards, benches, planters, streetlights, and barriers, keeping them out of vehicle lanes. Use flat paved ground with no water or relief. The city boundary is implied by outer building rows and the edge of the street grid rather than a hard wall. Frame the composition from an elevated three-quarter isometric view, with the central road junction and car readable in the foreground and city blocks extending behind.\n\n## Render order\nUse `topdown`: the connected road grid and turning circulation must remain continuously driveable, so a valid plan should lead before the isometric dressing.\n\n## Scale, theme, and pipeline cost\nScale is large, driven by a city-wide drivable street grid rather than a single parking lot. Theme is present-day asphalt and concrete, deliberately simple and cube-built. Use `P0`; this is one flat, contiguous exterior surface with no forced extra capture path.",
+  "spec": {
+    "genre": "Simulation",
+    "secondary": [],
+    "shape": "world-shared",
+    "preset": "Vehicle Sim",
+    "axes": {},
+    "options": [
+      {
+        "id": "path-road-vehicle",
+        "text": "Open asphalt street grid, wide and clear enough for the car to turn through intersections between blocks.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "resource-shared",
+        "text": "The city is common open ground rather than isolated player plots; do not add an extraction field.",
+        "visible": true,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "Elevated three-quarter isometric view, with the central road junction and car readable in the foreground and city blocks extending behind.",
+      "zones": [
+        {
+          "name": "Shared city street grid",
+          "role": "Free-roam vehicle operation across a common contiguous city map.",
+          "where": "Entire map, centered on the main road junction.",
+          "size": "Medium-to-large footprint"
+        }
+      ],
+      "paths": [
+        {
+          "from": "Central street junction",
+          "to": "City blocks",
+          "kind": "road"
+        },
+        {
+          "from": "Street segment",
+          "to": "Street segment",
+          "kind": "road"
+        }
+      ],
+      "terrain": "Flat paved ground with asphalt roads and no water or relief.",
+      "props": [
+        {
+          "name": "Drivable car",
+          "count": 1,
+          "where": "On a central street"
+        },
+        {
+          "name": "Concrete building masses",
+          "count": -1,
+          "where": "Lining blocks on both sides of the roads"
+        },
+        {
+          "name": "Blocky bollards, benches, planters, streetlights, and barriers",
+          "count": -1,
+          "where": "Sidewalks and road edges, kept out of vehicle lanes"
+        }
+      ],
+      "boundary": "Implied by outer building rows and the edge of the street grid rather than a hard wall.",
+      "scale_band": "large",
+      "theme": "Present-day asphalt and concrete, deliberately simple and cube-built."
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "The connected road grid and turning circulation must remain continuously driveable.",
+      "set_piece": false
+    },
+    "route": [
+      "P0"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a 3D present-day city map for free driving, with an open street grid of asphalt roads between concrete buildings. Place a drivable car on the streets, and use simple cube-based props throughout the city."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P0'] gives isometric"
+  ]
+}

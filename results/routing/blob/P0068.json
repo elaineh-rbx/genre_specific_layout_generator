@@ -1,0 +1,94 @@
+{
+  "scene": "P0068",
+  "source": "# Prompt: Real-Time Settlers-style Roblox Game\n\nBuild a Roblox multiplayer strategy game in Luau, inspired by Settlers of Catan, with three core rule changes from the original: no dice, real-time play instead of turns, and no resource storage caps. Below is the full spec.\n\n## Core Concept\nA hex-grid resource/settlement game where players build roads, settlements, and cities using resources that accumulate automatically over time from hexes they're adjacent to. There are no turns and no dice - the game is a continuous, real-time economy race.\n\n## Rule Changes & Why They Matter for Implementation\n\n**1. No dice - production comes from hex \"tiers\"**\n- Each hex has a fixed production rate instead of a dice-roll number token.\n- Make tiers visually intuitive without needing a legend: e.g., hex size/height, glow intensity, or particle density scales with output rate. A player should be able to glance at the board and know a taller/brighter hex produces more, without reading a number.\n- Suggest 3-4 tiers per resource type (e.g., Low/Medium/High/Rare), with rare tiers noticeably rarer on the board.\n- Production should still respect Catan's adjacency rule: settlements/cities collect from all touching hexes.\n\n**2. Real-time, not turn-based**\n- Server runs a continuous tick (e.g., every 1-2 seconds) that adds resources to each player based on their settlements'/cities' adjacent hex production rates.\n- Players can build/trade/act at any moment, gated only by whether they currently hold enough resources - no \"your turn\" state at all.\n- This means the server needs a persistent per-player resource ledger updated on a loop, not an event tied to a turn order.\n- Building costs stay classic Catan (road, settlement, city, dev card) but purchases fire instantly on click if affordable - no queue.\n\n**3. No storage limit, but a purchasable Robber**\n- Remove Catan's 7-card discard rule entirely - players can bank unlimited resources.\n- Since there's no scarcity pressure from hand limits, the Robber becomes a purchasable action/unit (costs a resource bundle) rather than a random dice-triggered event.\n- When bought, the Robber lets the owner move it onto an opponent's adjacent hex and steal a chunk (flat amount or % of stockpile - pick one and make it feel worth the cost) from that opponent, then it's used up or has a cooldown before it can be redeployed.\n- Balance question to make explicit in the build: should stealing scale with the target's stockpile (rich-get-punished) or be flat (predictable, less snowball-breaking)? Implement flat-with-cooldown first, leave % scaling as a config toggle.\n\n## Technical Architecture (Roblox-specific)\n- **Server-authoritative economy**: all resource balances, production ticks, and build validation live server-side. Client only sends \"build request\" RemoteEvents; server checks affordability and board rules before committing.\n- **Hex grid**: build as a data-driven grid (axial or offset coordinates) with each hex's tier/resource type set at map generation, not hardcoded per-map.\n- **UI**: a persistent resource HUD that updates live (numbers ticking up) so the real-time production feels visible and satisfying, not just a background number change.\n- **Robber UI**: clear affordance for \"buy robber,\" then a targeting mode to pick which opponent hex/settlement to steal from.\n- **Session model**: since there's no turn order, define a match length or win condition (e.g., first to N victory points, or a timed match) so games actually end.\n\n## Ask for the build, in order\n1. Hex grid generation with tiered resource production (with the visual intuitiveness requirement above).\n2. Server-side real-time production loop + per-player resource ledger.\n3. Build system (roads/settlements/cities) with instant server-validated purchases.\n4. Robber as a purchasable, targetable steal action with cooldown.\n5. Basic HUD showing live resource counts and board state.\n6. Win condition and match-end handling.\n\nStart with a single-player-visible prototype (bots not required yet) to validate the real-time economy feel before wiring up full multiplayer trading.",
+  "answers": [
+    {
+      "field": "theme",
+      "ask": "No visual theme was stated - should the board read as a natural island of terrain, a stylized tabletop with wooden pieces, or something else?",
+      "answer": "Use a stylized tabletop board with clear, colorful terrain hexes and simple wooden-style settlement, city, and road pieces; readability of resource tiers is the priority."
+    },
+    {
+      "field": "scale",
+      "ask": "How many hexes across is the board, and do players stand on it or view it from above?",
+      "answer": "Start with a small board about 5 hexes across, viewed from an elevated top-down/isometric camera rather than having players stand on the board."
+    }
+  ],
+  "scene_prompt": "Create a small stylized tabletop strategy board, about 5 hexes across, viewed from an elevated top-down/isometric camera. Arrange colorful terrain hexes in a compact hexagonal grid, with distinct resource terrain types and 3–4 visibly graded production tiers expressed through increasing hex height, brightness, glow, or particle density; high and rare tier hexes are sparse. Place buildable junctions at hex corners and routes along shared edges for simple wooden-style settlement, city, and road pieces. Keep the board clean and readable as a single-player-visible prototype, with a neutral tabletop surround framing the terrain.",
+  "blob": "### Genre\nThe dominant genre is Strategy, established by the real-time resource economy, settlement construction, and board-based territorial play. The mechanics classify it; the layout remains a readable tabletop board.\n\n### Shape and preset\nUse `board-grid`, matching the Board & Card Games preset. This is a compact hexagonal tabletop rather than a square checkerboard: the board itself is the complete playable surface. The preset remains recognisable, with its tile-based play field retained; no additional preset options are implied.\n\n### Config requirements\nUse `tile-grid` as visible geometry: a tightly packed hex grid with clearly bounded, colorful terrain tiles. No invisible layout options are required. Tier readability is rendered directly into the hex geometry through 3–4 stepped height and emissive/particle grades, rather than through labels or UI.\n\n### Layout components\nCenter a small, approximately 5-hex-across compact hexagonal board on a neutral tabletop surround. Fill the board with interlocking terrain hexes in distinct resource-terrain colors; distribute low, medium, high, and rare production tiers, making high and rare tiles visibly sparse. Each tier increases through a combination of raised hex height, stronger brightness or glow, and denser subtle particles, while preserving clean tile boundaries.\n\nAt every shared terrain corner, provide a small clear buildable junction sized for a simple wooden settlement or city piece. Trace each shared hex edge as a narrow, legible route for wooden road pieces, producing a connected lattice without cluttering the terrain faces. Keep all pieces low-profile and color-neutral wood so terrain types and tier differences remain the visual priority. The boundary is the outer edge of the compact hex cluster, surrounded on all sides by a broad, flat neutral tabletop with no extra scenery. Compose the board symmetrically and centrally, with the entire outer hex perimeter visible in frame and the raised rare tiles readable at a glance.\n\n### Render order\nUse `isometric`: render the elevated isometric tabletop view first and derive the top-down plan from it. The board is a simple fixed set, so visual readability of height-based production tiers is authoritative rather than traversal topology.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the stated approximately 5-hex-across prototype board. Theme is a clean stylized tabletop strategy game: colorful terrain hexes, restrained glow, and simple wooden game pieces. Use `SET`, because this is real tabletop geometry viewed from above rather than a space players traverse; skip traversal and jump-gap checks.",
+  "spec": {
+    "genre": "Strategy",
+    "secondary": [],
+    "shape": "board-grid",
+    "preset": "Board & Card Games",
+    "axes": {},
+    "options": [
+      {
+        "id": "tile-grid",
+        "text": "A tightly packed compact hex grid with clearly bounded, colorful terrain tiles forming the complete playable tabletop surface.",
+        "visible": true,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "A small compact hexagonal board is centered symmetrically on a broad neutral tabletop surround, with the entire outer hex perimeter visible in frame and raised rare tiles readable at a glance.",
+      "zones": [
+        {
+          "name": "Compact hex board",
+          "role": "Complete playable tabletop surface for board-based territorial play, resource terrain, and wooden pieces.",
+          "where": "centre",
+          "size": "approximately 5 hexes across"
+        },
+        {
+          "name": "Neutral tabletop surround",
+          "role": "Broad flat framing surface with no extra scenery.",
+          "where": "surrounding all sides of the board",
+          "size": "broad"
+        }
+      ],
+      "paths": [
+        {
+          "from": "shared hex edge",
+          "to": "shared hex edge",
+          "kind": "road"
+        }
+      ],
+      "terrain": "Interlocking resource-terrain hexes in distinct colorful terrain types. Low, medium, high, and rare production tiers use 3–4 stepped height and emissive or particle grades; higher tiers have stronger brightness or glow and denser subtle particles, while high and rare tiles remain sparse.",
+      "props": [
+        {
+          "name": "simple wooden settlement or city piece",
+          "count": -1,
+          "where": "small clear buildable junctions at every shared terrain corner"
+        },
+        {
+          "name": "wooden road piece",
+          "count": -1,
+          "where": "narrow legible routes traced along shared hex edges"
+        }
+      ],
+      "boundary": "The outer edge of the compact hex cluster, surrounded on all sides by a broad flat neutral tabletop.",
+      "scale_band": "small",
+      "theme": "Clean stylized tabletop strategy game with colorful terrain hexes, restrained glow, and simple color-neutral wooden game pieces."
+    },
+    "render": {
+      "first": "isometric",
+      "then": "topdown",
+      "authoritative": "isometric",
+      "why": "Visual readability of height-based production tiers is authoritative rather than traversal topology.",
+      "set_piece": true
+    },
+    "route": [
+      "SET"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a small stylized tabletop strategy board, about 5 hexes across, viewed from an elevated top-down/isometric camera. Arrange colorful terrain hexes in a compact hexagonal grid, with distinct resource terrain types and 3–4 visibly graded production tiers expressed through increasing hex height, brightness, glow, or particle density; high and rare tier hexes are sparse. Place buildable junctions at hex corners and routes along shared edges for simple wooden-style settlement, city, and road pieces. Keep the board clean and readable as a single-player-visible prototype, with a neutral tabletop surround framing the terrain."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": []
+}

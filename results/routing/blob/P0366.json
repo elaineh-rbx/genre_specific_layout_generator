@@ -1,0 +1,132 @@
+{
+  "scene": "P0366",
+  "source": "A 3D racing game that drives through different environments. The driving conditions should change depending on the environment.",
+  "answers": [
+    {
+      "field": "shape",
+      "ask": "Is this laps around a closed circuit, or a point-to-point run that ends somewhere different from where it started?",
+      "answer": "Use a point-to-point run, ending somewhere different from where it starts, so the route can move through the changing environments."
+    },
+    {
+      "field": "theme",
+      "ask": "Which environments do you want - for example city, desert, snow, jungle - and how many?",
+      "answer": "Use three environments: city, desert, and snow. Each should visibly alter driving conditions, such as normal pavement in the city, loose sand in the desert, and slippery snow/ice in the snow area."
+    }
+  ],
+  "scene_prompt": "Create a 3D point-to-point racing map with one continuous route traveling through three distinct environments. The course begins in a city on normal paved roads, transitions into a desert section with loose sand terrain, and finishes in a snow-covered area with icy road surfaces; the endpoint is separate from the starting area.",
+  "blob": "### Genre\nThe dominant genre is Racing: the original request centers on a 3D drive from a start to a separate endpoint. There is no secondary genre.\n\n### Shape and preset\nUse `route-point-to-point`, a single continuous vehicle route that leaves the city, crosses desert, and ends in snow country without returning to its origin. Match the Sprint / Drag preset for its start-to-finish course structure, while replacing its uniform straight-run character with a long environmental progression; the route remains point-to-point as the prompt requires.\n\n### Config requirements\nUse `startpoint-line` as visible start-line geometry and an invisible race-start detection position at the city edge. Use `lane-corridor` as visible road edges, painted markings where appropriate, and clearly readable route boundaries through all three environments. Use `trigger-finish` as a visible finish gate or line plus its invisible terminal detection volume in the snow area. Do not add unrequested hazards, checkpoints, stands, or terrain-relief options.\n\n### Layout components\nBuild three sequentially connected zones of roughly comparable route importance. The opening city zone occupies the near end of the course: a paved urban road begins at the start line and runs between city buildings, curbs, and street-scale roadside props. It transitions directly into a broad desert zone in the middle, where the same continuous road becomes loose-sand driving ground, bordered by open sand terrain and sparse desert forms. The final snow zone occupies the far end: snow-covered ground encloses an icy road surface that leads to the distinct finish gate. Keep the endpoint visibly and spatially separate from the city start. The route must be one unbroken, vehicle-width path with readable edge treatment at every environmental transition. Frame the course diagonally from the city foreground through desert midground toward the snowy finish in the distance; use the changing ground materials as the primary visual progression. The boundary is defined by the road edges and surrounding environment rather than a stadium wall.\n\n### Render order\nUse `authored_plan`: a point-to-point racing route must be valid by construction, continuous, and unambiguous from start to finish before it is dressed with the three environments.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by one continuous route spanning three fully distinct environments. Theme: stylized 3D environmental road race, progressing from urban pavement to sandy desert to icy snowfield. Apply `P6` because the authored route must remain a connected, playable start-to-finish course. No other pipeline modifier is forced.",
+  "spec": {
+    "genre": "Racing",
+    "secondary": [],
+    "shape": "route-point-to-point",
+    "preset": "Sprint / Drag",
+    "axes": {},
+    "options": [
+      {
+        "id": "startpoint-line",
+        "text": "Visible start-line geometry and an invisible race-start detection position at the city edge.",
+        "visible": true,
+        "count": 1
+      },
+      {
+        "id": "lane-corridor",
+        "text": "Visible road edges, painted markings where appropriate, and clearly readable route boundaries through all three environments.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "trigger-finish",
+        "text": "A visible finish gate or line plus its invisible terminal detection volume in the snow area.",
+        "visible": true,
+        "count": 1
+      }
+    ],
+    "layout": {
+      "composition": "Frame the course diagonally from the city foreground through desert midground toward the snowy finish in the distance; changing ground materials provide the primary visual progression.",
+      "zones": [
+        {
+          "name": "City zone",
+          "role": "Opening course section where the paved urban road begins at the start line and runs between city buildings, curbs, and street-scale roadside props.",
+          "where": "Near end of the course; foreground.",
+          "size": "Roughly comparable route importance to the desert and snow zones."
+        },
+        {
+          "name": "Desert zone",
+          "role": "Middle course section where the same continuous road becomes loose-sand driving ground, bordered by open sand terrain and sparse desert forms.",
+          "where": "Middle of the course; midground.",
+          "size": "Roughly comparable route importance to the city and snow zones."
+        },
+        {
+          "name": "Snow zone",
+          "role": "Final course section where snow-covered ground encloses an icy road surface leading to the distinct finish gate.",
+          "where": "Far end of the course; distance.",
+          "size": "Roughly comparable route importance to the city and desert zones."
+        }
+      ],
+      "paths": [
+        {
+          "from": "City zone",
+          "to": "Desert zone",
+          "kind": "road"
+        },
+        {
+          "from": "Desert zone",
+          "to": "Snow zone",
+          "kind": "road"
+        }
+      ],
+      "terrain": "Urban pavement transitions to loose-sand driving ground with open sand terrain, then to snow-covered ground enclosing an icy road surface.",
+      "props": [
+        {
+          "name": "City buildings",
+          "count": -1,
+          "where": "Along the paved urban road in the city zone."
+        },
+        {
+          "name": "Curbs",
+          "count": -1,
+          "where": "Along the paved urban road in the city zone."
+        },
+        {
+          "name": "Street-scale roadside props",
+          "count": -1,
+          "where": "Along the paved urban road in the city zone."
+        },
+        {
+          "name": "Sparse desert forms",
+          "count": -1,
+          "where": "Bordering the loose-sand driving ground in the desert zone."
+        },
+        {
+          "name": "Finish gate",
+          "count": 1,
+          "where": "At the endpoint in the snow zone."
+        }
+      ],
+      "boundary": "Road edges and surrounding environment define the boundary rather than a stadium wall.",
+      "scale_band": "large",
+      "theme": "Stylized 3D environmental road race, progressing from urban pavement to sandy desert to icy snowfield."
+    },
+    "render": {
+      "first": "authored_plan",
+      "then": "topdown",
+      "authoritative": "authored_plan",
+      "why": "The point-to-point route must be connected, playable, and unambiguous from start to finish before dressing.",
+      "set_piece": false
+    },
+    "route": [
+      "P6"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a 3D point-to-point racing map with one continuous route traveling through three distinct environments. The course begins in a city on normal paved roads, transitions into a desert section with loose sand terrain, and finishes in a snow-covered area with icy road surfaces; the endpoint is separate from the starting area."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "layout",
+  "first": "authored_plan",
+  "mapper_notes": []
+}

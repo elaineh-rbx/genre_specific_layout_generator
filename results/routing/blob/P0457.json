@@ -1,0 +1,96 @@
+{
+  "scene": "P0457",
+  "source": "Build a Roblox 3D arcade tennis game inspired by Nintendo Switch Sports Tennis (original assets only, do not copy Nintendo content).\n\nGoal\n\nCreate a fast, accessible tennis game that feels fun rather than realistic. The focus is on positioning, timing, and shot placement.\n\nCamera\n\n* Third-person camera behind the player.\n* Elevated broadcast angle showing both players and most of the court.\n* Camera smoothly follows the player horizontally.\n* Never rotate freely or switch sides during a rally.\n\nControls\n\nPC\n\n* WASD: Move\n* Space / Left Click: Hit\n* Hold to charge power\n* Release to swing\n\nMobile\n\n* Left virtual joystick: Move\n* Right hit button: Hit\n* Hold to charge\n* Release to swing\n\nMovement\n\n* Player moves manually.\n* Character automatically turns to face the incoming ball.\n* Add slight auto-positioning when close to the ball, but never teleport or fully auto-play.\n\nHitting\n\nA player can hit only when the ball is inside a hit radius.\n\nShot quality depends on timing:\n\n* Perfect → fast, accurate\n* Good → normal\n* Early/Late → less accurate\n* Miss → no contact\n\nShot Direction\n\nAim is determined by movement input at contact:\n\n* Left = left side\n* Right = right side\n* Up = deeper shot\n* Down = shorter shot\n\nPerfect timing produces more accurate placement.\n\nBall\n\nUse custom scripted ball physics instead of Roblox physics.\n\nSupport:\n\n* Bounce\n* Net collision\n* Out detection\n* Groundstrokes\n* Charged shots\n* Later add lobs and slice.\n\nMatch Rules\n\n* Singles only.\n* Standard tennis scoring.\n* Reset players after each point.\n* Server controls score and ball state.\n\nMultiplayer\n\nServer-authoritative:\n\n* Ball physics\n* Score\n* Hit validation\n\nClient:\n\n* Movement\n* Camera\n* Input\n* Animations\n\nDevelopment Order\n\n1. Court\n2. Camera\n3. Player movement\n4. Ball physics\n5. Hitting\n6. Shot direction\n7. Scoring\n8. Multiplayer\n9. Mobile UI\n10. Polish",
+  "answers": [
+    {
+      "field": "scale",
+      "ask": "Should the court sit in a stadium with seating, or on an open bright backdrop with nothing around it?",
+      "answer": "Use an open bright backdrop with nothing around the court; keep the first build focused on the playable tennis space rather than stadium scenery."
+    }
+  ],
+  "scene_prompt": "Create a 3D arcade tennis map centered on a single standard singles court, with clear boundary lines, service boxes, a central net, and open run-off space around all sides. Use a bright, empty backdrop with no stadium seating or surrounding scenery, keeping the court as the sole focal point. Compose the view from an elevated third-person broadcast angle behind one baseline, showing both player positions across the net and most of the full court.",
+  "blob": "### Genre\nThe dominant genre is Sports: a singles tennis match with formal court boundaries and scoring. There is no secondary genre.\n\n### Shape and preset\nUse `field-bounded`, matching the Court Sport preset. It is a single regulation-style singles tennis court rather than a stadium field: the full playable surface, net, and run-off are one compact bounded space. The open bright backdrop explicitly drops the preset’s possible stadium dressing.\n\n### Config requirements\nUse `trigger-bounds` as visible painted singles sidelines, baselines, service lines, and service boxes, paired with invisible out-of-bounds detection at the court perimeter. Use `startpoint-play` as visible player reset positions centered behind the two baselines, with invisible reset markers. Use `trigger-scoring` as the visible central net and court target context, paired with invisible score and point-resolution volumes; these invisible volumes must not enter the image render.\n\n### Layout components\nThe sole zone is one standard singles court, centered in a generous rectangular run-off apron on all four sides. A taut central net divides the court evenly. Paint clear baselines, singles sidelines, center service marks, service lines, and four service boxes in high-contrast court markings. Put one player start position behind each baseline, aligned to the center mark and facing across the net. The ground is a clean, flat court surface with a bright empty surrounding ground or seamless sky-like backdrop; add no seating, stands, buildings, spectators, landscape, or scenery. The boundary is the visible court-and-run-off extent, with no enclosing stadium walls. Frame from an elevated broadcast-style third-person view behind one baseline, showing both sides of the net and nearly the entire court.\n\n### Render order\nUse `topdown`: court line geometry, net placement, equal halves, and adequate run-off must be accurate for playable tennis before the elevated broadcast dressing is derived.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by one singles court and its run-off area. Theme is bright, clean, accessible arcade tennis with minimal presentation. Use `P0`; this is one flat surface with no interiors, overhangs, separate maps, or volumetric play.",
+  "spec": {
+    "genre": "Sports",
+    "secondary": [],
+    "shape": "field-bounded",
+    "preset": "Court Sport",
+    "axes": {},
+    "options": [
+      {
+        "id": "trigger-bounds",
+        "text": "Visible painted singles sidelines, baselines, service lines, and service boxes, paired with invisible out-of-bounds detection at the court perimeter.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "startpoint-play",
+        "text": "Visible player reset positions centered behind the two baselines, aligned to the center mark and facing across the net, with invisible reset markers.",
+        "visible": true,
+        "count": 2
+      },
+      {
+        "id": "trigger-scoring",
+        "text": "Visible central net and court target context, paired with invisible score and point-resolution volumes; these invisible volumes must not enter the image render.",
+        "visible": true,
+        "count": 1
+      }
+    ],
+    "layout": {
+      "composition": "Elevated broadcast-style third-person view behind one baseline, showing both sides of the taut central net and nearly the entire court.",
+      "zones": [
+        {
+          "name": "standard singles court",
+          "role": "The sole playable tennis court, with formal boundaries, scoring context, player reset positions, and a central net.",
+          "where": "centre, within the run-off apron",
+          "size": "one compact regulation-style singles court with generous rectangular run-off on all four sides"
+        }
+      ],
+      "paths": [],
+      "terrain": "Clean, flat court surface with high-contrast court markings, surrounded by bright empty ground or a seamless sky-like backdrop.",
+      "props": [
+        {
+          "name": "taut central net",
+          "count": 1,
+          "where": "across the centre, dividing the court evenly"
+        },
+        {
+          "name": "service boxes",
+          "count": 4,
+          "where": "two on each side of the central net"
+        },
+        {
+          "name": "player start positions",
+          "count": 2,
+          "where": "one behind each baseline, aligned to the center mark"
+        }
+      ],
+      "boundary": "Visible court-and-run-off extent with no enclosing stadium walls.",
+      "scale_band": "small",
+      "theme": "bright, clean, accessible arcade tennis with minimal presentation"
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "Court line geometry, net placement, equal halves, and adequate run-off must be accurate for playable tennis.",
+      "set_piece": false
+    },
+    "route": [
+      "P0"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a 3D arcade tennis map centered on a single standard singles court, with clear boundary lines, service boxes, a central net, and open run-off space around all sides. Use a bright, empty backdrop with no stadium seating or surrounding scenery, keeping the court as the sole focal point. Compose the view from an elevated third-person broadcast angle behind one baseline, showing both player positions across the net and most of the full court."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P0'] gives isometric"
+  ]
+}

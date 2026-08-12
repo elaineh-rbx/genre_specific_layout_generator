@@ -1,0 +1,126 @@
+{
+  "scene": "P0537",
+  "source": "Focus Garden Tycoon\n\nThe game is using the pomodoro method, where completing Pomodoro focus sessions earns Focus Points that grow your garden.\n\nConfigurations:\nAllow the user to setup the following time durations: 25 minutes, 50minutes, 1 hour\n\nHow it works: you spawn on your own plot, press E at the Focus Desk to start a 25-min session, and the server runs an authoritative Focus → Short/Long Break state machine. Wandering off pauses the timer (enforces staying focused). Each completed session pays 25 Focus Points, every 4th triggers a long break plus a bonus, and you spend points on the Unlock Pad to grow 8 progressively bigger plants - that's the tycoon loop. Progress saves via DataStore, with an in-memory fallback so it runs even without API access enabled.",
+  "answers": [
+    {
+      "field": "theme",
+      "ask": "Nothing in the prompt says what the garden looks like - cottage garden, zen rock garden, or bright stylised planters?",
+      "answer": "Use a bright stylised planter-garden theme; it best fits a small, readable tycoon loop."
+    },
+    {
+      "field": "scale",
+      "ask": "Assumed a single plot under 100 studs - how far should the plot let you wander before the timer pauses?",
+      "answer": "Keep each plot under 100 studs and pause the timer once the player leaves their own plot boundary."
+    },
+    {
+      "field": "shape",
+      "ask": "Are plots visible to each other in one shared world, or is each player alone on their own plot?",
+      "answer": "Put all player plots in one shared world, visibly arranged alongside each other."
+    }
+  ],
+  "scene_prompt": "Create a shared-world garden tycoon map with multiple visible player plots arranged side by side, each plot under 100 studs and clearly bounded. Use a bright stylised planter-garden theme. Each individual plot contains a Focus Desk and an Unlock Pad, with space for eight progressively larger plants to grow in an ordered garden display.",
+  "blob": "### Genre\nSimulation is dominant: the original message describes a personal-plot tycoon progression loop. There is no secondary genre.\n\n### Shape and preset\nUse `plot-isolated`: multiple independently owned garden plots sit together in one visible shared world, rather than placing each player in a private instance. The closest preset is Tycoon, but use `none` because its shared-team-plot shape and bazaar/circulation bundle do not match these compact individual plots.\n\n### Config requirements\nUse `trigger-task` as both visible and invisible geometry: each plot has a visible Focus Desk and Unlock Pad, with their interaction volumes placed afterward and omitted from the image. Use `gate-progression` as visible geometry: eight ordered planting bays progress from small to large, with clear sequential dividers or low planter gates associated with the Unlock Pad. Do not add a shop hub, roads, resources, NPCs, or unrequested scenery systems.\n\n### Layout components\nBuild one shared, open garden court containing multiple side-by-side player plots; each plot remains under 100 studs and has a crisp low border, hedge, or planter curb that visibly defines its ownership and wandering limit. Within every compact rectangular plot, place the Focus Desk near the front edge as the arrival-facing work station and the Unlock Pad nearby but distinct. Reserve the majority of the plot for a linear or gently arcing ordered display of exactly eight planting spaces, arranged from the smallest plant nearest the pad to progressively larger plants toward the rear focal end. Leave simple walking clearance around the desk, pad, and all eight planters. Use clean grass or paving beneath bright stylised raised planters, with small flowers and garden accents only as dressing. Keep plots visibly adjacent across the shared court, separated by their own borders but not enclosed from one another. Frame an isometric view to show several plots at once while making a representative plot and its eight-stage plant sequence legible.\n\n### Render order\nUse `isometric`: the topology is simple, compact, and non-critical, so the stylised garden presentation should lead and the top-down plan can be projected from it.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by the shared array of multiple sub-100-stud plots rather than the size of any one plot. Theme: bright stylised planter garden, clean readable tycoon props, cheerful saturated planting. Use `P0`; all geometry remains on one exterior ground surface with no required overhangs, interiors, separate maps, or validity-by-construction route.",
+  "spec": {
+    "genre": "Simulation",
+    "secondary": [],
+    "shape": "plot-isolated",
+    "preset": "none",
+    "axes": {},
+    "options": [
+      {
+        "id": "trigger-task",
+        "text": "Each compact player plot has a visible Focus Desk near its front arrival-facing edge and a nearby distinct Unlock Pad; their interaction volumes are placed afterward and omitted from the image.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "gate-progression",
+        "text": "Exactly eight ordered planting bays progress from small plants nearest the Unlock Pad to progressively larger plants toward the rear focal end, with clear sequential dividers or low planter gates.",
+        "visible": true,
+        "count": 8
+      }
+    ],
+    "layout": {
+      "composition": "Isometric view showing several adjacent player plots across one shared garden court, with a representative compact plot and its eight-stage planting sequence legible from front desk and pad to rear focal end.",
+      "zones": [
+        {
+          "name": "Shared open garden court",
+          "role": "Visible shared world containing side-by-side independently owned garden plots.",
+          "where": "Across the full frame",
+          "size": "medium shared array"
+        },
+        {
+          "name": "Player plots",
+          "role": "Compact personal tycoon plots with a Focus Desk, Unlock Pad, and ordered planting progression.",
+          "where": "Side by side within the shared court",
+          "size": "Each plot under 100 studs"
+        },
+        {
+          "name": "Representative plot front",
+          "role": "Arrival-facing work area holding the Focus Desk and nearby distinct Unlock Pad.",
+          "where": "Front edge of each plot",
+          "size": ""
+        },
+        {
+          "name": "Ordered planting display",
+          "role": "Eight planting spaces progressing from smallest to largest plants.",
+          "where": "From near the Unlock Pad toward the rear focal end of each plot",
+          "size": "exactly eight planting spaces"
+        }
+      ],
+      "paths": [],
+      "terrain": "Clean grass or paving beneath bright stylised raised planters, with simple walking clearance around the desk, pad, and planters.",
+      "props": [
+        {
+          "name": "Focus Desk",
+          "count": -1,
+          "where": "Near the front arrival-facing edge of each plot"
+        },
+        {
+          "name": "Unlock Pad",
+          "count": -1,
+          "where": "Near but distinct from the Focus Desk in each plot"
+        },
+        {
+          "name": "Raised planters / planting bays",
+          "count": 8,
+          "where": "In a linear or gently arcing ordered display from the pad toward each plot's rear focal end"
+        },
+        {
+          "name": "Low plot border, hedge, or planter curb",
+          "count": -1,
+          "where": "Around each player plot"
+        },
+        {
+          "name": "Small flowers and garden accents",
+          "count": -1,
+          "where": "As dressing around the plots"
+        }
+      ],
+      "boundary": "One open shared garden court; each adjacent plot has its own crisp low ownership border, hedge, or planter curb but is not enclosed from neighboring plots.",
+      "scale_band": "medium",
+      "theme": "bright stylised planter garden, clean readable tycoon props, cheerful saturated planting"
+    },
+    "render": {
+      "first": "isometric",
+      "then": "topdown",
+      "authoritative": "isometric",
+      "why": "the topology is simple, compact, and non-critical, so stylised garden presentation should lead.",
+      "set_piece": false
+    },
+    "route": [
+      "P0"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a shared-world garden tycoon map with multiple visible player plots arranged side by side, each plot under 100 studs and clearly bounded. Use a bright stylised planter-garden theme. Each individual plot contains a Focus Desk and an Unlock Pad, with space for eight progressively larger plants to grow in an ordered garden display."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": []
+}

@@ -1,0 +1,140 @@
+{
+  "scene": "P0508",
+  "source": "Build a playable MVP for a Roblox 3D tower-defense game set in a small fantasy medieval kingdom.\n\nCore Goal\n\nCreate a short solo defense run that proves the main gameplay loop:\n\n1. Enemies spawn in waves.\n2. They follow a fixed path toward the castle.\n3. The player earns gold by defeating enemies.\n4. The player stands on special ground tiles to construct or upgrade defenses.\n5. Towers, friendly units, and the player attack enemies.\n6. The player wins after surviving 10 waves or loses if the castle is destroyed.\n\nKeep the experience simple, readable, and understandable within the first 30 seconds. Do not add menus, research systems, persistent progression, level-up cards, rebirth, matchmaking, or other systems outside this MVP.\n\nScene\n\nCreate a compact medieval kingdom scene containing:\n\n* One central castle at the end of the enemy path\n* One clearly visible enemy spawn area\n* One winding but readable enemy path\n* Open terrain around the path\n* Predefined construction locations\n* Matching interaction tiles placed near each construction location\n\nUse simple low-poly fantasy assets. You may use suitable existing Studio assets or use generate_mesh to create consistent original assets.\n\nRequired buildings:\n\n* Castle\n* Archer Tower\n* Barracks\n\nRequired enemies:\n\n* Basic melee enemy: goblins wearing ragged leather armors and carrying blades\n* Fast enemy: Goblin hunting hounds\n* Tough enemy: Orcs wearing rusty plate armor\n\nRequired friendly unit:\n\n* Basic swordsmen spawned by the Barracks\n\nAvoid unnecessary decorative assets until the gameplay is working.\n\nPlayer Controls\n\nThe player moves normally through the 3D world.\n\nThe player has one automatic or simple basic attack against nearby enemies (simple projectiles). Keep the attack easy to understand and visually clear.\n\nThe player interacts with construction and upgrade systems only by standing on special tiles for 2 seconds with enough gold balance. Each special tile comes with a predefined cost.\n\nDo not require clicking a menu.\n\nInteraction Tiles\n\nCreate these tiles:\n\n1. Build Archer Tower\n2. Upgrade Archer Tower\n3. Build Barracks\n4. Upgrade Barracks\n5. Repair Castle\n\nEach tile must:\n\n* Display its function and gold cost clearly (ex. Build: 10 gold, Upgrade: 15 gold, Repair: 10 gold)\n* Activate after the player stands on it for a short moment: 2 seconds\n* Show visible progress while activating\n* Cancel if the player leaves early\n* Prevent purchase when the player lacks enough gold\n* Disable or change appearance when unavailable\n* Give clear visual and audio feedback after purchase\n\nConstruction must occur only at predefined fixed locations.\n\nThe Build tile should become inactive after construction. Its corresponding Upgrade tile should then become available.\n\nCombat\n\nImplement:\n\n* Enemy HP, movement speed, damage, and death\n* Castle HP and enemy attacks against the castle\n* Player attacks\n* Archer Tower attacks\n* Soldier attacks\n* Enemy targeting of nearby soldiers when appropriate\n* Gold rewards when enemies die\n* Basic damage feedback and health bars where useful\n\nArcher Tower:\n\n* Automatically targets enemies within range\n* Fires projectiles\n* Prioritizes the enemy closest to the castle\n* Upgrade increases damage and attack speed\n\nBarracks:\n\n* Periodically spawns soldiers\n* Soldiers move toward nearby enemies and fight them\n* Replaces defeated soldiers after a delay\n* Upgrade increases soldier HP, damage, and maximum active soldiers\n\nEnemies should stay on the intended path unless temporarily engaging nearby friendly soldiers.\n\nWaves\n\nCreate 10 short waves with small delays between them.\n\nSuggested progression:\n\n* Waves 1-2: basic enemies\n* Waves 3-4: more basic enemies\n* Wave 5: introduce fast enemies\n* Waves 6-7: mixed basic and fast enemies\n* Wave 8: introduce tough enemies\n* Wave 9: mixed larger wave\n* Wave 10: final difficult wave containing all three enemy types\n\nShow:\n\n* Current wave\n* Time until the next wave\n* Remaining enemies\n* Castle HP\n* Player gold\n\nThe first wave should begin shortly after the player spawns.\n\nEconomy\n\nUse only gold.\n\n* Start the player with enough gold to build either the Archer Tower or Barracks, but not both.\n* Enemies drop or award gold when defeated.\n* Construction, upgrades, and castle repairs consume gold.\n* Balance prices so the player must choose an investment order.\n* Both an Archer Tower-first strategy and a Barracks-first strategy should be viable.\n\nWin and Loss\n\nWin condition:\n\n* Defeat all enemies in Wave 10 while the castle remains alive.\n\nLoss condition:\n\n* Castle HP reaches zero.\n\nDisplay a simple victory or defeat message and provide a way to restart the run.\n\nTechnical and Structural Requirements\n\nOrganize the game into clear reusable systems for:\n\n* Waves\n* Enemies\n* Combat\n* Buildings\n* Friendly units\n* Interaction tiles\n* Gold\n* Castle health\n* UI\n\nDo not hard-code every individual enemy or tile separately when a reusable configuration would work.\n\nKeep important values configurable, including:\n\n* Enemy stats\n* Wave compositions\n* Gold rewards\n* Building prices\n* Upgrade prices\n* Attack damage\n* Attack speed\n* Range\n* Castle HP\n\nStructure shared game state so it can support multiplayer later, but do not implement matchmaking or multiplayer-specific UI in this milestone.\n\nValidation\n\nBefore considering the MVP complete, verify that:\n\n* The full 10-wave run can be completed from start to finish.\n* Enemies reliably reach and attack the castle.\n* Gold is awarded and spent correctly.\n* Tiles cannot be purchased repeatedly by mistake.\n* Towers and soldiers consistently target enemies.\n* The castle can be repaired but not above maximum HP.\n* The player can win using either major starting defense choice.\n* Restarting resets all wave, gold, building, enemy, and castle state.\n* The main loop is understandable without a written tutorial.",
+  "answers": [
+    {
+      "field": "free",
+      "ask": "How many construction locations should the path have?",
+      "answer": "Use two fixed construction locations: one for the Archer Tower and one for the Barracks, each with its matching build and upgrade interaction tiles nearby. This keeps the MVP compact while supporting either starting defense choice."
+    },
+    {
+      "field": "scale",
+      "ask": "How long should the winding path be - how many seconds does a goblin take to walk it?",
+      "answer": "Make the path compact: a basic goblin should take about 20 seconds to reach the castle if unobstructed. Keep it winding enough to read clearly but short enough for a brisk 10-wave run."
+    }
+  ],
+  "scene_prompt": "Create a compact, low-poly fantasy medieval kingdom defense map. A central castle sits at the end of one clearly visible, winding path; place a distinct enemy spawn area at the opposite end, with the path taking a basic goblin roughly 20 seconds to traverse unobstructed. Keep open terrain around the readable route. Add exactly two fixed construction locations beside the path: one Archer Tower site and one Barracks site, each with matching nearby build and upgrade interaction tiles; include a nearby castle-repair tile. The Archer Tower is a raised defensive tower, while the Barracks is a small military building that serves as the origin point for friendly swordsmen. Use only minimal supporting scenery so the castle, path, spawn area, construction sites, and interaction tiles remain immediately legible.",
+  "blob": "### Genre\nThe dominant genre is Strategy: a compact tower-defense defense run with a fixed enemy route terminating at a defended castle.\n\n### Shape and preset\nUse `lane-actor-track`, matching the Tower Defense preset. The preset remains recognisable: one continuous, readable winding lane runs from a visible enemy entry at one end to the castle core at the other. The route is compact rather than sprawling, sized for an unobstructed basic goblin traversal of roughly 20 seconds.\n\n### Config requirements\nUse visible `buildzone-grid` as exactly two fixed, clearly marked construction pads beside the route: one Archer Tower site and one Barracks site. Use `tracker-core` as the visible central castle at the route endpoint, with its associated castle-health tracking kept invisible. Use `spawner-npc` as the invisible wave-emitter placement within a visible, distinct enemy spawn clearing at the opposite route endpoint. No extra decorative or gameplay options are required.\n\n### Layout components\nPlace the castle in the rear third of the map as the dominant focal structure, with its approach facing the winding path. Put the enemy spawn clearing at the far opposite edge. Between them, carve one continuous earthen or cobbled enemy path through open, mostly flat grass terrain; it should bend broadly enough to be legible from above without concealing its full progression. Set the raised Archer Tower construction site beside an early-to-middle path bend with a nearby pair of build and upgrade interaction tiles. Set the small Barracks construction site beside a later path section closer to the castle, also with nearby build and upgrade tiles; leave a clear frontage for friendly swordsmen to emerge. Place the fifth, castle-repair interaction tile near the castle entrance without blocking the route. Keep all five tiles large, labeled, and visibly distinct from terrain. Use only sparse low-poly medieval support props, such as a few rocks, shrubs, fence fragments, and path-edge banners. The outer boundary is a shallow natural perimeter of low hills, trees, or cliff edges that contains the playable field without competing with the route. Compose the isometric view diagonally from spawn through the winding lane to the castle, keeping every critical landmark visible.\n\n### Render order\nUse `authored_plan`: generate the authoritative continuous tower-defense route and its endpoint relationships in code first, then dress top-down and isometric renders from that blueprint, because a broken or disconnected enemy lane makes the game unplayable.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by one compact route, one castle, one spawn clearing, and exactly two build locations. Theme is clean low-poly fantasy medieval kingdom, with high gameplay readability and minimal dressing. Pipeline modifier: `P6`, forced by the enemy track needing to be valid and continuously connected by construction.",
+  "spec": {
+    "genre": "Strategy",
+    "secondary": [],
+    "shape": "lane-actor-track",
+    "preset": "Tower Defense",
+    "axes": {},
+    "options": [
+      {
+        "id": "buildzone-grid",
+        "text": "Exactly two fixed, clearly marked construction pads beside the route: one raised Archer Tower site at an early-to-middle bend and one small Barracks site closer to the castle, each with nearby build and upgrade interaction tiles.",
+        "visible": true,
+        "count": 2
+      },
+      {
+        "id": "tracker-core",
+        "text": "A visible central castle at the route endpoint, with its associated castle-health tracking kept invisible.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "spawner-npc",
+        "text": "The invisible wave-emitter placement within the visible, distinct enemy spawn clearing at the opposite route endpoint.",
+        "visible": false,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "Isometric view composed diagonally from the enemy spawn at the far edge through the full winding lane to the castle in the rear third, with every critical landmark visible.",
+      "zones": [
+        {
+          "name": "Enemy spawn clearing",
+          "role": "Visible enemy entry and location of the invisible wave-emitter placement.",
+          "where": "Far opposite edge from the castle",
+          "size": "small"
+        },
+        {
+          "name": "Early-to-middle Archer Tower site",
+          "role": "Raised fixed construction pad beside a broad early-to-middle path bend.",
+          "where": "Beside an early-to-middle bend in the route",
+          "size": "small"
+        },
+        {
+          "name": "Late Barracks site",
+          "role": "Fixed construction pad with clear frontage for friendly swordsmen to emerge.",
+          "where": "Beside a later path section closer to the castle",
+          "size": "small"
+        },
+        {
+          "name": "Castle core",
+          "role": "Defended endpoint of the enemy route and dominant focal structure.",
+          "where": "Rear third of the map",
+          "size": "dominant"
+        }
+      ],
+      "paths": [
+        {
+          "from": "Enemy spawn clearing",
+          "to": "Castle core",
+          "kind": "track"
+        }
+      ],
+      "terrain": "Open, mostly flat grass terrain with one continuous earthen or cobbled winding enemy path; a shallow natural perimeter of low hills, trees, or cliff edges surrounds the playable field.",
+      "props": [
+        {
+          "name": "Build and upgrade interaction tiles",
+          "count": 4,
+          "where": "Nearby the Archer Tower and Barracks construction sites"
+        },
+        {
+          "name": "Castle-repair interaction tile",
+          "count": 1,
+          "where": "Near the castle entrance without blocking the route"
+        },
+        {
+          "name": "Rocks",
+          "count": -1,
+          "where": "Sparse support scenery"
+        },
+        {
+          "name": "Shrubs",
+          "count": -1,
+          "where": "Sparse support scenery"
+        },
+        {
+          "name": "Fence fragments",
+          "count": -1,
+          "where": "Sparse support scenery"
+        },
+        {
+          "name": "Path-edge banners",
+          "count": -1,
+          "where": "Along the enemy path"
+        }
+      ],
+      "boundary": "A shallow natural perimeter of low hills, trees, or cliff edges containing the playable field without competing with the route.",
+      "scale_band": "small",
+      "theme": "Clean low-poly fantasy medieval kingdom with high gameplay readability and minimal dressing."
+    },
+    "render": {
+      "first": "authored_plan",
+      "then": "topdown",
+      "authoritative": "authored_plan",
+      "why": "a broken or disconnected enemy lane makes the game unplayable.",
+      "set_piece": false
+    },
+    "route": [
+      "P6"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a compact, low-poly fantasy medieval kingdom defense map. A central castle sits at the end of one clearly visible, winding path; place a distinct enemy spawn area at the opposite end, with the path taking a basic goblin roughly 20 seconds to traverse unobstructed. Keep open terrain around the readable route. Add exactly two fixed construction locations beside the path: one Archer Tower site and one Barracks site, each with matching nearby build and upgrade interaction tiles; include a nearby castle-repair tile. The Archer Tower is a raised defensive tower, while the Barracks is a small military building that serves as the origin point for friendly swordsmen. Use only minimal supporting scenery so the castle, path, spawn area, construction sites, and interaction tiles remain immediately legible."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "p6",
+  "first": "topdown",
+  "mapper_notes": [
+    "blob asked for authored_plan first; the route ['P6'] gives topdown"
+  ]
+}

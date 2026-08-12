@@ -1,0 +1,157 @@
+{
+  "scene": "P0354",
+  "source": "a game that is a fun game to play and people will love so im thinking we make a game that has anomolies and you have to shoot them to protect your base and your base has to be as powerful as thorn armor yourbase can only get bigger the more anomolies you kill thier are secret bases that are surrounded by anomolies and inside you have to kill the anomolies on the outside to get in side the secret base.once inside you will have to fight the king but to fight you need to find at least 10 keys scatterd around the map.",
+  "answers": [
+    {
+      "field": "theme",
+      "ask": "What are anomalies meant to look like, and is the world sci-fi, fantasy, or something else?",
+      "answer": "Use a sci-fi world with strange glowing, distorted creature-like anomalies. The bases should feel like fortified futuristic outposts."
+    },
+    {
+      "field": "goal",
+      "ask": "Does the run end when the king dies, or does it keep going?",
+      "answer": "The run ends when the king is defeated; that is the main win condition."
+    },
+    {
+      "field": "scale",
+      "ask": "How many secret bases, and how far apart should they be?",
+      "answer": "Use one secret base for the first build, placed a moderate distance from the player's starting base so players can reach it across the small map."
+    }
+  ],
+  "scene_prompt": "Create a small sci-fi game map with a fortified futuristic player outpost as the starting base, set within terrain patrolled by strange glowing, distorted creature-like anomalies. Place one secret fortified base a moderate distance away across the map, surrounded by anomalies and with an enclosed interior containing the king’s arena. Scatter at least 10 keys around the map between the starting outpost and the secret base.",
+  "blob": "### Genre\nThe dominant genre is Shooter, specifically a PvE combat map: players shoot hostile anomalies while advancing from a defended outpost to a boss encounter. No secondary genre is needed.\n\n### Shape and preset\nUse `lane-network`, matched loosely from the PvE Shooter preset. Here its lanes are not urban firing corridors but several readable routes across the small alien terrain between the player outpost and the secret base. The prompt keeps the preset’s combat destination concept but does not request wave emitters or chokepoints, so the preset is not otherwise retained.\n\n### Config requirements\nUse `building-interior` as visible geometry: the secret fortified base has an enclosed, enterable interior culminating in the king’s arena. The at-least-10 keys are visible sci-fi key artifacts or key pedestals distributed in the exterior routes; their collection markers are invisible layout objects and must not be rendered as UI or volumes. The glowing creature-like anomalies are visible hostile inhabitants placed on patrol ground and around the secret base, but no unrequested spawn-emitter geometry is added.\n\n### Layout components\nPlace the fortified futuristic starting outpost on one edge of a small map, with armored walls, defensive structures, and a clear outward-facing gate. Across a moderate travel distance, place exactly one secret fortified base on the opposing side. Build several open, connected terrain routes between them so the central ground can be crossed without forcing a single corridor. Scatter at least 10 keys across these routes, using exposed clearings, beside ruined sci-fi debris, and near anomaly-patrolled terrain; keep all keys reachable before the secret-base entrance.\n\nThe secret base sits in a hostile perimeter ring densely occupied by glowing distorted anomalies. Its outer shell is a closed futuristic fortress with one readable entrance. Inside, use a short enclosed approach leading to a broad king arena at the rear, with the king’s combat space as the visual destination. Terrain is dark rocky alien ground with sparse glowing fractures and scattered technological wreckage. The outer boundary is a continuous band of impassable rocky formations and haze. Compose the outpost in the foreground, the secret base as the distant focal mass, and the key routes legible across the middle ground.\n\n### Render order\nUse `topdown`: a valid connected exterior route, reachable key placements, and a clear entrance-to-arena sequence are required for the win path to function.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by one starting base, exactly one secret base, and a moderate-distance crossing. Theme: ominous futuristic sci-fi, dark metal fortifications, neon-glowing distortions. Pipeline modifier: `P3`, forced by movement from the exterior map into the enclosed secret-base interior.",
+  "spec": {
+    "genre": "Shooter",
+    "secondary": [],
+    "shape": "lane-network",
+    "preset": "none",
+    "axes": {},
+    "options": [
+      {
+        "id": "building-interior",
+        "text": "The secret fortified base has an enclosed, enterable interior culminating in the king's arena.",
+        "visible": true,
+        "count": 1
+      }
+    ],
+    "layout": {
+      "composition": "The fortified starting outpost occupies the foreground on one edge of the map. Several readable key routes cross the middle-ground alien terrain toward the secret fortified base, which forms the distant focal mass on the opposing side.",
+      "zones": [
+        {
+          "name": "Fortified futuristic starting outpost",
+          "role": "Player starting base with armored defenses and an outward-facing gate.",
+          "where": "Foreground, one edge of the map",
+          "size": "Small"
+        },
+        {
+          "name": "Connected exterior routes",
+          "role": "Open terrain crossings containing reachable keys before the secret-base entrance.",
+          "where": "Middle ground between the outpost and secret base",
+          "size": "Moderate travel distance"
+        },
+        {
+          "name": "Secret fortified base perimeter",
+          "role": "Hostile anomaly-patrolled ring surrounding the base shell.",
+          "where": "Opposing side of the map",
+          "size": "Small"
+        },
+        {
+          "name": "Secret fortified base interior",
+          "role": "Short enclosed approach leading to the king's arena.",
+          "where": "Inside the secret fortified base",
+          "size": "Short approach"
+        },
+        {
+          "name": "King's arena",
+          "role": "Rear combat destination inside the secret base.",
+          "where": "Rear of the secret-base interior",
+          "size": "Broad"
+        }
+      ],
+      "paths": [
+        {
+          "from": "Fortified futuristic starting outpost",
+          "to": "Connected exterior routes",
+          "kind": "open ground"
+        },
+        {
+          "from": "Connected exterior routes",
+          "to": "Secret fortified base perimeter",
+          "kind": "open ground"
+        },
+        {
+          "from": "Secret fortified base perimeter",
+          "to": "Secret fortified base interior",
+          "kind": "corridor"
+        },
+        {
+          "from": "Secret fortified base interior",
+          "to": "King's arena",
+          "kind": "corridor"
+        }
+      ],
+      "terrain": "Dark rocky alien ground with sparse glowing fractures and scattered technological wreckage.",
+      "props": [
+        {
+          "name": "Fortified futuristic starting outpost",
+          "count": 1,
+          "where": "One edge of the map in the foreground"
+        },
+        {
+          "name": "Secret fortified base",
+          "count": 1,
+          "where": "Opposing side of the map"
+        },
+        {
+          "name": "Sci-fi key artifacts or key pedestals",
+          "count": 10,
+          "where": "Across exterior routes in exposed clearings, beside ruined sci-fi debris, and near anomaly-patrolled terrain before the secret-base entrance"
+        },
+        {
+          "name": "Glowing distorted creature-like anomalies",
+          "count": -1,
+          "where": "Patrol ground, around the secret base, and densely within its hostile perimeter ring"
+        },
+        {
+          "name": "Armored walls and defensive structures",
+          "count": -1,
+          "where": "Starting outpost"
+        },
+        {
+          "name": "Technological wreckage",
+          "count": -1,
+          "where": "Scattered across the alien terrain"
+        }
+      ],
+      "boundary": "A continuous band of impassable rocky formations and haze encloses the outer boundary.",
+      "scale_band": "small",
+      "theme": "Ominous futuristic sci-fi, dark metal fortifications, neon-glowing distortions."
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "A valid connected exterior route, reachable key placements, and a clear entrance-to-arena sequence are required for the win path to function.",
+      "set_piece": false
+    },
+    "route": [
+      "P3"
+    ],
+    "notes": [
+      "Key collection markers are invisible layout objects and are not rendered as UI or volumes.",
+      "No spawn-emitter geometry is added."
+    ],
+    "scene_prompt": "Create a small sci-fi game map with a fortified futuristic player outpost as the starting base, set within terrain patrolled by strange glowing, distorted creature-like anomalies. Place one secret fortified base a moderate distance away across the map, surrounded by anomalies and with an enclosed interior containing the king’s arena. Scatter at least 10 keys around the map between the starting outpost and the secret base."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P3'] gives isometric"
+  ]
+}

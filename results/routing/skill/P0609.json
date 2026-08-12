@@ -1,0 +1,107 @@
+{
+  "scene": "P0609",
+  "source": "🌪️ Implementando Sistemas e Mapa: Project: Horizon\\n​1. O Mapa: Estilo \"Expirado\" do Twisted com Cidades de El Reno\\n​A Inspiração: Em vez de usar o mapa claustrofóbico do Severity, usaremos a estética de mundo aberto plano e vasto inspirada nos mapas clássicos \"removidos/expirados\" do Twisted (estradas longas de asfalto cinza, campos de plantação abertos, fazendas isoladas e torres de energia ao longe).\\n​O Layout (Estilo El Reno):\\n​Uma grande cidade central com quarteirões em grade, casas suburbanas de um andar, postos de gasolina e um entroncamento rodoviário complexo.\\n​Ao redor da cidade principal, estradas rurais cruzando campos abertos onde os tornados ganham muita velocidade e força.\\n​2. Sistema dos Interceptadores (Veículos)\\n​Para simular a caça às tempestades com desempenho fluido no A32, os veículos devem usar o sistema clássico de física do Roblox (CylindricalConstraint ou chassi leve).\\n​Veículos Disponíveis:\\n​TIV (Tornado Intercept Vehicle): Pesado, blindado, com garras hidráulicas que descem para fixar o carro no chão. Menos velocidade, mas não voa se for pego na borda do tornado.\\n​Probe Car (Carro Sonda): Muito rápido, ágil, usado para lançar instrumentos científicos na frente do funil e pontuar mais.\\n​3. Sistema de Vida e Loja (Scripting Rápido)\\n​🛡️ Barra de Vida e Dano\\n​Coloque este script local (LocalScript) dentro de StarterPlayer > StarterPlayerScripts para controlar a barra de vida da interface (ScreenGui):-- Script (Server): Gerenciador de Moedas e Loja simples\\ngame.Players.PlayerAdded:Connect(function(player)\\n local leaderstats = Instance.new(\"Folder\")\\n leaderstats.Name = \"leaderstats\"\\n leaderstats.Parent = player\\n \\n local cash = Instance.new(\"IntValue\")\\n cash.Name = \"Cash\"\\n cash.Value = 500 -- Dinheiro inicial para comprar o primeiro carro\\n cash.Parent = leaderstats\\nend)\\n-- LocalScript: Gerenciador de Vida e UI\\nlocal player = game.Players.LocalPlayer\\nlocal playerGui = player:WaitForChild(\"PlayerGui\")\\n\\n-- Criação simples da interface de vida\\nlocal screenGui = Instance.new(\"ScreenGui\", playerGui)\\nscreenGui.Name = \"HUD\"\\n\\nlocal healthBarBg = Instance.new(\"Frame\", screenGui)\\nhealthBarBg.Size = UDim2.new(0, 200, 0, 20)\\nhealthBarBg.Position = UDim2.new(0.5, -100, 0, 20)\\nhealthBarBg.BackgroundColor3 = Color3.fromRGB(50, 50, 50)\\n\\nlocal healthBar = Instance.new(\"Frame\", healthBarBg)\\nhealthBar.Size = UDim2.new(1, 0, 1, 0)\\nhealthBar.BackgroundColor3 = Color3.fromRGB(0, 255, 0)\\nhealthBar.Name = \"Fill\"\\n\\n-- Atualização baseada no Humanoid\\nlocal character = player.Character or player.CharacterAdded:Wait()\\nlocal humanoid = character:WaitForChild(\"Humanoid\")\\n\\nhumanoid.HealthChanged:Connect(function(health)\\n local maxHealth = humanoid.MaxHealth\\n local percent = math.clamp(health / maxHealth, 0, 1)\\n healthBar.Size = UDim2.new(percent, 0, 1, 0)\\n \\n if percent < 0.3 then\\n healthBar.BackgroundColor3 = Color3.fromRGB(255, 0, 0)\\n else\\n healthBar.BackgroundColor3 = Color3.fromRGB(0, 255, 0)\\n end\\nend)\\n🛒 Sistema de Loja (Shop)\\n​Crie um Folder chamado Leaderstats no ServerScriptService para gerenciar a moeda do jogo (Pontos de Pesquisa/Dinheiro) e uma peça Part no mapa que serve como o menu da Loja:Para a Loja de Interceptadores, crie um ProximityPrompt em uma peça no lobby/garagem:-- Script (Server): Parte da Loja\\nlocal marketPart = script.Parent\\nlocal prompt = Instance.new(\"ProximityPrompt\", marketPart)\\nprompt.ActionText = \"Abrir Garagem\"\\nprompt.ObjectText = \"Loja de Veículos\"\\n\\nprompt.Triggered:Connect(function(player)\\n local cash = player:FindFirstChild(\"leaderstats\") and player.leaderstats:FindFirstChild(\"Cash\")\\n \\n if cash and cash.Value >= 1000 then\\n cash.Value = cash.Value - 1000\\n print(player.Name ..\" comprou um novo Interceptador!\")\\n -- Aqui você pode clonar o veículo para o inventário ou Team do jogador\\n else\\n print(\"Dinheiro insuficiente! Você precisa de $1000.\")\\n end\\nend)\\n4. Dica de Ouro para o A32 no Mapa \"Expirado\"\\n​Como o mapa estilo Twisted é aberto e tem poucos obstáculos bloqueando a visão, utilize o Terrain do Roblox para criar colinas suaves. Esconder partes da cidade atrás de relevos naturais faz com que o mecanismo de StreamingEnabled do Roblox descarregue o que está longe, mantendo o jogo rodando a 60 FPS cravados no seu celular.",
+  "block": {
+    "genres": [
+      "simulation"
+    ],
+    "shape": {
+      "id": "world-shared",
+      "type": "Zone",
+      "name": "Shared Persistent World"
+    },
+    "preset": "Vehicle Sim",
+    "pipeline": [
+      "P0"
+    ],
+    "image_prompt": [
+      {
+        "id": "path-road-vehicle",
+        "text": "Long grey asphalt highways and rural roads wide enough for the interceptor vehicles, running out of the city grid and across open farmland"
+      },
+      {
+        "id": "resource-shared",
+        "text": "Open crop fields the whole server drives across, shared ground rather than anyone plot"
+      },
+      {
+        "id": "hazard-kill",
+        "text": "A tornado moving across the flat open country as a damaging volume, gaining speed and force over the fields"
+      },
+      {
+        "id": "social-hub",
+        "text": "A lobby garage where interceptor vehicles are bought, the one place every chase starts and returns to"
+      },
+      {
+        "id": null,
+        "text": "A large central city on a street grid with one-story suburban houses, gas stations, and a complex highway interchange"
+      },
+      {
+        "id": null,
+        "text": "Isolated farmsteads and power line towers scattered far out across the fields"
+      },
+      {
+        "id": null,
+        "text": "Gentle rolling terrain hills that partly hide the far side of the city"
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": null,
+        "type": null,
+        "text": "Drivable interceptor vehicles: a heavy armoured TIV with hydraulic claws that anchor it, and a fast light probe car"
+      },
+      {
+        "id": null,
+        "type": null,
+        "text": "A vehicle purchase trigger in the lobby garage costing 1000 cash"
+      }
+    ],
+    "notes": [
+      "Close call between Simulation and Survival: the tornado is a disaster hazard, but the player chases it rather than outlasting it, and there is no lap or finish, which is the Vehicle Sim boundary rule.",
+      "hazard-kill is being used for a hazard that moves across the whole map, which the option text does not contemplate.",
+      "Roughly two thirds of the prompt is Lua scripting for a health bar and a shop, plus mobile performance advice - none of it layout."
+    ]
+  },
+  "open_questions": [
+    {
+      "field": "scale",
+      "ask": "How far out should the rural roads run before the map ends - a few minutes of driving, or much more?"
+    },
+    {
+      "field": "goal",
+      "ask": "Is the goal scoring probe drops on the funnel, or surviving a set number of storms?"
+    }
+  ],
+  "theme": "Flat rural American plains - grey asphalt, open crop fields, one-story suburbs, power lines on the horizon",
+  "scale": {
+    "band": "region",
+    "assumed": true
+  },
+  "coverage_missing": [
+    {
+      "field": "scale",
+      "ask": "How large is the drivable area?"
+    },
+    {
+      "field": "goal",
+      "ask": "What ends a run - the storm dissipating, a timer, or a score target?"
+    },
+    {
+      "field": "genre",
+      "ask": "Do buildings need to be destructible when the tornado hits them?"
+    }
+  ],
+  "answers": [
+    {
+      "field": "scale",
+      "ask": "How far out should the rural roads run before the map ends - a few minutes of driving, or much more?",
+      "answer": "A few minutes of driving from the central city is enough; keep the map compact for smooth mobile performance while still giving rural intercept space."
+    },
+    {
+      "field": "goal",
+      "ask": "Is the goal scoring probe drops on the funnel, or surviving a set number of storms?",
+      "answer": "The goal is scoring probe drops near/in front of the tornado funnel, as the Probe Car is specifically meant to launch scientific instruments and earn more points."
+    }
+  ],
+  "answers_missing": 0
+}

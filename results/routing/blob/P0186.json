@@ -1,0 +1,203 @@
+{
+  "scene": "P0186",
+  "source": "I want to build a simple puzzle and adventure game where the player (set in third person view, so you can see your avatar) will explore a world that has a forest setting, a mountain setting, and a water-based setting that are Zelda-inspired. As the player explores the world, they should encounter simple puzzles to solve which reward them with tokens (the game's currency) upon successful completion. There should be goblin-like monsters and other fantasy creature enemies that occasionally patrol set areas of the world. The enemies should not look too scary. The enemies should not move too much out of their set boundaries of land. There should also be weapons like swords and axes and bows and arrows you can pick up along the way on the ground or in other clever hidden areas of the world to help attack monsters that you encounter. There should be shops that are spread out evenly across the world that sell different types of healing or magic or weapon items. There should be occasional tokens and healing items also distributed around the world in locations where the player can access and destroy to get the items (like bushes, pots, barrels). The end goal of the game is to defeat the ultimate boss who is locked behind several different puzzles in a castle at the center of the map. The player starts out with 3 hearts and each hit by a monster should deplete half of a heart. Some of the harder puzzles should reward the player with an extra life heart. The maximum number of life hearts is 10. The puzzles can be something like manipulating blocks into a certain shape (with clues near the puzzle to indicate what the shape should be), running around an obstacle course in a specific sequence (with clues nearby), or a small arena that locks when you enter it and you have to defeat a set small number of monsters to win.",
+  "answers": [
+    {
+      "field": "scale",
+      "ask": "Should the three biomes be one continuous walkable landmass, or separate areas you travel between?",
+      "answer": "Make the forest, mountain, and water-based areas one continuous walkable world, with the castle at the center of the map."
+    },
+    {
+      "field": "shape",
+      "ask": "Roughly how many puzzles per biome, and how many of them gate the castle?",
+      "answer": "Use three simple puzzles per biome, for nine total; one key puzzle from each biome gates the castle, while the others provide tokens, items, or heart rewards."
+    },
+    {
+      "field": "goal",
+      "ask": "Is the castle open from the start with the boss locked inside, or is the castle itself gated?",
+      "answer": "The castle itself is gated until the player completes the required key puzzle in each of the three biomes."
+    }
+  ],
+  "scene_prompt": "Create a 3D third-person fantasy adventure map inspired by classic storybook action-adventure worlds, built as one continuous walkable landmass with a central castle. Arrange a forest biome, a mountain biome, and a water-based biome around the castle, each containing three simple puzzle locations; one prominent key-puzzle site in each biome opens the castle gate, while the other puzzle sites reward tokens, equipment, or extra-heart pickups. Place gentle goblin-like and other non-scary fantasy creature patrol areas along routes, with visible boundary terrain. Spread small shops evenly across the world, and scatter swords, axes, bows, arrows, tokens, healing items, breakable bushes, pots, and barrels along paths and in hidden alcoves. The central castle is the visual destination, with a gated entrance, interior puzzle barriers, and a final boss chamber.",
+  "blob": "### Genre\nThe dominant genre is `RPG`, with `Puzzle` as the secondary genre. Character combat, scattered equipment and shops, enemy patrol territories, rewards, and a boss-gated central destination make this an RPG; the nine environmental challenges contribute the puzzle structure without changing the world’s overall form.\n\n### Shape and preset\nUse `world-single`: one continuous walkable landmass wraps three biomes around the central castle. The closest RPG preset is Turn-based RPG for its contiguous-map shape, but its combat and level-gate bundle does not match, so the preset is none.\n\n### Config requirements\nVisible geometry includes `hazard-aggro` as gentle, bounded goblin and fantasy-creature patrol clearings set off the main routes; `gate-progression` as the castle’s prominent sealed entrance; `landmark-focal` as the castle visible across all regions; `building-interior` for the castle’s enterable puzzle halls and boss chamber; `water-body` for the water biome; and `terrain-relief` for the mountain biome. Puzzle geometry uses `gate-solve`, `trigger-solve`, and `facade-clue` for physical puzzle gates, interaction pieces, and nearby clues, plus `arena-lockin` for enclosed combat-puzzle arenas. `spawner-npc` is invisible layout-only placement inside patrol areas; `collectible-nodes` is invisible layout-only placement for equipment, tokens, healing caches, and breakable reward props.\n\n### Layout components\nPlace the castle at the map center on a modest raised approach, with its closed gate facing the main circulation loop. Build three roughly equal surrounding regions: a dense forest biome, a rocky mountain biome with ascending paths and overlooks, and a water-based biome of shorelines, channels, and small crossing features. Each biome contains exactly three puzzle locations, for nine total: one prominent key-puzzle site per biome lies on a clear route toward the castle, while the other two occupy side clearings, alcoves, ruins, or short obstacle routes. The castle gate opens only after the three key sites, then leads through interior puzzle barriers to the final boss chamber.\n\nUse a continuous road-and-trail loop with branch paths from the castle to every biome, shops evenly spaced along this circulation, patrol clearings visibly bounded by terrain, and hidden alcoves off the main routes. Scatter swords, axes, bows, arrows, tokens, healing items, bushes, pots, and barrels along paths and at puzzle rewards. Natural cliffs, dense trees, water edges, and outer mountains form the boundary. Frame the castle as the central visual anchor, with the three biome silhouettes readable around it.\n\n### Render order\nUse `topdown` first, authoritative, because all three biomes, their key-puzzle routes, and the gated castle approach must remain continuously connected and playable before the isometric dressing is made.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by one connected three-biome world, nine puzzle sites, distributed shops, patrol grounds, and a full castle interior. Theme: bright storybook Zelda-inspired fantasy, adventurous and non-scary. Use `tiered` for mountain relief without overhangs, `P3` for the linked exterior world and castle interior, and `CHECK` for the water-based area; keep water routes readable without self-occluding volumetric space.",
+  "spec": {
+    "genre": "RPG",
+    "secondary": [
+      "Puzzle"
+    ],
+    "shape": "world-single",
+    "preset": "none",
+    "axes": {},
+    "options": [
+      {
+        "id": "hazard-aggro",
+        "text": "Gentle, bounded goblin and fantasy-creature patrol clearings set off the main routes.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "gate-progression",
+        "text": "The castle's prominent sealed entrance, opening only after the three key-puzzle sites.",
+        "visible": true,
+        "count": 3
+      },
+      {
+        "id": "landmark-focal",
+        "text": "The central castle visible across all three surrounding regions.",
+        "visible": true,
+        "count": 1
+      },
+      {
+        "id": "building-interior",
+        "text": "The castle's enterable puzzle halls, interior puzzle barriers, and final boss chamber.",
+        "visible": true,
+        "count": 1
+      },
+      {
+        "id": "water-body",
+        "text": "The water-based biome of shorelines, channels, and small crossing features.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "terrain-relief",
+        "text": "The rocky mountain biome with ascending paths and overlooks.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "spawner-npc",
+        "text": "Invisible layout-only placement inside patrol areas.",
+        "visible": false,
+        "count": -1
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "Invisible layout-only placement for equipment, tokens, healing caches, and breakable reward props.",
+        "visible": false,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "The castle is the central visual anchor at map centre on a modest raised approach, with three readable biome silhouettes surrounding it: dense forest, rocky mountain, and water-based shoreline terrain.",
+      "zones": [
+        {
+          "name": "Central Castle",
+          "role": "Gated central destination with enterable puzzle halls, interior barriers, and a final boss chamber.",
+          "where": "Map center",
+          "size": ""
+        },
+        {
+          "name": "Forest Biome",
+          "role": "Dense forest region containing three puzzle locations, including one prominent key-puzzle site on the route toward the castle.",
+          "where": "Around the central castle",
+          "size": "Roughly equal to the other two biomes"
+        },
+        {
+          "name": "Mountain Biome",
+          "role": "Rocky region with ascending paths, overlooks, and three puzzle locations, including one prominent key-puzzle site on the route toward the castle.",
+          "where": "Around the central castle",
+          "size": "Roughly equal to the other two biomes"
+        },
+        {
+          "name": "Water Biome",
+          "role": "Shoreline and channel region with small crossing features and three puzzle locations, including one prominent key-puzzle site on the route toward the castle.",
+          "where": "Around the central castle",
+          "size": "Roughly equal to the other two biomes"
+        },
+        {
+          "name": "Patrol Clearings",
+          "role": "Gentle goblin and fantasy-creature patrol territories bounded visibly by terrain.",
+          "where": "Along routes and off main routes",
+          "size": ""
+        },
+        {
+          "name": "Puzzle Side Sites",
+          "role": "Side clearings, alcoves, ruins, and short obstacle routes containing the six non-key puzzle locations and their rewards.",
+          "where": "Off the main routes in the three biomes",
+          "size": ""
+        }
+      ],
+      "paths": [
+        {
+          "from": "Central Castle",
+          "to": "Forest Biome",
+          "kind": "road"
+        },
+        {
+          "from": "Central Castle",
+          "to": "Mountain Biome",
+          "kind": "trail"
+        },
+        {
+          "from": "Central Castle",
+          "to": "Water Biome",
+          "kind": "road"
+        },
+        {
+          "from": "Central Castle",
+          "to": "All three biomes",
+          "kind": "open ground"
+        },
+        {
+          "from": "Main circulation loop",
+          "to": "Puzzle Side Sites",
+          "kind": "trail"
+        }
+      ],
+      "terrain": "One continuous walkable landmass with dense forest, rocky tiered mountain relief, shorelines and channels in the water biome, natural cliffs, dense trees, water edges, and outer mountains.",
+      "props": [
+        {
+          "name": "Shops",
+          "count": -1,
+          "where": "Evenly spaced along the continuous road-and-trail circulation"
+        },
+        {
+          "name": "Swords, axes, bows, arrows, tokens, healing items, bushes, pots, and barrels",
+          "count": -1,
+          "where": "Along paths, in hidden alcoves, and at puzzle rewards"
+        },
+        {
+          "name": "Puzzle locations",
+          "count": 9,
+          "where": "Three in each biome"
+        },
+        {
+          "name": "Key-puzzle sites",
+          "count": 3,
+          "where": "One on a clear route toward the castle in each biome"
+        }
+      ],
+      "boundary": "Natural cliffs, dense trees, water edges, and outer mountains form the boundary.",
+      "scale_band": "large",
+      "theme": "Bright storybook Zelda-inspired fantasy, adventurous and non-scary."
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "All three biomes, their key-puzzle routes, and the gated castle approach must remain continuously connected and playable.",
+      "set_piece": false
+    },
+    "route": [
+      "P3",
+      "tiered",
+      "CHECK"
+    ],
+    "notes": [
+      "Dropped `gate-solve`, `trigger-solve`, `facade-clue`, and `arena-lockin` because they are not canonical option IDs for the dominant RPG genre."
+    ],
+    "scene_prompt": "Create a 3D third-person fantasy adventure map inspired by classic storybook action-adventure worlds, built as one continuous walkable landmass with a central castle. Arrange a forest biome, a mountain biome, and a water-based biome around the castle, each containing three simple puzzle locations; one prominent key-puzzle site in each biome opens the castle gate, while the other puzzle sites reward tokens, equipment, or extra-heart pickups. Place gentle goblin-like and other non-scary fantasy creature patrol areas along routes, with visible boundary terrain. Spread small shops evenly across the world, and scatter swords, axes, bows, arrows, tokens, healing items, breakable bushes, pots, and barrels along paths and in hidden alcoves. The central castle is the visual destination, with a gated entrance, interior puzzle barriers, and a final boss chamber."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P3', 'CHECK', 'P0', 'tiered'] gives isometric"
+  ]
+}

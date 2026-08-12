@@ -1,0 +1,164 @@
+{
+  "scene": "P0476",
+  "source": "I want to create a game where its a story game and its where us as the player is lost in a forest and we have this guide called mat. mat helps us find recources to build a campfire and make a shelter, but then it starts storming. mat tells us to stay in the shelter while he gets food. when hes gone we wonder why mat was in the forest in the first place. its gotten late, and mat isnt back yet. we get tired and fall asleep. we end up waking up in the middle of the night becasue we got a bad feeling, and then noticed mat standing in the corner with a creepy smile on his face. when we ask why hes standing there, he says run. theres a chase scene where we have to follow the arrows around the forest until we reach city. we start screaming for help from the hundreds of people walking around, but no one answers. mat appears out of no where and tells us its too late. we're already dead",
+  "answers": [
+    {
+      "field": "scale",
+      "ask": "How much forest - one clearing and a chase route, or a wood you can get lost in?",
+      "answer": "Use one main clearing for gathering, building the campfire and shelter, plus a clearly marked chase route through the forest. Keep it focused rather than making a large forest players can freely get lost in."
+    },
+    {
+      "field": "shape",
+      "ask": "Is the city a separate map from the forest, or reached by running to it?",
+      "answer": "The city should be reached by running to it at the end of the forest chase, as a continuous transition rather than a separate map."
+    }
+  ],
+  "scene_prompt": "Create a 3D story-game map set in a focused forest at night. A main woodland clearing serves as the gathering area, with scattered natural resources and space for a campfire and a simple shelter. From the clearing, a clearly marked chase route winds through dense trees toward a city reached as a continuous transition. The route opens into city streets filled with hundreds of silent pedestrians, ending in an urban area that contrasts with the dark forest.",
+  "blob": "### Genre\nThe dominant genre is Adventure, with Survival as a secondary horror-chase influence. The story journey and directed escape own the map form; survival details only inform the opening clearing.\n\n### Shape and preset\nUse `world-corridor`, a guided forest-to-city journey rather than a free-roam wood. Match the Guided Trail preset: retain its corridor form, `path-trail`, and destination pull, but drop its `reveal-exit` because the forest opens directly into exterior city streets rather than crossing an outside-to-inside threshold.\n\n### Config requirements\n`path-trail` is visible geometry: a clearly legible, winding chase path marked through dense trees from the clearing to the city. `landmark-focal` is visible geometry: the brighter urban skyline and first street frontage are the distant destination visible through breaks in the forest. `collectible-nodes` are invisible layout placements for the scattered natural resources in the opening clearing. `npc-population` is both visible and invisible: render hundreds of silent pedestrians throughout the city streets, with their standing and walking occupancy placements applied after segmentation. `settlement-density` is visible geometry: the endpoint becomes a built-up urban street district, not isolated buildings.\n\n### Layout components\nThe opening zone is one medium woodland clearing near the foreground, large enough for gathering, a central campfire site, and one simple improvised shelter along its edge. Scatter natural resource props around its perimeter without turning the forest into a large explorable maze. A single marked route leaves the clearing and snakes through a dense, dark conifer forest; use repeated arrow markers, packed trunks, undergrowth, and occasional open sightlines to keep the intended direction unmistakable. The route continuously transitions into a contrasting city edge, then broad urban streets and building facades filled with hundreds of silent pedestrians. End the route in a tighter urban arrival area. Forest ground is uneven leaf litter and dirt, becoming paved sidewalks and streets at the transition. Dense trees and peripheral darkness form the forest boundary; city blocks frame the final area. Compose the clearing in the lower foreground, the curving route through the middle, and city lights ahead as the visual pull.\n\n### Render order\nUse `topdown`: the chase route must remain continuously connected and readable from clearing to city, since a broken route would make the directed escape unplayable.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by one focused clearing, one complete chase route, and a compact city endpoint rather than a whole open forest. Theme: nocturnal psychological horror, rain-ready woodland darkness, then uncanny populated urban streets. Use `P0`; the forest and city remain one continuous exterior surface with no forced stacked, interior, or separate-map capture pass.",
+  "spec": {
+    "genre": "Adventure",
+    "secondary": [
+      "Survival"
+    ],
+    "shape": "world-corridor",
+    "preset": "Guided Trail",
+    "axes": {},
+    "options": [
+      {
+        "id": "path-trail",
+        "text": "a clearly legible, winding chase path marked through dense trees from the clearing to the city",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "landmark-focal",
+        "text": "the brighter urban skyline and first street frontage are the distant destination visible through breaks in the forest",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "scattered natural resources in the opening clearing",
+        "visible": false,
+        "count": -1
+      },
+      {
+        "id": "npc-population",
+        "text": "hundreds of silent pedestrians throughout the city streets, with standing and walking occupancy placements applied after segmentation",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "settlement-density",
+        "text": "a built-up urban street district at the endpoint, not isolated buildings",
+        "visible": true,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "The clearing sits in the lower foreground, the curving route runs through the middle, and city lights ahead provide the visual pull.",
+      "zones": [
+        {
+          "name": "Opening woodland clearing",
+          "role": "Gathering area with a central campfire site, simple improvised shelter, and scattered natural resources.",
+          "where": "Lower foreground",
+          "size": "medium"
+        },
+        {
+          "name": "Forest chase route",
+          "role": "A single marked escape route through dense dark conifers, kept directional with repeated arrow markers, packed trunks, undergrowth, and occasional open sightlines.",
+          "where": "Middle, leading from the clearing toward the city",
+          "size": ""
+        },
+        {
+          "name": "City edge and urban streets",
+          "role": "The route transitions continuously into broad paved streets and building facades filled with silent pedestrians.",
+          "where": "Ahead of the forest route",
+          "size": "compact"
+        },
+        {
+          "name": "Urban arrival area",
+          "role": "The tighter final destination area at the end of the route.",
+          "where": "End of the city streets",
+          "size": "tight"
+        }
+      ],
+      "paths": [
+        {
+          "from": "Opening woodland clearing",
+          "to": "Forest chase route",
+          "kind": "track"
+        },
+        {
+          "from": "Forest chase route",
+          "to": "City edge and urban streets",
+          "kind": "open ground"
+        },
+        {
+          "from": "City edge and urban streets",
+          "to": "Urban arrival area",
+          "kind": "road"
+        }
+      ],
+      "terrain": "Uneven forest leaf litter and dirt become paved sidewalks and streets at the continuous city transition.",
+      "props": [
+        {
+          "name": "central campfire site",
+          "count": 1,
+          "where": "Opening woodland clearing"
+        },
+        {
+          "name": "simple improvised shelter",
+          "count": 1,
+          "where": "Along the edge of the opening woodland clearing"
+        },
+        {
+          "name": "natural resource props",
+          "count": -1,
+          "where": "Around the perimeter of the opening woodland clearing"
+        },
+        {
+          "name": "repeated arrow markers",
+          "count": -1,
+          "where": "Along the forest chase route"
+        },
+        {
+          "name": "packed conifer trunks and undergrowth",
+          "count": -1,
+          "where": "Along the forest chase route"
+        },
+        {
+          "name": "silent pedestrians",
+          "count": -1,
+          "where": "Throughout the city streets"
+        }
+      ],
+      "boundary": "Dense trees and peripheral darkness form the forest boundary; city blocks frame the final area.",
+      "scale_band": "medium",
+      "theme": "nocturnal psychological horror, rain-ready woodland darkness, then uncanny populated urban streets"
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "the chase route must remain continuously connected and readable from clearing to city, since a broken route would make the directed escape unplayable.",
+      "set_piece": false
+    },
+    "route": [
+      "P0"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a 3D story-game map set in a focused forest at night. A main woodland clearing serves as the gathering area, with scattered natural resources and space for a campfire and a simple shelter. From the clearing, a clearly marked chase route winds through dense trees toward a city reached as a continuous transition. The route opens into city streets filled with hundreds of silent pedestrians, ending in an urban area that contrasts with the dark forest."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P0'] gives isometric"
+  ]
+}

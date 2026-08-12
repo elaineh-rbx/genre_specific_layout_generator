@@ -1,0 +1,142 @@
+{
+  "scene": "P0388",
+  "source": "make a game like temple run but for new york city skyscrapers",
+  "answers": [
+    {
+      "field": "shape",
+      "ask": "Three fixed lanes to snap between, or continuous steering across the width of the path?",
+      "answer": "Use three fixed lanes to snap between, like Temple Run, for clear readable rooftop dodging."
+    },
+    {
+      "field": "theme",
+      "ask": "Should the city read as photoreal New York, or a stylized cartoon version?",
+      "answer": "Use a stylized cartoon New York City look so the skyscraper rooftops and obstacles stay readable."
+    },
+    {
+      "field": "goal",
+      "ask": "Is something chasing the player, or is the run ended only by obstacles?",
+      "answer": "The run ends only when the player hits an obstacle or falls; the prompt does not call for a chaser."
+    }
+  ],
+  "scene_prompt": "Create a stylized cartoon New York City rooftop-running map: a forward route across connected skyscraper rooftops, with three fixed lanes spanning the rooftop path for clear dodging. Arrange rooftop gaps, elevated obstacles, and connecting structures along the route, with a dense city skyline extending around and below the course.",
+  "blob": "### Genre\nThe dominant genre is Infinite Runner: the original request is an endless Temple Run-style forward run, with automatic progression and failure from obstacles or falling. There is no secondary genre.\n\n### Shape and preset\nUse `lane-snap`, matching the Lane Runner preset in its fixed, readable three-lane movement. The explicit three fixed rooftop lanes override Temple Run’s usual free-steering association. Retain the preset’s modular-run logic but omit coins and moving traffic because neither was requested.\n\n### Config requirements\n`chunk-modular` is visible geometry: repeatable rooftop-route segments align exactly end-to-end along one forward axis. `obstacle-jump` is visible geometry: rooftop gaps, raised barriers, and connecting structures require timed jumps. `hazard-kill` is visible geometry: open drops between skyscrapers and solid obstacles end the run on contact or falling. `settlement-density` is visible geometry: dense surrounding skyscraper blocks create the New York City skyline. No invisible pickups, boost volumes, cleanup volumes, or chase elements are requested.\n\n### Layout components\nBuild one long forward rooftop course, three fixed lanes wide, across a continuous sequence of connected skyscraper roofs. Each modular zone is a broad flat roof with lane-readable open pavement, followed by a gap, bridge-like connector, or adjacent roof segment. Stagger elevated obstacles across individual lanes while always leaving a clear dodge or jump line. Use rooftop utility structures, raised vents, water tanks, billboards, short parapets, and construction-like connectors as readable obstacles and transitions. The critical route runs centrally through the frame; a dense stylized Manhattan-like field of tall rectangular towers surrounds it and falls away below, providing depth without becoming alternate traversable paths. Open air and the city drop form the boundary rather than enclosing walls. Compose the scene in a forward-looking isometric view with the three lanes immediately legible and the skyline receding toward the horizon.\n\n### Render order\nUse `topdown`: the connected chunk sequence, three-lane width, and clearable rooftop gaps must remain valid for play, so the plan is established before the isometric dressing.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by the long repeating rooftop run and citywide skyline. Theme is stylized cartoon New York City: bold, clean skyscraper silhouettes and high-contrast readable obstacles. Apply `P6` because fixed-lane chunk connections and obstacle spacing must be valid by construction.",
+  "spec": {
+    "genre": "Infinite Runner",
+    "secondary": [],
+    "shape": "lane-snap",
+    "preset": "Lane Runner",
+    "axes": {},
+    "options": [
+      {
+        "id": "chunk-modular",
+        "text": "Repeatable rooftop-route segments align exactly end-to-end along one forward axis.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "obstacle-jump",
+        "text": "Rooftop gaps, raised barriers, and connecting structures require timed jumps.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "hazard-kill",
+        "text": "Open drops between skyscrapers and solid obstacles end the run on contact or falling.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "settlement-density",
+        "text": "Dense surrounding skyscraper blocks create the New York City skyline.",
+        "visible": true,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "Forward-looking isometric view with the three-lane critical route running centrally through the frame; nearby roofs and obstacles are immediately legible, while the dense skyline recedes toward the horizon and falls away below the course.",
+      "zones": [
+        {
+          "name": "Three-lane rooftop course",
+          "role": "The long forward running route for automatic progression, dodging, and timed jumps.",
+          "where": "centre, running forward through the frame",
+          "size": "long"
+        },
+        {
+          "name": "Surrounding skyline",
+          "role": "Dense stylized Manhattan-like skyscraper field providing depth without alternate traversable paths.",
+          "where": "around and below the rooftop course, receding toward the horizon",
+          "size": "citywide"
+        }
+      ],
+      "paths": [
+        {
+          "from": "Rooftop segment",
+          "to": "Next rooftop segment",
+          "kind": "bridge"
+        }
+      ],
+      "terrain": "Broad flat roofs with lane-readable open pavement, open air, and the city drop between skyscrapers.",
+      "props": [
+        {
+          "name": "Rooftop utility structures",
+          "count": -1,
+          "where": "along rooftop segments"
+        },
+        {
+          "name": "Raised vents",
+          "count": -1,
+          "where": "staggered across individual lanes"
+        },
+        {
+          "name": "Water tanks",
+          "count": -1,
+          "where": "along rooftop segments"
+        },
+        {
+          "name": "Billboards",
+          "count": -1,
+          "where": "along rooftop segments"
+        },
+        {
+          "name": "Short parapets",
+          "count": -1,
+          "where": "along rooftop segments"
+        },
+        {
+          "name": "Construction-like connectors",
+          "count": -1,
+          "where": "between roof segments"
+        },
+        {
+          "name": "Elevated obstacles",
+          "count": -1,
+          "where": "staggered across individual lanes"
+        }
+      ],
+      "boundary": "Open air and the city drop form the boundary rather than enclosing walls.",
+      "scale_band": "large",
+      "theme": "Stylized cartoon New York City; bold, clean skyscraper silhouettes and high-contrast readable obstacles."
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "the connected chunk sequence, three-lane width, and clearable rooftop gaps must remain valid for play.",
+      "set_piece": false
+    },
+    "route": [
+      "P6"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a stylized cartoon New York City rooftop-running map: a forward route across connected skyscraper rooftops, with three fixed lanes spanning the rooftop path for clear dodging. Arrange rooftop gaps, elevated obstacles, and connecting structures along the route, with a dense city skyline extending around and below the course."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "p6",
+  "first": "topdown",
+  "mapper_notes": []
+}

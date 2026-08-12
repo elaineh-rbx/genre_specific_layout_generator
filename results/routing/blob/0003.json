@@ -1,0 +1,181 @@
+{
+  "scene": "0003",
+  "source": "Create a medium-sized tactical gun arena map for team-based combat. Include multiple buildings with doorways and windows for cover, elevated platforms and catwalks for vertical gameplay, scattered cover crates and barriers, symmetrical lanes for balanced team vs team engagements, and sniper towers at opposite ends. The map should have a modern industrial/urban warfare aesthetic with concrete and metal materials. Expose attributes for wall height, building count, and cover density so the map can be tuned.",
+  "answers": [],
+  "scene_prompt": "Create a medium-sized tactical team-combat arena with a modern industrial urban-warfare setting, built from concrete and metal. Arrange symmetrical left and right engagement lanes around a central combat zone, with multiple coverable buildings containing doorways and windows, elevated platforms and catwalks overhead, and sniper towers at opposite ends of the map. Scatter cover crates and barriers throughout the lanes and open areas; make wall height, building count, and cover density tunable layout parameters.",
+  "blob": "### Genre\nDominant genre: Shooter. This is a team-versus-team tactical gun arena organized around firing lanes, cover, opposing spawns, and balanced sightlines.\n\n### Shape and preset\nUse `lane-network`, matching the Team Deathmatch preset. The prompt’s symmetric left and right lanes and central combat zone outweigh Tactical Shooter’s breach-sequence form; add the requested buildings and overhead routes beyond the preset.\n\n### Config requirements\nUse `spawn-teambase` for shielded, mirrored team bases at opposite map ends; `cover-los` for concrete barriers, crates, doorways, windows, and broken sightlines throughout each lane; and `choke-bottleneck` for the constrained approaches into the central combat zone. Use `building-interior` for traversable industrial buildings with doorways and window openings, and `cover-elevated` for elevated platforms, catwalks, and the two opposing sniper towers. The bases also use `spawn-protected`, with immediate geometry screening each team from long sniper sightlines.\n\n### Layout requirements\nPlace two `spawn-teambase` markers, one inside each mirrored end-base, behind protected cover and facing into their respective outer lanes. Place matching `spawn-protected` screening volumes at both base exits, preventing direct cross-map shots at spawning players. No pickups, AI emitters, or scoring volumes are requested.\n\n### Layout components\nBuild a medium rectangular industrial arena with a central open combat zone, flanked by symmetrical left and right engagement lanes. Put a sniper tower at each opposite end, aligned as mirrored landmarks but screened from direct base views. Arrange multiple concrete-and-metal buildings along both lanes, with usable doorways, windows, and interior cut-throughs. Connect elevated platforms and overhead catwalks between building roofs and lane-side structures, while retaining readable ground routes below. Distribute crates and low barriers across lanes and central open ground in mirrored cover patterns. Keep wall height, building count, and cover density as tunable geometry parameters. Enclose the arena with industrial perimeter walls; compose it as a balanced bilateral plan around a clear central axis.\n\n### Render order\nUse `topdown`: the top-down plan is authoritative so mirrored lane connectivity, protected spawns, and fair tower sightlines remain reliable before the isometric industrial dressing.\n\n### Scale, theme, and pipeline cost\nScale band: medium, driven by two team bases, paired lanes, central combat ground, multiple buildings, and two towers. Theme: modern industrial urban warfare, concrete, steel, crates, barriers, and utilitarian catwalks. Use `P2` because catwalks and elevated platforms overhang the ground routes, and `P3` because combat crosses between exterior lanes and enterable building interiors.",
+  "spec": {
+    "genre": "Shooter",
+    "secondary": [],
+    "shape": "lane-network",
+    "preset": "Team Deathmatch",
+    "axes": {},
+    "options": [
+      {
+        "id": "spawn-teambase",
+        "text": "Shielded, mirrored team bases at opposite map ends.",
+        "visible": true,
+        "count": 2
+      },
+      {
+        "id": "cover-los",
+        "text": "Concrete barriers, crates, doorways, windows, and broken sightlines throughout each lane.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "choke-bottleneck",
+        "text": "Constrained approaches into the central combat zone.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "building-interior",
+        "text": "Traversable industrial buildings with doorways and window openings.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "cover-elevated",
+        "text": "Elevated platforms, overhead catwalks, and two opposing sniper towers.",
+        "visible": true,
+        "count": 2
+      },
+      {
+        "id": "spawn-protected",
+        "text": "Immediate geometry screening each team from long sniper sightlines.",
+        "visible": true,
+        "count": 2
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "spawn-teambase",
+        "text": "Team-base markers inside each mirrored end-base, behind protected cover and facing into their respective outer lanes.",
+        "count": 2,
+        "where": "One inside each mirrored end-base, behind protected cover, facing into its respective outer lane."
+      },
+      {
+        "id": "spawn-protected",
+        "text": "Screening volumes at both base exits, preventing direct cross-map shots at spawning players.",
+        "count": 2,
+        "where": "At both base exits."
+      }
+    ],
+    "layout": {
+      "composition": "Balanced bilateral rectangular plan around a clear central axis, with mirrored left and right lanes flanking the central open combat zone; opposing end-bases and sniper towers anchor the map ends.",
+      "zones": [
+        {
+          "name": "Central combat zone",
+          "role": "Open contested combat ground.",
+          "where": "Centre",
+          "size": ""
+        },
+        {
+          "name": "Left engagement lane",
+          "role": "Ground combat route with coverable industrial buildings and elevated connections.",
+          "where": "Left side",
+          "size": ""
+        },
+        {
+          "name": "Right engagement lane",
+          "role": "Mirrored ground combat route with coverable industrial buildings and elevated connections.",
+          "where": "Right side",
+          "size": ""
+        },
+        {
+          "name": "End-base",
+          "role": "Protected team spawn base.",
+          "where": "Each opposite map end",
+          "size": ""
+        },
+        {
+          "name": "Sniper tower",
+          "role": "Elevated opposing landmark screened from direct base views.",
+          "where": "Each opposite map end",
+          "size": ""
+        }
+      ],
+      "paths": [
+        {
+          "from": "Left engagement lane",
+          "to": "Central combat zone",
+          "kind": "open ground"
+        },
+        {
+          "from": "Right engagement lane",
+          "to": "Central combat zone",
+          "kind": "open ground"
+        },
+        {
+          "from": "Industrial buildings",
+          "to": "Industrial buildings",
+          "kind": "corridor"
+        },
+        {
+          "from": "Building roofs",
+          "to": "Lane-side structures",
+          "kind": "bridge"
+        }
+      ],
+      "terrain": "Concrete and metal industrial ground with readable ground routes beneath elevated platforms and catwalks.",
+      "props": [
+        {
+          "name": "Concrete-and-metal industrial buildings",
+          "count": -1,
+          "where": "Along both symmetrical engagement lanes."
+        },
+        {
+          "name": "Sniper towers",
+          "count": 2,
+          "where": "At opposite ends of the map."
+        },
+        {
+          "name": "Elevated platforms and overhead catwalks",
+          "count": -1,
+          "where": "Between building roofs and lane-side structures."
+        },
+        {
+          "name": "Cover crates and low barriers",
+          "count": -1,
+          "where": "Across both lanes and central open ground in mirrored cover patterns."
+        },
+        {
+          "name": "Industrial perimeter walls",
+          "count": -1,
+          "where": "Around the arena boundary."
+        }
+      ],
+      "boundary": "Industrial perimeter walls enclose the arena.",
+      "scale_band": "medium",
+      "theme": "Modern industrial urban warfare: concrete, steel, crates, barriers, and utilitarian catwalks."
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "Mirrored lane connectivity, protected spawns, and fair tower sightlines must remain reliable.",
+      "set_piece": false
+    },
+    "route": [
+      "P2",
+      "P3"
+    ],
+    "notes": [
+      "Wall height, building count, and cover density are tunable geometry parameters.",
+      "No pickups, AI emitters, or scoring volumes are requested."
+    ],
+    "scene_prompt": "Create a medium-sized tactical team-combat arena with a modern industrial urban-warfare setting, built from concrete and metal. Arrange symmetrical left and right engagement lanes around a central combat zone, with multiple coverable buildings containing doorways and windows, elevated platforms and catwalks overhead, and sniper towers at opposite ends of the map. Scatter cover crates and barriers throughout the lanes and open areas; make wall height, building count, and cover density tunable layout parameters."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "010a8a15fa34",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": false,
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P3', 'P0', 'tiered', 'P2'] gives isometric"
+  ]
+}

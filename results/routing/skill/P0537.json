@@ -1,0 +1,117 @@
+{
+  "scene": "P0537",
+  "source": "Focus Garden Tycoon\\n\\nThe game is using the pomodoro method, where completing Pomodoro focus sessions earns Focus Points that grow your garden.\\n\\nConfigurations:\\nAllow the user to setup the following time durations: 25 minutes, 50minutes, 1 hour\\n\\nHow it works: you spawn on your own plot, press E at the Focus Desk to start a 25-min session, and the server runs an authoritative Focus → Short/Long Break state machine. Wandering off pauses the timer (enforces staying focused). Each completed session pays 25 Focus Points, every 4th triggers a long break plus a bonus, and you spend points on the Unlock Pad to grow 8 progressively bigger plants - that's the tycoon loop. Progress saves via DataStore, with an in-memory fallback so it runs even without API access enabled.",
+  "block": {
+    "genres": [
+      "simulation"
+    ],
+    "shape": {
+      "id": "plot-isolated",
+      "type": "BuildZone",
+      "name": "Isolated Per-Player Plots"
+    },
+    "preset": "Tycoon",
+    "pipeline": [
+      "P0"
+    ],
+    "image_prompt": [
+      {
+        "id": "social-hub",
+        "text": "The Unlock Pad, the one station every player returns to in order to spend Focus Points on the next plant"
+      },
+      {
+        "id": "gate-progression",
+        "text": "Eight plant slots that open in order as Focus Points are spent, each unlock revealing a bigger plant than the last"
+      },
+      {
+        "id": "path-circulation",
+        "text": "Walkable circulation on the plot chaining the Focus Desk to the Unlock Pad and out to the planting slots"
+      },
+      {
+        "id": "trigger-task",
+        "text": "The Focus Desk the player stands at to start a session, and the planting slots where the reward appears"
+      },
+      {
+        "id": null,
+        "text": "eight plants at visibly different sizes, from a seedling in the first slot to a large plant in the eighth"
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "trigger-task",
+        "type": "TriggerZone",
+        "text": "Interaction volume at the Focus Desk for starting a session, and one per planting slot"
+      },
+      {
+        "id": null,
+        "type": null,
+        "text": "a presence volume around the Focus Desk - leaving it pauses the running timer"
+      },
+      {
+        "id": null,
+        "type": null,
+        "text": "one plot per player, spawned into at join"
+      }
+    ],
+    "notes": [
+      "Shape was taken from the prompt, not the preset: the Tycoon preset carries a shared team plot and the prompt says you spawn on your own plot, so plot-isolated was used with the presets options kept.",
+      "gate-progression is a loose fit - the prompt unlocks plants at a pad rather than animating physical walls away - but it is the only option expressing purchase-gated tiers.",
+      "The timer, the Focus Point economy and the pause-on-leaving rule are mechanics with a spatial consequence the handoff cannot state: the pause needs a radius around the desk."
+    ]
+  },
+  "open_questions": [
+    {
+      "field": "theme",
+      "ask": "Nothing in the prompt says what the garden looks like - cottage garden, zen rock garden, or bright stylised planters?"
+    },
+    {
+      "field": "scale",
+      "ask": "Assumed a single plot under 100 studs - how far should the plot let you wander before the timer pauses?"
+    },
+    {
+      "field": "shape",
+      "ask": "Are plots visible to each other in one shared world, or is each player alone on their own plot?"
+    }
+  ],
+  "theme": "",
+  "scale": {
+    "band": "room",
+    "assumed": true
+  },
+  "coverage_missing": [
+    {
+      "field": "theme",
+      "ask": "Nothing says what the garden looks like - cottage garden, zen rock garden, or bright stylised planters?"
+    },
+    {
+      "field": "scale",
+      "ask": "How far should the plot let you wander before the timer pauses?"
+    },
+    {
+      "field": "shape",
+      "ask": "Are plots visible to each other in one shared world, or is each player alone?"
+    },
+    {
+      "field": "goal",
+      "ask": "Is finishing all eight plants the end of the game, or does it loop with rebirths?"
+    }
+  ],
+  "answers": [
+    {
+      "field": "theme",
+      "ask": "Nothing in the prompt says what the garden looks like - cottage garden, zen rock garden, or bright stylised planters?",
+      "answer": "Use a bright stylised planter-garden theme; it best fits a small, readable tycoon loop."
+    },
+    {
+      "field": "scale",
+      "ask": "Assumed a single plot under 100 studs - how far should the plot let you wander before the timer pauses?",
+      "answer": "Keep each plot under 100 studs and pause the timer once the player leaves their own plot boundary."
+    },
+    {
+      "field": "shape",
+      "ask": "Are plots visible to each other in one shared world, or is each player alone on their own plot?",
+      "answer": "Put all player plots in one shared world, visibly arranged alongside each other."
+    }
+  ],
+  "answers_missing": 0
+}

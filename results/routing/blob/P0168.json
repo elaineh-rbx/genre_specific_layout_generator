@@ -1,0 +1,175 @@
+{
+  "scene": "P0168",
+  "source": "please build an escape room game where you have to solve puzzles to escape a hidden underground temple within 30 minutes before it fills with lava. there should be various types of puzzles to solve including riddles, interact able puzzles, tile puzzles, and more like using items (e.g. water bucket fills with water, use the water on a plinth to reveal a pattern used somewhere else). each step should be logical and the exit should be unlocked at the end of the chain. follow proper escape room design philosophy but apply it to virtual space.",
+  "answers": [
+    {
+      "field": "scale",
+      "ask": "How many chambers should the chain run through - four or five, or a sprawling complex?",
+      "answer": "Use four connected chambers; keep it a focused, logical escape-room chain rather than a sprawling complex."
+    },
+    {
+      "field": "free",
+      "ask": "Is the 30 minutes a hard fail with a restart, or does the lava just push the pace?",
+      "answer": "Make the 30-minute limit a hard fail: if the temple fills with lava before escape, restart the run."
+    }
+  ],
+  "scene_prompt": "Create a 3D escape-room map set in a hidden underground temple, with four connected chambers forming a focused, logical route toward a final locked exit. Arrange the chambers in sequence through carved stone corridors, each containing distinct puzzle fixtures such as riddle inscriptions, interactive mechanisms, tile-pattern surfaces, item sockets, and stone plinths; include a water container and a plinth that reveals a pattern used in a later chamber. Place the sealed temple exit at the end of the chain, and incorporate lava channels or a rising-lava presence through the temple as a visible threat.",
+  "blob": "### Genre\nThe dominant genre is Puzzle: a chained escape-room progression in which each solve unlocks the route to the final exit.\n\n### Shape and preset\nUse `puzzle-rooms`, matching the Escape Room preset. This is a fully underground sequence of four sealed stone chambers rather than an open-air puzzle space; retain the preset’s chained unlock logic and add the visible lava threat requested by the scene.\n\n### Config requirements\nVisible geometry: `facade-clue` places riddle inscriptions and revealed patterns on deliberate feature walls in the player’s forward path; `button-solve` provides levers, pressure plates, tile controls, and other readable mechanisms; `trigger-solve` provides item sockets and the water-receiving plinth; `gate-progression` makes each corridor door or barrier visibly unlock after its chamber’s solution; and `hazard-kill` makes lava channels and rising lava a visible temple threat. `collectible-nodes` is invisible layout placement: place the water container and any other carryable puzzle-item markers after segmentation. `button-solve` and `trigger-solve` each also require invisible interaction/acceptance volumes placed after segmentation; only their physical controls, sockets, and plinths appear in the image.\n\n### Layout components\nBuild four connected chambers in a clear linear chain, each roughly room-sized rather than sprawling, linked by narrow carved-stone corridors with sealed progression doors. The first chamber introduces riddle inscriptions and a simple mechanism. The second contains tile-pattern surfaces and interactive stone controls. The third is the item-use chamber: place one water container near its puzzle fixture and a central stone plinth that receives water to reveal a pattern. Carry that revealed pattern forward to the fourth chamber, where it appears as the solution language for the final mechanism. Beyond it, set the sealed temple exit in an imposing end wall as the chain’s final gate. Run shallow lava channels along wall edges, floor fissures, or corridor trenches throughout the temple, with the strongest rising-lava presence near later chambers; keep the critical walking route legible and clear between fixtures. Enclose the entire map in heavy carved stone walls and ceilings, with no exterior. Frame the plan as a readable left-to-right or front-to-back progression ending at the exit.\n\n### Render order\nUse `topdown`: the four-room sequence and its single logical progression route must remain connected and readable for play before the isometric dressing is made authoritative.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the focused chain of exactly four chambers. Theme: ancient hidden underground temple, carved stone, ritual mechanisms, glowing lava. Use `P0`: the entire experience is one indoor, single-surface room chain; lava channels and enclosed chambers do not by themselves require another capture path.",
+  "spec": {
+    "genre": "Puzzle",
+    "secondary": [],
+    "shape": "puzzle-rooms",
+    "preset": "Escape Room",
+    "axes": {},
+    "options": [
+      {
+        "id": "facade-clue",
+        "text": "Riddle inscriptions and revealed patterns on deliberate feature walls in the player's forward path.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "button-solve",
+        "text": "Levers, pressure plates, tile controls, and other readable physical mechanisms; their invisible interaction volumes are placed after segmentation.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "trigger-solve",
+        "text": "Item sockets and the water-receiving stone plinth; their invisible acceptance volumes are placed after segmentation.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "gate-progression",
+        "text": "Each carved-stone corridor door or barrier visibly unlocks after its chamber's solution, culminating in the sealed temple exit.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "Place the one water container and any other carryable puzzle-item markers after segmentation.",
+        "visible": false,
+        "count": 1
+      }
+    ],
+    "layout": {
+      "composition": "A readable left-to-right or front-to-back linear plan: four compact chambers progress through narrow corridors toward the imposing sealed exit wall at the far end.",
+      "zones": [
+        {
+          "name": "First chamber",
+          "role": "Introduces riddle inscriptions and a simple mechanism.",
+          "where": "Start of the linear chain",
+          "size": "Roughly room-sized"
+        },
+        {
+          "name": "Second chamber",
+          "role": "Contains tile-pattern surfaces and interactive stone controls.",
+          "where": "After the first sealed corridor door",
+          "size": "Roughly room-sized"
+        },
+        {
+          "name": "Third chamber",
+          "role": "Item-use chamber with the water container, puzzle fixture, and central plinth that receives water to reveal a pattern.",
+          "where": "After the second sealed corridor door",
+          "size": "Roughly room-sized"
+        },
+        {
+          "name": "Fourth chamber",
+          "role": "Uses the revealed pattern as the solution language for the final mechanism.",
+          "where": "After the third sealed corridor door, before the exit",
+          "size": "Roughly room-sized"
+        },
+        {
+          "name": "Sealed temple exit",
+          "role": "The chain's final gate beyond the fourth chamber.",
+          "where": "End wall beyond the fourth chamber",
+          "size": "Imposing"
+        }
+      ],
+      "paths": [
+        {
+          "from": "First chamber",
+          "to": "Second chamber",
+          "kind": "corridor"
+        },
+        {
+          "from": "Second chamber",
+          "to": "Third chamber",
+          "kind": "corridor"
+        },
+        {
+          "from": "Third chamber",
+          "to": "Fourth chamber",
+          "kind": "corridor"
+        },
+        {
+          "from": "Fourth chamber",
+          "to": "Sealed temple exit",
+          "kind": "corridor"
+        }
+      ],
+      "terrain": "Single-surface carved stone floors with shallow lava channels along wall edges, floor fissures, and corridor trenches; rising lava is strongest near later chambers.",
+      "props": [
+        {
+          "name": "Water container",
+          "count": 1,
+          "where": "Near the puzzle fixture in the third chamber"
+        },
+        {
+          "name": "Central stone plinth",
+          "count": -1,
+          "where": "Centre of the third chamber"
+        },
+        {
+          "name": "Riddle inscriptions",
+          "count": -1,
+          "where": "Feature walls in the first chamber and forward player path"
+        },
+        {
+          "name": "Tile-pattern surfaces",
+          "count": -1,
+          "where": "Second chamber"
+        },
+        {
+          "name": "Interactive stone controls",
+          "count": -1,
+          "where": "Second chamber"
+        },
+        {
+          "name": "Sealed progression doors",
+          "count": -1,
+          "where": "Between chambers and at the final exit"
+        }
+      ],
+      "boundary": "Heavy carved stone walls and ceilings fully enclose the underground temple; no exterior.",
+      "scale_band": "small",
+      "theme": "Ancient hidden underground temple, carved stone, ritual mechanisms, glowing lava."
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "the four-room sequence and its single logical progression route must remain connected and readable for play.",
+      "set_piece": false
+    },
+    "route": [
+      "P0"
+    ],
+    "notes": [
+      "dropped option 'hazard-kill': not in Puzzle"
+    ],
+    "scene_prompt": "Create a 3D escape-room map set in a hidden underground temple, with four connected chambers forming a focused, logical route toward a final locked exit. Arrange the chambers in sequence through carved stone corridors, each containing distinct puzzle fixtures such as riddle inscriptions, interactive mechanisms, tile-pattern surfaces, item sockets, and stone plinths; include a water container and a plinth that reveals a pattern used in a later chamber. Place the sealed temple exit at the end of the chain, and incorporate lava channels or a rising-lava presence through the temple as a visible threat."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P0', 'P3'] gives isometric"
+  ]
+}

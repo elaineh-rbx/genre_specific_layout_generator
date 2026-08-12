@@ -1,0 +1,157 @@
+{
+  "scene": "P0396",
+  "source": "could you make a very very very very very very very very very very very very very very very very Very very very Very very Very very very Very cool game of running. you run away from a zombie you just run away from it and there is very very Very very very Very very very Very very very Very very very Very very very Very very very cool running animation for the player and the zombie you are 1.2x faster than the zombie and there and ramps and parkour",
+  "answers": [
+    {
+      "field": "theme",
+      "ask": "No setting was given - should the chase run through a city, a forest, a facility?",
+      "answer": "Use a small abandoned city setting, with streets, rooftops, ramps, and simple parkour obstacles for the chase."
+    },
+    {
+      "field": "goal",
+      "ask": "Does the chase end - an escape exit, a timer, or does it run until you are caught?",
+      "answer": "The chase ends at an escape exit at the end of the course; the player loses if the zombie catches them first."
+    }
+  ],
+  "scene_prompt": "Create a 3D zombie chase course in a small abandoned city. A forward-running route follows empty streets through city blocks, with ramps leading onto rooftops and simple parkour obstacles along the escape path. Place an escape exit at the far end of the course.",
+  "blob": "### Genre\nThe dominant genre is Survival, with Obby & Platformer secondary for the authored parkour movement. The chase-and-escape objective makes this a survival escape course rather than an endless runner; do not carry the speed relationship or animation requirements into the layout.\n\n### Shape and preset\nUse `warren-looping`, adapted from the Escape preset. The prompt’s route is a forward escape through city blocks rather than a dense indoor warren, so keep the preset’s escape-focused topology but form it as a connected street-and-rooftop pursuit route with no trapping dead ends. The preset remains recognizable through its hostile pursuit and terminal escape.\n\n### Config requirements\nUse `spawner-npc` as invisible layout geometry: place the zombie’s hostile origin at the rear of the opening chase segment, off the visible route composition. Use `gate-escape` as both visible geometry and an invisible completion volume: a conspicuous sealed exit gate at the course terminus. From the secondary genre, use `obstacle-jump` as visible geometry for the simple parkour barriers and rooftop transitions. No enterable-building option applies; rooftops are traversal surfaces, not interiors.\n\n### Layout components\nBuild a compact abandoned-city chase course of several connected blocks. Start on a broad empty street at the near edge, with the zombie origin behind the player’s departure direction. The main route proceeds forward through deserted streets, turns between shuttered storefront facades and derelict block fronts, then uses repeated ramps to climb onto connected rooftops. Rooftop segments provide short, readable parkour sequences of low gaps, barricades, broken roof sections, and ramps down to the next street, always preserving a continuous escape path. Put the escape exit at the far end, framed by a fenced street terminus or large industrial gate. Use cracked asphalt, scattered rubble, boarded windows, abandoned vehicles, and sparse street debris; keep obstacle silhouettes clear. Surround the course with blocked streets, building masses, fences, and collapsed debris rather than open map edges. Compose the view diagonally along the forward route, showing the street-to-rooftop escalation and the distant exit.\n\n### Render order\nUse `topdown` first, with the top-down route authoritative, because a disconnected chase path or an unavoidable dead end would make escape unplayable; the isometric view is then dressed from that valid plan.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by several city blocks and a full street-to-rooftop escape progression. Theme: stylized abandoned urban zombie chase, bleak but readable. Use `P6` for valid chase-route construction and `P2` because rooftop paths physically overlap the streets below.",
+  "spec": {
+    "genre": "Survival",
+    "secondary": [
+      "Obby & Platformer"
+    ],
+    "shape": "warren-looping",
+    "preset": "Escape",
+    "axes": {},
+    "options": [
+      {
+        "id": "spawner-npc",
+        "text": "Place the zombie’s hostile origin at the rear of the opening chase segment, off the visible route composition.",
+        "visible": false,
+        "count": -1
+      },
+      {
+        "id": "gate-escape",
+        "text": "A conspicuous sealed exit gate at the course terminus, framed by a fenced street terminus or large industrial gate, with an invisible completion volume.",
+        "visible": true,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "Diagonal view along the forward escape route, with the broad starting street at the near edge, streets and shuttered block fronts through the middle, rooftop escalation above the streets, and the distant exit at the far end.",
+      "zones": [
+        {
+          "name": "Opening chase street",
+          "role": "Broad empty street where the player begins the escape; the zombie origin sits behind the player’s departure direction.",
+          "where": "near edge",
+          "size": "broad"
+        },
+        {
+          "name": "Street-block pursuit route",
+          "role": "Forward route through deserted streets turning between shuttered storefront facades and derelict block fronts.",
+          "where": "midground",
+          "size": "several connected blocks"
+        },
+        {
+          "name": "Connected rooftops",
+          "role": "Short readable parkour sequences with low gaps, barricades, broken roof sections, and ramps down to the next street while preserving a continuous escape path.",
+          "where": "above the streets through the midground",
+          "size": ""
+        },
+        {
+          "name": "Escape terminus",
+          "role": "Terminal escape at a sealed exit gate.",
+          "where": "far end",
+          "size": ""
+        }
+      ],
+      "paths": [
+        {
+          "from": "Opening chase street",
+          "to": "Street-block pursuit route",
+          "kind": "road"
+        },
+        {
+          "from": "Street-block pursuit route",
+          "to": "Connected rooftops",
+          "kind": "ramp"
+        },
+        {
+          "from": "Connected rooftops",
+          "to": "Street-block pursuit route",
+          "kind": "ramp"
+        },
+        {
+          "from": "Street-block pursuit route",
+          "to": "Escape terminus",
+          "kind": "road"
+        }
+      ],
+      "terrain": "Cracked asphalt streets, rooftop traversal surfaces, scattered rubble, and collapsed debris.",
+      "props": [
+        {
+          "name": "shuttered storefront facades",
+          "count": -1,
+          "where": "along the street-block pursuit route"
+        },
+        {
+          "name": "derelict block fronts",
+          "count": -1,
+          "where": "along the street-block pursuit route"
+        },
+        {
+          "name": "boarded windows",
+          "count": -1,
+          "where": "building masses"
+        },
+        {
+          "name": "abandoned vehicles",
+          "count": -1,
+          "where": "streets"
+        },
+        {
+          "name": "sparse street debris",
+          "count": -1,
+          "where": "streets and route edges"
+        },
+        {
+          "name": "fences",
+          "count": -1,
+          "where": "course perimeter and escape terminus"
+        },
+        {
+          "name": "barricades",
+          "count": -1,
+          "where": "rooftop segments"
+        }
+      ],
+      "boundary": "Blocked streets, building masses, fences, and collapsed debris surround the course rather than open map edges.",
+      "scale_band": "medium",
+      "theme": "stylized abandoned urban zombie chase, bleak but readable"
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "a disconnected chase path or an unavoidable dead end would make escape unplayable.",
+      "set_piece": false
+    },
+    "route": [
+      "P6",
+      "P2"
+    ],
+    "notes": [
+      "Dropped `obstacle-jump`: it is not a canonical option ID for the dominant genre Survival."
+    ],
+    "scene_prompt": "Create a 3D zombie chase course in a small abandoned city. A forward-running route follows empty streets through city blocks, with ramps leading onto rooftops and simple parkour obstacles along the escape path. Place an escape exit at the far end of the course."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "p6",
+  "first": "topdown",
+  "mapper_notes": []
+}

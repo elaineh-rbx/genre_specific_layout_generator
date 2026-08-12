@@ -1,0 +1,162 @@
+{
+  "scene": "P0374",
+  "source": "I want a racing game with a city and a dealership",
+  "answers": [
+    {
+      "field": "shape",
+      "ask": "A closed street circuit with laps, or a free-roam city you can drive anywhere in?",
+      "answer": "Use a closed street circuit with laps."
+    },
+    {
+      "field": "other",
+      "ask": "Is the dealership somewhere you walk into and buy cars, or just a landmark on the route?",
+      "answer": "The dealership should be somewhere players can walk into and buy cars."
+    },
+    {
+      "field": "scale",
+      "ask": "How much city - a few blocks around the track, or a whole drivable city?",
+      "answer": "Keep it to a few city blocks around the track so the game stays focused and playable."
+    }
+  ],
+  "scene_prompt": "Create a 3D racing map set across a few city blocks, centered on a closed street circuit that loops through the urban streets. Place a walk-in car dealership along the route as a distinct accessible building, with surrounding city blocks framing the track.",
+  "blob": "### Genre\nThe dominant genre is Racing: the author specifies a closed circuit with laps. The dealership is a route-side destination within that racing map, not a secondary genre.\n\n### Shape and preset\nUse `route-circuit`, matching the Circuit Racing preset. Here it is a compact closed street loop through a few urban blocks; retain the preset’s race-control features and add the explicitly requested accessible dealership.\n\n### Config requirements\nUse `spawn-grid` as visible, evenly spaced start slots across a broad street launch front, with its race-start positions also placed invisibly. Use `trigger-lap` as an invisible detection line on the completed loop. Use `barrier-guardrail` as visible curb barriers, railings, and street-edge blockers that keep cars on the circuit, and `path-turnaround` as visible tight corner geometry that clearly returns the route toward its start. Use `building-interior` as visible geometry for the walk-in dealership, including a street-facing entrance and showroom interior. Use `settlement-density` as visible built-up city blocks framing the route.\n\n### Layout components\nBuild one compact urban circuit occupying a few city blocks. The main zone is the closed asphalt street loop, wide enough for the start grid and continuously readable around block corners. Place the start/finish straight on the most open block edge, with the lap line at that location. Arrange surrounding blocks as continuous rows of low- to mid-rise urban facades, sidewalks, intersections, storefronts, and street furniture, while preserving an unobstructed circuit corridor. Put the dealership directly along one route-side block as a distinct accessible building, with a glazed showroom facing the street and an interior entered from the sidewalk. Use curbs, rails, barriers, and corner islands as the physical circuit boundary; the city facade perimeter closes the composition rather than extending into a free-roam city. Frame the map in a three-quarter isometric view with the looping route legible around the blocks and the dealership recognizable from the track.\n\n### Render order\nUse `authored_plan`: a racing circuit must be generated as a valid, continuous closed route before the city dressing is applied.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by a complete lap circuit plus a few surrounding city blocks rather than a whole city. Theme: compact contemporary urban street racing, asphalt, storefront glass, and civic street furniture. Pipeline modifiers are `P6`, because the circuit must close and remain traversable by construction, and `P3`, because players cross from the outdoor street into the dealership interior.",
+  "spec": {
+    "genre": "Racing",
+    "secondary": [],
+    "shape": "route-circuit",
+    "preset": "Circuit Racing",
+    "axes": {},
+    "options": [
+      {
+        "id": "spawn-grid",
+        "text": "Visible, evenly spaced start slots across a broad street launch front, with race-start positions also placed invisibly.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "trigger-lap",
+        "text": "An invisible detection line on the completed loop at the start/finish straight.",
+        "visible": false,
+        "count": -1
+      },
+      {
+        "id": "barrier-guardrail",
+        "text": "Visible curb barriers, railings, and street-edge blockers that keep cars on the circuit.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "path-turnaround",
+        "text": "Visible tight corner geometry that clearly returns the route toward its start.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "building-interior",
+        "text": "A walk-in dealership directly along one route-side block, with a street-facing entrance, glazed showroom, and interior entered from the sidewalk.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "settlement-density",
+        "text": "Built-up city blocks framing the route: continuous rows of low- to mid-rise urban facades, sidewalks, intersections, storefronts, and street furniture.",
+        "visible": true,
+        "count": -1
+      }
+    ],
+    "layout": {
+      "composition": "Three-quarter isometric view of a compact looping street route around urban blocks, with the dealership recognizable from the track. The start/finish straight sits on the most open block edge; surrounding city facades frame the circuit.",
+      "zones": [
+        {
+          "name": "Closed asphalt street loop",
+          "role": "Continuous lap circuit, wide enough for the start grid and readable around block corners.",
+          "where": "Centre, looping through the urban blocks",
+          "size": "Compact circuit occupying a few city blocks"
+        },
+        {
+          "name": "Start/finish straight",
+          "role": "Broad street launch front with the start grid and lap line.",
+          "where": "Most open block edge",
+          "size": ""
+        },
+        {
+          "name": "Route-side dealership",
+          "role": "Accessible walk-in car dealership with a street-facing glazed showroom and interior.",
+          "where": "Directly along one route-side block",
+          "size": ""
+        },
+        {
+          "name": "Surrounding city blocks",
+          "role": "Urban framing around the circuit while preserving an unobstructed circuit corridor.",
+          "where": "Around the closed street loop",
+          "size": "A few surrounding blocks"
+        }
+      ],
+      "paths": [
+        {
+          "from": "Start/finish straight",
+          "to": "Closed asphalt street loop",
+          "kind": "track"
+        },
+        {
+          "from": "Closed asphalt street loop",
+          "to": "Route-side dealership",
+          "kind": "open ground"
+        },
+        {
+          "from": "Sidewalk",
+          "to": "Route-side dealership",
+          "kind": "corridor"
+        }
+      ],
+      "terrain": "Asphalt urban streets with sidewalks, curbs, corner islands, and civic street furniture.",
+      "props": [
+        {
+          "name": "Low- to mid-rise urban facades",
+          "count": -1,
+          "where": "Continuous rows around the circuit"
+        },
+        {
+          "name": "Storefronts",
+          "count": -1,
+          "where": "Along surrounding city blocks"
+        },
+        {
+          "name": "Street furniture",
+          "count": -1,
+          "where": "Sidewalks and intersections"
+        },
+        {
+          "name": "Curbs, rails, barriers, and corner islands",
+          "count": -1,
+          "where": "Along the circuit boundary"
+        }
+      ],
+      "boundary": "Curbs, rails, barriers, and corner islands physically contain the circuit; the city facade perimeter closes the composition rather than extending into a free-roam city.",
+      "scale_band": "medium",
+      "theme": "Compact contemporary urban street racing, asphalt, storefront glass, and civic street furniture."
+    },
+    "render": {
+      "first": "authored_plan",
+      "then": "topdown",
+      "authoritative": "authored_plan",
+      "why": "The circuit must be a valid, continuous closed route before city dressing is applied.",
+      "set_piece": false
+    },
+    "route": [
+      "P6",
+      "P3"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a 3D racing map set across a few city blocks, centered on a closed street circuit that loops through the urban streets. Place a walk-in car dealership along the route as a distinct accessible building, with surrounding city blocks framing the track."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "6c9ebf678e33",
+  "served_by": "gateway/production/gpt-5.6-terra",
+  "reused_uprez": true,
+  "order": "layout",
+  "first": "authored_plan",
+  "mapper_notes": []
+}
