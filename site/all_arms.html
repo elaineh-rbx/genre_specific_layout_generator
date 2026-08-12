@@ -96,7 +96,7 @@ dialog img{max-width:94vw;max-height:94vh;border-radius:8px}
 .given .box{border:1px solid var(--ln);border-radius:8px;padding:9px 11px}
 .given .box h4{margin:0 0 6px}
 </style>
-<header><h1>Every arm on the same scene</h1><span class="tabs"><a class="" href="index.html">Start</a><a class="on" href="all_arms.html">4 arms</a><a class="" href="rules_compare.html">Build.md Part II</a><a class="" href="skill_compare.html">Who chose: an agent following the skill, or the router</a><a class="" href="roadmap.html">Injection roadmap</a><a class="" href="requirements.html">Requirements used</a><a class="" href="rules_viewer/index.html">Genre menu</a><a href="/playground" title="generate from any prompt">Playground</a></span>
+<header><h1>Every arm on the same scene</h1><span class="tabs"><a class="" href="index.html">Start</a><a class="on" href="all_arms.html">4 arms</a><a class="" href="rules_compare.html">Build.md Part II</a><a class="" href="skill_compare.html">Who chose: an agent following the skill, or the router</a><a class="" href="blob_compare.html">The four-stage pipeline</a><a class="" href="blob_asks.html">Did each arm deliver what it asked for</a><a class="" href="roadmap.html">Injection roadmap</a><a class="" href="requirements.html">Requirements used</a><a class="" href="rules_viewer/index.html">Genre menu</a><a href="/playground" title="generate from any prompt">Playground</a></span>
   <span class="sub">75 golden prompts &middot; identical wrapper and style
     tail &middot; the only difference is what each arm was told</span></header>
 <div class="wrap">
@@ -214,6 +214,12 @@ function given(s){
 
 function render(i){
   cur=i; const s=S[i];
+  // A comparison whose arms have not both finished rendering has nothing to show yet.
+  // Saying so beats throwing, which looks identical to a broken page.
+  if(!s){ $("main").innerHTML = HEAD + `<div class="sect"><h2>Nothing to compare yet</h2>
+    <p class="note">No scene has been rendered by every arm in this comparison.
+    A scene appears here once all of ${ARMS.map(a=>a.title).join(", ")} have an
+    isometric and a top-down image for it.</p></div>`; return; }
   $("main").innerHTML = HEAD + `
   <div class="sect">
     <h2>${esc(s.scene)}${s.agreed&&s.genre?` &mdash; ${esc(s.genre)}`:""}</h2>

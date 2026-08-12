@@ -42,11 +42,19 @@ def collect(cmp: A.Comparison) -> list[dict]:
     runs = A.load_runs()
     scores = _scores(cmp)
     scenes = sorted(set.intersection(*(set(runs[a.id]) for a in cmp.runs)))
+    # A scene one arm never managed to render cannot be compared: the row would be an
+    # empty tile beside a full one, which reads as a failure of the layout rather than
+    # of the image service. The content filter refuses a handful of prompts outright,
+    # and the arms disagree about which - so this is not a rare tidiness case, it is
+    # exactly where the arms differ most.
+    scenes = [s for s in scenes
+              if all(paths.scene(a, st, s).is_file()
+                     for a in cmp.arms for st in paths.STAGES)]
 
     out = []
     for scene in scenes:
         rows = A.rows_for(scene, runs)
-        reqs = cmp.requirements(rows)
+        reqs = cmp.requirements(rows, scene)
         judged = {st: scores[st].get(scene) for st in paths.STAGES}
 
         feats = []
@@ -285,6 +293,12 @@ function given(s){{
 
 function render(i){{
   cur=i; const s=S[i];
+  // A comparison whose arms have not both finished rendering has nothing to show yet.
+  // Saying so beats throwing, which looks identical to a broken page.
+  if(!s){{ $("main").innerHTML = HEAD + `<div class="sect"><h2>Nothing to compare yet</h2>
+    <p class="note">No scene has been rendered by every arm in this comparison.
+    A scene appears here once all of ${{ARMS.map(a=>a.title).join(", ")}} have an
+    isometric and a top-down image for it.</p></div>`; return; }}
   $("main").innerHTML = HEAD + `
   <div class="sect">
     <h2>${{esc(s.scene)}}${{s.agreed&&s.genre?` &mdash; ${{esc(s.genre)}}`:""}}</h2>

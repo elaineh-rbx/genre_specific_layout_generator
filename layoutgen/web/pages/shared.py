@@ -26,8 +26,17 @@ def thumbs() -> int:
     """
     from layoutgen.evaluate.score import thumb
 
+    # Every arm's scenes, not one arm's. The arms no longer cover the same set - the
+    # ones built on the imported prompts have several hundred scenes the original arms
+    # have never seen - so anchoring the sweep on a single arm left those pages linking
+    # to thumbnails that were never made.
+    scenes: set[str] = set()
+    for arm in A.ARMS:
+        for stage in paths.STAGES:
+            scenes |= {p.stem for p in (paths.SCENES / arm / stage).glob("*.png")}
+
     jobs = []
-    for scene in sorted(p.stem for p in (paths.SCENES / "rules" / "iso").glob("*.png")):
+    for scene in sorted(scenes):
         for arm in A.ARMS:
             for stage in paths.STAGES:
                 jobs.append((paths.scene(arm, stage, scene),

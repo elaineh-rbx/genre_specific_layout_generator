@@ -21,12 +21,31 @@ import sys
 
 from layoutgen import arms as A
 
-#: A page, and a scene on it worth landing on. The scenes are ones where the arms
-#: disagree, so the panels that only appear on a disagreement are exercised.
-PAGES = [(c.page, "0036") for c in A.COMPARISONS.values()] + [
-    ("requirements.html", ""), ("roadmap.html", ""), ("rules_viewer/index.html", ""),
-    ("index.html", ""),
-]
+def probe(cmp: A.Comparison) -> str:
+    """A scene on this page worth landing on, so its panels get exercised.
+
+    Asked of the comparison rather than fixed, because the arms do not all cover the
+    same scenes: the original golden set counts from `0036`, and the arms built on the
+    imported set have nothing by that name. A hardcoded scene reported those pages as
+    broken when they were only about something else.
+    """
+    runs = A.load_runs()
+    if not cmp.runs:
+        return ""
+    # Only scenes every arm actually rendered. A scene present in the run files but
+    # failed - the content filter refuses a handful - has no images, and reporting its
+    # missing thumbnails as a broken page points at the wrong thing.
+    ok = [{s for s, row in runs[a.id].items() if row.get("status", "ok") == "ok"}
+          for a in cmp.runs]
+    shared = set.intersection(*ok)
+    return min(shared) if shared else ""
+
+
+def pages_to_check() -> list[tuple[str, str]]:
+    return [(c.page, probe(c)) for c in A.COMPARISONS.values()] + [
+        ("requirements.html", ""), ("roadmap.html", ""),
+        ("rules_viewer/index.html", ""), ("index.html", ""),
+    ]
 
 #: What a working page has once a scene is open. A page that loads, throws nothing and
 #: still shows none of these is broken in the way that is easiest to miss.
@@ -73,7 +92,7 @@ def main() -> int:
         return 2
 
     base = f"http://127.0.0.1:{args.port}"
-    pages = [p for p in PAGES if not args.page or p[0] == args.page]
+    pages = [p for p in pages_to_check() if not args.page or p[0] == args.page]
     failed = 0
     with sync_playwright() as p:
         browser = p.chromium.launch()

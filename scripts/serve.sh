@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
-# Keep the playground (8887) and the viewers (8888) up.
+# Keep the playground (8887) and the viewer ports (8888, 8889) up.
 #
-# Both ports run the same program: one opens on the playground, the other on the
-# viewer index, and every other path is identical on both. Each gets a detached
-# supervisor loop that restarts it if it ever exits, so a crash costs five seconds
-# instead of staying down until someone notices.
+# Every port runs the same program: 8887 opens on the playground, 8888/8889 on the
+# viewer index, and every other path is identical on all of them. Each gets a
+# detached supervisor loop that restarts it if it ever exits, so a crash costs
+# five seconds instead of staying down until someone notices. 8889 is the shared
+# link, since it is the one that answers /results/config_shifts.html and other
+# read-only analyses over the network.
 #
 # A supervisor cannot survive the container itself going away, so ~/.zshrc calls this
 # script too: opening any shell brings the pair back. Running it is always safe - a
@@ -25,8 +27,8 @@ PY="${LAYOUTGEN_PYTHON:-}"
 [ -z "$PY" ] && [ -x "$REPO/.venv/bin/python" ] && PY="$REPO/.venv/bin/python"
 [ -z "$PY" ] && PY="$(command -v python3)"
 LOGS="$REPO/run/logs"
-PORTS=(8887 8888)
-HOMES=(playground viewers)
+PORTS=(8887 8888 8889)
+HOMES=(playground viewers shifts)
 TAG=layoutgen-serve           # appears in each supervisor's command line, so they can be
                          # found again without a pid file to go stale
 
