@@ -123,18 +123,22 @@ flowchart TD
 
 **Owner:** Build Agent.
 
-The Build Agent is the only component that talks to the author. It uses the intake and
-genre-choice skills to resolve ambiguities that materially change the map. Goal or win
+The Build Agent is the only component that talks to the author. It uses
+`.cursor/skills/layout-intake/` for dispatch,
+`.cursor/skills/uprez-prompt/` for the fixed scene prompt, and
+`.cursor/skills/genre-choice/` when intake routes a layout concern there. Goal or win
 condition is not collected unless it changes spatial shape; gameplay rules do not belong
 in the scene prompt.
 
 The Build Agent produces a fixed scene prompt describing spaces, paths, terrain, visible
 props, scale, and composition. Rules, UI, economy, and non-spatial mechanics are removed.
 
-The corrected corpus was originally seeded from previously generated scene prompts. The
-self-contained `agent_blob/*.md` artifacts are now authoritative: `build_agent_arm.py`
-reads their `# Scene prompt` sections directly and verifies them against
-`agent_input/*.json`. It does not read or rerun a historical arm.
+The corrected corpus inputs were seeded by `tools/make_agent_inputs.py`, which projected
+`results/routing/answered/` and copied fixed `scene_prompt` values from historical
+`results/routing/blob/` records into `results/routing/agent_input/`. The self-contained
+`agent_blob/*.md` artifacts are now authoritative: `build_agent_arm.py` reads their
+`# Scene prompt` sections directly and verifies them against `agent_input/*.json`. It
+does not read or rerun a historical arm.
 
 ## Stage 1 — Cursor agent decides in prose
 
@@ -235,7 +239,7 @@ The output is a structured layout spec containing:
 - migrates the 12 retired shape IDs;
 - drops options that do not belong to the selected genre;
 - reconciles `options`, `visible`, and `layout_placement`;
-- rejects unknown presets;
+- clears unknown presets to `none` and records a note;
 - derives `render.then` and aligns `render.authoritative`;
 - reconciles `SET` and `set_piece`;
 - ensures an empty route becomes `["P0"]`;
@@ -247,8 +251,10 @@ This is validation and policy enforcement, not another prose parser.
 
 **Owner:** MapGen. **Model calls:** none.
 
-`mapper.build(spec)` assembles prompts from the fixed scene prompt, shared catalogue,
-selected shape, visible options, and camera wrappers.
+`mapper.build(spec)` assembles prompts from the fixed scene prompt, shared-catalogue
+shape and option wording, visible option IDs, and camera wrappers. It passes `edits={}`,
+so transcribed per-scene `options[].text` remains on the spec for audit but is not
+injected into the `agent_gateway` image addendum.
 
 Only visible geometry reaches the image prompts. Trigger volumes, spawn markers,
 checkpoints, pickups, emitters, and other post-segmentation work remain in
@@ -271,9 +277,13 @@ plan in code.
 
 ### Current route-authority caveat
 
-The intended contract says the route transcribed from the agent decision determines
-render order. `tools/build_agent_arm.py` currently does that first and overwrites
-`render.first` accordingly.
+The agent's prose records both a Render order decision
+(`isometric`/`topdown`/`authored_plan`) and named route modifiers (`P6`, `P4`, and so
+on). Execution does not obey the prose render-order sentence directly.
+
+`tools/build_agent_arm.py` first overwrites `render.first` and `render.authoritative`
+using the transcribed `spec.route` and local carveability: `layout` when carveable,
+otherwise `p6` when the route contains `P6`, otherwise `std`.
 
 However, `mapper.build()` then recomputes route from genre, shape, options, axes, and
 set-piece state and derives order again. Its returned record contains:
@@ -281,13 +291,15 @@ set-piece state and derives order again. Its returned record contains:
 - `route`: the recomputed catalogue route;
 - `claimed_route`: the route transcribed from agent prose.
 
-Therefore the final executed order currently follows the mapper's recomputed route when
-the two disagree. Documentation must not claim that the transcribed agent route is the
-single execution authority until those two code paths are reconciled.
+Therefore the final executed order follows `mapper.build()`'s catalogue-recomputed route
+and the shared `layout`/`p6`/`std` formula. The transcribed route is retained as
+`claimed_route`, while `route` records the recomputed value. Agent prose alone is not
+execution authority.
 
 For example, `P0005` asks for `topdown` in prose and names route `P4 + P3`, but executes
-as `std`/isometric-first because the recomputed route has no `P6` and the shape has no
-carver.
+as `std`/isometric-first because execution keys off `P6` and carveability, not the prose
+`topdown` request. Its claimed and recomputed routes both equal `["P4", "P3"]`;
+`build_agent_arm.py` still rewrites `render.first` to `isometric` before mapper assembly.
 
 ## Stage 5 — Render the two images
 
@@ -405,9 +417,10 @@ s3://3dfm-data/users/elaineh/layoutgen/results/scenes/agent_gateway_260813/segme
 
 Evaluation checklist extraction is not a production MapGen stage.
 
-`layoutgen/evaluate/checklist.py` makes one schema-constrained text-model call only for a
-scene whose checklist is missing, unless forced. Checklists are shared across arms and
-stored under:
+`layoutgen/evaluate/checklist.py` makes one text-model call with a JSON Schema only for a
+scene whose checklist is missing, unless forced. Unlike `blob.decouple`, it does not pass
+`require_schema=True`, so the Gateway may fall back to locally parsed JSON when
+provider-side schema enforcement is unavailable. Checklists are stored under:
 
 ```text
 results/eval/<SCENE>.json
@@ -427,7 +440,8 @@ tools/agent_task.md
 # 2. One strict Gateway transcription per artifact:
 python tools/build_agent_arm.py
 
-# 3. Render the corrected source:
+# 3. Render the corrected source. Missing checklists are backfilled unless
+#    --no-checklists is supplied. --arm agent_gateway is already the default:
 python -m layoutgen.pipeline.golden --arm agent_gateway
 
 # 4. Downstream segmentation:
@@ -437,8 +451,10 @@ python tools/run_i2l_segmentation.py
 python tools/build_segmentation_manifest.py
 ```
 
-The viewer reads `results/routing/agent_spec_gateway`,
-`results/runs/agent_gateway.jsonl`, and the versioned S3 images.
+`python tools/build_pipeline_viewer.py` writes `results/pipeline_viewer.html`. It reads
+`results/routing/agent_spec_gateway`, `results/runs/agent_gateway.jsonl`,
+`results/eval/<SCENE>.json`, and image URLs under the versioned
+`results/scenes/agent_gateway_260813/` route.
 
 ## Text backend
 
@@ -499,7 +515,9 @@ verified in the Cube repository itself. They are not facts this repository can e
 1. The real Cursor agent decides; the Gateway transcribes.
 2. The prose artifact is never JSON.
 3. After the prose handoff, MapGen makes one text-model call.
-4. The transcription call requires provider-enforced JSON Schema and fails closed.
+4. The MapGen transcription call (`blob.decouple`) requires provider-enforced JSON
+   Schema and fails closed; downstream checklist extraction is separate and may degrade
+   locally.
 5. Deterministic Python owns normalisation and prompt assembly.
 6. Invisible placement requirements never enter image prompts.
 7. Every scene produces exactly two rendered views.
