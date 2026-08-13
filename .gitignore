@@ -9,12 +9,11 @@ uv.lock
 # and the cache of images pulled from the bucket.
 run/
 
-# The renders themselves - 700 MB, and about 900 model calls to make again. They live
-# in S3 and are fetched on demand by layoutgen/assets.py, so a clone is a few MB and
-# still shows every page. The scores, runs and routing picks under results/ ARE
-# committed: they are small, and they are what the pages are actually built from.
+# Rendered images live under the versioned production S3 prefix and are fetched on
+# demand, so a clone keeps only structured evidence and manifests.
 results/scenes/
 results/thumbs/
+results/runs/logs/
 
 # The viewers and the flat export, which are built from the data beside them: 22 MB
 # between them, and `tools/build_*.py` remakes any one in seconds. The pages under
@@ -22,9 +21,8 @@ results/thumbs/
 results/*.html
 results/pipeline_export.csv
 
-# A spec set kept beside the current one while two pipeline versions were compared.
-# Scratch by construction - the version hash names it, and the specs in use are the
-# ones in `results/routing/blob`.
+# Versioned routing snapshots are comparison scratch. Production specs live in
+# `results/routing/agent_spec_gateway`.
 results/routing/_*/
 
 # Credentials never belong here. The image and text models read a key from

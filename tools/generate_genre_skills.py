@@ -1,17 +1,12 @@
-"""Generate the genre-choice skill files and the viewer's genre data from Build.md.
+"""Generate the genre-choice skill files from Build.md.
 
 Build.md is canonical. Two things are produced from it, so neither can drift:
 
   * .cursor/skills/genre-choice/genres/*.md   verbatim section copies
-  * pipeline-viewer.html GENRE_DATA block     parsed shapes/options/presets
-
-    python tools/generate_genre_skills.py           # write both
+    python tools/generate_genre_skills.py           # write generated skill files
     python tools/generate_genre_skills.py --check   # exit 1 if stale
 
 --check is the drift guard: run it after editing Build.md Part II.
-
-The viewer data is injected into the HTML rather than written as a sibling
-.json because the viewer is opened over file://, where fetch() is blocked.
 
 Copied from mpalleschi/3D-LayoutBuild-Rules, where it was written. One thing
 differs here: there is no `pipeline-viewer.html`, so the second half is inert -
@@ -30,6 +25,10 @@ import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(REPO))
+
+from layoutgen.model import rules as br  # noqa: E402
+
 BUILD_MD = REPO / "docs" / "LayoutGen - Build.md"
 GENRE_DIR = REPO / ".cursor" / "skills" / "genre-choice" / "genres"
 NO_GENRE_MD = GENRE_DIR.parent / "no-genre.md"
@@ -246,11 +245,12 @@ def merge_universal(genre: dict, universal: list[dict]) -> None:
 def validate(genres: list[dict], universal: list[dict] | None = None) -> list[str]:
     problems = []
     universal_ids = {o["id"] for o in (universal or [])}
+    shared_shape_ids = set(br.SHAPES)
     for g in genres:
-        shape_ids = {s["id"] for s in g["shapes"]}
+        # Shapes now live in one shared catalogue. A genre section contains only
+        # optional wording overrides, so an empty local table is valid.
+        shape_ids = shared_shape_ids | {s["id"] for s in g["shapes"]}
         opt_ids = {o["id"] for o in g["options"]} | universal_ids
-        if not shape_ids:
-            problems.append(f"{g['slug']}: no shapes parsed")
         if not opt_ids:
             problems.append(f"{g['slug']}: no options parsed")
         if not g["presets"]:
@@ -342,7 +342,7 @@ def main() -> int:
             if not args.check:
                 VIEWER.write_text(updated, encoding="utf-8")
 
-    counts = (len(data), sum(len(g["shapes"]) for g in data),
+    counts = (len(data), len(br.SHAPES),
               sum(len(g["options"]) for g in data), sum(len(g["presets"]) for g in data))
 
     if args.check:
@@ -350,12 +350,13 @@ def main() -> int:
             print("stale: " + ", ".join(sorted(stale)), file=sys.stderr)
             print("run: python tools/generate_genre_skills.py", file=sys.stderr)
             return 1
-        print(f"OK - {counts[0]} genres, {counts[1]} shapes, {counts[2]} options, "
+        print(f"OK - {counts[0]} genres, {counts[1]} shared shapes, "
+              f"{counts[2]} options, "
               f"{counts[3]} presets all match Build.md")
         return 0
 
     print(f"updated {len(stale)} target(s); parsed {counts[0]} genres, "
-          f"{counts[1]} shapes, {counts[2]} options, {counts[3]} presets")
+          f"{counts[1]} shared shapes, {counts[2]} options, {counts[3]} presets")
     return 0
 
 

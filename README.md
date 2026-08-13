@@ -1,256 +1,188 @@
-# genre_specific_layout_generator
+# LayoutGen
 
-Turn a game prompt into a scene whose **layout** is right, not just its art.
+LayoutGen turns a fixed Roblox scene brief into a layout-aware isometric/top-down image
+pair and downstream segmentation artifacts.
 
-The Python package is `layoutgen`, after the source document it is built from
-(`LayoutGen - Build.md`).
+The canonical architecture and current corpus are documented in
+[`docs/layoutgen-pipeline-overview.md`](docs/layoutgen-pipeline-overview.md).
 
-Both source documents under `docs/` are mirrored byte-for-byte from
-mpalleschi/3D-LayoutBuild-Rules, keeping the names they carry there. Re-syncing either
-is then a straight copy, and the references they make to each other resolve here.
+## Production pipeline
 
-Ask an image model for "a racing game map" and you get something that looks like one:
-tarmac, kerbs, grandstands, and a road that forks, dead-ends, or quietly stops being a
-loop. The picture is fine and the map is unplayable. This repo puts a layout model
-between the prompt and the image, so what gets drawn is a space someone could actually
-play in.
-
-## The idea
-
-Layout knowledge is genre-specific. `docs/LayoutGen - Build.md` is the source document,
-and its Part II is a menu rather than a specification:
-
-| | |
-|---|---|
-| **Shape** | Exactly one per game, mutually exclusive. Usually the decision that routes the pipeline: a flat arena and a stacked interior need different treatment. |
-| **Option** | Additive on top of the shape, combined freely. Nothing is mandatory. |
-| **Universal option** | Six that belong to every genre rather than one - who inhabits the space, water, terrain relief. Never offered, only landed on when a prompt asks. |
-| **Preset** | A shape plus a few option IDs, modelled on a real game - a starting point, not a constraint. |
-| **Axis** | What a prompt with no genre answers instead of picking a shape. Five questions, each with a default that costs nothing, so leaving all five alone is a complete answer. |
-
-`layoutgen/model/rules.py` parses that document at import, so the model in code cannot
-drift from the model in prose. A router (`layoutgen/model/router.py`) reads a prompt
-and picks a genre, a shape and whatever options the prompt gives a reason to want - and
-picking almost nothing is a legitimate answer.
-
-Naming no genre at all is also a legitimate answer, and a common one: a prompt for a
-haunted lobby or a swamp is describing a place rather than a game. That destination has
-its own options and presets and is reached through `rules.NO_GENRE`. The router cannot
-get there - it chooses among fifteen and always names one - but the skill can, and on
-this repository's golden set it does on fifteen scenes out of seventy-five.
-
-Each option carries a **Goes to** field, and it is enforced. Geometry a segmenter
-could recover (`image`) is injected into the prompt; an invisible trigger volume or
-spawn marker (`layout`) never is, because a later stage recovers geometry from the
-render and cannot recover something that was never visible. The filter lives on the
-server, so what the UI previews is what the model is sent.
-
-## Three ways to draw the same prompt
-
-The pipeline picks an order from what the routing implies:
-
-```
-std      text -> isometric -> top-down          the default
-p6       text -> plan -> isometric              when the topology is the game
-layout   blueprint -> top-down -> isometric     when we can author the topology outright
+```text
+Build Agent intake
+  -> fixed scene prompt
+  -> real Cursor agent reads the full layout skills
+  -> prose layout decision
+  -> one strict Gateway prose-to-JSON call
+  -> deterministic normalisation and prompt assembly
+  -> two GPT Image 2 calls
+  -> image-to-layout segmentation
 ```
 
-The `layout` order is the strongest guarantee available. A maze carved by
-`layoutgen/layouts/maze.py` is a perfect maze - exactly one route between any two cells, so
-it is solvable by construction rather than by luck. A circuit from
-`layoutgen/layouts/track.py` is one continuous closed loop with no spurs and no ambiguous
-self-crossings. The image model is handed that plan and asked to dress it, not to
-invent it.
+The Cursor agent decides. The Gateway only transcribes that decision into the strict
+layout schema. Python owns validation, routing policy, render order, and prompt assembly.
 
-A circuit's shape comes from `layoutgen/layouts/repulsive/`, ported from
-[rschmidt/trackgen](https://github.rbx.com/rschmidt/trackgen) at `69dfd36`: a loop is
-grown while being pushed away from itself, so it folds back into hairpins and long
-parallel corridors instead of staying a ring. How far it is allowed to fold is decided
-by the road it is about to be drawn with - the evolution keeps the last shape whose
-carriageway still fits without two corridors merging - which is also why a folded
-circuit is drawn with a much slimmer road than the old one was.
+After the Cursor agent returns prose, MapGen makes exactly:
 
-## What is in `results/`
+- one text-model call;
+- two image-model calls.
 
-75 prompts, each generated three ways, judged blind by a vision model against the
-union of what both guided arms asked for. The three images are shuffled per scene and
-labelled A/B/C, so position cannot correlate with arm.
+Evaluation checklist generation and image-to-layout segmentation have separate,
+downstream call budgets.
 
-| Arm | What it was given |
-|---|---|
-| `raw` | the prompt, plus the shared style tail. Nothing else. |
-| `needs` | an older model: per-sub-genre Hard Needs, injected as mandatory demands. |
-| `rules` | this repo: one shape plus the options the router picked, nothing mandatory. |
+## Key files
 
-An arm is an entry in `layoutgen/arms.py` - a name, a colour, where its run lives and
-what it demands - and a *comparison* is a set of arms judged together. Nothing counts to
-three: the judge asks about however many images it is handed, the pages draw a column
-per arm, and the card sizes its tiles to fit. Adding a fourth arm is one entry plus its
-images under `results/scenes/<id>/`.
+| Path | Purpose |
+| --- | --- |
+| `tools/agent_task.md` | Cursor-agent prose contract |
+| `.cursor/skills/genre-choice/` | Genre, shape, option, and route decision workflow |
+| `.cursor/skills/layout-blob/SKILL.md` | Seven-section prose handoff |
+| `results/routing/agent_blob/` | Self-contained scene prompt + prose decision artifacts |
+| `tools/build_agent_arm.py` | One strict Gateway transcription per artifact |
+| `layoutgen/model/blob.py` | Layout schema, strict transcription, and normalisation |
+| `layoutgen/pipeline/mapper.py` | Deterministic spec-to-prompt mapping |
+| `layoutgen/pipeline/golden.py` | Production `agent_gateway` render runner |
+| `tools/run_i2l_segmentation.py` | Downstream image-to-layout batch |
+| `tools/build_segmentation_manifest.py` | S3 corpus manifest |
+| `tools/build_pipeline_viewer.py` | Per-scene production pipeline viewer |
 
-These results were generated before this repo existed, in a scratch tree, and were
-brought across rather than rerun - the images cost about 900 model calls and none of
-the arms changed. Two things were renamed on the way, which is worth knowing if you
-compare against anything older: the arms `original` and `guided` became `raw` and
-`needs`, and every arm's files became `{scene}.png` where one of them used to prefix
-`scene_`. The judge output was later rewritten from one set of keys per comparison to
-the generic `present`/`met` form, without rejudging, since both say the same thing.
+`docs/LayoutGen - Build.md` is the source catalogue. `layoutgen/model/rules.py` parses it
+at import, so the shared 45-shape and option model cannot drift from the document.
 
-Against the raw baseline on the features it asked for, the rules arm lands 82% of them
-on the isometric and 83% on the top-down, where the baseline manages 63% of the same
-list. Judged against the union of both guided arms' asks, the picture is more
-interesting: the Hard Needs arm scores higher overall (78% against 60% on the
-isometric), which is what a mandatory checklist buys - and what it costs is that every
-scene in a sub-genre gets the same demands whether or not its prompt called for them.
+## Run the production flow
 
-## Layout
-
-```
-docs/LayoutGen - Build.md   the layout rules; rules.py parses this, nothing hardcodes it
-docs/LayoutGen - Pipeline.md  the companion: how a layout gets generated, and when the
-                            approach has to change. Reference only so far - nothing in
-                            the package reads it yet
-docs/subgenre-catalogue.html the 44 sub-genres of the older Hard Needs model
-docs/skill-run-findings.md  what broke when the genre-choice skill was executed as
-                            written, by an agent, on all 75 golden-set scenes. A report
-                            on the document rather than the scenes, for upstream
-
-layoutgen/paths.py               where everything lives
-layoutgen/arms.py                what an arm is, which exist, and which sets get compared
-
-layoutgen/model/rules.py         Build.md Part II -> genres, shapes, options, presets
-layoutgen/model/router.py        prompt -> genre, shape, options (two constrained LLM calls)
-layoutgen/model/hardneeds/       the older per-sub-genre model, kept for the comparison
-
-layoutgen/backends/images.py     the image backend: generation and reference edits
-layoutgen/backends/llm.py        the text/vision model behind one JSON-schema call
-
-layoutgen/pipeline/prompts.py    every wrapper sent to the image model, in one file
-layoutgen/pipeline/spec.py       a playground spec -> the prompts it produces
-layoutgen/pipeline/carve.py      authored layouts, and the overlays that check them
-layoutgen/pipeline/run.py        one spec all the way to images, in any of the three orders
-layoutgen/pipeline/golden.py     the same, batched over the 75 golden prompts
-layoutgen/layouts/               authored topology: mazes, racing circuits
-layoutgen/layouts/repulsive/     the folded-loop centreline, vendored from trackgen
-
-layoutgen/evaluate/judge.py      one blinded judge, any number of arms
-layoutgen/evaluate/score.py      run a comparison over the golden set
-layoutgen/evaluate/card.py       one sheet per prompt: the arms and the checklist
-
-layoutgen/web/server.py          the HTTP layer, and the page/results host
-layoutgen/web/playground.html    the playground itself
-layoutgen/web/build.py           rebuild every page from results/
-layoutgen/web/pages/             the static pages under site/
-
-scripts/serve.sh            keep 8887 and 8888 up, with a supervisor each - the one
-                            thing here that is not Python. Anything importable lives
-                            in the package and runs with -m.
-
-layoutgen/assets.py         finds a scene's images, on this disk or in the bucket
-
-.cursor/skills/genre-choice/  the agent-facing version of the same model: classify a
-                            prompt, offer the genre's options as a menu, emit the picks
-                            split into an image stream and a layout stream. It covers the
-                            same 15 genres this repo parses, so the two agree on what
-                            exists
-.cursor/skills/layout-intake/ the front door above it: read a free-text prompt, work out
-                            which concerns are in play, send genre to genre-choice, and
-                            assemble one handoff with theme and scale alongside
-tools/generate_genre_skills.py  writes those 15 genre files from the rules document,
-                            and --check says whether they still match. This is the
-                            drift guard for the three copied items above
-tools/check_pages.py        opens every built page in a browser and fails on an
-                            uncaught error, a broken image or an empty panel - the
-                            faults a page can have while still building cleanly
-
-evaluation/                 upstream's study behind that document: 620 real user
-                            prompts graded for genre and coverage, the clustering of
-                            what they asked for, the report, and the tools that
-                            produced it. Mirrored at the path its tools expect, and
-                            read-only here - it is evidence for the rules, not a
-                            thing this pipeline runs. Not to be confused with
-                            `layoutgen/evaluate/`, which judges our own renders
-
-All four are copied from mpalleschi/3D-LayoutBuild-Rules @ 5a3c636, where they were
-written. `python tools/generate_genre_skills.py --check` is what keeps the copy honest:
-it exits 1 and names the files that no longer follow from the rules document.
-
-layoutgen/model/handoff.py  adapts what the skill emits into a spec the pipeline can
-                            run, checking every ID against the parsed tables and
-                            recomputing the route rather than believing the block.
-                            `results/routing/skill/` holds blocks agents have emitted
-
-results/                    the evidence. The runs, routing picks and judge scores are
-                            committed; the 700 MB of renders are not - they live in
-                            S3 and are fetched on demand
-site/                       the built pages
-run/                        anything a live server writes, plus the image cache
-```
-
-## Running it
+The workspace virtual environment must include system packages:
 
 ```bash
-pip install -e .                     # pillow, numpy, httpx, matplotlib, scipy, numba
-scripts/serve.sh                     # 8887 the playground, 8888 the viewers
-scripts/serve.sh status
+uv venv --seed --system-site-packages
 ```
 
-Install into a virtual environment made with `--system-site-packages`, or torch and the
-rest of the system packages disappear. `serve.sh` runs `.venv/bin/python` when there is
-one, because carving a circuit needs scipy and numba and the interpreter on `PATH` is
-usually not the one they were installed for.
-
-After rebuilding the pages, and before believing one:
+Then:
 
 ```bash
-pip install -e '.[check]' && python -m playwright install --with-deps chromium
-python -m layoutgen.web.build && python tools/check_pages.py
+# Cursor agents first write results/routing/agent_blob/P####.md.
+
+# One provider-enforced JSON Schema call per prose artifact.
+python tools/build_agent_arm.py
+
+# Deterministic assembly plus two image calls.
+python -m layoutgen.pipeline.golden
+
+# Downstream segmentation and corpus manifest.
+python tools/run_i2l_segmentation.py
+python tools/build_segmentation_manifest.py
+
+# Rebuild the current viewers.
+python tools/build_pipeline_viewer.py
+python tools/build_shifts_viewer.py
 ```
 
-Both ports run the same program and answer every path identically; they differ only in
-what `/` opens on. The server also serves `results/` and the pages in `site/`, so
-nothing needs a second origin.
-
-Regenerating from scratch, in order:
+Useful focused forms:
 
 ```bash
-python -m layoutgen.model.router --golden  # route all 75 prompts
-python -m layoutgen.pipeline.golden   # generate the rules arm
-python -m layoutgen.evaluate.score         # judge every comparison, blind, both stages
-python -m layoutgen.web.build         # rebuild the pages
+python tools/build_agent_arm.py --only P0005 --workers 1
+python -m layoutgen.pipeline.golden --only P0005 --no-checklists
 ```
 
-A single card, without a server:
+## Strict transcription contract
 
-```bash
-python -m layoutgen.evaluate.card --scene 0025
+`blob.decouple(prose, scene_prompt)` sends `LAYOUT_SPEC_SCHEMA` through Roblox LLM
+Gateway with `require_schema=True`.
+
+- Provider-enforced structured output is required.
+- A Gateway that cannot enforce the schema is a hard failure.
+- The production call never falls back to unconstrained prose or custom JSON extraction.
+- JSON transport decoding and deterministic `normalise()` still run locally.
+
+Default text backend:
+
+```text
+provider: gateway
+environment: production
+model: gpt-5.6-terra
 ```
 
-## Where the images live
+The default Gateway path is unseeded.
 
-The renders are about 700 MB and cost roughly 900 model calls to make, so they are
-kept in S3 rather than in git:
+## Render orders
 
+```text
+std      text -> isometric -> top-down edit
+p6       text -> top-down -> isometric edit
+layout   deterministic plan -> top-down edit -> isometric edit
 ```
-s3://3dfm-data/users/elaineh/layoutgen/results/{scenes,thumbs}/
+
+All orders use two image-model calls. `layout` additionally creates its initial blueprint
+in deterministic code.
+
+The mapper injects:
+
+- the selected shared-catalogue shape;
+- visible genre options;
+- requested universal visible options;
+- applicable non-default visual axes.
+
+Layout-only requirements such as trigger volumes, spawn markers, checkpoints, pickups,
+and emitters are withheld in `layout_placement` for downstream placement.
+
+## Current corpus
+
+The corrected production corpus contains 616 scenes.
+
+```text
+s3://3dfm-data/users/elaineh/layoutgen/results/scenes/agent_gateway_260813/
+├── iso/
+├── td/
+├── plan/
+├── seg/
+├── i2l/
+├── segmentation_manifest.jsonl
+└── segmentation_manifest_summary.json
 ```
 
-The bucket blocks public access, so the pages do not address it directly. They ask
-this server for `/results/...` as they always have, and the server fetches anything
-the clone does not carry, caching it under `run/cache/`. A page URL is therefore never
-a presigned link with an expiry date, and a fresh clone works as soon as the machine
-running the server can read the bucket.
+Verified segmentation totals:
 
-Point it somewhere else with `LAYOUTGEN_S3` and `LAYOUTGEN_S3_PROFILE`, or set
-`LAYOUTGEN_S3_OFF=1` to refuse the network and serve only what is on disk.
+- 616/616 scenes complete;
+- 603 quality-gate passes;
+- 13 best retained masks after the soft gate;
+- 8,247 provenance artifacts.
+
+The pipeline viewer is served at:
+
+```text
+https://8889--standard--elaineh-dev--elainehuang.devspaces.rbx.com/pipeline
+```
+
+It shows, per scene:
+
+- source and fixed scene prompt;
+- Cursor-agent prose blob;
+- strict structured JSON;
+- deterministic route/order and addendum;
+- exact image prompts;
+- rendered images and evaluation checklist.
+
+## Results retained as evidence
+
+Current production evidence lives in:
+
+```text
+results/routing/agent_input/
+results/routing/agent_blob/
+results/routing/agent_spec_gateway/
+results/runs/agent_gateway.jsonl
+results/runs/agent_gateway_segmentation_manifest.jsonl
+results/runs/agent_gateway_segmentation_summary.json
+results/eval/
+```
+
+Older routing and comparison records may remain under `results/` for provenance, but they
+are not executable production entry points.
 
 ## Credentials
 
-No credential is stored in this repo, and none should ever be. One Azure key covers
-both the image deployment and the text/vision model; it is read at run time from
-`~/.cache/i2l/gpt-image-2-token`, or from `GPT_IMAGE_2_API_KEY` and
-`LAYOUTGEN_LLM_KEY`. AWS reads `~/.aws/credentials` in the usual way. Endpoints and deployment names are environment-overridable; see the
-constants at the top of `layoutgen/backends/images.py` and `layoutgen/backends/llm.py`.
+No credentials belong in the repository.
 
-The judge deployment rejects `temperature` and `top_p` and accepts `seed`, so
-determinism is best-effort: a repeat that differs is possible rather than a bug.
+- Gateway: `LAYOUTGEN_GATEWAY_TOKEN`
+- GPT Image 2: `GPT_IMAGE_2_API_KEY` or the configured local token cache
+- AWS/S3: standard AWS credentials/profile resolution

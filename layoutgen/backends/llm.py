@@ -66,9 +66,8 @@ def text_part(text: str) -> dict:
 #: Azure is kept because the older results in `results/` were produced through it, and a
 #: comparison between two arms means nothing if what answered them changed unrecorded.
 #:
-#: Both serve `gpt-5.6-terra`, so the default swap is transport-only - deliberately, since
-#: changing transport and model together would leave every difference with two possible
-#: causes. `tools/run_blob_pipeline.py` folds whichever answered into its version hash.
+#: Both serve `gpt-5.6-terra`, so switching transport does not silently switch models.
+#: Production records persist `served_by()` for provenance.
 PROVIDER = os.getenv("LAYOUTGEN_LLM_PROVIDER", "gateway").strip().lower()
 
 #: Set by the last `ask` when the provider would not enforce the schema and it had to be
@@ -97,7 +96,7 @@ def served_by() -> str:
 
 
 def ask(system: str, user: str | list[dict], schema: dict, *, retries: int = 3,
-        timeout: int = 300) -> dict:
+        timeout: int = 300, require_schema: bool = False) -> dict:
     """One question, answered as JSON matching `schema`.
 
     `user` is either a string or a list of content parts, which is how images are
@@ -107,8 +106,10 @@ def ask(system: str, user: str | list[dict], schema: dict, *, retries: int = 3,
     if PROVIDER == "gateway":
         global degraded_calls
         from layoutgen.backends import gateway
-        out, degraded = gateway.ask(system, user, schema, retries=retries,
-                                    timeout=timeout)
+        out, degraded = gateway.ask(
+            system, user, schema, retries=retries, timeout=timeout,
+            require_schema=require_schema,
+        )
         _call.degraded = degraded
         if degraded:
             degraded_calls += 1

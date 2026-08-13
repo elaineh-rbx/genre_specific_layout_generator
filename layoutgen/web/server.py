@@ -201,54 +201,6 @@ class Handler(BaseHTTPRequestHandler):
                 b"pipeline_viewer.html not built yet - run "
                 b"tools/build_pipeline_viewer.py",
                 "text/plain")
-        # `/compare` sets two runs' prompts against each other on the scenes both ran.
-        # Built by `tools/build_run_compare.py`, which defaults to the live answered run
-        # against the end-to-end arm.
-        if path in ("/compare", "/compare/"):
-            cmp_path = paths.RESULTS / "run_compare.html"
-            if cmp_path.is_file():
-                return self._send(200, cmp_path.read_bytes(),
-                                  "text/html; charset=utf-8")
-            return self._send(404,
-                b"run_compare.html not built yet - run "
-                b"tools/build_run_compare.py",
-                "text/plain")
-        # `/prompts` pairs each sent prompt with the images it drew, across every arm.
-        # The other viewers explain how a scene was decided; this one only answers what
-        # went out and what came back. Built by `tools/build_prompt_gallery.py`.
-        if path in ("/prompts", "/prompts/"):
-            pg_path = paths.RESULTS / "prompt_gallery.html"
-            if pg_path.is_file():
-                return self._send(200, pg_path.read_bytes(),
-                                  "text/html; charset=utf-8")
-            return self._send(404,
-                b"prompt_gallery.html not built yet - run "
-                b"tools/build_prompt_gallery.py",
-                "text/plain")
-        # `/e2e` is the end-to-end test set: the same flowchart's worth of detail, but
-        # for scenes built from the author's message alone, with the intake questions
-        # generated rather than imported. Built by `tools/build_e2e_viewer.py`.
-        if path in ("/e2e", "/e2e/"):
-            e2e_path = paths.RESULTS / "e2e_viewer.html"
-            if e2e_path.is_file():
-                return self._send(200, e2e_path.read_bytes(),
-                                  "text/html; charset=utf-8")
-            return self._send(404,
-                b"e2e_viewer.html not built yet - run "
-                b"tools/run_e2e_pipeline.py then tools/build_e2e_viewer.py",
-                "text/plain")
-        # `/pipeline/reference` is the upstream pipeline-viewer.html with its
-        # hand-authored list of ~50 variations. Same flowchart, but the picker
-        # walks the reference variations rather than our 614 real scenes.
-        if path in ("/pipeline/reference", "/pipeline/reference/"):
-            ref_path = paths.RESULTS / "pipeline_reference.html"
-            if ref_path.is_file():
-                return self._send(200, ref_path.read_bytes(),
-                                  "text/html; charset=utf-8")
-            return self._send(404,
-                b"pipeline_reference.html not built yet - run "
-                b"tools/build_pipeline_reference.py",
-                "text/plain")
         if path in ("/playground", "/playground/"):
             return self._send(200, PAGE.encode(), "text/html; charset=utf-8")
         if path == "/api/init":

@@ -1,5 +1,12 @@
 # **LayoutGen — Pipeline & Routing**
 
+> **Design reference, not the production execution overview.** This document preserves
+> the routing assumptions, failure taxonomy, and planned pipeline modifiers. For the
+> current Build Agent → Cursor agent → one strict Gateway call → deterministic MapGen →
+> image-to-layout workflow, use
+> [`layoutgen-pipeline-overview.md`](layoutgen-pipeline-overview.md). Where the two
+> documents disagree about execution or ownership, the overview is authoritative.
+
 This document describes the **3D layout-generation pipeline** used to turn a text prompt into a playable Roblox layout, the **assumptions baked into that pipeline**, the **ways it fails**, and two **decision trees** that decide how to run it:
 
 * **Decision Tree A — Pipeline Routing:** how to *modify* the pipeline based on the game that was prompted.

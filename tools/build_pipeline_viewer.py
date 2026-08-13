@@ -1,6 +1,6 @@
 """Build a per-scene pipeline flowchart viewer.
 
-For each of the ~614 answered scenes this emits one HTML page with a scene
+For each corrected prose-agent scene this emits one HTML page with a scene
 picker at the top and, for the selected scene, the full LayoutGen pipeline
 graph with THAT scene's actual data lit up on each node:
 
@@ -8,7 +8,10 @@ graph with THAT scene's actual data lit up on each node:
     classify   which genre the router picked
     ask        the intake questions the agent answered (count + list below)
     genre      the picked genre / shape / preset
-    handoff    options split by `Goes to`: image_prompt vs layout_placement
+    handoff    the fixed scene prompt handed to the Cursor agent
+    blob       the Cursor agent's prose layout decision
+    json       the strict structured JSON transcribed by the Gateway
+    streams    options split by `Goes to`: image_prompt vs layout_placement
     route      P0/P2/P3/P4/P6/tiered - what routes the scene off the happy path
     iso/td     the actual images that landed for this scene
     plan       the authored plan, if the scene runs the layout-first path
@@ -36,10 +39,9 @@ REPO = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
 
 from layoutgen.model import rules as br
-from layoutgen.paths import RESULTS, ROUTING, SCENES
+from layoutgen.paths import RESULTS, ROUTING
 
-ANSWERED = ROUTING / "answered"
-ANSWERED_SCENES = SCENES / "answered"
+AGENT = ROUTING / "agent_spec_gateway"
 EVAL = RESULTS / "eval"
 
 #: Route modifiers the flowchart lights up. Anything else in `route` (P0, CHECK,
@@ -53,7 +55,7 @@ def unescape_nl(s: str) -> str:
     return s.replace("\\r\\n", "\n").replace("\\n", "\n").replace("\\t", "    ")
 
 
-def option_split(genre_name: str, option_ids: list[str]) -> tuple[list[dict], list[dict]]:
+def option_split(cfg: dict) -> tuple[list[dict], list[dict]]:
     """Split picks into the two handoff streams. `image_prompt` is the visible
     geometry that ends up in the isometric render; `layout_placement` is the
     invisible stuff placed after segmentation (triggers, spawns, emitters).
@@ -61,16 +63,34 @@ def option_split(genre_name: str, option_ids: list[str]) -> tuple[list[dict], li
     The document's rule is `Option.drawn` (goes_to ∈ {image, both}); we mirror
     it verbatim so both places agree on which stream a pick belongs to.
     """
-    g = br.GENRES.get(genre_name)
-    if g is None:
-        return [], []
+    g = br.GENRES.get(cfg.get("genre", ""))
     img, lay = [], []
-    for oid in option_ids:
-        o = g.option(oid)
-        if o is None:
+    placements = {o.get("id"): o for o in cfg.get("layout_placement") or []}
+    seen_lay = set()
+    for pick in cfg.get("options") or []:
+        oid = pick.get("id", "")
+        o = g.option(oid) if g else None
+        entry = {
+            "id": oid,
+            "label": o.label if o else oid,
+            "what": pick.get("text") or (o.what if o else ""),
+            "goes": o.goes_to if o else ("image" if pick.get("visible") else "layout"),
+        }
+        if pick.get("visible", True):
+            img.append(entry)
+        else:
+            lay.append(entry)
+            seen_lay.add(oid)
+    for oid, pick in placements.items():
+        if oid in seen_lay:
             continue
-        entry = {"id": oid, "label": o.label, "what": o.what, "goes": o.goes_to}
-        (img if o.drawn else lay).append(entry)
+        o = g.option(oid) if g else None
+        lay.append({
+            "id": oid,
+            "label": o.label if o else oid,
+            "what": pick.get("text") or pick.get("where") or (o.what if o else ""),
+            "goes": o.goes_to if o else "layout",
+        })
     return img, lay
 
 
@@ -81,7 +101,7 @@ def sent_prompts() -> dict[str, dict]:
     what was decided, the run is what was sent. The viewer needs both, and only the
     second one is evidence about the image.
     """
-    path = RESULTS / "runs" / "answered.jsonl"
+    path = RESULTS / "runs" / "agent_gateway.jsonl"
     if not path.is_file():
         return {}
     return {r["scene"]: r for line in path.open()
@@ -91,9 +111,9 @@ def sent_prompts() -> dict[str, dict]:
 def collect() -> list[dict]:
     rows: list[dict] = []
     sent = sent_prompts()
-    for p in sorted(ANSWERED.glob("*.json")):
+    for p in sorted(AGENT.glob("*.json")):
         d = json.loads(p.read_text(encoding="utf-8"))
-        cfg = d.get("config") or {}
+        cfg = d.get("spec") or {}
         scene = d["scene"]
         route = list(cfg.get("route") or [])
         mods = [m for m in route if m in FLOWCHART_MODIFIERS]
@@ -101,14 +121,16 @@ def collect() -> list[dict]:
         check = "CHECK" in route
         set_piece = "SET" in route
 
-        options = cfg.get("options") or []
-        img_opts, lay_opts = option_split(cfg.get("genre", ""), options)
+        img_opts, lay_opts = option_split(cfg)
 
         images = {}
-        for kind in ("iso", "td", "plan"):
-            f = ANSWERED_SCENES / kind / f"{scene}.png"
-            if f.is_file():
-                images[kind] = f"/results/scenes/answered/{kind}/{scene}.png"
+        run = sent.get(scene, {})
+        if run.get("status") == "ok":
+            for kind in ("iso", "td", "plan"):
+                if run.get(kind):
+                    images[kind] = (
+                        f"/results/scenes/agent_gateway_260813/{kind}/{scene}.png"
+                    )
 
         checklist = {"features": [], "excluded": []}
         ev = EVAL / f"{scene}.json"
@@ -118,10 +140,10 @@ def collect() -> list[dict]:
             checklist["excluded"] = ec.get("excluded") or []
 
         answers = d.get("answers") or []
-        run = sent.get(scene, {})
         rows.append({
             "id": scene,
             "prompt": unescape_nl(d.get("source", "")),
+            "scene_prompt": d.get("scene_prompt", ""),
             # What actually reached the image model, assembled. The source prompt and
             # the addendum are both only ingredients of it: the wrapper, the style tail
             # and the whole top-down instruction appear nowhere else on the page, and
@@ -138,6 +160,8 @@ def collect() -> list[dict]:
             "evidence": cfg.get("evidence", ""),
             "genre_evidence": cfg.get("genre_evidence", ""),
             "answers": answers,
+            "agent_blob": d.get("blob", ""),
+            "structured_json": json.dumps(cfg, indent=2, ensure_ascii=False),
             "options_img": img_opts,
             "options_lay": lay_opts,
             "modifiers": mods,
@@ -244,7 +268,7 @@ header .nav a.active{border-color:var(--accent);background:var(--panel-2)}
 .excluded .why{margin-left:6px;font-size:10.5px;color:#6f7690;font-style:italic}
 
 .main{flex:1;padding:16px 22px 40px;overflow-x:auto}
-.chart{position:relative;width:2140px;height:690px;
+.chart{position:relative;width:2500px;height:690px;
   background:linear-gradient(180deg,rgba(255,255,255,.02),transparent 60%);
   border-radius:14px}
 .band{position:absolute;border:1px dashed var(--line);border-radius:14px;pointer-events:none}
@@ -305,7 +329,9 @@ HEADER_HTML = """
   <h1>Pipeline viewer &mdash; per-scene attribution</h1>
   <p>Pick a scene: the graph lights up the actual path its prompt took through
   the pipeline. Each node shows what came in at that step, so you can attribute
-  every input to its stage. <b style="color:var(--green)">Green</b> = fits the
+  every input to its stage, including the Cursor agent's prose blob and the
+  strict structured JSON returned by the one Gateway transcription call.
+  <b style="color:var(--green)">Green</b> = fits the
   current pipeline. <b style="color:var(--orange)">Orange</b> = P6 variant
   (procedural first) or a tiered flag. <b style="color:var(--red)">Red</b> = a
   break (P2 elevation, P3 outside&#8594;inside, or P4 multi-zone) that pushes
@@ -314,7 +340,6 @@ HEADER_HTML = """
   <div class="nav">
     <a href="/">Config shifts</a>
     <a href="/pipeline" class="active">Pipeline (per-scene)</a>
-    <a href="/pipeline/reference">Reference (upstream)</a>
   </div>
 </header>
 """
@@ -371,7 +396,7 @@ BODY_HTML = """
 
   <main class="main">
     <div class="chart" id="chart">
-      <svg class="edges" id="edges" viewBox="0 0 2140 690" preserveAspectRatio="none"></svg>
+      <svg class="edges" id="edges" viewBox="0 0 2500 690" preserveAspectRatio="none"></svg>
     </div>
     <div class="legend">
       <p><b>Every arrow is drawn once.</b> The <b>gray</b> arrows are the master graph &mdash; every
@@ -383,6 +408,14 @@ BODY_HTML = """
       <div class="card">
         <h5>Source prompt (as the router saw it, before clarifications)</h5>
         <div class="prompt" id="promptText"></div>
+      </div>
+      <div class="card">
+        <h5>Cursor agent decision &mdash; prose blob</h5>
+        <pre id="blobText"></pre>
+      </div>
+      <div class="card">
+        <h5>Gateway output &mdash; strict structured JSON</h5>
+        <pre id="specText"></pre>
       </div>
       <div class="card">
         <h5>Addendum injected into iso render</h5>
@@ -416,37 +449,40 @@ const NODES = {
   classify: { x:275,  y:385, tag:"Skill \u00b7 router", title:"Classify",       sub:"genre \u00b7 shape \u00b7 options" },
   ask:      { x:275,  y:220, tag:"Round trip",        title:"Ask the user",     sub:"open questions" },
   genre:    { x:455,  y:385, tag:"Choice",            title:"Genre + shape",    sub:"selected picks" },
-  handoff:  { x:625,  y:385, tag:"Part 0 out",        title:"Handoff",          sub:"split by \u201cGoes to\u201d" },
-  img:      { x:800,  y:80,  tag:"Forward pass 1",    title:"image_prompt",     sub:"visible geometry" },
-  lay:      { x:1010, y:80,  tag:"Forward pass 2",    title:"layout_placement", sub:"triggers, spawns" },
-  route:    { x:800,  y:385, tag:"Route",             title:"Route",            sub:"current path by default" },
-  p4:       { x:970,  y:385, tag:"P4 \u00b7 Multi-Zone", title:"Zone graph",    sub:"multi-zone" },
-  iso:      { x:1140, y:235, tag:"Phase 2",           title:"Isometric image",  sub:"whole game" },
-  top:      { x:1310, y:235, tag:"Phase 3",           title:"Top-down",         sub:"projection" },
-  elev:     { x:1310, y:385, tag:"P2 \u00b7 Elevation", title:"Elevation layers", sub:"stacked / vertical" },
-  params:   { x:1140, y:545, tag:"P6",                title:"Extract params",   sub:"size / laps / spacing" },
-  proc:     { x:1310, y:545, tag:"P6",                title:"Procedural gen",   sub:"structural plan" },
-  seg:      { x:1485, y:385, tag:"Phase 4",           title:"Segmentation",     sub:"paths, walls, props..." },
-  p3:       { x:1485, y:545, tag:"P3 \u00b7 2nd top-down", title:"Interior top-down", sub:"exterior \u2192 interior" },
-  p45:      { x:1670, y:235, tag:"Phase 4.5",         title:"Placement",        sub:"onto segmented geometry" },
-  build:    { x:1840, y:385, tag:"Phase 5",           title:"3D build + assets", sub:"assemble layout" },
-  out:      { x:2010, y:385, tag:"Output",            title:"Playable layout",  sub:"ready" }
+  handoff:  { x:625,  y:385, tag:"Build Agent out",   title:"Fixed scene prompt", sub:"space-only handoff" },
+  blob:     { x:800,  y:385, tag:"Cursor agent",      title:"Prose decision",   sub:"layout blob \u00b7 never JSON" },
+  json:     { x:980,  y:385, tag:"1 Gateway call",    title:"Structured JSON",  sub:"strict layout_spec schema" },
+  img:      { x:1160, y:80,  tag:"Spec stream 1",     title:"image_prompt",     sub:"visible geometry" },
+  lay:      { x:1370, y:80,  tag:"Spec stream 2",     title:"layout_placement", sub:"triggers, spawns" },
+  route:    { x:1160, y:385, tag:"Deterministic",     title:"Route + order",    sub:"catalogue-derived execution" },
+  p4:       { x:1330, y:385, tag:"P4 \u00b7 Multi-Zone", title:"Zone graph",    sub:"multi-zone" },
+  iso:      { x:1500, y:235, tag:"Image call",        title:"Isometric image",  sub:"whole game" },
+  top:      { x:1670, y:235, tag:"Image call",        title:"Top-down",         sub:"projection" },
+  elev:     { x:1670, y:385, tag:"P2 \u00b7 Elevation", title:"Elevation layers", sub:"stacked / vertical" },
+  params:   { x:1500, y:545, tag:"P6",                title:"Extract params",   sub:"size / laps / spacing" },
+  proc:     { x:1670, y:545, tag:"P6",                title:"Procedural gen",   sub:"structural plan" },
+  seg:      { x:1840, y:385, tag:"Downstream",        title:"Segmentation",     sub:"mask + JSON provenance" },
+  p3:       { x:1840, y:545, tag:"P3 \u00b7 2nd top-down", title:"Interior top-down", sub:"exterior \u2192 interior" },
+  p45:      { x:2020, y:235, tag:"Phase 4.5",         title:"Placement",        sub:"onto segmented geometry" },
+  build:    { x:2200, y:385, tag:"Phase 5",           title:"3D build + assets", sub:"assemble layout" },
+  out:      { x:2380, y:385, tag:"Output",            title:"Playable layout",  sub:"ready" }
 };
 
 const BANDS = [
-  { x:15,   y:160, w:700, h:320, label:"Part 0 \u2014 intake + router",
-    holds:["prompt","classify","ask","genre","handoff"] },
-  { x:725,  y:160, w:850, h:455, label:"Phases 2\u20134 \u2014 generation",
-    holds:["route","p4","iso","top","elev","params","proc","seg","p3"] },
-  { x:1585, y:160, w:540, h:320, label:"Phase 4.5\u20135 \u2014 placement & build",
-    holds:["p45","build","out"] }
+  { x:15,   y:160, w:875, h:320, label:"Build Agent \u2014 intake, fixed prompt, Cursor agent prose",
+    holds:["prompt","classify","ask","genre","handoff","blob"] },
+  { x:900,  y:160, w:850, h:455, label:"MapGen \u2014 one strict text call, deterministic assembly, two image calls",
+    holds:["json","route","p4","iso","top","elev","params","proc"] },
+  { x:1760, y:160, w:720, h:455, label:"Downstream \u2014 segmentation, placement & build",
+    holds:["seg","p3","p45","build","out"] }
 ];
 
 const MASTER_EDGES = [
   ["prompt","classify"],
   ["classify","ask"],["ask","classify"],
   ["ask","genre"],["genre","handoff"],
-  ["handoff","img"],["handoff","lay"],["handoff","route"],
+  ["handoff","blob"],["blob","json"],
+  ["json","img"],["json","lay"],["json","route"],
   ["img","iso"],["lay","p45"],
   ["route","p4"],["route","iso"],["route","params"],
   ["p4","iso"],["p4","params"],
@@ -458,10 +494,11 @@ const MASTER_EDGES = [
   ["p45","build"],
   ["build","out"]
 ];
-const STREAM_EDGES = ["handoff>img","img>iso","handoff>lay","lay>p45"];
+const STREAM_EDGES = ["json>img","img>iso","json>lay","lay>p45"];
 
 const CAT = {
   prompt:"base", classify:"base", ask:"base", genre:"base", handoff:"base",
+  blob:"base", json:"base",
   img:"base", lay:"base", route:"base", iso:"base", top:"base",
   seg:"base", p45:"base", build:"base", out:"base",
   params:"variant", proc:"variant",
@@ -480,7 +517,7 @@ const MODIFIER_NAMES = {
 
 function pathFor(s) {
   const has = id => s.modifiers.includes(id);
-  const p = ["prompt","classify","ask","genre","handoff","route"];
+  const p = ["prompt","classify","ask","genre","handoff","blob","json","route"];
   if (has("P4")) p.push("p4");
   const struct = has("P2") ? "elev" : "top";
   if (has("P6")) p.push("params","proc",struct,"iso","seg");
@@ -657,8 +694,12 @@ function render(idx){
         <span class="why">${esc(x.why || "")}</span></li>`).join("")
     : `<li style="font-style:italic;padding-top:4px">nothing excluded</li>`;
 
-  // Tail cards: prompt + addendum, then the two prompts actually sent
+  // Tail cards: source -> agent prose -> strict JSON -> assembled image prompts.
   document.getElementById("promptText").textContent = s.prompt || "";
+  document.getElementById("blobText").textContent =
+    s.agent_blob || "(no prose decision recorded)";
+  document.getElementById("specText").textContent =
+    s.structured_json || "(no structured spec recorded)";
   document.getElementById("addendumText").textContent = s.addendum || "(no addendum \u2014 no options picked)";
   // Which image was drawn from text and which was converted from the other, since the
   // same two prompts mean different things depending on the order.
@@ -734,8 +775,17 @@ function render(idx){
       sub = `${s.genre}${preset}`;
       if (s.shape_label) extra = `<div class="brief">shape: ${esc(s.shape_label)}</div>`;
     } else if (id === "handoff"){
+      const preview = (s.scene_prompt||"").replace(/\s+/g," ").slice(0,90);
+      sub = "fixed before MapGen";
+      if (preview) extra = `<div class="brief">${esc(preview + ((s.scene_prompt||"").length>90?"\u2026":""))}</div>`;
+    } else if (id === "blob"){
+      const n = (s.agent_blob||"").length;
+      sub = `${n.toLocaleString()} chars \u00b7 prose`;
+      const preview = (s.agent_blob||"").replace(/\s+/g," ").slice(0,90);
+      if (preview) extra = `<div class="brief">${esc(preview + ((s.agent_blob||"").length>90?"\u2026":""))}</div>`;
+    } else if (id === "json"){
       const ni = (s.options_img||[]).length, nl = (s.options_lay||[]).length;
-      sub = `${ni} \u2192 image \u00b7 ${nl} \u2192 layout`;
+      sub = `strict schema \u00b7 ${ni} image \u00b7 ${nl} layout`;
     } else if (id === "img"){
       const ni = (s.options_img||[]).length;
       sub = ni ? `${ni} pick${ni===1?"":"s"} \u2192 iso addendum` : "no picks (scene has no visible options)";

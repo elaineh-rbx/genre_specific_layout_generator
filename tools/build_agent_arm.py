@@ -7,19 +7,13 @@ through the LLM Gateway transcribes the already-made decisions into structured J
 then derives render order and assembles the image prompts through the same mapper every
 other arm uses.
 
-Two things are deliberately held fixed so that *who chose the config* is the only thing
-that moved.
+The prose artifact is self-contained: its ``# Scene prompt`` section is the fixed Build
+Agent handoff, and its ``# Agent decision`` section is the Cursor agent's reasoning. This
+builder does not read or rerun any historical arm.
 
-The body is not rewritten. It is lifted from the blob arm's record for the same scene, so
-both arms send the same uprezzed paragraph and every difference downstream is a difference
-in the picks. Asking the subagents to uprez as well would have moved the body too, and a
-gap in the images would then have had two causes and no way to separate them.
-
-The order is derived, not stated. The subagents were not asked which image to draw first
-and this does not let them say: it computes the route from the picks and takes the order
-that follows, exactly as `mapper.build` and `golden._finish` do. `render.first` is set to
-that derived order rather than left to default, purely so `mapper` does not record a
-disagreement with an opinion this arm never expressed.
+The agent records its requested order and route in prose. The transcriber copies both,
+then deterministic policy derives the executed order so an arbitrary prose sentence
+cannot change rendering behavior.
 
 Writes `results/routing/agent_spec_gateway/<scene>.json`, leaving the earlier direct-JSON
 experiment intact so the architecture change can be measured rather than overwriting its
@@ -51,8 +45,7 @@ from layoutgen.pipeline.carve import layout_kind                  # noqa: E402
 
 IN = paths.ROUTING / "agent_blob"          # prose the subagents wrote
 OUT = paths.ROUTING / "agent_spec_gateway" # gateway-transcribed structured arm
-BLOB = paths.ROUTING / "blob"         # where the shared body comes from
-ANSWERED = paths.ROUTING / "answered"
+INPUT = paths.ROUTING / "agent_input"       # source + answers used by the agent
 
 SKILL = pathlib.Path(__file__).resolve().parent.parent / ".cursor" / "skills" / "genre-choice"
 TASK = pathlib.Path(__file__).resolve().parent / "agent_task.md"
@@ -72,7 +65,7 @@ def _slug(name: str) -> str:
 #: The parenthetical form is indexed as well as the full one. One genre is written
 #: `Entertainment (Showcase & Hub)` and an agent that reads it naturally calls it
 #: `Entertainment`, which is not a misreading to correct but a name to accept - the same
-#: allowance `genre_truth.slug_to_genre` makes for the upstream tags.
+#: allowance used by the archived upstream-tag evaluation.
 _SLUG: dict[str, str] = {}
 for _g in list(br.GENRES) + [br.NO_GENRE_NAME]:
     _SLUG[_slug(_g)] = _g
@@ -105,25 +98,34 @@ def version() -> str:
     return h.hexdigest()[:12]
 
 
-def decision(text: str) -> str:
-    """The prose decision inside a self-contained agent artifact."""
-    marker = "# Agent decision"
-    if marker not in text:
-        raise ValueError(f"prose artifact has no {marker!r} section")
-    out = text.split(marker, 1)[1].strip()
+def artifact(text: str) -> tuple[str, str]:
+    """Return the fixed scene prompt and prose decision from one agent artifact."""
+    scene_marker = "# Scene prompt"
+    decision_marker = "# Agent decision"
+    if scene_marker not in text or decision_marker not in text:
+        raise ValueError(
+            f"prose artifact requires {scene_marker!r} and {decision_marker!r} sections"
+        )
+    before, out = text.split(decision_marker, 1)
+    body = before.split(scene_marker, 1)[1].strip()
+    out = out.strip()
     if not out:
         raise ValueError("agent decision section is empty")
-    return out
+    return body, out
 
 
 def build_one(scene: str, prose: str, body: str, source: str,
               said: list[dict]) -> dict:
     """Transcribe one agent's prose and assemble its prompts."""
-    prose_decision = decision(prose)
+    artifact_body, prose_decision = artifact(prose)
+    if not artifact_body:
+        raise ValueError("scene prompt section is empty")
+    if artifact_body != body.strip():
+        raise ValueError("agent artifact scene prompt differs from its input record")
     spec = blob.decouple(prose_decision, body)
     schema_degraded = llm.schema_degraded()
-    # The strict schema pins the spelling. Canonicalisation also protects the weaker
-    # locally-enforced gateway fallback without asking another model to reinterpret it.
+    # The provider-enforced schema pins the shape; canonicalisation resolves harmless
+    # genre spelling variants without asking another model to reinterpret the decision.
     spec["genre"] = canon_genre(spec.get("genre", ""))
     spec["scene_prompt"] = body
     spec = blob.normalise(spec)
@@ -150,7 +152,7 @@ def build_one(scene: str, prose: str, body: str, source: str,
             "pipeline_version": version(),
             "served_by": f"subagent/genre-choice -> {llm.served_by()}",
             "schema_degraded": schema_degraded,
-            "reused_uprez": True,
+            "scene_prompt_source": "agent_artifact",
             "order": built["order"], "first": built["first"],
             "mapper_notes": built["notes"]}
 
@@ -163,14 +165,19 @@ def process(path: pathlib.Path) -> tuple[str, str, dict | None, str]:
     except OSError as exc:
         return scene, "error", None, f"unreadable: {exc}"
 
-    rec = BLOB / f"{scene}.json"
-    old = json.loads(rec.read_text(encoding="utf-8")) if rec.is_file() else {}
-    body = (old.get("scene_prompt") or "").strip() if old.get("status") == "ok" else ""
-    if not body:
-        return scene, "skip", None, "waiting on a body from the blob arm"
-    said = [a for a in (old.get("answers") or []) if (a.get("answer") or "").strip()]
     try:
-        out = build_one(scene, prose, body, old.get("source", ""), said)
+        body, _ = artifact(prose)
+        if not body:
+            return scene, "skip", None, "agent artifact has no buildable scene prompt"
+        input_path = INPUT / f"{scene}.json"
+        inp = json.loads(input_path.read_text(encoding="utf-8")) \
+            if input_path.is_file() else {}
+        input_body = (inp.get("scene_prompt") or "").strip()
+        if input_body and input_body != body:
+            return scene, "error", None, "artifact scene prompt differs from agent input"
+        said = [a for a in (inp.get("answers") or [])
+                if (a.get("answer") or "").strip()]
+        out = build_one(scene, prose, body, inp.get("source", ""), said)
     except Exception as exc:                                      # noqa: BLE001
         return scene, "error", None, f"{type(exc).__name__}: {exc}"
     return scene, "ok", out, ""
@@ -212,8 +219,7 @@ def main() -> None:
             if built % 25 == 0 or built == len(inputs):
                 print(f"  {built}/{len(inputs)}", flush=True)
 
-    print(f"\n{built} specs built, {skipped} waiting on a body from the blob arm, "
-          f"{failed} failed")
+    print(f"\n{built} specs built, {skipped} skipped, {failed} failed")
     print(f"{degraded} gateway calls used locally-enforced rather than provider-enforced "
           "JSON schema")
     if repairs:

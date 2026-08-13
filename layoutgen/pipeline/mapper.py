@@ -30,15 +30,9 @@ the wrappers in `prompts` already implement:
     p6      text -> plan -> isometric              the route carries `P6`
     layout  blueprint -> top-down -> isometric     a carveable maze or circuit
 
-The spec's own `render.first` is *not* what decides this, though the blob still states it
-and it is still recorded. This followed the precedent already set for the route in
-`model.handoff`: the block there claims a set of modifiers, `br.route_of` recomputes them
-from the picked rows, and the document wins while the claim is kept as a note. Letting the
-blob's stated order through instead moved 177 of 613 scenes off look-first, which is a
-second difference between the arms on top of who chose the config - and with two
-differences at once, a gap in the images has no attributable cause. `render.first` is now
-a measurable opinion rather than an instruction: `tools/prompt_similarity.py` can report
-how often the blob wanted an order the route did not give it.
+The spec's own `render.first` is recorded but does not decide execution. The shared
+catalogue route is recomputed from the structured picks, and deterministic policy derives
+the order from that route. Any disagreement is retained in mapper notes for audit.
 
 Options the spec marked invisible never reach a prompt. A trigger volume or a spawn
 marker is recovered from the render by a later stage, and it cannot be recovered from a
@@ -71,8 +65,8 @@ def build(spec: dict, *, crossings: int | None = None,
         # this stage stopped doing. Better to say so than to emit a prompt made only of
         # an addendum and a style tail, which renders as a generic scene and looks like
         # a layout failure rather than a missing field.
-        notes.append("spec carries no scene_prompt: run "
-                     "`tools/run_blob_pipeline.py --renormalise` to backfill it")
+        notes.append("spec carries no scene_prompt: rebuild it from the self-contained "
+                     "agent artifact with `tools/build_agent_arm.py`")
 
     picks = [o["id"] for o in spec.get("options") or []]
     # Whether a blueprint can be generated is this repo's fact, not the spec's.

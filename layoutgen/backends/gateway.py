@@ -126,7 +126,8 @@ def _schema_unsupported(exc: GatewayError) -> bool:
 
 
 def ask(system: str, user: str | list[dict], schema: dict, *, retries: int = 3,
-        timeout: int = 300, model: str | None = None) -> tuple[dict, bool]:
+        timeout: int = 300, model: str | None = None,
+        require_schema: bool = False) -> tuple[dict, bool]:
     """One question, answered as JSON matching `schema`.
 
     Returns the answer and whether the schema had to be enforced here rather than by the
@@ -149,11 +150,20 @@ def ask(system: str, user: str | list[dict], schema: dict, *, retries: int = 3,
             return json.loads(data["choices"][0]["message"]["content"]), False
         except GatewayError as exc:
             if _schema_unsupported(exc):
+                if require_schema:
+                    raise GatewayError(
+                        "gateway does not support the required structured-output schema"
+                    ) from exc
                 last = exc
                 break                      # no point retrying an unsupported feature
             last = exc
         except RETRYABLE as exc:
             last = exc
+
+    if require_schema:
+        raise GatewayError(
+            f"schema-enforced call failed after {retries} tries: {last}"
+        )
 
     # Fallback: the gateway would not enforce the schema, so state it in the prompt and
     # enforce it here. Weaker, and the caller is told so.

@@ -48,10 +48,7 @@ AXES = ("genre", "shape", "preset", "route", "options")
 
 
 def enriched_prompt(source: str, answers: list[dict]) -> str:
-    """Build the exact string the router sees: the source prompt with each Q&A
-    appended in the author's voice. Kept in sync with the same-named function
-    in `tools/reclassify_with_answers.py` - that one produced the answered
-    configs, this one shows them back for auditing."""
+    """Reconstruct the archived answered-arm input for provenance display."""
     if not answers:
         return source
     lines = [source.rstrip(), "", "--- clarifications from the author ---"]
@@ -128,7 +125,8 @@ def agent_images() -> dict[str, dict[str, str]]:
         r = json.loads(line)
         if r.get("status") != "ok":
             continue
-        out[r["scene"]] = {k: f"/results/scenes/agent_gateway/{k}/{r['scene']}.png"
+        out[r["scene"]] = {
+            k: f"/results/scenes/agent_gateway_260813/{k}/{r['scene']}.png"
                            for k in ("iso", "td", "plan") if r.get(k)}
     return out
 

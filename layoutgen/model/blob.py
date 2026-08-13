@@ -1,60 +1,22 @@
-"""The front half of the pipeline: message -> scene prompt -> word blob -> spec.
+"""Transcribe a Cursor agent's prose decision into the structured layout contract.
 
-The router this replaces asked the model to fill a schema while it was still deciding,
-and the two jobs interfered. A schema field wants a slug; deciding whether a maze has
-to be carved wants a sentence. Asked for both at once the model produced slugs that
-were individually plausible and jointly incoherent - a shape from one reading of the
-prompt beside options from another.
+The Build Agent already fixed the scene prompt and the Cursor agent already decided the
+layout in prose. This module owns the one strict Gateway transcription call plus
+deterministic normalisation. It does not rewrite the prompt or decide the layout.
 
-So the decision and its encoding are now separate calls:
-
-    1. uprez     the user's message -> a scene prompt about space and nothing else
-    2. describe  that scene prompt -> a word blob, prose, reasoned, IDs named inline
-    3. decouple  that blob -> the structured spec, a transcription job
-
-Stage 3 invents nothing. Everything it emits was already decided in stage 2's prose,
-which is why it can be a small strict-schema call that either matches the blob or is
-wrong in a way a diff will show. The spec it produces is the pipeline's contract, and
-`layoutgen.pipeline.mapper` turns it into prompts with no further model involvement.
-
-The instructions for stages 1 and 2 are the skill files under `.cursor/skills`, read
-at call time rather than duplicated here, so an agent walking a single scene by hand
-and this module running six hundred are following the same document. The option menu
-is generated from Build.md through `rules`, so it cannot drift from the tables the
-rest of the repo reads.
+The option menu is generated from Build.md through ``rules``, so it cannot drift from
+the tables used by deterministic prompt assembly.
 """
 
 from __future__ import annotations
 
-import json
-
-from layoutgen import paths
 from layoutgen.backends import llm
 from layoutgen.model import rules as br
 from layoutgen.pipeline.carve import layout_kind
 
-SKILLS = paths.ROOT / ".cursor" / "skills"
-
 ORDERS = ("isometric", "topdown", "authored_plan")
 MODIFIERS = ("P0", "P2", "P3", "P4", "P5", "P6", "tiered", "CHECK", "SET")
 SCALES = ("small", "medium", "large", "huge")
-
-
-# ---------------------------------------------------------------- the instructions
-
-def skill(name: str) -> str:
-    """A skill's body, YAML front matter stripped.
-
-    The front matter addresses the agent runtime - when to invoke, whether the model
-    may pick it up on its own - and none of that is instruction to a model already
-    being handed the text.
-    """
-    text = (SKILLS / name / "SKILL.md").read_text(encoding="utf-8")
-    if text.startswith("---"):
-        end = text.find("\n---", 3)
-        if end != -1:
-            text = text[end + 4:]
-    return text.strip()
 
 
 #: The document's own rule about the six universal options, quoted rather than
@@ -98,16 +60,22 @@ def _catalog_lines() -> list[str]:
     afterwards cost 675 lines to say what 45 say - it tripled the menu and, worse, implied
     fifteen separate catalogues at the exact moment the document had merged them into one.
     """
-    out = [CATALOG_HEADER, "", "## The shape catalogue - pick exactly one, from any genre",
-           ""]
+    out = [
+        CATALOG_HEADER,
+        "",
+        "## The shape catalogue - pick exactly one, from any genre",
+        "",
+    ]
     for s in br.SHAPES.values():
         # Which shapes have a generator is a fact this repo holds and the blob was
         # otherwise guessing at - it read "speed run minigame" as not-a-circuit and asked
         # the image model to draw a plan a carver could have guaranteed.
         kind = layout_kind("", s.id, [])
-        out.append(f"  `{s.id}` {s.label} — {s.what}"
-                   + (f" [{s.pipeline}]" if s.pipeline else "")
-                   + (f"  <-- CARVEABLE ({kind}): use `authored_plan`" if kind else ""))
+        out.append(
+            f"  `{s.id}` {s.label} — {s.what}"
+            + (f" [{s.pipeline}]" if s.pipeline else "")
+            + (f"  <-- CARVEABLE ({kind}): use `authored_plan`" if kind else "")
+        )
     return out + [""]
 
 
@@ -135,8 +103,10 @@ def vocabulary(notes: bool = False) -> str:
             out.append("Notes on this genre - read before you commit:")
             out += [f"  - {n}" for n in g.notes]
         if g.typical:
-            out.append(f"Typical shapes (default `{g.default_shape}`; any catalogue "
-                       f"shape is allowed): " + " ".join(f"`{s}`" for s in g.typical))
+            out.append(
+                f"Typical shapes (default `{g.default_shape}`; any catalogue "
+                f"shape is allowed): " + " ".join(f"`{s}`" for s in g.typical)
+            )
         # Only where this genre words a catalogue row its own way. The sentence that
         # reaches the image model is the genre's, so a decision made against the
         # catalogue's generic wording would be made against text nobody will send.
@@ -153,11 +123,20 @@ def vocabulary(notes: bool = False) -> str:
             if o.pipeline:
                 bits += f" [{o.pipeline}]"
             carves = layout_kind(g.name, "", [o.id])
-            out.append(f"  `{o.id}` {o.label} — {o.what} ({bits})"
-                       + ("  <-- UNIVERSAL: only if the author asked for it"
-                          if o.universal else "")
-                       + (f"  <-- picking this makes the scene CARVEABLE ({carves}): "
-                          f"use `authored_plan`" if carves else ""))
+            out.append(
+                f"  `{o.id}` {o.label} — {o.what} ({bits})"
+                + (
+                    "  <-- UNIVERSAL: only if the author asked for it"
+                    if o.universal
+                    else ""
+                )
+                + (
+                    f"  <-- picking this makes the scene CARVEABLE ({carves}): "
+                    f"use `authored_plan`"
+                    if carves
+                    else ""
+                )
+            )
         if g.presets:
             out.append("Presets:")
             for p in g.presets:
@@ -165,9 +144,13 @@ def vocabulary(notes: bool = False) -> str:
                 # interactive skill calls it internal grounding and forbids saying it to a
                 # user; it is exactly what lets a prompt describing Brookhaven land on
                 # `Life` rather than `Home Builder`, so the deciding stage gets it.
-                ref = f"  (modelled on {p.modelled_on})" if notes and p.modelled_on else ""
-                out.append(f"  {p.name}: shape=`{p.shape}` "
-                           f"options={', '.join(p.options) or '(none)'}{ref}")
+                ref = (
+                    f"  (modelled on {p.modelled_on})" if notes and p.modelled_on else ""
+                )
+                out.append(
+                    f"  {p.name}: shape=`{p.shape}` "
+                    f"options={', '.join(p.options) or '(none)'}{ref}"
+                )
         out.append("")
     out += _no_genre_menu(notes)
     return "\n".join(out)
@@ -186,26 +169,36 @@ def _no_genre_menu(notes: bool) -> list[str]:
     that costs nothing, so leaving all five alone is a complete answer.
     """
     g = br.NO_GENRE
-    out = [f"### {g.name} — no genre names this; it is a place, not a game type",
-           "Use this when the prompt describes a space and never implies a game: a lobby, "
-           "a farm scene, a hangout, an environment showcase. Naming it is a complete "
-           "answer, not a failure to decide. Do not invent a genre to escape it.", ""]
+    out = [
+        f"### {g.name} — no genre names this; it is a place, not a game type",
+        "Use this when the prompt describes a space and never implies a game: a lobby, "
+        "a farm scene, a hangout, an environment showcase. Naming it is a complete "
+        "answer, not a failure to decide. Do not invent a genre to escape it.",
+        "",
+    ]
     if notes and g.notes:
         out.append("Notes on No Genre - read before you commit:")
         out += [f"  - {n}" for n in g.notes]
     out.append("Axes (answer these INSTEAD of picking a shape; every default is free):")
     for a in g.axes:
-        vals = " | ".join(f"`{v}`" + (" (default)" if v == a.default else
-                                      (f" [{a.routes[v]}]" if v in a.routes else ""))
-                          for v in a.clauses)
+        vals = " | ".join(
+            f"`{v}`"
+            + (
+                " (default)"
+                if v == a.default
+                else (f" [{a.routes[v]}]" if v in a.routes else "")
+            )
+            for v in a.clauses
+        )
         out.append(f"  `{a.key}`: {vals}")
         out.append(f"       {a.what}")
     out.append("Options (combine freely):")
     for o in g.options:
         bits = f"goes_to={o.goes_to}" + (" core" if o.core else "")
-        out.append(f"  `{o.id}` {o.label} — {o.what} ({bits})"
-                   + ("  <-- UNIVERSAL: only if the author asked for it"
-                      if o.universal else ""))
+        out.append(
+            f"  `{o.id}` {o.label} — {o.what} ({bits})"
+            + ("  <-- UNIVERSAL: only if the author asked for it" if o.universal else "")
+        )
     out.append("Presets:")
     for p in g.presets:
         ref = f"  (modelled on {p.modelled_on})" if notes and p.modelled_on else ""
@@ -214,125 +207,8 @@ def _no_genre_menu(notes: bool) -> list[str]:
     return out
 
 
-# ---------------------------------------------------------------- 1. uprez
+# ---------------------------------------------------------------- strict transcription
 
-UPREZ_SCHEMA = {
-    "name": "uprez", "strict": True,
-    "schema": {
-        "type": "object",
-        "properties": {"initial_scene_subprompt_enriched": {"type": "string"}},
-        "required": ["initial_scene_subprompt_enriched"],
-        "additionalProperties": False,
-    },
-}
-
-
-def clarified(message: str, answers: list[dict] | None = None) -> str:
-    """The author's message with their answers to the intake's questions folded in.
-
-    Appended in the author's own voice rather than passed as a second channel, because
-    every rule about what to keep and what to drop is written about "the user message",
-    and a clarification is that message continued. An answer saying the wilderness should
-    take ten minutes to cross is a size; one saying the slice ends when the dungeon is
-    cleared is a rule; both need to meet the same filter, and they only do if they arrive
-    as the same kind of text.
-
-    Formatted identically to `tools/reclassify_with_answers.enriched_prompt`, which is
-    what the router's arm was given, so neither side of the comparison is reading a
-    differently-shaped version of the same facts.
-    """
-    lines = [message.rstrip()]
-    said = [a for a in (answers or []) if (a.get("answer") or "").strip()]
-    if said:
-        lines += ["", "--- clarifications from the author ---"]
-        for a in said:
-            ask = (a.get("ask") or "").rstrip("?")
-            lines.append(f"- [{a.get('field', '?')}] {ask}? {a['answer'].strip()}")
-    return "\n".join(lines)
-
-
-def uprez(message: str, answers: list[dict] | None = None) -> str:
-    """The user's message as a scene prompt. Empty string when there is no space.
-
-    `answers` are the intake's open questions as the author resolved them. They are
-    optional because not every scene has been through an intake, and a scene without one
-    is not a different kind of scene - it is the same call with less to read.
-    """
-    if not message.strip():
-        return ""
-    out = llm.ask(skill("uprez-prompt"), clarified(message, answers).strip(),
-                  UPREZ_SCHEMA)
-    return (out.get("initial_scene_subprompt_enriched") or "").strip()
-
-
-# ---------------------------------------------------------------- 2. describe
-
-BLOB_SCHEMA = {
-    "name": "layout_blob", "strict": True,
-    "schema": {
-        "type": "object",
-        "properties": {
-            "blob": {
-                "type": "string",
-                "description": "The word blob: prose covering genre, shape, config "
-                               "requirements, layout components, render order, and "
-                               "scale/theme/pipeline cost. Canonical IDs in backticks.",
-            },
-        },
-        "required": ["blob"],
-        "additionalProperties": False,
-    },
-}
-
-
-def describe(scene: str, source: str = "", notes: bool = True) -> str:
-    """The word blob. Prose, because this is the call that is actually deciding.
-
-    **One call where `model.router` made three**, and that is a real difference from the
-    arm this is compared against rather than a reformatting of it. The router asked for a
-    genre against fifteen one-line descriptions, then a preset, then - only if no preset
-    fit - a shape and options; each call was blind to the others and the genre could not be
-    revisited once `GENRES[...]` had been indexed. This call sees the whole menu while it
-    chooses, so it can pick a genre because of the shape it wants, and it treats a preset as
-    a starting point to add to and subtract from where the router took one verbatim and
-    stopped. That shows up as 100 genres and 169 shapes differing across 613 scenes, and
-    as 90% against the upstream agents' tags where the router gets 85%.
-
-    Worth being explicit that the prose format did not require this. Three calls could
-    have fed a fourth that wrote the blob, leaving the config identical and only the
-    structure changed. Collapsing them was a second, separate decision, kept deliberately
-    for the accuracy, at the cost of the arms differing in two ways at once.
-
-    Both texts go in, and the reason is a measured one. Given only the scene prompt this
-    stage classified genre from a description that uprez had, correctly, stripped of
-    rules, scoring and economy - so a tycoon arrived as a town and an RPG as an
-    explorable world. Across 611 scenes the genre flowed systematically out of
-    Simulation (-35), RPG (-16) and Entertainment (-15) and into Roleplay (+45) and
-    Adventure (+24), and on a sample of high-confidence disagreements showing the
-    original message recovered the router's genre in 19 of 40.
-
-    Genre is a fact about the game and layout is a fact about the space, so the stage
-    that decides both needs both. Uprez still owns what reaches the image model; this
-    only widens what the classifier may read.
-
-    `notes` is here to be turned off by `tools/ablate_notes.py`, not by callers: the
-    judgement material it adds is the one part of the menu whose effect is contested, and
-    an ablation needs both versions reachable from the same code path.
-    """
-    if not scene.strip():
-        return ""
-    system = f"{skill('layout-blob')}\n\n# The menu\n\n{vocabulary(notes=notes)}"
-    user = scene.strip()
-    if source.strip():
-        user = (f"# The author's original message\n\nRead this for genre, intent and any "
-                f"stated numbers. It contains rules and mechanics that must NOT reach "
-                f"the layout description.\n\n{source.strip()}\n\n"
-                f"# The layout scene prompt derived from it\n\nThis is the space to "
-                f"describe.\n\n{scene.strip()}")
-    return (llm.ask(system, user, BLOB_SCHEMA).get("blob") or "").strip()
-
-
-# ---------------------------------------------------------------- 3. decouple
 
 def _zone() -> dict:
     return {
@@ -340,11 +216,15 @@ def _zone() -> dict:
         "properties": {
             "name": {"type": "string"},
             "role": {"type": "string", "description": "What happens here."},
-            "where": {"type": "string",
-                      "description": "Position in the map or in frame: 'north end', "
-                                     "'foreground left', 'centre'."},
-            "size": {"type": "string",
-                     "description": "Relative or stated size. Empty if unstated."},
+            "where": {
+                "type": "string",
+                "description": "Position in the map or in frame: 'north end', "
+                "'foreground left', 'centre'.",
+            },
+            "size": {
+                "type": "string",
+                "description": "Relative or stated size. Empty if unstated.",
+            },
         },
         "required": ["name", "role", "where", "size"],
         "additionalProperties": False,
@@ -357,9 +237,11 @@ def _path() -> dict:
         "properties": {
             "from": {"type": "string"},
             "to": {"type": "string"},
-            "kind": {"type": "string",
-                     "description": "road, corridor, track, ramp, stair, bridge, "
-                                    "portal, tunnel, open ground"},
+            "kind": {
+                "type": "string",
+                "description": "road, corridor, track, ramp, stair, bridge, "
+                "portal, tunnel, open ground",
+            },
         },
         "required": ["from", "to", "kind"],
         "additionalProperties": False,
@@ -371,8 +253,10 @@ def _prop() -> dict:
         "type": "object",
         "properties": {
             "name": {"type": "string"},
-            "count": {"type": "integer",
-                      "description": "The number the prompt stated. -1 when none was."},
+            "count": {
+                "type": "integer",
+                "description": "The number the prompt stated. -1 when none was.",
+            },
             "where": {"type": "string"},
         },
         "required": ["name", "count", "where"],
@@ -385,14 +269,18 @@ def _option() -> dict:
         "type": "object",
         "properties": {
             "id": {"type": "string", "description": "A canonical option ID."},
-            "text": {"type": "string",
-                     "description": "What this looks like in THIS scene, from the "
-                                    "blob's own wording - not the generic table text."},
-            "visible": {"type": "boolean",
-                        "description": "True when it is geometry the image model should "
-                                       "draw. False for trigger volumes, spawn markers, "
-                                       "pickups, emitters - anything placed after "
-                                       "segmentation, which must never reach the image."},
+            "text": {
+                "type": "string",
+                "description": "What this looks like in THIS scene, from the "
+                "blob's own wording - not the generic table text.",
+            },
+            "visible": {
+                "type": "boolean",
+                "description": "True when it is geometry the image model should "
+                "draw. False for trigger volumes, spawn markers, "
+                "pickups, emitters - anything placed after "
+                "segmentation, which must never reach the image.",
+            },
             "count": {"type": "integer", "description": "Stated number, or -1."},
         },
         "required": ["id", "text", "visible", "count"],
@@ -412,16 +300,22 @@ def _placement() -> dict:
     return {
         "type": "object",
         "properties": {
-            "id": {"type": "string",
-                   "description": "A canonical option ID whose menu `goes_to` is "
-                                  "`layout` or `both`."},
-            "text": {"type": "string",
-                     "description": "What this is in THIS scene, in English, from the "
-                                    "blob's own wording."},
+            "id": {
+                "type": "string",
+                "description": "A canonical option ID whose menu `goes_to` is "
+                "`layout` or `both`.",
+            },
+            "text": {
+                "type": "string",
+                "description": "What this is in THIS scene, in English, from the "
+                "blob's own wording.",
+            },
             "count": {"type": "integer", "description": "Stated number, or -1."},
-            "where": {"type": "string",
-                      "description": "The siting rule: which zone, at what interval, "
-                                     "against which piece of geometry."},
+            "where": {
+                "type": "string",
+                "description": "The siting rule: which zone, at what interval, "
+                "against which piece of geometry.",
+            },
         },
         "required": ["id", "text", "count", "where"],
         "additionalProperties": False,
@@ -444,11 +338,14 @@ def _axes() -> dict:
     return {
         "type": "object",
         "description": "Only meaningful when `shape` is empty - No Genre, or a described "
-                       "shape the catalogue does not cover. Leave every axis at its "
-                       "default unless the blob argued for another value.",
+        "shape the catalogue does not cover. Leave every axis at its "
+        "default unless the blob argued for another value.",
         "properties": {
-            a.key: {"type": "string", "enum": list(a.clauses),
-                    "description": f"{a.name}. Default {a.default!r}. {a.what}"}
+            a.key: {
+                "type": "string",
+                "enum": list(a.clauses),
+                "description": f"{a.name}. Default {a.default!r}. {a.what}",
+            }
             for a in br.NO_GENRE.axes
         },
         "required": [a.key for a in br.NO_GENRE.axes],
@@ -457,20 +354,24 @@ def _axes() -> dict:
 
 
 LAYOUT_SPEC_SCHEMA = {
-    "name": "layout_spec", "strict": True,
+    "name": "layout_spec",
+    "strict": True,
     "schema": {
         "type": "object",
         "properties": {
             "genre": {"type": "string", "enum": list(br.GENRES) + ["No Genre"]},
-            "secondary": {"type": "array",
-                          "items": {"type": "string", "enum": list(br.GENRES)}},
-            "shape": {"type": "string",
-                      "description": "Exactly one shape ID from the shared catalogue - "
-                                     "any of the 45, not only the genre's typical ones. "
-                                     "Empty string for No Genre, and for a described "
-                                     "shape, where the axes answer instead."},
-            "preset": {"type": "string",
-                       "description": "Preset name, or 'none'."},
+            "secondary": {
+                "type": "array",
+                "items": {"type": "string", "enum": list(br.GENRES)},
+            },
+            "shape": {
+                "type": "string",
+                "description": "Exactly one shape ID from the shared catalogue - "
+                "any of the 45, not only the genre's typical ones. "
+                "Empty string for No Genre, and for a described "
+                "shape, where the axes answer instead.",
+            },
+            "preset": {"type": "string", "description": "Preset name, or 'none'."},
             "axes": _axes(),
             "options": {"type": "array", "items": _option()},
             "layout_placement": {"type": "array", "items": _placement()},
@@ -480,61 +381,95 @@ LAYOUT_SPEC_SCHEMA = {
                     "composition": {
                         "type": "string",
                         "description": "How the space sits in frame: what is in the "
-                                       "foreground, midground, background, left, right.",
+                        "foreground, midground, background, left, right.",
                     },
                     "zones": {"type": "array", "items": _zone()},
                     "paths": {"type": "array", "items": _path()},
-                    "terrain": {"type": "string",
-                                "description": "Relief, water, ground material."},
+                    "terrain": {
+                        "type": "string",
+                        "description": "Relief, water, ground material.",
+                    },
                     "props": {"type": "array", "items": _prop()},
-                    "boundary": {"type": "string",
-                                 "description": "What encloses the play space, or that "
-                                                "it is open."},
+                    "boundary": {
+                        "type": "string",
+                        "description": "What encloses the play space, or that "
+                        "it is open.",
+                    },
                     "scale_band": {"type": "string", "enum": list(SCALES)},
-                    "theme": {"type": "string",
-                              "description": "The visual register, a few words."},
+                    "theme": {
+                        "type": "string",
+                        "description": "The visual register, a few words.",
+                    },
                 },
-                "required": ["composition", "zones", "paths", "terrain", "props",
-                             "boundary", "scale_band", "theme"],
+                "required": [
+                    "composition",
+                    "zones",
+                    "paths",
+                    "terrain",
+                    "props",
+                    "boundary",
+                    "scale_band",
+                    "theme",
+                ],
                 "additionalProperties": False,
             },
             "render": {
                 "type": "object",
                 "properties": {
                     "first": {
-                        "type": "string", "enum": list(ORDERS),
+                        "type": "string",
+                        "enum": list(ORDERS),
                         "description": "Which image is generated FIRST. 'isometric' is "
-                                       "the default: look leads, plan projected from it. "
-                                       "'topdown' draws the plan first and dresses the "
-                                       "isometric from it, when topology must be valid. "
-                                       "'authored_plan' means this repo carves the "
-                                       "geometry first - mazes and racing circuits.",
+                        "the default: look leads, plan projected from it. "
+                        "'topdown' draws the plan first and dresses the "
+                        "isometric from it, when topology must be valid. "
+                        "'authored_plan' means this repo carves the "
+                        "geometry first - mazes and racing circuits.",
                     },
-                    "then": {"type": "string", "enum": list(ORDERS) + ["none"],
-                             "description": "Which image is generated second."},
+                    "then": {
+                        "type": "string",
+                        "enum": list(ORDERS) + ["none"],
+                        "description": "Which image is generated second.",
+                    },
                     "authoritative": {
-                        "type": "string", "enum": list(ORDERS),
+                        "type": "string",
+                        "enum": list(ORDERS),
                         "description": "Which image is ground truth for the geometry. "
-                                       "Always whichever was generated first.",
+                        "Always whichever was generated first.",
                     },
-                    "why": {"type": "string",
-                            "description": "One clause. The test is whether an invalid "
-                                           "layout would make the game unplayable."},
+                    "why": {
+                        "type": "string",
+                        "description": "One clause. The test is whether an invalid "
+                        "layout would make the game unplayable.",
+                    },
                     "set_piece": {
                         "type": "boolean",
                         "description": "True when the geometry is real but nobody walks "
-                                       "on it, so the frame holds the whole set.",
+                        "on it, so the frame holds the whole set.",
                     },
                 },
                 "required": ["first", "then", "authoritative", "why", "set_piece"],
                 "additionalProperties": False,
             },
-            "route": {"type": "array",
-                      "items": {"type": "string", "enum": list(MODIFIERS)}},
+            "route": {
+                "type": "array",
+                "items": {"type": "string", "enum": list(MODIFIERS)},
+            },
             "notes": {"type": "array", "items": {"type": "string"}},
         },
-        "required": ["genre", "secondary", "shape", "preset", "axes", "options",
-                     "layout_placement", "layout", "render", "route", "notes"],
+        "required": [
+            "genre",
+            "secondary",
+            "shape",
+            "preset",
+            "axes",
+            "options",
+            "layout_placement",
+            "layout",
+            "render",
+            "route",
+            "notes",
+        ],
         "additionalProperties": False,
     },
 }
@@ -619,10 +554,13 @@ def decouple(blob: str, scene: str = "") -> dict:
     if not blob.strip():
         raise ValueError("nothing to decouple: blob is empty")
     system = f"{DECOUPLE_SYSTEM}\n\n# The menu\n\n{vocabulary()}"
-    user = (f"# The word blob\n\n{blob.strip()}")
+    user = f"# The word blob\n\n{blob.strip()}"
     if scene.strip():
         user = f"{user}\n\n# The scene prompt it was written from\n\n{scene.strip()}"
-    spec = llm.ask(system, user, LAYOUT_SPEC_SCHEMA)
+    # This production handoff must be one schema-enforced call. Do not fall back to
+    # extracting JSON from unconstrained prose: a gateway without structured-output
+    # support is a hard failure, not a weaker transcription path.
+    spec = llm.ask(system, user, LAYOUT_SPEC_SCHEMA, require_schema=True)
     return normalise(spec)
 
 
@@ -651,8 +589,10 @@ def _reconcile_placements(g: br.Genre, spec: dict, notes: list[str]) -> list[dic
             notes.append(f"dropped placement {oid!r}: not in {g.name}")
             continue
         if o.goes_to not in _PLACED:
-            notes.append(f"dropped placement {oid!r}: the document draws it "
-                         f"(goes_to={o.goes_to}) rather than placing it")
+            notes.append(
+                f"dropped placement {oid!r}: the document draws it "
+                f"(goes_to={o.goes_to}) rather than placing it"
+            )
             continue
         if not (p.get("where") or "").strip():
             notes.append(f"placement {oid!r} carries no siting rule")
@@ -661,8 +601,12 @@ def _reconcile_placements(g: br.Genre, spec: dict, notes: list[str]) -> list[dic
             # A thing to place is still a pick. Only `options` reaches `route_from`, so
             # a placement missing from it is a requirement the route never costed.
             notes.append(f"placement {oid!r} added to options")
-            picks[oid] = {"id": oid, "text": p.get("text", ""),
-                          "visible": o.goes_to == "both", "count": p.get("count", -1)}
+            picks[oid] = {
+                "id": oid,
+                "text": p.get("text", ""),
+                "visible": o.goes_to == "both",
+                "count": p.get("count", -1),
+            }
 
     for oid in list(picks):
         o = g.option(oid)
@@ -672,8 +616,12 @@ def _reconcile_placements(g: br.Genre, spec: dict, notes: list[str]) -> list[dic
         # Mirrored rather than dropped: the requirement is real either way, and a row
         # with an empty `where` is the honest record of a half-made decision.
         notes.append(f"placement mirrored from option {oid!r}: no siting rule given")
-        rows[oid] = {"id": oid, "text": picks[oid].get("text", ""),
-                     "count": picks[oid].get("count", -1), "where": ""}
+        rows[oid] = {
+            "id": oid,
+            "text": picks[oid].get("text", ""),
+            "count": picks[oid].get("count", -1),
+            "where": "",
+        }
 
     for oid, pick in picks.items():
         o = g.option(oid)
@@ -709,8 +657,11 @@ def normalise(spec: dict) -> dict:
         notes.append(f"cleared shape {spec['shape']!r}: No Genre has axes, not shapes")
         spec["shape"] = ""
     if spec.get("shape"):
-        moved = [f"{k}={v}" for k, v in (spec.get("axes") or {}).items()
-                 if (a := br.NO_GENRE.axis(k)) is not None and v != a.default]
+        moved = [
+            f"{k}={v}"
+            for k, v in (spec.get("axes") or {}).items()
+            if (a := br.NO_GENRE.axis(k)) is not None and v != a.default
+        ]
         if moved:
             notes.append(f"cleared axes on a shape build: {', '.join(moved)}")
         spec["axes"] = {}
@@ -721,7 +672,9 @@ def normalise(spec: dict) -> dict:
         # empty shape would read downstream as a described shape nobody described.
         if (old := spec.get("shape")) and g.shape(old) is None:
             if new := br.SHAPE_MIGRATION.get(old):
-                notes.append(f"migrated shape {old!r} -> {new!r}: the catalogue merged it")
+                notes.append(
+                    f"migrated shape {old!r} -> {new!r}: the catalogue merged it"
+                )
                 spec["shape"] = new
             else:
                 notes.append(f"dropped shape {old!r}: not in the shape catalogue")
@@ -745,8 +698,11 @@ def normalise(spec: dict) -> dict:
         r["authoritative"] = r.get("first")
     # `then` is a consequence of `first` in all three orders, so it is derived rather
     # than believed: an authored plan produces both images from the carve.
-    want = {"isometric": "topdown", "topdown": "isometric",
-            "authored_plan": "topdown"}.get(r.get("first", ""), "none")
+    want = {
+        "isometric": "topdown",
+        "topdown": "isometric",
+        "authored_plan": "topdown",
+    }.get(r.get("first", ""), "none")
     if r.get("then") != want:
         r["then"] = want
     route = [m for m in (spec.get("route") or []) if m in MODIFIERS]
@@ -773,30 +729,3 @@ def normalise(spec: dict) -> dict:
     spec["route"] = route
     spec["notes"] = notes
     return spec
-
-
-# ---------------------------------------------------------------- the whole front half
-
-def run(message: str) -> dict:
-    """All three stages, with every intermediate kept.
-
-    The intermediates are the point: when a render is wrong, the question is always
-    which stage lost it, and that is only answerable if the scene prompt and the blob
-    were both written down.
-    """
-    scene = uprez(message)
-    if not scene:
-        return {"scene_prompt": "", "blob": "", "spec": None,
-                "notes": ["uprez found no describable space"]}
-    blob = describe(scene, message)
-    if not blob:
-        return {"scene_prompt": scene, "blob": "", "spec": None,
-                "notes": ["blob stage returned nothing"]}
-    return {"scene_prompt": scene, "blob": blob, "spec": decouple(blob, scene),
-            "notes": []}
-
-
-if __name__ == "__main__":
-    import sys
-    msg = " ".join(sys.argv[1:]) or sys.stdin.read()
-    print(json.dumps(run(msg), indent=2))
