@@ -24,7 +24,7 @@
     }
   ],
   "scene_prompt": "Create a 3D indoor birthday party scene in a small party hall sized for a handful of players. Decorate the room with colorful balloons and streamers, with presents and a birthday cake arranged as the central party setup.",
-  "blob": "### Genre\n`No Genre`: this is a purely social 3D hangout with no stated round, score, objective, combat, or other gameplay loop.\n\n### Shape and preset\nUse the No Genre axes rather than a shape. Set `enclosure` to `interior-only` for one enclosed party hall; leave `verticality` at single-surface, `zone-count` at single, `structure` at dressed, and `play-space` at grounded-surface. The closest preset is Social Space, retained as a small gathering room rather than a gameplay lobby.\n\n### Config requirements\nUse visible `social-hub` as the open central floor area sized for a handful of players to stand, mingle, and gather around the party setup. No invisible markers, triggers, pickups, or emitters are needed. The balloons, streamers, presents, and cake are scene props rather than additional config options.\n\n### Layout components\nBuild one small rectangular indoor party hall. Keep a clear, compact gathering area through the center, with the birthday setup as the focal cluster slightly toward the far wall: a decorated table holding one birthday cake, surrounded by grouped presents. Suspend colorful balloons around wall edges and corners and run streamers across the ceiling and upper walls. Leave enough open floor around the central table for several players to circulate comfortably. Use simple finished indoor flooring and plain party-hall walls; the room boundary is fully enclosed by four walls and a ceiling, with a single visible entrance on the near side. Compose the view from the entrance toward the cake table, with the ceiling decorations framing the central setup.\n\n### Render order\nUse `isometric`: render the isometric room first and derive the top-down view from it, because this is a simple decorative interior with no topology whose failure would make play impossible.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the stated handful-of-players capacity and single-room hall. Theme: cheerful, colorful indoor birthday party. Use `P0`; one enclosed room on a single walkable floor introduces no overlapping surfaces, outside-to-inside transition, separate maps, volumetric play, or validity constraint.",
+  "blob": "### 1. Genre\n`No Genre`: this is purely a small social hangout with no stated round, score, objective, or gameplay loop.\n\n### 2. Shape and preset\nNo shape applies under `No Genre`. Use the Social Space preset in spirit, but only its gathering-space intent is supported by the prompt. Set `enclosure` to `interior-only`; leave `verticality` as single-surface, `zone-count` as single, `structure` as dressed, and `play-space` as grounded-surface.\n\n### 3. Config requirements\nUse `social-hub` as a compact gathering area: open floor around the party setup, sized for a handful of players to stand and mingle. No other configuration options are requested.\n\n### 4. Layout requirements\nNo placed gameplay requirements are needed. There are no spawns, triggers, pickups, checkpoints, or emitters because the room is only a hangout.\n\n### 5. Layout components\nBuild one small enclosed party hall as the complete map, with a simple open central floor. Place the birthday setup at the visual center: one cake on a decorated table, surrounded by wrapped presents. Dress the walls and ceiling line with colorful balloons and streamers, keeping the floor circulation clear around the table for a handful of players. The boundary is the hall’s enclosing walls, with a clear entrance on one side. Compose the room symmetrically enough that the cake table is immediately readable as the focal point, while balloons and streamers frame it from all sides.\n\n### 6. Render order\nUse `isometric`: the compact decorative interior is look-led and has no topology whose validity affects play.\n\n### 7. Scale, theme, and pipeline cost\nScale band: small, driven by the requested capacity for only a handful of players. Theme: cheerful, colorful indoor birthday celebration. Pipeline modifier: `P0`, since this is one enclosed, single-level room with no forced multi-surface, transition, or traversal-validation cost.",
   "spec": {
     "genre": "No Genre",
     "secondary": [],
@@ -40,71 +40,60 @@
     "options": [
       {
         "id": "social-hub",
-        "text": "Open central floor area sized for a handful of players to stand, mingle, and gather around the party setup.",
+        "text": "A compact gathering area with open floor around the party setup, sized for a handful of players to stand and mingle.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "View from the near-side entrance toward the cake table near the far wall, with ceiling decorations framing the central party setup.",
+      "composition": "A small symmetrical enclosed party hall, with the cake table immediately readable at the visual center; balloons and streamers frame it from all sides, and clear circulation surrounds the table.",
       "zones": [
         {
-          "name": "Central gathering area",
-          "role": "Clear compact floor for several players to stand, mingle, and circulate around the party setup.",
-          "where": "centre of the hall",
-          "size": "sized for a handful of players"
-        },
-        {
-          "name": "Birthday setup",
-          "role": "Focal decorated table holding the birthday cake and surrounded by grouped presents.",
-          "where": "slightly toward the far wall",
-          "size": ""
+          "name": "Party hall",
+          "role": "A small indoor social hangout and gathering space centered on the birthday setup.",
+          "where": "The complete enclosed map.",
+          "size": "small"
         }
       ],
-      "paths": [
-        {
-          "from": "Entrance",
-          "to": "Central gathering area",
-          "kind": "open ground"
-        },
-        {
-          "from": "Central gathering area",
-          "to": "Birthday setup",
-          "kind": "open ground"
-        }
-      ],
-      "terrain": "Simple finished indoor flooring.",
+      "paths": [],
+      "terrain": "Simple open central indoor floor, kept clear around the party table.",
       "props": [
         {
           "name": "birthday cake",
           "count": 1,
-          "where": "on the decorated table near the far wall"
+          "where": "On the decorated table at the visual center."
         },
         {
-          "name": "grouped presents",
+          "name": "decorated table",
+          "count": 1,
+          "where": "At the visual center of the party hall."
+        },
+        {
+          "name": "wrapped presents",
           "count": -1,
-          "where": "surrounding the decorated table"
+          "where": "Surrounding the central cake table."
         },
         {
           "name": "colorful balloons",
           "count": -1,
-          "where": "around wall edges and corners"
+          "where": "Dressing the walls and ceiling line around the room."
         },
         {
           "name": "streamers",
           "count": -1,
-          "where": "across the ceiling and upper walls"
+          "where": "Dressing the walls and ceiling line around the room."
         }
       ],
-      "boundary": "Fully enclosed small rectangular party hall with four walls and a ceiling; a single visible entrance is on the near side.",
+      "boundary": "The hall's enclosing walls, with a clear entrance on one side.",
       "scale_band": "small",
-      "theme": "cheerful, colorful indoor birthday party"
+      "theme": "cheerful, colorful indoor birthday celebration"
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "a simple decorative interior has no topology whose failure would make play impossible.",
+      "why": "The compact decorative interior is look-led and has no topology whose validity affects play.",
       "set_piece": false
     },
     "route": [
@@ -116,7 +105,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

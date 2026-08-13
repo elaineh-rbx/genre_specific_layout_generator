@@ -14,76 +14,105 @@
     }
   ],
   "scene_prompt": "Create a 3D present-day city map for free driving, with an open street grid of asphalt roads between concrete buildings. Place a drivable car on the streets, and use simple cube-based props throughout the city.",
-  "blob": "## Genre\nSimulation is dominant: this is free-roam vehicle operation with no race, finish, or task loop. Use the `world-shared` shape, matching the Vehicle Sim preset.\n\n## Shape and preset\n`world-shared` is one contiguous present-day city map in which the street network is the shared driving ground. The Vehicle Sim preset remains recognisable and is used without alteration.\n\n## Config requirements\nUse visible `path-road-vehicle` for the open asphalt street grid, wide and clear enough for the car to turn through intersections between blocks. Use visible `resource-shared` only as its shared-world spatial implication: the city is common open ground rather than isolated player plots; do not add an extraction field because none was requested. No other options apply. The car, roads, buildings, and props are visible geometry; no invisible markers, triggers, pickups, or emitters are needed.\n\n## Layout components\nBuild a single contiguous city zone, medium-to-large in footprint, organized as an open orthogonal grid of asphalt roads. Put several broad intersections and straight street segments through the center, with turning space at corners and a continuous route around each block. Concrete building masses line the blocks on both sides of the roads, varied in footprint and height but leaving the streets unobstructed. Place one drivable car on a central street. Dress sidewalks and road edges with simple cube-based urban props such as blocky bollards, benches, planters, streetlights, and barriers, keeping them out of vehicle lanes. Use flat paved ground with no water or relief. The city boundary is implied by outer building rows and the edge of the street grid rather than a hard wall. Frame the composition from an elevated three-quarter isometric view, with the central road junction and car readable in the foreground and city blocks extending behind.\n\n## Render order\nUse `topdown`: the connected road grid and turning circulation must remain continuously driveable, so a valid plan should lead before the isometric dressing.\n\n## Scale, theme, and pipeline cost\nScale is large, driven by a city-wide drivable street grid rather than a single parking lot. Theme is present-day asphalt and concrete, deliberately simple and cube-built. Use `P0`; this is one flat, contiguous exterior surface with no forced extra capture path.",
+  "blob": "### Genre\nThis is `No Genre`: the author wants a free-roam driving place, with no race, finish, task loop, score, or other game activity specified.\n\n### Shape and preset\nNo shape applies under `No Genre`. Use the Social Space preset only in its broad open-city sense, but retain only the city circulation it supports. The decided axes are `enclosure` exterior, `verticality` single-surface, `zone-count` single, `structure` dressed, and `play-space` grounded-surface.\n\n### Config requirements\nUse `path-circulation` for a connected, vehicle-scaled asphalt street grid threading between city blocks. Use `settlement-density` for a built-up present-day grid of concrete buildings. No other config options are needed; the car and cube props are scene objects rather than additional layout options.\n\n### Layout requirements\nNothing needs placement beyond the scene geometry. The drivable car should be positioned on a clear street near the central block, facing along the road; it is a visible prop, not a trigger or spawn-marker requirement.\n\n### Layout components\nBuild one open, single-level city district. A broad central intersection anchors several straight asphalt streets in a readable orthogonal grid, with continuous driving connections around the surrounding blocks and no dead-end-only street network. Concrete buildings line the block edges, varying modestly in footprint and height while leaving roads unobstructed. Place the single drivable car on the central street. Add simple cube-based urban props such as boxy barriers, bollards, street furniture, and sparse block-form roadside details without narrowing the driving lanes. The outer city edge is implied by continuing building fronts and distant block masses rather than a hard wall. Compose the frame from an elevated isometric angle that clearly exposes the central intersection, the car, and multiple connected streets.\n\n### Render order\nUse `topdown` first, authoritative, because the free-driving street network must remain continuously connected and vehicle-navigable before the isometric city dressing is derived.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by several connected city blocks rather than a single street. Theme: present-day asphalt-and-concrete city, deliberately simple modular cube-based construction. Use `P0`; the flat exterior street grid has one traversable surface and no forced extra capture pass.",
   "spec": {
-    "genre": "Simulation",
+    "genre": "No Genre",
     "secondary": [],
-    "shape": "world-shared",
-    "preset": "Vehicle Sim",
-    "axes": {},
+    "shape": "",
+    "preset": "Social Space",
+    "axes": {
+      "enclosure": "exterior",
+      "verticality": "single-surface",
+      "zone-count": "single",
+      "structure": "dressed",
+      "play-space": "grounded-surface"
+    },
     "options": [
       {
-        "id": "path-road-vehicle",
-        "text": "Open asphalt street grid, wide and clear enough for the car to turn through intersections between blocks.",
+        "id": "path-circulation",
+        "text": "A connected, vehicle-scaled asphalt street grid threading between city blocks.",
         "visible": true,
         "count": -1
       },
       {
-        "id": "resource-shared",
-        "text": "The city is common open ground rather than isolated player plots; do not add an extraction field.",
+        "id": "settlement-density",
+        "text": "A built-up present-day grid of concrete buildings.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "Elevated three-quarter isometric view, with the central road junction and car readable in the foreground and city blocks extending behind.",
+      "composition": "Elevated isometric framing clearly exposes the broad central intersection, the single drivable car on the central street, and multiple connected streets around the surrounding blocks.",
       "zones": [
         {
-          "name": "Shared city street grid",
-          "role": "Free-roam vehicle operation across a common contiguous city map.",
-          "where": "Entire map, centered on the main road junction.",
-          "size": "Medium-to-large footprint"
+          "name": "Central intersection",
+          "role": "Anchors the connected free-driving street grid.",
+          "where": "centre",
+          "size": "broad"
+        },
+        {
+          "name": "Surrounding city blocks",
+          "role": "Concrete buildings line the block edges while leaving roads unobstructed.",
+          "where": "around the central intersection",
+          "size": "several connected blocks"
+        },
+        {
+          "name": "Outer city edge",
+          "role": "Implied continuation of the city rather than a hard map wall.",
+          "where": "background and outer perimeter",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Central street junction",
-          "to": "City blocks",
+          "from": "Central intersection",
+          "to": "Surrounding city blocks",
           "kind": "road"
         },
         {
-          "from": "Street segment",
-          "to": "Street segment",
+          "from": "Surrounding city blocks",
+          "to": "Surrounding city blocks",
           "kind": "road"
         }
       ],
-      "terrain": "Flat paved ground with asphalt roads and no water or relief.",
+      "terrain": "Flat single-level asphalt streets between concrete city blocks.",
       "props": [
         {
           "name": "Drivable car",
           "count": 1,
-          "where": "On a central street"
+          "where": "On a clear central street near the central block, facing along the road."
         },
         {
-          "name": "Concrete building masses",
+          "name": "Boxy barriers",
           "count": -1,
-          "where": "Lining blocks on both sides of the roads"
+          "where": "Along streets without narrowing driving lanes."
         },
         {
-          "name": "Blocky bollards, benches, planters, streetlights, and barriers",
+          "name": "Bollards",
           "count": -1,
-          "where": "Sidewalks and road edges, kept out of vehicle lanes"
+          "where": "Along streets without narrowing driving lanes."
+        },
+        {
+          "name": "Street furniture",
+          "count": -1,
+          "where": "Along streets without narrowing driving lanes."
+        },
+        {
+          "name": "Sparse block-form roadside details",
+          "count": -1,
+          "where": "Along streets without narrowing driving lanes."
         }
       ],
-      "boundary": "Implied by outer building rows and the edge of the street grid rather than a hard wall.",
-      "scale_band": "large",
-      "theme": "Present-day asphalt and concrete, deliberately simple and cube-built."
+      "boundary": "Open; the outer city edge is implied by continuing building fronts and distant block masses rather than a hard wall.",
+      "scale_band": "medium",
+      "theme": "Present-day asphalt-and-concrete city, deliberately simple modular cube-based construction."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "The connected road grid and turning circulation must remain continuously driveable.",
+      "why": "the free-driving street network must remain continuously connected and vehicle-navigable before the isometric city dressing is derived.",
       "set_piece": false
     },
     "route": [
@@ -95,7 +124,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

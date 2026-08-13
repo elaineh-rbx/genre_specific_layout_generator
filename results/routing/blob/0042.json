@@ -3,7 +3,7 @@
   "source": "Build a Rec Room style paintball arena based on the reference image. The arena should be an enclosed rectangular field with outer walls on all four sides. Inside the field, place various cover barriers and blocks that players can hide behind - including a large center barrier, symmetric cover blocks on both sides, elevated platforms with ramps, and smaller scattered cover elements. The arena should be symmetrical for fair team play. Use a paintball arena aesthetic with colorful barriers. Make it large enough for a proper game - the field should be roughly 200x100 studs. Include: outer boundary walls, a central dividing barrier, multiple symmetric cover blocks on both halves, elevated sniper platforms with ramps, and scattered small cover elements. Color scheme should use bright, playful colors typical of Rec Room paintball.",
   "answers": [],
   "scene_prompt": "Build a large, enclosed rectangular paintball arena, roughly 200x100 studs, with outer boundary walls on all four sides. Arrange the field symmetrically around a central dividing barrier: a large center cover structure in the midground, matching groups of colorful cover blocks on each half, and smaller scattered barriers mirrored left to right. Place elevated platform structures on opposing sides with ramps leading up to them, while keeping clear lanes between cover clusters. Use a bright, playful paintball-arena palette for the barriers and walls.",
-  "blob": "### Genre\nThe dominant genre is Shooter: a symmetrical paintball combat arena for fair team play.\n\n### Shape and preset\nUse the `lane-network` shape. The field is a rectangular set of clear firing lanes broken by mirrored cover clusters around a central divider. It most closely matches the Team Deathmatch preset, but omit its opposing bases and chokepoints because neither is requested.\n\n### Config requirements\n`cover-los` is visible geometry: colorful waist-high blocks, taller barriers, and the large central cover piece interrupt sightlines across the field. `cover-elevated` is visible geometry: matching raised sniper platforms on opposite halves, each reached by a ramp and overlooking lanes without creating inaccessible under-platform routes. No invisible layout options are required.\n\n### Layout components\nBuild one enclosed, approximately 200x100-stud rectangular field, bisected symmetrically along its long axis. Solid outer boundary walls enclose all four sides. Put a large central dividing barrier at midfield, broad enough to split direct views while leaving passable lanes around both ends. On each half, arrange matching groups of colorful cover blocks at equal offsets from the centreline: larger clustered blocks nearer midfield and smaller scattered barriers farther outward, all mirrored left to right. Place one elevated platform structure on each opposing side, with a ramp rising from the inward-facing side of each platform. Keep open, readable travel and firing lanes between every cover cluster, along both side edges and through the centre approaches. Use flat arena ground and raised, solid-supported platforms rather than tunnels or walkable space beneath decks. Frame the full rectangular field in a high three-quarter isometric view so the central symmetry, perimeter walls, ramps, and all lanes remain legible.\n\n### Render order\nUse `isometric`: the arena is a visually led, symmetric combat field, and an image-first isometric render can clearly establish its cover composition without a topology-validity requirement.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by the explicit roughly 200x100-stud field. Theme is bright, playful Rec Room-style paintball: saturated colorful barriers, clean enclosed arena walls, and readable toy-like cover silhouettes. Use `tiered` because the ramped sniper platforms create real elevation without overhanging playable surfaces; otherwise the layout remains `P0`.",
+  "blob": "### Genre\nThe dominant genre is Shooter: a symmetric, team-based paintball firefight organized around ranged sightlines and cover.\n\n### Shape and preset\nUse `lane-network`, matching the Team Deathmatch preset: the rectangular field divides into mirrored opposing halves with readable firing lanes around the center barrier. Retain the preset’s team symmetry and cover logic, add the requested elevated platforms through `cover-elevated`, and omit a forced `choke-bottleneck` because the prompt calls for clear lanes rather than narrow pinch points.\n\n### Config requirements\nUse `cover-los` as colorful paintball blocks, barricades, and the large center structure, arranged symmetrically to break direct fire across the field. Use `cover-elevated` for one elevated sniper platform on each opposing side, each reached by a ramp and overlooking lanes without dominating every route. Use `spawn-teambase` as mirrored, screened team start areas at opposite short ends of the field.\n\n### Layout requirements\nPlace `spawn-teambase` twice: one protected start marker centered just inside each short-end wall, behind its team’s nearest cover cluster and out of direct sight from the central barrier. No other invisible volumes, pickups, or emitters are required by the prompt.\n\n### Layout components\nBuild one large enclosed rectangular arena, roughly 200 by 100 studs. Outer walls close all four sides. A substantial central dividing cover barrier occupies the field midpoint and anchors the left-right mirror axis. Each half contains matching clusters of bright cover blocks, with larger blocks nearer the center and smaller scattered barriers mirrored across the axis. Keep several clear, traversable firing lanes between these clusters from each team end toward mid-field. Put an elevated sniper platform on each opposing side, positioned symmetrically toward the long edges and connected to ground level by ramps. Use a flat arena floor; the only elevation is the paired platform structures. Compose the isometric frame from one corner so the full enclosure, centered barrier, mirrored cover pattern, and both raised platforms are legible.\n\n### Render order\nUse `isometric`: the arena’s visual symmetry, colorful barrier hierarchy, and sightline-breaking cover should lead, while its simple contiguous field can be projected into plan afterward.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by the stated 200×100-stud competitive field. Theme is bright, playful Rec Room-style paintball, with saturated colorful barriers against a clean enclosed arena floor. Use `P2` because the elevated sniper platforms create raised surfaces over the ground plane that a single top-down capture can occlude.",
   "spec": {
     "genre": "Shooter",
     "secondary": [],
@@ -13,103 +13,107 @@
     "options": [
       {
         "id": "cover-los",
-        "text": "Colorful waist-high blocks, taller barriers, and the large central cover piece interrupt sightlines across the field.",
+        "text": "Colorful paintball blocks, barricades, and the large center structure, arranged symmetrically to break direct fire across the field.",
         "visible": true,
         "count": -1
       },
       {
         "id": "cover-elevated",
-        "text": "Matching raised sniper platforms on opposite halves, each reached by a ramp and overlooking lanes without creating inaccessible under-platform routes.",
+        "text": "One elevated sniper platform on each opposing side, each reached by a ramp and overlooking lanes without dominating every route.",
+        "visible": true,
+        "count": 2
+      },
+      {
+        "id": "spawn-teambase",
+        "text": "Mirrored, screened team start areas at opposite short ends of the field.",
         "visible": true,
         "count": 2
       }
     ],
+    "layout_placement": [
+      {
+        "id": "spawn-teambase",
+        "text": "One protected start marker centered just inside each short-end wall, behind its team's nearest cover cluster and out of direct sight from the central barrier.",
+        "count": 2,
+        "where": "Centered just inside each short-end wall, behind its team's nearest cover cluster and out of direct sight from the central barrier."
+      }
+    ],
     "layout": {
-      "composition": "High three-quarter isometric view framing the full rectangular field, with the large central dividing barrier at midfield, mirrored cover groups on both halves, elevated platforms on opposing sides, and all perimeter walls, ramps, and firing lanes legible.",
+      "composition": "Isometric frame from one corner so the full enclosure, centered barrier, mirrored cover pattern, and both raised platforms are legible.",
       "zones": [
         {
-          "name": "Rectangular field",
-          "role": "Symmetrical paintball combat arena for fair team play.",
-          "where": "full enclosed map",
-          "size": "approximately 200x100 studs"
+          "name": "Enclosed rectangular arena",
+          "role": "Symmetric team-based paintball firefight field with ranged sightlines and cover.",
+          "where": "Full map",
+          "size": "Roughly 200 by 100 studs"
         },
         {
-          "name": "Central divider",
-          "role": "Splits direct views while leaving passable lanes around both ends.",
-          "where": "midfield along the long-axis centreline",
-          "size": "broad"
+          "name": "Central dividing cover barrier",
+          "role": "Anchors the left-right mirror axis and breaks fire across the field.",
+          "where": "Field midpoint",
+          "size": "Substantial"
         },
         {
-          "name": "Opposing elevated platforms",
-          "role": "Raised sniper positions overlooking the lanes.",
-          "where": "one on each opposing side",
+          "name": "Opposing team halves",
+          "role": "Matching bright cover-block clusters and clear firing lanes lead from each team end toward mid-field.",
+          "where": "Mirrored on either side of the central barrier",
           "size": ""
+        },
+        {
+          "name": "Elevated sniper platforms",
+          "role": "Overlook lanes from opposing sides without dominating every route.",
+          "where": "Symmetrically toward the long edges",
+          "size": "2 platforms"
         }
       ],
       "paths": [
         {
-          "from": "one side of the field",
-          "to": "the opposite side of the field",
-          "kind": "open ground"
-        },
-        {
-          "from": "each elevated platform",
-          "to": "its inward-facing approach",
+          "from": "Ground level",
+          "to": "Elevated sniper platforms",
           "kind": "ramp"
-        },
-        {
-          "from": "side edges",
-          "to": "centre approaches",
-          "kind": "open ground"
         }
       ],
-      "terrain": "Flat arena ground with raised, solid-supported platforms; no tunnels or walkable space beneath decks.",
+      "terrain": "Flat arena floor; the only elevation is the paired platform structures.",
       "props": [
         {
-          "name": "outer boundary walls",
+          "name": "Outer boundary walls",
           "count": 4,
-          "where": "all four sides of the rectangular field"
+          "where": "All four sides of the arena"
         },
         {
-          "name": "large central dividing barrier",
+          "name": "Large center cover structure",
           "count": 1,
-          "where": "midfield"
+          "where": "Field midpoint"
         },
         {
-          "name": "elevated platform structures",
-          "count": 2,
-          "where": "opposing sides"
-        },
-        {
-          "name": "ramps",
-          "count": 2,
-          "where": "inward-facing side of each elevated platform"
-        },
-        {
-          "name": "colorful cover block groups",
+          "name": "Bright cover blocks and barricades",
           "count": -1,
-          "where": "matching equal offsets on each half, with larger clusters nearer midfield"
+          "where": "Matching clusters in each half, with larger blocks nearer the center and smaller scattered barriers mirrored across the axis"
         },
         {
-          "name": "smaller scattered barriers",
-          "count": -1,
-          "where": "farther outward on each half, mirrored left to right"
+          "name": "Elevated sniper platforms",
+          "count": 2,
+          "where": "Symmetrically toward the long edges"
+        },
+        {
+          "name": "Ramps",
+          "count": 2,
+          "where": "Connecting each elevated platform to ground level"
         }
       ],
-      "boundary": "Solid outer boundary walls enclose all four sides.",
+      "boundary": "Outer walls close all four sides of the enclosed rectangular arena.",
       "scale_band": "large",
-      "theme": "Bright, playful Rec Room-style paintball with saturated colorful barriers, clean enclosed walls, and readable toy-like cover silhouettes."
+      "theme": "Bright, playful Rec Room-style paintball with saturated colorful barriers against a clean enclosed arena floor."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "the visually led symmetric combat field can establish its cover composition without a topology-validity requirement.",
+      "why": "visual symmetry, colorful barrier hierarchy, and sightline-breaking cover should lead.",
       "set_piece": false
     },
     "route": [
-      "P0",
-      "tiered"
+      "P2"
     ],
     "notes": [],
     "scene_prompt": "Build a large, enclosed rectangular paintball arena, roughly 200x100 studs, with outer boundary walls on all four sides. Arrange the field symmetrically around a central dividing barrier: a large center cover structure in the midground, matching groups of colorful cover blocks on each half, and smaller scattered barriers mirrored left to right. Place elevated platform structures on opposing sides with ramps leading up to them, while keeping clear lanes between cover clusters. Use a bright, playful paintball-arena palette for the barriers and walls."
@@ -117,7 +121,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a 3D endless colourful parkour tower that rises through small repeating vertical segments, each about 100 studs tall, generating continuously above the player. Stack increasingly difficult climbing sections upward with wall-hop routes, staircases that vanish after being stepped on, and hazardous kill-brick obstacles; provide platforms or landing areas along the ascent for retry points. Emphasize the tall vertical composition and an uninterrupted climb disappearing into the distance above.",
-  "blob": "### Genre\nThe dominant genre is Obby & Platformer: player-controlled climbing uses discrete parkour jumps and retries, not automatic runner motion. The height record and leaderboard establish competitive intent but add no layout geometry.\n\n### Shape and preset\nUse `course-tower`, a continuously ascending colourful tower made from repeatable 100-stud vertical segments. It matches the Tower Obby preset, while replacing its end-reward focus with an uninterrupted upward climb; there is no terminal winner zone.\n\n### Config requirements\nVisible geometry: `path-track` is the ordered upward chain of ledges, wall-hop faces, and stair routes. `checkpoint-respawn` supplies broad, safe landing platforms between difficult climbs. `hazard-kill` is expressed as bright kill-brick strips and blocks. `obstacle-climb` provides the wall-hop climbing sections, and `obstacle-timing` provides staircases that vanish after being stepped on. The checkpoint respawn markers are invisible layout elements placed on those visible landing pads; no other invisible elements are needed.\n\n### Layout components\nBuild one narrow, vertically stacked tower shaft with each modular generated segment about 100 studs tall. Each segment begins on a stable landing platform, rises through a denser and harder sequence of colourful platforms, wall-hop walls, disappearing stair flights, and kill-brick hazards, then ends at the next retry landing. Arrange each successive segment with increased gap precision, more demanding wall-hop alignments, and less forgiving timed stairs while retaining a continuous legal climb. Keep a clear central upward void so the ascent reads as one uninterrupted route. The tower boundary is its outer shaft walls and occasional open cutaways; no ground-level world or separate end zone is required. Frame it from a low isometric angle that looks upward, with the tower disappearing high into the distance.\n\n### Render order\nUse `topdown`: the jump chain must remain playable and connected, but this is not a carveable maze or racing circuit.\n\n### Scale, theme, and pipeline cost\nScale is huge in vertical extent because segments generate indefinitely, though each active module is compact. Theme: vivid colourful Roblox parkour, clean geometric blocks, escalating vertical challenge. Use `P2` because stacked tower surfaces overlap in plan view, and `P6` because the procedural climbing route must be valid by construction.",
+  "blob": "### Genre\nThe dominant genre is Obby & Platformer: the player climbs through discrete parkour challenges at their own pace, with failure returning them to a prior landing point. The height record and leaderboard are mechanics/UI and do not alter the map layout.\n\n### Shape and preset\nUse `course-tower`, a vertical tower of stacked climbing sections whose platforms overlap in plan but rise continuously upward. Match the Tower Obby preset: retain its vertical course character, `path-track`, `obstacle-timing`, and `obstacle-climb`; drop its end reward because this tower has no finish, and add the requested retries and lethal bricks.\n\n### Config requirements\nUse `path-track` for the ordered upward chain of colorful platforms and stair routes. Use `checkpoint-respawn` for broad, safe landing pads interrupting the climb. Use `obstacle-climb` for wall-hop climbing faces and tight vertical movement. Use `obstacle-timing` for staircases that disappear after being stepped on. Use `hazard-kill` for clearly distinct kill-brick blocks and strips.\n\n### Layout requirements\nPlace `checkpoint-respawn` once near the top of each approximately 100-stud generated segment, on an enclosed flat landing platform before the next difficulty increase; its visible pad is rendered above, while its respawn marker is sited here. No pickups, emitters, or end trigger are needed.\n\n### Layout components\nBuild a single narrow, open-sided vertical tower with a repeating stack of small segments, each about 100 studs tall. Each segment begins at a safe landing/checkpoint pad, then ascends through a legible ordered route of colorful suspended platforms, wall-hop faces, and disappearing stair flights before reaching the next pad. Make lower segments use generous jumps and simple climbs, then steadily tighten and complicate the routes higher up. Scatter hazardous kill bricks only as explicit obstacles beside or across the route, with safe recovery pads separating sections. Keep the tower footprint compact and the boundary defined by open air and fall space rather than enclosing walls. Compose the frame as a dramatic upward view: the current segment is readable in the foreground while repeated colorful sections vanish high above.\n\n### Render order\nUse `topdown`: the upward platform chain must be validated as a continuous, physics-legal climb before the isometric tower dressing is produced.\n\n### Scale, theme, and pipeline cost\nScale is huge in playable height but built from small repeated 100-stud modules. Theme: bright, saturated, toy-like neon parkour construction. Use `P2` because platforms stack directly above lower routes, and `P6` because every generated climbing chain must remain physically valid. No other modifier is forced.",
   "spec": {
     "genre": "Obby & Platformer",
     "secondary": [],
@@ -24,84 +24,103 @@
     "options": [
       {
         "id": "path-track",
-        "text": "the ordered upward chain of ledges, wall-hop faces, and stair routes",
+        "text": "the ordered upward chain of colorful platforms and stair routes",
         "visible": true,
         "count": -1
       },
       {
         "id": "checkpoint-respawn",
-        "text": "broad, safe landing platforms between difficult climbs; invisible checkpoint respawn markers are placed on those visible landing pads",
+        "text": "broad, safe landing pads interrupting the climb for retries",
         "visible": true,
-        "count": -1
-      },
-      {
-        "id": "hazard-kill",
-        "text": "bright kill-brick strips and blocks",
-        "visible": true,
-        "count": -1
+        "count": 1
       },
       {
         "id": "obstacle-climb",
-        "text": "wall-hop climbing sections",
+        "text": "wall-hop climbing faces and tight vertical movement",
         "visible": true,
         "count": -1
       },
       {
         "id": "obstacle-timing",
-        "text": "staircases that vanish after being stepped on",
+        "text": "staircases that disappear after being stepped on",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "hazard-kill",
+        "text": "clearly distinct kill-brick blocks and strips",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "checkpoint-respawn",
+        "text": "respawn marker for the broad, safe landing pad",
+        "count": 1,
+        "where": "Near the top of each approximately 100-stud generated segment, on an enclosed flat landing platform before the next difficulty increase."
+      }
+    ],
     "layout": {
-      "composition": "Low isometric angle looking upward through a narrow vertical tower shaft, with a clear central upward void and the colourful climb disappearing high into the distance.",
+      "composition": "A dramatic upward view: the current segment is readable in the foreground while repeated colorful tower sections vanish high above.",
       "zones": [
         {
-          "name": "Modular tower segment",
-          "role": "Each repeating ascent segment starts at a retry landing, rises through increasingly difficult parkour, and ends at the next retry landing.",
-          "where": "Stacked continuously upward inside the tower shaft",
-          "size": "About 100 studs tall; compact active module"
+          "name": "Current climbing segment",
+          "role": "A safe landing/checkpoint pad leads into an ordered climb of suspended platforms, wall-hop faces, disappearing stair flights, and explicit kill-brick obstacles.",
+          "where": "Foreground",
+          "size": "About 100 studs tall"
+        },
+        {
+          "name": "Repeated upper segments",
+          "role": "Continuing stacked climbing sections that steadily tighten and complicate the route higher up.",
+          "where": "Directly above the current segment, disappearing into the distance",
+          "size": "About 100 studs tall each"
         }
       ],
       "paths": [
         {
-          "from": "Stable landing platform",
-          "to": "Next retry landing",
-          "kind": "stair"
+          "from": "safe landing/checkpoint pad",
+          "to": "next safe landing/checkpoint pad",
+          "kind": "track"
         }
       ],
-      "terrain": "Clean geometric colourful parkour blocks arranged as vertically stacked surfaces around a clear central upward void.",
+      "terrain": "Open air and fall space around a compact vertical tower footprint; colorful suspended platforms stack directly above lower routes.",
       "props": [
         {
-          "name": "colourful platforms",
+          "name": "colorful suspended platforms",
           "count": -1,
-          "where": "Through each ascending tower segment"
+          "where": "Along each ordered upward climbing route"
         },
         {
-          "name": "wall-hop walls",
+          "name": "wall-hop climbing faces",
           "count": -1,
-          "where": "Through each ascending tower segment"
+          "where": "Within the vertical segments along the ascent"
         },
         {
           "name": "disappearing stair flights",
           "count": -1,
-          "where": "Through each ascending tower segment"
+          "where": "Along the upward routes between landing pads"
         },
         {
-          "name": "kill-brick hazards",
+          "name": "kill-brick blocks and strips",
           "count": -1,
-          "where": "Through each ascending tower segment"
+          "where": "Beside or across the route as explicit obstacles"
+        },
+        {
+          "name": "safe landing/checkpoint pads",
+          "count": 1,
+          "where": "Near the top of each approximately 100-stud generated segment"
         }
       ],
-      "boundary": "Outer shaft walls with occasional open cutaways; no ground-level world or separate end zone.",
+      "boundary": "Open air and fall space rather than enclosing walls.",
       "scale_band": "huge",
-      "theme": "Vivid colourful Roblox parkour, clean geometric blocks, escalating vertical challenge"
+      "theme": "Bright, saturated, toy-like neon parkour construction."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the jump chain must remain playable and connected",
+      "why": "the upward platform chain must be validated as a continuous, physics-legal climb before the isometric tower dressing is produced.",
       "set_piece": false
     },
     "route": [
@@ -114,7 +133,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

@@ -3,7 +3,7 @@
   "source": "Create a medium-sized tactical gun arena map for team-based combat. Include multiple buildings with doorways and windows for cover, elevated platforms and catwalks for vertical gameplay, scattered cover crates and barriers, symmetrical lanes for balanced team vs team engagements, and sniper towers at opposite ends. The map should have a modern industrial/urban warfare aesthetic with concrete and metal materials. Expose attributes for wall height, building count, and cover density so the map can be tuned.",
   "answers": [],
   "scene_prompt": "Create a medium-sized tactical team-combat arena with a symmetrical modern industrial urban layout. Arrange mirrored lanes between opposite team ends, each anchored by a sniper tower, with multiple concrete-and-metal buildings along the lanes featuring doorways and windows for cover. Add elevated platforms and catwalks linking or overlooking key areas, plus scattered cover crates and barriers across open sightlines. Make wall height, building count, and cover density tunable layout attributes.",
-  "blob": "### Genre\nThe dominant genre is Shooter: team-based tactical gun combat organized around balanced firing lanes. There is no secondary genre.\n\n### Shape and preset\nUse the Shooter shape `lane-network`: mirrored routes connect two opposing ends through an industrial combat block, with crossing sightlines and cover rather than a single shared melee arena. This follows the Team Deathmatch preset, but omit its unrequested `choke-bottleneck`; retain its symmetric team-end and distributed-cover logic. Add the prompt-required vertical firing geometry and enterable buildings.\n\n### Config requirements\nVisible geometry: `spawn-teambase` provides two equivalent, screened team-end compounds at opposite ends, each visually anchored by a sniper tower. `cover-los` is scattered concrete barriers, crates, low walls, and building corners that repeatedly interrupt long firing views. `building-interior` is multiple concrete-and-metal structures with traversable doorways, windows, and interior cover. `cover-elevated` is elevated platforms and catwalks overlooking important lanes and linking building levels. Invisible layout elements: `spawn-teambase` also places the corresponding team spawn markers within the protected end compounds.\n\n### Layout components\nBuild a medium-sized, bilaterally symmetrical urban-industrial arena. Place matching team-end zones on the far left and right, each with one sniper tower set behind its forward combat frontage. Run several mirrored, roughly parallel lanes across the center, alternating open cross-lane sightlines with building-lined routes. Put multiple low-to-mid-rise concrete and metal buildings along both sides in matching placements; their doorways create routes through the structures and their windows face lanes as firing apertures. Link key roofs, upper platforms, and building edges with catwalks, ensuring mirrored access from both sides. Scatter crates, jersey barriers, and waist-high concrete cover through exposed central and side-lane stretches, while retaining readable long views between the two ends. Use paved concrete ground, metal railings, industrial walls, and a hard outer boundary enclosing the combat footprint. Make wall height, building count, and cover density tunable geometry attributes. Frame the map as a clear three-quarter isometric overview, with both towers and the central crossed lanes legible.\n\n### Render order\nUse `topdown`: the mirrored lane connectivity, equivalent team approaches, building passages, and elevated-route access must remain tactically valid before the isometric dressing is produced.\n\n### Scale, theme, and pipeline cost\nScale band: medium, driven by several parallel lanes, multiple buildings, two towers, and a central combat block without becoming a city. Theme: modern industrial urban warfare, concrete slabs, dark metal, railings, crates, and utilitarian catwalks. Pipeline modifiers are `P2`, because catwalks and elevated platforms overhang routes beneath them, and `P3`, because combat crosses between exterior lanes and building interiors.",
+  "blob": "### Genre\nThe dominant genre is Shooter: team-based tactical gun combat organized around mirrored firing lanes and opposing team ends.\n\n### Shape and preset\nUse `lane-network`, matching the Team Deathmatch preset. The preset’s balanced opposing lanes and bases fit the brief; add elevated towers, platforms, and catwalks beyond its flat-lane baseline.\n\n### Config requirements\nUse `cover-los` for scattered concrete crates, waist-high barriers, building corners, doorways, and windows that break long firing lines. Use `spawn-teambase` for mirrored team-end bases anchored at the two opposite sniper towers. Use `cover-elevated` for elevated platforms, rooftop-like overlooks, towers, and catwalks commanding selected lane junctions. Do not add enterable interiors beyond the explicitly visible building shells and cover openings.\n\n### Layout requirements\nPlace `spawn-teambase` twice: one protected team start at each extreme end of the mirrored map, immediately beneath or beside its sniper tower and screened from direct cross-map sightlines. Each base must feed evenly into its adjacent outer lane and the central lane.\n\n### Layout components\nBuild a medium-sized, bilaterally symmetrical industrial-urban arena. Two opposing end zones contain matching concrete-and-metal sniper towers, with each tower overlooking but not fully dominating the main approach. Between them, lay out mirrored left and right outer lanes plus a central contested lane. Multiple low industrial building clusters sit along the lanes, with doorways, window openings, and corner geometry providing cover and route choices. Use narrow inter-building passages as local engagement points without blocking either team’s equivalent route.\n\nSuspend elevated platforms and catwalks across key lane intersections and between selected buildings, creating layered sightlines above the ground routes. Scatter cover crates and barriers across exposed ground, especially through the central lane and at transitions between building clusters. Treat wall height, building count, and cover density as tunable build attributes while preserving bilateral symmetry and equivalent sightlines. The boundary is a contained industrial combat compound, enclosed by perimeter walls and outer building backs. Compose the frame from a high three-quarter view with both towers at opposite ends and the three-lane symmetry readable at a glance.\n\n### Render order\nUse `isometric` first and treat it as authoritative; the scene’s industrial silhouette, vertical catwalk layering, and combat-cover composition lead, while the top-down plan is projected from that render.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by three mirrored combat lanes, multiple building clusters, and two endpoint towers. Theme: modern industrial urban warfare, with raw concrete, dark metal, exposed structural frames, and utilitarian barricades. Apply `P2` because catwalks and elevated platforms overhang ground-level routes and occlude them from a single top-down capture.",
   "spec": {
     "genre": "Shooter",
     "secondary": [],
@@ -12,133 +12,139 @@
     "axes": {},
     "options": [
       {
+        "id": "cover-los",
+        "text": "Scattered concrete crates, waist-high barriers, building corners, doorways, and windows break long firing lines across the industrial lanes.",
+        "visible": true,
+        "count": -1
+      },
+      {
         "id": "spawn-teambase",
-        "text": "Two equivalent, screened team-end compounds at opposite ends, each visually anchored by a sniper tower, with corresponding team spawn markers within the protected compounds.",
+        "text": "Mirrored protected team-end bases anchored at the two opposite sniper towers, screened from direct cross-map sightlines.",
         "visible": true,
         "count": 2
       },
       {
-        "id": "cover-los",
-        "text": "Scattered concrete barriers, crates, low walls, and building corners repeatedly interrupt long firing views across exposed central and side-lane stretches.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "building-interior",
-        "text": "Multiple concrete-and-metal structures with traversable doorways, windows, and interior cover; doorways create routes through the structures and windows face lanes as firing apertures.",
-        "visible": true,
-        "count": -1
-      },
-      {
         "id": "cover-elevated",
-        "text": "Elevated platforms and catwalks overlook important lanes, link key roofs, upper platforms, and building edges, and provide mirrored access from both sides.",
+        "text": "Elevated platforms, rooftop-like overlooks, towers, and catwalks command selected lane junctions and create layered sightlines above ground routes.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "spawn-teambase",
+        "text": "One protected team start at each extreme end of the mirrored map, immediately beneath or beside its sniper tower and screened from direct cross-map sightlines.",
+        "count": 2,
+        "where": "At each extreme end of the mirrored map, immediately beneath or beside its sniper tower; each base feeds evenly into its adjacent outer lane and the central lane."
+      }
+    ],
     "layout": {
-      "composition": "Clear three-quarter isometric overview with matching sniper towers at the far left and right team ends and central crossed, roughly parallel mirrored lanes legible between them.",
+      "composition": "High three-quarter view with the two matching sniper towers at opposite ends of the frame and the bilaterally symmetrical three-lane layout readable at a glance; central contested lane between mirrored left and right outer lanes, with elevated catwalks crossing key intersections.",
       "zones": [
         {
-          "name": "Left team-end compound",
-          "role": "Screened opposing team base behind a forward combat frontage.",
-          "where": "far left",
+          "name": "Opposing end zones",
+          "role": "Matching protected team-start areas anchored by sniper towers.",
+          "where": "At the two opposite extreme ends of the mirrored map.",
           "size": ""
         },
         {
-          "name": "Central combat block",
-          "role": "Crossed lanes alternate open sightlines with building-lined routes and cover.",
-          "where": "centre",
+          "name": "Left outer lane",
+          "role": "Mirrored combat route linking both team ends through industrial building clusters.",
+          "where": "Left side of the arena.",
           "size": ""
         },
         {
-          "name": "Right team-end compound",
-          "role": "Screened opposing team base behind a forward combat frontage.",
-          "where": "far right",
+          "name": "Central contested lane",
+          "role": "Exposed primary engagement route with scattered cover and transitions between building clusters.",
+          "where": "Centre of the arena.",
           "size": ""
         },
         {
-          "name": "Building-lined side routes",
-          "role": "Traversable interior routes and firing apertures alongside the lanes.",
-          "where": "both sides in matching placements",
+          "name": "Right outer lane",
+          "role": "Mirrored combat route linking both team ends through industrial building clusters.",
+          "where": "Right side of the arena.",
           "size": ""
         },
         {
-          "name": "Elevated route network",
-          "role": "Catwalk and upper-platform access overlooking and linking key combat areas.",
-          "where": "above key roofs, platforms, building edges, and routes",
+          "name": "Elevated intersections",
+          "role": "Platforms and catwalks provide rooftop-like overlooks and layered sightlines over selected lane junctions.",
+          "where": "Across key lane intersections and between selected buildings.",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Left team-end compound",
-          "to": "Central combat block",
+          "from": "Left team-end base",
+          "to": "Left outer lane",
           "kind": "open ground"
         },
         {
-          "from": "Central combat block",
-          "to": "Right team-end compound",
+          "from": "Left team-end base",
+          "to": "Central contested lane",
           "kind": "open ground"
         },
         {
-          "from": "Building-lined side routes",
-          "to": "Central combat block",
+          "from": "Right team-end base",
+          "to": "Right outer lane",
+          "kind": "open ground"
+        },
+        {
+          "from": "Right team-end base",
+          "to": "Central contested lane",
+          "kind": "open ground"
+        },
+        {
+          "from": "Building clusters",
+          "to": "Adjacent building clusters",
           "kind": "corridor"
         },
         {
-          "from": "Left team-end compound",
-          "to": "Elevated route network",
-          "kind": "stair"
-        },
-        {
-          "from": "Right team-end compound",
-          "to": "Elevated route network",
-          "kind": "stair"
-        },
-        {
-          "from": "Elevated route network",
-          "to": "Building-lined side routes",
-          "kind": "catwalk"
+          "from": "Selected buildings",
+          "to": "Key lane intersections",
+          "kind": "bridge"
         }
       ],
-      "terrain": "Paved concrete ground with industrial walls, dark metal, railings, and open cross-lane sightlines.",
+      "terrain": "Industrial-urban ground of raw concrete and dark metal, with exposed structural frames and utilitarian barricades; elevated platforms and catwalks overhang the ground-level routes.",
       "props": [
         {
-          "name": "sniper towers",
+          "name": "Concrete-and-metal sniper towers",
           "count": 2,
-          "where": "one behind each far-left and far-right team-end combat frontage"
+          "where": "Matching towers in the opposing end zones."
         },
         {
-          "name": "concrete-and-metal buildings",
+          "name": "Low industrial building clusters",
           "count": -1,
-          "where": "along both sides of the mirrored lanes in matching placements"
+          "where": "Mirrored along the left and right outer lanes and around lane transitions."
         },
         {
-          "name": "catwalks and elevated platforms",
+          "name": "Doorways, window openings, and corner cover",
           "count": -1,
-          "where": "linking key roofs, upper platforms, and building edges above routes"
+          "where": "In the visible building shells along the lanes."
         },
         {
-          "name": "crates, jersey barriers, and waist-high concrete cover",
+          "name": "Elevated platforms and catwalks",
           "count": -1,
-          "where": "through exposed central and side-lane stretches"
+          "where": "Across key lane intersections and between selected buildings."
+        },
+        {
+          "name": "Cover crates and waist-high barriers",
+          "count": -1,
+          "where": "Across exposed ground, especially in the central lane and at transitions between building clusters."
         }
       ],
-      "boundary": "Hard outer boundary enclosing the combat footprint.",
+      "boundary": "Contained industrial combat compound enclosed by perimeter walls and outer building backs.",
       "scale_band": "medium",
-      "theme": "Modern industrial urban warfare; concrete slabs, dark metal, railings, crates, and utilitarian catwalks."
+      "theme": "Modern industrial urban warfare: raw concrete, dark metal, exposed structural frames, and utilitarian barricades."
     },
     "render": {
-      "first": "topdown",
-      "then": "isometric",
-      "authoritative": "topdown",
-      "why": "Mirrored lane connectivity, equivalent team approaches, building passages, and elevated-route access must remain tactically valid.",
+      "first": "isometric",
+      "then": "topdown",
+      "authoritative": "isometric",
+      "why": "The industrial silhouette, vertical catwalk layering, and combat-cover composition lead while the top-down plan is projected from the isometric render.",
       "set_piece": false
     },
     "route": [
-      "P2",
-      "P3"
+      "P2"
     ],
     "notes": [],
     "scene_prompt": "Create a medium-sized tactical team-combat arena with a symmetrical modern industrial urban layout. Arrange mirrored lanes between opposite team ends, each anchored by a sniper tower, with multiple concrete-and-metal buildings along the lanes featuring doorways and windows for cover. Add elevated platforms and catwalks linking or overlooking key areas, plus scattered cover crates and barriers across open sightlines. Make wall height, building count, and cover density tunable layout attributes."
@@ -146,12 +152,10 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
-  "mapper_notes": [
-    "blob asked for topdown first; the route ['P3', 'P0', 'tiered', 'P2'] gives isometric"
-  ]
+  "mapper_notes": []
 }

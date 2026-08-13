@@ -19,119 +19,130 @@
     }
   ],
   "scene_prompt": "Create a 3D dark storybook fantasy overworld with colorful cartoon characters and readable, playful environments. Build a small connected first-playable-slice map: a simple town hub leading along paths into a distinct dungeon area, with clear transitions between zones and space for the player to walk with two companion characters following behind. Keep the town, paths, and dungeon as the primary explorable spaces; story-scene areas are minimal.",
-  "blob": "### Genre\nThe dominant genre is RPG, established by the requested Deltarune-inspired turn-based combat and party-led overworld progression. The build concentrates on the overworld rather than adding combat mechanics or story scripting to the layout.\n\n### Shape and preset\nUse `world-single`: one compact, contiguous first-playable-slice map in which the town, connecting paths, and dungeon coexist as connected areas. This most closely matches the Turn-based RPG preset, but the prompt overrides its implied enemy-emitter and level-gate features; retain the single-map shape without inventing those features.\n\n### Config requirements\nUse `safezone-town` as visible geometry: the simple town hub is a calm, readable settlement at the map entrance and the safe base for the surrounding exploration. No invisible layout options are required. Do not render mechanics, battle UI, quest systems, or follower behavior; instead, make the primary walking route broad and uncluttered enough for the player and two trailing companion positions.\n\n### Layout components\nPlace the town hub at the near/front side of the map as the arrival and orientation zone, with a small central square, a few simple stylized buildings, and a clearly visible outgoing path. Run the main path through the middle of the composition, using bends, signposts, tree groupings, and storybook scenery to make movement direction clear without becoming a maze. The route should remain continuously walkable and comfortably wide for a three-character party formation.\n\nAt the far end, transition into one distinct dungeon area, visually separated from the town by a gateway, bridge, arch, or narrowing approach rather than a loading-screen-like break. Give the dungeon a compact entrance court and several readable chambers or corridors, keeping it a connected exploration destination rather than a dense labyrinth. Terrain is a single grounded surface with gentle decorative variation only; keep the map boundary naturally screened by trees, cliffs, dark forest edges, or distant fantasy scenery. Frame the town in the foreground, the route as the visual lead-in, and the dungeon as the distant destination.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because the town-to-dungeon route must remain clearly connected and traversable before the isometric storybook dressing is applied.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the requested first playable slice containing only one town hub, its paths, and one dungeon. Theme is dark storybook fantasy with colorful cartoon characters, playful readable props, and moody but approachable environments. Pipeline modifier: `P0`, because this is one contiguous exterior-facing surface with no required overhangs, interiors, separate maps, or validity-by-construction topology.",
+  "blob": "### Genre\nThe dominant genre is RPG, with Adventure as a secondary influence from the overworld exploration. Character progression and turn-based encounters establish RPG, while the walking journey through the map is the primary player-facing experience.\n\n### Shape and preset\nUse `world-open`: one small contiguous overworld in which the town, connecting paths, and dungeon approach coexist as connected regions. Match the Turn-based RPG preset, retaining its explorable overworld and encounter support while omitting level-gated barriers not requested.\n\n### Config requirements\nUse `safezone-town` for the simple town hub, an enemy-free starting settlement that contrasts with the dungeon approach. Use `settlement-density` as a compact, low-density storybook town rather than a large city. Do not add unrequested shops, interiors, terrain relief, water, or extra biomes.\n\n### Layout requirements\nUse `spawner-npc` for encounter origins: place several invisible encounter markers only within the dungeon area and its immediate approach, never on the town paths. Place two party-follower formation anchors directly behind and slightly offset from the player’s walking line, one for Susie and one for Ralsei, with enough path width for the three-character procession. No other placed gameplay volumes are required for this first slice.\n\n### Layout components\nThe town hub occupies the near foreground as a small, readable cluster of colorful storybook buildings around an open arrival square. A broad pedestrian path leaves the town and passes through one or two transitional woodland or ruin-lined clearings toward the far side of the map. The dungeon area is a distinct dark castle-ruin or shadowy gate complex at the route terminus, with a clear threshold, a short entry court, and several walkable dungeon chambers for exploration and encounters. Keep story-scene space limited to a small focal clearing or entry platform rather than a dedicated cinematic zone. The map boundary is formed by dense stylized forest, cliffs, ruined walls, and darkness beyond the playable route. Compose the town-to-dungeon route as one legible diagonal journey, with the dungeon visible as the distant destination.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because the connected town-to-dungeon route must remain continuously walkable and readable before the isometric storybook dressing is added.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the requested first-playable slice with three primary spaces. Theme is dark storybook fantasy, colorful cartoon characters, playful readable environments, and Deltarune-inspired contrast between cozy town and ominous dungeon. Pipeline modifier: `P0`, since this is one contiguous ground-level map with no forced overhangs, interiors, separate maps, or topology that must be procedurally carved.",
   "spec": {
     "genre": "RPG",
-    "secondary": [],
-    "shape": "world-single",
+    "secondary": [
+      "Adventure"
+    ],
+    "shape": "world-open",
     "preset": "Turn-based RPG",
     "axes": {},
     "options": [
       {
         "id": "safezone-town",
-        "text": "The simple town hub is a calm, readable settlement at the map entrance and the safe base for surrounding exploration.",
+        "text": "A simple town hub, an enemy-free starting settlement that contrasts with the dungeon approach.",
         "visible": true,
+        "count": -1
+      },
+      {
+        "id": "settlement-density",
+        "text": "A compact, low-density storybook town rather than a large city.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "spawner-npc",
+        "text": "Several invisible encounter markers only within the dungeon area and its immediate approach, never on the town paths.",
+        "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "spawner-npc",
+        "text": "Several invisible encounter markers only within the dungeon area and its immediate approach, never on the town paths.",
+        "count": -1,
+        "where": "Only within the dungeon area and its immediate approach; never on the town paths."
+      }
+    ],
     "layout": {
-      "composition": "Town fills the near foreground, with the broad central route leading through the middle toward the distant dungeon destination at the far end.",
+      "composition": "A legible diagonal journey runs from the town hub in the near foreground to the distant dungeon at the far side of the map, with transitional clearings between them and the dungeon visible as the destination.",
       "zones": [
         {
           "name": "Town hub",
-          "role": "Arrival, orientation, and safe base for surrounding exploration.",
-          "where": "Near/front side of the map; foreground.",
-          "size": "Small"
+          "role": "Enemy-free starting settlement and arrival space.",
+          "where": "Near foreground.",
+          "size": "Small, readable cluster."
         },
         {
-          "name": "Main route",
-          "role": "Continuously walkable lead-in between town and dungeon, broad enough for the player and two trailing companion positions.",
-          "where": "Through the middle of the composition.",
-          "size": "Comfortably wide for a three-character party formation"
+          "name": "Connecting path and transitional clearings",
+          "role": "Walkable overworld journey from town to dungeon, wide enough for a three-character procession.",
+          "where": "Diagonal middle of the map between town and dungeon.",
+          "size": "One or two transitional woodland or ruin-lined clearings."
         },
         {
           "name": "Dungeon area",
-          "role": "Connected exploration destination with an entrance court and readable chambers or corridors.",
-          "where": "Far end of the map; distant background.",
-          "size": "Compact"
+          "role": "Exploration and encounter area with a clear threshold, short entry court, walkable dungeon chambers, and minimal story-scene space.",
+          "where": "Far side of the map at the route terminus.",
+          "size": ""
         }
       ],
       "paths": [
         {
           "from": "Town hub",
+          "to": "Connecting path and transitional clearings",
+          "kind": "road"
+        },
+        {
+          "from": "Connecting path and transitional clearings",
           "to": "Dungeon area",
           "kind": "path"
-        },
-        {
-          "from": "Main route",
-          "to": "Dungeon area",
-          "kind": "bridge"
         }
       ],
-      "terrain": "Single grounded surface with gentle decorative variation only; dark storybook fantasy ground dressed with trees, cliffs, dark forest edges, and distant fantasy scenery.",
+      "terrain": "Ground-level connected overworld with dense stylized forest, cliffs, ruined walls, and darkness beyond the playable route.",
       "props": [
         {
-          "name": "Small central square",
+          "name": "Colorful storybook buildings around an open arrival square",
           "count": -1,
-          "where": "Centre of the town hub"
+          "where": "Town hub in the near foreground."
         },
         {
-          "name": "Simple stylized buildings",
-          "count": -1,
-          "where": "Town hub"
+          "name": "Party-follower formation anchors for Susie and Ralsei",
+          "count": 2,
+          "where": "Directly behind and slightly offset from the player's walking line on the broad pedestrian path."
         },
         {
-          "name": "Signposts",
+          "name": "Dark castle-ruin or shadowy gate complex",
           "count": -1,
-          "where": "Along the main route"
+          "where": "Dungeon route terminus."
         },
         {
-          "name": "Tree groupings",
+          "name": "Walkable dungeon chambers",
           "count": -1,
-          "where": "Along the main route and natural map edge"
+          "where": "Inside the dungeon area beyond the short entry court."
         },
         {
-          "name": "Storybook scenery",
+          "name": "Small focal clearing or entry platform",
           "count": -1,
-          "where": "Along the main route"
-        },
-        {
-          "name": "Gateway, bridge, arch, or narrowing approach",
-          "count": -1,
-          "where": "Transition into the dungeon area"
-        },
-        {
-          "name": "Dungeon entrance court",
-          "count": -1,
-          "where": "At the dungeon entrance"
-        },
-        {
-          "name": "Readable chambers or corridors",
-          "count": -1,
-          "where": "Within the dungeon area"
+          "where": "Dungeon entry area for limited story-scene space."
         }
       ],
-      "boundary": "Naturally screened by trees, cliffs, dark forest edges, or distant fantasy scenery.",
+      "boundary": "Dense stylized forest, cliffs, ruined walls, and darkness beyond the playable route form the map boundary.",
       "scale_band": "small",
-      "theme": "Dark storybook fantasy; colorful cartoon characters, playful readable props, and moody but approachable environments."
+      "theme": "Dark storybook fantasy; colorful cartoon characters, playful readable environments, and Deltarune-inspired contrast between cozy town and ominous dungeon."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the town-to-dungeon route must remain clearly connected and traversable before isometric storybook dressing is applied.",
+      "why": "the connected town-to-dungeon route must remain continuously walkable and readable before the isometric storybook dressing is added.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
-    "notes": [],
+    "notes": [
+      "Level-gated barriers from the Turn-based RPG preset are omitted because they were not requested.",
+      "No unrequested shops, interiors, terrain relief, water, or extra biomes are included.",
+      "The two party-follower formation anchors have no canonical option ID in the RPG menu, so they are retained as layout props rather than options."
+    ],
     "scene_prompt": "Create a 3D dark storybook fantasy overworld with colorful cartoon characters and readable, playful environments. Build a small connected first-playable-slice map: a simple town hub leading along paths into a distinct dungeon area, with clear transitions between zones and space for the player to walk with two companion characters following behind. Keep the town, paths, and dungeon as the primary explorable spaces; story-scene areas are minimal."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

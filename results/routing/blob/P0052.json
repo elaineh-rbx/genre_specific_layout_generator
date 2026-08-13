@@ -24,7 +24,7 @@
     }
   ],
   "scene_prompt": "Create a small, tight 3D chase arena in a plain abstract blocky Roblox-style build. Arrange compact block structures, platforms, and clear connecting paths to keep all areas close together. Include character representations: Verity as a yellow ball, Falsity as a blue ball, and Creator as a tall humanoid figure.",
-  "blob": "### Genre\nThe dominant genre is Survival, specifically an asymmetric 1-versus-all chase round: one pursuer against up to four chased players. The timer-and-capture rules establish this genre; those mechanics do not add layout objects.\n\n### Shape and preset\nUse `warren-looping`, a compact looping warren rather than a broad field. The matched preset is 1 vs All. Retain its looping, no-dead-end chase topology and separated starts, but omit its escape exit because rounds end by time expiry or all chased players being caught, not by escape.\n\n### Config requirements\nUse `cover-los` as visible geometry: dense, chunky block structures and short walls interrupt direct sightlines without isolating any route. Use `spawn-protected` as both visible and invisible layout: screened, separated start alcoves provide fair starting positions, while the actual chaser and chased-player spawn markers are invisible and must not enter the render. Use `npc-population` as visible geometry only for the three requested character representations: Verity is a yellow ball, Falsity a blue ball, and Creator a tall humanoid figure, placed as readable arena figures rather than additional environmental population.\n\n### Layout components\nBuild one small, tight abstract Roblox-style arena. A central open crossing occupies roughly the middle third, with compact block clusters around it providing short sightline breaks. Four connected perimeter corridors loop around the crossing and reconnect at multiple openings, ensuring no terminal dead ends. Add a few low raised block platforms at corridor corners and beside structures, kept close to the main ground rather than becoming separate floors. Put the separated start alcoves at opposing outer edges, each opening into more than one route. Place Verity, Falsity, and Creator as prominent colored props near different loop junctions so they are visible landmarks but do not obstruct circulation. Use a continuous flat block floor, block-built perimeter walls, and no natural terrain or water. Frame the arena as a compact square composition with the central crossing legible and all loop connections readable.\n\n### Render order\nUse `topdown`: the looping routes must be checked first so the chase space has no trapping dead ends or sealed corridors; the isometric view is dressed from that valid plan.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the requested tight arena and active chase distance. Theme is plain abstract, brightly colored, blocky Roblox construction with a tense chase-horror register. Use `P6` because the looping chase topology must remain valid by construction; all players need connected escape routes rather than accidental cul-de-sacs.",
+  "blob": "### Genre\nThe dominant genre is Survival, specifically a small asymmetric 1-vs-all chase game: one chaser hunts up to four chased players until the round timer expires or all survivors are caught.\n\n### Shape and preset\nUse `warren-looping`, taking the 1 vs All preset. The compact abstract arena must be an interconnected loop of block-built routes with no dead-end corners where chased players can be permanently trapped. Retain the preset’s chase-safe circulation and separated starts, but omit its escape exit because rounds end by timer or captures rather than escape.\n\n### Config requirements\nUse `cover-los` as compact block structures, short walls, and platform supports that interrupt sightlines and create brief hiding or turning opportunities. Use `spawn-protected` as screened, separated starting pockets so the lone chaser and chased players do not begin in immediate contact.\n\n### Layout requirements\nPlace `spawn-protected` markers as one chaser start at one edge of the arena and up to four chased-player starts in a separate, screened opposite-side pocket, each with a clear route into the loop network. No NPC emitters, pickups, escape trigger, or scoring volume is required by the prompt.\n\n### Layout components\nBuild one small, tight, enclosed abstract Roblox-style arena. Its central zone is a compact blocky plaza, surrounded by several closely spaced structures and raised low platforms. Clear corridors, ramps, and passages connect every area into multiple circular routes; each branch must reconnect rather than terminate. Use simple block materials and open sightline breaks rather than a specific real-world setting. Include three static character representations as focal props: Verity, a yellow ball; Falsity, a blue ball; and Creator, a tall humanoid figure. Enclose the arena with tall abstract walls that prevent leaving the playable space. Compose it as a readable top-down loop network with the central plaza visible and platforms secondary to the ground routes.\n\n### Render order\nUse `authored_plan`: the looping chase topology must be valid by construction, since a dead-end or disconnected route would make the chase unfair or unplayable; dress the generated plan in blocky Roblox geometry afterward.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the requested tight arena and maximum five active players. Theme is plain abstract, colorful, blocky Roblox chase horror with jumpscare-ready sightline breaks. Apply `P6` because the loop network must contain no trapping dead ends and must remain connected by construction.",
   "spec": {
     "genre": "Survival",
     "secondary": [],
@@ -34,122 +34,127 @@
     "options": [
       {
         "id": "cover-los",
-        "text": "Dense, chunky block structures and short walls interrupt direct sightlines without isolating any route.",
+        "text": "Compact block structures, short walls, and platform supports that interrupt sightlines and create brief hiding or turning opportunities.",
         "visible": true,
         "count": -1
       },
       {
         "id": "spawn-protected",
-        "text": "Screened, separated start alcoves provide fair starting positions; actual chaser and chased-player spawn markers are invisible.",
-        "visible": true,
+        "text": "Screened, separated starting pockets so the lone chaser and chased players do not begin in immediate contact.",
+        "visible": false,
         "count": -1
-      },
+      }
+    ],
+    "layout_placement": [
       {
-        "id": "npc-population",
-        "text": "Three requested character representations: Verity is a yellow ball, Falsity a blue ball, and Creator a tall humanoid figure, placed as readable arena figures rather than additional environmental population.",
-        "visible": true,
-        "count": 3
+        "id": "spawn-protected",
+        "text": "One chaser start at one edge of the arena and up to four chased-player starts in a separate, screened opposite-side pocket, each with a clear route into the loop network.",
+        "count": -1,
+        "where": "Place one chaser start at one edge of the arena; place up to four chased-player starts in a screened opposite-side pocket, each connecting clearly into the loop network."
       }
     ],
     "layout": {
-      "composition": "Compact square arena composition with a central open crossing in the middle third, surrounded by readable looping perimeter corridors and compact block clusters.",
+      "composition": "Readable top-down loop network with the central plaza visible; ground routes are primary and raised low platforms are secondary.",
       "zones": [
         {
-          "name": "Central open crossing",
-          "role": "Main chase crossing and shared circulation space.",
+          "name": "Central blocky plaza",
+          "role": "Compact central zone within the chase arena.",
           "where": "centre",
-          "size": "roughly the middle third"
-        },
-        {
-          "name": "Perimeter corridor loop",
-          "role": "Four connected corridors that loop around the crossing and reconnect at multiple openings with no terminal dead ends.",
-          "where": "around the central crossing",
           "size": "compact"
         },
         {
-          "name": "Separated start alcoves",
-          "role": "Fair opposing starts for the chaser and chased players, each opening into more than one route.",
-          "where": "opposing outer edges",
+          "name": "Loop network",
+          "role": "Interconnected circular chase routes with no dead-end branches.",
+          "where": "surrounding the central plaza",
+          "size": "small and tight"
+        },
+        {
+          "name": "Chaser start pocket",
+          "role": "Screened separated start for the lone chaser.",
+          "where": "one edge of the arena",
           "size": ""
         },
         {
-          "name": "Loop junction landmarks",
-          "role": "Prominent placements for Verity, Falsity, and Creator that do not obstruct circulation.",
-          "where": "different loop junctions",
+          "name": "Chased-player start pocket",
+          "role": "Screened opposite-side starts for up to four chased players, with routes into the loop network.",
+          "where": "opposite side of the arena",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Central open crossing",
-          "to": "Perimeter corridor loop",
+          "from": "Chaser start pocket",
+          "to": "Loop network",
           "kind": "corridor"
         },
         {
-          "from": "Perimeter corridor loop",
-          "to": "Perimeter corridor loop",
+          "from": "Chased-player start pocket",
+          "to": "Loop network",
           "kind": "corridor"
         },
         {
-          "from": "Separated start alcoves",
-          "to": "Perimeter corridor loop",
+          "from": "Central blocky plaza",
+          "to": "Loop network",
+          "kind": "open ground"
+        },
+        {
+          "from": "Loop network",
+          "to": "Loop network",
           "kind": "corridor"
+        },
+        {
+          "from": "Loop network",
+          "to": "Raised low platforms",
+          "kind": "ramp"
         }
       ],
-      "terrain": "Continuous flat block floor with a few low raised block platforms at corridor corners and beside structures; no natural terrain or water.",
+      "terrain": "Simple block materials with compact block-built routes, low raised platforms, clear corridors, ramps, and passages.",
       "props": [
         {
-          "name": "Compact block clusters and short walls",
-          "count": -1,
-          "where": "around the central crossing and along the perimeter corridors"
-        },
-        {
-          "name": "Low raised block platforms",
-          "count": -1,
-          "where": "at corridor corners and beside structures"
-        },
-        {
-          "name": "Verity, yellow ball",
+          "name": "Verity, a yellow ball",
           "count": 1,
-          "where": "near a loop junction"
+          "where": "as a focal prop in the arena"
         },
         {
-          "name": "Falsity, blue ball",
+          "name": "Falsity, a blue ball",
           "count": 1,
-          "where": "near a different loop junction"
+          "where": "as a focal prop in the arena"
         },
         {
-          "name": "Creator, tall humanoid figure",
+          "name": "Creator, a tall humanoid figure",
           "count": 1,
-          "where": "near a different loop junction"
+          "where": "as a focal prop in the arena"
         }
       ],
-      "boundary": "Block-built perimeter walls enclosing the compact square arena.",
+      "boundary": "Tall abstract walls enclose the arena and prevent leaving the playable space.",
       "scale_band": "small",
-      "theme": "Plain abstract, brightly colored, blocky Roblox construction with a tense chase-horror register."
+      "theme": "Plain abstract, colorful, blocky Roblox chase horror with jumpscare-ready sightline breaks."
     },
     "render": {
-      "first": "topdown",
-      "then": "isometric",
-      "authoritative": "topdown",
-      "why": "The looping chase routes must be validated first to prevent trapping dead ends or sealed corridors.",
+      "first": "authored_plan",
+      "then": "topdown",
+      "authoritative": "authored_plan",
+      "why": "The looping chase topology must remain connected with no trapping dead ends, or the chase becomes unfair or unplayable.",
       "set_piece": false
     },
     "route": [
       "P6"
     ],
     "notes": [
-      "The 1 vs All preset escape exit is omitted because rounds end by time expiry or all chased players being caught."
+      "The 1 vs All preset's escape exit is intentionally omitted because rounds end by timer expiry or captures rather than escape.",
+      "No NPC emitters, pickups, escape trigger, or scoring volume is required."
     ],
     "scene_prompt": "Create a small, tight 3D chase arena in a plain abstract blocky Roblox-style build. Arrange compact block structures, platforms, and clear connecting paths to keep all areas close together. Include character representations: Verity as a yellow ball, Falsity as a blue ball, and Creator as a tall humanoid figure."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",
   "first": "topdown",
-  "mapper_notes": []
+  "mapper_notes": [
+    "blob asked for authored_plan first; the route ['P6'] gives topdown"
+  ]
 }

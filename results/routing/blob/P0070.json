@@ -9,7 +9,7 @@
     }
   ],
   "scene_prompt": "Create a static, table-sized 3D hex-board game map viewed by a fixed angled top-down camera. Arrange a standard 19-tile hexagonal island in five staggered rows of 3, 4, 5, 4, and 3 terrain hexes, with forest, brick-clay, pasture, wheat field, ore, and one central or near-central desert tile; each producing hex has a circular numbered token, with 6 and 8 tokens red. Place a dark robber pawn on the desert at the start. Surround the board edges with 54 settlement/city vertex positions and 72 road slots, visibly integrated along tile corners and borders. Show player-colored settlements, cities, and road bars when built, plus a pair of 3D dice beside the board. Keep the board unobstructed in the middle of the screen, with space around it for a top turn-and-roll HUD and bottom resource/action controls.",
-  "blob": "### Genre\nDominant genre: Strategy, specifically a turn-based tabletop resource-management board game. The board-game rules and turn structure establish this rather than a world-exploration genre.\n\n### Shape and preset\nUse `board-grid`, matching the Board & Card Games preset. Here it is a compact, table-sized hex board rather than a rectangular chess-like grid; the preset remains recognisable because the board is a static play surface viewed from above.\n\n### Config requirements\nUse `tile-grid` as visible geometry: the board surface is a tightly fitted array of terrain hexes with clearly readable individual spaces. No other configuration options are required. The robber, dice, number tokens, and future player pieces are visible props, not invisible gameplay markers for the render.\n\n### Layout components\nBuild one tabletop-scale board zone centered in frame, with a standard 19-hex island arranged in five staggered rows of 3, 4, 5, 4, and 3 tiles. Use forest green wood hexes, red-brown brick/clay hexes, light-green pasture hexes, golden wheat hexes, blue-gray ore hexes, and exactly one sandy desert hex, central or near-central. Place circular number tokens on all producing hexes; tokens numbered 6 and 8 are red and all other values are black. Put a single dark charcoal robber pawn on the desert at the start.\n\nIntegrate exactly 54 settlement/city vertex positions at shared hex corners and exactly 72 road slots along shared and outer hex edges. Make these positions legible as small corner pads and narrow edge channels without obscuring tile art. Include a few illustrative player-colored settlements, taller cities, and thin road bars in red, blue, yellow, and green, while leaving most vertices and edges visibly open. Place a pair of chunky 3D dice beside the board, outside its hex perimeter. The board is a single flat surface on a neutral tabletop or clean presentation ground, with an open boundary around it. Reserve clear empty upper screen space for a turn-and-roll HUD and a broad lower margin for resource and action controls; do not render the UI itself. Compose the entire board fully in view from a fixed angled top-down perspective.\n\n### Render order\nUse `isometric`: render the angled top-down board view first and derive the plan from it, since this is a static display set rather than a topology players traverse.\n\n### Scale, theme, and pipeline cost\nScale band: small, driven by the author’s table-sized, non-walkable board requirement. Theme: polished colorful tabletop strategy game, clean stylized 3D pieces and readable terrain. Modifier: `SET`, because this is real board geometry that nobody walks on; skip traversal and jump-gap checks.",
+  "blob": "### 1. Genre\nStrategy is the dominant genre: this is a turn-based resource-management board game with fixed board topology and player structure placement.\n\n### 2. Shape and preset\nUse `board-grid`, matched from the Strategy preset Board & Card Games. Here the board is a compact hexagonal tabletop rather than a square playing board; it is a static, non-walkable game surface.\n\n### 3. Config requirements\nUse `tile-grid` as the visible hex-tile board arrangement: 19 terrain hexes form the playable resource island, with circular numbered tokens centered on producing tiles. No other image configuration is required; HUD controls are reserved screen space, not board geometry.\n\n### 4. Layout requirements\nNo menu-defined layout markers need separate siting. The board itself must expose 54 discrete corner vertex positions for settlement/city pieces and 72 border-to-border edge slots for road bars. The dark robber pawn starts on the desert tile; built player pieces occupy their corresponding visible vertex or edge slot.\n\n### 5. Layout components\nCenter a table-sized hex island in five staggered rows of 3, 4, 5, 4, and 3 tiles. Use exactly 4 forest/wood tiles, 3 brick-clay tiles, 4 pasture/sheep tiles, 4 wheat-field tiles, 3 ore tiles, and 1 central or near-central desert. Place 18 circular number tokens on non-desert tiles using the standard values 2, 3, 3, 4, 4, 5, 5, 6, 6, 8, 8, 9, 9, 10, 10, 11, 11, and 12; make both 6 and 8 tokens red and all others black. Integrate the 54 vertex nodes at hex corners and 72 road slots along shared and outer hex edges. Include sample player-colored settlement, city, and road pieces only where occupied, plus a pair of 3D dice beside the board. Keep the board unobstructed, with clear empty bands above for turn and roll HUD and below for resource and action controls. Frame the entire island from a fixed angled top-down view.\n\n### 6. Render order\nUse `topdown`: the exact hex adjacency, vertex graph, and road-edge alignment are authoritative for playable board placement, then dress the angled isometric view from that plan.\n\n### 7. Scale, theme, and pipeline cost\nScale is small, driven by a single table-sized 19-hex board. Theme: polished tabletop strategy game, saturated resource terrain, clean tokens, colored wooden-game-piece styling. Use `SET` because this is real three-dimensional display geometry that players view and operate from outside rather than traverse.",
   "spec": {
     "genre": "Strategy",
     "secondary": [],
@@ -19,84 +19,127 @@
     "options": [
       {
         "id": "tile-grid",
-        "text": "The board surface is a tightly fitted array of terrain hexes with clearly readable individual spaces.",
+        "text": "Visible hex-tile board arrangement: 19 terrain hexes form the playable resource island, with circular numbered tokens centered on producing tiles.",
         "visible": true,
         "count": 19
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "The entire compact hex board is centered and fully visible in a fixed angled top-down frame, with clear empty upper screen space reserved for a turn-and-roll HUD and a broad lower margin reserved for resource and action controls. A pair of dice sits beside the board outside its hex perimeter.",
+      "composition": "Frame the entire compact hex island from a fixed angled top-down view, unobstructed in the middle of the screen; leave clear empty bands above for the turn-and-roll HUD and below for resource and action controls, with a pair of 3D dice beside the board.",
       "zones": [
         {
-          "name": "tabletop hex board",
-          "role": "Static turn-based tabletop resource-management board-game play surface.",
-          "where": "centre of frame",
-          "size": "compact, table-sized"
+          "name": "Hex resource island",
+          "role": "Static, non-walkable tabletop playing surface for resource production and player structure placement.",
+          "where": "centre",
+          "size": "table-sized 19-hex board"
+        },
+        {
+          "name": "Top HUD band",
+          "role": "Reserved screen space for turn and roll controls.",
+          "where": "above the board",
+          "size": ""
+        },
+        {
+          "name": "Bottom controls band",
+          "role": "Reserved screen space for resource and action controls.",
+          "where": "below the board",
+          "size": ""
         }
       ],
       "paths": [],
-      "terrain": "A single flat hexagonal island on a neutral tabletop or clean presentation ground: forest green wood hexes, red-brown brick/clay hexes, light-green pasture hexes, golden wheat hexes, blue-gray ore hexes, and exactly one sandy desert hex central or near-central.",
+      "terrain": "A compact hexagonal island in five staggered rows of 3, 4, 5, 4, and 3 saturated resource terrain hexes: forest/wood, brick-clay, pasture/sheep, wheat-field, ore, and one central or near-central desert.",
       "props": [
         {
-          "name": "terrain hex tiles",
-          "count": 19,
-          "where": "five staggered board rows of 3, 4, 5, 4, and 3 tiles"
+          "name": "Forest/wood terrain hexes",
+          "count": 4,
+          "where": "within the 19-hex island"
         },
         {
-          "name": "sandy desert hex",
+          "name": "Brick-clay terrain hexes",
+          "count": 3,
+          "where": "within the 19-hex island"
+        },
+        {
+          "name": "Pasture/sheep terrain hexes",
+          "count": 4,
+          "where": "within the 19-hex island"
+        },
+        {
+          "name": "Wheat-field terrain hexes",
+          "count": 4,
+          "where": "within the 19-hex island"
+        },
+        {
+          "name": "Ore terrain hexes",
+          "count": 3,
+          "where": "within the 19-hex island"
+        },
+        {
+          "name": "Desert terrain hex",
           "count": 1,
-          "where": "central or near-central on the board"
+          "where": "central or near-central within the island"
         },
         {
-          "name": "circular number tokens",
-          "count": -1,
-          "where": "on all producing hexes; 6 and 8 are red and all other values are black"
+          "name": "Circular numbered tokens",
+          "count": 18,
+          "where": "centered on non-desert producing tiles; values 2, 3, 3, 4, 4, 5, 5, 6, 6, 8, 8, 9, 9, 10, 10, 11, 11, and 12"
         },
         {
-          "name": "dark charcoal robber pawn",
-          "count": 1,
-          "where": "on the desert at the start"
+          "name": "Red 6 and 8 tokens",
+          "count": 4,
+          "where": "on producing tiles"
         },
         {
-          "name": "settlement/city vertex positions",
+          "name": "Black number tokens",
+          "count": 14,
+          "where": "on the remaining producing tiles"
+        },
+        {
+          "name": "Settlement/city vertex positions",
           "count": 54,
-          "where": "shared hex corners around the board, shown as small corner pads"
+          "where": "integrated at hex corners around the board"
         },
         {
-          "name": "road slots",
+          "name": "Road slots",
           "count": 72,
-          "where": "shared and outer hex edges, shown as narrow edge channels"
+          "where": "along shared and outer hex edges"
         },
         {
-          "name": "illustrative player-colored settlements",
+          "name": "Dark robber pawn",
+          "count": 1,
+          "where": "on the desert tile at the start"
+        },
+        {
+          "name": "Player-colored settlement pieces",
           "count": -1,
-          "where": "a few open vertex positions, in red, blue, yellow, and green"
+          "where": "only at occupied vertex positions"
         },
         {
-          "name": "illustrative taller cities",
+          "name": "Player-colored city pieces",
           "count": -1,
-          "where": "a few open vertex positions, in red, blue, yellow, and green"
+          "where": "only at occupied vertex positions"
         },
         {
-          "name": "thin road bars",
+          "name": "Player-colored road bars",
           "count": -1,
-          "where": "a few road slots, in red, blue, yellow, and green"
+          "where": "only at occupied edge slots"
         },
         {
-          "name": "chunky 3D dice",
+          "name": "3D dice",
           "count": 2,
-          "where": "beside the board outside its hex perimeter"
+          "where": "beside the board"
         }
       ],
-      "boundary": "Open boundary around the board on the neutral tabletop or presentation ground.",
+      "boundary": "The outer border of the hexagonal island, with road slots integrated along its outer hex edges.",
       "scale_band": "small",
-      "theme": "polished colorful tabletop strategy game, clean stylized 3D pieces and readable terrain"
+      "theme": "Polished tabletop strategy game, saturated resource terrain, clean tokens, colored wooden-game-piece styling."
     },
     "render": {
-      "first": "isometric",
-      "then": "topdown",
-      "authoritative": "isometric",
-      "why": "this is a static display set rather than a topology players traverse.",
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "the exact hex adjacency, vertex graph, and road-edge alignment are authoritative for playable board placement.",
       "set_piece": true
     },
     "route": [
@@ -108,10 +151,12 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
-  "mapper_notes": []
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P0', 'SET'] gives isometric"
+  ]
 }

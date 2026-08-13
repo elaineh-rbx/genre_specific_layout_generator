@@ -14,119 +14,146 @@
     }
   ],
   "scene_prompt": "Create a 3D football World Cup map set in a modern 2026 stadium, built as one connected environment rather than on a baseplate. The central stadium contains a full football pitch, surrounding spectator stands, and a large 3D screen overlooking the field. Attach a lobby area to the stadium where players gather and vote for countries before entering the match, with a direct route from the lobby into the stadium.",
-  "blob": "### Genre\nThe dominant genre is Sports, specifically football played on a formal stadium pitch. The voting lobby supports match staging but does not make this a separate Party & Casual genre.\n\n### Shape and preset\nUse `field-bounded`, matching the Field Sport preset. The prompt’s attached lobby is retained as an adjoining stadium concourse zone; the field itself remains the authoritative bounded play surface.\n\n### Config requirements\nUse visible `spectator-bleachers` for the full ring of modern spectator stands and `barrier-perimeter` for the stadium bowl and outer containment around the pitch. Use `trigger-bounds` as both visible painted touchlines and invisible foul/reset perimeter, `startpoint-play` as the visible centre spot and team restart positions plus their invisible reset markers, and `trigger-scoring` as the visible two goal mouths with invisible goal-detection planes. These field-sport requirements are implied by football. The lobby, country-voting area, and its 3D screen are visible geometry, not extra game-mechanic components.\n\n### Layout components\nPlace the regulation-proportioned rectangular football pitch centrally, with two opposing goal areas and clear painted field markings. Wrap it on all sides with steep, continuous spectator stands inside a modern 2026 stadium bowl; mount one large 3D screen high above a long side of the field, facing the stands and pitch. Attach a substantial lobby/concourse to one stadium end, outside the field boundary but within the same connected environment. The lobby is an open gathering zone with country-voting stations arranged along its walls and a wide direct concourse route into the stadium seating and field-entry side. Build the stadium on landscaped constructed ground rather than a flat baseplate. The stadium walls, stands, and exterior approaches form the boundary; no open world extends beyond them. Compose the isometric view with the lobby readable at the foreground edge, the pitch as the centrepiece, and the screen visible above the far stand.\n\n### Render order\nUse `topdown`: the pitch dimensions, opposing goals, boundary, and direct lobby-to-stadium connection must be spatially valid for football before the isometric stadium dressing is generated.\n\n### Scale, theme, and pipeline cost\nUse a large scale, driven by the full pitch, enclosing stadium bowl, spectator stands, screen, and attached crowd lobby. Theme: polished contemporary 2026 World Cup stadium, bright broadcast-ready sports architecture. Use `tiered` because the raked spectator stands are real non-overhanging elevation; no further pipeline modifier is forced.",
+  "blob": "### Genre\nThe dominant genre is Sports: football has a bounded field, two competing teams, goals, and a timed match. Party & Casual is secondary only for the attached pre-match gathering and voting lobby; Sports owns the field shape and match layout.\n\n### Shape and preset\nUse `space-bounded`, a regulation-like football pitch contained within a modern stadium footprint, with the lobby physically attached rather than a separate match map. Match the Full Stadium preset: the spectator enclosure and seating are essential, while football-specific field geometry and the lobby are added from the prompt.\n\n### Config requirements\nUse `trigger-bounds` as the clearly marked touchline, goal-line, and outer pitch perimeter. Use `startpoint-play` for the centre kick-off point and balanced team reset positions. Use `trigger-scoring` as visible goal mouths at both ends of the field. Use `spectator-bleachers` for continuous modern stands surrounding the pitch, `barrier-perimeter` for the stadium’s enclosing outer structure, and `social-hub` for the attached country-voting gathering lobby. The large 3D screen is a stadium prop overlooking the field.\n\n### Layout requirements\nPlace `trigger-bounds` as one continuous detection perimeter aligned exactly to the painted pitch boundary. Place `startpoint-play` once at the centre circle, with two opposing team start formations on their respective halves. Place `trigger-scoring` twice, one detection volume centred inside each goal mouth. No separate teleport placement is needed: the lobby connects directly into the stadium.\n\n### Layout components\nThe main zone is a full football pitch at the centre of a large modern 2026 stadium, with grass, centre circle, penalty boxes, sidelines, two goals, and clear open run-off margins. Tiered spectator stands wrap all four sides, with the largest stand carrying one large 3D screen facing the field. Attach a spacious lobby concourse to one stadium end, sized for gathering before a match and containing the country-voting area. A broad direct concourse or tunnel leads from the lobby into the stadium entry side without loading or teleporting. Use substantial stadium walls, façades, lighting structures, and exterior ground rather than a floating baseplate. Frame the composition around the rectangular pitch, symmetrical goals, enclosing stands, and visibly connected lobby wing.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because the football field’s symmetrical boundaries, goal alignment, and direct lobby-to-stadium connection must be valid and readable for play.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by a full pitch, surrounding stands, screen, and attached lobby. Theme: polished modern 2026 World Cup stadium, bright turf, contemporary steel-and-glass architecture, and event-scale presentation. Use `tiered` because the stepped spectator stands require elevation capture without overhanging play surfaces.",
   "spec": {
     "genre": "Sports",
-    "secondary": [],
-    "shape": "field-bounded",
-    "preset": "Field Sport",
+    "secondary": [
+      "Party & Casual"
+    ],
+    "shape": "space-bounded",
+    "preset": "Full Stadium",
     "axes": {},
     "options": [
       {
-        "id": "spectator-bleachers",
-        "text": "Full ring of steep, continuous modern spectator stands inside the stadium bowl.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "barrier-perimeter",
-        "text": "The stadium bowl and outer containment around the pitch.",
-        "visible": true,
-        "count": -1
-      },
-      {
         "id": "trigger-bounds",
-        "text": "Visible painted touchlines with an invisible foul/reset perimeter.",
+        "text": "Clearly marked touchline, goal-line, and outer pitch perimeter.",
         "visible": true,
-        "count": -1
+        "count": 1
       },
       {
         "id": "startpoint-play",
-        "text": "Visible centre spot and team restart positions plus their invisible reset markers.",
+        "text": "Centre kick-off point with balanced team reset positions and two opposing team start formations on their respective halves.",
         "visible": true,
-        "count": -1
+        "count": 1
       },
       {
         "id": "trigger-scoring",
-        "text": "Visible two goal mouths with invisible goal-detection planes.",
+        "text": "Visible goal mouths at both ends of the field.",
         "visible": true,
         "count": 2
+      },
+      {
+        "id": "spectator-bleachers",
+        "text": "Continuous modern tiered spectator stands surrounding the pitch on all four sides.",
+        "visible": true,
+        "count": 4
+      },
+      {
+        "id": "barrier-perimeter",
+        "text": "The stadium's enclosing outer structure, with substantial walls and façades.",
+        "visible": true,
+        "count": -1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "trigger-bounds",
+        "text": "One continuous detection perimeter aligned exactly to the painted pitch boundary.",
+        "count": 1,
+        "where": "Aligned exactly to the painted touchline, goal-line, and outer pitch perimeter."
+      },
+      {
+        "id": "startpoint-play",
+        "text": "One centre-circle kick-off point with two opposing team start formations on their respective halves.",
+        "count": 1,
+        "where": "At the centre circle, with the opposing formations on their respective pitch halves."
+      },
+      {
+        "id": "trigger-scoring",
+        "text": "Detection volumes centred inside each goal mouth.",
+        "count": 2,
+        "where": "One centred inside each goal mouth at opposite ends of the field."
       }
     ],
     "layout": {
-      "composition": "Isometric view with the attached lobby readable along the foreground edge, the football pitch as the central centerpiece, continuous stands surrounding it, and the large screen visible above the far stand.",
+      "composition": "Frame the rectangular central pitch symmetrically, with matching goals at either end, enclosing stands on all four sides, the largest stand and its 3D screen overlooking the field, and a visibly connected lobby wing at one stadium end.",
       "zones": [
         {
-          "name": "Central football pitch",
-          "role": "Authoritative bounded football play surface with regulation proportions, painted markings, and opposing goal areas.",
-          "where": "centre of the stadium bowl",
-          "size": "full regulation-proportioned pitch"
+          "name": "Football pitch",
+          "role": "The timed two-team football match, including the centre circle, penalty boxes, sidelines, goals, and open run-off margins.",
+          "where": "Centre of the stadium",
+          "size": "Full regulation-like pitch"
         },
         {
-          "name": "Spectator stands",
-          "role": "Continuous spectator seating surrounding the pitch.",
-          "where": "on all sides of the pitch inside the stadium bowl",
-          "size": "full ring"
+          "name": "Tiered spectator stands",
+          "role": "Continuous viewing enclosure around the football field.",
+          "where": "Wrapping all four sides of the pitch",
+          "size": "Large"
         },
         {
-          "name": "Stadium screen",
-          "role": "Large 3D display overlooking the field.",
-          "where": "high above a long far side of the field",
-          "size": "large"
-        },
-        {
-          "name": "Lobby and voting concourse",
-          "role": "Open gathering and country-voting area before players enter the match.",
-          "where": "attached to one stadium end, outside the field boundary",
-          "size": "substantial"
+          "name": "Country-voting lobby concourse",
+          "role": "Pre-match gathering and country voting before players enter the match.",
+          "where": "Attached to one stadium end",
+          "size": "Spacious"
         }
       ],
       "paths": [
         {
-          "from": "Lobby and voting concourse",
-          "to": "Spectator stands",
-          "kind": "concourse"
-        },
-        {
-          "from": "Lobby and voting concourse",
-          "to": "Central football pitch",
-          "kind": "concourse"
+          "from": "Country-voting lobby concourse",
+          "to": "Football pitch",
+          "kind": "tunnel"
         }
       ],
-      "terrain": "Landscaped constructed ground supporting the stadium rather than a flat baseplate.",
+      "terrain": "Bright grass turf on the pitch with exterior ground around the substantial stadium structure.",
       "props": [
         {
-          "name": "large 3D screen",
+          "name": "large 3D stadium screen",
           "count": 1,
-          "where": "high above a long side of the field"
+          "where": "On the largest spectator stand, facing and overlooking the field"
         },
         {
-          "name": "country-voting stations",
+          "name": "football goals",
+          "count": 2,
+          "where": "Centred at opposite ends of the pitch"
+        },
+        {
+          "name": "lighting structures",
           "count": -1,
-          "where": "along the lobby walls"
+          "where": "Around the modern stadium"
+        },
+        {
+          "name": "stadium façades",
+          "count": -1,
+          "where": "Around the enclosing outer structure"
         }
       ],
-      "boundary": "Stadium walls, stands, and exterior approaches form a contained boundary; no open world extends beyond them.",
+      "boundary": "A substantial modern stadium perimeter of enclosing walls and façades surrounds the pitch and stands; the attached lobby connects directly into the stadium without teleporting or loading.",
       "scale_band": "large",
-      "theme": "Polished contemporary 2026 World Cup stadium, bright broadcast-ready sports architecture."
+      "theme": "Polished modern 2026 World Cup stadium, bright turf, contemporary steel-and-glass architecture, event-scale presentation."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the pitch dimensions, opposing goals, boundary, and direct lobby-to-stadium connection must be spatially valid for football.",
+      "why": "The symmetrical field boundaries, goal alignment, and direct lobby-to-stadium connection must be valid and readable for play.",
       "set_piece": false
     },
     "route": [
+      "P0",
       "tiered"
     ],
-    "notes": [],
+    "notes": [
+      "dropped option 'social-hub': not in Sports",
+      "visible on 'trigger-bounds' set from goes_to=both",
+      "visible on 'startpoint-play' set from goes_to=both",
+      "visible on 'trigger-scoring' set from goes_to=both"
+    ],
     "scene_prompt": "Create a 3D football World Cup map set in a modern 2026 stadium, built as one connected environment rather than on a baseplate. The central stadium contains a full football pitch, surrounding spectator stands, and a large 3D screen overlooking the field. Attach a lobby area to the stadium where players gather and vote for countries before entering the match, with a direct route from the lobby into the stadium."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

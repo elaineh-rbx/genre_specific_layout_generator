@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a bright, stylised 3D obstacle-course map layout with 3 selectable parkour courses. Each course is a compact tower rising 8–10 parkour sections high, with a clear finish area at the top and a lava-filled lower level beneath the climbing route.",
-  "blob": "### Genre\nThe dominant genre is Obby & Platformer: players climb discrete parkour routes under a rising-lava threat. There is no secondary genre.\n\n### Shape and preset\nUse `course-tower`, interpreted as three separate compact vertical climbing towers rather than one long spiral. The closest preset is Tower Obby, but the prompt overrides its timing and climbing emphasis: these are selectable lava-escape courses with explicit lower lava basins and top finishes.\n\n### Config requirements\n`path-track` is visible geometry: each tower has a clearly ordered sequence of jump platforms and parkour sections from its base to summit. `hazard-kill` is visible geometry: bright lava fills the lower level beneath every route. `winner-zone` is both: a visible, clearly distinct finish platform crowns each tower, with its completion volume placed invisibly afterward.\n\n### Layout components\nBuild a shared central selection forecourt at ground level, with three clearly separated course entrances arranged in a shallow arc around it. Each entrance identifies one compact tower and leads immediately into its own upward platform chain. Make all three towers 8–10 parkour sections tall, with varied but readable stacked platforms, short ledges, and elevated transitions; preserve a continuous legal climb route within every tower. Each tower rises from a lava-filled lower basin, with the climbing route visibly suspended above or climbing around the molten level. Place one large, bright finish area at the top of each tower. Keep the base forecourt safe and open, while the tower sides and lava basins define the course boundaries. Frame the three colorful towers together in an isometric overview, with their summit finishes readable above the shared lower plaza.\n\n### Render order\nUse `topdown`: each tower’s jump chain must remain continuously traversable, and an invalid platform sequence would make the course unplayable.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by three selectable compact towers, each 8–10 sections high. Theme is bright, stylised Roblox obstacle-course design with clean, distinct course colors and vivid lava. Pipeline modifiers are `P6`, because the critical platform paths require valid construction, and `P2`, because the stacked tower platforms overhang lower climbing surfaces.",
+  "blob": "### 1. Genre\nThe dominant genre is Obby & Platformer: players choose a parkour tower and climb it under rising-lava pressure.\n\n### 2. Shape and preset\nUse `course-tower`, matching the Tower Obby preset. The three selectable courses are compact vertical ascents, with their platform routes stacked above lava rather than spread across a flat course. Retain the preset’s vertical-course logic but add explicit lava hazards and checkpoints.\n\n### 3. Config requirements\nUse `path-track` for a clearly ordered chain of jump platforms climbing every tower. Use `hazard-kill` for the visible lava filling each lower basin beneath the routes. Use `checkpoint-respawn` as bright, flat safe landing pads integrated into the climbs. Use `winner-zone` for a distinct, celebratory finish platform at the top of each tower.\n\n### 4. Layout requirements\nPlace `checkpoint-respawn` pads at the base and then after roughly every two to three parkour sections in each 8–10-section tower, always on wide enclosed platforms above the lava. Place one `winner-zone` at the top of each of the three towers, beyond its final jump sequence, with an unobstructed landing area.\n\n### 5. Layout components\nBuild three compact, visually distinct but consistently bright stylised Roblox parkour towers, each rising 8–10 sections high. A shared ground-level selection apron faces the three clearly signed tower entrances. Each tower has a vertical sequence of floating platforms, short ramps, stepped blocks, and lateral jump gaps that spirals or zigzags upward without ambiguous branches. Beneath every climbing route is a contained glowing lava basin occupying the lower level. Each tower ends in a broad finish deck at its highest point. Keep the towers separated by safe ground and low perimeter barriers so players can read and select a course without crossing another tower’s lava. Compose the frame from an elevated three-quarter view, showing all three vertical silhouettes, their lava bases, and the top finish decks.\n\n### 6. Render order\nUse `topdown` first and make it authoritative, because every tower’s ordered jump chain must remain physically connected and clearable; the isometric view should dress that validated plan.\n\n### 7. Scale, theme, and pipeline cost\nScale is medium, driven by three selectable towers with 8–10 parkour sections each. Theme: bright, clean, approachable stylised Roblox obstacle course, with colourful platforms and vivid lava. Pipeline modifiers are `P2` because platforms and upper sections stack directly above the lava and lower route, and `P6` because the critical parkour paths must be valid by construction.",
   "spec": {
     "genre": "Obby & Platformer",
     "secondary": [],
@@ -24,100 +24,147 @@
     "options": [
       {
         "id": "path-track",
-        "text": "Each compact tower has a clearly ordered, continuously legal sequence of jump platforms and parkour sections from its base to summit, 8–10 sections high.",
+        "text": "A clearly ordered chain of jump platforms climbing every tower, with floating platforms, short ramps, stepped blocks, and lateral jump gaps spiralling or zigzagging upward without ambiguous branches.",
         "visible": true,
         "count": 3
       },
       {
         "id": "hazard-kill",
-        "text": "Bright lava fills the lower basin beneath every climbing route, with platforms visibly suspended above or climbing around the molten level.",
+        "text": "Visible glowing lava filling each contained lower basin beneath the climbing routes.",
         "visible": true,
         "count": 3
       },
       {
+        "id": "checkpoint-respawn",
+        "text": "Bright, flat safe landing pads integrated into the climbs on wide enclosed platforms above the lava.",
+        "visible": true,
+        "count": -1
+      },
+      {
         "id": "winner-zone",
-        "text": "One large, bright, clearly distinct finish platform crowns each tower, with its completion volume placed invisibly afterward.",
+        "text": "A distinct, celebratory broad finish platform at the top of each tower beyond the final jump sequence, with an unobstructed landing area.",
         "visible": true,
         "count": 3
       }
     ],
+    "layout_placement": [
+      {
+        "id": "checkpoint-respawn",
+        "text": "Bright, flat safe landing pads on wide enclosed platforms above the lava.",
+        "count": -1,
+        "where": "At the base and then after roughly every two to three parkour sections in each 8–10-section tower."
+      },
+      {
+        "id": "winner-zone",
+        "text": "A distinct, celebratory finish platform with an unobstructed landing area.",
+        "count": 3,
+        "where": "At the top of each of the three towers, beyond its final jump sequence."
+      }
+    ],
     "layout": {
-      "composition": "Isometric overview framing all three colorful compact towers together around a shared safe lower plaza, with the summit finish areas readable above the forecourt and lava-filled lower basins beneath the routes.",
+      "composition": "Elevated three-quarter view showing all three vertical tower silhouettes, their lava bases, and their top finish decks; the shared selection apron faces the clearly signed tower entrances.",
       "zones": [
         {
-          "name": "Shared central selection forecourt",
-          "role": "Safe open ground-level plaza for selecting a course.",
-          "where": "centre foreground at ground level",
-          "size": "shared central area"
+          "name": "Shared selection apron",
+          "role": "Ground-level safe area where players read and select a parkour tower.",
+          "where": "Foreground, facing the three tower entrances.",
+          "size": "Shared ground-level area."
         },
         {
-          "name": "Tower 1 course entrance and climb",
-          "role": "A separated entrance leading immediately into an upward legal platform chain above a lava basin.",
-          "where": "left side of the shallow arc around the forecourt",
-          "size": "compact tower, 8–10 parkour sections high"
+          "name": "Tower 1",
+          "role": "Compact vertical parkour ascent with an ordered climbing route above lava.",
+          "where": "One side of the selection apron.",
+          "size": "8–10 sections high."
         },
         {
-          "name": "Tower 2 course entrance and climb",
-          "role": "A separated entrance leading immediately into an upward legal platform chain above a lava basin.",
-          "where": "centre-back of the shallow arc around the forecourt",
-          "size": "compact tower, 8–10 parkour sections high"
+          "name": "Tower 2",
+          "role": "Compact vertical parkour ascent with an ordered climbing route above lava.",
+          "where": "Centre beyond the selection apron.",
+          "size": "8–10 sections high."
         },
         {
-          "name": "Tower 3 course entrance and climb",
-          "role": "A separated entrance leading immediately into an upward legal platform chain above a lava basin.",
-          "where": "right side of the shallow arc around the forecourt",
-          "size": "compact tower, 8–10 parkour sections high"
+          "name": "Tower 3",
+          "role": "Compact vertical parkour ascent with an ordered climbing route above lava.",
+          "where": "Opposite side of the selection apron.",
+          "size": "8–10 sections high."
+        },
+        {
+          "name": "Lava basins",
+          "role": "Contained glowing lower levels beneath every climbing route.",
+          "where": "At the lower level of each tower.",
+          "size": "One beneath each tower route."
+        },
+        {
+          "name": "Finish decks",
+          "role": "Celebratory end areas beyond each final jump sequence.",
+          "where": "At the highest point of each tower.",
+          "size": "Broad."
         }
       ],
       "paths": [
         {
-          "from": "Shared central selection forecourt",
-          "to": "Tower 1 course entrance and climb",
+          "from": "Shared selection apron",
+          "to": "Tower 1",
           "kind": "open ground"
         },
         {
-          "from": "Shared central selection forecourt",
-          "to": "Tower 2 course entrance and climb",
+          "from": "Shared selection apron",
+          "to": "Tower 2",
           "kind": "open ground"
         },
         {
-          "from": "Shared central selection forecourt",
-          "to": "Tower 3 course entrance and climb",
+          "from": "Shared selection apron",
+          "to": "Tower 3",
           "kind": "open ground"
+        },
+        {
+          "from": "Tower entrance",
+          "to": "Finish deck",
+          "kind": "track"
         }
       ],
-      "terrain": "Safe open ground-level forecourt; bright molten lava fills the lower basin beneath each tower route.",
+      "terrain": "Safe ground separates the towers; each climbing route rises over a contained glowing lava basin.",
       "props": [
         {
-          "name": "Varied readable stacked jump platforms, short ledges, and elevated transitions",
+          "name": "Clearly signed tower entrances",
+          "count": 3,
+          "where": "Facing the shared ground-level selection apron."
+        },
+        {
+          "name": "Floating platforms",
           "count": -1,
-          "where": "within all three tower climbing routes"
+          "where": "Along each vertical climbing route."
         },
         {
-          "name": "Bright finish areas",
-          "count": 3,
-          "where": "at the summit of each tower"
+          "name": "Short ramps",
+          "count": -1,
+          "where": "Along each vertical climbing route."
         },
         {
-          "name": "Lava-filled lower basins",
-          "count": 3,
-          "where": "beneath each climbing route"
+          "name": "Stepped blocks",
+          "count": -1,
+          "where": "Along each vertical climbing route."
+        },
+        {
+          "name": "Low perimeter barriers",
+          "count": -1,
+          "where": "Around the separated tower areas and safe ground."
         }
       ],
-      "boundary": "Tower sides and lava basins define the course boundaries; the shared base forecourt remains safe and open.",
+      "boundary": "Low perimeter barriers separate the towers and safe ground, preventing players from crossing another tower's lava.",
       "scale_band": "medium",
-      "theme": "Bright, stylised Roblox obstacle-course design with clean distinct course colors and vivid lava."
+      "theme": "Bright, clean, approachable stylised Roblox obstacle course with colourful platforms and vivid lava."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "each tower’s jump chain must remain continuously traversable, and an invalid platform sequence would make the course unplayable.",
+      "why": "Every tower’s ordered jump chain must remain physically connected and clearable.",
       "set_piece": false
     },
     "route": [
-      "P6",
-      "P2"
+      "P2",
+      "P6"
     ],
     "notes": [],
     "scene_prompt": "Create a bright, stylised 3D obstacle-course map layout with 3 selectable parkour courses. Each course is a compact tower rising 8–10 parkour sections high, with a clear finish area at the top and a lava-filled lower level beneath the climbing route."
@@ -125,7 +172,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

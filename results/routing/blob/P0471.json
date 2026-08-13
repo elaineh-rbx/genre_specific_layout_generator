@@ -19,131 +19,132 @@
     }
   ],
   "scene_prompt": "Create a 3D soccer game layout with a separate match lobby and a real-looking stadium map. The lobby contains distinct mode-selection boxes for 1v1, 2v2, 3v3, 4v4, and 5v5, arranged clearly for players to enter before teleporting to matches. The match takes place on a smaller arcade-sized soccer pitch inside a realistic stadium, with normal goals at opposite ends, marked field lines, and surrounding spectator stands; the field supports Spain-versus-France team matches from 1v1 through 5v5.",
-  "blob": "### Genre\nThe dominant genre is Sports: a soccer match with formal teams, goals, field markings, and a bounded play field. The separate lobby is supporting access space, not a secondary genre.\n\n### Shape and preset\nUse `field-bounded`, a compact arcade-sized soccer pitch whose reduced footprint keeps 1v1 through 5v5 matches active. Match the Full Stadium preset: retain its stadium framing while using the prompt’s smaller pitch rather than a regulation-scale field.\n\n### Config requirements\n`trigger-bounds` is both visible geometry and invisible layout: painted touchlines, goal lines, and boundary perimeter define the field, with matching out-of-bounds detection. `startpoint-play` is both: a visible centre circle and kickoff mark, with reset positions placed on the pitch. `trigger-scoring` is both: normal visible goal frames and nets at each end, with invisible goal-mouth scoring planes. `spectator-bleachers` is visible geometry: surrounding stepped spectator stands enclosing the field visually. No unrequested NPC crowd, dugouts, or enterable stadium interiors are included.\n\n### Layout components\nBuild two separate maps. The lobby is a compact arrival room or plaza with five clearly spaced, readable mode-selection boxes labeled 1v1, 2v2, 3v3, 4v4, and 5v5, arranged in a single shallow arc or straight row facing the arrival side. Keep open standing space in front of them and unobstructed circulation between each box.\n\nThe match map centers on one smaller arcade-sized rectangular grass pitch. Put normal soccer goals on the short ends, the centre circle and kickoff mark at center, and complete painted field boundaries around the playable rectangle. Place low perimeter separation outside the lines, then continuous tiered spectator stands around the outer edge, tallest along the long sides and lower behind each goal so the field remains legible. Frame the isometric composition from a high corner so both goals, all markings, and the enclosing stands read at once.\n\n### Render order\nUse `topdown`: the exact rectangular field, opposing goals, centre mark, and boundary geometry must remain valid and readable for play before the stadium is dressed isometrically.\n\n### Scale, theme, and pipeline cost\nScale is medium: the pitch is deliberately compact, but the separate lobby and full surrounding stadium stands add footprint. Theme is a realistic contemporary soccer stadium with maintained green turf, crisp white paint, goal nets, and concrete-and-seat bleachers. Pipeline modifiers are `P4` because the lobby and match stadium are separate maps, and `tiered` because the stepped spectator seating has elevation without overhangs.",
+  "blob": "### 1. Genre\nSports is the dominant genre: a timed team soccer match on a marked pitch. The separate pre-match lobby does not make Party & Casual a secondary genre; it is staging for the sports game.\n\n### 2. Shape and preset\nUse `space-staged`, taken from outside Sports’ usual shapes, because the lobby is a separate place and teleports into the isolated stadium match map. Adapt the Field Sport preset: retain its regulation pitch geometry and scoring requirements while replacing its single-map `space-bounded` shape with the stated two-place arrangement.\n\n### 3. Config requirements\nUse `trigger-bounds` as crisp touchlines, goal lines, and the enclosed active pitch perimeter. Use `startpoint-play` as the centre restart mark and symmetric team reset positions. Use `trigger-scoring` as normal visible goal mouths at opposite ends, with scoring planes inside them. Use `spectator-bleachers` as realistic tiered stands surrounding the pitch. Use `teleporter-link` as five clearly labelled lobby mode-selection boxes for 1v1, 2v2, 3v3, 4v4, and 5v5.\n\n### 4. Layout requirements\nPlace `trigger-bounds` as one continuous boundary following all field lines. Place one `startpoint-play` at midfield and paired team start positions on opposite halves. Place two `trigger-scoring` volumes, one directly inside each goal. Place `teleporter-link` at all five mode boxes in the lobby, each linking out to the selected separate match instance.\n\n### 5. Layout components\nThe lobby is a compact, open arrival room with five evenly spaced selection boxes in a clear row or shallow arc, labelled 1v1 through 5v5. The separate stadium map centers on one smaller arcade-sized soccer pitch, proportioned for fast matches from 1v1 to 5v5. Put Spain and France at opposite goal ends, using restrained team-color dressing. Include white field markings, a center circle, penalty areas, and two normal full goals. Tiered spectator stands ring the outer field, beyond a stadium boundary; no other walkable zones are needed. Compose the match map symmetrically from a high three-quarter view, with both goals and the complete pitch legible.\n\n### 6. Render order\nUse `topdown` first and make it authoritative, because exact symmetric pitch boundaries, goal placement, and restart geometry must remain valid for competitive soccer play before the stadium is dressed isometrically.\n\n### 7. Scale, theme, and pipeline cost\nScale is medium: one compact lobby place plus one arcade-sized stadium map. Theme is a realistic modern soccer stadium. Use `P4` because lobby and match stadium are separate linked maps. Use `tiered` because the spectator bleachers have stepped elevation without overhanging play surfaces.",
   "spec": {
     "genre": "Sports",
     "secondary": [],
-    "shape": "field-bounded",
-    "preset": "Full Stadium",
+    "shape": "space-staged",
+    "preset": "Field Sport",
     "axes": {},
     "options": [
       {
         "id": "trigger-bounds",
-        "text": "Painted touchlines, goal lines, and a boundary perimeter define the compact soccer field, with matching out-of-bounds detection.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "startpoint-play",
-        "text": "A visible centre circle and kickoff mark at the center of the pitch, with reset positions placed on the field.",
+        "text": "Crisp touchlines, goal lines, and the enclosed active pitch perimeter.",
         "visible": true,
         "count": 1
       },
       {
+        "id": "startpoint-play",
+        "text": "The centre restart mark and symmetric team reset positions.",
+        "visible": true,
+        "count": 3
+      },
+      {
         "id": "trigger-scoring",
-        "text": "Normal visible goal frames and nets at each end, with invisible goal-mouth scoring planes.",
+        "text": "Normal visible goal mouths at opposite ends, with scoring planes inside them.",
         "visible": true,
         "count": 2
       },
       {
-        "id": "barrier-perimeter",
-        "text": "Low perimeter separation sits outside the painted field lines.",
-        "visible": true,
-        "count": -1
-      },
-      {
         "id": "spectator-bleachers",
-        "text": "Continuous tiered spectator stands surround the outer edge, tallest along the long sides and lower behind each goal.",
+        "text": "Realistic tiered stands surrounding the pitch.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "trigger-bounds",
+        "text": "One continuous boundary following all field lines.",
+        "count": 1,
+        "where": "Following all field lines around the active pitch."
+      },
+      {
+        "id": "startpoint-play",
+        "text": "One midfield restart mark and paired team start positions.",
+        "count": 3,
+        "where": "One at midfield, with paired team positions on opposite halves."
+      },
+      {
+        "id": "trigger-scoring",
+        "text": "Scoring planes directly inside each goal.",
+        "count": 2,
+        "where": "One directly inside each goal at opposite ends of the pitch."
+      }
+    ],
     "layout": {
-      "composition": "High-corner isometric framing of the stadium so both goals, all field markings, and the enclosing stands read at once; the separate lobby faces its arrival side with its mode-selection boxes in a shallow arc or straight row.",
+      "composition": "The separate match map is composed symmetrically from a high three-quarter view, with both goals and the complete pitch legible.",
       "zones": [
         {
-          "name": "Lobby",
-          "role": "Compact arrival and mode-selection space before teleporting to matches.",
-          "where": "Separate map, with selection boxes facing the arrival side.",
+          "name": "Pre-match lobby",
+          "role": "Open arrival and mode selection before teleporting to a match.",
+          "where": "Separate lobby place.",
           "size": "compact"
         },
         {
-          "name": "Mode-selection row",
-          "role": "Five readable boxes labeled 1v1, 2v2, 3v3, 4v4, and 5v5 for players to enter.",
-          "where": "Lobby, arranged in a single shallow arc or straight row.",
-          "size": "-1"
-        },
-        {
-          "name": "Match stadium",
-          "role": "Soccer match play on a compact arcade-sized pitch for 1v1 through 5v5.",
-          "where": "Separate map, centered on the rectangular grass pitch.",
-          "size": "medium"
-        },
-        {
-          "name": "Soccer pitch",
-          "role": "Bounded playable field with opposing goals, centre circle, kickoff mark, and complete painted boundaries.",
-          "where": "Center of the match stadium.",
-          "size": "smaller arcade-sized"
-        },
-        {
-          "name": "Spectator stands",
-          "role": "Stadium framing around the field while keeping play legible.",
-          "where": "Around the outer edge; tallest on long sides and lower behind each goal.",
-          "size": "continuous"
+          "name": "Stadium match map",
+          "role": "Timed Spain-versus-France soccer matches from 1v1 to 5v5.",
+          "where": "Separate isolated stadium map.",
+          "size": "arcade-sized"
         }
       ],
       "paths": [
         {
-          "from": "Lobby",
-          "to": "Match stadium",
+          "from": "Pre-match lobby",
+          "to": "Stadium match map",
           "kind": "portal"
         }
       ],
-      "terrain": "Maintained green turf on the rectangular pitch with crisp white paint; concrete-and-seat tiered bleachers surround it.",
+      "terrain": "A marked smaller arcade-sized soccer pitch with white field markings, a center circle, penalty areas, and restrained Spain and France team-color dressing.",
       "props": [
         {
-          "name": "mode-selection boxes labeled 1v1, 2v2, 3v3, 4v4, and 5v5",
+          "name": "mode-selection boxes labelled 1v1 through 5v5",
           "count": 5,
-          "where": "Lobby, in a shallow arc or straight row facing the arrival side"
+          "where": "Evenly spaced in a clear row or shallow arc in the lobby."
         },
         {
-          "name": "soccer goals with nets",
+          "name": "normal full goals",
           "count": 2,
-          "where": "Short ends of the pitch"
+          "where": "At opposite goal ends of the pitch."
         },
         {
-          "name": "centre circle and kickoff mark",
-          "count": 1,
-          "where": "Center of the pitch"
+          "name": "tiered spectator stands",
+          "count": -1,
+          "where": "Ringing the outer field beyond the stadium boundary."
         }
       ],
-      "boundary": "Complete painted field boundaries with low perimeter separation outside the lines, enclosed visually by continuous spectator stands.",
+      "boundary": "A stadium boundary beyond the surrounding tiered spectator stands encloses the match pitch; no other walkable zones are needed.",
       "scale_band": "medium",
-      "theme": "Realistic contemporary soccer stadium with maintained turf, crisp white paint, goal nets, and concrete-and-seat bleachers."
+      "theme": "realistic modern soccer stadium"
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the exact rectangular field, opposing goals, centre mark, and boundary geometry must remain valid and readable for play before stadium dressing.",
+      "why": "exact symmetric pitch boundaries, goal placement, and restart geometry must remain valid for competitive soccer play before the stadium is dressed isometrically.",
       "set_piece": false
     },
     "route": [
       "P4",
       "tiered"
     ],
-    "notes": [],
+    "notes": [
+      "`space-staged` is taken from outside Sports’ usual shapes, as stated.",
+      "The Field Sport preset is adapted to the separate lobby-and-stadium arrangement.",
+      "`teleporter-link` was named in the blob but is not an option in the dominant Sports genre, so it was dropped from options and layout placement. The stated lobby-to-stadium portal remains transcribed as a layout path.",
+      "visible on 'startpoint-play' set from goes_to=both"
+    ],
     "scene_prompt": "Create a 3D soccer game layout with a separate match lobby and a real-looking stadium map. The lobby contains distinct mode-selection boxes for 1v1, 2v2, 3v3, 4v4, and 5v5, arranged clearly for players to enter before teleporting to matches. The match takes place on a smaller arcade-sized soccer pitch inside a realistic stadium, with normal goals at opposite ends, marked field lines, and surrounding spectator stands; the field supports Spain-versus-France team matches from 1v1 through 5v5."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
   "mapper_notes": [
-    "blob asked for topdown first; the route ['P0', 'tiered'] gives isometric"
+    "blob asked for topdown first; the route ['P4', 'P0', 'tiered'] gives isometric"
   ]
 }

@@ -8,10 +8,8 @@
 
 **Shape — pick one.** This is the genre's real fork, and it changes the chunk geometry.
 
-| ID | Shape | What it is | Pipeline |
-| :---- | :---- | :---- | :---- |
-| `lane-snap` | **Lane (Fixed Lane Snap)** | Rigid parallel lanes, typically three, each the avatar bounding box plus a 2-stud safety margin so lateral dashes snap instantly without clipping geometry. | `P6` |
-| `lane-free` | **Lane (Free Lateral Steering)** | Continuous lateral movement across a corridor instead of discrete lane slots. | `P6` |
+**Typical shapes.** `lane-snap` · `lane-free` *(default)*
+
 
 **Options** — combine freely on top of the chosen shape.
 
@@ -42,14 +40,14 @@
 * **Lane snap versus free lateral is the genre's real fork.** Subway Surfers snaps between three fixed lanes; Temple Run steers continuously. They produce different chunk geometry, and the 3-lane assumption shouldn't be applied to both.
 * **Spacing must be elastic, not fixed.** Players accelerate the further they get, so a gap authored in fixed studs becomes unclearable later in the run. Everything is derived from current speed against reaction time.
 * **Chunk pivots are the thing that breaks silently.** If exit and origin pivots don't match exactly on one axis, the track drifts a little per chunk and the run degrades over minutes rather than failing visibly.
-* **Scope caveat on the cleanup volume.** It's a placed volume, so it's arguably layout, but its justification is runtime memory management. Kept here framed by *placement* — how far behind the camera it sits — rather than by the memory concern, which is Mechanics.
-* **Roblox files Runner as a subgenre of Obby & Platformer, not as its own genre.** Kept separate here because a runner routes P6 with elastic speed-derived spacing and shares almost none of its generation with a difficulty-chart obby. The skill should still recognise "runner" arriving as an obby request, since that is the wording Roblox's own taxonomy teaches creators.
+* **The cleanup volume is specified by placement, not by the memory concern.** It is a placed volume, so it is layout; what it is *for* is runtime memory management, which is Mechanics. Specify how far behind the camera it sits and leave the rest alone.
+* **Roblox files Runner as a subgenre of Obby & Platformer; here it is its own genre.** A runner routes P6 with elastic speed-derived spacing and shares almost none of its generation with a difficulty-chart obby. The skill should still recognise "runner" arriving as an obby request, since that is the wording Roblox's own taxonomy teaches creators.
 
 ## Universal Options
 
 Six features that belong to **no genre in particular because they belong to all of them**. Every genre inherits this table on top of its own.
 
-They exist because the alternative is worse. Each was measured against 620 real prompts and requested in eleven to fifteen different genres, so filing them per-genre would restate the same row seventy-eight times — and leaving them out is what produced the largest hole in the system, with *who is in the world* having no home anywhere.
+They exist because the alternative is worse. Each is wanted across nearly every genre, so filing them per-genre would restate the same row dozens of times, and leaving them out strands common requests — *who is in the world* would have no home anywhere.
 
 | ID | Option | What it is | Core | Goes to | Pipeline |
 | :---- | :---- | :---- | :--: | :---- | :---- |
@@ -60,13 +58,13 @@ They exist because the alternative is worse. Each was measured against 620 real 
 | `terrain-relief` | **Zone (Terrain Relief)** | Natural landform shaping the ground: hills, mountains, cliffs, a valley, or a canyon. | | `image` | `P0 + tiered` |
 | `island-cluster` | **Zone (Island Cluster)** | Several separate landmasses with water or open air between them, crossed by bridge, boat, or flight. | | `image` | `CHECK` |
 
-**None of these is `Core`, and that is deliberate.** They must never appear in the tune menu, which shows `Core` options only, and no preset includes one. A universal option is a **landing place for a request the user actually made** — reached from the open question in step 5 when a free-text ask matches it — never a default and never a suggestion. Measured against 620 prompts, each of the six would fire on 6–15% of them, so a run that applies one unasked is wrong far more often than it is right.
+**None of these is `Core`, and that is deliberate.** They must never appear in the tune menu, which shows `Core` options only, and no preset includes one. A universal option is a **landing place for a request the user actually made** — reached from the open question in step 5 when a free-text ask matches it — never a default and never a suggestion. Most builds want none of them, so a run that applies one unasked is wrong far more often than right.
 
 **A genre's own wording wins.** Four genres already define `building-interior` in their own terms — Shooter's is a breachable structure, Survival's is a shelter to hide in. Those rows are the definition for those genres; the universal row is the fallback for the other eleven. Dedupe by ID exactly as with any shared ID.
 
 **Bend the wording to the prompt.** These are written generically because they are genre-neutral, which makes the instruction to rewrite them *more* important than usual, not less. `water-body` for a pirate game is "open sea between the islands, deep enough to sail"; for a park it is "a duck pond at the centre of the green." Ship the prompt's water, not the word "water."
 
-**Two pipeline notes.** `terrain-relief` is `P0 + tiered` for hills and cliffs, but **caves, overhangs, and tunnels push it to `P2`** — say so when the prompt asks for them. `water-body` and `island-cluster` are `CHECK` because swimming and flight are volumetric: usually fine as a play-height envelope over a representable surface, and only a real problem when the volume self-occludes (layered floating islands, 3D cave networks). See *Layout Attributes* in Build.md for the underlying axis.
+**Two pipeline notes.** `terrain-relief` is `P0 + tiered` for hills and cliffs, but **caves, overhangs, and tunnels push it to `P2`** — say so when the prompt asks for them. `water-body` and `island-cluster` are `CHECK` because swimming and flight are volumetric: usually fine as a play-height envelope over a representable surface, and only a real problem when the volume self-occludes (layered floating islands, 3D cave networks). See *The Five Routing Axes* in Build.md for the axis behind it.
 
 **`npc-population` is not `spawner-npc`.** `spawner-npc` is where hostiles enter a fight — an emitter, wired to combat. `npc-population` is who lives here. A market crowd, a quest giver, and a herd of deer are not spawners, and filing them as one produces enemy waves in a town square.
 

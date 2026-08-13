@@ -19,7 +19,7 @@
     }
   ],
   "scene_prompt": "Create a 3D treasure-hunt map on a compact pirate island, sized for a few minutes of walking between the farthest hidden chests. Arrange varied island terrain and landmarks to provide distinct chest-hiding locations across the map.",
-  "blob": "### Genre\nThe dominant genre is Adventure: the original request is a treasure hunt with hidden chests, matching exploration and collection rather than a social island. There is no secondary genre.\n\n### Shape and preset\nUse `world-open`, an open but compact island that supports free searching across several distinct hiding regions. Match the Scavenger Hunt preset: its open search area and dispersed objectives fit directly; do not add its unrequested quest board or secret-alcove assumptions.\n\n### Config requirements\nUse `collectible-nodes` as invisible layout markers for hidden chest locations distributed across the island; the chests themselves are visible props at those markers. Use visible `terrain-relief` for varied slopes, rocky rises, and low ground that create differentiated search areas. The on-screen leaderboard has no map geometry and is excluded.\n\n### Layout components\nBuild one compact pirate island, large enough that walking between its farthest chests takes a few minutes. Arrange a central sandy clearing as the readable orientation space, with a rocky raised ridge and lookout on one side, a dense palm-and-jungle slope on another, and a weathered cove with a wrecked or abandoned pirate landmark on the shore. Use beaches, packed earth, grass, exposed stone, palms, boulders, ruins, barrels, broken docks, and pirate-era wreckage as varied chest-hiding cover. Place chests at visually discoverable but non-obvious locations: behind rocks, among ruins, under dock debris, beside the lookout, and in terrain recesses. The ocean forms the natural outer boundary; keep the playable landmass continuous and enclosed by shoreline cliffs, sand, and water. Compose the island as a readable central mass with the ridge and cove providing strong silhouette anchors, while retaining clear sight across the main clearing.\n\n### Render order\nUse `isometric`: the hunt does not depend on a single exact route remaining playable, so an isometric scenic composition can lead and its plan can be derived afterward.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by the requested few minutes of traversal across one compact island. Theme is clear, stylized pirate-island adventure: tropical foliage, weathered timber, sand, stone, and nautical ruins. Apply `tiered` because the island’s real terrain relief must be captured without any overhanging surfaces.",
+  "blob": "### Genre\nThe dominant genre is Adventure: players explore to find scattered treasures, matching the Scavenger Hunt style. The leaderboard is on-screen only and does not create map geometry.\n\n### Shape and preset\nUse `world-open`, a single compact but freely explorable pirate island where chest locations can be visited in any order. This matches the Scavenger Hunt preset: retain its open-world exploration and hidden-item intent, but drop the physical `tracker-quest` board because tracking is UI-only.\n\n### Config requirements\nUse `landmark-focal` for distinct pirate landmarks that orient explorers and make each chest area recognizable. Use `terrain-relief` for varied hills, cliffs, ridges, and sheltered low ground across the island. Use `water-body` for the sea enclosing the island and defining its coastline.\n\n### Layout requirements\nUse `collectible-nodes` for hidden treasure chests. Distribute an unspecified number across all major landmark areas, placing some in readable but remote locations and others in concealed terrain cutouts; ensure the farthest pair requires a few minutes of walking. No physical leaderboard, quest board, checkpoints, or other placed gameplay markers are required.\n\n### Layout components\nBuild one medium compact island zone with a central navigable interior and a continuous coastline. Put a prominent pirate focal landmark near the island’s visual center or on a high ridge, with several secondary landmarks distributed toward opposite shores to create distinct search destinations. Connect the major areas with worn dirt trails, beach paths, and climbable slopes rather than a rigid linear route. Shape the terrain into beaches, rocky coves, low jungle or scrub-covered rises, cliff edges, and a few sheltered hiding pockets. The surrounding ocean is a clear natural boundary; cliffs and water limit the playable land. Compose the island as a readable overhead silhouette with the central landmark visible across multiple paths and remote coves at the outer edges.\n\n### Render order\nRender `isometric` first and treat it as authoritative, then project the top-down view from it. The island’s landmarks and terrain composition lead; no topology is so exact that an authored plan is required.\n\n### Scale, theme, and pipeline cost\nUse a medium scale, driven by the requested few minutes of walking between the farthest chest locations while remaining one compact island. Theme: bright, readable pirate-island adventure with weathered paths, coastal rock, tropical vegetation, and treasure-hunt landmarks. Apply `tiered` for the island’s non-overhanging relief and `CHECK` for the surrounding water feature; the water should remain a simple visible surface without self-occluding volumetric routes.",
   "spec": {
     "genre": "Adventure",
     "secondary": [],
@@ -28,106 +28,104 @@
     "axes": {},
     "options": [
       {
-        "id": "collectible-nodes",
-        "text": "invisible layout markers for hidden chest locations distributed across the island; the chests themselves are visible props at those markers",
-        "visible": false,
+        "id": "landmark-focal",
+        "text": "Distinct pirate landmarks that orient explorers and make each chest area recognizable.",
+        "visible": true,
         "count": -1
       },
       {
         "id": "terrain-relief",
-        "text": "varied slopes, rocky rises, and low ground that create differentiated search areas",
+        "text": "Varied hills, cliffs, ridges, and sheltered low ground across the island.",
         "visible": true,
+        "count": -1
+      },
+      {
+        "id": "water-body",
+        "text": "The sea enclosing the island and defining its coastline.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "Hidden treasure chests distributed across all major landmark areas, with some in readable remote locations and others in concealed terrain cutouts.",
+        "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "collectible-nodes",
+        "text": "Hidden treasure chests distributed across all major landmark areas, with some in readable remote locations and others in concealed terrain cutouts.",
+        "count": -1,
+        "where": "Across all major landmark areas; some in readable remote locations and others in concealed terrain cutouts, with the farthest pair requiring a few minutes of walking."
+      }
+    ],
     "layout": {
-      "composition": "A readable central island mass with a sandy clearing at its centre and clear sight across it; a rocky raised ridge and lookout anchor one side, while a weathered shore cove anchors another, with a dense palm-and-jungle slope forming a further distinct search region.",
+      "composition": "A readable overhead island silhouette with a prominent central pirate landmark visible across multiple paths, secondary landmarks toward opposite shores, and remote coves at the outer edges.",
       "zones": [
         {
-          "name": "Central sandy clearing",
-          "role": "Readable orientation space and open search area.",
-          "where": "centre",
-          "size": ""
-        },
-        {
-          "name": "Rocky raised ridge and lookout",
-          "role": "Elevated search area and chest-hiding location beside the lookout.",
-          "where": "one side of the island",
-          "size": ""
-        },
-        {
-          "name": "Palm-and-jungle slope",
-          "role": "Dense tropical search region with chest-hiding cover.",
-          "where": "another side of the island",
-          "size": ""
-        },
-        {
-          "name": "Weathered cove",
-          "role": "Shore search region with a wrecked or abandoned pirate landmark and dock debris.",
-          "where": "shore",
-          "size": ""
+          "name": "Compact pirate island",
+          "role": "Freely explorable treasure-hunt island with a central navigable interior, landmark search destinations, and hidden chest locations.",
+          "where": "Entire map",
+          "size": "medium"
         }
       ],
-      "paths": [],
-      "terrain": "Continuous compact pirate-island landmass with beaches, packed earth, grass, exposed stone, varied slopes, rocky rises, low ground, shoreline cliffs, sand, and surrounding ocean.",
+      "paths": [
+        {
+          "from": "Central navigable interior",
+          "to": "Major landmark areas",
+          "kind": "trail"
+        },
+        {
+          "from": "Major landmark areas",
+          "to": "Opposite shores and remote coves",
+          "kind": "path"
+        },
+        {
+          "from": "Beaches and low ground",
+          "to": "Ridges and cliff edges",
+          "kind": "ramp"
+        }
+      ],
+      "terrain": "Beaches, rocky coves, low jungle or scrub-covered rises, cliff edges, sheltered hiding pockets, and non-overhanging hills, cliffs, ridges, and low ground; surrounding sea forms the coastline.",
       "props": [
         {
-          "name": "hidden chests",
-          "count": -1,
-          "where": "behind rocks, among ruins, under dock debris, beside the lookout, and in terrain recesses across the island"
+          "name": "Prominent pirate focal landmark",
+          "count": 1,
+          "where": "Near the island's visual center or on a high ridge"
         },
         {
-          "name": "palms",
+          "name": "Secondary pirate landmarks",
           "count": -1,
-          "where": "across the island, especially the dense jungle slope"
-        },
-        {
-          "name": "boulders",
-          "count": -1,
-          "where": "across varied terrain"
-        },
-        {
-          "name": "ruins",
-          "count": -1,
-          "where": "across chest-hiding areas"
-        },
-        {
-          "name": "barrels",
-          "count": -1,
-          "where": "across pirate-era hiding areas"
-        },
-        {
-          "name": "broken docks",
-          "count": -1,
-          "where": "at the weathered cove"
-        },
-        {
-          "name": "pirate-era wreckage",
-          "count": -1,
-          "where": "at the weathered cove"
+          "where": "Distributed toward opposite shores"
         }
       ],
-      "boundary": "The ocean forms the natural outer boundary; continuous playable land is enclosed by shoreline cliffs, sand, and water.",
+      "boundary": "Clear surrounding ocean forms the natural boundary; cliffs and water limit playable land.",
       "scale_band": "medium",
-      "theme": "Clear, stylized pirate-island adventure with tropical foliage, weathered timber, sand, stone, and nautical ruins."
+      "theme": "Bright, readable pirate-island adventure with weathered paths, coastal rock, tropical vegetation, and treasure-hunt landmarks."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "the hunt does not depend on a single exact route remaining playable, so scenic composition can lead.",
+      "why": "The island's landmarks and terrain composition lead, with no exact topology requiring an authored plan.",
       "set_piece": false
     },
     "route": [
-      "tiered"
+      "P0",
+      "tiered",
+      "CHECK"
     ],
-    "notes": [],
+    "notes": [
+      "The Scavenger Hunt preset's physical tracker-quest board is intentionally omitted because tracking and the leaderboard are UI-only.",
+      "No physical leaderboard, quest board, checkpoints, or other placed gameplay markers are required."
+    ],
     "scene_prompt": "Create a 3D treasure-hunt map on a compact pirate island, sized for a few minutes of walking between the farthest hidden chests. Arrange varied island terrain and landmarks to provide distinct chest-hiding locations across the map."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

@@ -5,126 +5,131 @@
     {
       "field": "theme",
       "ask": "No look was described - should the map be bright and cartoon-coloured, or something more specific?",
-      "answer": "خلوه ستايل كرتوني ملوّن ومشرق مثل ألعاب المني جيم في روبلوكس، ومرتب وواضح."
+      "answer": "Make it bright and cartoon-coloured, with a clean polished Roblox minigame-game look."
     },
     {
       "field": "goal",
       "ask": "Which minigames should the stage host? It cannot be laid out without knowing what is played on it.",
-      "answer": "ابدؤوا بميني جيمات بسيطة ومشهورة: أوبي/باركور، سباق قصير، وساحة قتال بسيطة، مع لوبي صغير مرتب يربط بينها."
+      "answer": "Use a small set of classic minigames: Obby, Spleef, and a simple survival arena; keep the lobby compact and organized around these stages."
     }
   ],
   "scene_prompt": "Create a bright, colourful cartoon-style 3D minigame map titled “Mini Game.” Build a small, neat central lobby hub with clearly separated entrances leading to three simple activity zones: an obby/parkour course, a short race track, and a basic combat arena. Arrange the lobby as the connecting center, with the three game areas visible around it and clear paths between them.",
-  "blob": "### Genre\nThe dominant genre is Party & Casual: this is a social minigame collection with a shared lobby and several short activities. Obby & Platformer is secondary because one activity is a dedicated parkour course; the race and combat spaces remain compact minigame zones within the party layout.\n\n### Shape and preset\nUse the continuous shared-space shape `space-continuous`, with the lobby and all three activity areas visible together and connected on one map. The closest preset is Minigame, but its isolated-stage `space-staged` structure contradicts the requested open, visible-around-the-hub arrangement, so the preset is none.\n\n### Config requirements\nUse visible `social-hub` geometry: a small, tidy central lobby square that distributes players to each activity entrance. No unrequested leaderboard, teleporter, scoring volume, shop geometry, pickups, or NPC population should be added. The three activity zones are visible geometry; their gameplay triggers, spawns, scoring, and administrative systems are invisible and must not appear in the render.\n\n### Layout components\nPlace a compact central lobby hub in the middle, large enough for gathering but smaller than the combined activity ring. Give it three clearly signed, evenly separated entrances and broad, unobstructed paved paths radiating outward. Put the obby/parkour course on one side as a short, readable chain of colourful raised platforms, ramps, and safe landings. Place the short race track on another side as a compact, clearly continuous loop or out-and-back route with a visible start and finish area. Put the basic combat arena on the third side as a simple open circular or square floor with low boundary walls and a few sparse cover blocks. Keep all three zones visually distinct by colour and silhouette while preserving direct sightlines back to the lobby. Use flat cartoon ground, with no water, buildings, or terrain relief requested. Frame the whole map in an isometric three-quarter view with the lobby central and the three zones forming a clean three-pronged composition.\n\n### Render order\nUse `topdown`: the parkour sequence and short race route must remain connected and playable, so their topology should be planned before the isometric dressing.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by one lobby plus three complete but short activity zones. Theme: bright, colourful, polished Roblox-style cartoon minigame park. Use `P6` because the obby route and race route need valid, continuous construction; no other geometry forces an added pipeline pass.",
+  "blob": "### Genre\nThe dominant genre is Party & Casual, using the Minigame format; Obby & Platformer is a secondary genre for the parkour stage only. The party-game structure owns the shared hub and stage arrangement.\n\n### Shape and preset\nUse `space-bounded`: one compact, contiguous minigame complex with a central lobby and three visible activity areas around it. This follows the Party & Casual Continuous Play Space shape rather than the Minigame preset’s `space-staged`, because the prompt explicitly requires the stages to remain visible from and directly connected to the lobby. Preset: none; the Minigame preset’s isolated stage, transport, leaderboard, scoring, and spectator bundle is not requested.\n\n### Config requirements\nUse `social-hub` for the small, orderly central lobby where players gather before entering a stage. Use `path-track` for the obby’s clearly ordered parkour route of physics-legal platforms. Use `checkpoint-respawn` for visible safe landing pads within the obby. Use `trigger-finish` as a clear finish marker at the end of the short race track.\n\n### Layout requirements\nPlace `spawn-protected` round-start markers in each of the three activity zones, spaced fairly and away from immediate hazards. Place `checkpoint-respawn` at the obby start and at least one safe midpoint pad, with the final pad at the end of the course. Place one `trigger-finish` volume directly across the race track’s terminal finish gate. No pickups, NPC emitters, or scoring volumes are specified.\n\n### Layout components\nMake a small bright lobby plaza at the center, with the “Mini Game” title sign as its visual anchor. Three clearly marked paths radiate to exactly three nearby zones: a compact elevated obby with colorful floating platforms and safe pads; a short ground-level race track with a start line, curved route, and finish gate; and a simple enclosed combat arena with an open central floor. Keep each entrance readable from the lobby and provide enough separation that each activity has its own footprint without becoming a separate map. Use clean paved ground, colorful trim, simple cartoon props, and a low decorative outer boundary. Compose the hub centrally, with all three zones readable in one isometric overview.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because the obby chain and race route must be connected and playable before the isometric scene is dressed.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by one compact hub and three short classic minigame zones. Theme: bright cartoon-coloured, polished Roblox minigame aesthetic. Use `P6` because the obby’s critical platform route must be physics-valid and the race path must remain connected. No other pipeline modifier is forced.",
   "spec": {
     "genre": "Party & Casual",
     "secondary": [
       "Obby & Platformer"
     ],
-    "shape": "space-continuous",
+    "shape": "space-bounded",
     "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "social-hub",
-        "text": "a small, tidy central lobby square that distributes players to each activity entrance",
+        "text": "Small, orderly central lobby where players gather before entering a stage.",
         "visible": true,
         "count": -1
+      },
+      {
+        "id": "spawn-protected",
+        "text": "Round-start markers in each of the three activity zones, spaced fairly and away from immediate hazards.",
+        "visible": false,
+        "count": 3
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "spawn-protected",
+        "text": "Round-start markers in each of the three activity zones, spaced fairly and away from immediate hazards.",
+        "count": 3,
+        "where": "In each of the three activity zones, spaced fairly and away from immediate hazards."
       }
     ],
     "layout": {
-      "composition": "Isometric three-quarter view of the whole map, with the central lobby hub in the middle and three visually distinct activity zones forming a clean three-pronged arrangement around it; direct sightlines return to the lobby from every zone.",
+      "composition": "Central lobby plaza in the middle of an isometric overview, with all three nearby activity zones readable around it: the elevated obby, the ground-level race track, and the enclosed combat arena.",
       "zones": [
         {
-          "name": "Central lobby hub",
-          "role": "Shared gathering and distribution point for the activities.",
-          "where": "centre",
-          "size": "small, but large enough for gathering and smaller than the combined activity ring"
+          "name": "Central lobby plaza",
+          "role": "Shared gathering hub and connecting center for the three activity zones.",
+          "where": "Center",
+          "size": "small"
         },
         {
           "name": "Obby / parkour course",
-          "role": "Short readable parkour activity with sequential raised traversal.",
-          "where": "one side of the lobby",
-          "size": "short"
-        },
-        {
-          "name": "Race track",
-          "role": "Short race activity with a continuous loop or out-and-back route and visible start and finish area.",
-          "where": "another side of the lobby",
+          "role": "A compact elevated parkour activity with a clearly ordered route of colorful floating platforms and safe pads.",
+          "where": "One side of the central lobby",
           "size": "compact"
         },
         {
+          "name": "Race track",
+          "role": "A short ground-level race activity with a start line, curved route, and terminal finish gate.",
+          "where": "One side of the central lobby",
+          "size": "short"
+        },
+        {
           "name": "Combat arena",
-          "role": "Basic combat activity on an open floor.",
-          "where": "the third side of the lobby",
+          "role": "A simple enclosed combat activity with an open central floor.",
+          "where": "One side of the central lobby",
           "size": "compact"
         }
       ],
       "paths": [
         {
-          "from": "Central lobby hub",
+          "from": "Central lobby plaza",
           "to": "Obby / parkour course",
-          "kind": "paved path"
-        },
-        {
-          "from": "Central lobby hub",
-          "to": "Race track",
-          "kind": "paved path"
-        },
-        {
-          "from": "Central lobby hub",
-          "to": "Combat arena",
-          "kind": "paved path"
-        },
-        {
-          "from": "Race track start area",
-          "to": "Race track finish area",
           "kind": "track"
+        },
+        {
+          "from": "Central lobby plaza",
+          "to": "Race track",
+          "kind": "track"
+        },
+        {
+          "from": "Central lobby plaza",
+          "to": "Combat arena",
+          "kind": "open ground"
         }
       ],
-      "terrain": "Flat cartoon ground with broad unobstructed paved paths; no water or terrain relief.",
+      "terrain": "Clean paved ground with colorful trim; the obby is elevated with colorful floating platforms and the race track remains ground-level.",
       "props": [
         {
-          "name": "clearly signed activity entrances",
-          "count": 3,
-          "where": "evenly separated around the central lobby hub"
+          "name": "“Mini Game” title sign",
+          "count": 1,
+          "where": "Central lobby plaza"
         },
         {
-          "name": "colourful raised platforms, ramps, and safe landings",
+          "name": "simple cartoon props",
           "count": -1,
-          "where": "obby / parkour course"
-        },
-        {
-          "name": "low boundary walls",
-          "count": -1,
-          "where": "combat arena"
-        },
-        {
-          "name": "sparse cover blocks",
-          "count": -1,
-          "where": "combat arena"
+          "where": "Across the compact minigame complex"
         }
       ],
-      "boundary": "The combat arena has low boundary walls; the shared map is otherwise open.",
-      "scale_band": "medium",
-      "theme": "bright, colourful, polished Roblox-style cartoon minigame park"
+      "boundary": "Low decorative outer boundary enclosing the compact contiguous complex.",
+      "scale_band": "small",
+      "theme": "bright cartoon-coloured, polished Roblox minigame aesthetic"
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the parkour sequence and short race route must remain connected and playable before isometric dressing.",
+      "why": "the obby chain and race route must be connected and playable before the isometric scene is dressed",
       "set_piece": false
     },
     "route": [
       "P6"
     ],
-    "notes": [],
+    "notes": [
+      "dropped option 'path-track': not in Party & Casual",
+      "dropped option 'checkpoint-respawn': not in Party & Casual",
+      "dropped option 'trigger-finish': not in Party & Casual",
+      "dropped placement 'checkpoint-respawn': not in Party & Casual",
+      "dropped placement 'trigger-finish': not in Party & Casual"
+    ],
     "scene_prompt": "Create a bright, colourful cartoon-style 3D minigame map titled “Mini Game.” Build a small, neat central lobby hub with clearly separated entrances leading to three simple activity zones: an obby/parkour course, a short race track, and a basic combat arena. Arrange the lobby as the connecting center, with the three game areas visible around it and clear paths between them."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

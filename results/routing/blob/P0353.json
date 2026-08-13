@@ -19,72 +19,77 @@
     }
   ],
   "scene_prompt": "Create a compact 3D endless-wave arena under 100 studs, tight enough that attacking purple and pink balls can reliably reach the player. The floor is light blue with a black techno pattern, enclosed by pink walls marked with black stripes. Place a light-blue upgrade kiosk in one corner, usable directly from the arena floor with no separate interior; leave the main arena open for movement and ball approaches.",
-  "blob": "### Genre\nThis is dominant `Action`: an endless combat arena against approaching hostile balls. No secondary genre is needed.\n\n### Shape and preset\nUse `arena-flat`, matching the Boss Raid preset’s single contained fight space, but retain only the prompt-supported open arena and enemy-entry provision; the preset is otherwise not recognisable, so the preset is none. The arena is a compact, flat room rather than terraced or multi-level combat space.\n\n### Config requirements\nUse `spawner-npc` as invisible layout geometry: place enemy-emitter points around the arena perimeter so purple and pink balls can enter the open floor and reach the player. Do not render emitter markers. No `building-interior` applies: the light-blue shop is an arena-floor kiosk, not an enterable room.\n\n### Layout components\nBuild one square or slightly rectangular combat room under 100 studs across, with the main open fighting floor taking nearly all of its footprint. Surface the floor in light blue with a crisp black techno pattern. Enclose all sides with solid pink walls carrying bold black horizontal or angular stripes; these walls form the hard boundary and should leave no exit corridors. Set the light-blue upgrade kiosk into one corner, flush to the wall and facing diagonally or inward toward the floor, with a compact counter-like silhouette that remains usable from the arena floor; it must not divide the combat space or create a separate room. Keep the center broadly clear for movement and direct ball approaches, while locating the invisible ball emitter points near the other wall sections and corners, clear of the kiosk. Frame the room in a readable three-quarter isometric view, showing the corner kiosk, patterned floor, and enclosing striped walls together.\n\n### Render order\nUse `isometric`: the compact visual identity, patterned arena floor, coloured walls, and kiosk silhouette lead; no topology beyond one open room requires a plan-first render.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the explicitly under-100-stud single-room arena and close engagement distance. Theme is bright neon techno, with light blue, pink, purple accents, and black graphic striping. Use `P0`: this is one flat, enclosed surface with no overhangs, interior transition, separate map, or topology that must be procedurally validated.",
+  "blob": "### Genre\nThe dominant genre is Shooter, specifically a compact PvE endless-wave encounter: the player uses a ranged weapon against attacking enemy balls. The score, currency, damage values, and upgrade rules define the genre but do not enter the map geometry.\n\n### Shape and preset\nUse `space-bounded`, taken from outside Shooter’s usual shape shortlist, because this is one open, enclosed arena rather than lanes or a breach sequence. The nearest PvE Shooter preset is not recognisable after replacing its lane network and omitting its interior and chokepoint assumptions, so the preset is none.\n\n### Config requirements\nNo additional image-config options apply. The requested kiosk is a visible prop, not an enterable building or a weapon-loadout bench.\n\n### Layout requirements\nUse `spawner-npc` for four ball-emitter locations, one centered along each wall and recessed into the wall treatment so balls enter from readable directions without blocking the open floor. No other placed gameplay requirements are implied.\n\n### Layout components\nBuild one compact square arena, under 100 studs across, with enough open central floor that players can retreat briefly but cannot indefinitely kite incoming balls. The entire ground plane is light blue with a repeating black techno pattern. Enclose it with continuous pink perimeter walls carrying bold black horizontal stripe detailing; there are no doors, corridors, or separate rooms. Keep the center broadly clear for movement and converging enemy approaches. Put a light-blue upgrade kiosk in one corner, facing diagonally into the arena and usable directly from the arena floor; it must not create a separate interior or obstruct the corner approach. Integrate four subtle ball-emitter recesses at the midpoints of the walls. Compose the frame as a readable enclosed neon arena, with the blue floor, pink striped boundary, corner kiosk, and open central combat space all visible.\n\n### Render order\nRender `isometric` first and treat it as authoritative, since this is a simple single-room arena whose playability does not depend on generated maze, track, or jump-chain topology.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the under-100-stud single-room requirement and intentionally close combat distance. Theme: bright neon techno, light-blue and pink arcade sci-fi. Use `P0`: one flat enclosed surface, with no overhangs, interior transition, separate map, volumetric play, or topology requiring construction validation.",
   "spec": {
-    "genre": "Action",
+    "genre": "Shooter",
     "secondary": [],
-    "shape": "arena-flat",
+    "shape": "space-bounded",
     "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "spawner-npc",
-        "text": "Invisible enemy-emitter points around the arena perimeter so purple and pink balls can enter the open floor and reach the player; do not render emitter markers.",
+        "text": "Four ball-emitter locations recessed into the wall treatment so attacking balls enter from readable directions without blocking the open floor.",
         "visible": false,
-        "count": -1
+        "count": 4
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "spawner-npc",
+        "text": "Four ball-emitter locations recessed into the wall treatment so attacking balls enter from readable directions without blocking the open floor.",
+        "count": 4,
+        "where": "One centered along each perimeter wall, recessed into the wall treatment."
       }
     ],
     "layout": {
-      "composition": "Readable three-quarter isometric view showing the corner kiosk, light-blue patterned floor, and enclosing striped walls together; the broadly clear centre dominates the room.",
+      "composition": "A readable enclosed neon arena with the light-blue patterned floor and broadly clear central combat space visible, continuous pink striped walls framing the perimeter, and a light-blue upgrade kiosk in one corner facing diagonally into the arena.",
       "zones": [
         {
-          "name": "Open fighting floor",
-          "role": "Main combat and movement space for direct approaching-ball attacks.",
-          "where": "Nearly the entire square or slightly rectangular room footprint, especially the centre.",
-          "size": "Under 100 studs across; nearly all of the footprint."
-        },
-        {
-          "name": "Upgrade kiosk corner",
-          "role": "Arena-floor upgrade kiosk usable directly from the combat floor without forming a separate room.",
-          "where": "One corner, flush to the wall and facing diagonally or inward toward the floor.",
-          "size": "Compact counter-like silhouette."
+          "name": "Compact square arena",
+          "role": "Open central combat floor for player movement and converging enemy-ball approaches.",
+          "where": "Entire map, enclosed by the perimeter walls.",
+          "size": "Under 100 studs across"
         }
       ],
       "paths": [],
-      "terrain": "Flat light-blue floor with a crisp black techno pattern.",
+      "terrain": "A single flat light-blue ground plane with a repeating black techno pattern.",
       "props": [
         {
           "name": "Light-blue upgrade kiosk",
-          "count": -1,
-          "where": "One corner, flush to the wall and facing diagonally or inward toward the open floor."
+          "count": 1,
+          "where": "In one corner, facing diagonally into the arena and usable directly from the arena floor without obstructing the corner approach."
         },
         {
-          "name": "Solid pink walls with bold black horizontal or angular stripes",
-          "count": -1,
-          "where": "All sides of the arena."
+          "name": "Subtle ball-emitter recesses",
+          "count": 4,
+          "where": "At the midpoints of the pink perimeter walls."
         }
       ],
-      "boundary": "Solid pink striped walls enclose all sides as a hard boundary, with no exit corridors.",
+      "boundary": "Continuous pink perimeter walls with bold black horizontal stripe detailing; no doors, corridors, or separate rooms.",
       "scale_band": "small",
-      "theme": "Bright neon techno; light blue, pink, purple accents, and black graphic striping."
+      "theme": "Bright neon techno, light-blue and pink arcade sci-fi."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "The compact visual identity, patterned floor, coloured walls, and kiosk silhouette lead, while one open room needs no plan-first topology validation.",
+      "why": "This simple single-room arena does not depend on maze, track, or jump-chain topology.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
-    "notes": [],
+    "notes": [
+      "`space-bounded` is taken from outside Shooter’s usual shape shortlist.",
+      "No additional image-config options apply; the kiosk is a visible prop, not an enterable building or weapon-loadout bench."
+    ],
     "scene_prompt": "Create a compact 3D endless-wave arena under 100 studs, tight enough that attacking purple and pink balls can reliably reach the player. The floor is light blue with a black techno pattern, enclosed by pink walls marked with black stripes. Place a light-blue upgrade kiosk in one corner, usable directly from the arena floor with no separate interior; leave the main arena open for movement and ball approaches."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

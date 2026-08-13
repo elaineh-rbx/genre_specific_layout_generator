@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a dark horror maze map with a couple of minutes of confusing, disorienting corridors leading to a single exit. The maze is enclosed by tall walls and kept mostly unlit, with the player’s bright flashlight as the main visible illumination; use a tense, oppressive atmosphere throughout.",
-  "blob": "### Genre\nPuzzle is the dominant genre: the stated goal is to escape a maze, so solvable traversal topology—not combat or exploration—is the game.\n\n### Shape and preset\nUse `puzzle-maze`, matched to the Maze / Labyrinth preset. Keep its maze form but omit the preset’s collectible items because nothing is required inside the maze; the only objective is the exit.\n\n### Config requirements\nNo additional menu options are selected. The enclosed corridor network, its single exit, and its deliberately disorienting routing are all inherent to `puzzle-maze`; no invisible pickups, triggers, or solve inputs are requested.\n\n### Layout components\nBuild one medium-large, wall-bounded maze: a couple of minutes of traversable corridors from entry to a single clearly terminating exit. The entrance occupies one outer edge and feeds into a long, confusing network of narrow turns, repeated-looking junctions, misleading branches, occasional dead ends, and route loops, while preserving one valid continuous path to the exit. Place the exit as a distinct final threshold at the far side of the maze, visually separated from ordinary corridors without making it visible from the start. Tall opaque maze walls fully contain the route; there is no settlement, water, terrain relief, or additional room. Keep the ground level and uniform, with dark worn floor material and sparse wall variation used only to support the oppressive horror mood. The space is mostly unlit, so the intended scene illumination is concentrated around the player’s flashlight rather than fixed decorative lighting. Frame the maze as a dense, legible overhead labyrinth with its entry and exit on opposing outer areas, while preserving the claustrophobic tall-wall feeling in the isometric dressing.\n\n### Render order\nUse `authored_plan`: generate the maze blueprint in code first, then build the top-down and isometric renders from it, because a sealed or unreachable exit would make the game unplayable.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by the requested couple of minutes of corridors rather than a ten-minute labyrinth. Theme: dark oppressive horror, disorienting and flashlight-led. Apply `P6` because the maze’s corridor topology and sole reachable exit must be valid by construction.",
+  "blob": "### 1. Genre\nThe dominant genre is Puzzle: the player must navigate a confusing maze to reach a single exit. There is no secondary genre; horror is the visual atmosphere rather than a separate gameplay type.\n\n### 2. Shape and preset\nUse `puzzle-maze`, matched from the Maze / Labyrinth preset. This is one enclosed, deliberately disorienting labyrinth whose topology must still provide a valid route from entry to exit. The preset’s collectible option is dropped because nothing needs to be found before escape.\n\n### 3. Config requirements\nNo additional config options apply. The prompt specifies an enclosed dark maze but does not request pickups, puzzle inputs, gates, NPCs, water, terrain, or other drawable option categories. Render the corridors mostly unlit, with darkness and oppressive wall treatment supporting the horror mood; the bright flashlight is player equipment, not layout geometry.\n\n### 4. Layout requirements\nNo canonical placed option is required. Place one player arrival point at the maze entrance and one clear escape completion marker immediately beyond the sole exit, both against the procedurally authored corridor network. Do not place collectibles, solve inputs, or enemy emitters.\n\n### 5. Layout components\nBuild a medium-sized enclosed maze containing roughly a couple of minutes of traversal. The entrance zone sits at one outer edge and feeds directly into the maze; the exit is on a distant outer edge, reachable by one valid but non-obvious route. Use a dense network of narrow, tall-walled corridors, frequent turns, visually repetitive junctions, and a few misleading loops or near-identical branches to create disorientation without making the exit unreachable. Keep the ground continuous and dark, with sparse weak ambient fixtures only where needed to silhouette intersections; the flashlight remains the dominant illumination. Enclose all sides with opaque tall walls and a ceiling or darkness-treated upper boundary so the maze feels sealed in. Compose the plan as a readable overall labyrinth while preserving claustrophobic corridor scale in the isometric view.\n\n### 6. Render order\nUse `authored_plan`: maze connectivity and the reachable exit are gameplay-critical, so the maze must be carved and validated before top-down and isometric dressing.\n\n### 7. Scale, theme, and pipeline cost\nScale band: medium, driven by the requested couple of minutes of corridors. Theme: dark enclosed horror, oppressive and dizzying, with flashlight-led visibility. Pipeline modifier: `P6`, because the maze topology must be valid by construction and must retain a reachable route from entrance to exit.",
   "spec": {
     "genre": "Puzzle",
     "secondary": [],
@@ -22,69 +22,79 @@
     "preset": "Maze / Labyrinth",
     "axes": {},
     "options": [],
+    "layout_placement": [],
     "layout": {
-      "composition": "Dense legible overhead labyrinth, with the entry and exit on opposing outer areas; isometric dressing preserves the claustrophobic tall-wall feeling.",
+      "composition": "A readable overall labyrinth in plan view, preserving claustrophobic narrow-corridor scale in the isometric view; the entrance is on one outer edge and the distant sole exit is on another outer edge.",
       "zones": [
         {
-          "name": "Entrance",
-          "role": "Entry into the maze.",
-          "where": "one outer edge",
+          "name": "Entrance zone",
+          "role": "Player arrival and direct entry into the maze.",
+          "where": "One outer edge of the maze.",
           "size": ""
         },
         {
-          "name": "Corridor network",
-          "role": "Long, confusing traversal network with narrow turns, repeated-looking junctions, misleading branches, occasional dead ends, and route loops, preserving one valid continuous path.",
-          "where": "between the opposing outer areas",
-          "size": "a couple of minutes of traversable corridors"
+          "name": "Enclosed maze",
+          "role": "Confusing traversal through dense narrow corridors, frequent turns, repetitive junctions, and misleading loops or near-identical branches.",
+          "where": "Between the entrance and distant exit.",
+          "size": "Medium-sized; roughly a couple of minutes of traversal."
         },
         {
-          "name": "Exit",
-          "role": "Single clearly terminating exit and final threshold.",
-          "where": "far side of the maze on the opposing outer area",
+          "name": "Exit zone",
+          "role": "The sole escape point, reachable by one valid but non-obvious route.",
+          "where": "A distant outer edge of the maze.",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Entrance",
-          "to": "Exit",
+          "from": "Entrance zone",
+          "to": "Exit zone",
           "kind": "corridor"
         }
       ],
-      "terrain": "Ground level and uniform, with dark worn floor material; sparse wall variation supports the oppressive horror mood.",
+      "terrain": "Continuous dark ground; sparse weak ambient fixtures only where needed to silhouette intersections.",
       "props": [
         {
-          "name": "Tall opaque maze walls",
-          "count": -1,
-          "where": "fully containing the corridor route"
+          "name": "Player arrival point",
+          "count": 1,
+          "where": "At the maze entrance, against the procedurally authored corridor network."
         },
         {
-          "name": "Player flashlight illumination",
+          "name": "Escape completion marker",
+          "count": 1,
+          "where": "Immediately beyond the sole exit, against the procedurally authored corridor network."
+        },
+        {
+          "name": "Weak ambient fixtures",
           "count": -1,
-          "where": "around the player"
+          "where": "Only where needed to silhouette intersections."
         }
       ],
-      "boundary": "Tall opaque maze walls fully enclose the play space.",
+      "boundary": "Opaque tall walls enclose all sides, with a ceiling or darkness-treated upper boundary so the maze feels sealed in.",
       "scale_band": "medium",
-      "theme": "dark oppressive horror, disorienting and flashlight-led"
+      "theme": "Dark enclosed horror, oppressive and dizzying, with flashlight-led visibility."
     },
     "render": {
       "first": "authored_plan",
       "then": "topdown",
       "authoritative": "authored_plan",
-      "why": "a sealed or unreachable exit would make the game unplayable.",
+      "why": "Maze connectivity and the reachable exit are gameplay-critical, so the maze must be carved and validated before dressing.",
       "set_piece": false
     },
     "route": [
       "P6"
     ],
-    "notes": [],
+    "notes": [
+      "No canonical config options apply.",
+      "No canonical placed option is required; the player arrival point and escape completion marker are retained as non-canonical layout components.",
+      "The flashlight is player equipment, not layout geometry."
+    ],
     "scene_prompt": "Create a dark horror maze map with a couple of minutes of confusing, disorienting corridors leading to a single exit. The maze is enclosed by tall walls and kept mostly unlit, with the player’s bright flashlight as the main visible illumination; use a tense, oppressive atmosphere throughout."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "layout",

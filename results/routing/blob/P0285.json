@@ -19,131 +19,164 @@
     }
   ],
   "scene_prompt": "Create a 3D airship-combat battle map set high above the clouds in a steampunk feudal world at war between two kingdoms. Build a compact open-sky engagement space, with opposing airship forces beginning roughly 1–2 minutes of flight apart. The main combat volume is open vertical airspace, broken by a small number of floating islands, dense cloud banks, floating rock formations, sky-city structures, and larger islands that serve as cover, chokepoints, or operation objectives. Place repair bases for each team at separated sides of the map. Arrange objective locations around defensible structures or islands, with clear aerial approach routes and room for large battle airships, small craft, and multi-ship formations to maneuver above, below, and between the terrain.",
-  "blob": "### Genre\nThe dominant genre is Shooter, specifically a PvE aerial-combat battlefield. The battle’s opposing forces, combat formations, and tactical use of cover make Shooter the owner of the layout; the strategic planning and progression systems do not add layout geometry.\n\n### Shape and preset\nUse `open-battlefield`, an open three-dimensional sky engagement rather than a lane map. The closest preset is PvE Shooter, but its `lane-network` shape is overridden because this battle is fought through freely maneuverable vertical airspace, not along ground corridors.\n\n### Config requirements\nUse visible `cover-los`: dense cloud banks, floating rock spires, island cliffs, and sky-city fragments interrupt aerial firing lines. Use visible `choke-bottleneck`: narrow passes between large floating islands and built structures create optional contested approach corridors without sealing the sky. Use `spawn-teambase`, with two separated repair-base compounds at opposing map sides; their hangar platforms and mooring structures are visible, while the actual team spawn markers are invisible layout elements. Use visible `island-cluster`: a small number of separate floating islands hangs in open air, with broad flight space between them. No interiors, ambient population, water, pickups, or added ground settlement are requested.\n\n### Layout components\nSet one compact battle volume high above a deep cloud layer, large enough that the opposing forces begin approximately 1–2 minutes of flight apart. Place the friendly repair base on one outer side and the opposing repair base on the far side, each as a protected airborne dock or fortified floating-island installation with clear departure airspace. Between them, arrange a sparse central combat field: several floating islands of varied size, a few rock formations, multiple dense cloud banks, and scattered steampunk sky-city structures. Keep wide navigable corridors above, below, and around every obstacle for large battle airships, small craft, and multi-ship formations. Place objective sites on or beside defensible large islands and structural platforms, with at least two readable aerial approach directions and open flanking space. Make the outer boundary an implied cloud-and-sky limit rather than a hard visible wall. Compose the isometric view with the nearer repair base in a lower corner, the central island-and-cloud cover field across the middle, and the distant enemy side visible beyond it.\n\n### Render order\nUse `isometric`: render the dramatic vertical steampunk battlefield first, then derive the top-down plan. Precise corridor validity is not required; airships retain broad open routes around the sparse terrain.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by capital-airship maneuver room and the stated 1–2 minute initial separation despite the focused single engagement. Theme is feudal steampunk sky war: brass, riveted airship docks, suspended masonry, dark clouds, and floating rock. Use `CHECK` because combat and movement occupy an open vertical air volume around separate airborne landmasses; keep obstacle density sparse enough that this volume does not self-occlude. No other pipeline modifier is forced.",
+  "blob": "### Genre\nThe dominant genre is `Shooter`, specifically a PvE airship battle; the ship-building economy is not represented in the combat-map layout.\n\n### Shape and preset\nUse `volume-open-air`, taken from outside Shooter’s usual shape set: the playable battlefield is a bounded vertical sky volume, with islands as maneuver terrain rather than a ground map. Start from the PvE Shooter preset, retaining its PvE encounter logic but replacing its lane network and enterable buildings with open aerial approaches; the preset remains recognizable through enemy origins and tactical chokepoints.\n\n### Config requirements\nUse `cover-los` as dense cloud banks, floating rocks, islands, and sky-city fragments that break long aerial firing lines. Use `choke-bottleneck` at narrow gaps between major islands or structures where formations must commit to an approach. Use `island-cluster` for the small number of separated floating islands and rock masses. Use `spawn-teambase` as visible, separated repair bases on opposite outer sides of the combat volume. Use `control-zone` as conspicuous defensible objective platforms, island keeps, or suspended structures.\n\n### Layout requirements\nPlace `spawn-teambase` markers at one repair base for each force, at opposite map edges and screened from direct opening fire by clouds or terrain. Place `spawner-npc` origins on the enemy-side approach or behind objective terrain, outside direct sightlines from the player repair base; use one origin per active enemy reinforcement direction. Place `control-zone` volumes at each staged objective structure, centered on defensible islands or sky-city platforms with multiple aerial approaches.\n\n### Layout components\nBuild a compact aerial engagement volume large enough to keep opposing forces roughly 1–2 minutes of flight apart. Put the player repair base on one perimeter side and the opposing repair base on the far side. Between them, distribute a small number of floating islands, dense cloud banks, floating rock formations, and fragmented steampunk sky-city structures at varied heights. Leave broad navigable corridors above, below, and between every obstacle for capital airships, small craft, and multi-ship formations. Cluster objective structures around the central and flanking islands, with cloud cover and rock gaps creating alternate attack routes. The boundary is an open-sky operational limit implied by distant cloud walls and the map’s outer atmospheric edge. Compose the frame around a deep central battle corridor, with the two bases readable at opposing ends and layered terrain emphasizing altitude.\n\n### Render order\nUse `topdown` first and make it authoritative, because valid aerial approach corridors, base separation, and objective access must remain playable rather than being left to a look-first isometric render.\n\n### Scale, theme, and pipeline cost\nUse a medium scale: compact for one focused engagement, but deep enough for the stated 1–2 minute opening flight and large airships. Theme: war-torn steampunk feudal sky, brass-and-iron airship infrastructure, cloud seas, floating ruins, and fortress-islands. Apply `CHECK` because combat takes place through a volumetric open-air space; keep the island masses sufficiently separated in plan that the air volume does not self-occlude.",
   "spec": {
     "genre": "Shooter",
     "secondary": [],
-    "shape": "open-battlefield",
+    "shape": "volume-open-air",
     "preset": "PvE Shooter",
     "axes": {},
     "options": [
       {
         "id": "cover-los",
-        "text": "Dense cloud banks, floating rock spires, island cliffs, and sky-city fragments interrupt aerial firing lines.",
+        "text": "Dense cloud banks, floating rocks, islands, and fragmented steampunk sky-city structures that break long aerial firing lines.",
         "visible": true,
         "count": -1
       },
       {
         "id": "choke-bottleneck",
-        "text": "Narrow passes between large floating islands and built structures create optional contested approach corridors without sealing the sky.",
+        "text": "Narrow gaps between major islands or structures where airship formations must commit to an approach.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "island-cluster",
+        "text": "A small number of separated floating islands and rock masses at varied heights.",
         "visible": true,
         "count": -1
       },
       {
         "id": "spawn-teambase",
-        "text": "Two separated repair-base compounds sit at opposing map sides; their hangar platforms and mooring structures are visible, while the actual team spawn markers are invisible layout elements.",
+        "text": "Visible, separated repair bases for the opposing forces on opposite outer sides of the combat volume.",
         "visible": true,
         "count": 2
       },
       {
-        "id": "island-cluster",
-        "text": "A small number of separate floating islands hangs in open air, with broad flight space between them.",
+        "id": "control-zone",
+        "text": "Conspicuous defensible objective platforms, island keeps, or suspended structures with multiple aerial approaches.",
         "visible": true,
+        "count": -1
+      },
+      {
+        "id": "spawner-npc",
+        "text": "Enemy reinforcement origins on enemy-side approaches or behind objective terrain, outside direct sightlines from the player repair base.",
+        "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "spawn-teambase",
+        "text": "One repair-base marker for each force, at opposite map edges and screened from direct opening fire by clouds or terrain.",
+        "count": 2,
+        "where": "At opposite map edges, screened from direct opening fire by clouds or terrain."
+      },
+      {
+        "id": "control-zone",
+        "text": "Control-zone volumes at each staged objective structure.",
+        "count": -1,
+        "where": "Centered on defensible islands or sky-city platforms with multiple aerial approaches."
+      },
+      {
+        "id": "spawner-npc",
+        "text": "Enemy reinforcement origins, one per active enemy reinforcement direction.",
+        "count": -1,
+        "where": "On the enemy-side approach or behind objective terrain, outside direct sightlines from the player repair base."
+      }
+    ],
     "layout": {
-      "composition": "The nearer friendly repair base occupies a lower corner, the central island-and-cloud cover field spans the middle, and the distant opposing repair base is visible beyond it.",
+      "composition": "A deep central battle corridor fills the frame, with the two repair bases readable at opposing ends and layered floating terrain emphasizing altitude.",
       "zones": [
         {
-          "name": "Friendly repair base",
-          "role": "Protected airborne dock or fortified floating-island installation for the friendly force, with clear departure airspace.",
-          "where": "One outer side in a lower corner",
-          "size": ""
-        },
-        {
-          "name": "Central combat field",
-          "role": "Sparse aerial battle space for large battle airships, small craft, and multi-ship formations to maneuver around cover and objectives.",
-          "where": "Centre between the opposing bases",
-          "size": "compact"
-        },
-        {
-          "name": "Objective sites",
-          "role": "Defensible objective locations on or beside large islands and structural platforms, with at least two readable aerial approach directions and open flanking space.",
-          "where": "Across the central combat field",
+          "name": "Player repair base",
+          "role": "Player-side repair base.",
+          "where": "One perimeter side of the combat volume.",
           "size": ""
         },
         {
           "name": "Opposing repair base",
-          "role": "Protected airborne dock or fortified floating-island installation for the opposing force, with clear departure airspace.",
-          "where": "Far outer side beyond the central field",
+          "role": "Opposing-force repair base.",
+          "where": "Far perimeter side of the combat volume.",
+          "size": ""
+        },
+        {
+          "name": "Central battle corridor",
+          "role": "Open aerial engagement and maneuver space between the opposing bases.",
+          "where": "Centre, between the two bases.",
+          "size": "Deep enough to keep opposing forces roughly 1–2 minutes of flight apart."
+        },
+        {
+          "name": "Objective structures",
+          "role": "Defensible staged objectives and control locations.",
+          "where": "Around the central and flanking islands.",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Friendly repair base",
-          "to": "Central combat field",
+          "from": "Player repair base",
+          "to": "Objective structures",
           "kind": "open ground"
         },
         {
-          "from": "Central combat field",
+          "from": "Objective structures",
           "to": "Opposing repair base",
           "kind": "open ground"
         }
       ],
-      "terrain": "Open three-dimensional sky engagement high above a deep cloud layer, with sparse floating islands, floating rock formations, dense cloud banks, and broad navigable space above, below, and around obstacles.",
+      "terrain": "Open vertical airspace above cloud seas, broken by floating islands, dense cloud banks, floating rock formations, and fragmented steampunk sky-city structures at varied heights. Broad navigable corridors remain above, below, and between every obstacle.",
       "props": [
         {
-          "name": "Floating islands of varied size",
+          "name": "Floating islands and rock masses",
           "count": -1,
-          "where": "Central combat field"
-        },
-        {
-          "name": "Rock formations",
-          "count": -1,
-          "where": "Central combat field"
+          "where": "Distributed between the opposing bases at varied heights."
         },
         {
           "name": "Dense cloud banks",
           "count": -1,
-          "where": "Central combat field and deep layer below"
+          "where": "Between terrain and around approach routes, screening bases and creating alternate attack routes."
         },
         {
-          "name": "Steampunk sky-city structures",
+          "name": "Fragmented steampunk sky-city structures",
           "count": -1,
-          "where": "Scattered through the central combat field"
+          "where": "Distributed between the opposing bases and around objective terrain."
         },
         {
-          "name": "Hangar platforms and mooring structures",
+          "name": "Objective structures",
           "count": -1,
-          "where": "At both repair bases"
+          "where": "Clustered around central and flanking islands."
         }
       ],
-      "boundary": "An implied cloud-and-sky limit rather than a hard visible wall.",
-      "scale_band": "large",
-      "theme": "Feudal steampunk sky war: brass, riveted airship docks, suspended masonry, dark clouds, and floating rock."
+      "boundary": "An open-sky operational limit implied by distant cloud walls and the map's outer atmospheric edge.",
+      "scale_band": "medium",
+      "theme": "War-torn steampunk feudal sky; brass-and-iron airship infrastructure, cloud seas, floating ruins, and fortress-islands."
     },
     "render": {
-      "first": "isometric",
-      "then": "topdown",
-      "authoritative": "isometric",
-      "why": "Precise corridor validity is not required because airships retain broad open routes around sparse terrain.",
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "Valid aerial approach corridors, base separation, and objective access must remain playable.",
       "set_piece": false
     },
     "route": [
       "CHECK"
     ],
-    "notes": [],
+    "notes": [
+      "The shape volume-open-air is taken from outside Shooter's usual shape set.",
+      "No exact total was stated for floating islands, chokepoints, objectives, or active enemy reinforcement directions; their counts are -1.",
+      "The air volume must remain sufficiently separated in plan so it does not self-occlude."
+    ],
     "scene_prompt": "Create a 3D airship-combat battle map set high above the clouds in a steampunk feudal world at war between two kingdoms. Build a compact open-sky engagement space, with opposing airship forces beginning roughly 1–2 minutes of flight apart. The main combat volume is open vertical airspace, broken by a small number of floating islands, dense cloud banks, floating rock formations, sky-city structures, and larger islands that serve as cover, chokepoints, or operation objectives. Place repair bases for each team at separated sides of the map. Arrange objective locations around defensible structures or islands, with clear aerial approach routes and room for large battle airships, small craft, and multi-ship formations to maneuver above, below, and between the terrain."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
-  "mapper_notes": []
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P0', 'CHECK'] gives isometric"
+  ]
 }

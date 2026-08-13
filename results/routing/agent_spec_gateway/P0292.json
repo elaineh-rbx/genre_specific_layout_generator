@@ -1,0 +1,173 @@
+{
+  "scene": "P0292",
+  "source": "Let's create a single-player version of \"Laser Grid Survival\" where the user plays against AI bots.\n\nGame Setup:\nWhen the game starts, automatically spawn 30 AI-controlled humanoid bots into the lobby alongside the main player. Give the bots basic pathfinding scripts so they run forward toward the objective during the safe phases, but make them occasionally make mistakes and fail so the player has competition.\n\nGame 1: Motion Sensor Rush\nBuild a long metallic hallway with a pulsing laser core computer at the end. Every few seconds, a glowing grid line sweeps the hallway.\n- When the line is BLUE, the player and the AI bots sprint forward.\n- When the line turns RED, an alarm blares. The player and the AI bots must freeze. Write a script for the AI bots so that 15% of them randomly fail to stop moving in time. Any player or bot that moves during the RED phase gets zapped by a laser and eliminated.\n\nGame 2: Gravity Fractures\nA high-tech chasm crossed by pairs of neon steps (one solid, one a fake holographic illusion). Write a script for the remaining AI bots so they take turns guessing which step to step on. If a bot guesses wrong, it falls and is eliminated, clearing the path or showing the player which way is safe.\n\nVisual Style:\nA gritty, sci-fi cyber-bunker. The player and bots wear simple metallic suits. Hostile NPCs are hovering security drones.",
+  "answers": [
+    {
+      "field": "scale",
+      "ask": "How long should the hallway be - a sprint of a few seconds, or a run that takes most of a minute?",
+      "answer": "Make it a short hallway run that takes roughly 20–30 seconds when the player handles the blue/red phases correctly; keep the first game compact and replayable."
+    },
+    {
+      "field": "goal",
+      "ask": "What ends the experience - surviving both games, or being the last one standing against the bots?",
+      "answer": "The experience ends when the player survives both games and reaches the end of Gravity Fractures; the bots provide competition and can be eliminated, but last-one-standing is not required."
+    }
+  ],
+  "scene_prompt": "Create a compact gritty sci-fi cyber-bunker map for a single player competing alongside AI humanoid bots in simple metallic suits. Begin in a lobby that feeds into Game 1: a long metallic hallway sized for a roughly 20–30 second run, with a pulsing laser-core computer at the far end and glowing grid lines spanning the corridor. Beyond it, build Game 2: a high-tech chasm crossed in successive pairs of neon steps, each pair arranged as two side-by-side routes with one appearing as a holographic illusion over the drop. Place hovering security drones around the bunker spaces as hostile surveillance elements. The route ends at the far side of the chasm.",
+  "blob": "## Genre\nParty & Casual is dominant because this is a compact sequence of elimination minigames with a lobby and competitors. Obby & Platformer is secondary because Gravity Fractures is a player-paced jumping and route-guessing challenge.\n\n## Shape and preset\nUse `rooms-sequence`, outside Party & Casual’s usual shapes: one continuous bunker progresses from lobby to laser hallway to chasm crossing in a fixed order. Preset is none; Minigame assumes isolated rotating stages and lobby transport, while this prompt explicitly joins both games into one terminating route.\n\n## Config requirements\nUse `social-hub` for a lobby sized for the player plus 30 AI bots. Use `path-track` for the ordered neon-step crossing, `obstacle-guess` for successive solid-versus-holographic pairs, and `hazard-kill` for the sweeping laser grid and bottomless chasm. The pulsing laser-core computer, glowing grid lines, metallic-suited competitors, and hovering security drones are explicit scene geometry.\n\n## Layout requirements\nPlace 31 `spawn-protected` starts in the lobby—one player start and 30 bot starts—distributed without blocking its exit. Place one `trigger-scoring` completion volume on the safe platform at the far side of Gravity Fractures. Each neon pair must expose two candidate step positions in sequence, but the number of pairs is unspecified. Do not add checkpoints: elimination is intentional, and success requires surviving both games.\n\n## Layout components\nAn enclosed metallic lobby opens directly into a straight cyber-bunker hallway whose length supports a 20–30 second correctly timed run. Glowing grid lines span the corridor, and a pulsing laser-core computer anchors its far end. Beyond it, a high-tech chasm contains a sequential chain of side-by-side neon step pairs, with one member of each pair visually holographic over the drop. A safe terminal platform closes the route. Hovering security drones occupy visible surveillance positions around the lobby, hallway, and chasm. Industrial walls and the chasm void form the boundary; compose the scene as a legible forward sequence.\n\n## Render order\nRender `topdown` first and treat it as authoritative, because every neon-step choice and the continuous start-to-finish route must be valid to play.\n\n## Scale, theme, and pipeline cost\nScale is medium, driven by capacity for 31 competitors and a short two-game run. The theme is gritty neon cyber-bunker. Use `P6` because the ordered chasm crossing must be valid by construction.",
+  "agent_artifact": "# Scene prompt\nCreate a compact gritty sci-fi cyber-bunker map for a single player competing alongside AI humanoid bots in simple metallic suits. Begin in a lobby that feeds into Game 1: a long metallic hallway sized for a roughly 20–30 second run, with a pulsing laser-core computer at the far end and glowing grid lines spanning the corridor. Beyond it, build Game 2: a high-tech chasm crossed in successive pairs of neon steps, each pair arranged as two side-by-side routes with one appearing as a holographic illusion over the drop. Place hovering security drones around the bunker spaces as hostile surveillance elements. The route ends at the far side of the chasm.\n\n# Agent decision\n\n## Genre\nParty & Casual is dominant because this is a compact sequence of elimination minigames with a lobby and competitors. Obby & Platformer is secondary because Gravity Fractures is a player-paced jumping and route-guessing challenge.\n\n## Shape and preset\nUse `rooms-sequence`, outside Party & Casual’s usual shapes: one continuous bunker progresses from lobby to laser hallway to chasm crossing in a fixed order. Preset is none; Minigame assumes isolated rotating stages and lobby transport, while this prompt explicitly joins both games into one terminating route.\n\n## Config requirements\nUse `social-hub` for a lobby sized for the player plus 30 AI bots. Use `path-track` for the ordered neon-step crossing, `obstacle-guess` for successive solid-versus-holographic pairs, and `hazard-kill` for the sweeping laser grid and bottomless chasm. The pulsing laser-core computer, glowing grid lines, metallic-suited competitors, and hovering security drones are explicit scene geometry.\n\n## Layout requirements\nPlace 31 `spawn-protected` starts in the lobby—one player start and 30 bot starts—distributed without blocking its exit. Place one `trigger-scoring` completion volume on the safe platform at the far side of Gravity Fractures. Each neon pair must expose two candidate step positions in sequence, but the number of pairs is unspecified. Do not add checkpoints: elimination is intentional, and success requires surviving both games.\n\n## Layout components\nAn enclosed metallic lobby opens directly into a straight cyber-bunker hallway whose length supports a 20–30 second correctly timed run. Glowing grid lines span the corridor, and a pulsing laser-core computer anchors its far end. Beyond it, a high-tech chasm contains a sequential chain of side-by-side neon step pairs, with one member of each pair visually holographic over the drop. A safe terminal platform closes the route. Hovering security drones occupy visible surveillance positions around the lobby, hallway, and chasm. Industrial walls and the chasm void form the boundary; compose the scene as a legible forward sequence.\n\n## Render order\nRender `topdown` first and treat it as authoritative, because every neon-step choice and the continuous start-to-finish route must be valid to play.\n\n## Scale, theme, and pipeline cost\nScale is medium, driven by capacity for 31 competitors and a short two-game run. The theme is gritty neon cyber-bunker. Use `P6` because the ordered chasm crossing must be valid by construction.\n",
+  "agent_notes": "## Genre\nParty & Casual is dominant because this is a compact sequence of elimination minigames with a lobby and competitors. Obby & Platformer is secondary because Gravity Fractures is a player-paced jumping and route-guessing challenge.\n\n## Shape and preset\nUse `rooms-sequence`, outside Party & Casual’s usual shapes: one continuous bunker progresses from lobby to laser hallway to chasm crossing in a fixed order. Preset is none; Minigame assumes isolated rotating stages and lobby transport, while this prompt explicitly joins both games into one terminating route.\n\n## Config requirements\nUse `social-hub` for a lobby sized for the player plus 30 AI bots. Use `path-track` for the ordered neon-step crossing, `obstacle-guess` for successive solid-versus-holographic pairs, and `hazard-kill` for the sweeping laser grid and bottomless chasm. The pulsing laser-core computer, glowing grid lines, metallic-suited competitors, and hovering security drones are explicit scene geometry.\n\n## Layout requirements\nPlace 31 `spawn-protected` starts in the lobby—one player start and 30 bot starts—distributed without blocking its exit. Place one `trigger-scoring` completion volume on the safe platform at the far side of Gravity Fractures. Each neon pair must expose two candidate step positions in sequence, but the number of pairs is unspecified. Do not add checkpoints: elimination is intentional, and success requires surviving both games.\n\n## Layout components\nAn enclosed metallic lobby opens directly into a straight cyber-bunker hallway whose length supports a 20–30 second correctly timed run. Glowing grid lines span the corridor, and a pulsing laser-core computer anchors its far end. Beyond it, a high-tech chasm contains a sequential chain of side-by-side neon step pairs, with one member of each pair visually holographic over the drop. A safe terminal platform closes the route. Hovering security drones occupy visible surveillance positions around the lobby, hallway, and chasm. Industrial walls and the chasm void form the boundary; compose the scene as a legible forward sequence.\n\n## Render order\nRender `topdown` first and treat it as authoritative, because every neon-step choice and the continuous start-to-finish route must be valid to play.\n\n## Scale, theme, and pipeline cost\nScale is medium, driven by capacity for 31 competitors and a short two-game run. The theme is gritty neon cyber-bunker. Use `P6` because the ordered chasm crossing must be valid by construction.",
+  "secondary": [
+    "Obby & Platformer"
+  ],
+  "spec": {
+    "genre": "Party & Casual",
+    "secondary": [
+      "Obby & Platformer"
+    ],
+    "shape": "rooms-sequence",
+    "preset": "none",
+    "axes": {},
+    "options": [
+      {
+        "id": "social-hub",
+        "text": "An enclosed metallic lobby sized for one player and 30 AI bots.",
+        "visible": true,
+        "count": 31
+      },
+      {
+        "id": "spawn-protected",
+        "text": "One player start and 30 bot starts in the lobby.",
+        "visible": false,
+        "count": 31
+      },
+      {
+        "id": "trigger-scoring",
+        "text": "A completion volume on the safe terminal platform at the far side of Gravity Fractures.",
+        "visible": false,
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "spawn-protected",
+        "text": "One player start and 30 bot starts in the lobby.",
+        "count": 31,
+        "where": "Distributed throughout the lobby without blocking its exit."
+      },
+      {
+        "id": "trigger-scoring",
+        "text": "A completion volume on the safe terminal platform at the far side of Gravity Fractures.",
+        "count": 1,
+        "where": "On the safe terminal platform closing the chasm crossing."
+      }
+    ],
+    "layout": {
+      "composition": "A legible forward sequence: the enclosed lobby leads directly into the straight hallway, then the chasm crossing, with the safe terminal platform at the far end.",
+      "zones": [
+        {
+          "name": "Metallic lobby",
+          "role": "Starting lobby for the player and 30 AI bots.",
+          "where": "At the start of the bunker route.",
+          "size": "Sized for 31 competitors."
+        },
+        {
+          "name": "Laser hallway",
+          "role": "Game 1, a correctly timed run through the sweeping laser grid.",
+          "where": "Directly beyond the lobby.",
+          "size": "Long enough for a 20–30 second run."
+        },
+        {
+          "name": "Gravity Fractures chasm",
+          "role": "Game 2, a sequential route-guessing crossing on neon step pairs.",
+          "where": "Beyond the laser-core computer at the far end of the hallway.",
+          "size": ""
+        },
+        {
+          "name": "Safe terminal platform",
+          "role": "The completion point that closes the route.",
+          "where": "At the far side of the chasm.",
+          "size": ""
+        }
+      ],
+      "paths": [
+        {
+          "from": "Metallic lobby",
+          "to": "Laser hallway",
+          "kind": "corridor"
+        },
+        {
+          "from": "Laser hallway",
+          "to": "Gravity Fractures chasm",
+          "kind": "track"
+        },
+        {
+          "from": "Gravity Fractures chasm",
+          "to": "Safe terminal platform",
+          "kind": "track"
+        }
+      ],
+      "terrain": "Metallic bunker flooring and a high-tech bottomless chasm void.",
+      "props": [
+        {
+          "name": "Pulsing laser-core computer",
+          "count": 1,
+          "where": "At the far end of the laser hallway."
+        },
+        {
+          "name": "Glowing grid lines",
+          "count": -1,
+          "where": "Spanning the laser hallway corridor."
+        },
+        {
+          "name": "Metallic-suited competitors",
+          "count": 31,
+          "where": "In the lobby and progressing through the bunker route."
+        },
+        {
+          "name": "Hovering security drones",
+          "count": -1,
+          "where": "In visible surveillance positions around the lobby, hallway, and chasm."
+        },
+        {
+          "name": "Neon step pairs",
+          "count": -1,
+          "where": "Sequentially across the high-tech chasm."
+        }
+      ],
+      "boundary": "Industrial walls enclose the bunker spaces, and the chasm void forms the boundary beneath the crossing.",
+      "scale_band": "medium",
+      "theme": "Gritty neon cyber-bunker"
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "Every neon-step choice and the continuous start-to-finish route must be valid to play.",
+      "set_piece": false
+    },
+    "route": [
+      "P6"
+    ],
+    "notes": [
+      "`rooms-sequence` is used from outside Party & Casual’s usual shape set.",
+      "The number of neon step pairs is unspecified.",
+      "dropped option 'path-track': not in Party & Casual",
+      "dropped option 'obstacle-guess': not in Party & Casual",
+      "dropped option 'hazard-kill': not in Party & Casual"
+    ],
+    "scene_prompt": "Create a compact gritty sci-fi cyber-bunker map for a single player competing alongside AI humanoid bots in simple metallic suits. Begin in a lobby that feeds into Game 1: a long metallic hallway sized for a roughly 20–30 second run, with a pulsing laser-core computer at the far end and glowing grid lines spanning the corridor. Beyond it, build Game 2: a high-tech chasm crossed in successive pairs of neon steps, each pair arranged as two side-by-side routes with one appearing as a holographic illusion over the drop. Place hovering security drones around the bunker spaces as hostile surveillance elements. The route ends at the far side of the chasm."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "1986e1975066",
+  "served_by": "subagent/genre-choice -> gateway/production/gpt-5.6-terra",
+  "schema_degraded": false,
+  "reused_uprez": true,
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P0'] gives isometric"
+  ]
+}

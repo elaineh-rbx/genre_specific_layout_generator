@@ -14,83 +14,115 @@
     }
   ],
   "scene_prompt": "Create a 3D outer-space flight course viewed from the side, with gameplay confined to a single vertical plane. A small flying bird character passes through a forward sequence of space-themed obstacles against an open cosmic backdrop.",
-  "blob": "### Genre\nThe dominant genre is Infinite Runner: the Flappy Bird reference establishes automatic forward travel and distance-based progression. The course is a side-view continuous flight run rather than a discrete platform course.\n\n### Shape and preset\nUse `lane-free`, interpreted here as continuous steering within one narrow vertical plane rather than left-right steering across a broad lane. The closest preset is Free Runner, but the preset is none because its jump-obstacle bundle does not describe this vertical flight course.\n\n### Config requirements\nUse `chunk-modular` as visible geometry: repeating forward course segments must join cleanly along the horizontal flight direction, while each segment presents the next space obstacle arrangement in the same single plane. No invisible layout options are requested; do not render pickups, cleanup volumes, or score markers.\n\n### Layout components\nBuild one long, side-on flight corridor with the bird entering from the left and progressing right through a forward sequence of space-themed obstacle gaps. Keep all traversable movement and obstacle openings aligned to a single vertical plane; give the 3D treatment only to depth dressing, model volume, lighting, and the camera presentation, not additional navigable lanes. The primary zone is the continuous obstacle field, occupying most of the frame. Place a small starting clearance at the far left before the first obstacle, then continue the repeated obstacle rhythm off the right edge. Use an open cosmic backdrop of stars, distant nebulae, and sparse non-interactive celestial silhouettes behind the course; it is not an enclosed tunnel. Keep foreground and background decoration visually separate from the flight plane so every gap remains readable. Compose as a clean side elevation with strong left-to-right flow, the active flight plane centered, and upcoming obstacle gaps clearly silhouetted against space.\n\n### Render order\nUse `topdown`: the continuous obstacle sequence needs its passable vertical gaps and segment joins checked as a coherent course before the side-view 3D dressing is derived.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by a repeatable forward course rather than a single static room. Theme: stylized outer-space arcade flight, luminous cosmic backdrop, compact readable obstacles. Apply `P6` because modular obstacle spacing and joins must remain valid by construction for uninterrupted forward flight. No other pipeline modifier is forced; the layered cosmic scenery is visual dressing, not stacked play surfaces.",
+  "blob": "### Genre\nThe dominant genre is `Infinite Runner`: the bird advances automatically and scores by distance while threading an endless obstacle sequence. There is no secondary genre.\n\n### Shape and preset\nUse `lane-free`, interpreted here as one continuous forward flight corridor with free vertical movement only, constrained to a single side-view plane rather than allowing left-right steering. Match the Free Runner preset: its modular forward path and reactive obstacle avoidance fit Flappy Bird, while the author’s single-plane clarification overrides ordinary corridor width.\n\n### Config requirements\nUse `chunk-modular` for repeatable forward course segments whose entry and exit pivots align precisely along the travel axis. Use `hazard-kill` for the solid space-themed obstacles that end a run on collision. Use `obstacle-jump` as vertically offset obstacle pairs and apertures that require controlled flapping through a clear gap. Do not add pickups, lanes, terrain, or side-steering geometry.\n\n### Layout requirements\nPlace one `trigger-despawn` cleanup volume continuously a fixed distance behind the side-view camera, clearing passed course chunks after they leave the active play window. No collectibles, checkpoints, or other placed gameplay objects are required.\n\n### Layout components\nBuild a single, endless-feeling vertical flight plane extending left-to-right in the direction of travel. The active zone is a narrow invisible 2D corridor embedded in a 3D outer-space scene; the bird rises and falls within it but cannot move toward or away from the camera. Assemble the route from sequential aligned chunks. Each chunk contains a space-themed upper and lower obstacle arrangement with one vertically positioned pass-through gap, and successive gaps vary in height while preserving a clear forward route.\n\nThere is no walkable terrain, road, or enclosed boundary. Surround the plane with a deep cosmic backdrop of stars, distant nebulae, planets, and sparse decorative depth layers that remain outside gameplay collision. Frame the composition strictly from the side: the forward route reads horizontally, obstacle openings read vertically, and the 3D setting supplies parallax and scale without obscuring the flight plane.\n\n### Render order\nUse `topdown` first, authoritative for validating the continuous chunk chain and collision-free forward route before the isometric/side-view presentation is dressed. A broken obstacle sequence would make the runner unplayable.\n\n### Scale, theme, and pipeline cost\nUse a medium scale, driven by a reusable active run window rather than a finite map. Theme: stylized 3D cosmic arcade flight, with luminous space obstacles against a dark starfield. Apply `P6` because chunk alignment and every obstacle gap must be valid by construction; no other modifier is forced by a single-plane flight corridor.",
   "spec": {
     "genre": "Infinite Runner",
     "secondary": [],
     "shape": "lane-free",
-    "preset": "none",
+    "preset": "Free Runner",
     "axes": {},
     "options": [
       {
         "id": "chunk-modular",
-        "text": "Repeating forward course segments join cleanly along the horizontal flight direction, each presenting the next space obstacle arrangement in the same single plane.",
+        "text": "Repeatable forward course segments whose entry and exit pivots align precisely along the travel axis.",
         "visible": true,
         "count": -1
+      },
+      {
+        "id": "hazard-kill",
+        "text": "Solid space-themed obstacles that end a run on collision.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "obstacle-jump",
+        "text": "Vertically offset obstacle pairs and apertures that require controlled flapping through a clear gap.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "trigger-despawn",
+        "text": "A cleanup volume clearing passed course chunks after they leave the active play window.",
+        "visible": false,
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "trigger-despawn",
+        "text": "A cleanup volume clearing passed course chunks after they leave the active play window.",
+        "count": 1,
+        "where": "Continuously a fixed distance behind the side-view camera."
       }
     ],
     "layout": {
-      "composition": "Clean side elevation with strong left-to-right flow: the bird enters from the far left, the active centered flight plane runs across the frame, and upcoming obstacle gaps are clearly silhouetted against open space toward the right edge.",
+      "composition": "Strict side view: the forward route reads horizontally from left to right, obstacle openings read vertically, and the 3D cosmic setting supplies parallax and scale without obscuring the flight plane.",
       "zones": [
         {
-          "name": "Starting clearance",
-          "role": "A small open lead-in before the first obstacle.",
-          "where": "far left",
-          "size": "small"
+          "name": "Active flight plane",
+          "role": "A narrow invisible 2D corridor where the bird rises and falls through the endless obstacle sequence without moving toward or away from the camera.",
+          "where": "Centre of the side-view composition, extending left to right in the direction of travel.",
+          "size": "Narrow"
         },
         {
-          "name": "Continuous obstacle field",
-          "role": "The repeated forward sequence of passable space-themed obstacle gaps for uninterrupted flight.",
-          "where": "centre through the right edge",
-          "size": "occupies most of the frame"
+          "name": "Cosmic backdrop",
+          "role": "Decorative outer-space setting outside gameplay collision.",
+          "where": "Surrounding the active flight plane.",
+          "size": ""
         }
       ],
-      "paths": [
-        {
-          "from": "Starting clearance",
-          "to": "Continuous obstacle field",
-          "kind": "corridor"
-        }
-      ],
-      "terrain": "Open cosmic backdrop of stars, distant nebulae, and sparse non-interactive celestial silhouettes behind the single vertical flight plane.",
+      "paths": [],
+      "terrain": "No walkable terrain or road; a single endless-feeling vertical flight plane assembled from sequential aligned chunks.",
       "props": [
         {
-          "name": "stars",
+          "name": "Space-themed upper and lower obstacle arrangements with vertically positioned pass-through gaps",
           "count": -1,
-          "where": "cosmic backdrop"
+          "where": "One arrangement in each sequential aligned chunk along the flight plane."
         },
         {
-          "name": "distant nebulae",
+          "name": "Stars",
           "count": -1,
-          "where": "background"
+          "where": "Deep cosmic backdrop outside gameplay collision."
         },
         {
-          "name": "sparse non-interactive celestial silhouettes",
+          "name": "Distant nebulae",
           "count": -1,
-          "where": "behind the course"
+          "where": "Deep cosmic backdrop outside gameplay collision."
+        },
+        {
+          "name": "Planets",
+          "count": -1,
+          "where": "Deep cosmic backdrop outside gameplay collision."
+        },
+        {
+          "name": "Sparse decorative depth layers",
+          "count": -1,
+          "where": "Outside the flight plane, supplying parallax and scale without obscuring gameplay."
         }
       ],
-      "boundary": "Open; it is not an enclosed tunnel.",
+      "boundary": "No enclosed boundary; the active plane is surrounded by an open cosmic backdrop.",
       "scale_band": "medium",
-      "theme": "stylized outer-space arcade flight, luminous cosmic backdrop, compact readable obstacles"
+      "theme": "Stylized 3D cosmic arcade flight, with luminous space obstacles against a dark starfield."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the continuous obstacle sequence needs passable vertical gaps and segment joins checked as a coherent course before side-view 3D dressing.",
+      "why": "A broken obstacle sequence would make the runner unplayable.",
       "set_piece": false
     },
     "route": [
       "P6"
     ],
-    "notes": [],
+    "notes": [
+      "The lane-free shape is interpreted as a single side-view flight plane with free vertical movement only; it has no left-right steering or ordinary corridor width."
+    ],
     "scene_prompt": "Create a 3D outer-space flight course viewed from the side, with gameplay confined to a single vertical plane. A small flying bird character passes through a forward sequence of space-themed obstacles against an open cosmic backdrop."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

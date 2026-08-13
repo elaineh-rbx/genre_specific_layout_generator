@@ -9,7 +9,7 @@
     }
   ],
   "scene_prompt": "Create a small 3D collectible exploration world in a bright, stylized look, with gems placed around the traversable environment.",
-  "blob": "### Genre\n`Adventure` is dominant: the player roams a small world to find gems. There is no secondary genre.\n\n### Shape and preset\nUse `world-open`, a single compact explorable exterior rather than a corridor or separate chapters. The closest preset is Scavenger Hunt, but it is only partially retained because the prompt asks for collectible gems without a quest board or hidden alcoves.\n\n### Config requirements\nUse `collectible-nodes` as layout-only pickup placements, distributed across the traversable world. The visible geometry is the bright gem props at those placements; the pickup markers themselves are invisible and must not enter the image render. No other options are implied.\n\n### Layout components\nBuild one small, contiguous outdoor exploration zone, with a broad central traversable area and short walkable branches around its perimeter so gems can be discovered across the environment rather than all from one point. Place gems in clearly separated positions throughout the terrain, including central and edge locations, while keeping every placement reachable on foot. Keep terrain as a simple continuous ground surface with no specified water, buildings, cliffs, or additional props. Use a soft natural map boundary at the outer edge rather than constructed walls. Compose the scene as a readable compact world, with the central area visible and the peripheral gem routes radiating outward.\n\n### Render order\nUse `isometric`: render the isometric scene first as authoritative, then derive the top-down view. The world is a simple connected exploration space whose layout does not require topology validation before visual dressing.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the explicitly small 3D world and a compact collectible loop. Theme is bright, stylized, simple collectible-explorer scenery. Use `P0`; the scene is one exterior ground surface with no forced interior transition, stacked surfaces, separate maps, volumetric traversal, or construction-valid route requirement.",
+  "blob": "### Genre\nThe dominant genre is Adventure: the player roams a compact world to find collectible gems. There is no secondary genre.\n\n### Shape and preset\nUse `world-open`, a single contiguous small exploration map whose gem locations can be approached in any order. This matches the Scavenger Hunt preset in broad intent, but retain only the prompt-supported collectible element rather than its extra discovery and tracking features.\n\n### Config requirements\nNo image-config options are required beyond the bright, stylized traversable world itself. Do not add trails, landmarks, terrain features, water, buildings, or NPCs that were not requested.\n\n### Layout requirements\nUse `collectible-nodes` for gems. Place an unspecified number across the accessible world, distributing them between the central open ground, its perimeter, and any visually distinct corners so exploration is rewarded without requiring a fixed route.\n\n### Layout components\nBuild one compact, continuous outdoor exploration zone sized for a small 3D world. Keep the ground broadly open and fully traversable, with a few gentle spatial variations and clear peripheral areas that make gem placement readable, but no named biome, structure, water feature, or path system. The boundary should be visually legible as the limit of the playable world rather than fading into unbounded terrain. Compose the scene as a clear overview: open central space, readable edges, and gems visibly dispersed across the available terrain.\n\n### Render order\nUse `isometric`: the bright stylized look leads, and no topology is so strict that a plan-first render is necessary.\n\n### Scale, theme, and pipeline cost\nScale band: small, driven by the author’s request for a small world. Theme: bright, stylized, simple collectible-explorer environment. Pipeline modifier: `P0`, because this is one contiguous grounded surface with no forced interior transition, stacked geometry, separate maps, volumetric traversal, or validity-by-construction requirement.",
   "spec": {
     "genre": "Adventure",
     "secondary": [],
@@ -19,51 +19,41 @@
     "options": [
       {
         "id": "collectible-nodes",
-        "text": "layout-only pickup placements, distributed across the traversable world; bright gem props sit at those placements",
+        "text": "Gems placed across the accessible world to reward exploration without requiring a fixed route.",
         "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "collectible-nodes",
+        "text": "Gems distributed between the central open ground, its perimeter, and visually distinct corners.",
+        "count": -1,
+        "where": "Across the central open ground, its perimeter, and any visually distinct corners."
+      }
+    ],
     "layout": {
-      "composition": "A readable compact world with the broad central traversable area visible, and peripheral gem routes radiating outward around it.",
+      "composition": "A clear overview with open central space, readable edges, and gems visibly dispersed across the available terrain.",
       "zones": [
         {
-          "name": "Central traversable area",
-          "role": "Broad central exploration ground with reachable gem locations.",
-          "where": "centre",
-          "size": "broad"
-        },
-        {
-          "name": "Perimeter branches",
-          "role": "Short walkable exploration branches for discovering gems at separated edge locations.",
-          "where": "around the outer perimeter",
-          "size": "short"
+          "name": "Compact continuous outdoor exploration zone",
+          "role": "Small 3D world for freely roaming and finding gems.",
+          "where": "Across the full map",
+          "size": "small"
         }
       ],
-      "paths": [
-        {
-          "from": "Central traversable area",
-          "to": "Perimeter branches",
-          "kind": "open ground"
-        }
-      ],
-      "terrain": "Simple continuous natural ground surface with no specified water, buildings, cliffs, or additional terrain features.",
-      "props": [
-        {
-          "name": "Bright gem props",
-          "count": -1,
-          "where": "Clearly separated central and edge positions throughout the reachable terrain"
-        }
-      ],
-      "boundary": "Soft natural map boundary at the outer edge; no constructed walls.",
+      "paths": [],
+      "terrain": "Broadly open, fully traversable ground with a few gentle spatial variations and clear peripheral areas.",
+      "props": [],
+      "boundary": "A visually legible limit of the playable world rather than terrain fading into an unbounded distance.",
       "scale_band": "small",
-      "theme": "Bright, stylized, simple collectible-explorer scenery"
+      "theme": "bright, stylized, simple collectible-explorer environment"
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "the simple connected exploration space does not require topology validation before visual dressing.",
+      "why": "No topology is so strict that a plan-first render is necessary.",
       "set_piece": false
     },
     "route": [
@@ -75,7 +65,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

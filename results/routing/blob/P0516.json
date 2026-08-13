@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a bright, stylized 3D obstacle-tower map with an original colorful look. Build a tall vertical tower of stacked platforming sections rising from a central base, with the goal area at the summit; keep the permanent structure non-volcanic, while allowing open lower space for a temporary rising-lava effect.",
-  "blob": "### Genre\nDominant genre: Obby & Platformer, indicated by the climb through a vertical obstacle tower to reach a summit goal.\n\n### Shape and preset\nUse `course-tower`, a tall stacked tower whose platforming sections rise continuously from a central base to the summit. This follows the Tower Obby preset: the tower form and summit payoff remain recognisable, while unsupported timing and climbing obstacles are omitted.\n\n### Config requirements\n`path-track` is visible geometry: an ordered upward chain of colorful platforms, landings, and transitions forming the only ascent route. `obstacle-jump` is visible geometry: each section uses distinct jump-based platforming arrangements. `winner-zone` is both visible and invisible: a clear summit goal platform is rendered, with its completion volume placed afterward. `hazard-kill` is invisible: reserve the tower’s open lower void for the temporary rising-lava hazard volume, but do not render permanent lava or volcanic scenery.\n\n### Layout components\nBuild one tall, narrow central tower on a broad base. The base is a safe arrival apron around the tower’s first ascent, with the lower central volume kept open beneath the platform chain so a rising hazard can occupy it later. Stack a sequence of colorful obstacle sections upward around the tower core, using offset platforms, wide safe landings, short bridges, suspended blocks, and rotating-looking visual motifs only where they do not obscure the required route. The route must visibly progress from lower, broader sections to tighter summit sections. Place the goal area on a prominent cap platform at the highest point, distinct in color and silhouette. Keep the exterior open to the sky; there is no permanent lava, volcano, or enclosing terrain. Frame the entire tower in a three-quarter isometric view, with the base and summit both readable.\n\n### Render order\nUse `topdown` first because the ordered vertical jump chain must remain physically connected and playable before the isometric presentation is dressed.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by the full-height multi-section tower. Theme: bright, stylized, original colorful obstacle architecture. Pipeline modifiers: `P6` because the critical platform route must be valid by construction, and `P2` because stacked tower sections vertically overhang and occlude lower surfaces.",
+  "blob": "### 1. Genre\nThe dominant genre is Obby & Platformer: the player climbs a vertical obstacle course and wins by reaching the summit.\n\n### 2. Shape and preset\nUse `course-tower`, a tall central tower whose successive platforming sections stack directly above the base and culminate at the top. This matches the Tower Obby preset; retain its tower ascent and summit payoff, but do not add timing or climbing obstacle types that the prompt did not request.\n\n### 3. Config requirements\nUse `path-track` as a continuous ordered chain of colorful platforms through each stacked section, with every critical jump kept physics-legal. Use `winner-zone` as a distinct, celebratory summit goal platform marking completion. Keep the lower tower volume open beneath the platforms so it can visually accommodate a temporary rising-lava event without making the permanent map volcanic.\n\n### 4. Layout requirements\nPlace one `winner-zone` at the absolute summit, beyond the final safe landing platform. No checkpoints, pickups, NPC emitters, or other placed gameplay objects are requested.\n\n### 5. Layout components\nBuild a compact central base at ground level leading immediately into a tall, vertically stacked tower. Divide the ascent into visually distinct colorful obstacle sections, each flowing upward into the next via a single readable sequence of suspended platforms, ledges, narrow crossings, and safe landing surfaces. Leave a broad open lower shaft beneath and around the early platforms for the temporary lava rise. The summit contains the final goal platform and clear completion space. Keep the tower’s outer boundary visually open rather than enclosing it in a permanent volcano or cave. Compose the scene as a tall, readable vertical landmark with the base visible below and the colorful summit clearly separated above.\n\n### 6. Render order\nUse `topdown`: render an authoritative top-down plan first so the stacked jump chain can be checked for continuous, playable progression before the isometric tower dressing is derived.\n\n### 7. Scale, theme, and pipeline cost\nScale is medium: a narrow-footprint but tall multi-section tower. Theme is bright, stylized, colorful, and original obstacle-platformer architecture. Pipeline modifiers are `P2` because platform sections stack above one another and occlude lower surfaces, and `P6` because the critical platform route must be valid and clearable by construction.",
   "spec": {
     "genre": "Obby & Platformer",
     "secondary": [],
@@ -24,106 +24,87 @@
     "options": [
       {
         "id": "path-track",
-        "text": "An ordered upward chain of colorful platforms, landings, and transitions forming the only ascent route.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "obstacle-jump",
-        "text": "Each tower section uses distinct jump-based platforming arrangements.",
+        "text": "A continuous ordered chain of colorful platforms through each stacked section, with every critical jump kept physics-legal.",
         "visible": true,
         "count": -1
       },
       {
         "id": "winner-zone",
-        "text": "A clear summit goal platform is rendered, with its completion volume placed afterward.",
+        "text": "A distinct, celebratory summit goal platform marking completion.",
         "visible": true,
-        "count": -1
-      },
+        "count": 1
+      }
+    ],
+    "layout_placement": [
       {
-        "id": "hazard-kill",
-        "text": "Reserve the tower’s open lower void for a temporary rising-lava hazard volume, but do not render permanent lava or volcanic scenery.",
-        "visible": false,
-        "count": -1
+        "id": "winner-zone",
+        "text": "The final goal platform and clear completion space.",
+        "count": 1,
+        "where": "At the absolute summit, beyond the final safe landing platform."
       }
     ],
     "layout": {
-      "composition": "Three-quarter isometric framing of the entire tall central tower, with the broad base readable below and the distinct summit cap readable at the highest point.",
+      "composition": "A tall, readable vertical landmark with the compact central base visible below and the colorful summit clearly separated above.",
       "zones": [
         {
-          "name": "Safe arrival apron",
-          "role": "Safe arrival area around the tower’s first ascent.",
-          "where": "broad base around the tower",
-          "size": "broad"
-        },
-        {
-          "name": "Open lower void",
-          "role": "Reserved space beneath the platform chain for the temporary rising-lava hazard volume.",
-          "where": "lower central tower volume",
-          "size": ""
+          "name": "Central base",
+          "role": "Ground-level entry leading immediately into the tower ascent.",
+          "where": "Ground level at the base of the tower.",
+          "size": "compact"
         },
         {
           "name": "Stacked obstacle sections",
-          "role": "Colorful jump-based platforming sections progressing upward around the tower core.",
-          "where": "from the lower tower to the summit",
-          "size": "lower sections broader; summit sections tighter"
+          "role": "Colorful platforming ascent through a single readable sequence of suspended platforms, ledges, narrow crossings, and safe landing surfaces.",
+          "where": "Vertically stacked above the base.",
+          "size": "tall multi-section tower"
         },
         {
-          "name": "Summit goal area",
-          "role": "Completion goal on a prominent cap platform.",
-          "where": "highest point of the tower",
+          "name": "Open lower shaft",
+          "role": "Open volume beneath and around the early platforms that can accommodate a temporary rising-lava event.",
+          "where": "Lower tower volume beneath and around the early ascent.",
+          "size": "broad"
+        },
+        {
+          "name": "Summit",
+          "role": "Final goal platform and completion space.",
+          "where": "Absolute top of the tower, beyond the final safe landing platform.",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Safe arrival apron",
-          "to": "Summit goal area",
+          "from": "Central base",
+          "to": "Stacked obstacle sections",
+          "kind": "track"
+        },
+        {
+          "from": "Stacked obstacle sections",
+          "to": "Summit",
           "kind": "track"
         }
       ],
-      "terrain": "Open sky around a broad base; no permanent lava, volcano, or enclosing terrain.",
+      "terrain": "Open lower tower shaft beneath suspended platforms; permanent structure is non-volcanic.",
       "props": [
         {
-          "name": "offset platforms",
+          "name": "Colorful suspended platforms, ledges, narrow crossings, and safe landing surfaces",
           "count": -1,
-          "where": "stacked upward around the tower core"
-        },
-        {
-          "name": "wide safe landings",
-          "count": -1,
-          "where": "along the ascent route"
-        },
-        {
-          "name": "short bridges",
-          "count": -1,
-          "where": "along the ascent route"
-        },
-        {
-          "name": "suspended blocks",
-          "count": -1,
-          "where": "along the ascent route"
-        },
-        {
-          "name": "rotating-looking visual motifs",
-          "count": -1,
-          "where": "only where they do not obscure the required route"
+          "where": "Through each vertically stacked obstacle section."
         }
       ],
-      "boundary": "Open to the sky; no enclosing terrain.",
-      "scale_band": "large",
-      "theme": "bright, stylized, original colorful obstacle architecture"
+      "boundary": "The tower outer boundary is visually open, not enclosed by a permanent volcano or cave.",
+      "scale_band": "medium",
+      "theme": "Bright, stylized, colorful, original obstacle-platformer architecture."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the ordered vertical jump chain must remain physically connected and playable before the isometric presentation is dressed.",
+      "why": "The stacked jump chain must be checked for continuous, playable progression before tower dressing is derived.",
       "set_piece": false
     },
     "route": [
-      "P6",
-      "P2"
+      "P2",
+      "P6"
     ],
     "notes": [],
     "scene_prompt": "Create a bright, stylized 3D obstacle-tower map with an original colorful look. Build a tall vertical tower of stacked platforming sections rising from a central base, with the goal area at the summit; keep the permanent structure non-volcanic, while allowing open lower space for a temporary rising-lava effect."
@@ -131,7 +112,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

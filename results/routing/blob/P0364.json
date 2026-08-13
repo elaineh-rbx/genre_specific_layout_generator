@@ -19,7 +19,7 @@
     }
   ],
   "scene_prompt": "Create a voxel-style go-kart racing map in a serene mountainous environment, centered on a clean closed racing circuit with a compact starting grid for up to four karts. The track follows a clear uninterrupted racing line through the mountain scenery, with no jumps, boosts, or shortcuts.",
-  "blob": "### Genre\nThe dominant genre is Racing: the original request specifies a three-lap competitive go-kart race. There is no secondary genre.\n\n### Shape and preset\nUse `route-circuit`, matching the Circuit Racing preset. The preset’s closed-loop route is directly required here; retain its grid, lap detection, and physical track containment, while omitting its turnaround because this is a continuous circuit rather than a reversal course.\n\n### Config requirements\nUse `spawn-grid` as visible painted or voxel-paved grid slots at the start and as invisible aligned start placements, with exactly up to four kart positions. Use `trigger-lap` as invisible detection regions at the start/finish and along the circuit to validate each lap; these do not appear in the image. Use `barrier-guardrail` as visible low guardrails and retaining edges that keep karts on the clean racing line. Do not add jumps, boosts, shortcuts, hazards, or recovery points.\n\n### Layout components\nBuild one compact closed circuit as the dominant central zone, broad enough for a small four-kart grid and with a clearly readable uninterrupted loop. Place the start/finish straight in the foreground-facing portion of the circuit, with four side-by-side starting slots across its width. The route sweeps through serene mountain scenery in a simple sequence of broad bends, avoiding ambiguous crossings, forks, jumps, or alternate lines. Surround the course with voxel grass, rock outcrops, pine trees, and rising mountain slopes; use retaining banks and guardrails at the outer edges of turns. Keep the infield mostly open, with a few low scenic rocks and trees only where they do not obscure the route. The boundary is formed naturally by steep mountains and trackside barriers rather than a hard rectangular wall. Compose the full loop legibly in frame, with the mountain backdrop rising behind it and the start grid immediately recognizable.\n\n### Render order\nUse `authored_plan`: a racing circuit must be a single valid, closed, continuous route, so its topology is generated first and the voxel mountain dressing follows it.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by a complete yet compact circuit sized for up to four simultaneous karts. Theme: calm, colorful voxel alpine karting course with pine forest, grass, and blocky mountains. Use `P6` because the circuit must be valid by construction, and `tiered` because the surrounding mountainous relief rises without overhanging the track.",
+  "blob": "### 1. Genre\nThe dominant genre is Racing: a competitive three-lap go-kart circuit for up to four players. No secondary genre applies.\n\n### 2. Shape and preset\nUse `route-circuit`, a single closed mountain circuit whose uninterrupted paved line returns to its compact start grid. This matches the Circuit Racing preset, retaining its closed-loop route and grid but omitting shortcuts, jumps, and boost features as explicitly requested.\n\n### 3. Config requirements\nUse `spawn-grid` as a compact, evenly spaced four-kart launch front on the circuit’s main straight. Use `lane-corridor` for a clearly readable, continuous paved racing corridor through the scenery. Use `barrier-guardrail` as restrained rails at exposed bends and track edges, preserving the clean line without adding alternate routes. Use `terrain-relief` for serene mountains, rolling slopes, rocky outcrops, and valley walls surrounding the circuit.\n\n### 4. Layout requirements\nPlace `spawn-grid` with four equal grid slots at the beginning of the main straight, all facing the same direction into the first corner. Place `trigger-lap` as one full-width timing line across that straight; it serves the three-lap race and is crossed once per completed circuit. No checkpoints, pickups, boosts, shortcuts, or other placed gameplay objects are needed.\n\n### 5. Layout components\nThe central zone is one compact closed go-kart circuit occupying a mountain valley. Its main straight sits along the lower, flatter valley floor and contains the four-slot starting grid. The route makes a clear loop through broad bends around low hills, climbing gently along one mountainside before descending back toward the straight; it remains a clean, single racing line with no jumps, branches, boosts, or shortcuts. Voxel grass, stone, sparse conifers, rocky ridges, and distant mountain faces form the terrain. Low guardrails protect exposed outer edges, while natural rock banks define the inner sides of curves. The mountain terrain and guardrails provide the effective boundary. Frame the full circuit legibly from an elevated three-quarter view, with the grid and continuous loop both visible.\n\n### 6. Render order\nUse `authored_plan`: the closed circuit must be valid by construction so its loop is continuous and raceable before voxel scenery dresses it.\n\n### 7. Scale, theme, and pipeline cost\nScale is medium: the four-kart grid is compact, but the complete circuit needs a readable mountain loop. Theme is tranquil voxel alpine karting, with clean bright track surfaces and serene natural scenery. Pipeline modifiers are `P6` because the circuit topology must close as one valid route, and `tiered` because the mountainous relief has elevation without any stacked or overhanging track surfaces.",
   "spec": {
     "genre": "Racing",
     "secondary": [],
@@ -29,103 +29,125 @@
     "options": [
       {
         "id": "spawn-grid",
-        "text": "Visible painted or voxel-paved grid slots at the start, with invisible aligned start placements for up to four karts.",
+        "text": "A compact, evenly spaced four-kart launch front on the circuit's main straight.",
         "visible": true,
         "count": 4
       },
       {
-        "id": "trigger-lap",
-        "text": "Invisible detection regions at the start/finish and along the circuit to validate each lap.",
-        "visible": false,
+        "id": "lane-corridor",
+        "text": "A clearly readable, continuous paved racing corridor through the mountain scenery.",
+        "visible": true,
         "count": -1
       },
       {
         "id": "barrier-guardrail",
-        "text": "Visible low guardrails and retaining edges that keep karts on the clean racing line.",
+        "text": "Restrained low guardrails at exposed bends and track edges, preserving the clean line without alternate routes.",
         "visible": true,
         "count": -1
+      },
+      {
+        "id": "terrain-relief",
+        "text": "Serene mountains, rolling slopes, rocky outcrops, valley walls, low hills, and distant mountain faces surrounding the circuit.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "trigger-lap",
+        "text": "One full-width timing line across the main straight, serving the three-lap race and crossed once per completed circuit.",
+        "visible": false,
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "spawn-grid",
+        "text": "Four equal grid slots at the beginning of the main straight, all facing the same direction into the first corner.",
+        "count": 4,
+        "where": "At the beginning of the main straight on the lower, flatter valley floor."
+      },
+      {
+        "id": "trigger-lap",
+        "text": "One full-width timing line serving the three-lap race.",
+        "count": 1,
+        "where": "Across the main straight, crossed once per completed circuit."
       }
     ],
     "layout": {
-      "composition": "The full compact closed loop is legible in frame, with the start/finish straight in the foreground-facing portion, an open infield at centre, broad bends around the circuit, and rising mountain backdrop behind it.",
+      "composition": "Elevated three-quarter view framing the full circuit legibly, with the four-kart grid on the lower valley-floor main straight and the continuous loop visible as it climbs one mountainside and descends back toward the straight.",
       "zones": [
         {
-          "name": "Closed racing circuit",
-          "role": "The uninterrupted three-lap competitive go-kart route.",
-          "where": "central zone",
-          "size": "compact medium circuit"
+          "name": "Compact closed go-kart circuit",
+          "role": "A competitive three-lap circuit for up to four players, following one uninterrupted racing line.",
+          "where": "Central mountain valley.",
+          "size": "Medium"
         },
         {
-          "name": "Start/finish straight",
-          "role": "Four-kart starting grid and start/finish location.",
-          "where": "foreground-facing portion of the circuit",
-          "size": "broad enough for four side-by-side slots"
+          "name": "Main straight and starting grid",
+          "role": "Four-kart launch front and full-width lap timing line.",
+          "where": "Along the lower, flatter valley floor at the beginning of the circuit.",
+          "size": "Compact"
         },
         {
-          "name": "Open infield",
-          "role": "Scenic interior that preserves clear reads across the route.",
-          "where": "centre of the circuit",
-          "size": "mostly open"
-        },
-        {
-          "name": "Mountain scenery",
-          "role": "Natural alpine surround and boundary for the course.",
-          "where": "around the circuit and rising behind it",
+          "name": "Mountain loop",
+          "role": "Broad bends around low hills, gently climbing one mountainside before descending toward the main straight.",
+          "where": "Around the central valley circuit.",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Start/finish straight",
-          "to": "Closed racing circuit",
+          "from": "Main straight and starting grid",
+          "to": "Mountain loop",
           "kind": "track"
         },
         {
-          "from": "Closed racing circuit",
-          "to": "Start/finish straight",
+          "from": "Mountain loop",
+          "to": "Main straight and starting grid",
           "kind": "track"
         }
       ],
-      "terrain": "Voxel grass, rock outcrops, pine trees, retaining banks, and rising mountain slopes; a simple sequence of broad bends with no ambiguous crossings, forks, jumps, or alternate lines.",
+      "terrain": "Voxel grass, stone, sparse conifers, rocky ridges, low hills, rolling slopes, rocky outcrops, valley walls, and distant mountain faces.",
       "props": [
         {
-          "name": "pine trees",
+          "name": "Sparse conifers",
           "count": -1,
-          "where": "surrounding the course and sparingly in the open infield"
+          "where": "Across the mountain terrain surrounding the circuit."
         },
         {
-          "name": "rock outcrops",
+          "name": "Low guardrails",
           "count": -1,
-          "where": "around the course"
+          "where": "At exposed outer bends and track edges."
         },
         {
-          "name": "low scenic rocks",
+          "name": "Natural rock banks",
           "count": -1,
-          "where": "open infield without obscuring the route"
+          "where": "Along the inner sides of curves."
         }
       ],
-      "boundary": "Steep mountains and trackside barriers naturally enclose the play space rather than a hard rectangular wall.",
+      "boundary": "Mountain terrain and low guardrails form the effective boundary.",
       "scale_band": "medium",
-      "theme": "calm, colorful voxel alpine karting course with pine forest, grass, and blocky mountains"
+      "theme": "Tranquil voxel alpine karting with clean bright track surfaces and serene natural scenery."
     },
     "render": {
       "first": "authored_plan",
       "then": "topdown",
       "authoritative": "authored_plan",
-      "why": "the circuit must be a single valid, closed, continuous route.",
+      "why": "The closed circuit must be valid by construction so its loop is continuous and raceable before voxel scenery dresses it.",
       "set_piece": false
     },
     "route": [
       "P6",
       "tiered"
     ],
-    "notes": [],
+    "notes": [
+      "visible on 'trigger-lap' set from goes_to=layout"
+    ],
     "scene_prompt": "Create a voxel-style go-kart racing map in a serene mountainous environment, centered on a clean closed racing circuit with a compact starting grid for up to four karts. The track follows a clear uninterrupted racing line through the mountain scenery, with no jumps, boosts, or shortcuts."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "layout",

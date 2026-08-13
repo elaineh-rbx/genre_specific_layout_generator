@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a 3D asymmetrical horror game layout for Shadow Escape, with a separate large lobby area containing NPC stations, a shop, inventory, missions, settings, rankings, statistics, a training area, and a portal leading into the match queue. Build the first arena as a compact, medium-sized abandoned school designed for a three-minute chase: interconnected corridors, classrooms, and enough alternate routes to prevent the space from feeling empty. Use dark atmospheric lighting, fog, particles, ambient sound sources, and worn school architecture to support the horror mood.",
-  "blob": "### 1. Gênero\nO gênero dominante é Survival, no formato assimétrico `1 vs All`: a escola sustenta perseguição, ocultação e uma fuga final. O lobby é suporte social separado, não um segundo gênero.\n\n### 2. Forma e preset\nUse a forma `warren-looping`, correspondendo ao preset 1 vs All. Ela será uma escola abandonada compacta, com corredores conectados em circuitos e salas que oferecem rotas alternativas, sem becos sem saída que prendam injustamente uma perseguição. O preset permanece reconhecível; a escola interna também exige uma estrutura acessível por dentro.\n\n### 3. Requisitos de configuração\n`cover-los` é geometria visível: armários, salas laterais, divisórias baixas e recortes nos corredores quebram linhas de visão e criam pontos de esconderijo. `gate-escape` é visível e invisível: uma saída estrutural grande no limite da escola recebe o volume de fuga. `spawn-protected` é invisível: pontos iniciais separados para os papéis, fora de visão direta. `building-interior` é geometria visível: toda a arena ocorre dentro da escola e suas salas conectadas. `npc-population` é visível e invisível somente no lobby: NPCs ocupam estações de loja, inventário, missões, configurações, rankings e estatísticas.\n\n### 4. Componentes de layout\nConstrua dois mapas separados. O lobby é uma área grande e aberta, organizada em anel em torno de uma praça de intermissão: estações de NPC nas bordas, área de treino em um lado e um portal de fila claramente visível no lado oposto. A arena é uma escola abandonada compacta de porte médio, adequada a uma perseguição de 3 minutos. Um hall central funciona como nó principal; corredores em laço saem dele e conectam alas de salas de aula, uma pequena área administrativa e rotas de retorno paralelas. Posicione a saída bloqueada em uma extremidade externa, com pelo menos dois caminhos de aproximação. Use pisos gastos, paredes descascadas, carteiras, armários, portas danificadas e iluminação escura; névoa, partículas e fontes de som ambiente ficam distribuídas nos corredores e salas. A escola é contida por paredes externas fechadas, janelas inacessíveis e o portão de saída. Enquadre a vista isométrica para revelar o hall, as alas e a saída como referências legíveis.\n\n### 5. Ordem de renderização\nUse `topdown`: a planta precisa preservar loops contínuos e rotas alternativas válidas para que a perseguição permaneça jogável, mas não é uma geometria de labirinto ou circuito que possa usar `authored_plan`.\n\n### 6. Escala, tema e custo de pipeline\nEscala média: uma arena escolar compacta, mais um lobby grande separado. Tema: horror escolar abandonado, escuro, enevoado e industrialmente gasto. Use `P6` para a conectividade sem becos injustos, `P3` porque a arena é um interior, e `P4` porque lobby e arena são mapas separados.",
+  "blob": "### Genre\nThe dominant genre is `Survival`, specifically asymmetric 1-versus-all chase horror. The separate waiting space supports the match flow but does not change the arena’s survival-horror identity.\n\n### Shape and preset\nUse `warren-looping`, from the Survival preset 1 vs All. It makes the abandoned school a compact connected chase environment with looping corridors and alternate room-to-room routes, avoiding terminal dead ends where survivors could be unfairly trapped. Retain the preset’s escape and separated-role-start logic; omit its implied hiding cutouts because the prompt does not request lockers or crawlspaces.\n\n### Config requirements\nUse `gate-escape` as a visibly locked school exit at the outer edge of the arena, released only after the survivors’ tasks are complete. Use `spawn-protected` as separated, screened starting areas for the killer and survivor side. Use `building-interior` for the fully enterable abandoned-school rooms, corridors, and worn institutional architecture. Use `social-hub` for the large lobby gathering floor around the queue portal and service stations. Use `npc-population` for the requested lobby NPC stations. Render dark dynamic-looking illumination, fog, sparse particles, and ambient sound-source fixtures as atmosphere, without treating them as gameplay geometry.\n\n### Layout requirements\nPlace `gate-escape` once, at a clearly readable exterior-facing end of the school perimeter, reached from more than one interior loop. Place `spawn-protected` as one isolated killer start and a separated survivor start cluster, each shielded from immediate sightlines and not adjacent to the exit. Place `npc-population` at distinct lobby stations for the shop, inventory, missions, settings, rankings, and statistics. Place the queue portal at the far, visually prominent end of the lobby, beyond the central gathering area.\n\n### Layout components\nBuild two separate maps: a large lobby and the first match arena. The lobby is an open central concourse with a training area to one side, grouped NPC service counters around its perimeter, and the queue portal as its focal endpoint. The arena is a compact, medium-sized abandoned school: a central corridor spine branches into classrooms, side halls, and connecting return routes so every pursuit can loop back through another space. Include worn classroom doors, desks, lockers as dressing, damaged walls, flickering fixtures, and foggy corridor intersections. Keep the school entirely enclosed, with the locked exit set into its outer boundary. Compose the arena from a readable top-down network of loops, with the lobby presented as its own separate destination.\n\n### Render order\nUse `topdown`: the authoritative first image is a top-down school plan, because the loop connectivity and alternate chase routes must remain valid and readable before the isometric horror dressing is applied.\n\n### Scale, theme, and pipeline cost\nScale band: medium, driven by a compact three-minute chase arena plus a separately large lobby. Theme: dark Roblox horror, decayed institutional interiors, cold fog, worn metal and wood. Use `P4` because the lobby and school arena are separate maps, and `P6` because the chase topology must be valid with connected loops and no trapping dead ends.",
   "spec": {
     "genre": "Survival",
     "secondary": [],
@@ -23,188 +23,173 @@
     "axes": {},
     "options": [
       {
-        "id": "cover-los",
-        "text": "Armários, salas laterais, divisórias baixas e recortes nos corredores da escola quebram linhas de visão e criam pontos de esconderijo.",
-        "visible": true,
-        "count": -1
-      },
-      {
         "id": "gate-escape",
-        "text": "Uma saída estrutural grande e bloqueada no limite externo da escola recebe o volume de fuga.",
+        "text": "A visibly locked school exit at the outer edge of the arena, released only after the survivors' tasks are complete.",
         "visible": true,
-        "count": -1
+        "count": 1
       },
       {
         "id": "spawn-protected",
-        "text": "Pontos iniciais separados para os papéis, fora de visão direta.",
+        "text": "Separated, screened starting areas for the killer and survivor side.",
         "visible": false,
         "count": -1
       },
       {
         "id": "building-interior",
-        "text": "Toda a arena ocorre dentro da escola abandonada e de suas salas conectadas.",
+        "text": "Fully enterable abandoned-school rooms, corridors, and worn institutional architecture.",
         "visible": true,
         "count": -1
       },
       {
         "id": "npc-population",
-        "text": "Somente no lobby, NPCs ocupam estações de loja, inventário, missões, configurações, rankings e estatísticas.",
+        "text": "Lobby NPC stations for the shop, inventory, missions, settings, rankings, and statistics.",
         "visible": true,
-        "count": -1
+        "count": 6
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "gate-escape",
+        "text": "A visibly locked school exit released only after survivors' tasks are complete.",
+        "count": 1,
+        "where": "At a clearly readable exterior-facing end of the school perimeter, reached from more than one interior loop."
+      },
+      {
+        "id": "spawn-protected",
+        "text": "One isolated killer start and a separated survivor start cluster, screened from immediate sightlines.",
+        "count": -1,
+        "where": "Keep both starting areas shielded from immediate sightlines and not adjacent to the exit."
+      },
+      {
+        "id": "npc-population",
+        "text": "Lobby NPC stations for the shop, inventory, missions, settings, rankings, and statistics.",
+        "count": 6,
+        "where": "At distinct lobby stations around the perimeter."
       }
     ],
     "layout": {
-      "composition": "Vista isométrica enquadrada para revelar o hall central, as alas conectadas e a saída bloqueada como referências legíveis; o lobby é um mapa separado em anel em torno de uma praça de intermissão.",
+      "composition": "The arena is a readable top-down network of school loops; the lobby is presented as its own separate destination, with the queue portal at its far visually prominent end beyond the central gathering area.",
       "zones": [
         {
-          "name": "Lobby de intermissão",
-          "role": "Suporte social separado, com estações de NPC, loja, inventário, missões, configurações, rankings, estatísticas, treino e fila.",
-          "where": "Mapa separado; praça central com anel ao redor.",
-          "size": "grande"
+          "name": "Lobby",
+          "role": "Separate large waiting space with the central gathering floor, service stations, training area, and match queue portal.",
+          "where": "Separate destination from the school arena.",
+          "size": "large"
         },
         {
-          "name": "Praça de intermissão",
-          "role": "Centro aberto do lobby para reunião e acesso às estações.",
-          "where": "Centro do lobby.",
-          "size": "grande"
-        },
-        {
-          "name": "Estações de NPC",
-          "role": "Loja, inventário, missões, configurações, rankings e estatísticas.",
-          "where": "Bordas do anel do lobby.",
+          "name": "Central Lobby Concourse",
+          "role": "Open central gathering area.",
+          "where": "Centre of the lobby.",
           "size": ""
         },
         {
-          "name": "Área de treino",
-          "role": "Treino no lobby.",
-          "where": "Um lado do lobby.",
+          "name": "Training Area",
+          "role": "Lobby training area.",
+          "where": "To one side of the lobby.",
           "size": ""
         },
         {
-          "name": "Portal de fila",
-          "role": "Entrada claramente visível para a fila da partida.",
-          "where": "Lado oposto à área de treino no lobby.",
+          "name": "NPC Service Counter Perimeter",
+          "role": "Shop, inventory, missions, settings, rankings, and statistics stations.",
+          "where": "Around the lobby perimeter.",
           "size": ""
         },
         {
-          "name": "Arena escolar abandonada",
-          "role": "Perseguição assimétrica de 3 minutos, ocultação e fuga final.",
-          "where": "Mapa separado.",
-          "size": "média e compacta"
-        },
-        {
-          "name": "Hall central",
-          "role": "Nó principal da arena escolar.",
-          "where": "Centro da escola.",
+          "name": "Queue Portal",
+          "role": "Portal leading into the match queue.",
+          "where": "At the far, visually prominent end of the lobby beyond the central gathering area.",
           "size": ""
         },
         {
-          "name": "Alas de salas de aula",
-          "role": "Salas conectadas e rotas alternativas para a perseguição.",
-          "where": "Ligadas ao hall pelos corredores em laço.",
+          "name": "Abandoned School Arena",
+          "role": "Compact connected three-minute asymmetric chase environment with looping corridors and alternate room-to-room routes.",
+          "where": "Separate map from the lobby.",
+          "size": "medium"
+        },
+        {
+          "name": "Central Corridor Spine",
+          "role": "Main school corridor branching into classrooms, side halls, and connecting return routes.",
+          "where": "Centre of the school arena.",
           "size": ""
         },
         {
-          "name": "Área administrativa",
-          "role": "Pequena ala conectada à rede de corredores.",
-          "where": "Arena escolar.",
-          "size": "pequena"
-        },
-        {
-          "name": "Saída bloqueada",
-          "role": "Ponto estrutural de fuga com volume de escape.",
-          "where": "Uma extremidade externa da escola.",
+          "name": "Classrooms and Side Halls",
+          "role": "Alternate pursuit spaces connected back into the school loops.",
+          "where": "Branching from the central corridor spine.",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Hall central",
-          "to": "Alas de salas de aula",
-          "kind": "corredor"
-        },
-        {
-          "from": "Alas de salas de aula",
-          "to": "Área administrativa",
-          "kind": "corredor"
-        },
-        {
-          "from": "Alas de salas de aula",
-          "to": "Hall central",
-          "kind": "corredor"
-        },
-        {
-          "from": "Hall central",
-          "to": "Saída bloqueada",
-          "kind": "corredor"
-        },
-        {
-          "from": "Rotas de retorno paralelas",
-          "to": "Saída bloqueada",
-          "kind": "corredor"
-        },
-        {
-          "from": "Lobby de intermissão",
-          "to": "Portal de fila",
+          "from": "Lobby",
+          "to": "Abandoned School Arena",
           "kind": "portal"
+        },
+        {
+          "from": "Central Corridor Spine",
+          "to": "Classrooms and Side Halls",
+          "kind": "corridor"
+        },
+        {
+          "from": "Classrooms and Side Halls",
+          "to": "Central Corridor Spine",
+          "kind": "corridor"
         }
       ],
-      "terrain": "Pisos gastos da escola; interiores escuros com névoa e partículas distribuídas por corredores e salas.",
+      "terrain": "Entirely enclosed abandoned-school interior with worn institutional architecture, cold fog, foggy corridor intersections, dark dynamic-looking illumination, sparse particles, and ambient sound-source fixtures.",
       "props": [
         {
-          "name": "armários",
+          "name": "Worn classroom doors",
           "count": -1,
-          "where": "Corredores e pontos de esconderijo da escola"
+          "where": "Throughout the abandoned-school rooms and corridors."
         },
         {
-          "name": "carteiras",
+          "name": "Desks",
           "count": -1,
-          "where": "Salas de aula"
+          "where": "In classrooms."
         },
         {
-          "name": "portas danificadas",
+          "name": "Lockers as dressing",
           "count": -1,
-          "where": "Salas e corredores"
+          "where": "Throughout the school interior."
         },
         {
-          "name": "paredes descascadas",
+          "name": "Damaged walls",
           "count": -1,
-          "where": "Toda a escola"
+          "where": "Throughout the school interior."
         },
         {
-          "name": "fontes de som ambiente",
+          "name": "Flickering fixtures",
           "count": -1,
-          "where": "Corredores e salas"
-        },
-        {
-          "name": "NPCs",
-          "count": -1,
-          "where": "Estações nas bordas do lobby"
+          "where": "Throughout corridors and rooms."
         }
       ],
-      "boundary": "A escola é contida por paredes externas fechadas, janelas inacessíveis e o portão de saída; o lobby é um mapa separado aberto organizado em anel.",
+      "boundary": "The school is entirely enclosed, with the locked exit set into its outer boundary.",
       "scale_band": "medium",
-      "theme": "horror escolar abandonado, escuro, enevoado e industrialmente gasto"
+      "theme": "Dark Roblox horror, decayed institutional interiors, cold fog, worn metal and wood."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "a planta precisa preservar loops contínuos e rotas alternativas válidas para a perseguição permanecer jogável.",
+      "why": "The loop connectivity and alternate chase routes must remain valid and readable before horror dressing is applied.",
       "set_piece": false
     },
     "route": [
-      "P6",
-      "P3",
-      "P4"
+      "P4",
+      "P6"
     ],
-    "notes": [],
+    "notes": [
+      "The preset's implied hiding cutouts are omitted because lockers or crawlspaces were not requested.",
+      "Dark illumination, fog, sparse particles, and ambient sound-source fixtures are atmosphere rather than gameplay geometry.",
+      "dropped option 'social-hub': not in Survival"
+    ],
     "scene_prompt": "Create a 3D asymmetrical horror game layout for Shadow Escape, with a separate large lobby area containing NPC stations, a shop, inventory, missions, settings, rankings, statistics, a training area, and a portal leading into the match queue. Build the first arena as a compact, medium-sized abandoned school designed for a three-minute chase: interconnected corridors, classrooms, and enough alternate routes to prevent the space from feeling empty. Use dark atmospheric lighting, fog, particles, ambient sound sources, and worn school architecture to support the horror mood."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

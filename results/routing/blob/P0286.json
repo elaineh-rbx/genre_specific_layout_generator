@@ -14,134 +14,140 @@
     }
   ],
   "scene_prompt": "Create a 3D open-world trampoline map set in a dreamy pastel skyscape, with soft clouds, a calm airy atmosphere, and floating-looking platforms. Spread large trampolines across the ground-level play space and rising aerial routes, leading upward through multiple elevation bands toward a few-thousand-stud-high upper sky zone. Place collectible stars and appearance-changing power-ups in the air above trampoline paths, with the best power-ups concentrated near the highest elevations; leave ground areas beneath the aerial course for resets and landing space.",
-  "blob": "### Genre\nThe dominant genre is Obby & Platformer: the core activity is chaining player-controlled trampoline jumps into increasingly difficult aerial landings. The open skyscape is the course setting, not a separate open-world RPG or simulation loop.\n\n### Shape and preset\nUse `course-terraced`, interpreted as a broad ground-level trampoline field rising through successive aerial elevation bands toward the upper sky. The closest preset is Precision Platformer; retain its ascending challenge logic, but replace ordinary ledges with large trampolines and floating-looking landing platforms.\n\n### Config requirements\n`path-track` is visible geometry: ordered trampoline chains and aerial landing platforms form clear upward routes, with every critical jump physically legal. `obstacle-jump` is visible geometry: large bounce pads create the escalating vertical jumps and directional transfers. `collectible-nodes` are invisible placement markers for stars and appearance-changing power-ups suspended above or just beyond successful bounce arcs; concentrate the best rewards near the highest elevations. `powerup-buffs` is invisible placement for the requested airborne power-ups, while their visible collectible models appear in the rendered scene. Do not add lethal hazards or checkpoints: the ground beneath the course is explicitly a reset and landing area, not a failure zone.\n\n### Layout components\nMake a large, open lower cloudscape field with widely spaced large trampolines across its surface and generous empty landing/reset ground between them. From this base, establish several readable, branching trampoline routes that rise through multiple elevation bands: lower pads are broad and close together, middle routes use longer transfers between floating platforms, and the upper routes become sparse, high, and visibly rewarding. The final upper sky zone sits a few thousand studs above the base and holds the strongest power-ups among dense cloud banks. Place stars in ascending aerial trails that trace intended arcs. Use soft cloud layers, pale pastel ground, and floating-looking platforms; keep the boundary visually open, fading into cloud and sky rather than walled. Compose the isometric view from below and to one side, showing the ground reset field, the rising route hierarchy, and the distant upper reward zone in one upward sweep.\n\n### Render order\nUse `topdown`: the trampoline chain must remain connected and physically playable, and its rising routes need plan-first validation, while `authored_plan` is unavailable because this is neither a maze nor a racing circuit.\n\n### Scale, theme, and pipeline cost\nScale is huge, driven by the few-thousand-stud vertical climb and multiple aerial route bands. Theme: dreamy pastel skyscape, calm airy clouds, soft floating forms. Use `P6` for physics-legal critical jump chains and `P2` because elevated floating platforms overlap the reset ground and each other in plan view.",
+  "blob": "### 1. Genre\nThe dominant genre is Obby & Platformer: the core activity is chaining self-paced trampoline launches through increasingly difficult aerial elevations. Adventure is not needed; the collectible rewards support the movement course rather than a story journey.\n\n### 2. Shape and preset\nUse `volume-open-air`, taken from outside Obby & Platformer’s usual shape set. This is a vertical open skyscape where large trampolines and floating platforms are the discrete safe surfaces, with a resettable ground plane far below. Preset: none; the aerial freeform ascent does not retain a recognizable standard obby preset.\n\n### 3. Config requirements\nUse `path-track` as visible, connected trampoline chains and floating landing platforms that rise through the sky in physically viable sequences. Use `obstacle-jump` for the oversized trampolines that provide the major upward boosts. The `volume-open-air` shape supplies the open vertical play space and aerial landing surfaces.\n\n### 4. Layout requirements\nPlace `collectible-nodes` as repeated star pickups along the aerial trampoline routes, with sparse low-band rewards and increasingly valuable clusters in the upper elevation bands. Place `powerup-buffs` on aerial platforms above the main routes, concentrating the best appearance-changing power-ups near the few-thousand-stud upper zone. No checkpoints or other placed recovery markers are requested; the broad ground reset zone serves as the natural failed-chain landing area.\n\n### 5. Layout components\nBuild one huge continuous skyscape map. The ground-level zone is a broad, open pastel cloud floor with widely distributed large trampolines and ample clear reset/landing space. Above it, several rising elevation bands form branching aerial trampoline routes: low routes are broad and forgiving, middle routes use more separated floating-looking pads, and upper routes narrow toward a high sky zone a few thousand studs above ground. Stars hover directly over the intended bounce arcs; cosmetic power-ups sit on or just above landing pads, with the highest-value rewards at the summit. Soft clouds frame the open boundary rather than forming walls. Compose the map as a readable upward funnel, with the high reward zone visible overhead from the starting ground.\n\n### 6. Render order\nUse `topdown` first and make it authoritative, because aerial trampoline chains must remain connected and physically clearable; an invalid gap would make the progression unplayable.\n\n### 7. Scale, theme, and pipeline cost\nScale band: huge, driven by the few-thousand-stud vertical ascent and multiple aerial elevation bands. Theme: dreamy pastel skyscape, soft clouds, airy calm, floating-platform fantasy. Pipeline modifiers: `P6` because the critical trampoline route needs valid jump connectivity; `CHECK` because play occurs through an open vertical volume, with separated landing surfaces that must remain legible without self-occlusion.",
   "spec": {
     "genre": "Obby & Platformer",
     "secondary": [],
-    "shape": "course-terraced",
-    "preset": "Precision Platformer",
+    "shape": "volume-open-air",
+    "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "path-track",
-        "text": "Ordered trampoline chains and aerial landing platforms form clear upward routes, with every critical jump physically legal.",
+        "text": "Visible, connected trampoline chains and floating landing platforms that rise through the sky in physically viable sequences.",
         "visible": true,
         "count": -1
       },
       {
         "id": "obstacle-jump",
-        "text": "Large bounce pads create the escalating vertical jumps and directional transfers.",
+        "text": "Oversized trampolines that provide the major upward boosts.",
         "visible": true,
         "count": -1
       },
       {
         "id": "collectible-nodes",
-        "text": "Stars and appearance-changing power-ups suspended above or just beyond successful bounce arcs, with the best rewards near the highest elevations.",
+        "text": "Repeated star pickups along the aerial trampoline routes, with sparse low-band rewards and increasingly valuable clusters in the upper elevation bands.",
         "visible": false,
         "count": -1
       },
       {
         "id": "powerup-buffs",
-        "text": "Requested airborne power-ups, with their visible collectible models appearing in the rendered scene.",
+        "text": "Appearance-changing power-ups on aerial platforms above the main routes, with the best rewards concentrated near the few-thousand-stud upper zone.",
         "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "collectible-nodes",
+        "text": "Repeated star pickups along the aerial trampoline routes, with sparse low-band rewards and increasingly valuable clusters in the upper elevation bands.",
+        "count": -1,
+        "where": "Along intended aerial bounce arcs; sparse in low elevation bands and clustered in upper bands."
+      },
+      {
+        "id": "powerup-buffs",
+        "text": "Appearance-changing power-ups on aerial platforms above the main routes, with the best rewards concentrated near the few-thousand-stud upper zone.",
+        "count": -1,
+        "where": "On or just above landing pads above the main routes, concentrated near the summit."
+      }
+    ],
     "layout": {
-      "composition": "Isometric view from below and to one side, showing the ground reset field, rising route hierarchy, and distant upper reward zone in one upward sweep.",
+      "composition": "A readable upward funnel: the broad ground-level cloud floor fills the base of the map, branching aerial trampoline routes rise through the middle, and the high reward zone remains visible overhead from the starting ground.",
       "zones": [
         {
-          "name": "Lower cloudscape field",
-          "role": "Ground-level trampoline field with reset and landing space beneath the aerial course.",
-          "where": "base of the course",
-          "size": "large"
+          "name": "Ground-level reset zone",
+          "role": "Broad open pastel cloud floor with widely distributed large trampolines and clear reset and landing space beneath the aerial course.",
+          "where": "Ground level",
+          "size": "broad"
         },
         {
-          "name": "Lower elevation routes",
-          "role": "Broad, close-together trampoline pads begin several readable branching upward routes.",
-          "where": "above the lower field",
-          "size": ""
+          "name": "Low aerial elevation bands",
+          "role": "Broad and forgiving branching trampoline routes.",
+          "where": "Above the ground-level zone",
+          "size": "broad"
         },
         {
-          "name": "Middle aerial routes",
-          "role": "Longer transfers between floating platforms continue the branching ascent.",
-          "where": "middle elevation bands",
+          "name": "Middle aerial elevation bands",
+          "role": "Rising routes using more separated floating-looking pads.",
+          "where": "Mid-sky",
           "size": ""
         },
         {
           "name": "Upper sky zone",
-          "role": "Sparse, high, visibly rewarding final route area containing the strongest power-ups among dense cloud banks.",
-          "where": "a few thousand studs above the base",
+          "role": "Narrow high-elevation routes leading to the highest-value rewards at the summit.",
+          "where": "A few thousand studs above ground",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Lower cloudscape field",
-          "to": "Lower elevation routes",
+          "from": "Ground-level reset zone",
+          "to": "Low aerial elevation bands",
           "kind": "track"
         },
         {
-          "from": "Lower elevation routes",
-          "to": "Middle aerial routes",
+          "from": "Low aerial elevation bands",
+          "to": "Middle aerial elevation bands",
           "kind": "track"
         },
         {
-          "from": "Middle aerial routes",
+          "from": "Middle aerial elevation bands",
           "to": "Upper sky zone",
           "kind": "track"
         }
       ],
-      "terrain": "Soft cloud layers and pale pastel ground beneath floating-looking platforms.",
+      "terrain": "A broad open pastel cloud floor far below the aerial course; soft clouds frame the open boundary.",
       "props": [
         {
-          "name": "large trampolines",
+          "name": "Large trampolines",
           "count": -1,
-          "where": "across the ground-level field and rising aerial routes"
+          "where": "Widely distributed across the ground-level play space and along rising aerial routes."
         },
         {
-          "name": "floating-looking landing platforms",
+          "name": "Floating-looking landing platforms",
           "count": -1,
-          "where": "middle and upper elevation bands"
+          "where": "Along middle and upper aerial trampoline routes."
         },
         {
-          "name": "stars",
+          "name": "Soft clouds",
           "count": -1,
-          "where": "ascending aerial trails tracing intended bounce arcs"
-        },
-        {
-          "name": "appearance-changing power-ups",
-          "count": -1,
-          "where": "above trampoline paths, concentrated near the highest elevations"
-        },
-        {
-          "name": "dense cloud banks",
-          "count": -1,
-          "where": "upper sky zone"
+          "where": "Framing the open boundary."
         }
       ],
-      "boundary": "Visually open, fading into cloud and sky rather than walled.",
+      "boundary": "Open, framed by soft clouds rather than walls.",
       "scale_band": "huge",
-      "theme": "dreamy pastel skyscape, calm airy clouds, soft floating forms"
+      "theme": "Dreamy pastel skyscape, soft clouds, airy calm, floating-platform fantasy."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the trampoline chain must remain connected and physically playable through rising routes.",
+      "why": "Aerial trampoline chains must remain connected and physically clearable; an invalid gap would make progression unplayable.",
       "set_piece": false
     },
     "route": [
       "P6",
-      "P2"
+      "CHECK"
     ],
-    "notes": [],
+    "notes": [
+      "`volume-open-air` was taken from outside Obby & Platformer’s usual shape set."
+    ],
     "scene_prompt": "Create a 3D open-world trampoline map set in a dreamy pastel skyscape, with soft clouds, a calm airy atmosphere, and floating-looking platforms. Spread large trampolines across the ground-level play space and rising aerial routes, leading upward through multiple elevation bands toward a few-thousand-stud-high upper sky zone. Place collectible stars and appearance-changing power-ups in the air above trampoline paths, with the best power-ups concentrated near the highest elevations; leave ground areas beneath the aerial course for resets and landing space."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

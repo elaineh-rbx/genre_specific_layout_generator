@@ -14,110 +14,153 @@
     }
   ],
   "scene_prompt": "Create a 3D space-themed game world called Clicker Phyco, formed as one continuous route through 15 sequentially unlockable areas. Players run between distinct planets and lunar zones arranged in order, with each new region visibly separated by a gateway or boundary and increasing in scale and value along the progression path. Place themed pet areas within each zone, and reserve prominent encounter spaces for bosses.",
-  "blob": "### Genre\nThe dominant genre is `Simulation`, specifically an incremental clicker/rebirth progression game. `RPG` is secondary for the boss encounters and companion/pet presentation, but Simulation owns the tiered progression route.\n\n### Shape and preset\nUse `tier-ladder`, matched to the Stat Grinder preset. Here it is a long, continuous space route rather than a literal staircase: fifteen sequential planetary tiers grow in visual scale and prestige from the entry zone to the final lunar region.\n\n### Config requirements\nUse `gate-progression` as visible geometry: a large, unmistakable space gate or boundary stands between every consecutive planetary zone and reads as the ordered progression threshold. Use `hazard-aggro` from the secondary RPG genre as visible geometry: each region includes a broad, isolated boss encounter clearing set off the main running route. Use `npc-population` as both visible geometry and placed entities: themed pet habitats or display areas in every zone visibly house that region’s pet companions. Use `trigger-rebirth` as invisible layout only: place the rebirth pad at the far end of the fifteenth and highest-value region; do not render its trigger volume.\n\n### Layout components\nBuild one continuous, forward-running chain of exactly 15 distinct areas. Begin with a compact lunar arrival zone, then lead through fourteen increasingly large planets and lunar territories, each with a clear local identity, such as crater fields, icy moons, ringed desert planets, neon asteroid platforms, and a final monumental lunar citadel. Each zone occupies a broad traversable plateau or planet-surface segment, with the next region visible beyond its gateway to preserve direction. A single wide circulation path runs through all fifteen regions in order, widening into a prominent boss clearing near the outer side of each zone before rejoining the route. Place one dedicated pet habitat, kiosk-like enclosure, or glowing companion display area within each zone near its main path, visually increasing in richness alongside the regions. Use gateways, rock walls, energy barriers, orbital debris, or cliff edges as boundaries between zones; keep the outer world edge closed by space void, distant asteroids, and impassable terrain. Compose the map as a readable diagonal progression from low-value starter moon in the foreground to the final citadel in the distance.\n\n### Render order\nUse `topdown`: the fifteen-region sequence, uninterrupted route, and ordered gateways must remain connected and legible before the isometric scene is dressed.\n\n### Scale, theme, and pipeline cost\nScale is huge, driven by fifteen full progression areas in one continuous world. Theme: bright stylized sci-fi lunar exploration, escalating from humble moon craters to premium cosmic planets. Pipeline modifier: `P0`; the world remains one connected exterior surface with no stacked routes, interiors, separate maps, or geometry requiring construction validation.",
+  "blob": "### Genre\nThe dominant genre is Simulation, specifically a clicker/stat-grinder progression game. The currency, rebirth loop, upgrades, and steadily stronger unlocks establish the Stat Grinder family; those mechanics classify the game but do not add UI or economic content to the map.\n\n### Shape and preset\nUse `tier-ladder`, matched to the Stat Grinder preset. This becomes a single ground-level progression chain of fifteen space regions rather than a literal staircase: each planet or lunar zone is a clearly readable successive tier, reached only through the next visible boundary gateway.\n\n### Config requirements\nUse `gate-progression` as large sci-fi lunar gateways or forcefield boundaries between each consecutive planetary zone. Do not add unrequested universal scenery options. The pet areas and boss encounter spaces are scene-specific subzones rather than separate config picks.\n\n### Layout requirements\nUse `trigger-rebirth`: place one rebirth pad at the far end of the fifteenth and final area, in a prominent clear terminal plaza beyond its boss encounter space. No other placed markers are required by the prompt.\n\n### Layout components\nBuild one continuous linear world of 15 sequential areas, increasing in visual scale and prestige from the first zone to the fifteenth. Begin with a compact lunar arrival zone, then connect every following planet or moon biome by a direct walkable causeway, landing bridge, or enclosed space transit path; each connection ends at a substantial locked-looking gateway marking the next tier. Every zone contains a themed pet area set beside, not across, the main route, plus a prominent open boss encounter plaza at the route’s forward side before its exit gateway. Keep the primary route unmistakable and uninterrupted from zone 1 through zone 15. Use varied space terrain—craters, alien rock shelves, glowing mineral ground, ice moons, volcanic planets, and high-value cosmic final regions—while retaining one traversable surface. Bound the world with distant void, cliffs, planetary horizons, and decorative impassable rock rather than separate maps. Compose the full chain as a long readable progression ribbon, with increasingly dramatic planets visible ahead.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because all fifteen zones and their gateways must form one connected, ordered progression route; an isometric-first image cannot reliably preserve that sequence.\n\n### Scale, theme, and pipeline cost\nScale is huge, driven by fifteen distinct connected planetary regions with pet and boss subareas. Theme: bright stylized lunar sci-fi, escalating from familiar moon terrain to rare cosmic worlds. Pipeline modifier: `P0`, because this is one continuous single-surface world with no forced overhangs, interior transition, volumetric traversal, or procedurally validated topology.",
   "spec": {
     "genre": "Simulation",
-    "secondary": [
-      "RPG"
-    ],
+    "secondary": [],
     "shape": "tier-ladder",
     "preset": "Stat Grinder",
     "axes": {},
     "options": [
       {
         "id": "gate-progression",
-        "text": "A large, unmistakable space gate or boundary stands between every consecutive planetary zone as the ordered progression threshold.",
+        "text": "Large sci-fi lunar gateways or forcefield boundaries between each consecutive planetary zone.",
         "visible": true,
-        "count": 14
-      },
-      {
-        "id": "npc-population",
-        "text": "Themed pet habitats or display areas in every zone visibly house that region’s pet companions, increasing in richness alongside the regions.",
-        "visible": true,
-        "count": 15
+        "count": -1
       },
       {
         "id": "trigger-rebirth",
-        "text": "Place the rebirth pad at the far end of the fifteenth and highest-value region; do not render its trigger volume.",
+        "text": "One rebirth pad at the far end of the fifteenth and final area.",
         "visible": false,
         "count": 1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "trigger-rebirth",
+        "text": "One rebirth pad.",
+        "count": 1,
+        "where": "At the far end of the fifteenth and final area, in a prominent clear terminal plaza beyond its boss encounter space."
+      }
+    ],
     "layout": {
-      "composition": "A readable diagonal progression runs from the low-value starter moon in the foreground to the final lunar citadel in the distance, with each next region visible beyond its gateway.",
+      "composition": "The full world reads as a long progression ribbon: the compact lunar arrival zone begins the chain, while increasingly dramatic planets are visible ahead along the uninterrupted forward route.",
       "zones": [
         {
-          "name": "Lunar arrival zone",
-          "role": "Compact starter entry zone at the beginning of the progression route.",
-          "where": "foreground",
+          "name": "Zone 1",
+          "role": "Compact lunar arrival zone with a themed pet area beside the main route and an open boss encounter plaza before the exit gateway.",
+          "where": "Start of the progression chain.",
           "size": "compact"
         },
         {
-          "name": "Planetary tiers 2–14",
-          "role": "Fourteen sequentially unlockable planetary and lunar territories that grow in visual scale and prestige, with local identities such as crater fields, icy moons, ringed desert planets, and neon asteroid platforms.",
-          "where": "between the arrival zone and final citadel along the diagonal route",
-          "size": "increasingly large"
+          "name": "Zone 2",
+          "role": "Successive planetary or lunar tier with a themed pet area beside the route and an open boss encounter plaza before the exit gateway.",
+          "where": "After Zone 1.",
+          "size": "Increasing"
         },
         {
-          "name": "Final lunar citadel",
-          "role": "The fifteenth, highest-value monumental lunar region containing the rebirth pad at its far end.",
-          "where": "distance / end of the route",
-          "size": "monumental"
+          "name": "Zone 3",
+          "role": "Successive planetary or lunar tier with a themed pet area beside the route and an open boss encounter plaza before the exit gateway.",
+          "where": "After Zone 2.",
+          "size": "Increasing"
+        },
+        {
+          "name": "Zone 4",
+          "role": "Successive planetary or lunar tier with a themed pet area beside the route and an open boss encounter plaza before the exit gateway.",
+          "where": "After Zone 3.",
+          "size": "Increasing"
+        },
+        {
+          "name": "Zone 5",
+          "role": "Successive planetary or lunar tier with a themed pet area beside the route and an open boss encounter plaza before the exit gateway.",
+          "where": "After Zone 4.",
+          "size": "Increasing"
+        },
+        {
+          "name": "Zone 6",
+          "role": "Successive planetary or lunar tier with a themed pet area beside the route and an open boss encounter plaza before the exit gateway.",
+          "where": "After Zone 5.",
+          "size": "Increasing"
+        },
+        {
+          "name": "Zone 7",
+          "role": "Successive planetary or lunar tier with a themed pet area beside the route and an open boss encounter plaza before the exit gateway.",
+          "where": "After Zone 6.",
+          "size": "Increasing"
+        },
+        {
+          "name": "Zone 8",
+          "role": "Successive planetary or lunar tier with a themed pet area beside the route and an open boss encounter plaza before the exit gateway.",
+          "where": "After Zone 7.",
+          "size": "Increasing"
+        },
+        {
+          "name": "Zone 9",
+          "role": "Successive planetary or lunar tier with a themed pet area beside the route and an open boss encounter plaza before the exit gateway.",
+          "where": "After Zone 8.",
+          "size": "Increasing"
+        },
+        {
+          "name": "Zone 10",
+          "role": "Successive planetary or lunar tier with a themed pet area beside the route and an open boss encounter plaza before the exit gateway.",
+          "where": "After Zone 9.",
+          "size": "Increasing"
+        },
+        {
+          "name": "Zone 11",
+          "role": "Successive planetary or lunar tier with a themed pet area beside the route and an open boss encounter plaza before the exit gateway.",
+          "where": "After Zone 10.",
+          "size": "Increasing"
+        },
+        {
+          "name": "Zone 12",
+          "role": "Successive planetary or lunar tier with a themed pet area beside the route and an open boss encounter plaza before the exit gateway.",
+          "where": "After Zone 11.",
+          "size": "Increasing"
+        },
+        {
+          "name": "Zone 13",
+          "role": "Successive planetary or lunar tier with a themed pet area beside the route and an open boss encounter plaza before the exit gateway.",
+          "where": "After Zone 12.",
+          "size": "Increasing"
+        },
+        {
+          "name": "Zone 14",
+          "role": "Successive planetary or lunar tier with a themed pet area beside the route and an open boss encounter plaza before the exit gateway.",
+          "where": "After Zone 13.",
+          "size": "Increasing"
+        },
+        {
+          "name": "Zone 15",
+          "role": "Final high-value cosmic tier with a themed pet area beside the route, an open boss encounter plaza, and the terminal rebirth plaza beyond it.",
+          "where": "Far end of the progression chain.",
+          "size": "largest and most prestigious"
         }
       ],
-      "paths": [
-        {
-          "from": "Lunar arrival zone",
-          "to": "Final lunar citadel",
-          "kind": "open ground"
-        }
-      ],
-      "terrain": "Broad traversable plateaus or planet-surface segments, including crater fields, icy moons, ringed desert planets, neon asteroid platforms, orbital debris, rock walls, energy barriers, cliff edges, distant asteroids, and surrounding space void.",
-      "props": [
-        {
-          "name": "space gates or progression boundaries",
-          "count": 14,
-          "where": "between every consecutive planetary zone"
-        },
-        {
-          "name": "boss encounter clearings",
-          "count": 15,
-          "where": "near the outer side of each zone, set off the main running route"
-        },
-        {
-          "name": "pet habitats, kiosk-like enclosures, or glowing companion display areas",
-          "count": 15,
-          "where": "within each zone near its main path"
-        },
-        {
-          "name": "rebirth pad",
-          "count": 1,
-          "where": "far end of the fifteenth and highest-value region"
-        }
-      ],
-      "boundary": "The outer world edge is closed by space void, distant asteroids, and impassable terrain; gateways, rock walls, energy barriers, orbital debris, or cliff edges divide zones.",
+      "paths": [],
+      "terrain": "Varied space terrain across one traversable surface: craters, alien rock shelves, glowing mineral ground, ice moons, volcanic planets, and high-value cosmic final regions.",
+      "props": [],
+      "boundary": "Distant void, cliffs, planetary horizons, and decorative impassable rock bound the continuous world rather than separate maps.",
       "scale_band": "huge",
-      "theme": "Bright stylized sci-fi lunar exploration, escalating from humble moon craters to premium cosmic planets."
+      "theme": "Bright stylized lunar sci-fi, escalating from familiar moon terrain to rare cosmic worlds."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the fifteen-region sequence, uninterrupted route, and ordered gateways must remain connected and legible before the isometric scene is dressed.",
+      "why": "All fifteen zones and their gateways must form one connected, ordered progression route.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
-    "notes": [
-      "Dropped `hazard-aggro`: it is not a canonical option ID for the dominant Simulation genre, although the described boss encounter clearings are retained in layout components."
-    ],
+    "notes": [],
     "scene_prompt": "Create a 3D space-themed game world called Clicker Phyco, formed as one continuous route through 15 sequentially unlockable areas. Players run between distinct planets and lunar zones arranged in order, with each new region visibly separated by a gateway or boundary and increasing in scale and value along the progression path. Place themed pet areas within each zone, and reserve prominent encounter spaces for bosses."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

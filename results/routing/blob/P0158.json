@@ -19,146 +19,221 @@
     }
   ],
   "scene_prompt": "Create a Roblox horror game layout for “Yourself” with a small separate multiplayer lobby room leading into a large, compact maze designed for a roughly 10–15 minute four-player search. The maze is a dense network of shadowy corridors with random true dead ends, intermittent small rooms, and concealed hiding spots arranged to give players occasional escape routes. Scatter five distinct key-fragment locations throughout the maze, each set in or beside a generator repair area. Use heavy fog, flickering lights, deep shadows, and a dark industrial-horror atmosphere. Place a locked exit gate at the maze perimeter as the final destination. In the final escape state, shift the maze lighting to dark red and add visible emergency alarm fixtures along the corridors. The pursuing figure is a black, player-shaped humanoid silhouette with glowing white eyes, appearing against the maze’s darkness.",
-  "blob": "### Genre\nThe dominant genre is Survival, specifically a chase-horror escape game. The monster pursuit and escape condition make Survival own the layout; the key search is secondary puzzle dressing rather than a separate Puzzle genre.\n\n### Shape and preset\nUse `warren-looping`, matched to the Escape preset. The prompt overrides the preset’s normally loop-only safety topology: retain a connected main circulation network leading to the exit, but attach genuine short dead-end branches for horror pressure. The Escape preset remains recognisable through its escape gate and hiding geometry; its enterable-shelter option is dropped because the small rooms are built into the maze, not separate buildings.\n\n### Config requirements\nUse visible `gate-escape` for the locked perimeter exit gate, with its invisible escape trigger placed at the gate threshold. Use visible `cover-los` as recessed hiding niches, lockers, and small side rooms that break pursuit sightlines. Use `collectible-nodes` as five invisible pickup placements, each anchored by visible generator-repair alcoves. Use invisible `spawner-npc` origins distributed in concealed maze pockets for the pursuing figure; do not render these markers. The black player-shaped stalker with glowing white eyes is a visible encounter silhouette, not a spawn marker.\n\n### Layout components\nBuild two separate maps: a small enclosed lobby room for 1–4-player room gathering, then the main maze reached by teleport. The maze is a large but compact, dense industrial interior sized for a roughly 10–15 minute four-player search. A central, looping corridor spine connects broad search sectors and ultimately reaches the locked exit gate on the outer perimeter. Branching from it are random true dead ends, intermittent small rooms, generator alcoves, and concealed hiding pockets; distribute the five distinct key-fragment generator locations across separated sectors rather than clustering them. Use narrow shadowy corridors, dark concrete or metal surfaces, heavy fog, deep shadows, flickering wall lights, and emergency alarm fixtures along major routes. In the final-state dressing, lights shift to dark red. Enclose the maze with opaque industrial walls; frame the isometric view to show the corridor density, generator rooms, and distant exit edge, with the white-eyed silhouette emerging from darkness.\n\n### Render order\nUse `authored_plan`: the maze must be generated as a valid connected layout with reachable generator sites and a reachable exit despite its deliberate dead ends.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by the compact 10–15 minute cooperative search maze, plus a small separate lobby. Theme is realistic Roblox industrial horror: blackened corridors, volumetric fog, flickering illumination, and red emergency lighting. Pipeline modifiers are `P6` because maze connectivity and the escape route must be valid by construction, and `P4` because the lobby and maze are separate teleport-linked maps.",
+  "blob": "### Genre\nDominant genre: Survival, with Puzzle secondary. The persistent stalking threat and escape objective make this a mascot-horror survival game; the fragment-and-generator interactions contribute puzzle elements without changing the map’s primary threat-driven identity.\n\n### Shape and preset\nUse `puzzle-maze`, taken from outside Survival’s usual shape set because the maze topology itself must be traversable and contain the requested true dead ends. Match the Mascot Horror preset in its escape gate, hiding geometry, and hostile presence, while overriding its single-interior shape for the authored maze. The separate lobby is a distinct small map, not an adjoining maze zone.\n\n### Config requirements\nUse `cover-los` for concealed lockers, alcoves, shadow pockets, and small side rooms that interrupt corridor sightlines. Use `gate-escape` for the locked perimeter exit gate. Use `button-solve` for visible generator-repair console assemblies at the fragment sites; each is a physical interactive station. Include dark industrial walls, heavy fog, flickering ceiling lights, deep shadows, and emergency alarm fixtures that can visually support the final red-alert dressing.\n\n### Layout requirements\nPlace `collectible-nodes` at exactly five distinct fragment sites, each beside or within one generator-console area, distributed across distant maze sectors rather than clustered near the entrance. Place `button-solve` interaction markers at all five generator consoles. Place one `gate-escape` trigger across the exit gate at the maze perimeter. Place `spawner-npc` markers in several screened corridor-adjacent pockets away from the lobby entrance and exit, with one central final-phase origin that has routes into multiple maze branches.\n\n### Layout components\nBuild a small enclosed multiplayer lobby room as its own map, with a central room-formation area and a clear teleport departure point. The main map is a large but compact maze sized for a roughly 10–15 minute four-player search: dense industrial corridors form the dominant footprint, with genuine random dead ends, intermittent small utility rooms, and recessed hiding spaces. Divide the maze into five readable sectors around a central circulation knot, each containing one generator-and-fragment site. Put the locked exit gate on the outer perimeter opposite the initial entry. Keep a few cross-links between major sectors so players can evade through the maze despite the true dead ends. Frame the maze tightly from an elevated isometric view, with fog-filled corridors and the black, white-eyed humanoid silhouette readable against shadow.\n\n### Render order\nUse `authored_plan`: the maze must be valid by construction, with every required sector reachable and the exit connected despite dead ends; the lobby is then dressed as the linked separate map.\n\n### Scale, theme, and pipeline cost\nScale band: large, driven by the five dispersed objective sectors and the intended 10–15 minute search, while retaining a compact overall footprint. Theme: realistic Roblox industrial horror, oppressive fog, flickering light, black-shadow antagonist, and dark-red emergency alert accents. Pipeline modifiers: `P4` because the lobby and maze are separate maps; `P6` because the maze’s connected, solvable topology must be authored validly; `P0` otherwise.",
   "spec": {
     "genre": "Survival",
-    "secondary": [],
-    "shape": "warren-looping",
-    "preset": "Escape",
+    "secondary": [
+      "Puzzle"
+    ],
+    "shape": "puzzle-maze",
+    "preset": "Mascot Horror",
     "axes": {},
     "options": [
       {
-        "id": "gate-escape",
-        "text": "Locked perimeter exit gate as the final destination, with an invisible escape trigger at its threshold.",
-        "visible": true,
-        "count": 1
-      },
-      {
         "id": "cover-los",
-        "text": "Recessed hiding niches, lockers, small side rooms, and concealed hiding pockets that break the pursuing figure's sightlines.",
+        "text": "Concealed lockers, alcoves, shadow pockets, and small side rooms that interrupt corridor sightlines.",
         "visible": true,
         "count": -1
       },
       {
+        "id": "gate-escape",
+        "text": "A locked perimeter exit gate as the final destination.",
+        "visible": true,
+        "count": 1
+      },
+      {
         "id": "collectible-nodes",
-        "text": "Five invisible key-fragment pickup placements, each anchored by a visible generator-repair alcove and distributed across separated sectors.",
+        "text": "Five distinct key fragments, each placed in or beside a generator repair area.",
         "visible": false,
         "count": 5
       },
       {
         "id": "spawner-npc",
-        "text": "Invisible pursuing-figure origins distributed in concealed maze pockets; do not render these markers.",
+        "text": "Hostile origin markers in screened corridor-adjacent pockets, including one central final-phase origin with routes into multiple maze branches.",
         "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "gate-escape",
+        "text": "One escape trigger across the locked exit gate.",
+        "count": 1,
+        "where": "Across the exit gate on the maze outer perimeter opposite the initial entry."
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "Five distinct key fragments, each beside or within one generator-console area.",
+        "count": 5,
+        "where": "One in each of the five readable maze sectors around the central circulation knot, distributed across distant sectors rather than near the entrance."
+      },
+      {
+        "id": "spawner-npc",
+        "text": "Hostile origin markers in screened corridor-adjacent pockets, with one central final-phase origin.",
+        "count": -1,
+        "where": "Several pockets away from the lobby entrance and exit; the central final-phase origin connects into multiple maze branches."
+      }
+    ],
     "layout": {
-      "composition": "Isometric frame shows dense shadowy corridor networks in the foreground and centre, intermittent generator rooms across separated search sectors, and the locked outer-perimeter exit edge in the distance; a white-eyed black silhouette emerges from darkness.",
+      "composition": "A tightly framed elevated isometric view of fog-filled industrial maze corridors, with the compact maze dominating the frame; the central circulation knot sits near the middle, distant objective sectors radiate around it, and the locked perimeter exit lies opposite the initial entry. The black, white-eyed humanoid silhouette is readable against the shadows.",
       "zones": [
         {
-          "name": "Separate multiplayer lobby room",
-          "role": "Small enclosed 1–4-player gathering room before entering the maze.",
-          "where": "Separate teleport-linked map.",
+          "name": "Multiplayer Lobby",
+          "role": "Separate enclosed map for players to form a room and depart through a teleport point.",
+          "where": "Separate small map linked to the maze.",
           "size": "small"
         },
         {
-          "name": "Main industrial maze",
-          "role": "Large compact four-player search maze with a connected looping circulation network leading to the exit.",
-          "where": "Separate teleport-linked map.",
-          "size": "large; roughly 10–15 minutes of search"
+          "name": "Maze Entry",
+          "role": "Initial entry into the main maze.",
+          "where": "Maze perimeter opposite the locked exit gate.",
+          "size": ""
         },
         {
-          "name": "Central looping corridor spine",
-          "role": "Main circulation network connecting search sectors and ultimately reaching the locked exit.",
+          "name": "Central Circulation Knot",
+          "role": "Central maze junction connecting routes into multiple branches and the final-phase hostile origin.",
           "where": "Centre of the maze.",
           "size": ""
         },
         {
-          "name": "Search sectors",
-          "role": "Broad separated areas containing generator-repair alcoves and key-fragment locations.",
-          "where": "Around the central corridor spine.",
+          "name": "Sector One",
+          "role": "Maze sector containing one generator-console and key-fragment site.",
+          "where": "Around the central circulation knot.",
           "size": ""
         },
         {
-          "name": "Dead-end branches and small rooms",
-          "role": "True dead ends, intermittent rooms, and hiding routes that create horror pressure and occasional escape opportunities.",
-          "where": "Branching from the main circulation network.",
+          "name": "Sector Two",
+          "role": "Maze sector containing one generator-console and key-fragment site.",
+          "where": "Around the central circulation knot.",
           "size": ""
         },
         {
-          "name": "Exit perimeter",
+          "name": "Sector Three",
+          "role": "Maze sector containing one generator-console and key-fragment site.",
+          "where": "Around the central circulation knot.",
+          "size": ""
+        },
+        {
+          "name": "Sector Four",
+          "role": "Maze sector containing one generator-console and key-fragment site.",
+          "where": "Around the central circulation knot.",
+          "size": ""
+        },
+        {
+          "name": "Sector Five",
+          "role": "Maze sector containing one generator-console and key-fragment site.",
+          "where": "Around the central circulation knot.",
+          "size": ""
+        },
+        {
+          "name": "Perimeter Exit",
           "role": "Locked final escape destination.",
-          "where": "Outer perimeter of the maze.",
+          "where": "Outer maze perimeter opposite the initial entry.",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Separate multiplayer lobby room",
-          "to": "Main industrial maze",
+          "from": "Multiplayer Lobby",
+          "to": "Maze Entry",
           "kind": "portal"
         },
         {
-          "from": "Central looping corridor spine",
-          "to": "Search sectors",
+          "from": "Maze Entry",
+          "to": "Central Circulation Knot",
           "kind": "corridor"
         },
         {
-          "from": "Central looping corridor spine",
-          "to": "Exit perimeter",
+          "from": "Central Circulation Knot",
+          "to": "Sector One",
           "kind": "corridor"
         },
         {
-          "from": "Central looping corridor spine",
-          "to": "Dead-end branches and small rooms",
+          "from": "Central Circulation Knot",
+          "to": "Sector Two",
+          "kind": "corridor"
+        },
+        {
+          "from": "Central Circulation Knot",
+          "to": "Sector Three",
+          "kind": "corridor"
+        },
+        {
+          "from": "Central Circulation Knot",
+          "to": "Sector Four",
+          "kind": "corridor"
+        },
+        {
+          "from": "Central Circulation Knot",
+          "to": "Sector Five",
+          "kind": "corridor"
+        },
+        {
+          "from": "Major maze sectors",
+          "to": "Major maze sectors",
+          "kind": "corridor"
+        },
+        {
+          "from": "Central Circulation Knot",
+          "to": "Perimeter Exit",
           "kind": "corridor"
         }
       ],
-      "terrain": "Dark concrete or metal industrial interior surfaces, narrow shadowy corridors, heavy volumetric fog, deep shadows, flickering wall lights, and final-state dark-red emergency lighting.",
+      "terrain": "Enclosed dense industrial corridors with genuine random dead ends, intermittent small utility rooms, recessed hiding spaces, heavy fog, and deep shadow.",
       "props": [
         {
-          "name": "Generator-repair alcoves",
-          "count": 5,
-          "where": "Separated search sectors throughout the maze"
+          "name": "Dark industrial walls",
+          "count": -1,
+          "where": "Throughout the maze corridors and utility rooms."
+        },
+        {
+          "name": "Flickering ceiling lights",
+          "count": -1,
+          "where": "Along maze corridors."
         },
         {
           "name": "Emergency alarm fixtures",
           "count": -1,
-          "where": "Along major corridors"
+          "where": "Along maze corridors for final dark-red alert dressing."
         },
         {
-          "name": "Black player-shaped stalker silhouette with glowing white eyes",
+          "name": "Black humanoid silhouette with glowing white eyes",
           "count": 1,
-          "where": "Emerging from the maze darkness"
+          "where": "Against the maze darkness."
         }
       ],
-      "boundary": "Opaque industrial walls enclose the maze; the lobby is a separate enclosed room.",
+      "boundary": "The main maze is enclosed by dark industrial walls, with a locked exit gate on its outer perimeter; the lobby is a separate enclosed room map.",
       "scale_band": "large",
-      "theme": "realistic Roblox industrial horror, blackened corridors, volumetric fog, flickering illumination, dark red emergency lighting"
+      "theme": "Realistic Roblox industrial horror, oppressive fog, flickering light, deep shadows, black-shadow antagonist, and dark-red emergency alert accents."
     },
     "render": {
       "first": "authored_plan",
       "then": "topdown",
       "authoritative": "authored_plan",
-      "why": "Maze connectivity, reachable generator sites, and the reachable exit must remain valid despite deliberate dead ends.",
+      "why": "The maze topology must be valid by construction so every objective sector is reachable and the exit remains connected despite true dead ends.",
       "set_piece": false
     },
     "route": [
+      "P4",
       "P6",
-      "P4"
+      "P0"
     ],
-    "notes": [],
+    "notes": [
+      "`puzzle-maze` is taken from outside Survival's usual shape set because the maze topology must be traversable with true dead ends.",
+      "The Mascot Horror preset is matched for its escape gate, hiding geometry, and hostile presence, while its single-interior shape is overridden by the authored maze.",
+      "The lobby is a separate small map rather than an adjoining maze zone.",
+      "dropped option 'button-solve': not in Survival",
+      "dropped placement 'button-solve': not in Survival"
+    ],
     "scene_prompt": "Create a Roblox horror game layout for “Yourself” with a small separate multiplayer lobby room leading into a large, compact maze designed for a roughly 10–15 minute four-player search. The maze is a dense network of shadowy corridors with random true dead ends, intermittent small rooms, and concealed hiding spots arranged to give players occasional escape routes. Scatter five distinct key-fragment locations throughout the maze, each set in or beside a generator repair area. Use heavy fog, flickering lights, deep shadows, and a dark industrial-horror atmosphere. Place a locked exit gate at the maze perimeter as the final destination. In the final escape state, shift the maze lighting to dark red and add visible emergency alarm fixtures along the corridors. The pursuing figure is a black, player-shaped humanoid silhouette with glowing white eyes, appearing against the maze’s darkness."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
-  "order": "p6",
-  "first": "topdown",
-  "mapper_notes": [
-    "blob asked for authored_plan first; the route ['P6'] gives topdown"
-  ]
+  "order": "layout",
+  "first": "authored_plan",
+  "mapper_notes": []
 }

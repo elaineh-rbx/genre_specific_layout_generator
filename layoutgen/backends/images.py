@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import os
 import pathlib
+import random
 import time
 from dataclasses import dataclass
 
@@ -30,6 +31,35 @@ KEY_ENV = "GPT_IMAGE_2_API_KEY"
 
 SIZE = 1024
 TIMEOUT_S = 600.0
+
+#: Statuses worth offering again. A 429 is the deployment admitting work more slowly than
+#: we are handing it over, which says nothing about the request; the 5xx family is
+#: transient by definition. Everything else - a 400 for a prompt the content filter
+#: refuses, a 401 for a stale key - is permanent, and trying it twice more only delays
+#: the report by the length of the backoff.
+RETRYABLE = {408, 409, 429, 500, 502, 503, 504}
+
+
+def _hold(response: httpx.Response | None, attempt: int) -> float:
+    """How long to wait before offering a rejected request again.
+
+    This deployment answers a 429 with `Retry-After: 4`, and taking it at its word beats
+    guessing in both directions. The rejection itself arrives in about a fifth of a
+    second, so a worker that waits the four seconds it was asked for has still spent an
+    order of magnitude less than the generation it is queueing for - which is what makes
+    it safe to run more workers than the limiter will admit at once. The exponential
+    fallback is only for a limiter that declines to say.
+
+    The jitter matters more than its size: without it, every worker rejected in the same
+    burst comes back in the same instant and rebuilds the burst it was throttled for.
+    """
+    hinted = response.headers.get("retry-after") if response is not None else None
+    if hinted:
+        try:
+            return min(float(hinted) + random.uniform(0, 0.5), 60.0)
+        except ValueError:
+            pass
+    return min(2**attempt + random.uniform(0, 1), 60.0)
 
 
 class ImageError(RuntimeError):
@@ -82,7 +112,7 @@ class Provider:
         self._key = api_key()
 
     def generate(self, prompt: str, references: list[pathlib.Path] | None = None,
-                 retries: int = 3) -> Answer:
+                 retries: int = 8) -> Answer:
         import base64
         import io
 
@@ -116,11 +146,19 @@ class Provider:
                         raise ImageError(f"{self.model} returned no image")
                 with Image.open(io.BytesIO(blob)) as im:
                     return Answer(im.convert("RGB").copy(), self.model)
+            except httpx.HTTPStatusError as exc:
+                if exc.response.status_code not in RETRYABLE:
+                    raise ImageError(f"HTTP {exc.response.status_code}: "
+                                     f"{exc.response.text[:200]}") from exc
+                last = exc
+                if attempt < retries:
+                    time.sleep(_hold(exc.response, attempt))
             except (httpx.HTTPError, KeyError, IndexError, ValueError) as exc:
                 last = exc
                 if attempt < retries:
-                    time.sleep(3 * attempt)
-        raise ImageError(f"{type(last).__name__}: {last}")
+                    time.sleep(_hold(None, attempt))
+        raise ImageError(f"gave up after {retries} attempts, "
+                         f"{type(last).__name__}: {last}")
 
 
 _provider: Provider | None = None
@@ -136,8 +174,20 @@ def provider() -> Provider:
 
 def generate(prompt: str, dest: pathlib.Path,
              references: list[pathlib.Path] | None = None) -> pathlib.Path:
-    """One image, normalised and written to `dest`."""
+    """One image, normalised and written to `dest`.
+
+    Saved beside the destination and moved into place, because the runners take an
+    existing file to be a finished one and skip it. A process killed mid-save otherwise
+    leaves a partial PNG that every later resume steps over as done - and which surfaces
+    much later as an unreadable reference to the stage built from it, or on a stage
+    nothing else reads, not at all.
+    """
     dest.parent.mkdir(parents=True, exist_ok=True)
     answer = provider().generate(prompt, references)
-    normalise(answer.image).save(dest, format="PNG")
+    tmp = dest.with_suffix(f".part{os.getpid()}")
+    try:
+        normalise(answer.image).save(tmp, format="PNG")
+        tmp.replace(dest)
+    finally:
+        tmp.unlink(missing_ok=True)
     return dest

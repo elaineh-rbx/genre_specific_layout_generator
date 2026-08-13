@@ -14,120 +14,109 @@
     }
   ],
   "scene_prompt": "Create a 3D zombie survival map centered on a lived-in, modern house, with open approaches around the building for attacking zombies.",
-  "blob": "### Genre\nThis is Survival, specifically the Horde Defense preset: the player survives attacking zombie waves at a defended house. The combat mechanics and wave rules do not alter the drawn layout.\n\n### Shape and preset\nUse the `arena-contained` shape, matched to Horde Defense. The modern house is the central defendable landmark rather than a route through a larger world; retain the preset’s contained encounter space.\n\n### Config requirements\nUse `spawner-npc` as invisible layout geometry: place zombie wave-origin markers around the outer approaches, beyond the house’s immediate yard. Use `cover-los` as visible geometry: provide localized concealment and sightline breaks around the house, such as low garden walls, parked vehicles, fences, and small yard structures. Do not add unrequested interiors, water, settlements, terrain relief, or pickups.\n\n### Layout components\nBuild one medium-sized, roughly square exterior defense arena. Put a lived-in modern detached house slightly central, with a driveway and small front yard facing the primary approach, and a rear patio or backyard behind it. Surround the house with open lawn and paved approach space wide enough for zombie attacks to be visible before reaching the building. Arrange scattered low fences, hedges, a parked car, garden furniture, bins, and short retaining walls as sparse cover without blocking the open approach lanes. Keep continuous walkable circulation around all sides of the house. The outer boundary is a clear map edge formed by perimeter fencing, hedges, and distant residential-edge dressing; zombie origins sit just inside or beyond this perimeter. Frame the house as the visual and spatial focus, with open ground radiating outward to the boundary.\n\n### Render order\nUse `topdown`: valid circulation around the central house and readable approach space are important to defending against waves, so the plan should establish the topology before the isometric dressing.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by one house plus a complete surrounding defense yard and multiple attack approaches. Theme is contemporary suburban home under a zombie siege, clean and lived-in rather than ruined or overgrown. Pipeline modifier `P0`: this is one exterior ground surface with no forced overlapping levels, outside-to-inside traversal, separate maps, or validity-by-construction route.",
+  "blob": "### Genre\n`Survival` is dominant: this is a Horde Defense scenario in which players hold a house against zombie waves.\n\n### Shape and preset\nUse `space-bounded`, matching the Horde Defense preset. It is one contained defensive arena: the modern house is the central holdout, with clear exterior ground around it for approaching attackers.\n\n### Config requirements\nNo additional image-config option is required beyond the bounded house-and-yard composition requested. Do not imply an abandoned, ruined, or overgrown setting; the house must read as currently lived-in and modern.\n\n### Layout requirements\nUse `spawner-npc` for four zombie wave origins, one near each outer side of the arena boundary. Site them beyond the open yard approaches, screened from immediate view by the perimeter rather than directly beside the house; each must have an unobstructed navigable route toward the building.\n\n### Layout components\nThe main zone is a lived-in modern detached house, centered and taking roughly one quarter of the playable footprint. Keep its exterior readable from all sides, with a front entry, side walls, rear yard edge, windows, roofline, driveway or front path, and ordinary residential detailing such as a porch, lawn, shrubs, fencing, and parked-household context without turning the property into ruins. The surrounding zone is an open defensive yard on all four sides, wide enough for zombies to advance in visible groups and for players to circle the building. A short front walk and driveway connect the street-facing edge to the house; side and rear lawn routes remain open and continuous around it. Use level suburban ground with only low landscaping, avoiding dense clutter that blocks the attacking approaches. Enclose the map at its outer edge with a restrained neighborhood-limit treatment such as fences, hedges, distant street edges, or tree lines, while preserving clear lanes from each spawn side toward the house. Frame the house as the visual and spatial center, with the open approaches radiating outward.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because the four exterior approaches and their routes to the central defensive house must remain connected and legible for the survival encounter.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by one substantial house plus a defensible perimeter yard. Theme is contemporary lived-in suburban home under zombie-siege tension. Use `P0`: this is one single-level exterior defensive surface with no forced interior transition, stacked geometry, or separate maps.",
   "spec": {
     "genre": "Survival",
     "secondary": [],
-    "shape": "arena-contained",
+    "shape": "space-bounded",
     "preset": "Horde Defense",
     "axes": {},
     "options": [
       {
         "id": "spawner-npc",
-        "text": "Zombie wave-origin markers around the outer approaches, beyond the house's immediate yard.",
+        "text": "Four zombie wave origins, one near each outer side of the arena boundary, screened by the perimeter and connected to the house by unobstructed navigable routes.",
         "visible": false,
-        "count": -1
-      },
+        "count": 4
+      }
+    ],
+    "layout_placement": [
       {
-        "id": "cover-los",
-        "text": "Localized concealment and sightline breaks around the house: low garden walls, parked vehicles, fences, and small yard structures.",
-        "visible": true,
-        "count": -1
+        "id": "spawner-npc",
+        "text": "Four zombie wave origins, one near each outer side of the arena boundary.",
+        "count": 4,
+        "where": "Beyond the open yard approaches at each outer boundary side, screened from immediate view by the perimeter rather than directly beside the house; each has an unobstructed navigable route toward the building."
       }
     ],
     "layout": {
-      "composition": "The lived-in modern detached house sits slightly central as the visual and spatial focus, with open lawn and paved ground radiating outward to the perimeter. The driveway and small front yard face the primary approach, while a rear patio or backyard sits behind the house.",
+      "composition": "The modern detached house is centered as the visual and spatial holdout, surrounded on all four sides by open defensive yard approaches radiating outward to the restrained perimeter.",
       "zones": [
         {
-          "name": "modern detached house",
-          "role": "Central defendable landmark for surviving zombie waves.",
-          "where": "slightly central",
-          "size": ""
+          "name": "Modern detached house",
+          "role": "Central lived-in defensive holdout for players against zombie waves.",
+          "where": "Centre of the arena.",
+          "size": "Roughly one quarter of the playable footprint."
         },
         {
-          "name": "front yard and driveway",
-          "role": "Primary defended approach space facing the house.",
-          "where": "in front of the house",
-          "size": "small"
-        },
-        {
-          "name": "rear patio or backyard",
-          "role": "Rear exterior defense and circulation space.",
-          "where": "behind the house",
-          "size": "small"
-        },
-        {
-          "name": "open lawn and paved approaches",
-          "role": "Open attack lanes where zombies remain visible before reaching the building.",
-          "where": "surrounding all sides of the house",
-          "size": ""
-        },
-        {
-          "name": "outer approaches",
-          "role": "Zombie wave-origin area beyond the immediate yard.",
-          "where": "near the perimeter around the arena",
-          "size": ""
+          "name": "Open defensive yard",
+          "role": "Open approaches for visible zombie groups and continuous player circulation around the house.",
+          "where": "Surrounding the house on all four sides, extending to the outer boundary.",
+          "size": "Wide enough for groups to advance and players to circle the building."
         }
       ],
       "paths": [
         {
-          "from": "front yard and driveway",
-          "to": "modern detached house",
+          "from": "Street-facing edge",
+          "to": "Modern detached house",
           "kind": "road"
         },
         {
-          "from": "modern detached house",
-          "to": "rear patio or backyard",
-          "kind": "open ground"
+          "from": "Street-facing edge",
+          "to": "Modern detached house",
+          "kind": "path"
         },
         {
-          "from": "front yard and driveway",
-          "to": "rear patio or backyard",
+          "from": "Side lawn routes",
+          "to": "Rear lawn routes",
           "kind": "open ground"
         }
       ],
-      "terrain": "One roughly square exterior ground surface of open lawn and paved approach space, with sparse low fences, hedges, a parked car, garden furniture, bins, and short retaining walls.",
+      "terrain": "Level suburban ground with lawn and only low landscaping; side and rear lawn routes remain open and continuous around the house.",
       "props": [
         {
-          "name": "low fences",
+          "name": "Front entry",
           "count": -1,
-          "where": "scattered around the house and yard"
+          "where": "Front of the centered house."
         },
         {
-          "name": "hedges",
+          "name": "Windows",
           "count": -1,
-          "where": "scattered around the house and perimeter"
+          "where": "Around the house exterior."
         },
         {
-          "name": "parked car",
+          "name": "Roofline",
           "count": -1,
-          "where": "around the house"
+          "where": "Top of the house."
         },
         {
-          "name": "garden furniture",
+          "name": "Porch",
           "count": -1,
-          "where": "around the house"
+          "where": "At the front entry."
         },
         {
-          "name": "bins",
+          "name": "Shrubs",
           "count": -1,
-          "where": "around the house"
+          "where": "Around the house as low residential landscaping."
         },
         {
-          "name": "short retaining walls",
+          "name": "Fencing",
           "count": -1,
-          "where": "around the house"
+          "where": "Around the property and outer neighborhood limit."
+        },
+        {
+          "name": "Parked-household context",
+          "count": -1,
+          "where": "Near the house and driveway."
         }
       ],
-      "boundary": "A clear map edge formed by perimeter fencing, hedges, and distant residential-edge dressing.",
+      "boundary": "A restrained neighborhood-limit treatment at the outer edge using fences, hedges, distant street edges, or tree lines, while preserving clear lanes from every spawn side toward the house.",
       "scale_band": "medium",
-      "theme": "Contemporary suburban home under a zombie siege, clean and lived-in rather than ruined or overgrown."
+      "theme": "Contemporary lived-in suburban home under zombie-siege tension."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "valid circulation around the central house and readable approach space are important to defending against waves.",
+      "why": "the four exterior approaches and their routes to the central defensive house must remain connected and legible for the survival encounter.",
       "set_piece": false
     },
     "route": [
@@ -139,7 +128,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

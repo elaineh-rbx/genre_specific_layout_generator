@@ -19,127 +19,165 @@
     }
   ],
   "scene_prompt": "Create a 3D clean modern animal hospital map with a lobby facing a road. Place three player spawn pads in the lobby, each sized for up to five players, alongside a check-in area and a coffee area. The hospital has two floors, glowing hospital signage, walls enclosing the map edges, and 10 medicine pickup items distributed within the hospital.",
-  "blob": "### Genre\nThe dominant genre is Simulation, specifically a hospital role-sim: the check-in and treatment spaces support a repeatable animal-care workplace rather than open-ended social roleplay.\n\n### Shape and preset\nUse `world-shared`, matching the Role Sim preset. The scene is a shared hospital facility rather than isolated player plots. Keep the preset’s circulation intent, but omit its vehicle-road requirement: the prompt only calls for a road facing the lobby, not a drivable network.\n\n### Config requirements\nUse visible `path-circulation` for the lobby-to-clinic corridors, stair connection, and front approach. Use `trigger-task` as both visible and invisible: a physical check-in counter and treatment/work stations, with their interaction volumes placed afterward. Use visible `building-interior` for the enterable two-floor hospital. Use invisible `collectible-nodes` for exactly 10 medicine pickup placements distributed through the hospital; do not render pickup markers into the image.\n\n### Layout components\nBuild a medium shared animal hospital on a roadside frontage. The ground floor centers on a broad front lobby facing the road, with three clearly separated player spawn pads near the arrival area; each pad is sized for up to five players. Put the check-in counter prominently along the lobby’s inner wall, with a small coffee area offset to one side. Lead from the lobby into clinic corridors and animal-care rooms on the first floor, then a central stair to the second-floor treatment and support rooms. Distribute the 10 medicine pickup locations across both floors, especially in treatment, storage, and care-room zones. Use clean pale flooring, glass partitions, modern clinic counters, and glowing hospital signage on the exterior facade. A simple front road runs directly outside the lobby entrance. Continuous enclosing walls define the map edge around the hospital grounds.\n\n### Render order\nUse `isometric`: the compact clinic’s modern architectural appearance is authoritative, while linked floor captures can be derived afterward; an invalid route would not make the role-sim unplayable.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by a public lobby, two complete floors, and several care rooms. Theme: clean modern animal clinic, bright clinical materials, glass, soft lighting, and luminous signage. Use `P2` because the two stacked floors occlude one another in a single plan capture, and `P3` because play crosses between the exterior road/lobby approach and the enterable hospital interior.",
+  "blob": "### 1. Genre\n`No Genre`: the request specifies an animal-hospital place with spawns and pickups but no defined task loop, scoring, threat, or progression system. The decided axes are `enclosure` = `transition`, because the hospital interior meets a front road; `verticality` = `stacked`, because the hospital has two accessible floors; and `play-space` = `grounded-surface`. Zone count and structure remain at their defaults.\n\n### 2. Shape and preset\nNo shape applies for `No Genre`. Use the Social Space preset as a loose match for its lobby and arrival focus, adapted to a two-floor veterinary hospital.\n\n### 3. Config requirements\nUse `building-interior` for the enterable two-storey hospital; `path-circulation` for the front road, lobby circulation, internal halls, and stair connection; `boundary-edge` for continuous enclosing walls around the map perimeter; and `spawn-area` for the three visible lobby spawn pads.\n\n### 4. Layout requirements\nPlace `spawn-area` as exactly three player spawn pads in the lobby, aligned beside or just behind the road-facing entrance and each sized to hold up to five players. Place `collectible-nodes` as exactly 10 medicine pickup items: distribute five on each floor in readable treatment, storage, or corridor locations rather than clustering them at check-in.\n\n### 5. Layout components\nThe ground floor is a broad road-facing lobby, with the three spawn pads nearest the entrance, a check-in counter immediately visible from them, and a separate coffee area along one side. Behind the public lobby, use a circulation hall leading into veterinary clinic rooms and a centrally readable staircase. The second floor is a smaller upper clinical level reached by that stair, with treatment and medicine-storage spaces arranged off a short hall. A simple paved road runs across the front exterior and faces the glazed entrance. Use clean pale floors, white walls, glass partitions, restrained clinic-blue accents, and glowing hospital signage over the front. Tall continuous walls enclose the outer map edges. Compose the frame to show the road, entrance lobby, and the two-level cutaway relationship.\n\n### 6. Render order\nUse `topdown` first and treat it as authoritative, because the two floors, stair connection, pickup distribution, and lobby access must remain coherent before the isometric dressing is made.\n\n### 7. Scale, theme, and pipeline cost\nScale is medium, driven by a public lobby, road frontage, and two hospital floors. Theme: clean modern animal clinic, bright, orderly, and lightly glowing. Use `P2` because the upper floor stacks above the ground floor, and `P3` because play crosses between the exterior road frontage and the hospital interior.",
   "spec": {
-    "genre": "Simulation",
+    "genre": "No Genre",
     "secondary": [],
-    "shape": "world-shared",
-    "preset": "Role Sim",
-    "axes": {},
+    "shape": "",
+    "preset": "Social Space",
+    "axes": {
+      "enclosure": "transition",
+      "verticality": "stacked",
+      "zone-count": "single",
+      "structure": "dressed",
+      "play-space": "grounded-surface"
+    },
     "options": [
       {
-        "id": "path-circulation",
-        "text": "Lobby-to-clinic corridors, central stair connection, and front approach from the road.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "trigger-task",
-        "text": "A physical check-in counter and treatment/work stations, with interaction volumes placed afterward.",
-        "visible": true,
-        "count": -1
-      },
-      {
         "id": "building-interior",
-        "text": "Enterable two-floor animal hospital.",
+        "text": "Enterable two-storey animal hospital.",
+        "visible": true,
+        "count": 1
+      },
+      {
+        "id": "path-circulation",
+        "text": "Front road, lobby circulation, internal halls, and a stair connection.",
         "visible": true,
         "count": -1
+      },
+      {
+        "id": "boundary-edge",
+        "text": "Continuous enclosing walls around the map perimeter.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "spawn-area",
+        "text": "Three visible lobby spawn pads, each sized to hold up to five players.",
+        "visible": true,
+        "count": 3
       },
       {
         "id": "collectible-nodes",
-        "text": "Exactly 10 medicine pickup placements distributed across both floors, especially in treatment, storage, and care-room zones; pickup markers are not rendered.",
+        "text": "10 medicine pickup items distributed across the hospital.",
         "visible": false,
         "count": 10
       }
     ],
+    "layout_placement": [
+      {
+        "id": "spawn-area",
+        "text": "Three player spawn pads in the lobby, each sized to hold up to five players.",
+        "count": 3,
+        "where": "Aligned beside or just behind the road-facing entrance in the lobby."
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "10 medicine pickup items.",
+        "count": 10,
+        "where": "Distribute five on each floor in readable treatment, storage, or corridor locations rather than clustering them at check-in."
+      }
+    ],
     "layout": {
-      "composition": "A roadside frontage sits directly outside the broad front lobby; the check-in counter is prominent along the lobby's inner wall, with a coffee area offset to one side. Clinic corridors and care rooms extend from the lobby on the first floor, while a central stair leads to second-floor treatment and support rooms.",
+      "composition": "Show the paved front road, glazed entrance and road-facing lobby, with a clear two-level cutaway relationship between the ground floor and smaller upper clinical floor.",
       "zones": [
         {
-          "name": "front lobby and arrival area",
-          "role": "Public arrival, player spawning, check-in, and coffee area.",
-          "where": "ground floor, facing the front road",
+          "name": "Front road",
+          "role": "Exterior frontage facing the hospital entrance.",
+          "where": "Across the front exterior.",
+          "size": ""
+        },
+        {
+          "name": "Ground-floor public lobby",
+          "role": "Arrival area containing spawn pads, check-in, coffee area, clinic access, and the stair.",
+          "where": "Road-facing ground floor behind the glazed entrance.",
           "size": "broad"
         },
         {
-          "name": "check-in area",
-          "role": "Physical check-in task station.",
-          "where": "along the lobby's inner wall",
+          "name": "Check-in area",
+          "role": "Reception immediately visible from arriving players.",
+          "where": "Inside the lobby, visible from the spawn pads.",
           "size": ""
         },
         {
-          "name": "coffee area",
-          "role": "Small lobby amenity area.",
-          "where": "offset to one side of the lobby",
-          "size": "small"
-        },
-        {
-          "name": "clinic corridors and animal-care rooms",
-          "role": "First-floor care and workplace circulation.",
-          "where": "beyond the lobby on the first floor",
+          "name": "Coffee area",
+          "role": "Separate public lobby amenity.",
+          "where": "Along one side of the lobby.",
           "size": ""
         },
         {
-          "name": "second-floor treatment and support rooms",
-          "role": "Treatment, support, storage, and medicine pickup distribution.",
-          "where": "second floor, reached by the central stair",
+          "name": "Ground-floor veterinary clinic rooms",
+          "role": "Clinical rooms reached from the public lobby circulation hall.",
+          "where": "Behind the public lobby.",
           "size": ""
+        },
+        {
+          "name": "Central staircase",
+          "role": "Connects the two accessible hospital floors.",
+          "where": "Centrally readable behind the lobby.",
+          "size": ""
+        },
+        {
+          "name": "Upper clinical level",
+          "role": "Second-floor treatment and medicine-storage spaces.",
+          "where": "Above the ground floor, reached by the central stair.",
+          "size": "smaller"
         }
       ],
       "paths": [
         {
-          "from": "front road",
-          "to": "front lobby and arrival area",
-          "kind": "road"
+          "from": "Front road",
+          "to": "Ground-floor public lobby",
+          "kind": "open ground"
         },
         {
-          "from": "front lobby and arrival area",
-          "to": "clinic corridors and animal-care rooms",
+          "from": "Ground-floor public lobby",
+          "to": "Ground-floor veterinary clinic rooms",
           "kind": "corridor"
         },
         {
-          "from": "front lobby and arrival area",
-          "to": "second-floor treatment and support rooms",
+          "from": "Ground-floor public lobby",
+          "to": "Upper clinical level",
           "kind": "stair"
+        },
+        {
+          "from": "Upper clinical level",
+          "to": "Treatment and medicine-storage spaces",
+          "kind": "corridor"
         }
       ],
-      "terrain": "Roadside hospital grounds with clean pale flooring inside.",
+      "terrain": "Simple paved road across the front exterior; clean pale hospital floors.",
       "props": [
         {
-          "name": "player spawn pads",
+          "name": "Player spawn pads",
           "count": 3,
-          "where": "near the lobby arrival area; each is sized for up to five players"
+          "where": "Nearest the road-facing lobby entrance."
         },
         {
-          "name": "medicine pickup placements",
-          "count": 10,
-          "where": "across both floors, especially treatment, storage, and care-room zones"
+          "name": "Check-in counter",
+          "count": 1,
+          "where": "Immediately visible from the lobby spawn pads."
         },
         {
-          "name": "glowing hospital signage",
+          "name": "Coffee area",
+          "count": 1,
+          "where": "Along one side of the public lobby."
+        },
+        {
+          "name": "Glowing hospital signage",
           "count": -1,
-          "where": "exterior facade"
-        },
-        {
-          "name": "glass partitions",
-          "count": -1,
-          "where": "hospital interior"
-        },
-        {
-          "name": "modern clinic counters",
-          "count": -1,
-          "where": "hospital interior"
+          "where": "Over the front entrance."
         }
       ],
-      "boundary": "Continuous enclosing walls define the map edge around the hospital grounds.",
+      "boundary": "Tall continuous walls enclose the outer map edges.",
       "scale_band": "medium",
-      "theme": "Clean modern animal clinic with bright clinical materials, glass, soft lighting, and luminous signage."
+      "theme": "Clean modern animal clinic, bright, orderly, lightly glowing; white walls, glass partitions, pale floors, and restrained clinic-blue accents."
     },
     "render": {
-      "first": "isometric",
-      "then": "topdown",
-      "authoritative": "isometric",
-      "why": "the compact clinic's modern architectural appearance is authoritative, and an invalid route would not make the role-sim unplayable.",
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "The two floors, stair connection, pickup distribution, and lobby access must remain coherent.",
       "set_piece": false
     },
     "route": [
@@ -152,10 +190,12 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
-  "mapper_notes": []
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P3', 'P2'] gives isometric"
+  ]
 }

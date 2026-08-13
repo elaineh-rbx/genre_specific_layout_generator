@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a compact 3D street-racing circuit inspired by Monaco, with a recognizable tight urban track winding through dense city blocks, bordered by barriers and close-set buildings. Include a six-car starting grid, a start/finish straight, narrow turns, and trackside damageable barriers and structures.",
-  "blob": "### Genre\nThe dominant genre is Racing: a compact Formula 1-style circuit race. There is no secondary genre.\n\n### Shape and preset\nUse `route-circuit`, matching the Circuit Racing preset. Here it is a compact Monaco-inspired street loop rather than a broad purpose-built course: a continuous, recognizable urban route that returns cleanly to its start/finish straight.\n\n### Config requirements\nUse `spawn-grid` as both visible and invisible layout: six clearly painted, side-by-side starting slots on the start straight, with the corresponding start positions placed after segmentation. Use `barrier-guardrail` as visible geometry: continuous close-set safety barriers along exposed edges, corners, and building-facing track boundaries. The prompt’s damageable barriers and trackside structures remain visible destructible-looking street furniture and barrier assemblies, but do not add unrequested pickups, spectators, checkpoints, or interior spaces.\n\n### Layout components\nBuild one compact looping street circuit winding tightly through dense Monaco-like city blocks. Place the start/finish straight along the widest available waterfront-adjacent or boulevard-like segment, with the six-car grid arranged abreast before the line. From this straight, the paved route compresses into a sequence of narrow, sharply turning urban corners, including a recognizable hairpin-like turn and constrained bends between close-set façades. The circuit must reconnect directly to the start/finish straight with no ambiguous crossings or disconnected branches.\n\nTrack edges are lined with continuous barrier walls, guardrails, tire stacks, and damageable barrier sections. Put damageable-looking street-side structures, signage supports, and light track furniture immediately beyond selected barriers, while keeping the racing surface clear and legible. Dense mid-rise city blocks tightly frame most of the course; they are exterior façades only, not enterable buildings. Use asphalt, painted grid markings, curbs, and a small amount of pavement around the route. The boundary is the barrier-lined street circuit and surrounding city-block façades. Compose the plan so the full loop reads as a compact, coherent circuit, with the start straight and signature tight turns easy to identify.\n\n### Render order\nUse `authored_plan`: a racing circuit must be valid by construction, with one continuous closed route and no broken or unclear street connections; dress the computed plan with Monaco-style city geometry afterward.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the compact Monaco-inspired footprint and six-car grid. Theme: polished contemporary Formula 1 street racing, dense Mediterranean luxury-city façades, close barriers, and high-speed urban precision. Apply `P6` because the circuit route must be procedurally connected and closed by construction.",
+  "blob": "### Genre\nThe dominant genre is Racing: the original request specifies Formula 1 competition, a three-lap race, and a six-car grid. Damage is gameplay mechanics and does not alter the map genre.\n\n### Shape and preset\nUse `route-circuit`, a compact closed Monaco-inspired street circuit whose tight urban loop returns to its start/finish straight. This matches the Circuit Racing preset, retaining its circuit topology, grid, lap detection, and physical boundaries.\n\n### Config requirements\nUse `spawn-grid` as six evenly spaced launch slots across the start/finish straight. Use `barrier-guardrail` as continuous close-set concrete barriers and guardrails lining every track edge, especially narrow corners. The circuit is framed by dense city blocks immediately beyond these barriers; selected barrier sections and trackside structures should visibly read as damageable, without adding damage logic to the render.\n\n### Layout requirements\nPlace `spawn-grid` as exactly six car positions, including the player, aligned side by side at the beginning of the main straight and facing the first turn. Place `trigger-lap` as one full-width timing line across the start/finish straight, registering each crossing and the three-lap race progression; it must be reachable only by completing the closed circuit in order.\n\n### Layout components\nBuild one compact urban circuit zone, dominated by a long enough start/finish straight at the front edge and a tightly winding loop through the surrounding city blocks. The route leaves the straight through narrow barrier-lined turns, snakes between close-set buildings, includes compact chicanes and hairpin-like corners, then reconnects cleanly to the same straight. The asphalt track has painted edge markings and a clear racing corridor. Dense mid-rise city façades, sidewalks, service alleys, streetlights, signage, and occasional trackside safety structures press close to the course. Concrete walls, metal guardrails, and protective barrier runs form the boundary; no open landscape surrounds the playable route. Compose the scene from an elevated three-quarter angle that shows the entire closed footprint and makes the start straight, six-car grid, and tight street geometry immediately legible.\n\n### Render order\nUse `authored_plan`: this is a racing circuit, so the closed route must be valid by construction before it is dressed as a Monaco-like city street course.\n\n### Scale, theme, and pipeline cost\nScale band: small, driven by the author’s request for a compact, focused first build and a six-car grid. Theme: polished arcade Formula 1 street racing, glamorous dense Mediterranean-inspired urban circuit, realistic safety barriers and close architecture. Pipeline modifiers: `P6` because the lap circuit must be one continuous, unambiguous closed route; `P0` otherwise, since the urban streets remain on one ground surface with no forced overhangs or separate maps.",
   "spec": {
     "genre": "Racing",
     "secondary": [],
@@ -24,100 +24,116 @@
     "options": [
       {
         "id": "spawn-grid",
-        "text": "six clearly painted, side-by-side starting slots on the start straight, with corresponding start positions placed after segmentation",
+        "text": "Six evenly spaced launch slots across the start/finish straight, including the player, aligned side by side and facing the first turn.",
         "visible": true,
         "count": 6
       },
       {
         "id": "barrier-guardrail",
-        "text": "continuous close-set safety barriers along exposed edges, corners, and building-facing track boundaries",
+        "text": "Continuous close-set concrete barriers and guardrails lining every track edge, especially narrow corners; selected barrier sections and trackside structures visibly read as damageable.",
         "visible": true,
         "count": -1
+      },
+      {
+        "id": "trigger-lap",
+        "text": "One full-width timing line across the start/finish straight, registering each crossing and the three-lap race progression.",
+        "visible": false,
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "spawn-grid",
+        "text": "Six evenly spaced launch slots across the start/finish straight, including the player, aligned side by side and facing the first turn.",
+        "count": 6,
+        "where": "At the beginning of the main start/finish straight."
+      },
+      {
+        "id": "trigger-lap",
+        "text": "One full-width timing line across the start/finish straight, registering each crossing and the three-lap race progression.",
+        "count": 1,
+        "where": "Across the start/finish straight; reachable only by completing the closed circuit in order."
       }
     ],
     "layout": {
-      "composition": "The full compact loop reads coherently in plan, with the waterfront-adjacent or boulevard-like start/finish straight and six-car grid easy to identify, followed by signature narrow tight turns tightly framed by city blocks.",
+      "composition": "Elevated three-quarter view showing the entire compact closed footprint. The long start/finish straight sits along the front edge, with the six-car grid immediately legible; the tight urban loop winds through dense city blocks behind and around it before reconnecting cleanly to the same straight.",
       "zones": [
         {
-          "name": "start/finish straight",
-          "role": "Wide waterfront-adjacent or boulevard-like racing segment holding the six-car grid before the line.",
-          "where": "along the widest available segment of the loop",
-          "size": "wide relative to the rest of the circuit"
-        },
-        {
-          "name": "urban corner sequence",
-          "role": "Narrow sharply turning racing route, including a recognizable hairpin-like turn and constrained bends.",
-          "where": "winding through the dense city blocks off the start straight",
-          "size": "compact and narrow"
-        },
-        {
-          "name": "city-block surround",
-          "role": "Exterior façade framing around most of the course.",
-          "where": "immediately around the barrier-lined circuit",
-          "size": "dense mid-rise blocks"
+          "name": "Compact urban circuit",
+          "role": "A closed three-lap Formula 1 street-racing circuit with a six-car grid, start/finish straight, narrow turns, chicanes, hairpin-like corners, and a continuous return to the straight.",
+          "where": "Entire scene, with the start/finish straight at the front edge and the loop through the surrounding city blocks.",
+          "size": "compact"
         }
       ],
       "paths": [
         {
-          "from": "start/finish straight",
-          "to": "urban corner sequence",
+          "from": "Start/finish straight",
+          "to": "Tightly winding urban loop",
           "kind": "track"
         },
         {
-          "from": "urban corner sequence",
-          "to": "start/finish straight",
+          "from": "Tightly winding urban loop",
+          "to": "Start/finish straight",
           "kind": "track"
         }
       ],
-      "terrain": "Asphalt racing surface with painted grid markings, curbs, and a small amount of pavement around the route.",
+      "terrain": "Asphalt street circuit on one ground surface, with painted edge markings and a clear racing corridor; sidewalks and service alleys sit tightly alongside the course.",
       "props": [
         {
-          "name": "continuous barrier walls and guardrails",
+          "name": "Dense mid-rise city façades",
           "count": -1,
-          "where": "along exposed edges, corners, and building-facing track boundaries"
+          "where": "Immediately beyond the barriers around the circuit."
         },
         {
-          "name": "tire stacks",
+          "name": "Close-set buildings",
           "count": -1,
-          "where": "along track edges"
+          "where": "Along the winding loop and narrow turns."
         },
         {
-          "name": "damageable-looking barrier sections",
+          "name": "Sidewalks and service alleys",
           "count": -1,
-          "where": "along selected track edges"
+          "where": "Between the close architecture around the course."
         },
         {
-          "name": "damageable-looking street-side structures, signage supports, and light track furniture",
+          "name": "Streetlights",
           "count": -1,
-          "where": "immediately beyond selected barriers"
+          "where": "Trackside through the urban circuit."
         },
         {
-          "name": "dense mid-rise exterior city façades",
+          "name": "Signage",
           "count": -1,
-          "where": "tightly framing most of the course"
+          "where": "Trackside through the urban circuit."
+        },
+        {
+          "name": "Trackside safety structures",
+          "count": -1,
+          "where": "Along selected barrier sections and around the course."
         }
       ],
-      "boundary": "The barrier-lined street circuit and surrounding city-block façades.",
+      "boundary": "Concrete walls, metal guardrails, and protective barrier runs line every track edge; dense city blocks press immediately beyond them, with no open landscape around the playable route.",
       "scale_band": "small",
-      "theme": "Polished contemporary Formula 1 street racing; dense Mediterranean luxury-city façades, close barriers, and high-speed urban precision."
+      "theme": "Polished arcade Formula 1 street racing; glamorous, dense Mediterranean-inspired urban circuit with realistic safety barriers and close architecture."
     },
     "render": {
       "first": "authored_plan",
       "then": "topdown",
       "authoritative": "authored_plan",
-      "why": "a racing circuit must be a valid continuous closed route with no broken or unclear street connections",
+      "why": "The closed racing route must be valid by construction so the three-lap circuit remains continuous and unambiguous.",
       "set_piece": false
     },
     "route": [
-      "P6"
+      "P6",
+      "P0"
     ],
-    "notes": [],
+    "notes": [
+      "visible on 'spawn-grid' set from goes_to=both"
+    ],
     "scene_prompt": "Create a compact 3D street-racing circuit inspired by Monaco, with a recognizable tight urban track winding through dense city blocks, bordered by barriers and close-set buildings. Include a six-car starting grid, a start/finish straight, narrow turns, and trackside damageable barriers and structures."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "layout",

@@ -24,108 +24,107 @@
     }
   ],
   "scene_prompt": "Create a 3D motocross freestyle map as one large desert riding compound with open dirt terrain. Arrange dirt tracks and large freestyle ramps across the main riding area, leaving broad open space between features for bike runs and trick lines. Place a dedicated build plot to one side of the compound for custom player-made ramps, kept separate from the main tracks. Include an in-world garage where players select and customize their bikes.",
-  "blob": "### Genre\nThe dominant genre is Simulation, specifically a vehicle-focused riding experience rather than Racing: players freely operate motocross bikes and perform tricks without a stated lap, finish, or competitive course.\n\n### Shape and preset\nUse `world-shared`, a single shared desert compound where all riders access the same tracks, ramps, garage, and construction area. This follows the Vehicle Sim preset in its shared-world vehicle operation, while omitting its extraction-field option because the compound is for freestyle riding rather than resource hauling.\n\n### Config requirements\nUse `path-road-vehicle` as visible geometry: broad packed-dirt tracks and approach lanes provide continuous, vehicle-width runups to ramps and connect the compound’s activity areas. Use `physics-rig` as visible geometry: the large dirt ramps and stunt structures should read as robust physical riding features designed for bike launches and freestyle trick lines. No invisible layout options are required.\n\n### Layout components\nMake one large desert freestyle compound. The main central riding ground is a broad, open expanse of compacted dirt, with ample clear spacing between distinct dirt tracks, ramp lines, and landing zones so riders can build speed and choose their own trick approaches. Arrange several large sculpted freestyle ramps across this main area, paired with long smooth runups and generous dirt landings; place smaller linking tracks around them rather than making a formal circuit.\n\nPut a dedicated custom-ramp build plot along one side of the compound, clearly separated from active track approaches by open buffer ground or low barriers. It should be a sizable flat dirt pad with enough room for player-built ramp arrangements without cluttering the shared stunt lines. Place the in-world bike garage near the compound entrance or edge, facing the central riding area; it is a recognizable service building with a forecourt where riders arrive, select, and customize bikes. Enclose the site only with distant desert berms, rock outcrops, and a soft natural map edge. Frame the central ramp skyline prominently in an isometric view, with the garage and build plot readable at opposite edges.\n\n### Render order\nUse `isometric`: the compound is a freeform riding space, so visual readability and the desert stunt atmosphere lead; an invalid formal route would not make play unworkable.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by the required open bike runs, multiple ramp lines, and a separate build plot. Theme: sun-baked MX Bikes-style desert motocross compound, sculpted dirt, rugged garage architecture. Pipeline modifier: `P0`; all riding areas remain one visible ground surface with ramps and berms, with no forced multi-map, interior-transition, or stacked-surface capture path.",
+  "blob": "### 1. Genre\nThe dominant genre is Simulation, specifically a physics-focused vehicle simulation. The riding and stunt loop is the genre signal; rewards and trick payouts do not enter the layout.\n\n### 2. Shape and preset\nUse `space-bounded`, taken from outside Simulation’s usual shape set: one large, clearly bounded desert compound contains the entire riding activity. Preset: none. Vehicle Sim assumes a broader shared operating world and hauling routes, while this prompt requires a single contained freestyle ground.\n\n### 3. Config requirements\nUse `physics-rig` for large dirt ramps and stunt structures whose physical bike interactions are the entertainment. Use `buildzone-plot` for the dedicated, clearly separated flat build plot where player-made ramps can accumulate without obstructing the public riding terrain.\n\n### 4. Layout requirements\nUse `trigger-task` for the bike selection and customization point: place it at the service counter or bays inside the garage at the compound edge. No other placed gameplay volumes are required by the prompt.\n\n### 5. Layout components\nMake the main zone a large open desert freestyle riding area occupying most of the compound, with packed dirt ground, sparse desert dressing, and ample run-up and landing clearances. Distribute several large sculpted dirt freestyle ramps and connected dirt-track lines through its center and outer reaches, leaving broad open lanes between them for independent trick lines and bike recovery. Place a dedicated build plot on one side, visibly divided from the public tracks by open buffer ground or a low boundary; it is a flat, generous dirt pad for custom ramps. Put an in-world garage near the compound entrance, facing the riding ground, with bike display/service bays and a direct dirt exit to the tracks. Enclose the overall map with natural desert berms, rocky rises, and a subtle perimeter barrier rather than urban walls. Compose the frame so the garage and build plot anchor opposite edges while the central ramp cluster and looping dirt lines remain immediately legible.\n\n### 6. Render order\nRender `topdown` first and treat it as authoritative, because ramp approaches, landing zones, track connections, and separation from the build plot must remain rideable rather than merely looking dramatic.\n\n### 7. Scale, theme, and pipeline cost\nScale is large, driven by the required open riding space, multiple large ramps, dirt tracks, garage, and separate build plot. Theme: MX Bikes-style desert motocross compound, sun-baked dirt, rugged ramps, and practical garage infrastructure. Pipeline modifier: `P0`; this is one bounded, ground-based surface with no forced overhangs, interior transition, separate maps, or volumetric play.",
   "spec": {
     "genre": "Simulation",
     "secondary": [],
-    "shape": "world-shared",
-    "preset": "Vehicle Sim",
+    "shape": "space-bounded",
+    "preset": "none",
     "axes": {},
     "options": [
       {
-        "id": "path-road-vehicle",
-        "text": "Broad packed-dirt tracks and approach lanes provide continuous, vehicle-width runups to ramps and connect the compound’s activity areas.",
+        "id": "physics-rig",
+        "text": "Large dirt ramps and stunt structures whose physical bike interactions are the entertainment.",
         "visible": true,
         "count": -1
       },
       {
-        "id": "physics-rig",
-        "text": "Large dirt ramps and stunt structures read as robust physical riding features designed for bike launches and freestyle trick lines.",
+        "id": "trigger-task",
+        "text": "Bike selection and customization point at the service counter or bays inside the garage.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "trigger-task",
+        "text": "Bike selection and customization point at the service counter or bays inside the garage.",
+        "count": -1,
+        "where": "At the service counter or bike display/service bays inside the garage at the compound edge."
+      }
+    ],
     "layout": {
-      "composition": "Isometric view frames the central ramp skyline prominently, with the garage and custom-ramp build plot readable at opposite edges of the compound.",
+      "composition": "The garage and build plot anchor opposite edges of the compound, while the central ramp cluster and looping dirt-track lines remain immediately legible between them.",
       "zones": [
         {
-          "name": "Main central riding ground",
-          "role": "Open freestyle riding area with distinct dirt tracks, ramp lines, landing zones, and room for bike runs and trick approaches.",
-          "where": "centre of the compound",
-          "size": "broad open expanse"
+          "name": "Main riding area",
+          "role": "Open desert freestyle riding terrain for bike runs, trick lines, ramp approaches, landings, and recovery.",
+          "where": "Occupying most of the compound, through the centre and outer reaches.",
+          "size": "large"
         },
         {
-          "name": "Custom-ramp build plot",
-          "role": "Flat dirt pad for player-built ramp arrangements, kept separate from shared stunt lines.",
-          "where": "along one side of the compound",
-          "size": "sizable"
+          "name": "Build plot",
+          "role": "Dedicated flat dirt pad for custom player-made ramps.",
+          "where": "On one side of the compound, visibly separated from the public tracks by open buffer ground or a low boundary.",
+          "size": "generous"
         },
         {
-          "name": "Bike garage",
-          "role": "Service building where riders arrive, select, and customize bikes, with a forecourt facing the riding area.",
-          "where": "near the compound entrance or edge",
+          "name": "Garage",
+          "role": "In-world bike selection and customization area with bike display and service bays.",
+          "where": "Near the compound entrance, facing the riding ground.",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Bike garage",
-          "to": "Main central riding ground",
-          "kind": "road"
-        },
-        {
-          "from": "Main central riding ground",
-          "to": "Custom-ramp build plot",
-          "kind": "road"
+          "from": "Garage",
+          "to": "Main riding area",
+          "kind": "track"
         }
       ],
-      "terrain": "Sun-baked open desert terrain of compacted dirt, sculpted dirt ramps, smooth runups, generous dirt landings, berms, and rock outcrops.",
+      "terrain": "Packed sun-baked dirt ground with sparse desert dressing, sculpted dirt freestyle ramps, connected dirt-track lines, natural desert berms, and rocky rises. Broad open lanes provide ample run-up and landing clearances between features.",
       "props": [
         {
-          "name": "Sculpted freestyle ramps",
+          "name": "Large sculpted dirt freestyle ramps",
           "count": -1,
-          "where": "across the main central riding ground"
+          "where": "Distributed through the centre and outer reaches of the main riding area."
         },
         {
-          "name": "Dirt tracks and linking tracks",
+          "name": "Bike display/service bays",
           "count": -1,
-          "where": "around the ramp lines and activity areas"
-        },
-        {
-          "name": "Low barriers",
-          "count": -1,
-          "where": "between the custom-ramp build plot and active track approaches"
-        },
-        {
-          "name": "Desert berms and rock outcrops",
-          "count": -1,
-          "where": "at the distant edge of the compound"
+          "where": "Inside the garage."
         }
       ],
-      "boundary": "Soft natural map edge formed by distant desert berms and rock outcrops.",
+      "boundary": "Natural desert berms, rocky rises, and a subtle perimeter barrier enclose the overall compound rather than urban walls.",
       "scale_band": "large",
-      "theme": "Sun-baked MX Bikes-style desert motocross compound, sculpted dirt, rugged garage architecture."
+      "theme": "MX Bikes-style desert motocross compound, sun-baked dirt, rugged ramps, practical garage infrastructure."
     },
     "render": {
-      "first": "isometric",
-      "then": "topdown",
-      "authoritative": "isometric",
-      "why": "The compound is a freeform riding space, so visual readability and desert stunt atmosphere lead because an invalid formal route would not make play unworkable.",
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "ramp approaches, landing zones, track connections, and separation from the build plot must remain rideable rather than merely looking dramatic.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
-    "notes": [],
+    "notes": [
+      "`space-bounded` is taken from outside Simulation’s usual shape set.",
+      "No other placed gameplay volumes are required.",
+      "dropped option 'buildzone-plot': not in Simulation"
+    ],
     "scene_prompt": "Create a 3D motocross freestyle map as one large desert riding compound with open dirt terrain. Arrange dirt tracks and large freestyle ramps across the main riding area, leaving broad open space between features for bike runs and trick lines. Place a dedicated build plot to one side of the compound for custom player-made ramps, kept separate from the main tracks. Include an in-world garage where players select and customize their bikes."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
-  "mapper_notes": []
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P0'] gives isometric"
+  ]
 }

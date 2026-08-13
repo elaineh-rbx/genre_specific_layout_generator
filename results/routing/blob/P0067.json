@@ -19,129 +19,168 @@
     }
   ],
   "scene_prompt": "Crie um mapa 3D original de uma cidade moderna, colorida e compacta, com poucos quarteirões exploráveis organizados ao redor de uma grande arena central de batalha de piões. Ruas conectam praças, prédios urbanos, lojas e NPCs pela cidade; a arena principal fica como marco no centro, em formato de prato plano ao nível da rua. Espalhe três arenas secundárias menores entre os quarteirões, também como pratos planos ao nível da rua, mantendo caminhos claros e uma composição aberta e legível para celulares.",
-  "blob": "### 1. Gênero\nO gênero dominante é Action, com RPG como secundário devido à progressão, itens e loja. A forma espacial é comandada pelo combate físico de piões em arenas, não pela economia.\n\n### 2. Forma e preset\nUse `arena-flat`, derivada do preset Battlegrounds. Aqui ela é uma arena-prato circular, plana e ao nível da rua, integrada à malha urbana como o grande marco central. O preset é mantido pela forma de arena de combate, mas não inclua bordas de ring-out, pilares de cobertura ou geometria de spawn que não foram solicitados.\n\n### 3. Requisitos de configuração\n`settlement-density` é geometria visível: uma cidade moderna compacta, com poucos quarteirões contínuos de prédios urbanos, fachadas comerciais, lojas e praças. `npc-population` é ambos: NPCs visíveis ocupam calçadas, lojas e áreas próximas às arenas; seus pontos de interação são marcadores invisíveis e não devem aparecer na imagem. Não há outros requisitos de configuração pedidos.\n\n### 4. Componentes do layout\nO centro do mapa é uma grande arena principal em forma de prato plano, aberta ao nível da rua e maior que todas as demais. Organize poucos quarteirões exploráveis ao redor dela, com quatro ramais urbanos curtos contendo prédios modernos coloridos, lojas de rua, calçadas e pequenas praças. Distribua exatamente três arenas secundárias menores entre esses quarteirões; cada uma também é um prato plano ao nível da rua, com área livre imediata para leitura clara. Ruas largas e diretas conectam a arena central, as três arenas, as praças e os conjuntos de lojas, formando uma circulação em anel com ligações radiais curtas. O terreno é plano, pavimentado e sem desníveis ou varandas sobre a arena. A fronteira é uma borda urbana discreta de blocos de edifícios, muros baixos e avenidas de saída não transitáveis. Enquadre a arena central como foco visual, com as arenas menores legíveis nos quarteirões periféricos.\n\n### 5. Ordem de renderização\nUse `isometric`: o visual colorido, aberto e urbano conduz a composição, e a cidade compacta não exige uma planta validada por construção.\n\n### 6. Escala, tema e custo de pipeline\nEscala média, conduzida pelos poucos quarteirões e pelas quatro arenas totais. Tema: cidade moderna, colorida, limpa, estilizada e otimizada para leitura em celular. Modificador `P0`: uma única superfície urbana plana, sem interiores, sobreposições, transições ou topologia que exija validação.",
+  "blob": "### 1. Genre\nThe dominant genre is `RPG`, with `Action` as a secondary genre for the Beyblade battle venues. Progression, shops, NPC challenges, and an explorable city make the RPG hub structure dominant; Action contributes the battle focus without changing the city-wide shape.\n\n### 2. Shape and preset\nUse `world-open`: one compact, contiguous modern city explored freely on foot, with all four arenas existing on the same map. This matches the RPG MMO Town Hub preset: retain its shared town-and-landmark logic, but replace fast-travel emphasis with directly connected streets and arena destinations.\n\n### 3. Config requirements\nUse `safezone-town` for the modern city hub, with battle activity confined to its dedicated arena dishes rather than spilling into streets. Use `social-hub` as the central shop-and-gathering ring around the main arena. Use `landmark-focal` for the large central street-level arena, visible and legible from surrounding blocks. Use `path-street` for clear pedestrian streets joining plazas, stores, buildings, and every arena. Use `settlement-density` for a compact urban few-block district of buildings and shops. Use `npc-population` for shopkeepers and challenge NPCs stationed in public city spaces and at arena approaches.\n\n### 4. Layout requirements\nPlace `npc-population` markers at shop counters, plaza edges, and the entrance apron of each arena; use a small cluster around the central arena and individual challenge NPCs at each of the three secondary arenas. No other invisible layout option is required by the prompt.\n\n### 5. Layout components\nThe central zone is a large circular, flat battle dish embedded at street level in the middle of the district, surrounded by a broad plaza, shops, and urban buildings. Three smaller flat street-level battle dishes sit in separate surrounding blocks: one each to the north, east, and west/south side of the central plaza, clearly subordinate in scale. Connected pedestrian streets form short direct routes from the main plaza to each satellite arena, with small intervening squares and storefront strips. Keep terrain flat and paved, with colorful modern façades, trees, benches, signs, and plaza furniture as light dressing. The boundary is an urban edge of taller buildings and streets, not a hard arena wall. Compose the frame around the central dish as the visual anchor, with the three smaller arenas readable along radial city routes.\n\n### 6. Render order\nUse `isometric`, rendered first and authoritative, because this is a compact city hub whose streets need visual clarity but not procedurally guaranteed topology.\n\n### 7. Scale, theme, and pipeline cost\nScale is medium: only a few dense, walkable blocks surround the central arena. Theme: bright, colorful, original modern urban battle city optimized for mobile readability. Pipeline modifier: `P0`, since all play is on one outdoor, single-level surface with no forced overhangs, interiors, separate maps, or topology-validation requirement.",
   "spec": {
-    "genre": "Action",
+    "genre": "RPG",
     "secondary": [
-      "RPG"
+      "Action"
     ],
-    "shape": "arena-flat",
-    "preset": "Battlegrounds",
+    "shape": "world-open",
+    "preset": "MMO Town Hub",
     "axes": {},
     "options": [
       {
+        "id": "safezone-town",
+        "text": "Modern city hub where battle activity remains confined to dedicated arena dishes rather than spilling into the streets.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "social-hub",
+        "text": "Central shop-and-gathering ring surrounding the main arena.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "landmark-focal",
+        "text": "Large central street-level battle arena, visible and legible from the surrounding city blocks.",
+        "visible": true,
+        "count": 1
+      },
+      {
         "id": "settlement-density",
-        "text": "uma cidade moderna compacta, com poucos quarteirões contínuos de prédios urbanos, fachadas comerciais, lojas e praças",
+        "text": "A compact urban district of a few blocks containing buildings and shops.",
         "visible": true,
         "count": -1
       },
       {
         "id": "npc-population",
-        "text": "NPCs visíveis ocupam calçadas, lojas e áreas próximas às arenas; seus pontos de interação são marcadores invisíveis",
+        "text": "Shopkeepers and challenge NPCs stationed in public city spaces and at arena approaches.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "npc-population",
+        "text": "Shopkeepers and challenge NPCs stationed in public city spaces and at arena approaches; a small cluster is around the central arena, with individual challenge NPCs at each of the three secondary arenas.",
+        "count": -1,
+        "where": "At shop counters, plaza edges, and the entrance apron of each arena."
+      }
+    ],
     "layout": {
-      "composition": "A grande arena central em forma de prato plano domina o centro do enquadramento como foco visual; as três arenas secundárias permanecem legíveis entre os quarteirões periféricos, com ruas abertas, lojas, praças e fachadas urbanas coloridas ao redor.",
+      "composition": "The central battle dish is the visual anchor at the centre of the frame, with three smaller battle dishes readable along radial city streets leading north, east, and west/south.",
       "zones": [
         {
-          "name": "Arena principal",
-          "role": "Arena central de batalha de piões e marco visual do mapa.",
-          "where": "centro",
-          "size": "grande, maior que todas as demais"
+          "name": "Central plaza and main arena",
+          "role": "Primary street-level Beyblade battle venue, social gathering ring, shops, and urban hub.",
+          "where": "Centre of the district",
+          "size": "Large"
         },
         {
-          "name": "Ramais urbanos",
-          "role": "Quarteirões exploráveis com prédios modernos coloridos, lojas de rua, calçadas e pequenas praças.",
-          "where": "ao redor da arena central",
-          "size": "quatro ramais urbanos curtos"
+          "name": "Northern secondary arena block",
+          "role": "A subordinate street-level battle venue with a challenge NPC.",
+          "where": "North of the central plaza",
+          "size": "Small"
         },
         {
-          "name": "Arena secundária 1",
-          "role": "Arena menor de batalha de piões, com área livre imediata para leitura clara.",
-          "where": "entre os quarteirões periféricos",
-          "size": "menor que a arena principal"
+          "name": "Eastern secondary arena block",
+          "role": "A subordinate street-level battle venue with a challenge NPC.",
+          "where": "East of the central plaza",
+          "size": "Small"
         },
         {
-          "name": "Arena secundária 2",
-          "role": "Arena menor de batalha de piões, com área livre imediata para leitura clara.",
-          "where": "entre os quarteirões periféricos",
-          "size": "menor que a arena principal"
+          "name": "West/south secondary arena block",
+          "role": "A subordinate street-level battle venue with a challenge NPC.",
+          "where": "West/south of the central plaza",
+          "size": "Small"
         },
         {
-          "name": "Arena secundária 3",
-          "role": "Arena menor de batalha de piões, com área livre imediata para leitura clara.",
-          "where": "entre os quarteirões periféricos",
-          "size": "menor que a arena principal"
+          "name": "Intervening squares and storefront strips",
+          "role": "Short urban public spaces between the central plaza and satellite arena blocks.",
+          "where": "Along the radial routes",
+          "size": "Small"
         }
       ],
       "paths": [
         {
-          "from": "Arena principal",
-          "to": "Arenas secundárias",
+          "from": "Central plaza and main arena",
+          "to": "Northern secondary arena block",
           "kind": "road"
         },
         {
-          "from": "Arena principal",
-          "to": "Praças e conjuntos de lojas",
+          "from": "Central plaza and main arena",
+          "to": "Eastern secondary arena block",
           "kind": "road"
         },
         {
-          "from": "Arenas secundárias",
-          "to": "Praças e conjuntos de lojas",
-          "kind": "road"
-        },
-        {
-          "from": "Ramais urbanos",
-          "to": "Ramais urbanos",
+          "from": "Central plaza and main arena",
+          "to": "West/south secondary arena block",
           "kind": "road"
         }
       ],
-      "terrain": "Terreno plano e pavimentado, sem desníveis ou varandas sobre as arenas.",
+      "terrain": "Flat paved urban ground with all battle dishes embedded at street level.",
       "props": [
         {
-          "name": "Prédios urbanos modernos coloridos",
-          "count": -1,
-          "where": "nos quarteirões ao redor da arena central"
+          "name": "Large circular flat central battle dish",
+          "count": 1,
+          "where": "Embedded at street level in the middle of the district"
         },
         {
-          "name": "Lojas de rua",
-          "count": -1,
-          "where": "nos ramais urbanos"
-        },
-        {
-          "name": "Pequenas praças",
-          "count": -1,
-          "where": "entre ruas, lojas e arenas"
-        },
-        {
-          "name": "Arenas secundárias em prato plano",
+          "name": "Smaller flat street-level battle dishes",
           "count": 3,
-          "where": "entre os quarteirões periféricos"
+          "where": "In surrounding northern, eastern, and west/south blocks"
+        },
+        {
+          "name": "Colorful modern urban façades",
+          "count": -1,
+          "where": "Around plazas, storefront strips, and district blocks"
+        },
+        {
+          "name": "Trees",
+          "count": -1,
+          "where": "Light dressing around streets and plazas"
+        },
+        {
+          "name": "Benches",
+          "count": -1,
+          "where": "Light dressing around streets and plazas"
+        },
+        {
+          "name": "Signs",
+          "count": -1,
+          "where": "Along storefronts, streets, and arena approaches"
+        },
+        {
+          "name": "Plaza furniture",
+          "count": -1,
+          "where": "Around the central plaza and intervening squares"
         }
       ],
-      "boundary": "Borda urbana discreta de blocos de edifícios, muros baixos e avenidas de saída não transitáveis.",
+      "boundary": "An urban edge of taller buildings and streets, rather than a hard arena wall.",
       "scale_band": "medium",
-      "theme": "cidade moderna, colorida, limpa, estilizada e otimizada para leitura em celular"
+      "theme": "Bright, colorful, original modern urban battle city optimized for mobile readability."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "o visual colorido, aberto e urbano conduz a composição, e a cidade compacta não exige uma planta validada por construção.",
+      "why": "This compact city hub needs visually clear streets but not procedurally guaranteed topology.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
-    "notes": [],
+    "notes": [
+      "`path-street` was named in the blob but is not an RPG option; its connected pedestrian-street requirement is retained in the layout paths.",
+      "The total NPC count is unstated: the blob specifies a small central cluster plus individual challenge NPCs at each of three secondary arenas."
+    ],
     "scene_prompt": "Crie um mapa 3D original de uma cidade moderna, colorida e compacta, com poucos quarteirões exploráveis organizados ao redor de uma grande arena central de batalha de piões. Ruas conectam praças, prédios urbanos, lojas e NPCs pela cidade; a arena principal fica como marco no centro, em formato de prato plano ao nível da rua. Espalhe três arenas secundárias menores entre os quarteirões, também como pratos planos ao nível da rua, mantendo caminhos claros e uma composição aberta e legível para celulares."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

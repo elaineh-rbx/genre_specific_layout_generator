@@ -14,170 +14,188 @@
     }
   ],
   "scene_prompt": "Create a small, crossable post-apocalyptic wilderness map, overgrown with vegetation and scattered abandoned remnants. Include natural areas for fishing and hunting, open ground and resource areas for building shelters from wood planks and metal, with zombie-filled approaches throughout the wilderness.",
-  "blob": "### Genre\nThe dominant genre is Survival: the original’s zombie threat, resource gathering, and shelter-building loop defines a Resource Survival game rather than a generic wilderness showcase.\n\n### Shape and preset\nUse `arena-contained`, interpreted as one compact, crossable wilderness bounded by impassable overgrown outskirts rather than a formal combat arena. The nearest preset is Resource Survival, but the prompt overrides its `world-biomes` shape because it explicitly requires one small contiguous map, so the preset is none.\n\n### Config requirements\nUse visible `buildzone-plot` for broad clearings where players can place shelters, visible-and-layout `collectible-nodes` for timber and metal salvage areas, and layout-only `spawner-npc` for zombie origins concealed in abandoned remnants and treeline approaches. Use visible `water-body` for a fishable pond or slow stream, and visible-and-layout `npc-population` for huntable wildlife occupying the woods and meadow edges. Do not render the zombie spawn markers or resource-node placement logic.\n\n### Layout components\nBuild one small wilderness map, sized to cross on foot. Place a central open meadow as the main shelter-building ground, with scattered wood piles, fallen trees, scrap metal, and a few ruined foundations. A pond or slow stream sits along one side, edged by reeds and a simple weathered fishing bank. Dense woodland and brushy hunting ground occupy the opposite side, while abandoned roadside remnants—broken fences, derelict vehicles, collapsed sheds, and crumbling structures—form several zombie-filled approaches around the outer perimeter. Keep the central clearing visibly safer and connected by narrow dirt trails to the water, forest, salvage clearings, and ruins. Natural thickets, wreckage, and rock outcrops break sightlines without sealing routes. Enclose the playable space with dense forest, overgrown embankments, and distant ruined infrastructure rather than hard walls. Compose it as a readable central clearing with hazardous ruined edges and water as a strong side landmark.\n\n### Render order\nUse `isometric`: the map is a compact, readable single-surface wilderness and does not require a procedurally validated maze, circuit, or jump route.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the explicit one-map, on-foot traversal scope. Theme is overgrown post-apocalyptic wilderness: reclaimed vegetation, rusted salvage, abandoned remnants, and oppressive zombie-haunted outskirts. Pipeline modifier: `P0`; all areas coexist on one ground surface, with no required interiors, stacked routes, separate maps, or volumetric traversal.",
+  "blob": "### Genre\n`Survival` is dominant: players gather resources, build shelters, and evade zombies. There is no secondary genre.\n\n### Shape and preset\nUse `world-open`, taken from outside Survival’s usual shape shortlist, for one small contiguous wilderness traversable on foot rather than distant threat-scaling biomes. Adapt the Resource Survival preset: retain its resource gathering and player base ground, while replacing its large biome world with this focused map.\n\n### Config requirements\nUse `buildzone-plot` for open, level clearings where survivors can raise improvised shelters. Use `water-body` as a fishable pond or slow stream. Use `npc-population` for huntable wildlife occupying the wooded hunting ground. Do not add terrain relief or settlement density: neither was requested.\n\n### Layout requirements\nUse `collectible-nodes`, with wood and salvaged metal resource spawn points distributed between forest-edge timber stands and abandoned-remnant scrap areas. Use `spawner-npc`, with zombie origins tucked behind derelict structures, in brushy approach corridors, and around the map perimeter so threats enter toward the usable clearings. Use `npc-population` with wildlife placed in the quieter hunting grove away from the most concentrated zombie approaches.\n\n### Layout components\nThe central zone is a broad open shelter-building clearing, large enough for several small player-made structures and surrounded by sightline-breaking overgrowth. A fishable pond or slow stream occupies one edge of the map, with a clear bank and reeds. A dense woodland hunting zone sits on another side, while timber stands, fallen trees, abandoned vehicles, rusted sheds, and scrap piles form the wood-and-metal resource areas. Narrow dirt trails and broken service paths connect the clearing, water, woods, and ruins. Zombies approach along these overgrown paths and emerge from the abandoned remnants. Enclose the small wilderness with dense vegetation, collapsed fencing, and impassable ruin debris rather than a visible hard wall. Compose the clearing near the center, with water and woodland at opposing edges and ruined silhouettes framing the perimeter.\n\n### Render order\nRender `isometric` first and treat it as authoritative; this is a compact wilderness composition whose topology does not require procedural validation.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the requirement that the whole wilderness be crossed on foot. Theme is post-apocalyptic, overgrown wilderness with rusted abandoned remnants and zombie-threatened survival clearings. Use `CHECK` because the fishable water feature must be captured as real water; no other geometry forces an added pipeline pass.",
   "spec": {
     "genre": "Survival",
     "secondary": [],
-    "shape": "arena-contained",
-    "preset": "none",
+    "shape": "world-open",
+    "preset": "Resource Survival",
     "axes": {},
     "options": [
       {
         "id": "buildzone-plot",
-        "text": "Broad clearings where players can place shelters.",
+        "text": "Open, level clearings where survivors can raise improvised shelters.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "water-body",
+        "text": "A fishable pond or slow stream with a clear bank and reeds.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "npc-population",
+        "text": "Huntable wildlife occupying the wooded hunting ground.",
         "visible": true,
         "count": -1
       },
       {
         "id": "collectible-nodes",
-        "text": "Timber and metal salvage areas with wood piles, fallen trees, and scrap metal.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "spawner-npc",
-        "text": "Zombie origins concealed in abandoned remnants and treeline approaches; do not render the spawn markers.",
+        "text": "Wood and salvaged metal resource spawn points distributed between forest-edge timber stands and abandoned-remnant scrap areas.",
         "visible": false,
         "count": -1
       },
       {
-        "id": "water-body",
-        "text": "A fishable pond or slow stream edged by reeds and a simple weathered fishing bank.",
-        "visible": true,
-        "count": 1
-      },
-      {
-        "id": "npc-population",
-        "text": "Huntable wildlife occupying the woods and meadow edges.",
-        "visible": true,
+        "id": "spawner-npc",
+        "text": "Zombie origins tucked behind derelict structures, in brushy approach corridors, and around the map perimeter so threats enter toward the usable clearings.",
+        "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "npc-population",
+        "text": "Huntable wildlife placed in the quieter hunting grove away from the most concentrated zombie approaches.",
+        "count": -1,
+        "where": "In the quieter hunting grove, away from the most concentrated zombie approaches."
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "Wood and salvaged metal resource spawn points distributed between forest-edge timber stands and abandoned-remnant scrap areas.",
+        "count": -1,
+        "where": "Between forest-edge timber stands and abandoned-remnant scrap areas."
+      },
+      {
+        "id": "spawner-npc",
+        "text": "Zombie origins tucked behind derelict structures, in brushy approach corridors, and around the map perimeter so threats enter toward the usable clearings.",
+        "count": -1,
+        "where": "Behind derelict structures, in brushy approach corridors, and around the map perimeter toward usable clearings."
+      }
+    ],
     "layout": {
-      "composition": "A readable central meadow clearing occupies the centre, with hazardous ruined approaches around the outer perimeter and water as a strong landmark along one side. Woodland and hunting ground fill the opposite side.",
+      "composition": "The broad shelter-building clearing sits near the center. Water and dense woodland occupy opposing map edges, while ruined silhouettes frame the perimeter around the central clearing.",
       "zones": [
         {
-          "name": "Central open meadow",
-          "role": "Main shelter-building ground and visibly safer central clearing.",
-          "where": "centre",
-          "size": "broad"
+          "name": "Shelter-building clearing",
+          "role": "Open, level ground for survivors to raise improvised shelters.",
+          "where": "Near the center.",
+          "size": "Broad; large enough for several small player-made structures."
         },
         {
           "name": "Water edge",
-          "role": "Fishing area with reeds and a weathered fishing bank.",
-          "where": "one side of the map",
+          "role": "Fishing area with a fishable pond or slow stream.",
+          "where": "One edge of the map, opposing the woodland.",
           "size": ""
         },
         {
-          "name": "Dense woodland and brushy hunting ground",
-          "role": "Huntable wildlife area.",
-          "where": "opposite side from the water",
+          "name": "Woodland hunting zone",
+          "role": "Quieter hunting ground occupied by wildlife.",
+          "where": "Another edge of the map, opposing the water.",
+          "size": "Dense."
+        },
+        {
+          "name": "Wood-and-metal resource areas",
+          "role": "Timber and salvaged-metal resource ground around timber stands and abandoned remnants.",
+          "where": "Between the forest edge and abandoned-remnant areas.",
           "size": ""
         },
         {
-          "name": "Salvage clearings",
-          "role": "Timber and metal resource areas.",
-          "where": "connected off the central clearing",
+          "name": "Abandoned remnants",
+          "role": "Ruined perimeter areas from which zombies emerge.",
+          "where": "Around the perimeter, framing the map.",
           "size": ""
-        },
-        {
-          "name": "Abandoned roadside remnants",
-          "role": "Zombie-filled approaches concealed among ruined remnants.",
-          "where": "around the outer perimeter",
-          "size": "several approaches"
         }
       ],
       "paths": [
         {
-          "from": "Central open meadow",
+          "from": "Shelter-building clearing",
           "to": "Water edge",
-          "kind": "trail"
+          "kind": "dirt trail"
         },
         {
-          "from": "Central open meadow",
-          "to": "Dense woodland and brushy hunting ground",
-          "kind": "trail"
+          "from": "Shelter-building clearing",
+          "to": "Woodland hunting zone",
+          "kind": "dirt trail"
         },
         {
-          "from": "Central open meadow",
-          "to": "Salvage clearings",
-          "kind": "trail"
+          "from": "Shelter-building clearing",
+          "to": "Wood-and-metal resource areas",
+          "kind": "broken service path"
         },
         {
-          "from": "Central open meadow",
-          "to": "Abandoned roadside remnants",
-          "kind": "trail"
+          "from": "Wood-and-metal resource areas",
+          "to": "Abandoned remnants",
+          "kind": "overgrown path"
         }
       ],
-      "terrain": "Overgrown wilderness with a central meadow, dense woodland, brush, a pond or slow stream, reeds, natural thickets, rock outcrops, and overgrown embankments.",
+      "terrain": "Small crossable wilderness with open level clearing ground, dense woodland, overgrowth, a fishable pond or slow stream, clear banks, and reeds.",
       "props": [
         {
-          "name": "wood piles",
+          "name": "Sightline-breaking overgrowth",
           "count": -1,
-          "where": "central open meadow and salvage areas"
+          "where": "Surrounding the central shelter-building clearing and along zombie approaches."
         },
         {
-          "name": "fallen trees",
+          "name": "Timber stands",
           "count": -1,
-          "where": "central open meadow and salvage areas"
+          "where": "At the forest edge in the wood resource areas."
         },
         {
-          "name": "scrap metal",
+          "name": "Fallen trees",
           "count": -1,
-          "where": "central open meadow and salvage areas"
+          "where": "In the timber resource areas."
         },
         {
-          "name": "ruined foundations",
+          "name": "Abandoned vehicles",
           "count": -1,
-          "where": "central open meadow"
+          "where": "In abandoned-remnant resource areas."
         },
         {
-          "name": "broken fences",
+          "name": "Rusted sheds",
           "count": -1,
-          "where": "abandoned roadside remnants around the perimeter"
+          "where": "In the abandoned remnants."
         },
         {
-          "name": "derelict vehicles",
+          "name": "Scrap piles",
           "count": -1,
-          "where": "abandoned roadside remnants around the perimeter"
+          "where": "In abandoned-remnant scrap areas."
         },
         {
-          "name": "collapsed sheds",
+          "name": "Collapsed fencing",
           "count": -1,
-          "where": "abandoned roadside remnants around the perimeter"
+          "where": "Along the wilderness perimeter."
         },
         {
-          "name": "crumbling structures",
+          "name": "Impassable ruin debris",
           "count": -1,
-          "where": "abandoned roadside remnants around the perimeter"
-        },
-        {
-          "name": "wreckage",
-          "count": -1,
-          "where": "throughout routes and perimeter approaches"
+          "where": "Along the wilderness perimeter."
         }
       ],
-      "boundary": "Dense forest, overgrown embankments, and distant ruined infrastructure enclose the playable space rather than hard walls.",
+      "boundary": "Dense vegetation, collapsed fencing, and impassable ruin debris enclose the small wilderness rather than a visible hard wall.",
       "scale_band": "small",
-      "theme": "Overgrown post-apocalyptic wilderness with reclaimed vegetation, rusted salvage, abandoned remnants, and oppressive zombie-haunted outskirts."
+      "theme": "Post-apocalyptic overgrown wilderness with rusted abandoned remnants and zombie-threatened survival clearings."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "the compact readable single-surface wilderness does not require a procedurally validated maze, circuit, or jump route.",
+      "why": "Its compact wilderness topology does not require procedural validation.",
       "set_piece": false
     },
     "route": [
-      "P0"
+      "CHECK"
     ],
-    "notes": [],
+    "notes": [
+      "`world-open` is taken from outside Survival’s usual shape shortlist.",
+      "The Resource Survival preset is adapted: its resource gathering and player base ground are retained while its large biome world is replaced with this focused contiguous map."
+    ],
     "scene_prompt": "Create a small, crossable post-apocalyptic wilderness map, overgrown with vegetation and scattered abandoned remnants. Include natural areas for fishing and hunting, open ground and resource areas for building shelters from wood planks and metal, with zombie-filled approaches throughout the wilderness."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

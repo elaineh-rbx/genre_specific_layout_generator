@@ -19,108 +19,111 @@
     }
   ],
   "scene_prompt": "Create a 3D game map set inside a single large, exaggerated cartoony supermarket called Tops Supermarket. The focused interior is one open shop floor, with long grocery aisles and product shelves arranged in rows, clear cross-aisles between them, and open areas around the store perimeter for shoppers.",
-  "blob": "### 1. Genre\nDominant genre: Shooter. The original request is a combat game in which players fire at other shoppers; the all-opponents-down round condition confirms a combat arena rather than a social supermarket scene.\n\n### 2. Shape and preset\nUse `lane-network`, matching the Arena Deathmatch preset. The supermarket is a single interconnected combat floor: shelf aisles create firing lanes and cross-aisles create alternate routes. The prompt overrides the preset’s elevated-cover emphasis; keep all play on the shop floor and do not add elevation.\n\n### 3. Config requirements\nUse visible `cover-los`: long stocked grocery shelves form repeated sightline-breaking cover across the floor. Use visible `path-loop`: cross-aisles connect the shelf rows at multiple points, preventing each aisle from becoming a dead end. Do not add bases, pickups, targets, exterior areas, or enterable back rooms. No invisible layout options are requested.\n\n### 4. Layout components\nBuild one large open supermarket shop-floor zone, with the main entrance-facing perimeter left comparatively open and a dense central grid of long, parallel grocery aisles. Arrange product shelves in rows with clear, generously wide aisles between them; add several perpendicular cross-aisles so players can rotate between rows and circle behind shelf cover. Keep open perimeter circulation around the shelf grid for shoppers and combat movement, especially along the front, side walls, and rear wall. The floor is flat polished store tile, with bright cartoony signage, exaggerated oversized packaged goods, checkout-like frontage dressing, and colorful shelf endcaps. Use interior walls and a high retail ceiling to bound the whole map; do not show stockrooms, parking lots, or outdoor space. Compose the isometric view diagonally across the shelf grid so long aisles, crossings, and the open perimeter are all legible.\n\n### 5. Render order\nUse `topdown`: the interconnected aisle and cross-aisle topology must remain traversable and readable for a shooter, so establish the plan before dressing it in the cartoony retail look.\n\n### 6. Scale, theme, and pipeline cost\nScale band: large, driven by one big shop floor with a central aisle grid and perimeter circulation. Theme: exaggerated, brightly lit cartoony supermarket retail interior branded Tops Supermarket. Pipeline modifier: `P0`; this is one flat enclosed floor with no stacked surfaces, outside-to-inside transition, separate maps, or geometry requiring construction validation.",
+  "blob": "### Genre\nThe dominant genre is Shooter, specifically a PvE shooter: the opposing shoppers occupy a single retail combat space. There is no secondary genre.\n\n### Shape and preset\nUse `interior-single`, taken from outside Shooter’s usual shape set, because the entire map is one enclosed supermarket shop floor with no exterior, parking lot, or back-of-house route. The nearest PvE Shooter preset is not recognisable after replacing its lane-network shape and retaining none of its defining spatial bundle, so the preset is none.\n\n### Config requirements\nUse `cover-los` as tall, continuous grocery shelving rows that interrupt firing lines and create cover between aisles. Do not add an exterior transition: the supermarket interior is the complete map.\n\n### Layout requirements\nUse `spawner-npc` for several opposing-shopper entry origins, sited behind shelving at aisle ends and along the open perimeter circulation so arrivals enter readable retail lanes rather than appearing in the central cross-aisles.\n\n### Layout components\nBuild one large open shop-floor zone inside the exaggerated cartoony Tops Supermarket. Arrange long parallel grocery aisles through the central majority of the floor, each formed by double-sided product shelves with clear cross-aisles cutting across them for lateral movement. Keep broad open circulation strips around the store perimeter for shoppers and combat movement, with the central shelving grid remaining the dominant spatial feature. Use colourful oversized packaged goods, bold aisle-end displays, cartoon checkout-like perimeter dressing, and a visible Tops Supermarket identity. The boundary is the enclosing supermarket walls; there is no outdoor area, stockroom, or parking lot. Compose the frame from a high three-quarter view so the full aisle grid, cross-connections, and perimeter loop are immediately legible.\n\n### Render order\nRender `isometric` first and treat it as authoritative, because this is a single readable combat interior whose shelf arrangement can be projected into plan without requiring a procedurally validated route.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by one large shop floor with a dense central aisle grid and generous perimeter circulation. Theme is exaggerated cartoony supermarket retail. Use `P0`: the single enclosed floor has no stacked surfaces, outside-to-inside transition, separate maps, or topology that must be generated by construction.",
   "spec": {
     "genre": "Shooter",
     "secondary": [],
-    "shape": "lane-network",
-    "preset": "Arena Deathmatch",
+    "shape": "interior-single",
+    "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "cover-los",
-        "text": "Long stocked grocery shelves form repeated sightline-breaking cover across the floor.",
+        "text": "Tall, continuous grocery shelving rows that interrupt firing lines and create cover between aisles.",
         "visible": true,
         "count": -1
       },
       {
-        "id": "path-loop",
-        "text": "Cross-aisles connect the shelf rows at multiple points, preventing each aisle from becoming a dead end.",
-        "visible": true,
+        "id": "spawner-npc",
+        "text": "Several opposing-shopper entry origins.",
+        "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "spawner-npc",
+        "text": "Several opposing-shopper entry origins.",
+        "count": -1,
+        "where": "Behind shelving at aisle ends and along the open perimeter circulation, so arrivals enter readable retail lanes rather than appearing in the central cross-aisles."
+      }
+    ],
     "layout": {
-      "composition": "Diagonal isometric view across the dense central grid of long parallel shelf aisles, showing their perpendicular crossings and the open perimeter circulation around the shop floor.",
+      "composition": "High three-quarter view showing the full central aisle grid, its cross-connections, and the perimeter loop immediately legibly.",
       "zones": [
         {
-          "name": "Tops Supermarket shop floor",
-          "role": "Single interconnected combat floor with shelf aisles as firing lanes, cross-aisles as alternate routes, and perimeter circulation for combat movement.",
-          "where": "Entire enclosed interior; dense shelf grid at centre with open circulation along the front, side walls, and rear wall.",
+          "name": "Open shop floor",
+          "role": "The single retail combat space, with shoppers and combat movement among the aisles and perimeter circulation.",
+          "where": "Inside the enclosing Tops Supermarket walls.",
           "size": "large"
         }
       ],
       "paths": [
         {
-          "from": "central shelf rows",
-          "to": "perimeter circulation",
+          "from": "Central grocery aisle grid",
+          "to": "Central grocery aisle grid",
           "kind": "corridor"
         },
         {
-          "from": "shelf aisles",
-          "to": "perpendicular cross-aisles",
-          "kind": "corridor"
+          "from": "Central grocery aisle grid",
+          "to": "Perimeter circulation",
+          "kind": "open ground"
         }
       ],
-      "terrain": "Flat polished store tile floor.",
+      "terrain": "Single enclosed supermarket shop floor with long parallel double-sided grocery shelving rows, clear cross-aisles, and broad open perimeter circulation strips.",
       "props": [
         {
-          "name": "long stocked grocery shelves",
+          "name": "Double-sided product shelves",
           "count": -1,
-          "where": "Dense central grid in long parallel rows"
+          "where": "Long parallel rows through the central majority of the shop floor."
         },
         {
-          "name": "product shelves",
+          "name": "Colourful oversized packaged goods",
           "count": -1,
-          "where": "Across the shop floor"
+          "where": "On the grocery shelves."
         },
         {
-          "name": "bright cartoony signage",
+          "name": "Bold aisle-end displays",
           "count": -1,
-          "where": "Throughout the retail interior"
+          "where": "At aisle ends."
         },
         {
-          "name": "exaggerated oversized packaged goods",
+          "name": "Cartoon checkout-like perimeter dressing",
           "count": -1,
-          "where": "On grocery shelves"
+          "where": "Around the store perimeter."
         },
         {
-          "name": "checkout-like frontage dressing",
+          "name": "Visible Tops Supermarket identity",
           "count": -1,
-          "where": "Entrance-facing perimeter"
-        },
-        {
-          "name": "colorful shelf endcaps",
-          "count": -1,
-          "where": "Ends of shelf rows"
+          "where": "Within the supermarket interior."
         }
       ],
-      "boundary": "Interior walls and a high retail ceiling bound the whole map; no stockrooms, parking lots, or outdoor space are shown.",
+      "boundary": "Enclosing supermarket walls; there is no outdoor area, stockroom, parking lot, or exterior transition.",
       "scale_band": "large",
-      "theme": "Exaggerated, brightly lit cartoony Tops Supermarket retail interior"
+      "theme": "Exaggerated cartoony Tops Supermarket retail."
     },
     "render": {
-      "first": "topdown",
-      "then": "isometric",
-      "authoritative": "topdown",
-      "why": "the interconnected aisle and cross-aisle topology must remain traversable and readable for a shooter.",
+      "first": "isometric",
+      "then": "topdown",
+      "authoritative": "isometric",
+      "why": "The single readable combat interior's shelf arrangement can be projected into plan without requiring a procedurally validated route.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
-    "notes": [],
+    "notes": [
+      "`interior-single` is taken from outside Shooter’s usual shape set."
+    ],
     "scene_prompt": "Create a 3D game map set inside a single large, exaggerated cartoony supermarket called Tops Supermarket. The focused interior is one open shop floor, with long grocery aisles and product shelves arranged in rows, clear cross-aisles between them, and open areas around the store perimeter for shoppers."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
-  "mapper_notes": [
-    "blob asked for topdown first; the route ['P0'] gives isometric"
-  ]
+  "mapper_notes": []
 }

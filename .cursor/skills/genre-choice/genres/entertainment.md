@@ -6,12 +6,15 @@
 
 **Shape — pick one.**
 
-| ID | Shape | What it is | Pipeline |
-| :---- | :---- | :---- | :---- |
-| `showcase-route` | **Path (Guided Route)** | A single clear walking route, or a small set of connected vignettes, sequencing the visitor through the environment's key compositions. | |
-| `showcase-freeroam` | **Zone (Free-Roam Space)** | An open explorable space with no prescribed order. | |
-| `hub-portals` | **Zone (Portal Hub)** | A layout whose purpose is to send visitors onward to separate experiences. | `P4` |
-| `venue-stage` | **Zone (Stage and Audience)** | A raised performance stage with the audience floor spread in front of it, every sightline in the build oriented toward the stage rather than through the space. | |
+**Typical shapes.** `route-guided` *(default)* · `world-open` · `hub-portals` · `venue-stage` · `interior-single` · `set-display`
+
+This genre words these its own way:
+
+| ID | Shape | What it is |
+| :---- | :---- | :---- |
+| `route-guided` | **Path (Guided Route)** | A single clear walking route, or a small set of connected vignettes, sequencing the visitor through the environment's key compositions. |
+| `world-open` | **Zone (Free-Roam Space)** | An open explorable space with no prescribed order. |
+
 
 **Options** — combine freely on top of the chosen shape.
 
@@ -31,10 +34,12 @@
 
 | Preset | Modelled on *(internal)* | Shape | Options |
 | :---- | :---- | :---- | :---- |
-| **Showcase** | [Adventure Time: Land of Ooo](https://www.roblox.com/games/11753761261/Adventure-Time-Land-of-Ooo-Showcase) (Roblox) | `showcase-route` | `landmark-focal`, `spawn-first-reveal`, `vignette-photo` |
-| **Free-Roam Showcase** | Roblox architectural and environment showcases | `showcase-freeroam` | `landmark-focal`, `spawn-first-reveal`, `collectible-nodes` |
+| **Showcase** | [Adventure Time: Land of Ooo](https://www.roblox.com/games/11753761261/Adventure-Time-Land-of-Ooo-Showcase) (Roblox) | `route-guided` | `landmark-focal`, `spawn-first-reveal`, `vignette-photo` |
+| **Free-Roam Showcase** | Roblox architectural and environment showcases | `world-open` | `landmark-focal`, `spawn-first-reveal`, `collectible-nodes` |
 | **Hub** | Roblox portal hubs | `hub-portals` | `teleporter-link`, `social-hub`, `landmark-focal` |
 | **Performance Venue** | Roblox concert, festival and talent-show places; Fortnite live events | `venue-stage` | `spectator-bleachers`, `social-hub`, `spawn-first-reveal` |
+| **Indoor Venue** | Roblox museum, gallery and club places | `interior-single` | `vignette-photo`, `zone-graphics`, `social-hub` |
+| **Display Piece** | Roblox vehicle showrooms, model showcases and diorama builds | `set-display` | `landmark-focal`, `vignette-photo`, `zone-graphics` |
 
 **Genre notes**
 
@@ -42,15 +47,16 @@
 * **The path substitutes for a gameplay loop.** With no combat, scoring, or objective to direct movement, the route itself is the only thing guiding players through the composition. That's why it carries more weight here than in any other genre.
 * **The spawn shot is the highest-leverage single decision.** A showcase gets one uncontrolled first impression. Exact camera framing belongs to the Mechanics/Camera doc; placement and orientation belong here.
 * **Badges mirror real showcase behaviour.** Actual Roblox showcases commonly award badges for finding side details, which is why hidden collectibles read as native to the genre rather than bolted on.
-* **Open question on hub portals.** They're tagged `P4` because the Pipeline treats portals as zone transitions. If portals lead to genuinely separate Roblox *places* rather than zones of this build, the hub itself may be a single-zone P0 layout with teleport markers. Worth confirming.
-* **A stage with an audience is a layout, and it had no home.** In a 620-prompt evaluation, nine workers independently coined the phrase *performance venue* for concerts, festivals, talent shows and a dance institution. Every other shape here is architecture you walk around and look at, so the stage kept getting forced into `landmark-focal` — which builds the stage and loses the thing that makes a venue a venue: **the crowd faces one way.** Orientation is the whole design. Sightlines converge, the floor is sized for density rather than circulation, and there is a side of the stage the audience never sees.
+* **Hub portals are `P4` because the Pipeline treats a portal as a zone transition.** The exception is a portal leading to a genuinely separate Roblox *place* rather than to a zone of this build: that hub is a single-zone P0 layout with teleport markers, so route it P0 and say why.
+* **A stage with an audience is its own layout.** Concerts, festivals, talent shows and dance institutions are all the same build, and every other shape here is architecture you walk around and look at, so without it the stage gets forced into `landmark-focal` — which builds the stage and loses the thing that makes a venue a venue: **the crowd faces one way.** Orientation is the whole design. Sightlines converge, the floor is sized for density rather than circulation, and there is a side of the stage the audience never sees.
+* **Not every showcase is walked through.** A modelled vehicle, a pinball machine, a city you zoom into — the subject is an object rather than a place, and every other shape here assumes an avatar moving around. `set-display` says the difference; `SET` was already the right route and stage B already reaches it.
 * **Roblox's own subgenres here are Music & Audio, Showcase & Hub, and Video.** *Showcase & Hub* is a single Roblox subgenre but two presets here, because a showcase and a hub have different shapes and different pipeline costs. **Video routes to P5** — it is a content-consumption surface with no 3D layout job. **Music & Audio usually does not.** A concert venue, a club, and a listening lounge are all rooms; only a bare music player with no room around it is P5. Judge the space, not the subgenre label.
 
 ## Universal Options
 
 Six features that belong to **no genre in particular because they belong to all of them**. Every genre inherits this table on top of its own.
 
-They exist because the alternative is worse. Each was measured against 620 real prompts and requested in eleven to fifteen different genres, so filing them per-genre would restate the same row seventy-eight times — and leaving them out is what produced the largest hole in the system, with *who is in the world* having no home anywhere.
+They exist because the alternative is worse. Each is wanted across nearly every genre, so filing them per-genre would restate the same row dozens of times, and leaving them out strands common requests — *who is in the world* would have no home anywhere.
 
 | ID | Option | What it is | Core | Goes to | Pipeline |
 | :---- | :---- | :---- | :--: | :---- | :---- |
@@ -61,13 +67,13 @@ They exist because the alternative is worse. Each was measured against 620 real 
 | `terrain-relief` | **Zone (Terrain Relief)** | Natural landform shaping the ground: hills, mountains, cliffs, a valley, or a canyon. | | `image` | `P0 + tiered` |
 | `island-cluster` | **Zone (Island Cluster)** | Several separate landmasses with water or open air between them, crossed by bridge, boat, or flight. | | `image` | `CHECK` |
 
-**None of these is `Core`, and that is deliberate.** They must never appear in the tune menu, which shows `Core` options only, and no preset includes one. A universal option is a **landing place for a request the user actually made** — reached from the open question in step 5 when a free-text ask matches it — never a default and never a suggestion. Measured against 620 prompts, each of the six would fire on 6–15% of them, so a run that applies one unasked is wrong far more often than it is right.
+**None of these is `Core`, and that is deliberate.** They must never appear in the tune menu, which shows `Core` options only, and no preset includes one. A universal option is a **landing place for a request the user actually made** — reached from the open question in step 5 when a free-text ask matches it — never a default and never a suggestion. Most builds want none of them, so a run that applies one unasked is wrong far more often than right.
 
 **A genre's own wording wins.** Four genres already define `building-interior` in their own terms — Shooter's is a breachable structure, Survival's is a shelter to hide in. Those rows are the definition for those genres; the universal row is the fallback for the other eleven. Dedupe by ID exactly as with any shared ID.
 
 **Bend the wording to the prompt.** These are written generically because they are genre-neutral, which makes the instruction to rewrite them *more* important than usual, not less. `water-body` for a pirate game is "open sea between the islands, deep enough to sail"; for a park it is "a duck pond at the centre of the green." Ship the prompt's water, not the word "water."
 
-**Two pipeline notes.** `terrain-relief` is `P0 + tiered` for hills and cliffs, but **caves, overhangs, and tunnels push it to `P2`** — say so when the prompt asks for them. `water-body` and `island-cluster` are `CHECK` because swimming and flight are volumetric: usually fine as a play-height envelope over a representable surface, and only a real problem when the volume self-occludes (layered floating islands, 3D cave networks). See *Layout Attributes* in Build.md for the underlying axis.
+**Two pipeline notes.** `terrain-relief` is `P0 + tiered` for hills and cliffs, but **caves, overhangs, and tunnels push it to `P2`** — say so when the prompt asks for them. `water-body` and `island-cluster` are `CHECK` because swimming and flight are volumetric: usually fine as a play-height envelope over a representable surface, and only a real problem when the volume self-occludes (layered floating islands, 3D cave networks). See *The Five Routing Axes* in Build.md for the axis behind it.
 
 **`npc-population` is not `spawner-npc`.** `spawner-npc` is where hostiles enter a fight — an emitter, wired to combat. `npc-population` is who lives here. A market crowd, a quest giver, and a herd of deer are not spawners, and filing them as one produces enemy waves in a town square.
 

@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a 3D horror survival map set inside a single compact, very dark building complex. Arrange a dense network of rooms, corridors, closeable doors, and intersecting hiding routes so players can break line of sight and make short escapes without remaining lost for minutes. Use sparse flickering lights and deep shadowed corners, with the interior framed as an oppressive enclosed space rather than an outdoor map.",
-  "blob": "### Genre\nThe dominant genre is Survival, specifically the asymmetric Runner-versus-Hunter format. The survival timer identifies the 1 vs All style; its tension comes from pursuit and evasion inside a compact navigable warren.\n\n### Shape and preset\nUse `warren-looping`, matched from the 1 vs All preset. Keep its dense looping circulation and separated role starts, but drop the preset’s escape exit: this scene’s runners survive in place rather than reaching an exit, so an escape gate would misdescribe the map.\n\n### Config requirements\n`cover-los` is visible geometry: short side rooms, deep shadowed recesses, closet-like hideaways, doorways, and intersecting corridors repeatedly break direct sightlines without becoming long-term dead ends. `spawn-protected` is invisible layout data: place separated Runner and Hunter role-start points behind initial sightline screens, outside immediate confrontation range. No other gameplay markers need rendering.\n\n### Layout components\nBuild one compact enclosed building complex, organized around a small central junction with several branching rooms and cross-corridors that reconnect into loops. Keep every escape route short: a Runner should be able to turn through a side room, close a door, cross an intersecting hall, and re-emerge elsewhere, but never remain lost for minutes. Include closeable doors at key corridor thresholds and room entrances, with some doors creating temporary separation rather than sealing the entire complex. Use small hiding rooms, alcoves, utility spaces, and shadowed corners as localized cover. The ground is continuous interior flooring; the boundary is opaque exterior walls around the full complex, with no outdoor space. Sparse flickering ceiling or wall lights punctuate otherwise deep darkness. Frame the isometric view to show the central junction, branching loops, doors, and the oppressive enclosing wall mass.\n\n### Render order\nUse `topdown` first and make it authoritative, because the looping pursuit routes must remain connected and avoid trapping players in unfair dead ends; the isometric render then dresses that validated plan.\n\n### Scale, theme, and pipeline cost\nScale is small: a single dense building sized for short, tense pursuits. Theme is oppressive psychological horror—near-black interiors, weak flickering light, heavy shadow, worn institutional surfaces. Use `P6` because the looping chase topology must be valid by construction; use `P0` otherwise, since the complex is one enclosed surface with no overhangs or outside-to-inside transition.",
+  "blob": "### Genre\nThe dominant genre is Survival, specifically an asymmetric Runners-versus-Hunters chase-survival round. The timer and elimination objective establish survival rather than a puzzle escape.\n\n### Shape and preset\nUse `warren-looping`, a compact interior warren of interconnected rooms and corridors with no dead-end traps, so Runners can make short tactical escapes and Hunters can pursue through alternate routes. Match the 1 vs All preset: retain its looping chase architecture and hiding cover, but drop `gate-escape` because Runners win by surviving the timer, not reaching an exit.\n\n### Config requirements\nUse `cover-los` as crawlspace-scale hiding cutouts, shadowed alcoves, room dividers, and door-screened corners that repeatedly break pursuit sightlines. Sparse flickering fixtures and deep darkness should reveal the route only in fragments without adding outdoor space or extra structures.\n\n### Layout requirements\nUse `spawn-protected` with two separated role-start clusters: place the Runner cluster at one outer loop node and the Hunter cluster at a distant, screened loop node, each behind immediate sightline-breaking turns and doors. These positions support reassigned roles while preventing either side from beginning in direct contact.\n\n### Layout components\nBuild one small, enclosed building complex. A central junction room anchors four to six compact rooms and several narrow corridors; every branch reconnects to another junction, creating intersecting loops rather than dead ends. Put closeable doors at room thresholds and major corridor junctions, with alternate adjacent routes so a closed door delays rather than permanently seals pursuit. Include shallow hiding alcoves, broken sightline partitions, and dark corners along each loop. Use worn interior floors, heavy walls, exposed utility details, sparse ceiling lights, and pockets of near-black shadow. The outer boundary is solid building walls with no exterior access. Compose the plan as a dense, readable interior network around the central junction, with the longest sightlines interrupted.\n\n### Render order\nUse `topdown` first and make it authoritative, because an invalid loop connection or a true dead end would make chase survival unfair and unplayable; dress the resulting valid plan in the dark isometric render.\n\n### Scale, theme, and pipeline cost\nScale is small: one compact complex designed for brief escapes rather than players remaining lost for minutes. Theme is oppressive psychological horror—industrial-dark interior, flickering light, silence, and heavy shadow. Apply `P6` because the looping pursuit topology must be valid by construction.",
   "spec": {
     "genre": "Survival",
     "secondary": [],
@@ -24,98 +24,109 @@
     "options": [
       {
         "id": "cover-los",
-        "text": "Short side rooms, deep shadowed recesses, closet-like hideaways, doorways, and intersecting corridors repeatedly break direct sightlines without becoming long-term dead ends.",
+        "text": "Crawlspace-scale hiding cutouts, shadowed alcoves, room dividers, and door-screened corners that repeatedly break pursuit sightlines.",
         "visible": true,
         "count": -1
       },
       {
         "id": "spawn-protected",
-        "text": "Separated Runner and Hunter role-start points behind initial sightline screens, outside immediate confrontation range.",
+        "text": "Two separated role-start clusters: a Runner cluster at one outer loop node and a Hunter cluster at a distant, screened loop node, each behind immediate sightline-breaking turns and doors.",
         "visible": false,
-        "count": -1
+        "count": 2
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "spawn-protected",
+        "text": "Two separated role-start clusters: a Runner cluster at one outer loop node and a Hunter cluster at a distant, screened loop node, each behind immediate sightline-breaking turns and doors.",
+        "count": 2,
+        "where": "Place the Runner cluster at one outer loop node and the Hunter cluster at a distant, screened loop node, each behind immediate sightline-breaking turns and doors."
       }
     ],
     "layout": {
-      "composition": "Isometric framing shows the small central junction, branching reconnecting loops, closeable doors, and oppressive enclosing wall mass.",
+      "composition": "A dense, readable interior network is composed around the central junction, with the longest sightlines interrupted.",
       "zones": [
         {
-          "name": "Central junction",
-          "role": "Small hub where branching rooms and cross-corridors meet.",
+          "name": "Central junction room",
+          "role": "Anchors the interconnected looping room and corridor network.",
           "where": "centre",
           "size": "small"
         },
         {
-          "name": "Branching rooms and cross-corridors",
-          "role": "Short pursuit and evasion routes that reconnect into loops.",
+          "name": "Compact rooms",
+          "role": "Connected by narrow corridors and alternate routes for short tactical escapes and pursuit.",
           "where": "around the central junction",
-          "size": "compact"
+          "size": "four to six compact rooms"
         },
         {
-          "name": "Hiding rooms and utility spaces",
-          "role": "Localized cover for breaking line of sight and making short escapes.",
-          "where": "off corridor thresholds and room entrances",
-          "size": "small"
+          "name": "Runner role-start cluster",
+          "role": "Runner role start, protected from direct initial contact.",
+          "where": "one outer loop node",
+          "size": ""
+        },
+        {
+          "name": "Hunter role-start cluster",
+          "role": "Hunter role start, protected from direct initial contact.",
+          "where": "a distant screened loop node",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Central junction",
-          "to": "Branching rooms and cross-corridors",
+          "from": "Central junction room",
+          "to": "Compact rooms",
           "kind": "corridor"
         },
         {
-          "from": "Branching rooms and cross-corridors",
-          "to": "Hiding rooms and utility spaces",
+          "from": "Compact rooms",
+          "to": "another junction",
           "kind": "corridor"
         },
         {
-          "from": "Branching rooms and cross-corridors",
-          "to": "Branching rooms and cross-corridors",
+          "from": "Room thresholds and major corridor junctions",
+          "to": "adjacent alternate routes",
           "kind": "corridor"
         }
       ],
-      "terrain": "Continuous interior flooring with near-black worn institutional surfaces, weak flickering ceiling or wall lights, and deep shadows.",
+      "terrain": "Worn interior floors, heavy walls, exposed utility details, sparse ceiling lights, and pockets of near-black shadow.",
       "props": [
         {
           "name": "Closeable doors",
           "count": -1,
-          "where": "Key corridor thresholds and room entrances"
+          "where": "At room thresholds and major corridor junctions."
         },
         {
-          "name": "Sparse flickering ceiling or wall lights",
+          "name": "Sparse flickering ceiling lights",
           "count": -1,
-          "where": "Throughout the enclosed complex"
+          "where": "Throughout the dark interior network."
         },
         {
-          "name": "Shadowed corners",
+          "name": "Exposed utility details",
           "count": -1,
-          "where": "Localized hiding rooms, alcoves, and utility spaces"
+          "where": "Along the interior rooms and corridors."
         }
       ],
-      "boundary": "Opaque exterior walls enclose the full building complex; there is no outdoor space.",
+      "boundary": "Solid building walls with no exterior access.",
       "scale_band": "small",
-      "theme": "Oppressive psychological horror; near-black interiors, weak flickering light, heavy shadow, worn institutional surfaces."
+      "theme": "Oppressive psychological horror, industrial-dark interior, flickering light, silence, and heavy shadow."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "Looping pursuit routes must remain connected and avoid unfair dead ends.",
+      "why": "An invalid loop connection or a true dead end would make chase survival unfair and unplayable.",
       "set_piece": false
     },
     "route": [
-      "P6",
-      "P0"
+      "P6"
     ],
-    "notes": [
-      "The 1 vs All preset is matched, but its escape exit is intentionally omitted because runners survive in place rather than reaching an exit."
-    ],
+    "notes": [],
     "scene_prompt": "Create a 3D horror survival map set inside a single compact, very dark building complex. Arrange a dense network of rooms, corridors, closeable doors, and intersecting hiding routes so players can break line of sight and make short escapes without remaining lost for minutes. Use sparse flickering lights and deep shadowed corners, with the interior framed as an oppressive enclosed space rather than an outdoor map."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

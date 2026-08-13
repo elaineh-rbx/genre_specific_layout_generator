@@ -14,98 +14,180 @@
     }
   ],
   "scene_prompt": "Build a 3D escape-room map set in a plain modern prison facility, with the escape route leading through the prison to the main gate at the map boundary. Include prison interior spaces and an exterior yard or approach immediately before the gate.",
-  "blob": "### Genre\nThe dominant genre is Puzzle: an escape-room prison escape whose objective is a physical route through the facility to its outer gate.\n\n### Shape and preset\nUse `puzzle-rooms`, matching the Escape Room preset. Retain its chained-room logic, but adapt the all-indoor expectation because the final approach passes outside through a prison yard before the exit.\n\n### Config requirements\nUse visible `gate-solve` for the main prison gate as the final structural escape barrier. Use visible `building-interior` for the prison’s enterable enclosed rooms and corridors; the route crosses from these interiors into the exterior yard, so this is a genuine outside-to-inside transition cost. No invisible emitters, pickups, or trigger volumes are specified for layout.\n\n### Layout components\nBuild a medium-sized, contiguous prison escape route. The starting portion is a sequence of modern institutional interior spaces: enclosed prison rooms and connecting corridors arranged as a clear forward chain toward the outer side of the facility. Keep the interiors plain, functional, and readable, with concrete or painted block walls, barred partitions where appropriate, secure doors, fluorescent ceiling lighting, and minimal utilitarian fixtures.\n\nThe interior route must discharge into one exterior yard or gate approach immediately before the escape boundary. This yard is a compact open-air transition zone, bounded by prison perimeter walls and fencing, with the main prison gate centered or strongly emphasized at the far map edge. The gate is the sole terminal landmark and visibly reads as the way out of the map. Use corridors and secured thresholds as the route connections; use a final straight or gently guided yard approach to prevent ambiguity about where escape lies. Frame the isometric composition with the interior rooms cut away in the foreground or side, the yard beyond them, and the main gate clearly visible at the boundary.\n\n### Render order\nUse `topdown`: render the connected room-and-corridor plan first and treat it as authoritative, because a sealed or disconnected prison route would make the escape objective unreachable. Dress the resulting valid plan as an isometric prison scene.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by a compact chain of prison interiors plus one exterior yard. Theme is plain modern prison facility: clean institutional concrete, steel bars, security doors, perimeter fencing, and restrained neutral lighting, with no horror fog, decay, or flicker. Use `P3` because traversal crosses between enclosed prison interiors and the exterior yard; no other geometry forces an additional pipeline modifier.",
+  "blob": "### Genre\nThe dominant genre is `Puzzle`: a prison escape-room game whose spatial progression is unlocked through prison-themed solves, ending at the main gate. There is no secondary genre.\n\n### Shape and preset\nUse `rooms-sequence`, taking the Escape Room preset. It becomes a controlled chain of modern prison chambers and connecting corridors, with each solved section opening the next route toward the exterior gate. The preset remains recognisable, extended with a final outdoor approach rather than changing the ordered-room structure.\n\n### Config requirements\nUse `gate-solve` for locked cellblock doors and the final prison-gate release; `button-solve` for visible keypads, levers, and pressure controls; `trigger-solve` for keycard readers, lock sockets, or evidence receptacles; `facade-clue` for clue boards, prison notices, schedules, and wall-mounted patterns placed in the natural route; `gate-progression` for sequentially unlocked security barriers; and `building-interior` for the prison rooms opening onto the exterior yard.\n\n### Layout requirements\nPlace `button-solve` interaction markers at each locked chamber's control point, immediately before the barrier it releases. Place `trigger-solve` markers at every visible reader or receptacle paired with its locked door, including the final main-gate control. Place `collectible-nodes` as keycards, tools, or evidence items inside the preceding chamber or a short optional side alcove, always before their matching input and never beyond its gate.\n\n### Layout components\nBegin in a compact intake or holding-cell zone, then run through ordered cellblocks, a guard-office puzzle room, and a final security-control chamber. Straight institutional corridors connect each chamber with barred doors, security shutters, and occasional small side alcoves. The last interior exit opens onto a fenced exterior prison yard or paved gate approach immediately before the main gate. Use clean concrete floors, painted walls, fluorescent fixtures, barred cells, desks, lockers, cameras, control panels, and perimeter fencing. Tall prison walls enclose the yard and form the map boundary, with the main gate centered on the outward edge as the unmistakable exit. Compose the map so the route reads clearly from intake to gate, with the exterior threshold visibly contrasting the enclosed interior.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because the ordered chain of chambers, locks, and final gate approach must remain connected and playable without accidental bypasses.\n\n### Scale, theme, and pipeline cost\nUse a medium scale, driven by several distinct prison chambers plus one compact exterior yard. The theme is a plain modern prison facility: clean institutional concrete, steel bars, controlled fluorescent lighting, and no horror decay or fog. Apply `P3`, forced by traversal from the enclosed prison interior to the exterior yard and main gate.",
   "spec": {
     "genre": "Puzzle",
     "secondary": [],
-    "shape": "puzzle-rooms",
+    "shape": "rooms-sequence",
     "preset": "Escape Room",
     "axes": {},
     "options": [
       {
         "id": "gate-solve",
-        "text": "Main prison gate as the final structural escape barrier at the map boundary.",
+        "text": "Locked cellblock doors and the final prison-gate release.",
         "visible": true,
-        "count": 1
+        "count": -1
+      },
+      {
+        "id": "button-solve",
+        "text": "Visible keypads, levers, and pressure controls.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "trigger-solve",
+        "text": "Keycard readers, lock sockets, or evidence receptacles.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "facade-clue",
+        "text": "Clue boards, prison notices, schedules, and wall-mounted patterns placed along the natural route.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "gate-progression",
+        "text": "Sequentially unlocked security barriers.",
+        "visible": true,
+        "count": -1
       },
       {
         "id": "building-interior",
-        "text": "Enterable enclosed prison rooms and connecting corridors, crossing out into the exterior yard before the exit.",
+        "text": "Prison rooms opening onto the exterior yard.",
         "visible": true,
+        "count": -1
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "Keycards, tools, or evidence items placed before their matching input.",
+        "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "button-solve",
+        "text": "Interaction markers for keypads, levers, and pressure controls.",
+        "count": -1,
+        "where": "At each locked chamber's control point, immediately before the barrier it releases."
+      },
+      {
+        "id": "trigger-solve",
+        "text": "Markers at visible keycard readers, lock sockets, or evidence receptacles.",
+        "count": -1,
+        "where": "At every reader or receptacle paired with its locked door, including the final main-gate control."
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "Keycards, tools, or evidence items.",
+        "count": -1,
+        "where": "Inside the preceding chamber or a short optional side alcove, always before their matching input and never beyond its gate."
+      }
+    ],
     "layout": {
-      "composition": "Isometric frame with cutaway interior rooms in the foreground or side, the exterior yard beyond them, and the main gate clearly visible at the far boundary.",
+      "composition": "The route reads clearly from the compact intake at one end through the ordered interior chambers and corridors to the centered main gate on the outward edge. The exterior threshold visibly contrasts the enclosed prison interior, with the final compact yard or paved gate approach immediately before the gate.",
       "zones": [
         {
-          "name": "Prison interior chain",
-          "role": "Starting escape route through enclosed modern institutional rooms and connecting corridors.",
-          "where": "foreground or side, leading toward the outer side of the facility",
-          "size": "medium"
-        },
-        {
-          "name": "Exterior yard / gate approach",
-          "role": "Compact open-air transition zone immediately before the escape boundary.",
-          "where": "beyond the interiors, before the far map edge",
+          "name": "Intake or holding-cell zone",
+          "role": "Starting prison chamber.",
+          "where": "Route start.",
           "size": "compact"
         },
         {
-          "name": "Main prison gate",
-          "role": "Sole terminal landmark and final escape barrier.",
-          "where": "centered or strongly emphasized at the far map edge",
+          "name": "Ordered cellblocks",
+          "role": "Sequential prison chambers unlocked through themed solves.",
+          "where": "Between intake and the guard-office puzzle room.",
           "size": ""
+        },
+        {
+          "name": "Guard-office puzzle room",
+          "role": "Puzzle chamber in the ordered escape route.",
+          "where": "After the cellblocks.",
+          "size": ""
+        },
+        {
+          "name": "Final security-control chamber",
+          "role": "Last interior chamber controlling the route to the main gate.",
+          "where": "Before the exterior exit.",
+          "size": ""
+        },
+        {
+          "name": "Exterior prison yard or paved gate approach",
+          "role": "Final outdoor approach immediately before the main gate.",
+          "where": "Beyond the last interior exit, at the outward map edge.",
+          "size": "compact"
         }
       ],
       "paths": [
         {
-          "from": "Prison interior chain",
-          "to": "Exterior yard / gate approach",
+          "from": "Intake or holding-cell zone",
+          "to": "Ordered cellblocks",
           "kind": "corridor"
         },
         {
-          "from": "Exterior yard / gate approach",
-          "to": "Main prison gate",
+          "from": "Ordered cellblocks",
+          "to": "Guard-office puzzle room",
+          "kind": "corridor"
+        },
+        {
+          "from": "Guard-office puzzle room",
+          "to": "Final security-control chamber",
+          "kind": "corridor"
+        },
+        {
+          "from": "Final security-control chamber",
+          "to": "Exterior prison yard or paved gate approach",
+          "kind": "corridor"
+        },
+        {
+          "from": "Exterior prison yard or paved gate approach",
+          "to": "Main gate",
           "kind": "open ground"
         }
       ],
-      "terrain": "Plain institutional concrete and painted block surfaces; compact open-air yard bounded by perimeter walls and fencing.",
+      "terrain": "Clean concrete floors and a paved exterior gate approach.",
       "props": [
         {
-          "name": "barred partitions",
+          "name": "Barred doors and security shutters",
           "count": -1,
-          "where": "interior rooms and corridors where appropriate"
+          "where": "Along the straight institutional corridors and chamber transitions."
         },
         {
-          "name": "secure doors",
+          "name": "Small side alcoves",
           "count": -1,
-          "where": "secured interior thresholds"
+          "where": "Occasionally off the connecting corridors."
         },
         {
-          "name": "fluorescent ceiling lighting",
+          "name": "Fluorescent fixtures",
           "count": -1,
-          "where": "interior rooms and corridors"
+          "where": "Throughout the prison interior."
         },
         {
-          "name": "minimal utilitarian fixtures",
+          "name": "Barred cells",
           "count": -1,
-          "where": "interior spaces"
+          "where": "In the cellblocks."
         },
         {
-          "name": "perimeter fencing",
+          "name": "Desks, lockers, cameras, and control panels",
           "count": -1,
-          "where": "around the exterior yard"
+          "where": "Throughout the prison chambers and guard-office areas."
+        },
+        {
+          "name": "Perimeter fencing",
+          "count": -1,
+          "where": "Around the exterior prison yard or paved gate approach."
         }
       ],
-      "boundary": "Prison perimeter walls and fencing enclose the exterior yard, with the main prison gate as the escape boundary at the far map edge.",
+      "boundary": "Tall prison walls enclose the exterior yard and form the map boundary, with the main gate centered on the outward edge as the unmistakable exit.",
       "scale_band": "medium",
-      "theme": "Plain modern prison facility; clean institutional concrete, steel bars, security doors, perimeter fencing, and restrained neutral lighting."
+      "theme": "Plain modern prison facility: clean institutional concrete, steel bars, and controlled fluorescent lighting; no horror decay or fog."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "a sealed or disconnected prison route would make the escape objective unreachable.",
+      "why": "the ordered chain of chambers, locks, and final gate approach must remain connected and playable without accidental bypasses",
       "set_piece": false
     },
     "route": [
@@ -117,12 +199,12 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
   "mapper_notes": [
-    "blob asked for topdown first; the route ['P0', 'P3'] gives isometric"
+    "blob asked for topdown first; the route ['P3'] gives isometric"
   ]
 }

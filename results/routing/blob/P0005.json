@@ -19,138 +19,151 @@
     }
   ],
   "scene_prompt": "Create a 3D high-fantasy starter kingdom region centered on a single human village. The village forms the safe central hub, bordered by a nearby forest where dark Hollow creatures appear, with a simple dungeon encounter set deeper along the forest path.",
-  "blob": "### Genre\nDominant genre: RPG, specifically an Action RPG starter progression loop; Adventure is secondary because the first region guides players from a village into a forest and dungeon. The RPG owns the hub-and-dungeon structure.\n\n### Shape and preset\nUse `world-hub-dungeon`, matched to the Action RPG preset. This is a compact first-build version of that form: one safe human village hub connects through hostile forest ground to one simple dungeon, rather than a full multi-dungeon world.\n\n### Config requirements\nUse visible `safezone-town` for the protected village, `social-hub` for its tightly grouped quest, shop, and service square, and `hazard-aggro` for clear Hollow-inhabited forest clearings set away from the village approach. Use visible `landmark-focal` as the dungeon entrance visible or strongly signposted from the forest route. Use invisible `spawner-npc` inside the Hollow clearings and dungeon encounter space; do not render spawn markers. No unrequested universal options apply.\n\n### Layout components\nPlace a medium-sized walled or naturally sheltered human village at the center foreground, with a central stone square, several compact fantasy timber-and-stone service buildings, a quest-facing notice or meeting point, and a protected arrival area. A single broad dirt-and-stone forest road leaves the village gate toward the back of the region. It enters a nearby dense, shadowed forest occupying the middle and rear ground, with two or three open Hollow encounter clearings offset from the main road so the travel route remains legible. Continue the path deeper to a small ruined stone dungeon entrance at the far rear, framed by dark trees, broken masonry, and a final open approach for the encounter. Keep the playable ground contiguous: grassy village margins transition into packed road and then leaf-strewn forest floor. Natural tree walls, low rocky rises, and dense undergrowth form the outer boundary without closing the route. Compose the village, forest corridor, and dungeon as a clear front-to-back progression, with the dungeon as the distant dark focal point.\n\n### Render order\nUse `topdown`: valid connectivity between the safe hub, forest route, encounter clearings, and dungeon is necessary for the opening quest to be playable, but this is not a carveable maze or circuit.\n\n### Scale, theme, and pipeline cost\nScale band: medium, driven by one village, its immediately surrounding forest, and one dungeon approach. Theme: bright high-fantasy human frontier village transitioning into ominous corrupted woodland and ancient ruins. Pipeline modifiers: `P4` and `P3` are forced by `world-hub-dungeon`: the village exterior and dungeon interior require linked captures, and the dungeon is a separate map space; otherwise no additional geometry cost is required.",
+  "blob": "### Genre\nThe dominant genre is `RPG`, specifically an Action RPG starter experience: the player begins in a safe settlement, travels to hostile ground, and fights Hollow creatures during an introductory quest. Adventure is secondary only through the directed story progression.\n\n### Shape and preset\nUse `world-open`, taken from the RPG catalogue, as one contiguous starter region containing village, forest, and dungeon approach rather than separate instances. Match the Action RPG preset in its safe hub, hostile encounter ground, and enemy origins, but override its `world-hub-dungeon` shape because this first quest must remain physically continuous.\n\n### Config requirements\nUse `safezone-town` for the single human starter village, entirely separated from hostile Hollow activity. Use `social-hub` as a compact village centre holding the quest-facing communal services. Use `hazard-aggro` for dark Hollow-infested forest clearings set away from the village roads. Use `building-interior` for the visible dungeon entrance and its compact enclosed encounter chamber.\n\n### Layout requirements\nUse `spawner-npc`: place two Hollow origins, one in a forest clearing beside the main route and one in the dungeon’s final encounter chamber. The village needs no hostile emitter. No other placed gameplay markers are required by this prompt.\n\n### Layout components\nBuild one small starter kingdom region. Put the single human village at the central, safest and most open portion of the map, with a town square, clustered timber-and-stone cottages, a quest focal point, and a clear outward road. Surround and extend beyond it with a nearby darkening forest, transitioning from maintained woodland at the village edge to denser, corrupted Hollow territory farther along the route. The main forest path leads from the village through one hostile clearing to a simple dungeon entrance deeper in the woods; beyond the entrance is one enclosed dungeon chamber for the encounter. Use woodland ground, roots, rocks, and increasingly dead or shadow-touched trees to signal danger. The dense forest and enclosing rocky terrain form the outer boundary rather than town walls. Compose the village centrally, with the road and forest route reading clearly toward the distant dungeon entrance.\n\n### Render order\nUse `topdown` first and make it authoritative, because the village-to-forest-to-dungeon quest route must remain continuously traversable and legible before the isometric scene is dressed.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the explicitly limited first-build scope of one village, nearby forest, and simple dungeon. Theme: bright high-fantasy human settlement fading into ominous shadow-corrupted woodland. Apply `P3` because play crosses from the outdoor forest into an enclosed dungeon interior; generate linked exterior and interior top-down captures.",
   "spec": {
     "genre": "RPG",
     "secondary": [
       "Adventure"
     ],
-    "shape": "world-hub-dungeon",
+    "shape": "world-open",
     "preset": "Action RPG",
     "axes": {},
     "options": [
       {
         "id": "safezone-town",
-        "text": "protected village",
+        "text": "the single human starter village, entirely separated from hostile Hollow activity",
         "visible": true,
-        "count": -1
+        "count": 1
       },
       {
         "id": "social-hub",
-        "text": "tightly grouped quest, shop, and service square",
+        "text": "a compact village centre holding the quest-facing communal services",
         "visible": true,
         "count": -1
       },
       {
         "id": "hazard-aggro",
-        "text": "clear Hollow-inhabited forest clearings set away from the village approach",
+        "text": "dark Hollow-infested forest clearings set away from the village roads",
         "visible": true,
         "count": -1
       },
       {
-        "id": "landmark-focal",
-        "text": "the dungeon entrance visible or strongly signposted from the forest route",
+        "id": "building-interior",
+        "text": "the visible dungeon entrance and its compact enclosed encounter chamber",
         "visible": true,
-        "count": -1
+        "count": 1
       },
       {
         "id": "spawner-npc",
-        "text": "inside the Hollow clearings and dungeon encounter space; do not render spawn markers",
+        "text": "two Hollow origins",
         "visible": false,
-        "count": -1
+        "count": 2
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "spawner-npc",
+        "text": "two Hollow origins",
+        "count": 2,
+        "where": "one in a forest clearing beside the main route and one in the dungeon’s final encounter chamber; none in the village"
       }
     ],
     "layout": {
-      "composition": "Clear front-to-back progression: the village occupies the center foreground, the forest corridor fills the middle and rear ground, and the distant dark dungeon is the far-rear focal point.",
+      "composition": "The single human village sits centrally in the safest, most open portion of the map. A clear outward road and forest route lead from the village toward the distant dungeon entrance, with darkening forest surrounding and extending beyond the settlement.",
       "zones": [
         {
-          "name": "Human village hub",
-          "role": "Safe central hub with services, quests, arrival, and a protected village square.",
-          "where": "center foreground",
-          "size": "medium-sized"
-        },
-        {
-          "name": "Forest road corridor",
-          "role": "Travel route from the village into hostile forest ground.",
-          "where": "from the village gate toward the back of the region",
-          "size": "broad"
-        },
-        {
-          "name": "Hollow encounter clearings",
-          "role": "Hostile Hollow encounter spaces offset from the travel route.",
-          "where": "middle and rear forest, offset from the main road",
-          "size": "open"
-        },
-        {
-          "name": "Dungeon approach and entrance",
-          "role": "Final encounter approach leading into the simple dungeon.",
-          "where": "far rear",
+          "name": "Human starter village",
+          "role": "Safe central hub with a town square, quest focal point, communal services, and clustered cottages.",
+          "where": "central, safest and most open portion of the map",
           "size": "small"
+        },
+        {
+          "name": "Village-edge woodland",
+          "role": "Maintained woodland transitioning the safe village into the forest route.",
+          "where": "around the village edge",
+          "size": "nearby"
+        },
+        {
+          "name": "Hostile forest clearing",
+          "role": "Dark Hollow-infested encounter ground beside the main route.",
+          "where": "along the forest path beyond the village",
+          "size": "-1"
+        },
+        {
+          "name": "Dungeon entrance",
+          "role": "Simple visible entrance deeper in the woods.",
+          "where": "distant end of the forest route",
+          "size": "-1"
+        },
+        {
+          "name": "Dungeon encounter chamber",
+          "role": "Enclosed final encounter chamber beyond the dungeon entrance.",
+          "where": "inside the dungeon beyond the entrance",
+          "size": "compact"
         }
       ],
       "paths": [
         {
-          "from": "Human village hub",
-          "to": "Forest road corridor",
+          "from": "Human starter village",
+          "to": "Hostile forest clearing",
           "kind": "road"
         },
         {
-          "from": "Forest road corridor",
-          "to": "Hollow encounter clearings",
-          "kind": "open ground"
+          "from": "Hostile forest clearing",
+          "to": "Dungeon entrance",
+          "kind": "path"
         },
         {
-          "from": "Forest road corridor",
-          "to": "Dungeon approach and entrance",
-          "kind": "road"
+          "from": "Dungeon entrance",
+          "to": "Dungeon encounter chamber",
+          "kind": "corridor"
         }
       ],
-      "terrain": "Contiguous playable ground transitions from grassy village margins to packed dirt-and-stone road and leaf-strewn forest floor, with low rocky rises, dense shadowed trees, broken masonry, and undergrowth.",
+      "terrain": "Woodland ground with roots, rocks, and increasingly dead or shadow-touched trees; maintained woodland at the village edge darkens into corrupted Hollow territory farther along the route, with enclosing rocky terrain.",
       "props": [
         {
-          "name": "central stone square",
-          "count": -1,
-          "where": "human village hub"
+          "name": "town square",
+          "count": 1,
+          "where": "central human starter village"
         },
         {
-          "name": "compact fantasy timber-and-stone service buildings",
+          "name": "timber-and-stone cottages",
           "count": -1,
-          "where": "around the central stone square"
+          "where": "clustered in the human starter village"
         },
         {
-          "name": "quest-facing notice or meeting point",
-          "count": -1,
-          "where": "human village hub"
+          "name": "quest focal point",
+          "count": 1,
+          "where": "human starter village"
         },
         {
-          "name": "protected arrival area",
+          "name": "roots",
           "count": -1,
-          "where": "human village hub"
+          "where": "woodland ground along the forest route"
         },
         {
-          "name": "dark trees",
+          "name": "rocks",
           "count": -1,
-          "where": "around the dungeon entrance"
+          "where": "forest and enclosing outer terrain"
         },
         {
-          "name": "broken masonry",
+          "name": "dead or shadow-touched trees",
           "count": -1,
-          "where": "around the dungeon entrance"
+          "where": "farther along the corrupted forest route"
         }
       ],
-      "boundary": "Natural tree walls, low rocky rises, and dense undergrowth form the outer boundary without closing the route.",
-      "scale_band": "medium",
-      "theme": "Bright high-fantasy human frontier village transitioning into ominous corrupted woodland and ancient ruins."
+      "boundary": "Dense forest and enclosing rocky terrain form the outer boundary rather than town walls.",
+      "scale_band": "small",
+      "theme": "bright high-fantasy human settlement fading into ominous shadow-corrupted woodland"
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "valid connectivity between the safe hub, forest route, encounter clearings, and dungeon is necessary for the opening quest to be playable.",
+      "why": "the village-to-forest-to-dungeon quest route must remain continuously traversable and legible before the isometric scene is dressed",
       "set_piece": false
     },
     "route": [
-      "P4",
       "P3"
     ],
     "notes": [],
@@ -159,12 +172,12 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
   "mapper_notes": [
-    "blob asked for topdown first; the route ['P4', 'P3'] gives isometric"
+    "blob asked for topdown first; the route ['P3'] gives isometric"
   ]
 }

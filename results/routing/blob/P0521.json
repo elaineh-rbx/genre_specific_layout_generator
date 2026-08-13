@@ -19,123 +19,160 @@
     }
   ],
   "scene_prompt": "Create a grimy post-apocalyptic 3D tower map: a dark, abandoned five-floor tower with zombie-filled interior floors stacked vertically. Each floor is a distinct combat area with one boss encounter, connected by a clear upward route toward the top floor. Place the hidden key at the tower’s summit as the final destination.",
-  "blob": "### Genre\nThe dominant genre is Shooter, specifically a PvE shooter: firearms are central, while hostile zombies and floor bosses define the combat progression. No secondary genre is needed; the final key is a destination within the shooter tower rather than a separate exploration world.\n\n### Shape and preset\nUse `breach-sequence`, interpreted as a vertical sequence of enclosed combat floors that must be cleared in upward order. The closest preset is PvE Shooter, but the prompt overrides its lane-network shape with this stacked tower sequence; retain only its applicable hostile-origin and interior requirements, so the preset is none.\n\n### Config requirements\nUse `spawner-npc` as invisible layout geometry: place zombie and boss enemy-origin markers within each floor’s combat space, never in the rendered image. Use `building-interior` as visible geometry: the playable spaces are the abandoned tower’s enterable interiors, reached from its dark exterior entrance. Do not add cover arrays, loot, or tactical lanes that were not requested.\n\n### Layout components\nBuild one tall, dark abandoned tower with exactly five stacked interior floors. The ground floor is a grimy entry and first zombie combat room. Floors two through four are distinct, increasingly damaged combat arenas, each with broken industrial walls, rubble, exposed piping, and one boss encounter area. The fifth and uppermost floor is the summit chamber, containing the hidden key as the final destination after its single boss area. A clear, continuous upward route—stairwells, damaged but passable stair flights, or enclosed ramps—connects every floor in order, with no alternate exterior route that bypasses floors. Keep each floor broadly similar in footprint but visually distinct through escalating decay and obstruction. The tower exterior is a silhouette boundary around the interior stack; frame it in a cutaway isometric view that reveals several floors and the ascent toward the summit.\n\n### Render order\nUse `topdown`: the floor-to-floor route and every connection must remain playable and continuous, while this is not a maze or racing circuit eligible for authored generation.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by a single five-floor tower with five boss arenas. Theme is grimy post-apocalyptic zombie horror: dark concrete, rusted metal, rubble, failing industrial fixtures, and abandoned interiors. Use `P2` because the five playable floors stack and occlude one another in a single plan. Use `P3` because play crosses from the exterior tower approach into its interior floors.",
+  "blob": "### 1. Genre\n`Shooter` is dominant: firearms and zombie combat define the play, specifically the PvE Shooter family. `Adventure` is secondary only for the summit-key objective; it does not own the tower shape.\n\n### 2. Shape and preset\nUse `arena-stacked`, taken from outside Shooter’s usual shapes, because this is one vertically stacked interior whose five combat floors overhang one another. Preset: none; the PvE Shooter preset’s lane network is contradicted by the sequential vertical ascent.\n\n### 3. Config requirements\nNo additional image-config options are required beyond the stacked tower geometry. Do not add unrequested cover arrays, breachable exterior buildings, or loot dressing.\n\n### 4. Layout requirements\nUse `spawner-npc` with five boss-emitter placements: one at the combat center or far end of each of the five floors, positioned clear of the upward stair or lift entrance so arrivals are not immediately blocked. Use `collectible-nodes` for one hidden key placement on the fifth-floor summit, behind or beyond that floor’s boss arena as the terminal objective.\n\n### 5. Layout components\nBuild one dark abandoned tower interior of exactly five stacked floors. Each floor is a distinct zombie-filled combat chamber, roughly equal in footprint but varied with collapsed walls, exposed pipes, broken concrete, rusted metal, debris, and dim emergency lighting. A clear upward stairwell, ramp sequence, or service-lift route connects floor one to two, two to three, three to four, and four to the summit floor; it must read as the only forward progression route. Floor one is the entry combat area at the base; floors two through four repeat the escalating abandoned combat-room structure; floor five is the summit boss chamber and contains the single hidden key. Enclose the whole map within the tower shell, with no exterior traversal. Compose an isometric cutaway showing the vertical stack, the upward route, and the key’s high final position.\n\n### 6. Render order\nUse `topdown`: establish the connected upward route and distinct boss-floor topology before dressing the isometric tower, since a broken ascent would make progression impossible.\n\n### 7. Scale, theme, and pipeline cost\nScale is medium, driven by five complete combat floors within one tower. Theme: grimy post-apocalyptic zombie horror, dark abandoned industrial interiors. Pipeline modifier `P2` is required because the five floors are vertically stacked and occlude one another in a single top-down capture.",
   "spec": {
     "genre": "Shooter",
-    "secondary": [],
-    "shape": "breach-sequence",
+    "secondary": [
+      "Adventure"
+    ],
+    "shape": "arena-stacked",
     "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "spawner-npc",
-        "text": "Zombie and boss enemy-origin markers within each floor’s combat space, never in the rendered image.",
+        "text": "Five boss-emitter placements, one at the combat center or far end of each floor and clear of the upward stair or lift entrance.",
         "visible": false,
-        "count": -1
-      },
+        "count": 5
+      }
+    ],
+    "layout_placement": [
       {
-        "id": "building-interior",
-        "text": "The abandoned tower’s enterable interiors, reached from its dark exterior entrance.",
-        "visible": true,
-        "count": -1
+        "id": "spawner-npc",
+        "text": "Five boss-emitter placements, one at the combat center or far end of each floor and clear of the upward stair or lift entrance.",
+        "count": 5,
+        "where": "At the combat center or far end of each of the five floors, positioned clear of the upward stair or lift entrance."
       }
     ],
     "layout": {
-      "composition": "Cutaway isometric view framing the dark tower silhouette around the interior stack, revealing several stacked floors and the continuous ascent toward the summit.",
+      "composition": "Isometric cutaway showing the full vertical stack of five floors, the clear upward route through the tower, and the hidden key at the high final summit position.",
       "zones": [
         {
-          "name": "Ground floor",
-          "role": "Grimy entry and first zombie combat room.",
-          "where": "bottom of the tower, reached from the dark exterior entrance",
-          "size": "Broadly similar footprint to the other floors"
+          "name": "Floor one entry combat area",
+          "role": "Base entry combat chamber and start of the upward progression.",
+          "where": "Bottom of the tower",
+          "size": "Roughly equal footprint to the other floors."
         },
         {
-          "name": "Floor two",
-          "role": "Distinct increasingly damaged combat arena with one boss encounter area.",
-          "where": "above the ground floor",
-          "size": "Broadly similar footprint"
+          "name": "Floor two combat chamber",
+          "role": "Zombie-filled escalating abandoned combat room.",
+          "where": "Above floor one",
+          "size": "Roughly equal footprint to the other floors."
         },
         {
-          "name": "Floor three",
-          "role": "Distinct increasingly damaged combat arena with one boss encounter area.",
-          "where": "middle of the tower",
-          "size": "Broadly similar footprint"
+          "name": "Floor three combat chamber",
+          "role": "Zombie-filled escalating abandoned combat room.",
+          "where": "Above floor two",
+          "size": "Roughly equal footprint to the other floors."
         },
         {
-          "name": "Floor four",
-          "role": "Distinct increasingly damaged combat arena with one boss encounter area.",
-          "where": "below the summit chamber",
-          "size": "Broadly similar footprint"
+          "name": "Floor four combat chamber",
+          "role": "Zombie-filled escalating abandoned combat room.",
+          "where": "Above floor three",
+          "size": "Roughly equal footprint to the other floors."
         },
         {
-          "name": "Summit chamber",
-          "role": "Uppermost floor containing the hidden key as the final destination after its single boss area.",
-          "where": "fifth and uppermost floor",
-          "size": "Broadly similar footprint"
+          "name": "Floor five summit boss chamber",
+          "role": "Terminal boss arena containing the single hidden summit key.",
+          "where": "Top of the tower",
+          "size": "Roughly equal footprint to the other floors."
         }
       ],
       "paths": [
         {
-          "from": "Ground floor",
-          "to": "Floor two",
-          "kind": "stairwell, damaged but passable stair flight, or enclosed ramp"
+          "from": "Floor one entry combat area",
+          "to": "Floor two combat chamber",
+          "kind": "stair"
         },
         {
-          "from": "Floor two",
-          "to": "Floor three",
-          "kind": "stairwell, damaged but passable stair flight, or enclosed ramp"
+          "from": "Floor two combat chamber",
+          "to": "Floor three combat chamber",
+          "kind": "stair"
         },
         {
-          "from": "Floor three",
-          "to": "Floor four",
-          "kind": "stairwell, damaged but passable stair flight, or enclosed ramp"
+          "from": "Floor three combat chamber",
+          "to": "Floor four combat chamber",
+          "kind": "stair"
         },
         {
-          "from": "Floor four",
-          "to": "Summit chamber",
-          "kind": "stairwell, damaged but passable stair flight, or enclosed ramp"
+          "from": "Floor four combat chamber",
+          "to": "Floor five summit boss chamber",
+          "kind": "stair"
         }
       ],
-      "terrain": "Dark concrete and rusted metal interior floors with escalating decay, broken industrial walls, rubble, exposed piping, and failing industrial fixtures.",
+      "terrain": "Dark abandoned industrial interior floors with collapsed walls, exposed pipes, broken concrete, rusted metal, debris, and dim emergency lighting.",
       "props": [
         {
           "name": "Hidden key",
           "count": 1,
-          "where": "summit chamber"
+          "where": "On the fifth-floor summit, behind or beyond the boss arena."
         },
         {
-          "name": "Boss encounter areas",
+          "name": "Boss encounter",
           "count": 5,
-          "where": "the tower’s five combat floors"
+          "where": "One in each floor's combat chamber."
+        },
+        {
+          "name": "Collapsed walls",
+          "count": -1,
+          "where": "Varied across the five combat chambers."
+        },
+        {
+          "name": "Exposed pipes",
+          "count": -1,
+          "where": "Varied across the five combat chambers."
+        },
+        {
+          "name": "Broken concrete",
+          "count": -1,
+          "where": "Varied across the five combat chambers."
+        },
+        {
+          "name": "Rusted metal",
+          "count": -1,
+          "where": "Varied across the five combat chambers."
+        },
+        {
+          "name": "Debris",
+          "count": -1,
+          "where": "Varied across the five combat chambers."
+        },
+        {
+          "name": "Dim emergency lighting",
+          "count": -1,
+          "where": "Throughout the tower interior."
         }
       ],
-      "boundary": "The dark tower exterior is a silhouette boundary around the interior stack; there is no alternate exterior route bypassing floors.",
+      "boundary": "The entire map is enclosed within the tower shell, with no exterior traversal.",
       "scale_band": "medium",
-      "theme": "Grimy post-apocalyptic zombie horror; dark concrete, rusted metal, rubble, failing industrial fixtures, abandoned interiors."
+      "theme": "Grimy post-apocalyptic zombie horror; dark abandoned industrial interiors."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the floor-to-floor route and every connection must remain playable and continuous.",
+      "why": "a broken connected ascent would make progression impossible.",
       "set_piece": false
     },
     "route": [
-      "P2",
-      "P3"
+      "P2"
     ],
-    "notes": [],
+    "notes": [
+      "`arena-stacked` is taken from outside Shooter’s usual shape set, as specified.",
+      "`collectible-nodes` was named for the hidden key but is not an option in the dominant Shooter genre, so it was not included as an option or layout-placement row; the stated single hidden key is retained as a layout prop.",
+      "The blob did not choose between stairwell, ramp sequence, or service lift; paths are transcribed as stairs because the layout components describe an upward stairwell, with no further siting detail beyond sequential floor connections."
+    ],
     "scene_prompt": "Create a grimy post-apocalyptic 3D tower map: a dark, abandoned five-floor tower with zombie-filled interior floors stacked vertically. Each floor is a distinct combat area with one boss encounter, connected by a clear upward route toward the top floor. Place the hidden key at the tower’s summit as the final destination."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
   "mapper_notes": [
-    "blob asked for topdown first; the route ['P3'] gives isometric"
+    "blob asked for topdown first; the route ['P2'] gives isometric"
   ]
 }

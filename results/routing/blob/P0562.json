@@ -19,129 +19,87 @@
     }
   ],
   "scene_prompt": "Create a small modern urban PvP survival map with simple buildings, streets, and cover. Arrange six gun boxes and six knife boxes around the map, distributed among building edges, street corners, and cover areas. Include a distinct trade area set apart from the combat streets.",
-  "blob": "### Genre\nThe dominant genre is Survival, with Shooter as a secondary influence because the round is PvP combat around weapons. Survival owns the contained-map form; the shooter influence only informs the urban cover and weapon placement.\n\n### Shape and preset\nUse `arena-contained`: a compact, bounded urban block where all combat streets, cover, and supply locations remain in one readable space. The closest preset is none, since this is neither a disaster arena nor a horde-defense arena, and the PvP trade enclave and weapon-box distribution replace those preset bundles.\n\n### Config requirements\nUse visible `cover-los` as street-side barriers, parked urban clutter, building corners, and low cover that break direct fire lanes. Use visible `settlement-density` for the compact cluster of simple modern buildings defining the streets. Use invisible `collectible-nodes` pickup markers at the weapon boxes: six gun-box markers and six knife-box markers, each aligned to its visible crate; respawn behavior is not rendered. No enterable interiors are requested.\n\n### Layout components\nBuild one small city-block combat zone. A roughly central cross-street and short side streets divide the map into several compact combat pockets, with simple low-rise building shells around the perimeter and at a few internal corners. Keep a distinct trade area on one edge of the block, separated from the combat streets by a clear boundary treatment such as a gated plaza or raised curb, while remaining visibly part of the same map. Place six gun boxes and six knife boxes across building edges, street corners, and cover pockets, distributed so no single street concentrates all supplies. Use paved streets, sidewalks, concrete barriers, crates, and parked-object cover. Enclose the play area with continuous building backs, walls, and blocked street ends. Frame the isometric view to show the central intersection, the separated trade area, and multiple supply locations at once.\n\n### Render order\nUse `isometric`: combat sightlines and urban atmosphere lead, and no exact route topology must be valid by construction.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by a single compact PvP survival block and twelve supply boxes. Theme: simple modern urban survival, clean streets, low-rise buildings, practical cover. Pipeline modifier: `P0`, because this is one exterior surface with no required interiors, overhangs, or procedurally valid route.",
+  "blob": "### Genre\n`Survival` is dominant: this is a timed PvP survival round in which players outlast one another. `Shooter` is secondary because firearms are supplied around the combat map; Survival owns the bounded round space.\n\n### Shape and preset\nUse `space-bounded`, the Survival Contained Arena shape: one compact, clearly readable urban combat block rather than a maze or a multi-map world. The closest Survival preset is none; the prompt describes free-for-all PvP streets, not an asymmetric chase, disaster, or horde-defense layout.\n\n### Config requirements\nUse `cover-los` as dense urban sightline breaks: parked vehicles, low concrete barriers, dumpsters, street furniture, and building corners distributed through the streets. Do not assume enterable buildings; the simple buildings primarily define the street edges and combat cover.\n\n### Layout requirements\nUse `collectible-loot` for 12 respawning weapon-box placements: exactly 6 gun boxes and 6 knife boxes. Distribute them between building edges, street corners, and cover pockets, with neither weapon type concentrated in one district. Place each box off the central travel line but exposed enough to create a contested pickup decision. No additional placed requirements are implied.\n\n### Layout components\nBuild a small modern urban survival arena. A central network of short streets forms the main combat area, bounded by simple block-like buildings and an outer map edge that prevents players leaving the playable block. Put cover clusters at intersections and along curb lines, while building corners create alternating long and broken sightlines. Set a distinct trade area apart from the combat streets, visually separated by a gate, plaza edge, or protected side lane; it should read as a dedicated exchange zone rather than another weapon-spawn pocket. Keep the frame centered on the street network, with the trade area visible at one edge as a legible secondary zone.\n\n### Render order\nRender `isometric` first and treat it as authoritative, because this compact free-for-all arena does not require procedurally guaranteed route topology.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by a single compact PvP block and 12 distributed weapon boxes. Theme: clean, simple modern urban survival—concrete streets, restrained buildings, practical street cover. Use `P0`: the map is one exterior, single-surface arena with no forced stacked, interior-transition, or validity-construction pass.",
   "spec": {
     "genre": "Survival",
     "secondary": [
       "Shooter"
     ],
-    "shape": "arena-contained",
+    "shape": "space-bounded",
     "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "cover-los",
-        "text": "Street-side barriers, parked urban clutter, building corners, and low cover that break direct fire lanes.",
+        "text": "Dense urban sightline breaks: parked vehicles, low concrete barriers, dumpsters, street furniture, and building corners distributed through the streets.",
         "visible": true,
         "count": -1
-      },
-      {
-        "id": "settlement-density",
-        "text": "A compact cluster of simple modern buildings defining the streets.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "collectible-nodes",
-        "text": "Pickup markers at the weapon boxes: six gun-box markers and six knife-box markers, each aligned to its visible crate; respawn behavior is not rendered.",
-        "visible": false,
-        "count": 12
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "Isometric view framed to show the central intersection, the separated trade area on one edge, and multiple supply locations at once.",
+      "composition": "Frame centered on the central short-street combat network, with the distinct trade area visible at one edge as a legible secondary zone.",
       "zones": [
         {
-          "name": "City-block combat zone",
-          "role": "Compact PvP survival combat space containing streets, cover, and supply locations.",
-          "where": "Across the single bounded map",
-          "size": "small"
-        },
-        {
-          "name": "Central cross-street",
-          "role": "Main combat intersection dividing the block into compact combat pockets.",
-          "where": "roughly centre",
-          "size": ""
-        },
-        {
-          "name": "Side streets and combat pockets",
-          "role": "Short streets and cover pockets for combat and distributed supplies.",
-          "where": "around the central cross-street",
+          "name": "Central combat streets",
+          "role": "Main free-for-all PvP combat area formed by a network of short streets.",
+          "where": "centre",
           "size": "compact"
         },
         {
           "name": "Trade area",
-          "role": "Distinct trade space set apart from combat streets but visibly part of the same map.",
-          "where": "one edge of the block",
-          "size": ""
+          "role": "Dedicated exchange zone, distinct from weapon-spawn pockets.",
+          "where": "one edge of the combat block",
+          "size": "small"
         }
       ],
-      "paths": [
-        {
-          "from": "Central cross-street",
-          "to": "Side streets and combat pockets",
-          "kind": "road"
-        },
-        {
-          "from": "Trade area",
-          "to": "City-block combat zone",
-          "kind": "road"
-        }
-      ],
-      "terrain": "Paved streets and sidewalks with concrete barriers, crates, parked-object cover, simple low-rise building shells, and a gated plaza or raised curb separating the trade area.",
+      "paths": [],
+      "terrain": "Concrete streets with curb lines in a clean modern urban block.",
       "props": [
         {
-          "name": "gun boxes",
+          "name": "Simple block-like buildings",
+          "count": -1,
+          "where": "Bounding the short streets and defining street edges"
+        },
+        {
+          "name": "Urban cover clusters: parked vehicles, low concrete barriers, dumpsters, street furniture, and building corners",
+          "count": -1,
+          "where": "At intersections, along curb lines, and through the streets"
+        },
+        {
+          "name": "Gun boxes",
           "count": 6,
-          "where": "across building edges, street corners, and cover pockets"
+          "where": "Distributed between building edges, street corners, and cover pockets; off the central travel line but exposed enough to be contested"
         },
         {
-          "name": "knife boxes",
+          "name": "Knife boxes",
           "count": 6,
-          "where": "across building edges, street corners, and cover pockets"
-        },
-        {
-          "name": "simple low-rise building shells",
-          "count": -1,
-          "where": "around the perimeter and at a few internal corners"
-        },
-        {
-          "name": "concrete barriers",
-          "count": -1,
-          "where": "combat streets and cover pockets"
-        },
-        {
-          "name": "crates",
-          "count": -1,
-          "where": "combat streets and cover pockets"
-        },
-        {
-          "name": "parked-object cover",
-          "count": -1,
-          "where": "combat streets and cover pockets"
+          "where": "Distributed between building edges, street corners, and cover pockets; off the central travel line but exposed enough to be contested"
         }
       ],
-      "boundary": "Continuous building backs, walls, and blocked street ends enclose the play area.",
+      "boundary": "An outer map edge prevents players leaving the playable urban block.",
       "scale_band": "small",
-      "theme": "simple modern urban survival, clean streets, low-rise buildings, practical cover"
+      "theme": "Clean, simple modern urban survival; restrained buildings, concrete streets, and practical street cover."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "combat sightlines and urban atmosphere lead, and no exact route topology must be valid by construction.",
+      "why": "This compact free-for-all arena does not require procedurally guaranteed route topology.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
-    "notes": [],
+    "notes": [
+      "`collectible-loot` was named in the blob but is a Shooter option rather than an option of the dominant Survival genre, so it was dropped from options and layout_placement. Its stated six gun boxes and six knife boxes are retained as layout props."
+    ],
     "scene_prompt": "Create a small modern urban PvP survival map with simple buildings, streets, and cover. Arrange six gun boxes and six knife boxes around the map, distributed among building edges, street corners, and cover areas. Include a distinct trade area set apart from the combat streets."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

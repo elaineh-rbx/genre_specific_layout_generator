@@ -14,82 +14,90 @@
     }
   ],
   "scene_prompt": "Create a compact 3D siege map with a small ice town enclosed by a grey defensive wall. Inside the wall, arrange a handful of ice buildings as the town center; leave approach space outside the wall for torch-bearing attackers to rush the defenses.",
-  "blob": "### Genre\nThe dominant genre is Action: opposing teams contest a compact physical siege space, with attackers breaking defenses and defenders holding the town. There is no secondary genre.\n\n### Shape and preset\nUse `arena-flat`, a single-level siege arena whose central defended objective is the ice town. The closest preset is Boss Raid for its destructible defensive focus, but the team-versus-team town siege does not retain its other bundle options; use preset none.\n\n### Config requirements\nUse `destructible-cluster` as visible geometry: the grey defensive wall and the handful of ice buildings are breakable defensive assemblies. No invisible layout options are required.\n\n### Layout components\nPlace the small ice town at the center of a compact, roughly square play area. Enclose it with one continuous grey defensive wall, with a few readable gates or weak wall stretches facing the attacker side. Inside, arrange a handful of distinct ice buildings around a small central clearing, keeping modest lanes between buildings so defenders can move around and attackers can press inward after breaching the wall. Outside the wall, reserve a broad open approach zone for the torch-bearing attacking team, largest on the primary assault side and narrowing toward the wall to focus the siege. Use flat snowy or icy ground throughout, with the grey wall forming the clear boundary between outer approach and inner town. The outer edge of the approach zone is the map boundary. Compose the isometric view with the wall framing the blue-white town center and the open assault ground visible in the foreground.\n\n### Render order\nUse `isometric`: the siege composition and readable contrast between grey wall, ice town, and approach ground lead the image; the simple connected layout does not need plan-first validation.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the requested handful of buildings and compact playable match area. Theme is stylized frozen siege: blue-white ice architecture, snow ground, and a stark grey fortification. Pipeline modifier `P0` applies because this is one flat exterior surface with no forced multi-layer, interior, volumetric, or validity-by-construction geometry.",
+  "blob": "### Genre\nThe dominant genre is `Action`: this is a compact asymmetric siege fight between defenders and attackers, with the town’s destruction versus survival timer defining the round. There is no secondary genre.\n\n### Shape and preset\nUse `space-bounded`, a single compact siege ground containing both the enclosed ice town and its surrounding assault apron. Match the Battlegrounds preset only in its flat bounded-arena intent; its option bundle does not describe this siege, so the preset is `none`.\n\n### Config requirements\nUse `destructible-cluster` for the grey defensive wall and the ice-town structures: they must read as a coherent set of breakable defenses and meltable buildings. Use `spawn-protected` for screened team-entry areas, with defenders protected inside the town and attackers protected at the outer edge of the approach.\n\n### Layout requirements\nPlace `spawn-protected` twice: one defender spawn zone behind the grey wall, tucked between the rear wall and the town center; and one attacker spawn zone at the far outer edge of the approach space, facing the wall but screened from immediate defender sightlines. No other placed markers are required; destruction state and round resolution are mechanics rather than layout objects.\n\n### Layout components\nBuild two primary zones: a compact, walled inner town occupying the center and a broad exterior attacker approach wrapping its front and sides. The town contains a handful of distinct ice buildings clustered around a small central open area, with narrow footpaths between them for defenders to reposition. A continuous grey defensive wall encloses the town, with readable attackable stretches and a main front-facing breach pressure point rather than dense exterior clutter. Outside it, leave open snow-covered ground wide enough for attackers to rush the wall in groups. Keep terrain nearly flat, with lightly banked snow at the outer map limit. The grey wall is the main boundary between teams, while low snow berms or icy cliffs define the outer playable edge. Frame the isometric composition with the wall crossing the middle of the image, attackers’ approach in the foreground, and the ice buildings visible behind it.\n\n### Render order\nRender `isometric` first; the siege’s spatial hierarchy is simple and does not require topology validation before dressing.\n\n### Scale, theme, and pipeline cost\nUse a small scale, driven by the requested handful of buildings and compact match area. Theme: stark winter siege, translucent blue ice architecture, heavy grey fortification, and open snowfield. Use `P0`: this is one flat, bounded surface with no forced multi-layer, interior-transition, or validity pass.",
   "spec": {
     "genre": "Action",
     "secondary": [],
-    "shape": "arena-flat",
+    "shape": "space-bounded",
     "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "destructible-cluster",
-        "text": "The grey defensive wall and the handful of ice buildings are breakable defensive assemblies.",
+        "text": "Grey defensive wall and ice-town structures forming coherent breakable defenses and meltable buildings.",
         "visible": true,
         "count": -1
+      },
+      {
+        "id": "spawn-protected",
+        "text": "Screened team-entry areas, with defenders protected inside the town and attackers protected at the outer edge of the approach.",
+        "visible": true,
+        "count": 2
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "spawn-protected",
+        "text": "One defender spawn zone behind the grey wall, tucked between the rear wall and the town center; one attacker spawn zone at the far outer edge of the approach space, facing the wall but screened from immediate defender sightlines.",
+        "count": 2,
+        "where": "Defender zone behind the grey wall between the rear wall and town center; attacker zone at the far outer edge of the approach facing the wall, screened from defender sightlines."
       }
     ],
     "layout": {
-      "composition": "Isometric view with the grey wall framing the blue-white town centre, while open assault ground remains visible in the foreground.",
+      "composition": "Isometric view with the grey wall crossing the middle of the image, the attackers' open approach in the foreground, and the ice buildings visible behind the wall.",
       "zones": [
         {
-          "name": "ice town",
-          "role": "Central defended objective, with defenders moving between buildings and attackers pressing inward after a breach.",
-          "where": "centre",
-          "size": "small"
+          "name": "Walled inner town",
+          "role": "Compact defender town and survival area, containing ice buildings, a small central open area, and narrow repositioning footpaths.",
+          "where": "Center, behind the grey defensive wall.",
+          "size": "compact"
         },
         {
-          "name": "central clearing",
-          "role": "Open space within the town around which the ice buildings are arranged.",
-          "where": "centre of the ice town",
-          "size": "small"
-        },
-        {
-          "name": "outer approach zone",
-          "role": "Broad open assault ground for the torch-bearing attacking team to rush the defenses.",
-          "where": "outside the wall, largest on the primary assault side and narrowing toward the wall",
+          "name": "Exterior attacker approach",
+          "role": "Open snow-covered rush space for attackers approaching the wall in groups.",
+          "where": "In front of and wrapping the front and sides of the inner town.",
           "size": "broad"
         }
       ],
       "paths": [
         {
-          "from": "outer approach zone",
-          "to": "ice town",
+          "from": "Ice buildings",
+          "to": "Town center",
           "kind": "open ground"
         },
         {
-          "from": "grey defensive wall gates or weak stretches",
-          "to": "central clearing",
-          "kind": "corridor"
+          "from": "Exterior attacker approach",
+          "to": "Grey defensive wall",
+          "kind": "open ground"
         }
       ],
-      "terrain": "Flat snowy or icy ground throughout.",
+      "terrain": "Nearly flat snow-covered ground with lightly banked snow at the outer map limit.",
       "props": [
         {
-          "name": "continuous grey defensive wall",
-          "count": 1,
-          "where": "enclosing the central ice town"
+          "name": "Grey defensive wall",
+          "count": -1,
+          "where": "Continuously enclosing the central ice town, with readable attackable stretches and a main front-facing breach pressure point."
         },
         {
-          "name": "ice buildings",
+          "name": "Distinct ice buildings",
           "count": -1,
-          "where": "around the small central clearing inside the wall"
+          "where": "Clustered around the small central open area inside the wall."
         },
         {
-          "name": "gates or weak wall stretches",
+          "name": "Low snow berms or icy cliffs",
           "count": -1,
-          "where": "facing the attacker side of the defensive wall"
+          "where": "At the outer playable edge."
         }
       ],
-      "boundary": "The outer edge of the approach zone is the map boundary.",
+      "boundary": "The grey defensive wall separates the teams around the town; low snow berms or icy cliffs define the outer playable edge.",
       "scale_band": "small",
-      "theme": "Stylized frozen siege: blue-white ice architecture, snow ground, and a stark grey fortification."
+      "theme": "Stark winter siege, translucent blue ice architecture, heavy grey fortification, open snowfield."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "the siege composition and readable contrast between grey wall, ice town, and approach ground lead the image.",
+      "why": "The siege's spatial hierarchy is simple and does not require topology validation before dressing.",
       "set_piece": false
     },
     "route": [
@@ -101,7 +109,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

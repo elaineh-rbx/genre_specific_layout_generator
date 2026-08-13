@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a 3D city-building tycoon map with separate city plots for each player, each developed as an individual city. Within every plot, arrange buildings, houses, shops, and shopping malls along a simple street layout.",
-  "blob": "### Genre\nThe dominant genre is Simulation, specifically a city-building tycoon with each player developing an independent plot. The income rules establish the tycoon intent but do not add layout geometry.\n\n### Shape and preset\nUse `plot-isolated`, a field of separate personal city parcels rather than one cooperative city. The closest preset is Tycoon, but the author’s per-player ownership contradicts its shared-plot shape; with that shape replaced and most preset options absent, the preset is none.\n\n### Config requirements\nUse `path-circulation` as visible geometry: a simple connected street layout within each personal plot, organizing the built city. Use `settlement-density` as visible geometry: each parcel is a compact developed urban district containing homes, shops, malls, and other buildings. Do not add purchase gates, an upgrades bazaar, resources, task stations, or other unrequested tycoon structures.\n\n### Layout components\nArrange a repeatable grid or row of clearly separated, similarly sized player city plots across a broad flat site. Each plot is an individual small city: place houses in residential blocks, shops on street-facing commercial lots, and larger shopping malls on prominent commercial parcels, with general buildings filling out the urban fabric. A simple internal street network connects these parcels and gives each plot an understandable circulation pattern; streets should meet the plot edge cleanly without implying that cities merge into one shared build. Keep terrain level and paved, with plot boundaries legible through curbs, spacing, or low dividers rather than tall walls. Frame the map in an elevated three-quarter overview so multiple independent city plots and their repeated street patterns are immediately readable.\n\n### Render order\nUse `isometric`: render the isometric city field first as the authoritative image, then derive the top-down view from it, because the plots are straightforward repeated ground layouts and no exact generated topology is required.\n\n### Scale, theme, and pipeline cost\nUse a large scale band, driven by the need to show multiple separate player plots, each with a complete mini-city. Theme: clean, colorful 3D Roblox-style modern city tycoon, with readable roads and modular urban buildings. Pipeline modifier: `P0`, since this is a single flat exterior surface with no interiors, stacked geometry, separate maps, volumetric traversal, or validity-critical route.",
+  "blob": "### 1. Genre\nThe dominant genre is Simulation: this is a tycoon in which each player develops an independent city and gains income from its homes, shops, and malls.\n\n### 2. Shape and preset\nUse `plot-isolated`, taken from outside Simulation’s usual preset list. It gives every player a large, separate, equally spaced city parcel that cannot overlap another player’s development. The closest preset is Tycoon, but it uses `plot-shared` for one cooperative structure; the author explicitly requires private plots, so the preset is none.\n\n### 3. Config requirements\nApply `path-circulation` as a simple street network within each plot, connecting residential, retail, and mall parcels. Apply `settlement-density` as a compact built-up city arrangement of houses, commercial buildings, shops, and shopping malls rather than isolated structures.\n\n### 4. Layout requirements\nNo additional placed layout markers are required from the stated scene. Plot ownership, income rules, purchase logic, and rent or sales calculation are mechanics and must not be rendered or sited as layout objects.\n\n### 5. Layout components\nLay out a repeated field of separate, level square city plots with clear spacing between neighboring plots. Each plot is a self-contained small city: a simple grid or loop of streets forms the circulation spine, with houses grouped into residential blocks, individual shops lining commercial street frontage, and one or more larger shopping-mall footprints at prominent street corners or central blocks. Keep buildings within their own plot boundaries and leave open roadside parcels for future city expansion. Use flat urban ground, paved streets and sidewalks, and open plot edges or subtle landscaped dividers rather than enclosing walls. Compose the frame to show several equal plots at once while keeping one foreground plot legible as the representative city.\n\n### 6. Render order\nUse `isometric`: the main requirement is readable city-building presentation across repeated plots, while no fragile route topology needs a plan-first render.\n\n### 7. Scale, theme, and pipeline cost\nUse a large scale, driven by multiple independent player city plots and the mix of residential and commercial districts within each. Theme: clean, colorful 3D urban tycoon city, modular and expandable. Use `P0`; all plots remain on one flat, visible surface with no interiors, overhangs, separate maps, or topology requiring validation.",
   "spec": {
     "genre": "Simulation",
     "secondary": [],
@@ -24,94 +24,107 @@
     "options": [
       {
         "id": "path-circulation",
-        "text": "a simple connected street layout within each personal plot, organizing the built city",
+        "text": "A simple street network within each plot, connecting residential, retail, and mall parcels.",
         "visible": true,
         "count": -1
       },
       {
         "id": "settlement-density",
-        "text": "each parcel is a compact developed urban district containing homes, shops, malls, and other buildings",
+        "text": "A compact built-up city arrangement of houses, commercial buildings, shops, and shopping malls rather than isolated structures.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "Elevated three-quarter overview across a broad flat city field, framing multiple independent plots and their repeated internal street patterns as immediately readable.",
+      "composition": "Show several equal, separate city plots at once, with one foreground plot kept legible as the representative city.",
       "zones": [
         {
-          "name": "player city plots",
-          "role": "Separate personal parcels where each player develops an individual small city.",
-          "where": "Across the broad flat site in a repeatable grid or row",
-          "size": "Similarly sized"
+          "name": "Repeated city-plot field",
+          "role": "Separate, equally spaced, independent player city parcels.",
+          "where": "Across the frame",
+          "size": "large"
         },
         {
-          "name": "residential blocks",
-          "role": "Houses fill the residential portion of each individual city plot.",
-          "where": "Within each player city plot",
+          "name": "Foreground city plot",
+          "role": "Representative self-contained small city plot.",
+          "where": "Foreground",
+          "size": "small"
+        },
+        {
+          "name": "Residential blocks",
+          "role": "Grouped houses within each plot.",
+          "where": "Within each city plot",
           "size": ""
         },
         {
-          "name": "street-facing commercial lots",
-          "role": "Shops occupy commercial parcels along the internal streets.",
-          "where": "Within each player city plot",
+          "name": "Commercial street frontage",
+          "role": "Individual shops lining the streets.",
+          "where": "Within each city plot",
           "size": ""
         },
         {
-          "name": "prominent commercial parcels",
-          "role": "Larger shopping malls anchor the commercial development.",
-          "where": "Within each player city plot",
+          "name": "Mall parcels",
+          "role": "Larger shopping-mall footprints.",
+          "where": "Prominent street corners or central blocks within each plot",
+          "size": ""
+        },
+        {
+          "name": "Future expansion parcels",
+          "role": "Open roadside parcels reserved for future city expansion.",
+          "where": "Within each plot along roadsides",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "residential blocks",
-          "to": "street-facing commercial lots",
+          "from": "Residential blocks",
+          "to": "Commercial street frontage",
           "kind": "road"
         },
         {
-          "from": "street-facing commercial lots",
-          "to": "prominent commercial parcels",
+          "from": "Commercial street frontage",
+          "to": "Mall parcels",
+          "kind": "road"
+        },
+        {
+          "from": "Street network",
+          "to": "Future expansion parcels",
           "kind": "road"
         }
       ],
-      "terrain": "Level, paved ground across a broad flat site.",
+      "terrain": "Flat urban ground with paved streets and sidewalks.",
       "props": [
+        {
+          "name": "separate level square city plots",
+          "count": -1,
+          "where": "Repeated across the map with clear spacing between neighboring plots"
+        },
         {
           "name": "houses",
           "count": -1,
-          "where": "Residential blocks within every plot"
+          "where": "Grouped into residential blocks within each plot"
         },
         {
           "name": "shops",
           "count": -1,
-          "where": "Street-facing commercial lots within every plot"
+          "where": "Lining commercial street frontage within each plot"
         },
         {
           "name": "shopping malls",
           "count": -1,
-          "where": "Prominent commercial parcels within every plot"
-        },
-        {
-          "name": "general buildings",
-          "count": -1,
-          "where": "Filling out the urban fabric of every plot"
-        },
-        {
-          "name": "curbs, spacing, or low dividers",
-          "count": -1,
-          "where": "Along legible plot boundaries"
+          "where": "At prominent street corners or central blocks within each plot"
         }
       ],
-      "boundary": "Clearly separated plot boundaries marked by curbs, spacing, or low dividers; streets meet plot edges cleanly without implying merged shared cities.",
+      "boundary": "Open plot edges or subtle landscaped dividers; no enclosing walls. Buildings remain within their own plot boundaries.",
       "scale_band": "large",
-      "theme": "clean, colorful 3D Roblox-style modern city tycoon with readable roads and modular urban buildings"
+      "theme": "Clean, colorful 3D urban tycoon city, modular and expandable."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "the plots are straightforward repeated ground layouts and no exact generated topology is required.",
+      "why": "Readable city-building presentation across repeated plots matters, while no fragile route topology needs a plan-first render.",
       "set_piece": false
     },
     "route": [
@@ -123,7 +136,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

@@ -1,0 +1,186 @@
+{
+  "scene": "P0306",
+  "source": "Atue como um desenvolvedor sênior de Roblox e especialista em criar jogos estilo RPG de grande sucesso inspirados em \"Blox Fruits\" e no universo de \"One Piece\". \n\nPreciso que você crie a estrutura inicial completa, scripts otimizados e a configuração de um sistema modular para um jogo de RPG de mundo aberto com as seguintes diretrizes exatas:\n\n1. ESTÉTICA E DIREÇÃO DE ARTE (VISUAL 3D BONITO):\n- Estilo visual vibrante, limpo e polido (estilo anime moderno 3D, similar ao Blox Fruits).\n- Iluminação realista combinada com um toque estilizado: ative o sistema Future Is Bright, use efeitos de \"Bloom\", \"ColorCorrection\" com saturação vibrante, e sombras suaves.\n- Design de UI (Interface de Usuário) moderno, minimalista e com temática marinha/pirata (usando cantos arredondados, cores douradas/azuladas, fontes limpas e barras de vida/energia estilizadas).\n\n2. SISTEMA DE COMBATE E JOGABILIDADE (RPG):\n- Sistema de combate fluido baseado em cliques (M1 Combo) com efeitos visuais de partículas (Slash/Aura).\n- Árvore de Level e Experiência (EXP): Sistema que salva o progresso do jogador (DataStoreService robusto).\n- Estatísticas (Stats) para distribuir pontos: Combat (Melee), Defense, Sword, Gun e Blox Fruit.\n- Sistema de Frutas do Diabo (Blox Fruits): Estrutura para frutas com habilidades especiais (poderes elementais, tempo de recarga/cooldown e animações dedicadas).\n\n3. ESTRUTURA DO MUNDO:\n- Crie um script de gerenciamento para ilhas procedimentais ou uma ilha inicial detalhada (Starter Island) com NPCs de missões (Quest Givers), baús espalhados pelo mapa que dão dinheiro (Beli) e áreas de treino com inimigos (Bandits) que possuem IA básica de perseguição e ataque.\n\n4. ORGANIZAÇÃO DO CÓDIGO:\n- Siga as melhores práticas do Roblox: use ModuleScripts, RemoteEvents centralizados no ReplicatedStorage, e mantenha o código limpo, comentado em português e otimizado para evitar lag (memory leaks).\n\nPor favor, comece gerando o script principal do sistema de salvamento de dados (DataStore) e a estrutura base do sistema de níveis e atributos dos jogadores.",
+  "answers": [
+    {
+      "field": "shape",
+      "ask": "Build the whole archipelago now, or just a detailed starter island and add islands later?",
+      "answer": "Comece apenas com uma Starter Island detalhada; as demais ilhas serão adicionadas posteriormente pela estrutura modular."
+    },
+    {
+      "field": "scale",
+      "ask": "How large should the starter island be relative to a player's walk speed - a couple of minutes across?",
+      "answer": "Mantenha-a compacta, atravessável em cerca de 1 a 2 minutos de caminhada, para servir bem como vertical slice inicial."
+    }
+  ],
+  "scene_prompt": "Create a polished, vibrant 3D anime-inspired pirate RPG map centered on one detailed Starter Island, compact enough to cross on foot in about 1–2 minutes. Arrange a coastal island with clear beach approaches, a small central settlement or quest hub containing quest-giver NPC locations, scattered treasure chests across the island, and dedicated outdoor training areas populated by bandit enemy locations. Use lush stylized terrain, ocean surrounding the island, and a clean, readable layout with paths connecting the shore, settlement, training zones, and elevated or peripheral exploration areas; leave the surrounding sea open for future modular islands.",
+  "blob": "## Genre\nThe dominant genre is RPG, with Adventure secondary. Levelled combat, quest givers, and bandit training define the RPG, while paths and peripheral discoveries make exploration meaningful.\n\n## Shape and preset\nUse `world-open` as one compact contiguous Starter Island. The preset is Action RPG, but its usual hub-and-dungeon shape is replaced with `world-open` because the brief explicitly asks for one island on one surface; its sanctuary, hostile areas, and enemy emitters remain intact.\n\n## Config requirements\nUse `safezone-town` for the small central quest settlement, isolated from bandit aggression. Draw `hazard-aggro` as dedicated outdoor bandit training clearings set away from safe paths. Add `path-trail` as readable routes from beaches through the settlement to training and elevated exploration ground. Use `npc-population` for visible quest-giver positions in the hub. Include `water-body` as the open ocean around the island and `terrain-relief` as lush elevated peripheral terrain. Draw scattered treasure chests as visible interactable props.\n\n## Layout requirements\nPlace `npc-population` markers for quest givers inside the central hub. Place `spawner-npc` emitters only within the outdoor training clearings, buffered from the settlement and shore arrivals. Place treasure-chest pickup markers at every drawn chest, distributed across paths, beach edges, training outskirts, and elevated peripheral discoveries. Place a player arrival at a clear beach approach facing the route into town.\n\n## Layout components\nBuild one coastal island traversable in one to two minutes. Its central zone is a small quest settlement; several beach approaches occupy the shore, bandit training clearings sit beyond town, and elevated exploration pockets ring the periphery. A branching but readable trail network connects shore, hub, training zones, and high ground. Use lush grass, stylized rock rises, sandy beaches, surrounding ocean, quest-giver stands, bandit grounds, and scattered treasure chests. Keep the outer sea unobstructed for future islands. Compose the island with town as the visual anchor and all major routes legible.\n\n## Render order\nUse `isometric`: the vibrant island look leads, and the authoritative top-down is projected from that image because no generated circuit, maze, or exact structural chain is required.\n\n## Scale, theme, and pipeline cost\nThe scale is medium, driven by the stated one-to-two-minute crossing. The theme is polished modern-anime pirate adventure in saturated green, sand, blue, and gold. Use `tiered` for elevated terrain without overhang and `CHECK` for the surrounding swimmable ocean; no separate-map cost applies yet.",
+  "agent_artifact": "# Scene prompt\nCreate a polished, vibrant 3D anime-inspired pirate RPG map centered on one detailed Starter Island, compact enough to cross on foot in about 1–2 minutes. Arrange a coastal island with clear beach approaches, a small central settlement or quest hub containing quest-giver NPC locations, scattered treasure chests across the island, and dedicated outdoor training areas populated by bandit enemy locations. Use lush stylized terrain, ocean surrounding the island, and a clean, readable layout with paths connecting the shore, settlement, training zones, and elevated or peripheral exploration areas; leave the surrounding sea open for future modular islands.\n\n# Agent decision\n## Genre\nThe dominant genre is RPG, with Adventure secondary. Levelled combat, quest givers, and bandit training define the RPG, while paths and peripheral discoveries make exploration meaningful.\n\n## Shape and preset\nUse `world-open` as one compact contiguous Starter Island. The preset is Action RPG, but its usual hub-and-dungeon shape is replaced with `world-open` because the brief explicitly asks for one island on one surface; its sanctuary, hostile areas, and enemy emitters remain intact.\n\n## Config requirements\nUse `safezone-town` for the small central quest settlement, isolated from bandit aggression. Draw `hazard-aggro` as dedicated outdoor bandit training clearings set away from safe paths. Add `path-trail` as readable routes from beaches through the settlement to training and elevated exploration ground. Use `npc-population` for visible quest-giver positions in the hub. Include `water-body` as the open ocean around the island and `terrain-relief` as lush elevated peripheral terrain. Draw scattered treasure chests as visible interactable props.\n\n## Layout requirements\nPlace `npc-population` markers for quest givers inside the central hub. Place `spawner-npc` emitters only within the outdoor training clearings, buffered from the settlement and shore arrivals. Place treasure-chest pickup markers at every drawn chest, distributed across paths, beach edges, training outskirts, and elevated peripheral discoveries. Place a player arrival at a clear beach approach facing the route into town.\n\n## Layout components\nBuild one coastal island traversable in one to two minutes. Its central zone is a small quest settlement; several beach approaches occupy the shore, bandit training clearings sit beyond town, and elevated exploration pockets ring the periphery. A branching but readable trail network connects shore, hub, training zones, and high ground. Use lush grass, stylized rock rises, sandy beaches, surrounding ocean, quest-giver stands, bandit grounds, and scattered treasure chests. Keep the outer sea unobstructed for future islands. Compose the island with town as the visual anchor and all major routes legible.\n\n## Render order\nUse `isometric`: the vibrant island look leads, and the authoritative top-down is projected from that image because no generated circuit, maze, or exact structural chain is required.\n\n## Scale, theme, and pipeline cost\nThe scale is medium, driven by the stated one-to-two-minute crossing. The theme is polished modern-anime pirate adventure in saturated green, sand, blue, and gold. Use `tiered` for elevated terrain without overhang and `CHECK` for the surrounding swimmable ocean; no separate-map cost applies yet.\n",
+  "agent_notes": "## Genre\nThe dominant genre is RPG, with Adventure secondary. Levelled combat, quest givers, and bandit training define the RPG, while paths and peripheral discoveries make exploration meaningful.\n\n## Shape and preset\nUse `world-open` as one compact contiguous Starter Island. The preset is Action RPG, but its usual hub-and-dungeon shape is replaced with `world-open` because the brief explicitly asks for one island on one surface; its sanctuary, hostile areas, and enemy emitters remain intact.\n\n## Config requirements\nUse `safezone-town` for the small central quest settlement, isolated from bandit aggression. Draw `hazard-aggro` as dedicated outdoor bandit training clearings set away from safe paths. Add `path-trail` as readable routes from beaches through the settlement to training and elevated exploration ground. Use `npc-population` for visible quest-giver positions in the hub. Include `water-body` as the open ocean around the island and `terrain-relief` as lush elevated peripheral terrain. Draw scattered treasure chests as visible interactable props.\n\n## Layout requirements\nPlace `npc-population` markers for quest givers inside the central hub. Place `spawner-npc` emitters only within the outdoor training clearings, buffered from the settlement and shore arrivals. Place treasure-chest pickup markers at every drawn chest, distributed across paths, beach edges, training outskirts, and elevated peripheral discoveries. Place a player arrival at a clear beach approach facing the route into town.\n\n## Layout components\nBuild one coastal island traversable in one to two minutes. Its central zone is a small quest settlement; several beach approaches occupy the shore, bandit training clearings sit beyond town, and elevated exploration pockets ring the periphery. A branching but readable trail network connects shore, hub, training zones, and high ground. Use lush grass, stylized rock rises, sandy beaches, surrounding ocean, quest-giver stands, bandit grounds, and scattered treasure chests. Keep the outer sea unobstructed for future islands. Compose the island with town as the visual anchor and all major routes legible.\n\n## Render order\nUse `isometric`: the vibrant island look leads, and the authoritative top-down is projected from that image because no generated circuit, maze, or exact structural chain is required.\n\n## Scale, theme, and pipeline cost\nThe scale is medium, driven by the stated one-to-two-minute crossing. The theme is polished modern-anime pirate adventure in saturated green, sand, blue, and gold. Use `tiered` for elevated terrain without overhang and `CHECK` for the surrounding swimmable ocean; no separate-map cost applies yet.",
+  "secondary": [
+    "Adventure"
+  ],
+  "spec": {
+    "genre": "RPG",
+    "secondary": [
+      "Adventure"
+    ],
+    "shape": "world-open",
+    "preset": "Action RPG",
+    "axes": {},
+    "options": [
+      {
+        "id": "safezone-town",
+        "text": "Small central quest settlement, isolated from bandit aggression.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "hazard-aggro",
+        "text": "Dedicated outdoor bandit training clearings set away from safe paths.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "npc-population",
+        "text": "Visible quest-giver positions in the hub.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "spawner-npc",
+        "text": "Bandit enemy emitters only within the outdoor training clearings, buffered from the settlement and shore arrivals.",
+        "visible": false,
+        "count": -1
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "Treasure-chest pickup markers at every drawn chest.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "water-body",
+        "text": "Open ocean surrounding the island.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "terrain-relief",
+        "text": "Lush elevated peripheral terrain.",
+        "visible": true,
+        "count": -1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "npc-population",
+        "text": "Quest givers.",
+        "count": -1,
+        "where": "Inside the central hub."
+      },
+      {
+        "id": "spawner-npc",
+        "text": "Bandit enemy emitters.",
+        "count": -1,
+        "where": "Only within the outdoor training clearings, buffered from the settlement and shore arrivals."
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "Treasure-chest pickup markers.",
+        "count": -1,
+        "where": "At every drawn chest, distributed across paths, beach edges, training outskirts, and elevated peripheral discoveries."
+      }
+    ],
+    "layout": {
+      "composition": "The central town is the visual anchor, with clear beach approaches at the shore, bandit training clearings beyond town, elevated exploration pockets around the periphery, and all major routes legible across the island.",
+      "zones": [
+        {
+          "name": "Central quest settlement",
+          "role": "Safe hub for quest givers, restocking, and quests.",
+          "where": "Centre of the island.",
+          "size": "small"
+        },
+        {
+          "name": "Beach approaches",
+          "role": "Shore arrivals and routes into town.",
+          "where": "Along the coast.",
+          "size": ""
+        },
+        {
+          "name": "Bandit training clearings",
+          "role": "Dedicated outdoor combat-training grounds.",
+          "where": "Beyond the central town.",
+          "size": ""
+        },
+        {
+          "name": "Elevated exploration pockets",
+          "role": "Peripheral discoveries and high-ground exploration.",
+          "where": "Around the island periphery.",
+          "size": ""
+        }
+      ],
+      "paths": [
+        {
+          "from": "Beach approaches",
+          "to": "Central quest settlement",
+          "kind": "trail"
+        },
+        {
+          "from": "Central quest settlement",
+          "to": "Bandit training clearings",
+          "kind": "trail"
+        },
+        {
+          "from": "Central quest settlement",
+          "to": "Elevated exploration pockets",
+          "kind": "trail"
+        }
+      ],
+      "terrain": "Lush grass, stylized rock rises, sandy beaches, elevated peripheral terrain, and surrounding swimmable ocean.",
+      "props": [
+        {
+          "name": "Quest-giver stands",
+          "count": -1,
+          "where": "Central quest settlement."
+        },
+        {
+          "name": "Scattered treasure chests",
+          "count": -1,
+          "where": "Across paths, beach edges, training outskirts, and elevated peripheral discoveries."
+        }
+      ],
+      "boundary": "The island is surrounded by unobstructed open ocean, left clear for future islands.",
+      "scale_band": "medium",
+      "theme": "Polished modern-anime pirate adventure in saturated green, sand, blue, and gold."
+    },
+    "render": {
+      "first": "isometric",
+      "then": "topdown",
+      "authoritative": "isometric",
+      "why": "No generated circuit, maze, or exact structural chain is required.",
+      "set_piece": false
+    },
+    "route": [
+      "P0",
+      "tiered",
+      "CHECK"
+    ],
+    "notes": [
+      "The Action RPG preset is retained while its usual world-hub-dungeon shape is explicitly replaced by world-open for one compact contiguous island.",
+      "dropped option 'path-trail': not in RPG",
+      "visible on 'collectible-nodes' set from goes_to=both"
+    ],
+    "scene_prompt": "Create a polished, vibrant 3D anime-inspired pirate RPG map centered on one detailed Starter Island, compact enough to cross on foot in about 1–2 minutes. Arrange a coastal island with clear beach approaches, a small central settlement or quest hub containing quest-giver NPC locations, scattered treasure chests across the island, and dedicated outdoor training areas populated by bandit enemy locations. Use lush stylized terrain, ocean surrounding the island, and a clean, readable layout with paths connecting the shore, settlement, training zones, and elevated or peripheral exploration areas; leave the surrounding sea open for future modular islands."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "1986e1975066",
+  "served_by": "subagent/genre-choice -> gateway/production/gpt-5.6-terra",
+  "schema_degraded": false,
+  "reused_uprez": true,
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": []
+}

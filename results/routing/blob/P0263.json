@@ -14,99 +14,101 @@
     }
   ],
   "scene_prompt": "Create a 3D zombie apocalypse survival map set in a ghost town, using one main street as a small arena to hold. The street runs through deserted town buildings and open approaches where normal, gold, and larger diamond zombies can enter and gather.",
-  "blob": "### Genre\n`Survival` is the dominant genre: an endless escalating zombie-wave holdout. The player survives in place rather than reaching an escape or completing a puzzle.\n\n### Shape and preset\nUse `arena-contained`, matching the Horde Defense preset. Here it is a compact ghost-town street arena, with a defendable central street and readable hostile approaches rather than a broad explorable town.\n\n### Config requirements\nUse `spawner-npc` as invisible layout geometry: place zombie entry origins at the far ends of the street and in side approaches, outside the immediate hold area. Use `settlement-density` as visible geometry: the arena is formed by a sparse, deserted ghost-town frontage rather than isolated props. Do not render spawn markers or other gameplay volumes.\n\n### Layout components\nBuild one small main-street arena running horizontally through frame. The central, open street is the primary holding ground, about half the map width, with enough clear space for groups of zombies to gather. Place weathered, boarded-up town buildings tightly along both sides, broken into short storefront and saloon-like facades with recessed doorways, porches, fences, carts, barrels, and scattered debris. Keep these as exterior shells, not enterable interiors.\n\nAt both ends of the street, leave broad open approaches between thinning buildings for incoming zombie groups. Add two narrower side alleys or gaps between facades that feed into the central street, making arrivals legible from multiple directions without obscuring the arena. The ground is dusty packed earth with cracked road surfaces, dead scrub, and sparse tumbleweeds. Enclose the small playable district with fading building rows, broken fencing, and barren desert beyond; no modern city backdrop. Compose the street as the clear centerline, with the open approaches visible at both ends and building silhouettes framing it.\n\n### Render order\nUse `isometric`: the small arena’s readable ghost-town mood and sightline composition lead, while its simple connected street can be projected into a top-down plan afterward.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the clarification that one main street is the entire survival arena. Theme: abandoned frontier ghost town, dusty apocalypse, eerie desaturated western decay. Use `P0`; all play occurs on one exterior surface with no required interiors, overhangs, separate maps, or topology that must be procedurally validated.",
+  "blob": "### 1. Genre\nThe dominant genre is Survival, specifically a horde-defense survival game in which players hold out against escalating zombie waves.\n\n### 2. Shape and preset\nUse `space-bounded`, a contained ghost-town street arena whose active play is concentrated on one main street rather than across a full town. This follows the Horde Defense preset in its bounded holdout space and hostile-entry focus, while dropping unrequested cover and destructible structures.\n\n### 3. Config requirements\nUse `spawner-npc` as zombie entry origins at the town’s open approaches, visually leaving those approaches clear enough for incoming waves to gather before reaching the street.\n\n### 4. Layout requirements\nPlace `spawner-npc` origins at each open approach into the main street arena, beyond the deserted building frontage and facing inward toward the holdout area. These origins must support the three named enemy varieties—normal, gold, and larger diamond zombies—without blocking the central fighting street. No other placed gameplay volumes are required by the prompt.\n\n### 5. Layout components\nBuild one small ghost-town survival arena centered on a broad, straight main street. Deserted, weathered town buildings line both sides as closed facades, creating a readable central combat lane and framing the arena without requiring enterable interiors. Leave an open holdout zone around the street center, with open approaches at the street ends and any visible side gaps for zombie arrivals and gathering. The boundary is formed by the surrounding ghost-town edge, blocked building fronts, and sparse perimeter debris; it should read as a compact arena rather than an explorable settlement. Use dusty ground, worn timber storefronts, boarded windows, abandoned wagons or crates, and a bleak undead-western atmosphere. Compose the street as the dominant central axis, with clear long views from the holding area toward every approach.\n\n### 6. Render order\nUse `isometric`: render the atmospheric ghost-town arena first, then derive the top-down plan. The arena is compact and visually led; its simple street topology does not require a generated plan.\n\n### 7. Scale, theme, and pipeline cost\nScale band: small, driven by the author’s clarification that one main street is the entire survival arena. Theme: dusty abandoned ghost town, bleak zombie apocalypse, weathered frontier buildings. Pipeline modifier: `P0`, because this is one bounded ground-level arena with no forced stacked, interior-transition, volumetric, separate-map, or construction-validating geometry.",
   "spec": {
     "genre": "Survival",
     "secondary": [],
-    "shape": "arena-contained",
+    "shape": "space-bounded",
     "preset": "Horde Defense",
     "axes": {},
     "options": [
       {
         "id": "spawner-npc",
-        "text": "Invisible zombie entry origins at the far ends of the street and in side approaches, outside the immediate hold area.",
+        "text": "Zombie entry origins at the town’s open approaches, kept clear enough for incoming waves to gather before reaching the street.",
         "visible": false,
-        "count": -1
-      },
-      {
-        "id": "settlement-density",
-        "text": "A sparse, deserted ghost-town frontage forming the arena rather than isolated props.",
-        "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "spawner-npc",
+        "text": "Zombie entry origins supporting normal, gold, and larger diamond zombies.",
+        "count": -1,
+        "where": "At each open approach into the main street arena, beyond the deserted building frontage and facing inward toward the holdout area; do not block the central fighting street."
+      }
+    ],
     "layout": {
-      "composition": "A horizontal main street forms the clear centreline through frame, with the open central holding ground in the middle, broad zombie approaches visible at both ends, and weathered building silhouettes tightly framing both sides.",
+      "composition": "The broad straight main street is the dominant central axis, with an open holdout area at its centre and clear long views toward every open approach. Deserted building facades frame both sides of the street.",
       "zones": [
         {
-          "name": "central main street",
-          "role": "Primary open holding ground where zombie groups gather.",
-          "where": "centre of the map, running horizontally through frame",
-          "size": "about half the map width"
+          "name": "Main street arena",
+          "role": "Central combat lane and survival arena.",
+          "where": "Centre, running straight through the arena.",
+          "size": "Small"
         },
         {
-          "name": "west street approach",
-          "role": "Broad incoming approach for zombie groups.",
-          "where": "far left end of the main street",
-          "size": "broad"
+          "name": "Holdout zone",
+          "role": "Open central area where players hold against zombie waves.",
+          "where": "Around the street centre.",
+          "size": ""
         },
         {
-          "name": "east street approach",
-          "role": "Broad incoming approach for zombie groups.",
-          "where": "far right end of the main street",
-          "size": "broad"
+          "name": "Open approaches",
+          "role": "Zombie arrival and gathering areas leading into the street.",
+          "where": "At the street ends and visible side gaps.",
+          "size": ""
         },
         {
-          "name": "side alleys",
-          "role": "Narrower arrival routes feeding zombies into the central street from multiple directions.",
-          "where": "between facades along both sides of the central street",
-          "size": "narrow"
+          "name": "Deserted building frontage",
+          "role": "Closed facades framing the combat lane without enterable interiors.",
+          "where": "Both sides of the main street.",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "west street approach",
-          "to": "central main street",
+          "from": "Open approaches",
+          "to": "Main street arena",
           "kind": "open ground"
-        },
-        {
-          "from": "east street approach",
-          "to": "central main street",
-          "kind": "open ground"
-        },
-        {
-          "from": "side alleys",
-          "to": "central main street",
-          "kind": "alley"
         }
       ],
-      "terrain": "Dusty packed earth and cracked road surfaces with dead scrub, sparse tumbleweeds, and barren desert beyond the district.",
+      "terrain": "Dusty ground with sparse perimeter debris.",
       "props": [
         {
-          "name": "weathered boarded-up storefront and saloon-like exterior facades",
+          "name": "Deserted weathered town building facades",
           "count": -1,
-          "where": "tightly along both sides of the main street"
+          "where": "Lining both sides of the main street."
         },
         {
-          "name": "recessed doorways, porches, fences, carts, barrels, and scattered debris",
+          "name": "Worn timber storefronts",
           "count": -1,
-          "where": "along the ghost-town facades and street edges"
+          "where": "Along the deserted building frontage."
         },
         {
-          "name": "fading building rows and broken fencing",
+          "name": "Boarded windows",
           "count": -1,
-          "where": "around the outer edge of the small playable district"
+          "where": "On the town building facades."
+        },
+        {
+          "name": "Abandoned wagons or crates",
+          "count": -1,
+          "where": "Around the ghost-town arena."
+        },
+        {
+          "name": "Sparse perimeter debris",
+          "count": -1,
+          "where": "At the ghost-town edge."
         }
       ],
-      "boundary": "Fading building rows, broken fencing, and barren desert enclose the small playable district; no modern city backdrop.",
+      "boundary": "The surrounding ghost-town edge, blocked building fronts, and sparse perimeter debris form a compact arena boundary rather than an explorable settlement.",
       "scale_band": "small",
-      "theme": "Abandoned frontier ghost town; dusty apocalypse; eerie desaturated western decay."
+      "theme": "Dusty abandoned ghost town, bleak zombie apocalypse, weathered frontier buildings."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "the readable ghost-town mood and sightline composition lead, while the simple connected street can be projected afterward.",
+      "why": "The compact, visually led street arena has simple topology that does not require a generated plan.",
       "set_piece": false
     },
     "route": [
@@ -118,7 +120,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

@@ -14,87 +14,105 @@
     }
   ],
   "scene_prompt": "Create a 3D horror game map called \"Survive the Rake\": a giant, extremely dark forest spanning several minutes of wandering, with dense trees and shadowy ground paths that let players become lost. Scatter random spawn locations throughout the forest; the space is viewed in first person and lit only by a flashlight. A giant white humanoid monster roams among the trees.",
-  "blob": "### Genre\nThe dominant genre is Survival: an endless hostile-AI horror survival loop rather than an escape scenario. There is no secondary genre.\n\n### Shape and preset\nUse `arena-contained`: a single, very large forest arena in which players endure the roaming threat rather than reach an exit. The closest preset is Horde Defense for its hostile presence in a contained space, but it is not recognisable here because this is solitary forest stalking rather than waves, barricades, or a defensive holdout; preset: none.\n\n### Config requirements\nUse `spawner-npc` as invisible layout geometry: place one or more monster origin and patrol-anchor points in connected deep-forest clearings, never in the render. Do not add escape gates, shelters, resource nodes, or unrequested structures. The monster itself is visible scene content: a giant white humanoid roaming among the trees.\n\n### Layout components\nBuild one giant, several-minutes-wide forest zone. Dense, irregular tree stands fill most of the map, broken by a loose network of shadowy dirt paths and occasional small clearings so players can wander, lose orientation, and still traverse between all regions. Keep the ground mostly dark, uneven-looking forest floor without stated major relief or water. Scatter random invisible respawn markers broadly across the forest, including path edges and clearings, rather than concentrating them in one hub. Place the giant white humanoid monster on the connected path-and-clearing network, visually contrasted against the black-blue forest darkness. The outer edge should dissolve into increasingly dense, impassable tree and undergrowth mass rather than read as a constructed wall. Compose the isometric view with a broad canopy field, dark path gaps cutting through it, and the pale monster as the only strong focal contrast; preserve enough canopy openings to read the route network.\n\n### Render order\nUse `topdown`: the forest's paths, clearings, spawn distribution, and monster traversal network must remain connected for several minutes of wandering and reliable pursuit; an image-led isometric pass cannot guarantee that topology. The top-down plan is authoritative.\n\n### Scale, theme, and pipeline cost\nScale is huge, driven by the stated several minutes of wandering and dense forest coverage. Theme: oppressive first-person flashlight horror, near-black woodland, cold shadows, and a stark white stalker. Pipeline modifier: `P0`; this is one continuous outdoor surface with no forced stacked layers, interiors, separate maps, volumetric traversal, or construction-valid maze/circuit geometry.",
+  "blob": "### 1. Genre\nThe dominant genre is Survival: an endless first-person monster-chase loop with no escape objective. There is no secondary genre.\n\n### 2. Shape and preset\nUse `wilderness-open`, taken from outside Survival’s usual shape set, as one giant natural forest with no settlement. Preset: none; the Survival chase presets assume looping built architecture or an escape exit, neither of which belongs in this endless forest.\n\n### 3. Config requirements\nApply `cover-los`: dense, irregular tree stands, brush, and darkness-break silhouettes interrupt long sightlines and create uncertain hiding routes. Do not add terrain, water, buildings, or other features not requested.\n\n### 4. Layout requirements\nApply `spawner-npc` for one roaming monster origin and patrol network, centered away from any single player entry and connected to all major forest paths. Apply `spawn-protected` for a dispersed set of random player respawn markers throughout the forest, each screened by trees and placed off the monster’s immediate patrol line so a respawn is not an instant capture.\n\n### 5. Layout components\nBuild one enormous contiguous forest zone, sized for several minutes of wandering from side to side. Dense trees occupy most of the ground, with dark leaf litter and shadowy soil beneath. Thread a connected, branching network of narrow ground paths through the trees; paths repeatedly reconnect rather than ending in isolated pockets, allowing both players and the roaming monster to navigate the whole forest. Leave occasional small clearings only as subtle orientation breaks and possible respawn surroundings, not as safe hubs. Include one giant white humanoid monster as the threatening focal figure among the trees. The boundary is an apparently endless wall of increasingly dense forest and darkness, preventing a visible hard edge. Compose the render with a readable network of dark paths below the canopy while retaining dense tree cover and oppressive low visibility.\n\n### 6. Render order\nUse `topdown` first and treat it as authoritative, because the forest path network must remain continuously navigable for a pursuing monster and cannot strand players in disconnected terrain.\n\n### 7. Scale, theme, and pipeline cost\nScale is huge, driven by the required several-minute wandering distance. Theme: pitch-dark, oppressive first-person forest horror, flashlight-lit shadows, and a stark white predator. Use `P0`: this is one contiguous exterior surface with no overhangs, interior transition, separate map, or volumetric traversal.",
   "spec": {
     "genre": "Survival",
     "secondary": [],
-    "shape": "arena-contained",
+    "shape": "wilderness-open",
     "preset": "none",
     "axes": {},
     "options": [
       {
+        "id": "cover-los",
+        "text": "Dense, irregular tree stands, brush, and darkness-break silhouettes interrupt long sightlines and create uncertain hiding routes.",
+        "visible": true,
+        "count": -1
+      },
+      {
         "id": "spawner-npc",
-        "text": "One or more monster origin and patrol-anchor points in connected deep-forest clearings, never in the render.",
+        "text": "One roaming monster origin and patrol network.",
+        "visible": false,
+        "count": 1
+      },
+      {
+        "id": "spawn-protected",
+        "text": "A dispersed set of random player respawn markers throughout the forest, screened by trees and off the monster's immediate patrol line.",
         "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "spawner-npc",
+        "text": "One roaming monster origin and patrol network.",
+        "count": 1,
+        "where": "Centered away from any single player entry and connected to all major forest paths."
+      },
+      {
+        "id": "spawn-protected",
+        "text": "A dispersed set of random player respawn markers throughout the forest, screened by trees and off the monster's immediate patrol line.",
+        "count": -1,
+        "where": "Throughout the forest, screened by trees and placed off the monster's immediate patrol line."
+      }
+    ],
     "layout": {
-      "composition": "Isometric view over a broad canopy field, with dark path gaps cutting through the trees and the pale monster as the only strong focal contrast; canopy openings preserve readability of the route network.",
+      "composition": "A readable network of dark paths is visible below the canopy, while dense tree cover retains oppressive low visibility; the giant white humanoid monster appears among the trees.",
       "zones": [
         {
-          "name": "Giant forest arena",
-          "role": "Players wander for several minutes while enduring a roaming hostile humanoid threat.",
-          "where": "Across the full contained map",
-          "size": "Giant; several-minutes-wide"
+          "name": "Contiguous forest",
+          "role": "Endless monster-chase wandering space with connected paths, subtle orientation clearings, roaming monster patrols, and dispersed player respawns.",
+          "where": "Across the entire map.",
+          "size": "Enormous, spanning several minutes of wandering from side to side."
         }
       ],
       "paths": [
         {
-          "from": "Deep-forest clearings",
-          "to": "All forest regions",
+          "from": "forest paths",
+          "to": "forest paths",
           "kind": "open ground"
         }
       ],
-      "terrain": "Mostly dark, uneven-looking forest floor with dense irregular tree stands, shadowy dirt paths, and occasional small clearings; no stated major relief or water.",
+      "terrain": "Dense trees cover most of the ground, with dark leaf litter and shadowy soil beneath; narrow branching ground paths repeatedly reconnect, with occasional small clearings as subtle orientation breaks and possible respawn surroundings.",
       "props": [
         {
-          "name": "Dense irregular tree stands and undergrowth",
-          "count": -1,
-          "where": "Filling most of the forest and becoming increasingly dense at the outer edge"
-        },
-        {
-          "name": "Shadowy dirt paths",
-          "count": -1,
-          "where": "Loose connected network through the forest"
-        },
-        {
-          "name": "Small clearings",
-          "count": -1,
-          "where": "Occasionally interrupting the tree stands and connected by paths"
-        },
-        {
-          "name": "Giant white humanoid monster",
+          "name": "giant white humanoid monster",
           "count": 1,
-          "where": "Roaming on the connected path-and-clearing network"
+          "where": "Among the trees."
         },
         {
-          "name": "Invisible respawn markers",
+          "name": "dense irregular tree stands and brush",
           "count": -1,
-          "where": "Broadly scattered across path edges and clearings"
+          "where": "Throughout most of the forest ground."
+        },
+        {
+          "name": "occasional small clearings",
+          "count": -1,
+          "where": "Within the forest paths and possible respawn surroundings."
         }
       ],
-      "boundary": "The outer edge dissolves into increasingly dense, impassable trees and undergrowth rather than a constructed wall.",
+      "boundary": "An apparently endless wall of increasingly dense forest and darkness prevents a visible hard edge.",
       "scale_band": "huge",
-      "theme": "Oppressive first-person flashlight horror; near-black woodland, cold shadows, and a stark white stalker."
+      "theme": "Pitch-dark oppressive first-person forest horror, flashlight-lit shadows, and a stark white predator."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "Connected paths, clearings, spawn distribution, and monster pursuit traversal must remain reliable across several minutes of wandering.",
+      "why": "The forest path network must remain continuously navigable for a pursuing monster and cannot strand players in disconnected terrain.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
-    "notes": [],
+    "notes": [
+      "Shape `wilderness-open` is taken from outside Survival's usual shape set."
+    ],
     "scene_prompt": "Create a 3D horror game map called \"Survive the Rake\": a giant, extremely dark forest spanning several minutes of wandering, with dense trees and shadowy ground paths that let players become lost. Scatter random spawn locations throughout the forest; the space is viewed in first person and lit only by a flashlight. A giant white humanoid monster roams among the trees."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

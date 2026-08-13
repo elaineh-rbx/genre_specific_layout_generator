@@ -1,0 +1,187 @@
+{
+  "scene": "P0532",
+  "source": "You are an expert Roblox game developer, technical artist, and sound designer. Build a complete, playable Roblox turn-based single-player JRPG inspired by the systems and feel of Final Fantasy X - a story-driven pilgrimage across a linear-but-lush world, with strategic turn-based combat. Use ONLY original world, characters, names, and lore (no Square Enix IP, no Spira/Tidus/Yuna/blitzball or other protected assets). It should look and play well on ALL platforms: phone, tablet, PC, and console.\n\nFIRST: produce a full Game Design Document (GDD) - game pillars and vision, target audience, core loop, an original setting and cast (a doomed-world pilgrimage premise in the spirit of FFX but wholly original), the combat system design, party/character-role design, progression grid, ability/magic system, world/zone structure, side activities (an original minigame in the spirit of blitzball), economy, art and audio direction, UI/UX and cross-platform input strategy, monetization philosophy (cosmetic-only, no pay-to-win), and success metrics. THEN produce a detailed technical implementation plan - architecture, module breakdown, instance hierarchy, data flow, save system, and milestone order. THEN autonomously implement the entire plan end to end without waiting for further input: write all scripts, build/define all systems, wire everything up, author a vertical-slice's worth of content (intro zone, first town, first dungeon, a boss, a starting party), and deliver a working, good-looking, good-sounding playable slice.\n\nCORE COMBAT (the FFX feel - CTB, not real-time)\n- Conditional Turn-Based (CTB) system: turn order is an explicit, visible timeline driven by each combatant's Speed and each action's recovery cost. Fast actions grant sooner next-turns; heavy actions push you back. Show the upcoming turn-order queue on-screen and let it update dynamically as haste/slow/actions change.\n- Full pause-to-think: no ATB clock pressure - the game waits for input. Deep, deliberate, readable.\n- Free mid-battle party swapping: a roster where you can sub any benched member in on your turn, so encounters reward using the whole party. Each character/role counters specific enemy types (armored, agile, flying, magical, tanky) so swapping is the strategic core.\n- Command menu: Attack, Skill/Ability, Magic, Item, Defend, Swap, Flee. Elemental and status affinities (fire/ice/lightning/water, poison/slow/silence/petrify/sleep). Overdrive-style limit meter that builds from taking/dealing damage and unleashes powerful signature moves.\n- Summon-style mechanic (original): call a powerful guardian entity that replaces the party temporarily with its own turn, health, and overdrive. Original creatures only.\n\nPARTY & PROGRESSION\n- A small cast of distinct roles: e.g. a balanced striker, an armor-breaker, an agile multi-hitter, a black-magic caster, a white-magic healer, a status/utility specialist, and a heavy hitter - each best against certain foes.\n- A Sphere-Grid-style progression board (original design): a large shared node network where characters spend earned points to move across nodes unlocking stats and abilities, with branching paths and gates that let builds diverge and eventually cross into other roles. No linear levels - growth is spatial and player-directed.\n- Equipment with ability slots/affinities rather than raw tiers; customization over stat-inflation.\n\nWORLD & CONTENT\n- Linear-but-rich zone progression: a sequence of handcrafted, atmospheric regions connected as a pilgrimage toward a distant goal, each with a distinct biome, town/save points, NPCs, treasure, and a set-piece boss.\n- Save spheres/points that heal and save. World map as a stylized route between zones.\n- An original side minigame in the spirit of blitzball (e.g. an arena sport or strategic mini-competition) with its own rules, recruitable players, and rewards.\n- Sidequests, an optional superboss, and collectible ability items. Vertical slice must include: opening cinematic-lite intro, first town, first field zone, first dungeon, first boss, and a working sphere-grid + CTB battle loop.\n\nVISUAL QUALITY (painterly, cinematic JRPG - not default Roblox)\n- Lush, atmospheric, emotionally-toned art direction: stylized-realistic environments, strong sense of place and scale, volumetric light shafts, water and reflections, gentle fog for depth. Each zone a distinct palette and mood (sun-drenched coast, solemn temple, storm-lit ruin).\n- Lighting: Future lighting, Bloom + ColorCorrection + SunRays + DepthOfField, per-zone color grade; dramatic key light in cutscenes and boss reveals.\n- Materials & maps: cohesive stylized PBR, clean readable silhouettes, hero lighting on save points, chests, and story NPCs. Skyboxes + atmospheric haze. No flat untextured parts.\n- Battle presentation: distinct battle camera with dynamic angles per action, spell VFX (elemental particles + light + screen tint), physical-hit impact frames and hit-stop, summon entrance set-piece, overdrive flourish. Damage numbers, status icons, clean turn-order timeline UI.\n- Camera & feel: smooth exploration follow-cam, cinematic framing in scripted moments, subtle shake on big hits, slow-mo on finishing blows.\n- UI: elegant, diegetic-leaning JRPG menus - command ring/list, ATB-free turn timeline, party status bars, sphere grid board, menu with equip/abilities/items - animated, legible, no clutter.\n- Performance: pool VFX, LOD, stream zones, hold 60fps.\n\nSOUND DESIGN (orchestral, emotional, reactive)\n- Music: sweeping original orchestral/ambient score - a wistful main theme, per-zone exploration tracks, a driving battle theme, a boss theme, a victory fanfare, an emotional story motif. Adaptive layers for tension and triumph. Diegetic UI plips.\n- SFX: menu cursor/confirm/cancel, spell and physical-hit sounds by element/type, status-effect cues, summon roar, save-point shimmer, chest jingle, level/grid-node unlock chime. 3D positional world SFX (water, wind, town bustle, dungeon drips).\n- Mixing: SoundGroups for Music/SFX/UI/Ambience with ducking under fanfares and cutscene lines. Reverb zones (temple vs. open coast). Per-zone ambient beds. Master + per-bus volume in settings.\n- Optional lightweight voice-bark support (hooks for VO on key lines) even if placeholder.\n\nMOBILE & CROSS-PLATFORM (must play well on phone/tablet/console, not just PC)\n- Detect input type and adapt: touch, mouse/keyboard, and gamepad all first-class. Never assume PC. Turn-based combat suits touch well - lean into clean tappable menus.\n- Touch controls: tap-to-select command menus and targets, virtual stick for field movement, tap-to-move option, large legible battle command UI, swipe/tap navigation of the sphere grid.\n- Auto-scaling UI: Scale-based UDim2 + anchor points so battle menus, turn timeline, and grid board reflow for phone, tablet, and TV-safe zones. Large, thumb-reachable targets.\n- Adaptive quality tiers: auto-detect device power and scale particles, dynamic lights, bloom/DOF, reflections, and draw distance down on mobile to hold 60fps (30fps floor). Manual quality toggle.\n- Camera: touch-drag/right-stick orbit in field; full gamepad menu navigation and cursor memory.\n- Test every system against touch and gamepad, not just PC input.\n\nTECH\n- Luau, server-authoritative saves and progression (grid nodes, inventory, story flags, party); combat can resolve client-side with server validation of rewards to prevent exploits. No client-trusted currency, items, or grid points. DataStore-backed saves with session locking and autosave at save points.\n- Modular: CTBBattleSystem (turn-order timeline engine), CommandMenu, PartyManager (swap/roster), AbilityMagicSystem, StatusEffectSystem, SummonSystem, SphereGridProgression, InventoryEquipSystem, EnemyAI (role/affinity-aware), ZoneStreamingManager, DialogueCutsceneManager, MinigameManager, SaveManager, VFXManager, AudioManager, CameraController, InputManager (cross-platform), UI. Clean RemoteEvents/RemoteFunctions and data-driven definitions (abilities, enemies, items, grid nodes as data tables/ModuleScripts so content is easy to expand).\n- Data-driven content pipeline so new zones, enemies, abilities, and grid nodes are authored as config, not hardcoded.\n\nDeliver in this order: (1) the GDD, (2) the technical implementation plan, (3) all commented scripts, the folder/instance hierarchy, data-definition modules, and VFX/lighting/audio setup, (4) setup steps and how to add new content. Implement the code in order: CTB battle core + turn-order timeline (get the combat feel right first) → command menu, party swap, abilities/magic/status → sphere-grid progression + equipment → enemy AI & a boss → zone streaming, save points & exploration → dialogue/cutscene + one story beat → the original side minigame → cross-platform input & UI scaling. Build a polished vertical slice, keep everything data-driven for expansion, and work autonomously through every milestone until the slice looks, sounds, and plays great on every device.",
+  "answers": [
+    {
+      "field": "scale",
+      "ask": "How many zones should the pilgrimage have, and how long should one take to walk end to end?",
+      "answer": "For the playable vertical slice, build three traversable zones: the first town, first field, and first dungeon; each should take roughly 3–5 minutes to walk end to end, with the dungeon slightly more compact and encounter-focused."
+    },
+    {
+      "field": "shape",
+      "ask": "Is the route strictly linear, or can the party walk back to earlier zones?",
+      "answer": "Use a strictly linear forward route for the slice, with a stylized world-map route that unlocks the next zone after its objective is complete; no backtracking is needed."
+    }
+  ],
+  "scene_prompt": "Create a 3D single-player JRPG pilgrimage vertical slice set along a strictly linear, lush route toward a distant sacred goal. Build three traversable zones, each roughly 3–5 minutes to cross end to end: an opening first town with story NPCs, save points, treasure chests, and a clear forward exit; a first field region with a distinct atmospheric biome, a defined main path, encounter spaces, and scenic depth; and a slightly more compact, encounter-focused first dungeon culminating in a dramatic boss arena. Connect completed zones through a stylized world-map route that reveals the next destination, with no backtracking. Use painterly cinematic composition, including sunlit coastal, solemn temple, or storm-lit ruin moods, water and reflections where appropriate, haze, volumetric light, hero-lit save points and chests, and a battle presentation space with clear readable silhouettes.",
+  "blob": "## Genre\nThe genre is RPG: party progression and turn-based combat drive a linear pilgrimage through towns, field encounters, and a dungeon.\n\n## Shape and preset\nUse `world-chaptered`, outside RPG’s usual shape list, because the three destinations are separate maps unlocked in strict order with no backtracking. Start from the Turn-based RPG preset, substituting this chaptered shape while retaining its safe town, hostile placements, and progression gate.\n\n## Config requirements\n`safezone-town` makes the opening town fully separated from hostile encounters. `hazard-aggro` creates readable encounter clearings beside the field path and inside the dungeon. `gate-progression` is the prominent forward exit and world-map destination lock. `teleporter-link` draws standardized world-route departure and arrival plinths. `npc-population` draws story NPCs in the town. `water-body` adds reflective coastal water as scenic depth. Draw hero-lit save points and treasure chests in all three zones.\n\n## Layout requirements\nPlace `npc-population` markers at the town square, route exit, and story focal points. Place `spawner-npc` markers only inside field and dungeon encounter spaces, plus one boss marker at the dungeon’s terminal arena. Place paired `teleporter-link` endpoints between town, field, and dungeon, enabled only forward. Site save-point markers near each zone entrance and before the boss; distribute treasure pickups in optional path-side alcoves.\n\n## Layout components\nBuild three separate 3–5-minute maps: a sunlit coastal town with square, NPC ground, save point, chests, and one forward exit; a lush atmospheric field with one directed main path, reflective water, scenic overlooks, encounter clearings, and side alcoves; and a slightly shorter solemn or storm-lit dungeon ending in a broad boss arena. A stylized world-map route presents the three destinations sequentially. Boundaries use coast, cliffs, architecture, and dungeon walls. Compose each zone cinematically around a distant forward landmark.\n\n## Render order\nUse `topdown`: establish the strictly linear route, encounter clearances, forward-only links, and terminal boss arena before dressing each isometric image.\n\n## Scale, theme, and pipeline cost\nScale is large: three separate traversable maps of 3–5 minutes each. The theme is painterly cinematic pilgrimage with coastal light, temple solemnity, storm-lit ruins, haze, and volumetric illumination. `P4` is required for separate zone maps; `CHECK` applies to the water play-height envelope.",
+  "agent_artifact": "# Scene prompt\nCreate a 3D single-player JRPG pilgrimage vertical slice set along a strictly linear, lush route toward a distant sacred goal. Build three traversable zones, each roughly 3–5 minutes to cross end to end: an opening first town with story NPCs, save points, treasure chests, and a clear forward exit; a first field region with a distinct atmospheric biome, a defined main path, encounter spaces, and scenic depth; and a slightly more compact, encounter-focused first dungeon culminating in a dramatic boss arena. Connect completed zones through a stylized world-map route that reveals the next destination, with no backtracking. Use painterly cinematic composition, including sunlit coastal, solemn temple, or storm-lit ruin moods, water and reflections where appropriate, haze, volumetric light, hero-lit save points and chests, and a battle presentation space with clear readable silhouettes.\n\n# Agent decision\n## Genre\nThe genre is RPG: party progression and turn-based combat drive a linear pilgrimage through towns, field encounters, and a dungeon.\n\n## Shape and preset\nUse `world-chaptered`, outside RPG’s usual shape list, because the three destinations are separate maps unlocked in strict order with no backtracking. Start from the Turn-based RPG preset, substituting this chaptered shape while retaining its safe town, hostile placements, and progression gate.\n\n## Config requirements\n`safezone-town` makes the opening town fully separated from hostile encounters. `hazard-aggro` creates readable encounter clearings beside the field path and inside the dungeon. `gate-progression` is the prominent forward exit and world-map destination lock. `teleporter-link` draws standardized world-route departure and arrival plinths. `npc-population` draws story NPCs in the town. `water-body` adds reflective coastal water as scenic depth. Draw hero-lit save points and treasure chests in all three zones.\n\n## Layout requirements\nPlace `npc-population` markers at the town square, route exit, and story focal points. Place `spawner-npc` markers only inside field and dungeon encounter spaces, plus one boss marker at the dungeon’s terminal arena. Place paired `teleporter-link` endpoints between town, field, and dungeon, enabled only forward. Site save-point markers near each zone entrance and before the boss; distribute treasure pickups in optional path-side alcoves.\n\n## Layout components\nBuild three separate 3–5-minute maps: a sunlit coastal town with square, NPC ground, save point, chests, and one forward exit; a lush atmospheric field with one directed main path, reflective water, scenic overlooks, encounter clearings, and side alcoves; and a slightly shorter solemn or storm-lit dungeon ending in a broad boss arena. A stylized world-map route presents the three destinations sequentially. Boundaries use coast, cliffs, architecture, and dungeon walls. Compose each zone cinematically around a distant forward landmark.\n\n## Render order\nUse `topdown`: establish the strictly linear route, encounter clearances, forward-only links, and terminal boss arena before dressing each isometric image.\n\n## Scale, theme, and pipeline cost\nScale is large: three separate traversable maps of 3–5 minutes each. The theme is painterly cinematic pilgrimage with coastal light, temple solemnity, storm-lit ruins, haze, and volumetric illumination. `P4` is required for separate zone maps; `CHECK` applies to the water play-height envelope.\n",
+  "agent_notes": "## Genre\nThe genre is RPG: party progression and turn-based combat drive a linear pilgrimage through towns, field encounters, and a dungeon.\n\n## Shape and preset\nUse `world-chaptered`, outside RPG’s usual shape list, because the three destinations are separate maps unlocked in strict order with no backtracking. Start from the Turn-based RPG preset, substituting this chaptered shape while retaining its safe town, hostile placements, and progression gate.\n\n## Config requirements\n`safezone-town` makes the opening town fully separated from hostile encounters. `hazard-aggro` creates readable encounter clearings beside the field path and inside the dungeon. `gate-progression` is the prominent forward exit and world-map destination lock. `teleporter-link` draws standardized world-route departure and arrival plinths. `npc-population` draws story NPCs in the town. `water-body` adds reflective coastal water as scenic depth. Draw hero-lit save points and treasure chests in all three zones.\n\n## Layout requirements\nPlace `npc-population` markers at the town square, route exit, and story focal points. Place `spawner-npc` markers only inside field and dungeon encounter spaces, plus one boss marker at the dungeon’s terminal arena. Place paired `teleporter-link` endpoints between town, field, and dungeon, enabled only forward. Site save-point markers near each zone entrance and before the boss; distribute treasure pickups in optional path-side alcoves.\n\n## Layout components\nBuild three separate 3–5-minute maps: a sunlit coastal town with square, NPC ground, save point, chests, and one forward exit; a lush atmospheric field with one directed main path, reflective water, scenic overlooks, encounter clearings, and side alcoves; and a slightly shorter solemn or storm-lit dungeon ending in a broad boss arena. A stylized world-map route presents the three destinations sequentially. Boundaries use coast, cliffs, architecture, and dungeon walls. Compose each zone cinematically around a distant forward landmark.\n\n## Render order\nUse `topdown`: establish the strictly linear route, encounter clearances, forward-only links, and terminal boss arena before dressing each isometric image.\n\n## Scale, theme, and pipeline cost\nScale is large: three separate traversable maps of 3–5 minutes each. The theme is painterly cinematic pilgrimage with coastal light, temple solemnity, storm-lit ruins, haze, and volumetric illumination. `P4` is required for separate zone maps; `CHECK` applies to the water play-height envelope.",
+  "secondary": [],
+  "spec": {
+    "genre": "RPG",
+    "secondary": [],
+    "shape": "world-chaptered",
+    "preset": "Turn-based RPG",
+    "axes": {},
+    "options": [
+      {
+        "id": "safezone-town",
+        "text": "The opening town is fully separated from hostile encounters.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "hazard-aggro",
+        "text": "Readable encounter clearings beside the field path and inside the dungeon.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "gate-progression",
+        "text": "A prominent forward exit and world-map destination lock.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "teleporter-link",
+        "text": "Standardized world-route departure and arrival plinths, enabled only forward.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "npc-population",
+        "text": "Story NPCs in the town.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "water-body",
+        "text": "Reflective coastal water for scenic depth.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "spawner-npc",
+        "text": "Hostile encounter markers in field and dungeon encounter spaces, with one boss marker in the dungeon terminal arena.",
+        "visible": false,
+        "count": -1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "teleporter-link",
+        "text": "Paired forward-only world-route departure and arrival plinth endpoints.",
+        "count": -1,
+        "where": "Between the town, field, and dungeon."
+      },
+      {
+        "id": "npc-population",
+        "text": "Story NPC markers.",
+        "count": -1,
+        "where": "At the town square, route exit, and story focal points."
+      },
+      {
+        "id": "spawner-npc",
+        "text": "Hostile encounter markers, plus one boss marker.",
+        "count": -1,
+        "where": "Only inside field and dungeon encounter spaces; place the one boss marker at the dungeon terminal arena."
+      }
+    ],
+    "layout": {
+      "composition": "Compose each separate map cinematically around a distant forward landmark: the sunlit coastal town opens around its square and forward exit, the lush field carries the main path through scenic depth toward its destination, and the solemn storm-lit dungeon resolves in the broad terminal boss arena.",
+      "zones": [
+        {
+          "name": "Opening coastal town",
+          "role": "Safe opening town with story NPC ground, a save point, treasure chests, a town square, and one forward exit.",
+          "where": "First destination.",
+          "size": "3–5 minutes to cross end to end."
+        },
+        {
+          "name": "Atmospheric field",
+          "role": "A lush field region with one directed main path, encounter clearings, reflective water, scenic overlooks, and optional side alcoves.",
+          "where": "Second destination, after the town.",
+          "size": "3–5 minutes to cross end to end."
+        },
+        {
+          "name": "Terminal dungeon",
+          "role": "A slightly shorter, encounter-focused solemn or storm-lit dungeon ending in a broad boss arena.",
+          "where": "Third and final destination, after the field.",
+          "size": "Slightly shorter than the town and field."
+        },
+        {
+          "name": "Stylized world-map route",
+          "role": "Sequentially presents the three destinations and reveals the next destination after completion, with no backtracking.",
+          "where": "Connecting the completed town, field, and dungeon zones.",
+          "size": ""
+        }
+      ],
+      "paths": [
+        {
+          "from": "Opening coastal town",
+          "to": "Atmospheric field",
+          "kind": "portal"
+        },
+        {
+          "from": "Atmospheric field",
+          "to": "Terminal dungeon",
+          "kind": "portal"
+        },
+        {
+          "from": "Atmospheric field main path",
+          "to": "Field encounter clearings and scenic overlooks",
+          "kind": "track"
+        }
+      ],
+      "terrain": "Sunlit coastal ground and reflective coastal water in the town; lush atmospheric field terrain with water and scenic overlooks; solemn temple or storm-lit ruin dungeon terrain, with haze and volumetric illumination.",
+      "props": [
+        {
+          "name": "Hero-lit save points",
+          "count": -1,
+          "where": "In all three zones, near each zone entrance and before the boss."
+        },
+        {
+          "name": "Treasure chests",
+          "count": -1,
+          "where": "In all three zones, distributed through optional path-side alcoves."
+        },
+        {
+          "name": "Distant forward landmarks",
+          "count": -1,
+          "where": "Framing each zone's cinematic forward composition."
+        }
+      ],
+      "boundary": "Coast, cliffs, architecture, and dungeon walls enclose the respective zones.",
+      "scale_band": "large",
+      "theme": "Painterly cinematic pilgrimage; coastal light, temple solemnity, storm-lit ruins, haze, volumetric illumination, and readable battle silhouettes."
+    },
+    "render": {
+      "first": "isometric",
+      "then": "topdown",
+      "authoritative": "isometric",
+      "why": "The strictly linear route, encounter clearances, forward-only links, and terminal boss arena must be established before dressing.",
+      "set_piece": false
+    },
+    "route": [
+      "P4",
+      "CHECK"
+    ],
+    "notes": [
+      "The chaptered shape comes from outside RPG's usual shape list, as specified.",
+      "The Turn-based RPG preset is retained with its chaptered-shape substitution.",
+      "Save points and treasure chests are transcribed as layout props because the blob did not name corresponding canonical option IDs.",
+      "The schema does not contain a render.then field; the blob's instruction to dress isometric images after the top-down layout is retained in render.why."
+    ],
+    "scene_prompt": "Create a 3D single-player JRPG pilgrimage vertical slice set along a strictly linear, lush route toward a distant sacred goal. Build three traversable zones, each roughly 3–5 minutes to cross end to end: an opening first town with story NPCs, save points, treasure chests, and a clear forward exit; a first field region with a distinct atmospheric biome, a defined main path, encounter spaces, and scenic depth; and a slightly more compact, encounter-focused first dungeon culminating in a dramatic boss arena. Connect completed zones through a stylized world-map route that reveals the next destination, with no backtracking. Use painterly cinematic composition, including sunlit coastal, solemn temple, or storm-lit ruin moods, water and reflections where appropriate, haze, volumetric light, hero-lit save points and chests, and a battle presentation space with clear readable silhouettes."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "1986e1975066",
+  "served_by": "subagent/genre-choice -> gateway/production/gpt-5.6-terra",
+  "schema_degraded": false,
+  "reused_uprez": true,
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": []
+}

@@ -14,115 +14,108 @@
     }
   ],
   "scene_prompt": "Create a bright, colorful 3D floating-island arena with 8 separate player islands suspended in open sky, spaced so each remains visible and readable across the server. Each island begins as a tiny 16x16-stud landmass and has room to expand into a 48x48-stud upgraded island with resource areas, pets, tools, and buildings. Place a clearly marked portal at each island hub leading instantly to a prestigious Golden Island that players can visit; keep the central sky open for server-wide events such as meteor showers, treasure rain, black holes, zombie invasions, and giant bosses.",
-  "blob": "### Genre\nThe dominant genre is Simulation: resource collection, constant upgrades, and rebirth-driven island growth establish an incremental simulator. No secondary genre is needed.\n\n### Shape and preset\nUse `plot-isolated`: eight personal floating plots are the primary spatial structure, each growing from 16×16 studs to a 48×48-stud upgraded island. This follows the Sandbox preset’s isolated-plot logic, but the preset is `none` because its resource-and-bazaar bundle does not represent the explicit shared Golden Island destination or the floating-island composition.\n\n### Config requirements\nUse `collectible-nodes` as invisible layout markers for the resource spawn positions within each player island’s resource area; their visible rocks, trees, crystals, or similar extraction props are rendered geometry. Use `island-cluster` as visible geometry: the eight separate landmasses, with open air between them, must remain individually legible. The portal is visible geometry at every island hub; its teleport function is not rendered.\n\n### Layout components\nArrange eight evenly spaced player islands in a broad ring around an intentionally empty central sky volume for server-wide event spectacle. Every island has the same expandable footprint: a compact 16×16-stud starter core centered within a reserved 48×48-stud full-upgrade envelope. Put a clearly marked portal hub near the inner-facing edge of each island, with resource patches, pet areas, tool stations, and modular building pads spreading outward as the island expands. Keep broad clear air lanes between islands and no bridges. The prestigious Golden Island is a larger, polished shared destination reached through these portals; give it a luminous gold-and-white focal structure, premium resource displays, and a compact visitable plaza. Use grass-topped floating earth and stone landmasses with visible undersides, bright stylized foliage and crystals, and no enclosing boundary beyond the open sky. Frame the arena in a high readable isometric view, with all eight plots recognizable at once and the open centre prominent.\n\n### Render order\nUse `isometric`: the primary need is a bright, readable floating-island spectacle rather than a constrained traversal topology.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by eight individually expandable 48×48-stud player islands plus the shared Golden Island and central event airspace. Theme: polished, colorful, high-saturation fantasy sky-islands with luminous gold prestige accents. Pipeline modifier: `CHECK`, forced by the separated floating landmasses and open-air volume; ensure the aerial composition remains readable without self-occluding islands.",
+  "blob": "### Genre\nSimulation is the dominant genre: a progression-and-upgrade island builder with recurring resource collection. The fitting preset is Sandbox in its isolated-building spirit, but the prompt’s floating player islands require `plot-isolated` rather than the preset’s ground plots.\n\n### Shape and preset\nUse `plot-isolated`, taken directly from Simulation’s usual shapes. It becomes eight independent floating personal islands, each with reserved expansion space and no overlap with its neighbours. The Sandbox preset is only partially retained: separate player build spaces and resource gathering remain, while its shared ground world is replaced by the sky arena.\n\n### Config requirements\nUse `collectible-nodes` for visible resource patches distributed across each player island’s expandable land. Use `teleporter-link` for a clearly marked portal structure at every island hub, visually linking to the prestigious Golden Island. Do not render the random events, rewards, UI, pets’ progression, or rebirth mechanics as layout requirements.\n\n### Layout requirements\nPlace `collectible-nodes` in several small resource areas on each of the eight islands, initially concentrated within the 16x16-stud starting footprint and extending into the planned 48x48-stud upgraded footprint. Place `teleporter-link` once per island, at its hub-facing edge away from resource plots; each marker targets the Golden Island. Place one reciprocal Golden Island arrival portal at its central arrival plaza. No other placed gameplay volumes are required.\n\n### Layout components\nArrange eight separate floating landmasses in a broad, readable ring around an open central sky void. Every island begins as a tiny 16x16-stud island but has a clearly legible 48x48-stud full-upgrade boundary, with a compact hub, portal, resource plots, pet/tool display space, and room for gradually added buildings. Keep generous sky gaps between islands. The Golden Island is a larger, ornate prestige island beyond the player-island ring, with an arrival plaza and exclusive-looking structures. Use grassy floating terrain with rocky undersides, bright foliage, colorful upgrade-ready pads, and glowing portal arches. The boundary is open sky; frame all eight islands and the central event space in one wide isometric composition.\n\n### Render order\nUse `isometric`; the bright floating-island spectacle and readable upgrade silhouettes are authoritative, while a top-down plan can be projected from that view.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by eight separately readable islands plus the Golden Island. Theme: polished, colorful, high-saturation fantasy sky islands with glowing prestige details. Use `P0`: all islands are separated horizontally on one readable surface map, and the open sky is backdrop rather than a self-occluding volumetric play space.",
   "spec": {
     "genre": "Simulation",
     "secondary": [],
     "shape": "plot-isolated",
-    "preset": "none",
+    "preset": "Sandbox",
     "axes": {},
     "options": [
       {
         "id": "collectible-nodes",
-        "text": "Invisible layout markers for the resource spawn positions within each player island’s resource area; their visible rocks, trees, crystals, or similar extraction props are rendered geometry.",
+        "text": "Visible resource patches distributed across each player island's expandable land.",
         "visible": false,
         "count": -1
-      },
+      }
+    ],
+    "layout_placement": [
       {
-        "id": "island-cluster",
-        "text": "The eight separate floating landmasses, with open air between them, must remain individually legible.",
-        "visible": true,
-        "count": 8
+        "id": "collectible-nodes",
+        "text": "Several small resource areas on each of the eight islands, initially concentrated within the 16x16-stud starting footprint and extending into the planned 48x48-stud upgraded footprint.",
+        "count": -1,
+        "where": "On each player island's expandable land, initially within its 16x16-stud starting footprint and extending into its planned 48x48-stud upgraded footprint."
       }
     ],
     "layout": {
-      "composition": "High readable isometric view framing all eight player plots in a broad ring, with the intentionally empty open central sky volume prominent and the larger Golden Island readable as the shared destination.",
+      "composition": "Wide isometric composition framing all eight floating player islands in a broad readable ring around the open central sky void, with the larger Golden Island beyond the ring.",
       "zones": [
         {
-          "name": "Player island ring",
-          "role": "Eight personal floating plots for resource collection, pets, tools, modular building pads, and island growth.",
-          "where": "Broad ring around the central sky volume",
-          "size": "8 islands, each with a 16×16-stud starter core inside a reserved 48×48-stud full-upgrade envelope"
+          "name": "Eight player islands",
+          "role": "Independent floating personal build spaces with compact hubs, portals, resource plots, pet and tool display space, and room for gradually added buildings.",
+          "where": "Broad ring around the central sky void.",
+          "size": "Each begins at 16x16 studs and has a clearly legible 48x48-stud full-upgrade boundary."
         },
         {
-          "name": "Central event airspace",
-          "role": "Intentionally empty sky volume for server-wide event spectacle.",
-          "where": "Centre of the ring",
+          "name": "Central sky event space",
+          "role": "Open central sky reserved for server-wide events.",
+          "where": "Centre of the player-island ring.",
           "size": ""
         },
         {
           "name": "Golden Island",
-          "role": "Prestigious shared destination with premium resource displays and a compact visitable plaza.",
-          "where": "Reached from the player-island portals",
-          "size": "Larger than a player island"
+          "role": "Prestige destination with a central arrival plaza and exclusive-looking structures.",
+          "where": "Beyond the player-island ring.",
+          "size": "Larger than the player islands."
         }
       ],
       "paths": [
         {
-          "from": "Player island hubs",
+          "from": "Eight player islands",
           "to": "Golden Island",
           "kind": "portal"
         }
       ],
-      "terrain": "Grass-topped floating earth and stone landmasses with visible undersides, bright stylized foliage and crystals, and broad clear open-air lanes between islands.",
+      "terrain": "Grassy floating terrain with rocky undersides, bright foliage, colorful upgrade-ready pads, and open sky between islands.",
       "props": [
         {
-          "name": "Clearly marked island-hub portals",
+          "name": "Floating player islands",
           "count": 8,
-          "where": "Near the inner-facing edge of each player island"
+          "where": "In a broad ring around the open central sky void."
         },
         {
-          "name": "Resource patches",
-          "count": -1,
-          "where": "Spreading outward from each island hub as the island expands"
+          "name": "Glowing portal arches",
+          "count": 9,
+          "where": "One at each player-island hub-facing edge and one at the Golden Island central arrival plaza."
         },
         {
-          "name": "Pet areas",
+          "name": "Resource areas",
           "count": -1,
-          "where": "Spreading outward from each island hub as the island expands"
+          "where": "Across each player island's expandable land."
         },
         {
-          "name": "Tool stations",
+          "name": "Exclusive-looking Golden Island structures",
           "count": -1,
-          "where": "Spreading outward from each island hub as the island expands"
-        },
-        {
-          "name": "Modular building pads",
-          "count": -1,
-          "where": "Spreading outward from each island hub as the island expands"
-        },
-        {
-          "name": "Luminous gold-and-white focal structure",
-          "count": -1,
-          "where": "Golden Island"
-        },
-        {
-          "name": "Premium resource displays",
-          "count": -1,
-          "where": "Golden Island"
+          "where": "On the Golden Island."
         }
       ],
-      "boundary": "No enclosing boundary beyond the open sky; no bridges between islands.",
+      "boundary": "Open sky, with generous sky gaps between islands.",
       "scale_band": "large",
-      "theme": "Polished, colorful, high-saturation fantasy sky-islands with luminous gold prestige accents."
+      "theme": "Polished, colorful, high-saturation fantasy sky islands with glowing prestige details."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "a bright, readable floating-island spectacle matters more than constrained traversal topology.",
+      "why": "The bright floating-island spectacle and readable upgrade silhouettes are authoritative, while a top-down plan can be projected from that view.",
       "set_piece": false
     },
     "route": [
-      "CHECK"
+      "P0"
     ],
-    "notes": [],
+    "notes": [
+      "The Sandbox preset is retained only partially: separate player build spaces and resource gathering remain, while its shared ground world is replaced by the sky arena.",
+      "Random events, rewards, UI, pets' progression, and rebirth mechanics are not rendered as layout requirements.",
+      "P0 applies because all islands are separated horizontally on one readable surface map, and open sky is backdrop rather than a self-occluding volumetric play space.",
+      "dropped option 'teleporter-link': not in Simulation",
+      "dropped placement 'teleporter-link': not in Simulation"
+    ],
     "scene_prompt": "Create a bright, colorful 3D floating-island arena with 8 separate player islands suspended in open sky, spaced so each remains visible and readable across the server. Each island begins as a tiny 16x16-stud landmass and has room to expand into a 48x48-stud upgraded island with resource areas, pets, tools, and buildings. Place a clearly marked portal at each island hub leading instantly to a prestigious Golden Island that players can visit; keep the central sky open for server-wide events such as meteor showers, treasure rain, black holes, zombie invasions, and giant bosses."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

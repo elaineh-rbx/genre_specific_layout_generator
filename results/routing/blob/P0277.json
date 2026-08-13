@@ -19,7 +19,7 @@
     }
   ],
   "scene_prompt": "Create a bright, stylized 3D survival map built as a large, difficult obby arranged as an open warren of interconnected obstacle sections. Provide multiple looping routes, crossings, and double-back paths through the course so players can chase and evade each other; keep the hard obstacles visually clear and easy to read.",
-  "blob": "### Genre\nDominant genre is Survival, with Obby & Platformer as a secondary genre: the asymmetric chase-survival intent owns the map topology, while the difficult obstacle-course character informs the physical treatment. \n\n### Shape and preset\nUse Survival shape `warren-looping`: a large, maze-like but readable warren of obstacle districts with continuous loop connectivity and no trapping dead ends. This matches the 1 vs All preset in its looping pursuit-and-evasion structure, but omit its escape-oriented gate because the requested format is not an exit course.\n\n### Config requirements\nNo additional named config options are established by the scene prompt. Do not add `hazard-kill`, `cover-los`, or specific obstacle types merely because this is difficult: the prompt does not specify contact-lethal surfaces, lockers/crawlspaces, jumps, moving parts, or timed modules. There are no requested invisible markers, triggers, emitters, pickups, or spawn points to place.\n\n### Layout components\nBuild one large connected play space around a broad central crossing hub, with several substantial obstacle sections branching around its perimeter and reconnecting to one another. Each section should offer at least two route choices and feed into neighboring sections through lateral links, return corridors, and clear crossings, allowing continuous double-backs rather than a single forward course. Make the crossings legible junctions rather than ambiguous overlaps; where routes meet, retain generous sightlines and visibly distinct entry/exit directions.\n\nUse hard, high-contrast stylized obstacle assemblies throughout, with clear silhouettes, strong color separation between traversable surfaces and non-traversable gaps, and uncluttered landing/readability zones. Keep terrain simple and largely planar so course geometry remains the visual focus. Enclose the outer edge with a continuous bright stylized perimeter wall or cliff-like boundary, while keeping the interior routes open to one another. Frame the map as a large isometric overview centered on the main junction, showing the surrounding obstacle districts and their looping connections.\n\n### Render order\nUse `topdown`: the connected pursuit routes and double-back topology must be validated from plan view before the isometric dressing is generated, since a sealed or dead-end-heavy warren would make evasion play fail.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by the requested giant course and multiple interconnected obstacle districts. Theme is bright, stylized, high-clarity obstacle architecture. Use `P6` because the looping warren must be structurally valid, with every major section participating in usable loops and no accidental permanent traps.",
+  "blob": "### Genre\nDominant genre: Survival, with Obby & Platformer as a secondary genre. The timer-based tagger-versus-hiders loop makes this a `1 vs All` survival map; the obby contributes difficult traversal obstacles but does not own the overall route.\n\n### Shape and preset\nUse `warren-looping`, matching the 1 vs All preset. It is a large, freely navigable obstacle warren whose interconnected loops, crossings, and double-back routes prevent hiders from being cornered while chased. Retain the preset’s evasion focus, but omit its escape exit because hiders win by surviving the timer rather than reaching an exit.\n\n### Config requirements\nUse `cover-los` as visually clear obstacle structures, elevated blocks, barriers, and route bends that break a tagger’s sightline without turning the map into opaque clutter. Add `obstacle-jump` from the secondary Obby genre: readable, demanding jumps and platform transitions distributed across the looping sections. Keep all obstacle silhouettes bright, high-contrast, and legible.\n\n### Layout requirements\nUse `spawn-protected` with two separated role-assignment starts: one isolated tagger start and one hider start placed on different outer loop sections, screened from direct sightlines and immediate contact. No other placed gameplay markers are required by the prompt.\n\n### Layout components\nBuild one large contiguous obstacle course divided into several interconnected sections rather than ordered stages. Place a broad central crossing zone, with outer obstacle districts linked by multiple loop paths and short double-back connectors. Each district should offer clear platforming challenges—gaps, elevated blocks, narrow traversable structures, and climbable-looking routes—while preserving at least two escape directions at meaningful junctions. Use ramps and broad transitions where sections meet so the warren remains readable. Keep terrain largely flat beneath the constructed course, with no enclosing building; define the outer boundary through bright stylized perimeter walls, void-edge treatment, or oversized decorative barriers. Compose the map as a readable top-down network, with the central crossing visibly connecting the outer loops.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because loop connectivity and the absence of trapping dead ends are necessary for fair chase-and-escape play, while this is not a carveable maze.\n\n### Scale, theme, and pipeline cost\nScale band: large, driven by the giant multi-section course and multiple chase loops. Theme: bright, stylized, high-contrast obstacle playground. Pipeline modifiers: `P6`, because the looping traversal topology must be valid by construction; `P0` otherwise, since the map is a single contiguous outdoor surface without overhangs or separate maps.",
   "spec": {
     "genre": "Survival",
     "secondary": [
@@ -28,74 +28,108 @@
     "shape": "warren-looping",
     "preset": "1 vs All",
     "axes": {},
-    "options": [],
+    "options": [
+      {
+        "id": "cover-los",
+        "text": "Visually clear obstacle structures, elevated blocks, barriers, and route bends that break a tagger’s sightline without turning the map into opaque clutter.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "spawn-protected",
+        "text": "Two separated role-assignment starts: one isolated tagger start and one hider start on different outer loop sections, screened from direct sightlines and immediate contact.",
+        "visible": false,
+        "count": 2
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "spawn-protected",
+        "text": "Two separated role-assignment starts: one isolated tagger start and one hider start on different outer loop sections, screened from direct sightlines and immediate contact.",
+        "count": 2,
+        "where": "Place the isolated tagger start and hider start on different outer loop sections, screened from direct sightlines and immediate contact."
+      }
+    ],
     "layout": {
-      "composition": "Large isometric overview centred on the broad main junction, with surrounding obstacle districts and their looping connections visible around the perimeter.",
+      "composition": "A readable top-down network with a broad central crossing visibly connecting outer obstacle districts and loops around the perimeter.",
       "zones": [
         {
-          "name": "Central crossing hub",
-          "role": "Broad, legible main junction for chase, evasion, crossings, and route choices.",
+          "name": "Central crossing zone",
+          "role": "Broad crossing zone connecting the outer loops.",
           "where": "centre",
           "size": "broad"
         },
         {
-          "name": "Obstacle districts",
-          "role": "Substantial difficult obstacle sections offering at least two route choices, lateral links, return corridors, and connections to neighbouring sections.",
-          "where": "around the perimeter of the central hub",
-          "size": "several substantial sections"
+          "name": "Outer obstacle districts",
+          "role": "Interconnected looping obstacle sections for chase, evasion, and platforming.",
+          "where": "around the central crossing",
+          "size": "large"
         }
       ],
       "paths": [
         {
-          "from": "Central crossing hub",
-          "to": "Obstacle districts",
-          "kind": "corridor"
+          "from": "Central crossing zone",
+          "to": "Outer obstacle districts",
+          "kind": "open ground"
         },
         {
-          "from": "Obstacle districts",
-          "to": "Neighbouring obstacle districts",
-          "kind": "corridor"
+          "from": "Outer obstacle districts",
+          "to": "Outer obstacle districts",
+          "kind": "track"
         },
         {
-          "from": "Obstacle districts",
-          "to": "Central crossing hub",
-          "kind": "corridor"
+          "from": "Outer obstacle districts",
+          "to": "Outer obstacle districts",
+          "kind": "ramp"
         }
       ],
-      "terrain": "Simple, largely planar terrain so the course geometry remains the visual focus; strong color separation marks traversable surfaces and non-traversable gaps.",
+      "terrain": "Terrain is largely flat beneath the constructed obstacle course, with ramps and broad transitions where sections meet.",
       "props": [
         {
-          "name": "Hard, high-contrast stylized obstacle assemblies",
+          "name": "Elevated blocks",
           "count": -1,
-          "where": "throughout the obstacle districts"
+          "where": "Across the interconnected obstacle districts"
         },
         {
-          "name": "Bright stylized perimeter wall or cliff-like boundary",
+          "name": "Barriers",
           "count": -1,
-          "where": "continuous outer edge"
+          "where": "Across looping sections and meaningful junctions"
+        },
+        {
+          "name": "Narrow traversable structures",
+          "count": -1,
+          "where": "Within each outer obstacle district"
+        },
+        {
+          "name": "Bright stylized perimeter walls, void-edge treatment, or oversized decorative barriers",
+          "count": -1,
+          "where": "Outer boundary"
         }
       ],
-      "boundary": "A continuous bright stylized perimeter wall or cliff-like boundary encloses the outer edge while interior routes remain open to one another.",
+      "boundary": "No enclosing building; the outer boundary is defined by bright stylized perimeter walls, void-edge treatment, or oversized decorative barriers.",
       "scale_band": "large",
-      "theme": "Bright, stylized, high-clarity obstacle architecture"
+      "theme": "bright, stylized, high-contrast obstacle playground"
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the connected pursuit routes and double-back topology must be validated from plan view before isometric dressing, since sealed or dead-end-heavy routes would make evasion play fail.",
+      "why": "Loop connectivity and the absence of trapping dead ends are necessary for fair chase-and-escape play.",
       "set_piece": false
     },
     "route": [
-      "P6"
+      "P6",
+      "P0"
     ],
-    "notes": [],
+    "notes": [
+      "dropped option 'obstacle-jump': not in Survival"
+    ],
     "scene_prompt": "Create a bright, stylized 3D survival map built as a large, difficult obby arranged as an open warren of interconnected obstacle sections. Provide multiple looping routes, crossings, and double-back paths through the course so players can chase and evade each other; keep the hard obstacles visually clear and easy to read."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

@@ -19,7 +19,7 @@
     }
   ],
   "scene_prompt": "Create a 3D climbing game map as a straight-up tower built from plain stylized blocks. Stack walls, climbable trusses, and high platforms vertically into a clear ascent, with the top of the tower as the destination.",
-  "blob": "### Genre\nThe dominant genre is Obby & Platformer: the stated goal is a player-controlled climb to the tower’s top. There is no secondary genre.\n\n### Shape and preset\nUse the `course-tower` Tower / Spiral Ascent shape, interpreted here as a compact straight-up vertical tower rather than a winding spiral: each climb section rises directly above the last. The closest preset is Tower Obby; retain its tower ascent, climbing emphasis, and end reward, but omit its unrequested timed obstacles.\n\n### Config requirements\n`path-track` is visible geometry: a clear ordered vertical ascent of connected climb sections and safe platforms. `obstacle-climb` is visible geometry: climbable trusses and wall-adjacent climbing structures form the main upward challenges. `winner-zone` is both visible and invisible: a distinct top platform visibly marks the destination, with an invisible completion area placed on it after segmentation. Do not add hazards, moving parts, checkpoints, pickups, or decorative extras not requested.\n\n### Layout components\nBuild one narrow, tall tower zone from plain stylized blocks. Start at a broad ground-level entry pad beneath the first wall and truss. Stack alternating block walls, vertical truss runs, and high square platforms into a legible upward chain; each platform is a stable landing and staging surface before the next climb. Keep the route visually obvious from below, with trusses attached to or framed by the walls rather than floating ambiguously. The final and highest platform is the destination zone. Use simple solid block ground and minimal structural framing; the outer boundary is open air around the tower, with no surrounding landscape. Compose the isometric view to show the full vertical silhouette and several ascent layers at once.\n\n### Render order\nUse `topdown`: the climb path must remain physically connected and clearable, so topology is authoritative before the isometric dressing.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by the complete vertical ascent and multiple stacked climb sections. Theme is plain stylized block construction. Pipeline modifier: `P6`, because the sequential climbing route must be valid by construction; `P2`, because high platforms and truss sections stack above lower surfaces and occlude them in one plan view.",
+  "blob": "### Genre\nThe dominant genre is Obby & Platformer: the player climbs a vertical sequence of obstacles to reach the tower top.\n\n### Shape and preset\nUse `course-tower`, matching the Tower Obby preset. This is a straight-up stylized-block tower rather than a terraced hillside; retain the preset’s vertical ascent and finish concept, while replacing its timed obstacles with the explicitly requested climbing geometry.\n\n### Config requirements\nUse `path-track` as one clearly ordered upward chain of reachable walls, trusses, and landing platforms. Use `obstacle-climb` for climbable truss sections and wall-adjacent climbs. Use `obstacle-jump` for the high platform-to-platform transitions. Use `winner-zone` as a visible simple end platform at the summit.\n\n### Layout requirements\nPlace `winner-zone` once, centered on the highest summit platform, beyond the final truss climb. No additional placed markers are required: the prompt does not request checkpoints, pickups, or buffs.\n\n### Layout components\nBuild one narrow, straight vertical tower with a safe ground-level entry pad. Stack successive block-wall segments, vertical trusses fixed to their faces or sides, and broad flat platforms into a legible upward route. Alternate truss climbs with high platforms so each platform is an unambiguous rest and setup point for the next climb or jump; keep all critical jumps and elevation changes physics-legal. Put the final, slightly wider summit platform directly above the ascent, carrying the end area. Keep the tower open to the surrounding air, with no terrain, water, buildings, or decorative clutter. Compose the full tower in frame from a three-quarter elevated view, clearly showing its vertical route from base to top.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because the ordered climb chain must remain connected and clearable; the isometric render then dresses that validated layout.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by a single tall tower with several vertically sequenced climbing sections. Theme: plain stylized blocks, simple walls, exposed trusses, and clean high platforms. Use `P2` because platforms and tower segments stack directly over lower surfaces, and `P6` because the climb route must be valid by construction.",
   "spec": {
     "genre": "Obby & Platformer",
     "secondary": [],
@@ -29,72 +29,103 @@
     "options": [
       {
         "id": "path-track",
-        "text": "A clear ordered vertical ascent of connected climb sections and safe platforms.",
+        "text": "One clearly ordered upward chain of reachable walls, trusses, and landing platforms.",
         "visible": true,
         "count": -1
       },
       {
         "id": "obstacle-climb",
-        "text": "Climbable trusses and wall-adjacent climbing structures form the main upward challenges.",
+        "text": "Climbable truss sections and wall-adjacent climbs.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "obstacle-jump",
+        "text": "High platform-to-platform transitions.",
         "visible": true,
         "count": -1
       },
       {
         "id": "winner-zone",
-        "text": "A distinct top platform visibly marks the destination, with an invisible completion area placed on it after segmentation.",
+        "text": "A visible simple end platform at the summit.",
         "visible": true,
-        "count": -1
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "winner-zone",
+        "text": "A visible simple end platform at the summit.",
+        "count": 1,
+        "where": "Centered on the highest summit platform, beyond the final truss climb."
       }
     ],
     "layout": {
-      "composition": "Isometric view showing the full vertical silhouette and several ascent layers at once, from the broad ground-level entry pad up to the highest destination platform.",
+      "composition": "The full tower is framed from a three-quarter elevated view, clearly showing the vertical route from the safe ground-level base to the summit.",
       "zones": [
         {
-          "name": "Tower ascent",
-          "role": "One narrow, tall vertical climb zone with the entry pad, alternating climb sections, stable landing platforms, and the final destination platform.",
-          "where": "Straight up from the ground-level entry pad to the tower top.",
-          "size": "medium"
+          "name": "Ground-level entry pad",
+          "role": "Safe starting point for the climb.",
+          "where": "Base of the tower.",
+          "size": ""
+        },
+        {
+          "name": "Vertical ascent",
+          "role": "Alternating truss climbs, block-wall segments, and broad flat landing platforms form the ordered upward route.",
+          "where": "Straight above the entry pad.",
+          "size": "Narrow"
+        },
+        {
+          "name": "Summit platform",
+          "role": "Final destination carrying the end area.",
+          "where": "Directly above the ascent, beyond the final truss climb.",
+          "size": "Slightly wider"
         }
       ],
       "paths": [
         {
           "from": "Ground-level entry pad",
-          "to": "Final highest platform",
+          "to": "Vertical ascent",
+          "kind": "track"
+        },
+        {
+          "from": "Vertical ascent",
+          "to": "Summit platform",
           "kind": "track"
         }
       ],
-      "terrain": "Simple solid block ground beneath the tower; open air surrounds it with no surrounding landscape.",
+      "terrain": "No terrain or water; the tower is open to the surrounding air.",
       "props": [
         {
-          "name": "Block walls",
+          "name": "Block-wall segments",
           "count": -1,
-          "where": "Alternating upward through the tower climb chain."
+          "where": "Stacked vertically in the tower ascent."
         },
         {
-          "name": "Vertical truss runs",
+          "name": "Vertical trusses",
           "count": -1,
-          "where": "Attached to or framed by the block walls along the ascent."
+          "where": "Fixed to the faces or sides of block-wall segments."
         },
         {
-          "name": "High square platforms",
+          "name": "Broad flat landing platforms",
           "count": -1,
-          "where": "Stacked between climb sections as stable landing and staging surfaces."
+          "where": "Alternating with truss climbs throughout the ascent."
         }
       ],
-      "boundary": "Open air around the tower.",
+      "boundary": "Open to the surrounding air, with no enclosing terrain, buildings, or decorative clutter.",
       "scale_band": "medium",
-      "theme": "Plain stylized block construction with minimal structural framing."
+      "theme": "Plain stylized blocks, simple walls, exposed trusses, and clean high platforms."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the climb path must remain physically connected and clearable.",
+      "why": "the ordered climb chain must remain connected and clearable",
       "set_piece": false
     },
     "route": [
-      "P6",
-      "P2"
+      "P2",
+      "P6"
     ],
     "notes": [],
     "scene_prompt": "Create a 3D climbing game map as a straight-up tower built from plain stylized blocks. Stack walls, climbable trusses, and high platforms vertically into a clear ascent, with the top of the tower as the destination."
@@ -102,7 +133,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

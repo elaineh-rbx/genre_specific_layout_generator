@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Crie um mapa 3D original de Tower Defense em estilo cartoon brilhante, compacto e legível, para até 4 jogadores defenderem uma base compartilhada. Um caminho inimigo claramente visível atravessa o cenário em cerca de 8–10 curvas ou pontos de passagem, começando em uma entrada distante e terminando na base destacada no fim do trajeto. Disponha áreas abertas e próprias para posicionar torres ao longo dos dois lados do caminho, com visibilidade clara sobre trechos retos e curvas; mantenha o cenário bonito, otimizado e com iluminação e efeitos simples.",
-  "blob": "### 1. Gênero\nO gênero dominante é Strategy, pois a defesa compartilhada depende de ondas seguindo uma rota até uma base e de torres posicionadas para as deter.\n\n### 2. Forma e preset\nUse a forma `lane-actor-track`, uma única rota inimiga contínua que atravessa o mapa compacto da entrada distante até a base. O preset correspondente é Tower Defense; ele permanece reconhecível e adequado ao pedido.\n\n### 3. Requisitos de configuração\n`buildzone-grid` é geometria visível: faixas abertas, planas e claramente demarcadas nos dois lados da rota, próprias para a colocação de torres sem invadir o caminho. `tracker-core` é ambos: uma base final grande e visualmente destacada, com a área de detecção/vida da base colocada de modo invisível. `spawner-npc` é invisível: a origem das ondas fica na entrada remota do caminho e não deve aparecer como elemento de imagem.\n\n### 4. Componentes do layout\nA zona principal é um campo compacto de defesa para até 4 jogadores, organizado em torno de uma estrada inimiga larga e muito legível. A rota começa numa entrada distante em uma extremidade, percorre aproximadamente 8–10 curvas ou pontos de passagem, alternando retas de boa visibilidade e curvas estratégicas, e termina na base compartilhada na extremidade oposta. Em ambos os lados, disponha grandes clareiras de posicionamento de torres, especialmente voltadas para curvas e trechos retos longos. O terreno é suave e simples, com gramado colorido, pequenas elevações decorativas que não bloqueiem a leitura da rota, rochas baixas, árvores esparsas e arbustos como moldura visual. A base ocupa a zona final e domina a composição; a entrada de inimigos fica pequena e distante. O limite do mapa é formado por relevo baixo, vegetação e bordas naturais, sem competir com o percurso.\n\n### 5. Ordem de renderização\nUse `topdown`: a conectividade contínua e legível da rota é necessária para o jogo funcionar, portanto o plano deve ser estabelecido antes da visão isométrica, sem recorrer a um blueprint `authored_plan` reservado a labirintos e circuitos de corrida.\n\n### 6. Escala, tema e custo de pipeline\nEscala média, guiada pelo suporte a 4 jogadores e uma rota compacta com 8–10 pontos de passagem. Tema cartoon brilhante, acessível e original para Roblox, com cores saturadas, iluminação suave e efeitos simples. Use `P6`, pois a rota de inimigos deve ser válida e contínua por construção.",
+  "blob": "### 1. Genre\nThe dominant genre is Strategy: a shared-base tower defense with enemy waves following a fixed path. There is no secondary genre.\n\n### 2. Shape and preset\nUse `lane-actor-track`, matching the Tower Defense preset. It is one continuous, unambiguous enemy lane from a distant entry to the shared base, with tower ground framing the route on both sides.\n\n### 3. Config requirements\nUse `buildzone-grid` as broad, clearly readable tower-placement pads and open ground along both sides of the lane. Use `tracker-core` for the prominent shared base at the route terminus. Use `choke-bottleneck` at selected tight bends so enemy waves visibly bunch and placement choices matter. The enemy entry should be visually identifiable, while the specific `spawner-npc` marker is placed after segmentation.\n\n### 4. Layout requirements\nPlace `spawner-npc` once at the distant lane entrance, facing into the first route segment. Place the `tracker-core` gameplay anchor at the base directly beyond the final lane segment, aligned so all enemies must reach it through the terminal approach. No other invisible placements are required by the scene.\n\n### 5. Layout components\nBuild one compact outdoor cartoon battlefield for up to 4 players. The route begins at a distant enemy gate, then winds continuously through roughly 8–10 clear turns or waypoints before reaching a large, highly visible shared base at the opposite end. Keep every bend legible from above and avoid crossings, branches, or ambiguous shortcuts. On both sides, provide generous flat tower pads and open build zones, especially beside long straight segments and inside or outside major curves for clear firing coverage. Use simple bright grass terrain, a clean contrasting paved or packed-dirt enemy path, small decorative rocks, shrubs, and low stylized trees placed outside tower ground and sightlines. Define the outer edge with soft cartoon cliffs, hedges, or raised banks rather than dense obstruction. Compose the view diagonally from entry toward base so the entire route and terminal core read at a glance.\n\n### 6. Render order\nUse `authored_plan`: the tower-defense lane must be procedurally valid as one continuous route, because a broken or ambiguous track makes enemy navigation and the game unplayable.\n\n### 7. Scale, theme, and pipeline cost\nScale band: medium, driven by a compact shared map for up to 4 players and an 8–10-turn strategic route. Theme: bright, accessible original Roblox cartoon battlefield with simple lighting and restrained effects. Pipeline modifiers: `P6` because the enemy lane must be valid by construction; `P0` otherwise, since the map is a single-level surface without forced overhangs, interiors, or separate maps.",
   "spec": {
     "genre": "Strategy",
     "secondary": [],
@@ -24,94 +24,110 @@
     "options": [
       {
         "id": "buildzone-grid",
-        "text": "faixas abertas, planas e claramente demarcadas nos dois lados da rota, próprias para a colocação de torres sem invadir o caminho",
+        "text": "Broad, clearly readable tower-placement pads and open ground along both sides of the enemy lane.",
         "visible": true,
         "count": -1
       },
       {
         "id": "tracker-core",
-        "text": "uma base final grande e visualmente destacada, com a área de detecção/vida da base colocada de modo invisível",
+        "text": "A prominent shared base at the route terminus.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "choke-bottleneck",
+        "text": "Selected tight bends where enemy waves visibly bunch and tower placement choices matter.",
         "visible": true,
         "count": -1
       },
       {
         "id": "spawner-npc",
-        "text": "a origem das ondas fica na entrada remota do caminho e não deve aparecer como elemento de imagem",
+        "text": "The enemy entry marker at the distant lane entrance, facing into the first route segment.",
         "visible": false,
-        "count": -1
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "tracker-core",
+        "text": "The shared-base gameplay anchor directly beyond the final lane segment.",
+        "count": -1,
+        "where": "At the base directly beyond the final lane segment, aligned so all enemies must reach it through the terminal approach."
+      },
+      {
+        "id": "spawner-npc",
+        "text": "The enemy entry marker at the distant lane entrance, facing into the first route segment.",
+        "count": 1,
+        "where": "At the distant lane entrance, facing into the first route segment."
       }
     ],
     "layout": {
-      "composition": "A base compartilhada ocupa e domina a zona final em uma extremidade; a entrada inimiga é pequena e distante na extremidade oposta. A estrada larga e legível atravessa o campo compacto entre elas, com clareiras de torres nos dois lados, enquadradas por vegetação e relevo baixo.",
+      "composition": "A diagonal view runs from the distant enemy entry toward the highly visible shared base at the opposite end, keeping the entire winding route and terminal core readable at a glance.",
       "zones": [
         {
-          "name": "Campo principal de defesa",
-          "role": "Campo compacto para até 4 jogadores defenderem a base compartilhada em torno da rota inimiga.",
-          "where": "centro do mapa, entre a entrada distante e a base final",
-          "size": "compacto; para até 4 jogadores"
+          "name": "Enemy entry",
+          "role": "Distant gate where enemy waves enter the fixed lane.",
+          "where": "Distant end of the map",
+          "size": ""
         },
         {
-          "name": "Entrada de inimigos",
-          "role": "Origem remota das ondas inimigas.",
-          "where": "uma extremidade distante do mapa",
-          "size": "pequena e distante"
+          "name": "Enemy lane",
+          "role": "One continuous, unambiguous route for enemy waves, winding through clear turns toward the base.",
+          "where": "Diagonally across the battlefield from entry to base",
+          "size": "Roughly 8–10 turns or waypoints"
         },
         {
-          "name": "Faixas de posicionamento de torres",
-          "role": "Áreas abertas para posicionar torres com visibilidade sobre retas longas e curvas estratégicas.",
-          "where": "em ambos os lados da estrada inimiga, especialmente junto a curvas e trechos retos longos",
-          "size": "grandes clareiras"
+          "name": "Tower ground",
+          "role": "Flat tower-placement pads and open build zones providing firing coverage along the lane.",
+          "where": "On both sides of the lane, especially beside long straight segments and inside or outside major curves",
+          "size": "Generous"
         },
         {
-          "name": "Base compartilhada",
-          "role": "Destino da rota inimiga e base final a ser defendida.",
-          "where": "extremidade oposta à entrada inimiga, zona final",
-          "size": "grande e visualmente destacada"
+          "name": "Shared base",
+          "role": "The prominent terminal core that all enemies must reach through the final approach.",
+          "where": "Opposite end of the map beyond the final lane segment",
+          "size": "Large"
         }
       ],
       "paths": [
         {
-          "from": "Entrada de inimigos",
-          "to": "Base compartilhada",
-          "kind": "road"
+          "from": "Enemy entry",
+          "to": "Shared base",
+          "kind": "track"
         }
       ],
-      "terrain": "Terreno suave e simples, com gramado colorido, pequenas elevações decorativas que não bloqueiam a leitura da rota, rochas baixas, árvores esparsas e arbustos como moldura visual.",
+      "terrain": "Simple bright grass terrain with a clean contrasting paved or packed-dirt enemy path; the map remains a single-level outdoor surface.",
       "props": [
         {
-          "name": "pequenas elevações decorativas",
+          "name": "Small decorative rocks",
           "count": -1,
-          "where": "pelo terreno, sem bloquear a leitura da rota"
+          "where": "Outside tower ground and sightlines"
         },
         {
-          "name": "rochas baixas",
+          "name": "Shrubs",
           "count": -1,
-          "where": "pelo terreno"
+          "where": "Outside tower ground and sightlines"
         },
         {
-          "name": "árvores esparsas",
+          "name": "Low stylized trees",
           "count": -1,
-          "where": "ao redor do campo como moldura visual"
-        },
-        {
-          "name": "arbustos",
-          "count": -1,
-          "where": "ao redor do campo como moldura visual"
+          "where": "Outside tower ground and sightlines"
         }
       ],
-      "boundary": "O limite do mapa é formado por relevo baixo, vegetação e bordas naturais, sem competir com o percurso.",
+      "boundary": "Soft cartoon cliffs, hedges, or raised banks define the outer edge without dense obstruction.",
       "scale_band": "medium",
-      "theme": "cartoon brilhante, acessível e original para Roblox, com cores saturadas, iluminação suave e efeitos simples"
+      "theme": "Bright, accessible original Roblox cartoon battlefield with simple lighting and restrained effects."
     },
     "render": {
-      "first": "topdown",
-      "then": "isometric",
-      "authoritative": "topdown",
-      "why": "a conectividade contínua e legível da rota é necessária para o jogo funcionar.",
+      "first": "authored_plan",
+      "then": "topdown",
+      "authoritative": "authored_plan",
+      "why": "because a broken or ambiguous enemy track makes navigation and the game unplayable.",
       "set_piece": false
     },
     "route": [
-      "P6"
+      "P6",
+      "P0"
     ],
     "notes": [],
     "scene_prompt": "Crie um mapa 3D original de Tower Defense em estilo cartoon brilhante, compacto e legível, para até 4 jogadores defenderem uma base compartilhada. Um caminho inimigo claramente visível atravessa o cenário em cerca de 8–10 curvas ou pontos de passagem, começando em uma entrada distante e terminando na base destacada no fim do trajeto. Disponha áreas abertas e próprias para posicionar torres ao longo dos dois lados do caminho, com visibilidade clara sobre trechos retos e curvas; mantenha o cenário bonito, otimizado e com iluminação e efeitos simples."
@@ -119,10 +135,12 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",
   "first": "topdown",
-  "mapper_notes": []
+  "mapper_notes": [
+    "blob asked for authored_plan first; the route ['P6'] gives topdown"
+  ]
 }

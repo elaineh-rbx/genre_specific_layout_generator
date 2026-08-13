@@ -14,71 +14,50 @@
     }
   ],
   "scene_prompt": "Create a large open-road 3D map spanning a few kilometres for free motorcycle riding. Lay out connected open roads across a spacious landscape, with long clear stretches that support maneuvering and wheelies; keep the world feeling expansive but manageable for a first version.",
-  "blob": "### Género\nEl género dominante es Simulation: un simulador de vehículos de conducción libre, no Racing, porque no hay carrera, vueltas ni línea de meta. La conducción y los caballitos definen el uso del espacio, pero no añaden retos ni reglas al trazado.\n\n### Forma y preset\nUsa la forma `world-shared`, un mundo continuo compartido para recorrer libremente en moto. El preset correspondiente es Vehicle Sim; se conserva su mundo abierto y red vial, pero se omite el campo de recursos porque el encargo no describe extracción ni tareas.\n\n### Requisitos de configuración\nIncluye `path-road-vehicle` como geometría visible: una red de carreteras anchas, lisas y conectadas, con rectas largas y curvas amplias que permitan conducir y levantar la rueda delantera sin obstáculos cercanos. No se requieren otros componentes de configuración; no hay elementos invisibles solicitados.\n\n### Componentes de layout\nConstruye un único mapa exterior de unos pocos kilómetros, amplio pero manejable para una primera versión. El núcleo es una red vial continua: una carretera principal larga que atraviesa el mapa, varios ramales abiertos y circuitos de retorno para que el jugador pueda cambiar de dirección sin callejones sin salida. Reserva varios tramos rectos, despejados y especialmente largos para maniobras y caballitos; une estos tramos con curvas de radio generoso y cruces simples. El terreno debe ser una extensión paisajística espaciosa y poco poblada, subordinada a mantener la legibilidad y amplitud de las carreteras. No añadir edificios, recursos, carreras, señales de puntuación ni obstáculos no solicitados. El borde del mundo queda a distancia, cerrado de forma discreta por el final natural del paisaje. En composición, la red debe leerse como una gran ruta abierta, con la recta principal dominando la vista isométrica.\n\n### Orden de render\nUsa `isometric`: se renderiza primero la vista isométrica como referencia autoritativa y después se proyecta la vista superior. La conectividad vial es importante, pero un trazado imperfecto no vuelve injugable la conducción libre ni requiere una ruta generada por código.\n\n### Escala, tema y coste de pipeline\nEscala grande, impulsada por los pocos kilómetros de carreteras abiertas. Tema: simulador de moto realista, paisaje abierto y asfalto limpio. Modificador `P0`: una sola superficie exterior continua, sin interiores, niveles superpuestos ni topología que deba validarse por construcción.",
+  "blob": "### Genre\nSimulation is the dominant genre: this is free vehicle operation with no lap, finish, or race objective. Use the Vehicle Sim preset.\n\n### Shape and preset\nUse `world-open`, the shared persistent-world shape, matching the Vehicle Sim preset. It is one contiguous outdoor road map for unrestricted motorcycle riding rather than a circuit or point-to-point course.\n\n### Config requirements\nUse `path-road-vehicle` for a connected network of broad, smooth paved roads with long unobstructed straights that leave room to manoeuvre and lift into wheelies. The prompt does not request resource fields, buildings, terrain relief, water, traffic, or other scenery-specific options.\n\n### Layout requirements\nNo additional placed layout components are required. There are no race starts, finish triggers, checkpoints, pickups, task stations, or scoring volumes in free riding.\n\n### Layout components\nBuild one large outdoor zone spanning a few kilometres, scaled to feel expansive while remaining manageable for a first release. Its core is an interconnected open-road network: several long, clear straightaways for sustained motorcycle acceleration and wheelies, joined by gentle wide curves and broad junctions so the rider can freely change direction without being forced onto a lap route. Keep the roads smooth, wide, and free of tight clutter, abrupt barriers, or dense roadside construction. Surround them with spacious, lightly dressed landscape that preserves long sightlines and makes the road system feel open. The map boundary should sit beyond the primary riding roads and be visually concealed at the distant perimeter. Compose the view around readable road ribbons crossing the landscape, with the longest straights visibly extending toward the horizon.\n\n### Render order\nRender `isometric` first and treat it as authoritative, because the scene is an open free-riding world whose road topology need not satisfy a race circuit or other validity-critical route.\n\n### Scale, theme, and pipeline cost\nUse the large scale band, driven by the requested few-kilometre map and multiple long motorcycle riding stretches. Theme: realistic, spacious open-road motorcycle landscape with clean asphalt and broad visibility. Use `P0`: the single contiguous outdoor surface has no forced overhangs, interiors, separate maps, volumetric traversal, or topology that must be constructed procedurally.",
   "spec": {
     "genre": "Simulation",
     "secondary": [],
-    "shape": "world-shared",
+    "shape": "world-open",
     "preset": "Vehicle Sim",
     "axes": {},
     "options": [
       {
         "id": "path-road-vehicle",
-        "text": "Una red de carreteras anchas, lisas y conectadas, con rectas largas y curvas amplias que permitan conducir y levantar la rueda delantera sin obstáculos cercanos.",
+        "text": "A connected network of broad, smooth paved roads with long unobstructed straights for manoeuvring and wheelies.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "La red debe leerse como una gran ruta abierta, con la recta principal dominando la vista isométrica.",
+      "composition": "Readable road ribbons cross the spacious landscape, with the longest clear straightaways visibly extending toward the horizon.",
       "zones": [
         {
-          "name": "Mapa exterior continuo",
-          "role": "Mundo compartido para recorrer libremente en moto.",
-          "where": "Todo el mapa",
-          "size": "Unos pocos kilómetros; amplio pero manejable para una primera versión."
-        },
-        {
-          "name": "Carretera principal",
-          "role": "Atravesar el mapa y ofrecer conducción libre en una recta dominante.",
-          "where": "A través del mapa, dominante en la vista isométrica",
-          "size": "Larga"
-        },
-        {
-          "name": "Tramos de maniobra y caballitos",
-          "role": "Permitir maniobras y levantar la rueda delantera sin obstáculos cercanos.",
-          "where": "Varios puntos de la red vial",
-          "size": "Especialmente largos y despejados"
+          "name": "Outdoor open-road zone",
+          "role": "Free motorcycle riding across an interconnected road network, with sustained acceleration, wheelies, and unrestricted direction changes.",
+          "where": "Across the full contiguous outdoor map",
+          "size": "A few kilometres; large"
         }
       ],
       "paths": [
         {
-          "from": "Carretera principal",
-          "to": "Ramales abiertos",
-          "kind": "road"
-        },
-        {
-          "from": "Ramales abiertos",
-          "to": "Circuitos de retorno",
-          "kind": "road"
-        },
-        {
-          "from": "Tramos de maniobra y caballitos",
-          "to": "Curvas de radio generoso y cruces simples",
+          "from": "Long clear straightaways",
+          "to": "Gentle wide curves and broad junctions",
           "kind": "road"
         }
       ],
-      "terrain": "Extensión paisajística espaciosa y poco poblada, subordinada a mantener la legibilidad y amplitud de las carreteras; asfalto limpio.",
+      "terrain": "Spacious, lightly dressed landscape surrounding smooth clean-asphalt roads; long sightlines are preserved.",
       "props": [],
-      "boundary": "El borde del mundo queda a distancia, cerrado de forma discreta por el final natural del paisaje.",
+      "boundary": "The map boundary sits beyond the primary riding roads and is visually concealed at the distant perimeter.",
       "scale_band": "large",
-      "theme": "Simulador de moto realista, paisaje abierto y asfalto limpio."
+      "theme": "Realistic, spacious open-road motorcycle landscape with clean asphalt and broad visibility."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "la conectividad vial es importante, pero un trazado imperfecto no vuelve injugable la conducción libre.",
+      "why": "The open free-riding road world has no race circuit or other validity-critical route.",
       "set_piece": false
     },
     "route": [
@@ -90,7 +69,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

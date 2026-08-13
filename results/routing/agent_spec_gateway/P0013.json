@@ -1,0 +1,266 @@
+{
+  "scene": "P0013",
+  "source": "Executive Summary\nCreate a Roblox Demonfall-inspired open-world action RPG set in a Taishō-era fantasy. The player starts as a human in a rural earth-biome village, returns home to find their family slain by a demon, then splinters into two paths: Survive = become a Slayer, Die = become a Demon. A cinematic prologue and mobile-friendly obby tutorial teach basic movement (run, jump, camera), combat (light/heavy attack, block, dash), and UI (controls overlay before drawing the katana). Players choose a family (clan) with unique buffs and cosmetic style during character creation (e.g. Kanroji clan gives +15% damage, Kamado clan +20% EXP and Sun-immunity). The core gameplay loop emphasizes dynamic combat with stamina/breathing management, deep progression (skill tree, breathing styles, Blood Demon Arts), cooperative PvE missions (with scalable difficulty), and a day/night cycle that makes nights dangerous (demons hunt; they die in daylight without Sun immunity).\n\nKey Systems:\n\nCombat: Simple mobile controls (touch buttons) and PC controls (keyboard/mouse) for light/heavy slash, block, dash/sprint, weapon draw/sheath, plus a visible Stamina/Breath meter. Advanced skills are unlocked via breathing styles (9-12 styles) or demon arts.\nProgression: Players earn skill points by killing demons, completing quests, and conquering missions. A branching skill tree lets them improve stats (Strength, Endurance, Speed, Steel-Lungs to slow breathing drain, Dash upgrades, etc.) and unlock special moves.\nBreathing Styles (Slayer paths): At least ten breathing arts (Water, Flame, Thunder, Wind, Mist, Stone, Love, Serpent, Sound, Beast, plus secret Sun/Moon) exist, each with trainer NPCs and unlock quests. Four beginner-friendly styles (Water, Flame, Thunder, Beast) are accessible early; higher-tier styles require harder quests or demos. For example, Beast Breathing (dual-wield style) requires Level 10, 10,000 Yen, dual katanas and a hidden mountain cave trainer. Clan synergy is important: e.g., Hashibira clan grants +10% damage for Beast users.\nDemon Path: If a player dies in the prologue, they become a demon with regeneration, Blood Arts, and increased power. Demons climb their own boss ladder (ordinary demons → Demon Ranks → Lower Moon bosses → Upper Moon bosses). Slayer players may choose to become demons by consuming Muzan's blood (a rare item or boss drop) and waiting in \"hybrid\" limbo (taking real-time hours based on level). Conversely, demons can revert via a rare Wipe Potion sold by a special merchant, or by codes, reflecting community lore.\nWorld & Quests: A large open map (see World Map diagram below) connects varied zones: the Starting Village (tutorial area), Cursed Forests (moonlit wood with fog), Snowy Mountain Pass (Beast trainer), Butterfly Mansion (advanced training/Full Concentration skill), Swordsmith Village/Forge, Haunted Roads (night raids), Spider Mountain Caves (elite slayer boss), and an Endgame Fortress (final raids). Day/night cycles and weather (fog, rain, moonlight) dynamically affect visibility and demon behavior. NPCs follow schedules (working/closing shops in day, hiding at night), and random events (e.g. demon attacks on a caravan, lost child rescues, or chance boss spawns) create a living world. Quests include daily hunts, escort/defense missions, boss investigations, and special trials. Party missions auto-scale: more players = tougher enemies and better rewards.\nBuilding & Tech: The design is modular for Roblox Build. We define core modules (Combat, Movement, UI, etc.) and RemoteEvents for communication. Development is phased: 1) Foundation: world base, controls, spawn points, character/family selection, tutorial obby. 2) Core Combat: weapon equip, attacks, block, dodge, enemy AI, stamina. 3) Progression & Quests: skill tree, breathing trainers, basic quests, party system. 4) World Expansion: add villages, NPCs, day/night, weather, merchant, Butterfly Mansion. 5) Endgame: boss fights (Lower/Upper Moons, Hashira mentors), transformation routes, secret rewards. 6) Polish: UI/UX, effects, sound/music, performance tweaks (especially mobile).\n\nBelow are detailed system designs, tables and diagrams to fully specify each element, so that a Roblox Build AI can be instructed to generate the game coherently. Citations reference real Demonfall community knowledge and lore to ground the design in player expectations.\n\nWorld Layout and Progression\nThe world is a connected open map with natural transitions. Players first train in the Starting Village (Earth Biome), then venture into increasingly dangerous zones. A sample progression path is:\n\nmermaid\nКопировать\nflowchart LR\n A[Starting Village (earth biome)] --> B[Foggy Forest of Moonlit Hunts]\n B --> C[Butterfly Mansion (slayer HQ)]\n C --> D[Swordsmith Forge Village]\n B --> E[Snowy Mountain Pass (Beast Trainer)]\n D --> F[Haunted Road (night demon ambush)]\n F --> G[Spider Demon Caves (Lower Moon boss)]\n G --> H[Endgame Demon Fortress (Upper Moon boss)] \n H --> A\nStarting Village (Earth Biome): Safe zone by day; acts as hub. Families roll here, obby tutorial and controls demo are here.\nFoggy Forest & Moonlit Hunts: Shaded woods around village. By night, demons roam; civilians lock doors. Players hunt weaker demons (R1-R10 ranks). At dusk, random hunts or caravan assaults occur.\nButterfly Mansion (Training Area): A separate fantasy mansion zone where players can learn Full Concentration (max breath bar skill) via an advanced trainer. Also a healer NPC and story mentor appear.\nForge Village / Hayakawa: A blacksmith village with a crafting system (weapon upgrades, repairs). Also home to some trainers (e.g. Wind Breathing Trainer).\nSnowy Mountain Pass: Alpine trails, where the Beast Breathing Trainer hides in a cave. Contains boulder-obstacle parkour. Cold weather adds atmosphere.\nHaunted Road: Dark, rural road where ambush quests (escort villagers, defend against demon waves) happen.\nSpider Demon Caves: Mid-game boss arena for Spider Demon (Lower Moon 6). Twisting tunnels to explore. Rewards special materials.\nEndgame Demon Fortress / Summit: Icy fortress in highest mountains. Final Upper Moon bosses and minibosses spawn here. Challenging raid content.\nDay/Night Cycle: Demonfall had a day/night cycle reinstated. Here, night strengthens demons (higher spawn rate, they gain stealth). Demons (without Sun immunity) take damage or die in daylight, so survivors flee or burn at dawn. Weather effects (rain reduces visibility, heavy fog delays sight) add tactical depth. For example, fog can hide a rare demon or make parkour harder. Townsfolk NPC schedules add life (e.g., shops close at night, guards patrol).\n\nWorld Map Flow (Mermaid Diagram)\nmermaid\nКопировать\nflowchart TD\n SV[Starting Village] --> Fog[Foggy Forest]\n SV --> WV[Woodland Path (day) / Haunted Road (night)]\n Fog --> BF[Butterfly Mansion Zone]\n WV --> Forge[Swordsmith Village]\n Fog --> Mountain[Snowy Mountain Pass]\n Forge --> Caves[Spider Demon Caves]\n Mountain --> Caves\n Caves --> Fortress[Endgame Fortress]\n Fortress --> SV\nThis illustrates travel routes and unlocking: e.g., after mastering basic breaths, players can climb to the Mountain; after lower moons, unlock Fortress quests.\n\nFamily (Clan) System\nAt character creation, players choose a family/surname (based on Demon Slayer clans). Each clan grants passive buffs and cosmetic flair. Families are tiered by rarity (common vs. rare 0.5%-2%). Examples (drawn from Demonfall wiki/Reddit) include:\n\nFamily (Clan) Rarity Buffs/Perks\nKanroji (Kocho) 2% +15% damage to all attacks (katana and breathing).\nKamado 0.5% +20% EXP gain, +1 Sun Breathing form (if slayer), sunlight immunity as demon/hybrid.\nTomioka 1% Free Lunge and Shoulder Bash skills at start (+2 extra SP). (Deep Calm 11th form move if slayer.)\nAgatsuma (Zenitsu) 2% (Suggested) Faster M1 attacks or faster Thunder skill cooldown.\nShinazugawa 1% (Inspired) Large HP or Poise increase; fearsome appearance (e.g. a bandage mask).\nHashibira (Inosuke) 1% Increased heal and movement rate in combat (faster regen); unique boar mask cosmetic.\nUzui (Sound) 2% (Suggested) Slight XP boost or increased drop chance, reflecting Uzui's festival wealth.\nKanroji (Mist) 2% 15% damage buff (same as Kocho listed above, Mist-Kanroji).\nHimejima (Gyomei) 1% High Strength: e.g. +10% base strength or armor. (Hashira-highest HP.)\nTokito (Mist) 2% Breath regen bonus, faster skill cooldown on Mist breathing moves.\nKocho (Insect) 2% Health regen speed or poison resistance (thematically Insect).\nHashibira (Swap) 2% Worst according to players; no direct stat buff, possibly negative (fast hunger). (This matches Ubuyashiki lore: +10% XP, 2 SP but perma-burn penalty.)\n\nNotes on buffs: These values come from community data and lore. For instance, Kanroji clan \"deals +15% Damage on EVERYTHING\". Kamado clan \"gives +20% exp buff\" and \"sunlight immunity\" for hybrids. We mirror these in our design: families should clearly show their bonuses in the UI when chosen. The table above should expand to include all canonical clans in final prompt.\n\nBreathing Styles & Unlocks\nThe Slayer path centers on learning Breathing Styles. We classify them by difficulty tier:\n\nBeginner Tier (easy unlock): Water, Flame, Thunder, Beast.\nMid Tier: Wind, Mist, Stone, Love, Serpent, Sound.\nAdvanced Tier: Insect, Moon, Secret Sun (requires special conditions), future Hybrids.\nEach style has a trainer NPC and specific unlock requirements (level, currency, mission). For example, Beast Breathing (Inosuke's style) in Demonfall requires: Level ≥10, 10,000 Yen, Dual Nichirin Swords (obtained from the forge), and speaking to the Beast Trainer in a hidden mountain cave. The trainer's location can require a small navigation or parkour challenge, fitting the lore (e.g. \"in a remote cave obscured by bushes\"). Once requirements are met, the player pays a fee or completes a mini-quest (e.g. defeating wild beasts), then learns the new style.\n\nFor each style, the prompt will list: Trainer Location, Unlock Requirements, Quest Outline, and a brief moveset description. For example:\n\nBreathing Style Trainer / Location Requirements Moveset Highlights\nWater Urokodaki in Coast Forest (house w/ boulder) 1,000 Yen, Intro tutorial completed M1: Striking Tide (horizontal slash); M2: Water Wheel (charged swing); M3: Whirlpool (AoE). Passive: breath regen per M1.\nFlame Rengoku atop White Peak ~2,000 Yen, defeat smaller fire demon M1: Unknowing Fire (slash), M2: Rising Fire (axe swing), M3: Fire Burst (explosion).\nThunder Zenitsu's mentor in Thunder Shrine 1,500 Yen, Sprint trial completed M1: Thunderclap (fast stab), M2: Ram (shoulder dash), M3: Raijin (AoE shockwave).\nBeast Beast Trainer in Hidden Mountain Cave Lvl≥10, 10,000 Yen, Dual Katanas Fangs: Lunge (guard-break), Devour (combo), Spatial Awareness buff (7th Fang).\nMist Tokito's shrine in Mist Village Lvl≥15, 15,000 Yen, forest obby challenge M1: Barrage, M2: Judgment Cut, M3: True Flow. Good for dodging.\nWind Temple in Cloud Mountain (Uzui area) Lvl≥20, 20,000 Yen, windmill climbing challenge Fast M1 combo, M2 Spinning Edge, M3 Gale.\nStone Gyomei's shrine on Sacred Peak Lvl≥25, 25,000 Yen, break stone pillars quest Heavy M1, Earthshaker slam, Ground Split AoE.\nLove Mitsuri's garden sanctuary Lvl≥30, 30,000 Yen, heart-building quest (help NPC) Ribbon strike M1, Love Barrage, Vine grasp.\nSerpent Obanai's hidden garden Lvl≥40, 40,000 Yen, sneak through vines quest Constrict M1, Venom M2 (dot), Snake Pit AoE.\nSound Uzui's mansion fortress Lvl≥45, 45,000 Yen, rhythm game trial Drum thrust M1, Spark Sound M2 (projectile), Fisticuffs M3.\nInsect Shinobu's butterfly mansion Lvl≥50, 50,000 Yen, timed bug-catching trial Needle M1, Poison Cloud M2, Cocoon M3 (trap).\nMoon (Demon Hybrid) Kokushibo (Upper Moon 1) Must be Hybrid (demon+slayer), defeat Upper Moon Ultra-powerful moves (game finale).\nSun (Secret) Tanjiro's secret dojo (legend only) Special long quest + high prestige All-around ultimate combo style.\n\n(The exact numbers/quests above are suggestions; the prompt should allow Roblox AI to fill specifics.)\n\nEach breathing style's acquisition should use quest templates. For example, unlocking a style might require \"Kill X demons in Y minutes\", \"Collect Z rare items from monsters\", or \"Survive N minutes on a night patrol without dying\". We will define at least 10 templates and rotate them. For example:\n\nTimed Hunt: \"Slay 20 demons within 10 minutes.\"\nHorn Gathering: \"Collect 50 Demon Horns dropped by Night Demons.\"\nBoss Duel: \"Challenge a mini-boss (e.g. Demon Rank 5) solo, no deaths.\"\nStealth Trial: \"Escort NPC through forest without alerting demons.\"\nWave Defense: \"Survive 3 waves of attacking demons at a lookout.\"\nEscort Mission: \"Guard a merchant caravan for 5 minutes.\"\nTimed Parkour: \"Reach the mountaintop within 3 minutes (obstacle course).\"\nElite Slayers Assist: \"Join an elite Slayer NPC to defeat 5 demons.\"\nItem Delivery: \"Retrieve a legendary ore from mines for the blacksmith.\"\nPuzzle/Trial: \"Solve the runes at Butterfly Mansion to unlock skill.\"\nThese quests are reused for different styles by changing numbers, enemy types, or locations. The prompt will instruct the AI to randomize numbers each time or pick appropriate spawn zones.\n\nDemon Path and Transformations\nIf the player's prologue \"boss\" demon wins, the player becomes a Demon. Demons have: auto HP regen, extra mobility, and unique Blood Arts (special skills). The demon progression ladder is:\n\nMinor Demons (random spawns, weaker).\nDemon Ranks 1-10 (named demonic fighters).\nLower Moon Bosses 6-1.\nUpper Moon Bosses 5-1 (team raids).\nMuzan (Ultimate Demon Lord) optional endgame fight.\nPlayers can switch sides mid-game:\n\nA Slayer → Demon requires Muzan's Blood (quest reward or rare merchant item) and a timed \"corruption\" (24 real-hours that can speed up with level). High-level Slayers (w/ breathing) become a Hybrid demon (Sun-breathing enabled, lore nod to Kokushibo/Kyogai).\nA Demon → Slayer can happen via a Wipe Potion (sold by a rare NPC for high cost, or via achievement/quest), which resets your demon state and lets you join the Corps. Demons get exclusive quests (hunt high-value humans, ambush missions) and rewards (demon points, Blood Demon Art unlocks).\nDeath in normal play is lenient: players simply respawn at their chosen village spawn point with slight penalties (lost time only). Only the introductory fight converts the character.\n\nQuest and Mission System\nMissions are accepted from quest boards or NPCs in villages. They auto-complete for party members. Major mission types:\n\nHunt Missions: Kill X demons in region.\nDefense Missions: Defend an NPC/building from waves.\nEscort Missions: Protect a villager or merchant.\nInvestigation Missions: Solve a mystery (find missing person, track demon tracks).\nBoss Missions: Unlock and fight a specific Lower/Upper Moon boss (requires group).\nSurvival Missions: Survive a time period on Demon-infested road.\nDungeon Raids: Clear an enemy camp/cave for loot.\nA mission UI lets players select, track progress, and see rewards (currency, XP, skill points, special items).\n\nBoss Ladder\nDesign bosses in tiers, reflecting Demonfall's Lower/Upper Moons. At least include Lower Moon 6→1, Upper Moon 5→1, plus optional Hashira rivals. Each boss has unique mechanics (e.g. blind spots, minion adds, stage phases). Key bosses: Spider Demon (Lower 6), Bountiful Demon (multi-boss Lower 5), (Lower 1-3 as in series), then Upper Moons like Nakime (teleport map), Gyokko (water demon), Kokushibo (endgame hybrid boss), Muzan (final final). Defeating each yields rare drops (unique abilities or crafting mats).\n\nUI Design\nA mobile-first UI with a mirrored PC layout:\n\nMain Screen (HUD): Top corners: minimap (with quest markers). Bottom left: movement joystick (mobile), invisible on PC. Bottom right: four large buttons (Light Attack, Heavy Attack, Dodge/Dash, Block). A Breathing/Buff meter (like \"Ki bar\") floats near ability buttons. UI should be legible for one-thumb play.\n\nControls Overlay: Before drawing katana, show an overlay image describing control scheme (mobile and PC). Example labels in Russian: \"Нажмите ✤ для лёгкой атаки, □ для блока\". Once dismissed, player gets the katana.\n\nCharacter Creation Screen: Input name, select family (show family banners with buff icons, e.g. +15% DMG). Show preview of avatar. Simple mobile navigation (arrows or swipe).\n\nSpawn/Revival Screen: Let player set their spawn village (applied each death).\n\nSkill Tree UI: Grid with nodes (Breath styles, Strength, Stamina, special moves). Tapping a node shows name, description, cost in points. Branching tree lines. Accessible via menu.\n\nBreathing Styles Screen: List unlocked styles and locked ones (with \"How to unlock\" tips).\n\nQuest Log: Scrollable list of active/available quests, with objectives and map markers.\n\nMap: Full-screen regional map with icons (towns, trainers, quest locations, bosses). Zoomable on PC, pinch on mobile.\n\nInventory: Item slots, currency, equip weapon/amulets. Consumables (potions) quick-access.\n\nParty Panel: Shows party members (health bars, revive option). Button to invite/join party.\n\nSettings: Includes Mobile Control Editor: allow players to reposition on-screen buttons. PC controls listed as reference.\n\nExample Russian UI text:\n\n\"Выберите фамилию\" above family selection.\n\"Обучение дыханию: найти Учителя Воды\" in quest prompt.\nAttack button labeled \"Удар\".\n(These Russian bits are just illustrative; main prompt stays English.)\n\nTechnical Architecture\nStructure the game in modules with clear folder/script hierarchy. For example:\n\nbash\nКопировать\nWorkspace\n - Terrain, MapParts\nReplicatedStorage\n - Modules\n • CombatModule (functions for damage, parry, etc.)\n • MovementModule (sprint, dash, jump)\n • ControlModule (input handling, mobile vs PC)\n • BreathingModule (style stats, unlock logic)\n • DemonModule (blood arts, transformation)\n • QuestModule (quest templates, progress tracking)\n • NPCModule (ai behaviors, vendors, trainers)\n • BossModule (boss AI states/phases)\n • InventoryModule\n • SkillTreeModule (node data, apply upgrades)\n • PartyModule (sync group status, revive)\n • UI Module (menu handling, tooltips)\n • AudioModule (ambient/music cues)\n • WorldEventsModule (day/night cycle, random spawns)\n - Remotes\n • RemoteEvent_Attack\n • RemoteEvent_Defend\n • RemoteFunction_GetStatus\n • RemoteEvent_StartQuest\n • ...\n - Scripts (server)\n • Server/GameManager (initializes world, day/night)\n • Server/SpawnManager (handles respawns)\n • Server/NPCSpawner (spawns demons based on time)\n • Server/QuestManager\n - LocalScripts (client)\n • Client/CameraController\n • Client/UIManager\n • Client/InputManager\n • Client/PlayerStats (updates HUD)\nRemoteEvents/Functions Examples:\n\nRemoteEvent_DoMeleeAttack(player, targetID) - called by client to execute a slash.\nRemoteFunction_CheckQuestProgress(player) - returns progress data.\nRemoteEvent_TransformToDemon(player) - triggers demon-mode on server.\nWe must optimize: low-detail meshes, LOD for distant objects, mobile-friendly particle counts. Use simple lighting, avoid too many simultaneous particles. Day/night could be a single time-of-day skybox blend.\n\nDevelopment Phases & Roadmap\nPlan sprints/phases (illustrated in chart below). Each phase builds on last; features added incrementally.\n\nPhase Features Estimated Scope\n1: Foundation Map prototype, movement (mobile/PC), camera, UI basics, spawn/respawn, char. creation & family selection, tutorial obby ★★☆☆☆ (20%)\n2: Core Combat Katana equip/draw, basic attacks (light/heavy), stamina system, blocking, dodging, enemy NPC AI (basic demons), health system ★★★☆☆ (25%)\n3: Progression Quest board and simple quests (slayer & demon), skill point & tree system, first breathing style trainer (e.g. Water), stat upgrades, simple",
+  "answers": [
+    {
+      "field": "scale",
+      "ask": "Should the eight zones be one continuous world, or separate maps stitched by loading transitions?",
+      "answer": "Use one continuous open world with natural transitions between all eight zones, as specified in the world layout."
+    },
+    {
+      "field": "shape",
+      "ask": "Are the caves and the fortress instanced per party, or shared open world?",
+      "answer": "Make Spider Demon Caves and the Endgame Demon Fortress instanced per party so their boss encounters, scaling, and raid progression work cleanly."
+    }
+  ],
+  "scene_prompt": "Create a 3D open-world action RPG map in a Taishō-era fantasy setting, built as one continuous world with natural transitions across eight zones. Begin in a rural earth-biome Starting Village: a daytime-safe hub with family homes, a small tutorial obstacle course, and paths leading into surrounding woods. A foggy, moonlit Cursed Forest encircles the village and connects to the Butterfly Mansion training grounds, a forge village, and a snowy mountain pass with alpine trails, boulder parkour, and a hidden trainer cave. A woodland route becomes a dark Haunted Road, continuing toward the forge village and its blacksmith area. The forge village and mountain pass each lead to the Spider Demon Caves, a twisting tunnel dungeon instanced per party for boss encounters. Beyond the caves, high icy mountains rise to an Endgame Demon Fortress, also instanced per party, with raid chambers for final bosses. Include a return route from the fortress back toward the starting village. Use day-to-night lighting, rain, fog, and moonlight to reshape visibility across roads, forests, and settlements.",
+  "blob": "## Genre\nThe dominant genre is RPG, with Action secondary, because character progression, quests, trainers, and boss raids organize a combat-driven open world.\n\n## Shape and preset\nUse `world-hub-dungeon`: one connected overworld feeds the party-instanced Spider Demon Caves and Endgame Demon Fortress. The matched preset is Action RPG, retaining its sanctuary, economy cluster, hostile encounter grounds, and hostile emitters.\n\n## Config requirements\nUse `safezone-town` for the Starting Village; `social-hub` for its homes and the forge village’s blacksmith and training services; `hazard-aggro` for forest clearings, Haunted Road ambush ground, caves, and raid chambers; `npc-population` for villagers, trainers, and blacksmiths; `building-interior` for the Butterfly Mansion, hidden trainer cave, caves, and fortress chambers; `terrain-relief` for the snowy pass and icy mountains; and `landmark-focal` so mansion, forge, mountain, and fortress guide travel. Include the visible small tutorial obstacle course and boulder parkour.\n\n## Layout requirements\nPlace `spawner-npc` emitters in hostile clearings, along Haunted Road, inside cave encounter rooms, and in fortress raid chambers, never in the Starting Village. Place the layout half of `npc-population` at homes, training grounds, forge stations, and the hidden cave. No exact population count is stated.\n\n## Layout components\nBuild exactly eight named zones: Starting Village, Cursed Forest, Butterfly Mansion, forge village, snowy mountain pass, Haunted Road, Spider Demon Caves, and Endgame Demon Fortress. Roads and woodland paths form the stated branching graph; both forge and mountain routes converge on cave entrances, the caves lead to the fortress, and a return route closes toward the village. Use earth, forest, snow, rock, tunnels, chambers, fog, rain, and moonlit sightline shifts. Keep the overworld continuous while caves and fortress are separate party instances.\n\n## Render order\nUse `topdown`: connectivity, route convergence, and valid obstacle traversal must lead; the top-down is authoritative.\n\n## Scale, theme, and pipeline cost\nScale is huge, driven by eight zones plus two instances. The theme is Taishō-era demon fantasy. Use `P4` for instanced maps, `P3` for exterior-to-interior transitions, `P2` for tunnels and overlapping chambers, and `P6` for the playable tutorial and boulder obstacle chains.",
+  "agent_artifact": "# Scene prompt\nCreate a 3D open-world action RPG map in a Taishō-era fantasy setting, built as one continuous world with natural transitions across eight zones. Begin in a rural earth-biome Starting Village: a daytime-safe hub with family homes, a small tutorial obstacle course, and paths leading into surrounding woods. A foggy, moonlit Cursed Forest encircles the village and connects to the Butterfly Mansion training grounds, a forge village, and a snowy mountain pass with alpine trails, boulder parkour, and a hidden trainer cave. A woodland route becomes a dark Haunted Road, continuing toward the forge village and its blacksmith area. The forge village and mountain pass each lead to the Spider Demon Caves, a twisting tunnel dungeon instanced per party for boss encounters. Beyond the caves, high icy mountains rise to an Endgame Demon Fortress, also instanced per party, with raid chambers for final bosses. Include a return route from the fortress back toward the starting village. Use day-to-night lighting, rain, fog, and moonlight to reshape visibility across roads, forests, and settlements.\n\n# Agent decision\n## Genre\nThe dominant genre is RPG, with Action secondary, because character progression, quests, trainers, and boss raids organize a combat-driven open world.\n\n## Shape and preset\nUse `world-hub-dungeon`: one connected overworld feeds the party-instanced Spider Demon Caves and Endgame Demon Fortress. The matched preset is Action RPG, retaining its sanctuary, economy cluster, hostile encounter grounds, and hostile emitters.\n\n## Config requirements\nUse `safezone-town` for the Starting Village; `social-hub` for its homes and the forge village’s blacksmith and training services; `hazard-aggro` for forest clearings, Haunted Road ambush ground, caves, and raid chambers; `npc-population` for villagers, trainers, and blacksmiths; `building-interior` for the Butterfly Mansion, hidden trainer cave, caves, and fortress chambers; `terrain-relief` for the snowy pass and icy mountains; and `landmark-focal` so mansion, forge, mountain, and fortress guide travel. Include the visible small tutorial obstacle course and boulder parkour.\n\n## Layout requirements\nPlace `spawner-npc` emitters in hostile clearings, along Haunted Road, inside cave encounter rooms, and in fortress raid chambers, never in the Starting Village. Place the layout half of `npc-population` at homes, training grounds, forge stations, and the hidden cave. No exact population count is stated.\n\n## Layout components\nBuild exactly eight named zones: Starting Village, Cursed Forest, Butterfly Mansion, forge village, snowy mountain pass, Haunted Road, Spider Demon Caves, and Endgame Demon Fortress. Roads and woodland paths form the stated branching graph; both forge and mountain routes converge on cave entrances, the caves lead to the fortress, and a return route closes toward the village. Use earth, forest, snow, rock, tunnels, chambers, fog, rain, and moonlit sightline shifts. Keep the overworld continuous while caves and fortress are separate party instances.\n\n## Render order\nUse `topdown`: connectivity, route convergence, and valid obstacle traversal must lead; the top-down is authoritative.\n\n## Scale, theme, and pipeline cost\nScale is huge, driven by eight zones plus two instances. The theme is Taishō-era demon fantasy. Use `P4` for instanced maps, `P3` for exterior-to-interior transitions, `P2` for tunnels and overlapping chambers, and `P6` for the playable tutorial and boulder obstacle chains.\n",
+  "agent_notes": "## Genre\nThe dominant genre is RPG, with Action secondary, because character progression, quests, trainers, and boss raids organize a combat-driven open world.\n\n## Shape and preset\nUse `world-hub-dungeon`: one connected overworld feeds the party-instanced Spider Demon Caves and Endgame Demon Fortress. The matched preset is Action RPG, retaining its sanctuary, economy cluster, hostile encounter grounds, and hostile emitters.\n\n## Config requirements\nUse `safezone-town` for the Starting Village; `social-hub` for its homes and the forge village’s blacksmith and training services; `hazard-aggro` for forest clearings, Haunted Road ambush ground, caves, and raid chambers; `npc-population` for villagers, trainers, and blacksmiths; `building-interior` for the Butterfly Mansion, hidden trainer cave, caves, and fortress chambers; `terrain-relief` for the snowy pass and icy mountains; and `landmark-focal` so mansion, forge, mountain, and fortress guide travel. Include the visible small tutorial obstacle course and boulder parkour.\n\n## Layout requirements\nPlace `spawner-npc` emitters in hostile clearings, along Haunted Road, inside cave encounter rooms, and in fortress raid chambers, never in the Starting Village. Place the layout half of `npc-population` at homes, training grounds, forge stations, and the hidden cave. No exact population count is stated.\n\n## Layout components\nBuild exactly eight named zones: Starting Village, Cursed Forest, Butterfly Mansion, forge village, snowy mountain pass, Haunted Road, Spider Demon Caves, and Endgame Demon Fortress. Roads and woodland paths form the stated branching graph; both forge and mountain routes converge on cave entrances, the caves lead to the fortress, and a return route closes toward the village. Use earth, forest, snow, rock, tunnels, chambers, fog, rain, and moonlit sightline shifts. Keep the overworld continuous while caves and fortress are separate party instances.\n\n## Render order\nUse `topdown`: connectivity, route convergence, and valid obstacle traversal must lead; the top-down is authoritative.\n\n## Scale, theme, and pipeline cost\nScale is huge, driven by eight zones plus two instances. The theme is Taishō-era demon fantasy. Use `P4` for instanced maps, `P3` for exterior-to-interior transitions, `P2` for tunnels and overlapping chambers, and `P6` for the playable tutorial and boulder obstacle chains.",
+  "secondary": [
+    "Action"
+  ],
+  "spec": {
+    "genre": "RPG",
+    "secondary": [
+      "Action"
+    ],
+    "shape": "world-hub-dungeon",
+    "preset": "Action RPG",
+    "axes": {},
+    "options": [
+      {
+        "id": "safezone-town",
+        "text": "Starting Village as a daytime-safe hub.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "social-hub",
+        "text": "Homes in the Starting Village and the forge village's blacksmith and training services.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "hazard-aggro",
+        "text": "Hostile forest clearings, Haunted Road ambush ground, caves, and raid chambers.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "npc-population",
+        "text": "Villagers, trainers, and blacksmiths.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "building-interior",
+        "text": "The Butterfly Mansion, hidden trainer cave, caves, and fortress chambers.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "terrain-relief",
+        "text": "The snowy pass and icy mountains.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "landmark-focal",
+        "text": "The mansion, forge, mountain, and fortress guide travel.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "spawner-npc",
+        "text": "Hostile emitters.",
+        "visible": false,
+        "count": -1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "npc-population",
+        "text": "Villagers, trainers, and blacksmiths.",
+        "count": -1,
+        "where": "At homes, training grounds, forge stations, and the hidden cave."
+      },
+      {
+        "id": "spawner-npc",
+        "text": "Hostile emitters.",
+        "count": -1,
+        "where": "In hostile clearings, along Haunted Road, inside cave encounter rooms, and in fortress raid chambers; never in the Starting Village."
+      }
+    ],
+    "layout": {
+      "composition": "Top-down overview of a continuous overworld: Starting Village sits within the encircling Cursed Forest, with branching paths reaching the Butterfly Mansion, forge village, snowy mountain pass, Haunted Road, Spider Demon Caves, and Endgame Demon Fortress.",
+      "zones": [
+        {
+          "name": "Starting Village",
+          "role": "Daytime-safe hub with family homes, a small tutorial obstacle course, and paths into surrounding woods.",
+          "where": "Within the Cursed Forest.",
+          "size": ""
+        },
+        {
+          "name": "Cursed Forest",
+          "role": "Foggy, moonlit woodland surrounding the village and connecting the overworld routes.",
+          "where": "Encircling the Starting Village.",
+          "size": ""
+        },
+        {
+          "name": "Butterfly Mansion",
+          "role": "Training grounds and an enterable mansion.",
+          "where": "Connected from the Cursed Forest.",
+          "size": ""
+        },
+        {
+          "name": "forge village",
+          "role": "Village with blacksmith area and training services.",
+          "where": "Reached by woodland and Haunted Road routes; leads toward the cave entrances.",
+          "size": ""
+        },
+        {
+          "name": "snowy mountain pass",
+          "role": "Alpine trails, boulder parkour, and a hidden trainer cave.",
+          "where": "Connected from the Cursed Forest and leading toward the cave entrances.",
+          "size": ""
+        },
+        {
+          "name": "Haunted Road",
+          "role": "Dark ambush route continuing toward the forge village.",
+          "where": "Where a woodland route becomes a dark road.",
+          "size": ""
+        },
+        {
+          "name": "Spider Demon Caves",
+          "role": "Twisting tunnel dungeon, instanced per party for boss encounters.",
+          "where": "Reached from both the forge village and snowy mountain pass.",
+          "size": ""
+        },
+        {
+          "name": "Endgame Demon Fortress",
+          "role": "Party-instanced final-boss fortress with raid chambers.",
+          "where": "Beyond the Spider Demon Caves in the high icy mountains.",
+          "size": ""
+        }
+      ],
+      "paths": [
+        {
+          "from": "Starting Village",
+          "to": "Cursed Forest",
+          "kind": "woodland path"
+        },
+        {
+          "from": "Cursed Forest",
+          "to": "Butterfly Mansion",
+          "kind": "woodland path"
+        },
+        {
+          "from": "Cursed Forest",
+          "to": "forge village",
+          "kind": "road"
+        },
+        {
+          "from": "Cursed Forest",
+          "to": "snowy mountain pass",
+          "kind": "alpine trail"
+        },
+        {
+          "from": "Cursed Forest",
+          "to": "Haunted Road",
+          "kind": "woodland path"
+        },
+        {
+          "from": "Haunted Road",
+          "to": "forge village",
+          "kind": "road"
+        },
+        {
+          "from": "forge village",
+          "to": "Spider Demon Caves",
+          "kind": "tunnel"
+        },
+        {
+          "from": "snowy mountain pass",
+          "to": "Spider Demon Caves",
+          "kind": "tunnel"
+        },
+        {
+          "from": "Spider Demon Caves",
+          "to": "Endgame Demon Fortress",
+          "kind": "tunnel"
+        },
+        {
+          "from": "Endgame Demon Fortress",
+          "to": "Starting Village",
+          "kind": "road"
+        }
+      ],
+      "terrain": "Earth, forest, snow, rock, tunnels, chambers, fog, rain, and moonlit sightline shifts; high icy mountains beyond the caves.",
+      "props": [
+        {
+          "name": "family homes",
+          "count": -1,
+          "where": "Starting Village"
+        },
+        {
+          "name": "small tutorial obstacle course",
+          "count": -1,
+          "where": "Starting Village"
+        },
+        {
+          "name": "boulder parkour",
+          "count": -1,
+          "where": "snowy mountain pass"
+        },
+        {
+          "name": "hidden trainer cave",
+          "count": 1,
+          "where": "snowy mountain pass"
+        },
+        {
+          "name": "blacksmith area",
+          "count": 1,
+          "where": "forge village"
+        },
+        {
+          "name": "raid chambers",
+          "count": -1,
+          "where": "Endgame Demon Fortress"
+        }
+      ],
+      "boundary": "Open continuous overworld with separate party instances for the Spider Demon Caves and Endgame Demon Fortress.",
+      "scale_band": "huge",
+      "theme": "Taishō-era demon fantasy"
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "Connectivity, route convergence, and valid obstacle traversal must lead.",
+      "set_piece": false
+    },
+    "route": [
+      "P4",
+      "P3",
+      "P2",
+      "P6"
+    ],
+    "notes": [
+      "placement 'spawner-npc' added to options"
+    ],
+    "scene_prompt": "Create a 3D open-world action RPG map in a Taishō-era fantasy setting, built as one continuous world with natural transitions across eight zones. Begin in a rural earth-biome Starting Village: a daytime-safe hub with family homes, a small tutorial obstacle course, and paths leading into surrounding woods. A foggy, moonlit Cursed Forest encircles the village and connects to the Butterfly Mansion training grounds, a forge village, and a snowy mountain pass with alpine trails, boulder parkour, and a hidden trainer cave. A woodland route becomes a dark Haunted Road, continuing toward the forge village and its blacksmith area. The forge village and mountain pass each lead to the Spider Demon Caves, a twisting tunnel dungeon instanced per party for boss encounters. Beyond the caves, high icy mountains rise to an Endgame Demon Fortress, also instanced per party, with raid chambers for final bosses. Include a return route from the fortress back toward the starting village. Use day-to-night lighting, rain, fog, and moonlight to reshape visibility across roads, forests, and settlements."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "1986e1975066",
+  "served_by": "subagent/genre-choice -> gateway/production/gpt-5.6-terra",
+  "schema_degraded": false,
+  "reused_uprez": true,
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P4', 'P3', 'P0', 'tiered'] gives isometric"
+  ]
+}

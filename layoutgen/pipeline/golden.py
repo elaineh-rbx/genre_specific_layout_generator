@@ -74,6 +74,8 @@ BLOCKS = paths.ROUTING / "skill"
 ANSWERED = paths.ROUTING / "answered"
 SPECS = paths.ROUTING / "blob"
 E2E = paths.ROUTING / "e2e"
+AGENT = paths.ROUTING / "agent_spec"
+AGENT_GATEWAY = paths.ROUTING / "agent_spec_gateway"
 
 _lock = threading.Lock()
 _done = 0
@@ -390,7 +392,16 @@ SOURCES = {"rules": rules_rows, "skill": skill_rows, "answered": answered_rows,
            # The same spec-to-prompt path as `blob`, over specs built from nothing but
            # the author's message: `tools/run_e2e_pipeline.py` asks the intake questions
            # and answers them itself rather than importing either.
-           "e2e": lambda: blob_rows(E2E)}
+           "e2e": lambda: blob_rows(E2E),
+           # Configs decided by subagents reading the skill files, rather than by one
+           # wide gateway call over a compressed menu of them. It reads through
+           # `blob_rows` deliberately: `tools/build_agent_arm.py` writes this record
+           # shape with the blob arm's own body lifted into it, so the two arms differ
+           # in who chose the config and in nothing else.
+           "agent": lambda: blob_rows(AGENT),
+           # Corrected agent architecture: subagents hand off prose, and the LLM Gateway
+           # transcribes that prose into the strict spec consumed here.
+           "agent_gateway": lambda: blob_rows(AGENT_GATEWAY)}
 
 
 def run_one(row: Row, total: int, redo: bool, arm: str) -> Row:

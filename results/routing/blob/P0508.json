@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a compact, low-poly fantasy medieval kingdom defense map. A central castle sits at the end of one clearly visible, winding path; place a distinct enemy spawn area at the opposite end, with the path taking a basic goblin roughly 20 seconds to traverse unobstructed. Keep open terrain around the readable route. Add exactly two fixed construction locations beside the path: one Archer Tower site and one Barracks site, each with matching nearby build and upgrade interaction tiles; include a nearby castle-repair tile. The Archer Tower is a raised defensive tower, while the Barracks is a small military building that serves as the origin point for friendly swordsmen. Use only minimal supporting scenery so the castle, path, spawn area, construction sites, and interaction tiles remain immediately legible.",
-  "blob": "### Genre\nThe dominant genre is Strategy: a compact tower-defense defense run with a fixed enemy route terminating at a defended castle.\n\n### Shape and preset\nUse `lane-actor-track`, matching the Tower Defense preset. The preset remains recognisable: one continuous, readable winding lane runs from a visible enemy entry at one end to the castle core at the other. The route is compact rather than sprawling, sized for an unobstructed basic goblin traversal of roughly 20 seconds.\n\n### Config requirements\nUse visible `buildzone-grid` as exactly two fixed, clearly marked construction pads beside the route: one Archer Tower site and one Barracks site. Use `tracker-core` as the visible central castle at the route endpoint, with its associated castle-health tracking kept invisible. Use `spawner-npc` as the invisible wave-emitter placement within a visible, distinct enemy spawn clearing at the opposite route endpoint. No extra decorative or gameplay options are required.\n\n### Layout components\nPlace the castle in the rear third of the map as the dominant focal structure, with its approach facing the winding path. Put the enemy spawn clearing at the far opposite edge. Between them, carve one continuous earthen or cobbled enemy path through open, mostly flat grass terrain; it should bend broadly enough to be legible from above without concealing its full progression. Set the raised Archer Tower construction site beside an early-to-middle path bend with a nearby pair of build and upgrade interaction tiles. Set the small Barracks construction site beside a later path section closer to the castle, also with nearby build and upgrade tiles; leave a clear frontage for friendly swordsmen to emerge. Place the fifth, castle-repair interaction tile near the castle entrance without blocking the route. Keep all five tiles large, labeled, and visibly distinct from terrain. Use only sparse low-poly medieval support props, such as a few rocks, shrubs, fence fragments, and path-edge banners. The outer boundary is a shallow natural perimeter of low hills, trees, or cliff edges that contains the playable field without competing with the route. Compose the isometric view diagonally from spawn through the winding lane to the castle, keeping every critical landmark visible.\n\n### Render order\nUse `authored_plan`: generate the authoritative continuous tower-defense route and its endpoint relationships in code first, then dress top-down and isometric renders from that blueprint, because a broken or disconnected enemy lane makes the game unplayable.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by one compact route, one castle, one spawn clearing, and exactly two build locations. Theme is clean low-poly fantasy medieval kingdom, with high gameplay readability and minimal dressing. Pipeline modifier: `P6`, forced by the enemy track needing to be valid and continuously connected by construction.",
+  "blob": "### 1. Genre\nThe dominant genre is Strategy, specifically tower defense: enemy waves follow a fixed lane to a core castle while defenses are constructed beside it.\n\n### 2. Shape and preset\nUse `lane-actor-track`, matching the Tower Defense preset. It is a compact single winding medieval lane from an enemy origin to the castle core, with defendable ground along both sides. The preset remains recognisable; omit its extra generic choke emphasis because the requested winding route already supplies readable bends.\n\n### 3. Config requirements\nUse `buildzone-grid` as two clearly marked fixed construction pads beside the path: one reserved for the Archer Tower and one for the Barracks. Use `tracker-core` for the central castle at the path terminus. Use `choke-bottleneck` in the form of gentle, readable path bends that concentrate enemies without obscuring the route. The required raised Archer Tower, small Barracks, nearby labelled build/upgrade tiles, and castle-repair tile are visible scene geometry, but no additional decorative systems are needed.\n\n### 4. Layout requirements\nUse `spawner-npc`: one enemy-wave origin at the far end of the path, visibly aimed down the lane toward the castle. Site the `tracker-core` gameplay volume at the castle gate/end of the route. Place two fixed build-pad interaction positions, one at each construction site, with its corresponding upgrade position immediately adjacent; place one repair interaction position on the castle-facing side of the route near the castle. The pads are the only construction locations.\n\n### 5. Layout components\nThe map is one compact open grassy kingdom clearing. The enemy spawn occupies one edge; a single broad, winding dirt-and-stone path crosses the clearing and ends at the central castle gate on the opposite side. Size the route so an unobstructed basic goblin traverses it in about 20 seconds. Keep both bends visible from an elevated plan view and leave open combat ground around them. Place exactly two fixed sites beside the route: a raised stone Archer Tower platform overlooking a bend, and a small Barracks pad on the other side of the path with clear open ground for swordsmen to emerge. Put the paired build and upgrade tiles beside each respective site, and a repair tile near the castle. Use only sparse rocks, grass, and a few medieval boundary trees; natural outer hills or tree lines bound the clearing. Compose the castle as the largest focal mass, with the spawn-to-castle route legible in one frame.\n\n### 6. Render order\nUse `authored_plan` first: the enemy lane must be a single continuous, valid route from spawn to castle, so it is generated as a plan before top-down and isometric dressing.\n\n### 7. Scale, theme, and pipeline cost\nScale band: small, driven by one 20-second lane, one castle, one spawn, and exactly two build sites. Theme: clean low-poly fantasy medieval kingdom, gameplay-first readability. Pipeline modifiers: `P6` because the fixed enemy route must be valid by construction.",
   "spec": {
     "genre": "Strategy",
     "secondary": [],
@@ -24,100 +24,146 @@
     "options": [
       {
         "id": "buildzone-grid",
-        "text": "Exactly two fixed, clearly marked construction pads beside the route: one raised Archer Tower site at an early-to-middle bend and one small Barracks site closer to the castle, each with nearby build and upgrade interaction tiles.",
+        "text": "Two clearly marked fixed construction pads beside the winding path: one reserved for the raised Archer Tower and one for the small Barracks.",
         "visible": true,
         "count": 2
       },
       {
         "id": "tracker-core",
-        "text": "A visible central castle at the route endpoint, with its associated castle-health tracking kept invisible.",
+        "text": "The central castle at the path terminus, with its core gameplay volume at the castle gate.",
         "visible": true,
-        "count": -1
+        "count": 1
+      },
+      {
+        "id": "choke-bottleneck",
+        "text": "Gentle, readable bends in the path that concentrate enemies without obscuring the route.",
+        "visible": true,
+        "count": 2
       },
       {
         "id": "spawner-npc",
-        "text": "The invisible wave-emitter placement within the visible, distinct enemy spawn clearing at the opposite route endpoint.",
+        "text": "One enemy-wave origin at the far end of the path, visibly aimed down the lane toward the castle.",
         "visible": false,
-        "count": -1
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "tracker-core",
+        "text": "The castle core gameplay volume.",
+        "count": 1,
+        "where": "At the castle gate at the end of the route."
+      },
+      {
+        "id": "spawner-npc",
+        "text": "One enemy-wave origin visibly aimed down the lane toward the castle.",
+        "count": 1,
+        "where": "At the far edge of the clearing, at the start of the winding path opposite the castle."
       }
     ],
     "layout": {
-      "composition": "Isometric view composed diagonally from the enemy spawn at the far edge through the full winding lane to the castle in the rear third, with every critical landmark visible.",
+      "composition": "The castle is the largest focal mass at one side of the frame, with the enemy spawn at the opposite edge. The single broad winding route remains legible from spawn to castle in one elevated plan-view frame, with both bends and open combat ground visible.",
       "zones": [
         {
-          "name": "Enemy spawn clearing",
-          "role": "Visible enemy entry and location of the invisible wave-emitter placement.",
-          "where": "Far opposite edge from the castle",
-          "size": "small"
+          "name": "Enemy spawn edge",
+          "role": "Enemy waves enter the lane and travel toward the castle.",
+          "where": "One edge of the clearing, opposite the castle.",
+          "size": ""
         },
         {
-          "name": "Early-to-middle Archer Tower site",
-          "role": "Raised fixed construction pad beside a broad early-to-middle path bend.",
-          "where": "Beside an early-to-middle bend in the route",
-          "size": "small"
+          "name": "Winding enemy lane",
+          "role": "A single continuous route for goblins from spawn to the castle.",
+          "where": "Crossing the clearing from the spawn edge to the castle gate.",
+          "size": "Broad enough for a basic goblin to traverse unobstructed in about 20 seconds."
         },
         {
-          "name": "Late Barracks site",
-          "role": "Fixed construction pad with clear frontage for friendly swordsmen to emerge.",
-          "where": "Beside a later path section closer to the castle",
-          "size": "small"
+          "name": "Archer Tower construction site",
+          "role": "Fixed defensive construction site for the raised Archer Tower.",
+          "where": "Beside the route overlooking one bend.",
+          "size": ""
+        },
+        {
+          "name": "Barracks construction site",
+          "role": "Fixed defensive construction site and origin point for friendly swordsmen.",
+          "where": "On the other side of the path from the Archer Tower site, with clear open ground for swordsmen to emerge.",
+          "size": ""
         },
         {
           "name": "Castle core",
-          "role": "Defended endpoint of the enemy route and dominant focal structure.",
-          "where": "Rear third of the map",
-          "size": "dominant"
+          "role": "The route terminus and defended core.",
+          "where": "At the opposite side of the clearing from the enemy spawn.",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Enemy spawn clearing",
+          "from": "Enemy spawn edge",
           "to": "Castle core",
           "kind": "track"
         }
       ],
-      "terrain": "Open, mostly flat grass terrain with one continuous earthen or cobbled winding enemy path; a shallow natural perimeter of low hills, trees, or cliff edges surrounds the playable field.",
+      "terrain": "One compact open grassy kingdom clearing with a broad winding dirt-and-stone lane, open combat ground around both bends, sparse rocks and grass, and natural outer hills or tree lines.",
       "props": [
         {
-          "name": "Build and upgrade interaction tiles",
-          "count": 4,
-          "where": "Nearby the Archer Tower and Barracks construction sites"
-        },
-        {
-          "name": "Castle-repair interaction tile",
+          "name": "Central castle",
           "count": 1,
-          "where": "Near the castle entrance without blocking the route"
+          "where": "At the route terminus, forming the largest focal mass."
         },
         {
-          "name": "Rocks",
-          "count": -1,
-          "where": "Sparse support scenery"
+          "name": "Enemy spawn area",
+          "count": 1,
+          "where": "At the far edge of the path opposite the castle."
         },
         {
-          "name": "Shrubs",
-          "count": -1,
-          "where": "Sparse support scenery"
+          "name": "Raised stone Archer Tower platform",
+          "count": 1,
+          "where": "At the Archer Tower construction site beside a path bend."
         },
         {
-          "name": "Fence fragments",
-          "count": -1,
-          "where": "Sparse support scenery"
+          "name": "Small Barracks",
+          "count": 1,
+          "where": "At the Barracks construction site on the other side of the path."
         },
         {
-          "name": "Path-edge banners",
+          "name": "Build interaction tiles",
+          "count": 2,
+          "where": "One beside each fixed construction site."
+        },
+        {
+          "name": "Upgrade interaction tiles",
+          "count": 2,
+          "where": "Immediately adjacent to the corresponding build tile at each construction site."
+        },
+        {
+          "name": "Castle-repair tile",
+          "count": 1,
+          "where": "On the castle-facing side of the route near the castle."
+        },
+        {
+          "name": "Sparse rocks",
           "count": -1,
-          "where": "Along the enemy path"
+          "where": "Minimal supporting scenery around the clearing."
+        },
+        {
+          "name": "Grass",
+          "count": -1,
+          "where": "Across the open clearing."
+        },
+        {
+          "name": "Medieval boundary trees",
+          "count": -1,
+          "where": "Along the natural outer bounds of the clearing."
         }
       ],
-      "boundary": "A shallow natural perimeter of low hills, trees, or cliff edges containing the playable field without competing with the route.",
+      "boundary": "Natural outer hills or sparse tree lines bound the clearing.",
       "scale_band": "small",
-      "theme": "Clean low-poly fantasy medieval kingdom with high gameplay readability and minimal dressing."
+      "theme": "Clean low-poly fantasy medieval kingdom, gameplay-first readability."
     },
     "render": {
       "first": "authored_plan",
       "then": "topdown",
       "authoritative": "authored_plan",
-      "why": "a broken or disconnected enemy lane makes the game unplayable.",
+      "why": "The enemy lane must be a single continuous valid route from spawn to castle.",
       "set_piece": false
     },
     "route": [
@@ -129,7 +175,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

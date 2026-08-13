@@ -14,110 +14,124 @@
     }
   ],
   "scene_prompt": "Create a polished 3D Roblox map for a woodcutting game loop. A small medieval-style town center forms the spawn area, clearly separated from a naturalistic pine forest; a dirt path leads from town to the forest edge only a few seconds away on foot. The forest contains at least 20 detailed pine trees distributed across grassy, uneven terrain with rocks and bushes, with each tree grounded naturally and varied slightly in height, width, and rotation. Pine trees have brown textured trunks and layered green branches. Place the visible axe tool and woodcutting interaction space around the trees; keep the town and nearby forest as the complete playable area, with no mines, shops, combat zones, trading spaces, or quest areas.",
-  "blob": "### Genre\nThe dominant genre is Simulation: the original specifies a repeatable shared resource-gathering and inventory-progression loop. Use the Mining & Extraction preset as the closest resource-loop reference, but the prompt overrides its underground, vehicle, and broad shared-field assumptions.\n\n### Shape and preset\nUse `world-shared`, a single contiguous exterior map in which the town spawn and harvesting forest coexist on one surface. The matched preset is Mining & Extraction, retained only for its shared resource-gathering character; its `world-underground` shape and hauling routes do not apply.\n\n### Config requirements\nUse visible `path-circulation` as the short dirt footpath from the town centre directly to the forest edge. Use layout-only `collectible-nodes` for the individual interactive tree locations; do not render icons or pickups. Use visible `terrain-relief` for gentle uneven grassy ground between and within both zones. No other simulation or universal options apply: do not add a bazaar, shops, mining, roads, combat, interiors, or extra systems.\n\n### Layout components\nMake two adjacent zones. The small medieval town centre is the arrival and spawn clearing, occupying one end of the map; it is a compact paved or packed-earth square with a few non-enterable medieval-style timber-and-stone building facades defining its edge. The forest is the main, slightly larger harvesting zone immediately beyond it, beginning only a few seconds’ walk along the dirt path. It contains at least 20 detailed pine trees, spaced across grass and gentle uneven terrain; every tree has a naturally grounded brown textured trunk, layered green pine boughs, and slight variation in height, width, and rotation. Distribute low rocks and bushes through the forest without obscuring tree approaches. Keep clear interaction clearings around tree trunks and show the visible axe tool only as a hand-held tool at those tree spaces. Use dense pine growth and a soft rise of ground to separate the forest visually from the town, while keeping the dirt path obvious and unobstructed. Bound the compact play area with denser forest, rocks, and terrain at the outer edges rather than hard walls. Frame the town in the foreground or lower edge and the forest spreading behind it, with the path as the visual connector.\n\n### Render order\nUse `topdown`: the town-to-forest connection and clear walkable approaches to every harvesting tree must remain valid rather than being inferred from a look-first view.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the deliberately few-seconds walk between the only two zones and the minimum 20-tree forest. Theme is polished stylized Roblox: compact medieval town meeting a naturalistic, appealing pine woodland. Use `tiered` for the gentle non-overhanging terrain relief; no overhangs, interiors, separate maps, or volumetric play force further cost.",
+  "blob": "### Genre\n`Simulation` is dominant: the game is a shared resource-gathering loop centered on repeatedly harvesting wood. There is no secondary genre.\n\n### Shape and preset\nUse `world-open`, a single compact shared exterior containing the town and its adjacent forest on one continuous surface. The closest published preset is Incremental Simulator for its shared-world form, but its progression-shop bundle does not apply, so the preset is none.\n\n### Config requirements\nUse `path-circulation` as the short dirt walking path from the town center directly to the forest edge. Use `resource-shared` for the pine-forest harvesting ground, visibly distinct from the town and large enough to distribute tree interactions. Use `collectible-nodes` for the rendered harvestable pine trees. Use `terrain-relief` for gently uneven grassy ground, low rises, and naturally seated rocks rather than flat terrain.\n\n### Layout requirements\nPlace `collectible-nodes` at at least 20 individual pine-tree interaction sites throughout the forest, spaced with clear approach room around each trunk and varied across its shallow rises and clearings. No other placed gameplay volumes are required by this scene.\n\n### Layout components\nThe small medieval town center is the spawn zone at the near side of the map, with a compact cluster of polished medieval buildings and an open central arrival space; it is a visual start area, not a commercial district. A dirt path leaves the town and reaches the forest edge within a few seconds on foot. Beyond it, the naturalistic pine forest is the main harvesting zone, occupying most of the map and clearly separated by the path transition and thicker tree line. Include at least 20 detailed pine trees, each with a brown textured trunk, layered green branches, a sturdy grounded base, and slight height, width, and rotation variation. Scatter grass, rocks, bushes, and gentle uneven terrain between trees. Keep the outer boundary natural and unobtrusive, using dense forest and terrain edges; do not add mines, shops, combat areas, trade spaces, or quest zones. Frame the town in the foreground and forest beyond it so their immediate connection reads clearly.\n\n### Render order\nUse `isometric`: the compact town-to-forest relationship is visually led and does not require topology validation.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the intentionally few-seconds walk from spawn to the forest and the minimum 20-tree harvesting area. Theme: polished Roblox medieval town meeting a naturalistic, stylized pine forest. Use `tiered` because the playable ground has visible gentle relief but no overhanging surfaces.",
   "spec": {
     "genre": "Simulation",
     "secondary": [],
-    "shape": "world-shared",
-    "preset": "Mining & Extraction",
+    "shape": "world-open",
+    "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "path-circulation",
-        "text": "Short dirt footpath from the town centre directly to the forest edge, only a few seconds away on foot.",
+        "text": "A short dirt walking path leading directly from the town center to the forest edge within a few seconds on foot.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "resource-shared",
+        "text": "A naturalistic pine-forest harvesting ground, visibly distinct from the town and large enough to distribute tree interactions.",
         "visible": true,
         "count": -1
       },
       {
         "id": "collectible-nodes",
-        "text": "Individual interactive tree locations around the harvesting pines; do not render icons or pickups.",
+        "text": "Rendered harvestable pine trees, each a woodcutting interaction site.",
         "visible": false,
         "count": 20
       },
       {
         "id": "terrain-relief",
-        "text": "Gentle uneven grassy ground between and within the town and forest zones, with a soft rise separating the forest visually from town.",
+        "text": "Gently uneven grassy ground with low rises and naturally seated rocks rather than flat terrain.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "collectible-nodes",
+        "text": "At least 20 individual pine-tree interaction sites with clear approach room around each trunk.",
+        "count": 20,
+        "where": "Throughout the forest, varied across shallow rises and clearings."
+      }
+    ],
     "layout": {
-      "composition": "Frame the compact town at the foreground or lower edge, with the slightly larger pine forest spreading behind it. The obvious unobstructed dirt path is the visual connector from the town centre to the forest edge.",
+      "composition": "The compact medieval town fills the foreground at the near side of the map, with its open arrival space facing the dirt path. The path leads directly into the pine forest beyond, making the immediate town-to-forest connection clear.",
       "zones": [
         {
-          "name": "Medieval town centre",
-          "role": "Arrival and spawn clearing, formed as a compact paved or packed-earth square edged by non-enterable medieval timber-and-stone building facades.",
-          "where": "One end of the map, foreground or lower edge.",
+          "name": "Medieval town center",
+          "role": "Visual spawn and arrival area.",
+          "where": "Near side of the map, in the foreground.",
           "size": "Small and compact."
         },
         {
-          "name": "Harvesting pine forest",
-          "role": "Main harvesting zone with clear interaction clearings around tree trunks and visible hand-held axe tools at those tree spaces.",
-          "where": "Immediately beyond the town, behind it along the dirt path.",
-          "size": "Slightly larger than the town zone."
+          "name": "Pine forest harvesting zone",
+          "role": "Main shared wood-harvesting area.",
+          "where": "Beyond the town, past the dirt-path transition and thicker tree line.",
+          "size": "Occupies most of the map."
         }
       ],
       "paths": [
         {
-          "from": "Medieval town centre",
-          "to": "Harvesting pine forest",
-          "kind": "dirt footpath"
+          "from": "Medieval town center",
+          "to": "Pine forest harvesting zone",
+          "kind": "road"
         }
       ],
-      "terrain": "Grass with gentle uneven non-overhanging relief throughout both zones; a soft ground rise and dense pine growth visually separate forest from town.",
+      "terrain": "Grassy, gently uneven terrain with low rises, shallow clearings, rocks, bushes, and dense pine growth.",
       "props": [
         {
-          "name": "Non-enterable medieval-style timber-and-stone building facades",
+          "name": "Polished medieval buildings",
           "count": -1,
-          "where": "Defining the edge of the town centre square."
+          "where": "Clustered around the open central arrival space in the town center."
         },
         {
-          "name": "Detailed pine trees with grounded brown textured trunks and layered green pine boughs, varied in height, width, and rotation",
+          "name": "Detailed pine trees with brown textured trunks and layered green branches",
           "count": 20,
-          "where": "Distributed across the forest on grassy uneven terrain, with clear approaches around each trunk."
+          "where": "Distributed through the forest across shallow rises and clearings."
         },
         {
-          "name": "Low rocks",
+          "name": "Grass",
           "count": -1,
-          "where": "Scattered through the forest without obscuring tree approaches."
+          "where": "Scattered between trees across the forest ground."
+        },
+        {
+          "name": "Rocks",
+          "count": -1,
+          "where": "Naturally seated on the uneven grassy ground between trees."
         },
         {
           "name": "Bushes",
           "count": -1,
-          "where": "Scattered through the forest without obscuring tree approaches."
-        },
-        {
-          "name": "Visible hand-held axe tool",
-          "count": -1,
-          "where": "At tree interaction spaces in the harvesting forest."
+          "where": "Scattered between trees in the forest."
         }
       ],
-      "boundary": "Denser forest, rocks, and terrain at the compact play area's outer edges; no hard walls.",
+      "boundary": "Natural and unobtrusive outer boundary formed by dense forest and terrain edges.",
       "scale_band": "small",
-      "theme": "Polished stylized Roblox; compact medieval town meeting a naturalistic, appealing pine woodland."
+      "theme": "Polished Roblox medieval town meeting a naturalistic, stylized pine forest."
     },
     "render": {
-      "first": "topdown",
-      "then": "isometric",
-      "authoritative": "topdown",
-      "why": "the town-to-forest connection and clear walkable approaches to every harvesting tree must remain valid.",
+      "first": "isometric",
+      "then": "topdown",
+      "authoritative": "isometric",
+      "why": "the compact town-to-forest relationship is visually led and does not require topology validation.",
       "set_piece": false
     },
     "route": [
       "tiered"
     ],
-    "notes": [],
+    "notes": [
+      "visible on 'collectible-nodes' set from goes_to=layout"
+    ],
     "scene_prompt": "Create a polished 3D Roblox map for a woodcutting game loop. A small medieval-style town center forms the spawn area, clearly separated from a naturalistic pine forest; a dirt path leads from town to the forest edge only a few seconds away on foot. The forest contains at least 20 detailed pine trees distributed across grassy, uneven terrain with rocks and bushes, with each tree grounded naturally and varied slightly in height, width, and rotation. Pine trees have brown textured trunks and layered green branches. Place the visible axe tool and woodcutting interaction space around the trees; keep the town and nearby forest as the complete playable area, with no mines, shops, combat zones, trading spaces, or quest areas."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
-  "mapper_notes": [
-    "blob asked for topdown first; the route ['P0', 'tiered'] gives isometric"
-  ]
+  "mapper_notes": []
 }

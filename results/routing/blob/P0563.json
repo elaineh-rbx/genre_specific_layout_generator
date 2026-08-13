@@ -14,155 +14,110 @@
     }
   ],
   "scene_prompt": "Create a colorful, fun multiplayer survival game layout with a safe central lobby that connects to three separate random survival maps. Each map is a compact, easy-to-navigate arena that players can cross in about half a minute, with open areas and clear routes suitable for disaster survival and monster encounters. Leave space in the lobby for a shop area and future map or update portals.",
-  "blob": "### 1. Genre\nThe dominant genre is Survival, specifically disaster-and-monster survival. The lobby is a supporting social staging space, not a second genre.\n\n### 2. Shape and preset\nUse `arena-contained` for each survival map: each is a compact, self-contained arena with readable routes and open refuge areas. Match the Disaster Survival preset, while extending the overall build with a lobby and three selectable map destinations; the preset remains recognisable.\n\n### 3. Config requirements\nUse visible `hazard-kill` for disaster-threat regions and dangerous monster-facing ground within each arena. Use invisible `spawner-npc` for monster entry origins, positioned at arena edges or distinct threat pockets rather than in central circulation. Use visible `terrain-tiered` for a few raised safe spots and clear elevation landmarks during disasters. Use visible `destructible-cluster` only where arena structures are intended to read as collapse-prone disaster set dressing. Use visible `social-hub` in the safe lobby as an open gathering and shop-ready central area. Use both-visible-and-invisible `teleporter-link` for the three physical map portals and their destination links.\n\n### 4. Layout components\nPlace one safe central lobby as the arrival hub, sized for a multiplayer group and visually distinct from the danger maps. Put a clear shop area along one side of the lobby, leaving a second open side or perimeter bay for future update portals. Arrange exactly three evenly legible portal gates around the lobby, each leading to a separate random survival map.\n\nBuild each destination as a single compact contained arena, crossable in about half a minute. Give every arena a broad central open area, several clear looping or perimeter routes, scattered cover and a small number of raised platforms or hills for temporary high ground. Keep hostile-origin pockets away from the primary routes. Use varied colorful terrain, light structures, and disaster-ready props; collapsing structures should sit around edges or landmark zones so they do not clutter navigation. Enclose each map with readable world-edge barriers, cliffs, walls, or hazard boundaries. Frame the lobby centrally, with the three maps treated as separate destination spaces rather than adjacent terrain.\n\n### 5. Render order\nUse `topdown`: route clarity and safe, navigable disaster arenas matter to playability, so establish each compact arena plan before dressing it isometrically.\n\n### 6. Scale, theme, and pipeline cost\nScale is medium overall: one compact lobby plus exactly three compact survival arenas. Theme is colorful, playful, readable disaster-survival adventure. Use `P4` because the lobby and three random destination arenas are separate maps. Use `P0` for tiered high ground and `CHECK` only if a hazard is represented as a volumetric region; otherwise no additional capture cost is required.",
+  "blob": "### 1. Genre\nThe dominant genre is Survival, specifically disaster survival with hostile monster encounters; the safe lobby is support space, not a secondary genre.\n\n### 2. Shape and preset\nUse `space-staged`, taken from outside Survival’s usual shapes, to keep the safe central lobby fully separate from the survival arenas. Preset: none. The Disaster Survival preset informs the compact threat arenas, but its bounded single-map shape is replaced by a lobby plus three distinct maps.\n\n### 3. Config requirements\nUse `social-hub` for a colorful, safe central gathering lobby with a clearly reserved shop zone and room for future portal additions. Use `teleporter-link` as three prominent outbound portal gates connecting the lobby to the separate maps. Use `hazard-kill` for clearly readable disaster-danger regions within each arena.\n\n### 4. Layout requirements\nPlace `teleporter-link` markers as three outbound gates around the lobby perimeter, each paired with a return marker at the protected entry edge of its respective arena. Place `spawner-npc` once in each survival map, set in a peripheral monster-entry pocket away from the arrival point and main crossing route. No additional placed pickups, scoring volumes, or checkpoints are specified by the scene prompt.\n\n### 5. Layout components\nBuild one central lobby, spacious enough for a shop area, three map portals, and future update portals; arrange its portal wall or ring so all destinations are immediately legible. Create exactly three separate random survival maps. Each is a compact, easy-to-navigate arena that a player can cross in about half a minute, with a protected arrival edge, broad open survival ground, clear circulation routes, and distinct disaster-danger pockets. Keep each map visually varied while maintaining the same readable compact scale. Bound every arena with strong natural or constructed edges that retain players and frame the hazard space. Compose the lobby as the visual center, with the three arena maps presented as separate destinations rather than adjacent districts.\n\n### 6. Render order\nUse `isometric`: the colorful lobby and arena identity should lead visually, while their simple open-route plans can be projected afterward without topology-first generation.\n\n### 7. Scale, theme, and pipeline cost\nScale band: medium, driven by one central lobby plus three compact, separately loaded arenas. Theme: colorful, playful, high-clarity disaster-survival spaces. Pipeline modifier: `P4`, because the lobby and exactly three random survival maps are separate maps rather than one shared surface.",
   "spec": {
     "genre": "Survival",
     "secondary": [],
-    "shape": "arena-contained",
-    "preset": "Disaster Survival",
+    "shape": "space-staged",
+    "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "hazard-kill",
-        "text": "Disaster-threat regions and dangerous monster-facing ground within each compact arena.",
+        "text": "Clearly readable disaster-danger regions within each arena.",
         "visible": true,
         "count": -1
       },
       {
         "id": "spawner-npc",
-        "text": "Monster entry origins at arena edges or in distinct threat pockets, kept away from central circulation and primary routes.",
+        "text": "A peripheral monster-entry pocket in each survival map, away from the arrival point and main crossing route.",
         "visible": false,
-        "count": -1
-      },
+        "count": 3
+      }
+    ],
+    "layout_placement": [
       {
-        "id": "terrain-tiered",
-        "text": "A few raised safe spots and clear elevation landmarks for temporary high ground during disasters.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "destructible-cluster",
-        "text": "Collapse-prone disaster structures around arena edges or landmark zones, kept out of navigation routes.",
-        "visible": true,
-        "count": -1
+        "id": "spawner-npc",
+        "text": "A peripheral monster-entry pocket in each survival map, away from the arrival point and main crossing route.",
+        "count": 3,
+        "where": "Once in each survival map, in a peripheral monster-entry pocket away from the protected arrival edge and the main crossing route."
       }
     ],
     "layout": {
-      "composition": "A safe central lobby anchors the layout, with three evenly legible portal gates arranged around it; each gate leads to a separate destination arena rather than adjacent terrain. Within each arena, a broad open centre is surrounded by looping or perimeter routes, edge-side threat pockets, and raised high-ground landmarks.",
+      "composition": "The colorful safe central lobby is the visual center, with a legible portal wall or ring around its perimeter presenting three separate arena destinations rather than adjacent districts.",
       "zones": [
         {
-          "name": "Central Lobby",
-          "role": "Safe arrival hub, multiplayer gathering area, shop-ready space, and portal staging space.",
+          "name": "Central lobby",
+          "role": "Safe gathering lobby with a reserved shop area, three map portals, and room for future update portals.",
           "where": "centre",
-          "size": "medium"
+          "size": "spacious"
         },
         {
-          "name": "Shop Area",
-          "role": "Reserved shop space along one side of the lobby.",
-          "where": "one side of the central lobby",
-          "size": ""
-        },
-        {
-          "name": "Future Update Portal Bay",
-          "role": "Open perimeter space reserved for future map or update portals.",
-          "where": "second open side or perimeter of the lobby",
-          "size": ""
-        },
-        {
-          "name": "Survival Map 1",
-          "role": "Separate compact disaster-and-monster survival arena with open refuge ground, looping routes, hostile-origin pockets, and temporary high ground.",
-          "where": "destination through one lobby portal",
+          "name": "Survival map 1",
+          "role": "A compact, easy-to-navigate survival arena with protected arrival, open survival ground, clear circulation, disaster-danger pockets, and a peripheral monster-entry pocket.",
+          "where": "separate destination from the lobby",
           "size": "compact; crossable in about half a minute"
         },
         {
-          "name": "Survival Map 2",
-          "role": "Separate compact disaster-and-monster survival arena with open refuge ground, looping routes, hostile-origin pockets, and temporary high ground.",
-          "where": "destination through one lobby portal",
+          "name": "Survival map 2",
+          "role": "A compact, easy-to-navigate survival arena with protected arrival, open survival ground, clear circulation, disaster-danger pockets, and a peripheral monster-entry pocket.",
+          "where": "separate destination from the lobby",
           "size": "compact; crossable in about half a minute"
         },
         {
-          "name": "Survival Map 3",
-          "role": "Separate compact disaster-and-monster survival arena with open refuge ground, looping routes, hostile-origin pockets, and temporary high ground.",
-          "where": "destination through one lobby portal",
+          "name": "Survival map 3",
+          "role": "A compact, easy-to-navigate survival arena with protected arrival, open survival ground, clear circulation, disaster-danger pockets, and a peripheral monster-entry pocket.",
+          "where": "separate destination from the lobby",
           "size": "compact; crossable in about half a minute"
         }
       ],
       "paths": [
         {
-          "from": "Central Lobby",
-          "to": "Survival Map 1",
+          "from": "Central lobby",
+          "to": "Survival map 1",
           "kind": "portal"
         },
         {
-          "from": "Central Lobby",
-          "to": "Survival Map 2",
+          "from": "Central lobby",
+          "to": "Survival map 2",
           "kind": "portal"
         },
         {
-          "from": "Central Lobby",
-          "to": "Survival Map 3",
+          "from": "Central lobby",
+          "to": "Survival map 3",
           "kind": "portal"
-        },
-        {
-          "from": "Central open area",
-          "to": "Arena perimeter routes",
-          "kind": "open ground"
         }
       ],
-      "terrain": "Varied colorful terrain with broad central open areas, scattered cover, small raised platforms or hills, light structures, disaster-ready props, and edge-side collapse-prone landmarks.",
-      "props": [
-        {
-          "name": "Physical map portal gates",
-          "count": 3,
-          "where": "arranged evenly around the central lobby"
-        },
-        {
-          "name": "Scattered cover",
-          "count": -1,
-          "where": "across each survival arena"
-        },
-        {
-          "name": "Raised platforms or hills",
-          "count": -1,
-          "where": "within each survival arena"
-        },
-        {
-          "name": "Collapsing structures",
-          "count": -1,
-          "where": "arena edges or landmark zones"
-        }
-      ],
-      "boundary": "Each survival map is enclosed by readable world-edge barriers, cliffs, walls, or hazard boundaries; the lobby and three arenas are separate destination spaces.",
+      "terrain": "Broad open survival ground with clear circulation routes and distinct disaster-danger pockets; each arena is visually varied while retaining the same compact readable scale.",
+      "props": [],
+      "boundary": "Every survival arena is bounded by strong natural or constructed edges that retain players and frame the hazard space.",
       "scale_band": "medium",
-      "theme": "colorful, playful, readable disaster-survival adventure"
+      "theme": "colorful, playful, high-clarity disaster-survival spaces"
     },
     "render": {
-      "first": "topdown",
-      "then": "isometric",
-      "authoritative": "topdown",
-      "why": "route clarity and safe navigable disaster arenas matter to playability.",
+      "first": "isometric",
+      "then": "topdown",
+      "authoritative": "isometric",
+      "why": "the simple open-route plans can be projected afterward without topology-first generation.",
       "set_piece": false
     },
     "route": [
-      "P0",
       "P4"
     ],
     "notes": [
-      "Dropped `social-hub`: it is not a canonical option ID for the dominant Survival genre.",
-      "Dropped `teleporter-link`: it is not a canonical option ID for the dominant Survival genre.",
-      "`CHECK` was not emitted because volumetric hazard representation was conditional rather than specified."
+      "`space-staged` is used from outside Survival’s usual shape set.",
+      "`social-hub` and `teleporter-link` were named in the blob but are not options in the dominant Survival genre, so they were not transcribed into options or layout placement.",
+      "The requested three outbound portal gates and paired return markers are retained as portal connections between the lobby and the three separate survival-map zones."
     ],
     "scene_prompt": "Create a colorful, fun multiplayer survival game layout with a safe central lobby that connects to three separate random survival maps. Each map is a compact, easy-to-navigate arena that players can cross in about half a minute, with open areas and clear routes suitable for disaster survival and monster encounters. Leave space in the lobby for a shop area and future map or update portals."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
-  "mapper_notes": [
-    "blob asked for topdown first; the route ['P0', 'tiered'] gives isometric"
-  ]
+  "mapper_notes": []
 }

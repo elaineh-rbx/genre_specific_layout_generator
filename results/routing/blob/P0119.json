@@ -19,94 +19,107 @@
     }
   ],
   "scene_prompt": "Create a bright, stylised 3D team shooter map with expansive grassy fields and several tall, simple towers distributed across the terrain as central contested landmarks. Arrange the towers with open ground and clear approaches between them, providing distinct areas for two opposing teams to converge and fight; include space for accompanying bot characters.",
-  "blob": "### Genre\nDominant genre: Shooter. Two opposing teams fight to hold tower positions, making this a control-focused team shooter rather than a general action arena.\n\n### Shape and preset\nUse `lane-network`, matched from the King of the Hill preset. Here the lanes are broad, readable grassy approaches between several tower control points rather than enclosed urban corridors. Retain the preset’s control-point emphasis but omit unrequested cover arrays.\n\n### Config requirements\n`control-zone` is both visible geometry and invisible layout: each tall tower has a clearly marked capture floor or ring at its base, with an occupancy volume placed over it. `cover-elevated` is visible geometry: tower platforms, stair access, and upper firing positions overlook the open approaches. Reserve navigable open ground around each tower for the accompanying bot characters; bot behaviour and spawning are not rendered.\n\n### Layout components\nBuild one expansive outdoor battlefield of bright green grass. Distribute several tall, simple towers across the central and mid-field terrain, spaced far enough apart that each becomes a separate contested area. Each tower has a broad capture zone, an accessible elevated platform, and clear open approaches from multiple directions. Connect the towers with wide mown-grass routes through the fields, preserving long but readable sightlines and enough open circulation for two teams and their bots to converge without a single cramped choke. Keep the terrain mostly level, with gentle rises only where needed to seat tower stairs. The boundary is an unobtrusive outer edge beyond the playable grass, kept visually distant from the tower fights. Compose the map as a broad central field with towers forming a legible triangle or loose chain in plan, while the tower heights dominate the isometric silhouette.\n\n### Render order\nUse `isometric`: the open-field composition and tall stylised tower silhouette lead, and invalid lane topology would not make the shooter unplayable.\n\n### Scale, theme, and pipeline cost\nScale band: large, driven by expansive fields and several separated tower objectives. Theme: bright, stylised, simple toy-like team battlefield. Pipeline modifier: `P2`, because accessible elevated tower platforms sit above and occlude the ground surface beneath them.",
+  "blob": "### Genre\nThe dominant genre is Shooter: two opposing teams use simple weapons to contest and hold tower objectives, with accompanying bots participating in the same field conflict.\n\n### Shape and preset\nUse `open-battlefield`, taken from Shooter’s usual shapes. It is a single broad grassy combat field with several dispersed tower objectives rather than a constrained lane network. Preset: none; the King of the Hill objective applies, but the requested open terrain overrides its usual lane-based shape.\n\n### Config requirements\nUse `control-zone` for a clearly readable held-point area at the base or accessible platform of every tower. Use `spawn-teambase` for two screened opposing team base areas at far, balanced edges of the field. Use `cover-elevated` for the tall simple towers as climbable elevated firing and observation positions, with exposed approaches rather than dense urban cover.\n\n### Layout requirements\nPlace `control-zone` volumes, one centered on each tower’s contestable hold area. Place `spawn-teambase` markers in two equal-sized protected bases on opposite ends of the map, each with several open approach routes toward the nearest towers and adequate room for players and accompanying bots to assemble. No separate enemy-wave emitters or pickup placements are required.\n\n### Layout components\nBuild one expansive grass field divided informally by several tall, simple towers distributed across its center and flanks. Each tower is a central landmark with a readable capture area and accessible elevated levels; leave broad open ground around it so both teams can see and converge on it. Set the two team bases at opposing outer field edges, screened from direct cross-map fire by low rises or tower-facing approach geometry. Connect each base to the tower cluster through multiple wide grass routes, ensuring neither side owns a uniquely safe route. Terrain remains mostly smooth, bright green grass with subtle low undulations only. The outer boundary is a distant natural field edge. Compose the frame around the tower cluster, with both bases visibly opposed across the open space.\n\n### Render order\nRender `isometric` first and treat it as authoritative, since this is an open combat field whose intended visual readability leads the plan rather than requiring a procedurally valid track or maze.\n\n### Scale, theme, and pipeline cost\nUse a large scale, driven by expansive team approaches and several separated contested towers. Theme: bright, stylised military-light shooter landscape, with clean simple tower silhouettes and vivid grass. Pipeline modifier: `P0`; the map is one contiguous ground surface, and the towers do not require overlapping traversable layers.",
   "spec": {
     "genre": "Shooter",
     "secondary": [],
-    "shape": "lane-network",
-    "preset": "King of the Hill",
+    "shape": "open-battlefield",
+    "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "control-zone",
-        "text": "Each tall tower has a clearly marked capture floor or ring at its base, with an occupancy volume placed over it.",
+        "text": "Clearly readable held-point areas at the base or accessible platform of every tower.",
         "visible": true,
         "count": -1
       },
       {
+        "id": "spawn-teambase",
+        "text": "Two screened opposing team base areas at far, balanced edges of the field.",
+        "visible": true,
+        "count": 2
+      },
+      {
         "id": "cover-elevated",
-        "text": "Tower platforms, stair access, and upper firing positions overlook the open approaches.",
+        "text": "Tall simple towers as climbable elevated firing and observation positions, with exposed approaches rather than dense urban cover.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "control-zone",
+        "text": "Volumes, one centered on each tower’s contestable hold area.",
+        "count": -1,
+        "where": "Centered on each tower’s contestable hold area."
+      },
+      {
+        "id": "spawn-teambase",
+        "text": "Markers in two equal-sized protected bases on opposite ends of the map, each with several open approach routes toward the nearest towers and room for players and accompanying bots to assemble.",
+        "count": 2,
+        "where": "In equal-sized protected bases on opposite ends of the map."
+      }
+    ],
     "layout": {
-      "composition": "A broad central grassy field, with several tall towers forming a legible triangle or loose chain in plan; tower heights dominate the isometric silhouette.",
+      "composition": "Frame the tower cluster across the center and flanks, with both team bases visibly opposed across the open space.",
       "zones": [
         {
-          "name": "Central and mid-field tower areas",
-          "role": "Separate contested control areas where two teams and their bots converge and fight.",
-          "where": "Across the central and mid-field terrain",
-          "size": "Several separated areas"
+          "name": "Tower cluster",
+          "role": "Several dispersed contested tower objectives with readable capture areas and accessible elevated levels.",
+          "where": "Across the center and flanks of the field.",
+          "size": "Large, dispersed across the expansive field."
         },
         {
-          "name": "Open grassy approaches",
-          "role": "Navigable circulation and long readable sightlines between tower objectives.",
-          "where": "Between and around the towers",
-          "size": "Expansive"
+          "name": "Opposing team bases",
+          "role": "Protected assembly areas for players and accompanying bots, with several open approach routes toward nearby towers.",
+          "where": "At opposing outer field edges.",
+          "size": "Equal-sized."
         }
       ],
       "paths": [
         {
-          "from": "Open grassy approaches",
-          "to": "Central and mid-field tower areas",
+          "from": "Opposing team bases",
+          "to": "Tower cluster",
           "kind": "open ground"
-        },
-        {
-          "from": "Tower control areas",
-          "to": "Tower control areas",
-          "kind": "road"
         }
       ],
-      "terrain": "Bright green grass with mostly level terrain and gentle rises only where needed to seat tower stairs.",
+      "terrain": "Mostly smooth, bright green grass with subtle low undulations only; broad open ground surrounds every tower.",
       "props": [
         {
-          "name": "Tall, simple towers",
+          "name": "Tall simple towers",
           "count": -1,
-          "where": "Distributed across the central and mid-field terrain"
+          "where": "Distributed across the center and flanks of the grass field."
         },
         {
-          "name": "Broad capture floors or rings",
+          "name": "Low rises or tower-facing approach geometry",
           "count": -1,
-          "where": "At the base of each tower"
-        },
-        {
-          "name": "Accessible elevated tower platforms and stairs",
-          "count": -1,
-          "where": "On each tower"
+          "where": "Screening the two team bases from direct cross-map fire."
         }
       ],
-      "boundary": "An unobtrusive outer edge beyond the playable grass, kept visually distant from the tower fights.",
+      "boundary": "A distant natural field edge.",
       "scale_band": "large",
-      "theme": "Bright, stylised, simple toy-like team battlefield"
+      "theme": "Bright, stylised military-light shooter landscape with clean simple tower silhouettes and vivid grass."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "the open-field composition and tall stylised tower silhouette lead, and invalid lane topology would not make the shooter unplayable.",
+      "why": "Visual readability leads the plan rather than requiring a procedurally valid track or maze.",
       "set_piece": false
     },
     "route": [
-      "P2"
+      "P0"
     ],
-    "notes": [],
+    "notes": [
+      "visible on 'control-zone' set from goes_to=both",
+      "visible on 'spawn-teambase' set from goes_to=both"
+    ],
     "scene_prompt": "Create a bright, stylised 3D team shooter map with expansive grassy fields and several tall, simple towers distributed across the terrain as central contested landmarks. Arrange the towers with open ground and clear approaches between them, providing distinct areas for two opposing teams to converge and fight; include space for accompanying bot characters."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

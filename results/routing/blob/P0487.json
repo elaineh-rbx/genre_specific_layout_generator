@@ -14,136 +14,149 @@
     }
   ],
   "scene_prompt": "Create a 3D story-game map set in a small abandoned laboratory facility. The character begins in a sealed chamber that opens into a couple of connected, damaged lab rooms leading toward an escape route. Show destruction throughout the facility, with broken equipment and debris, and dead people lying in the rooms; the final path leads out of the lab.",
-  "blob": "### Genre\nThe dominant genre is Adventure: a short story-driven escape journey rather than a survival encounter, since the story ends when the player reaches the way out. \n\n### Shape and preset\nUse `world-corridor`, a compact interior progression from the starting chamber through damaged laboratory rooms to the exterior escape. Match the Guided Trail preset in its directed route, but omit its outdoor landmark and reveal bundle because this is a small enclosed facility.\n\n### Config requirements\n`path-trail` is visible geometry: a clear sequence of doorways, short corridors, and room-to-room floor paths directs the player from the chamber toward the exit. `building-interior` is visible geometry: the playable facility is enclosed, with the final damaged exit crossing from the lab interior to outside. No invisible layout elements are required.\n\n### Layout components\nMake a small facility with a sealed starting chamber at one end, opening into a couple of connected abandoned lab rooms. The first room is a transition lab with overturned benches and broken equipment; the next, slightly larger damaged laboratory contains heavier debris, shattered machinery, and dead people lying on the floor. A short final corridor or breached doorway leads from this room to the escape route outside. Keep the route linear but readable, with open doorways and debris arranged along walls so the central walking line remains clear. Use cracked industrial floors, damaged wall panels, exposed cables, and scattered rubble throughout. Enclose the interior with laboratory walls and ceilings until the final broken exterior exit. Frame the start chamber in the foreground and the escape opening as the visual pull at the far end.\n\n### Render order\nUse `topdown` first, authoritative because the connected escape route must remain continuously traversable through the small sequence of rooms.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the chamber and a couple of connected exploration rooms. Theme: abandoned, ruined industrial laboratory, tense and bleak. Apply `P3` because play crosses the laboratory interior-to-exterior boundary at the final escape.",
+  "blob": "### 1. Genre\nThe dominant genre is Adventure: this is a short story-driven escape journey through a damaged laboratory.\n\n### 2. Shape and preset\nUse `rooms-sequence`, an ordered interior run from the sealed starting chamber through damaged laboratory rooms to the escape. This shape is taken from outside Adventure’s usual shortlist because the facility is a small connected room chain, not an open world. Preset: none; the Story preset’s separate chapters and chapter thresholds do not describe this single facility.\n\n### 3. Config requirements\nUse `path-trail` as a clear interior circulation route through the chamber, the two lab rooms, and the final exit. Use `gate-progression` for the visibly sealed chamber door that releases the player into the facility.\n\n### 4. Layout requirements\nNo additional canonical placed elements are required. The start chamber and escape threshold are fixed geometry rather than separate placed gameplay markers.\n\n### 5. Layout components\nPlace a small sealed spawn chamber at one end of the facility, connected by its opening door to two damaged laboratory rooms in sequence. The first room is a wrecked work lab with broken benches, overturned equipment, shattered containment hardware, scattered debris, and dead bodies on the floor. A short damaged corridor or breached doorway leads to the second, more heavily destroyed lab room, with collapsed equipment, exposed wall damage, debris piles, and additional bodies. The final route continues directly to a prominent exterior escape door or broken exit at the far end. Keep all rooms enclosed by industrial lab walls and ceilings until this final outside threshold. Frame the map as a readable longitudinal cutaway, clearly showing the chamber-to-lab-to-exit progression.\n\n### 6. Render order\nUse `topdown` first and make it authoritative, because the connected interior sequence must preserve an unbroken, playable route from spawn to escape.\n\n### 7. Scale, theme, and pipeline cost\nScale band: small, driven by one starting chamber and two connected explorable lab rooms. Theme: abandoned sci-fi laboratory, catastrophic destruction, bleak horror atmosphere. Use `P3` because the story path crosses from the enclosed laboratory to the exterior at the escape exit.",
   "spec": {
     "genre": "Adventure",
     "secondary": [],
-    "shape": "world-corridor",
-    "preset": "Guided Trail",
+    "shape": "rooms-sequence",
+    "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "path-trail",
-        "text": "A clear sequence of doorways, short corridors, and room-to-room floor paths directs the player from the chamber toward the exit.",
+        "text": "A clear interior circulation route through the chamber, the two lab rooms, and the final exit.",
         "visible": true,
         "count": -1
       },
       {
-        "id": "building-interior",
-        "text": "The playable facility is enclosed, with the final damaged exit crossing from the lab interior to outside.",
+        "id": "gate-progression",
+        "text": "A visibly sealed chamber door that releases the player into the facility.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "The sealed starting chamber sits in the foreground, with connected damaged laboratory rooms receding through the frame toward the escape opening as the visual pull at the far end.",
+      "composition": "A readable longitudinal cutaway showing the progression from the sealed starting chamber through two damaged laboratory rooms to the exterior escape exit at the far end.",
       "zones": [
         {
-          "name": "Sealed starting chamber",
-          "role": "Player starting point.",
-          "where": "one end; foreground",
+          "name": "Sealed spawn chamber",
+          "role": "Starting chamber where the character begins.",
+          "where": "One end of the facility.",
           "size": "small"
         },
         {
-          "name": "Transition lab",
-          "role": "First connected damaged laboratory room, containing overturned benches and broken equipment.",
-          "where": "after the starting chamber",
+          "name": "First damaged laboratory room",
+          "role": "Wrecked work lab along the escape route.",
+          "where": "After the opening chamber door.",
           "size": ""
         },
         {
-          "name": "Damaged laboratory",
-          "role": "Larger connected laboratory room containing heavier debris, shattered machinery, and dead people lying on the floor.",
-          "where": "after the transition lab",
-          "size": "slightly larger"
+          "name": "Second damaged laboratory room",
+          "role": "More heavily destroyed lab room along the escape route.",
+          "where": "After a short damaged corridor or breached doorway from the first lab.",
+          "size": ""
         },
         {
-          "name": "Exterior escape",
-          "role": "Final way out of the laboratory facility.",
-          "where": "far end",
+          "name": "Exterior escape threshold",
+          "role": "Final exit leading out of the laboratory.",
+          "where": "Far end of the facility.",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Sealed starting chamber",
-          "to": "Transition lab",
+          "from": "Sealed spawn chamber",
+          "to": "First damaged laboratory room",
           "kind": "corridor"
         },
         {
-          "from": "Transition lab",
-          "to": "Damaged laboratory",
+          "from": "First damaged laboratory room",
+          "to": "Second damaged laboratory room",
           "kind": "corridor"
         },
         {
-          "from": "Damaged laboratory",
-          "to": "Exterior escape",
+          "from": "Second damaged laboratory room",
+          "to": "Exterior escape threshold",
           "kind": "corridor"
         }
       ],
-      "terrain": "Cracked industrial floors throughout, with damaged wall panels, exposed cables, and scattered rubble.",
+      "terrain": "Enclosed industrial laboratory floors with damaged walls and ceilings; the route reaches an exterior threshold only at the final exit.",
       "props": [
         {
-          "name": "Overturned benches",
+          "name": "Broken benches",
           "count": -1,
-          "where": "Transition lab"
+          "where": "First damaged laboratory room"
         },
         {
-          "name": "Broken equipment",
+          "name": "Overturned equipment",
           "count": -1,
-          "where": "Transition lab"
+          "where": "First damaged laboratory room"
         },
         {
-          "name": "Heavier debris",
+          "name": "Shattered containment hardware",
           "count": -1,
-          "where": "Damaged laboratory"
+          "where": "First damaged laboratory room"
         },
         {
-          "name": "Shattered machinery",
+          "name": "Scattered debris",
           "count": -1,
-          "where": "Damaged laboratory"
+          "where": "First damaged laboratory room"
         },
         {
-          "name": "Dead people lying on the floor",
+          "name": "Dead bodies",
           "count": -1,
-          "where": "Damaged laboratory"
+          "where": "On the floor in the laboratory rooms"
         },
         {
-          "name": "Scattered rubble",
+          "name": "Collapsed equipment",
           "count": -1,
-          "where": "Throughout the facility"
+          "where": "Second damaged laboratory room"
         },
         {
-          "name": "Exposed cables",
+          "name": "Exposed wall damage",
           "count": -1,
-          "where": "Throughout the facility"
+          "where": "Second damaged laboratory room"
+        },
+        {
+          "name": "Debris piles",
+          "count": -1,
+          "where": "Second damaged laboratory room"
+        },
+        {
+          "name": "Additional bodies",
+          "count": -1,
+          "where": "Second damaged laboratory room"
         }
       ],
-      "boundary": "Laboratory walls and ceilings enclose the interior until the final broken exterior exit.",
+      "boundary": "Industrial laboratory walls and ceilings enclose all rooms until the final exterior escape threshold.",
       "scale_band": "small",
-      "theme": "Abandoned, ruined industrial laboratory; tense and bleak."
+      "theme": "Abandoned sci-fi laboratory, catastrophic destruction, bleak horror atmosphere."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the connected escape route must remain continuously traversable through the small sequence of rooms.",
+      "why": "the connected interior sequence must preserve an unbroken, playable route from spawn to escape.",
       "set_piece": false
     },
     "route": [
       "P3"
     ],
-    "notes": [],
+    "notes": [
+      "The rooms-sequence shape is taken from outside Adventure’s usual shortlist because the facility is a small connected room chain rather than an open world."
+    ],
     "scene_prompt": "Create a 3D story-game map set in a small abandoned laboratory facility. The character begins in a sealed chamber that opens into a couple of connected, damaged lab rooms leading toward an escape route. Show destruction throughout the facility, with broken equipment and debris, and dead people lying in the rooms; the final path leads out of the lab."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
   "mapper_notes": [
-    "blob asked for topdown first; the route ['P3'] gives isometric"
+    "blob asked for topdown first; the route ['P0'] gives isometric"
   ]
 }

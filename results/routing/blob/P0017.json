@@ -14,161 +14,175 @@
     }
   ],
   "scene_prompt": "Create a low-graphics 3D mech combat map set across Ayush Forest, an extremely large forested planet that forms the whole playable world. The team begins after ejecting from a warship, landing at a small safe landing-zone base near the forest edge, with space for the squad and a dropship pad. About six distinct locations are spread widely through the hostile forest and connected by long ground routes, including a main early-story location near the starting base; the dropship travels between unlocked landing areas. Dense woodland, uneven natural terrain, and scattered resource sites fill the spaces between locations, while red-and-black alien forces occupy hostile areas.",
-  "blob": "### Genre\nThe dominant genre is RPG: the original describes character upgrades, resource gathering, combat, quests, and an economic hub. There is no secondary genre.\n\n### Shape and preset\nUse `world-single`, a single contiguous Ayush Forest rather than separate biome maps or detached dungeons. Match the Action RPG preset in its safe hub and hostile encounter structure, but override its `world-hub-dungeon` shape because the author explicitly makes the forest one whole playable world.\n\n### Config requirements\nVisible geometry: `safezone-town` is a small fortified landing-zone base at the forest edge, with squad staging space and a dropship pad. `hazard-aggro` forms broad alien-held clearings and ruin-like nests set back from the main travel routes. `collectible-nodes` are scattered resource sites in forest clearings and along side paths. `teleporter-link` is represented by repeated dropship landing pads at the major locations. `terrain-relief` gives the forest uneven hills, gullies, and ridges. `npc-population` visibly places the player squad at the landing zone and in the field.\n\nInvisible layout elements: `spawner-npc` marks alien emergence points inside hostile nests; `teleporter-link` also places the linked travel endpoints at each landing pad. Do not render these markers as UI or gameplay indicators.\n\n### Layout components\nAyush Forest is an extremely large, continuous forested planet region containing about six widely separated locations. Put the small safe landing-zone base near one outer forest edge as the opening zone; include a clear mech landing area, a dropship pad, team staging ground, and low defensive structures. Place the main early-story location close enough to reach by the first long ground route. Spread the other four locations deep across the forest as distinct hostile clearings, alien occupation sites, resource-rich ravines, and elevated woodland ruins, each with a practical dropship landing area.\n\nLong dirt-and-rock mech routes connect all locations, branching through dense woodland but remaining readable and traversable. Use uneven natural ground, low hills, ridges, gullies, exposed roots, rocks, and resource clearings between destinations. Red-and-black alien structures, patrol grounds, plasma-themed props, and spawn nests concentrate away from the safe base. The outer boundary is dense impassable forest, cliffs, and terrain fades. Compose the base in the foreground or lower edge, with routes visibly leading toward distant forest landmarks.\n\n### Render order\nUse `topdown`: the six-location route network must remain connected and navigable across the very large forest before the low-graphics isometric dressing is applied.\n\n### Scale, theme, and pipeline cost\nScale is huge, driven by the extremely large contiguous forest and six far-spaced destinations. Theme: low-graphics sci-fi mech warfare, dark green woodland, industrial landing pads, and red-black alien intrusion. Use `tiered` for the non-overhanging natural relief; otherwise `P0`, since this remains one exterior surface without separate maps, interiors, or stacked traversal.",
+  "blob": "### Genre\nThe dominant genre is `RPG`, with `Action` as a secondary combat layer. Character upgrades, resource gathering, quests, hostile alien combat, and a safe resupply point make progression RPG the owner of the world shape.\n\n### Shape and preset\nUse `world-open`: Ayush Forest is one contiguous playable world, not separate dungeon instances, with six widely spaced locations connected across the same forest. The closest preset is none: the world supports open exploration and combat, but it does not establish the biome-distance progression or player-base loop of Open World & Survival RPG.\n\n### Config requirements\nUse `safezone-town` as a compact fortified landing-zone base near the forest edge, with squad staging space and a clear dropship pad. Use `hazard-aggro` for hostile alien-held clearings set away from the main travel routes. Use `collectible-nodes` as visible resource-site alcoves scattered through woodland and terrain. Use `teleporter-link` as standardized unlocked dropship landing pads at major locations.\n\n### Layout requirements\nPlace `spawner-npc` origins within each hostile location, behind alien-held cover or at the far side of combat clearings, so red-and-black plasma-weapon aliens enter from readable directions. Place one `teleporter-link` endpoint at the safe base and one at each of the five other locations; these are dropship arrival pads unlocked through progression. Place `collectible-nodes` in small clusters beside long routes and within hostile areas, rather than in the base.\n\n### Layout components\nThe six locations are: the small safe landing-zone base at the forest edge; one early-story site close to it; and four further hostile locations distributed broadly across Ayush Forest. The base contains a squad arrival area, dropship pad, and protected open ground. Long dirt and worn-metal ground routes radiate from the base and branch through dense woodland toward each destination. Keep the early-story location on the nearest route; place the other four at increasingly remote points without making them separate maps. Terrain is uneven forest floor with shallow rises, gullies, rocks, and dense tree clusters. Scatter resource sites between locations and in alien-held clearings. The world boundary is concealed by impassable dense forest and natural terrain. Compose the map as a broad readable forest expanse, with the base visibly distinct and hostile sites separated by substantial travel distance.\n\n### Render order\nUse `topdown` first and make it authoritative, because the large connected forest needs reliable route connectivity between all six locations; it is not a maze or racing circuit, so it does not use procedural carving.\n\n### Scale, theme, and pipeline cost\nScale is huge, driven by the explicitly extremely large forest world and widely separated six locations. Theme: low-graphics, low-poly sci-fi mech warfare in a dark alien forest. Pipeline modifier: `P0`; the map is one contiguous ground surface with no required overhangs, interior transitions, separate maps, or topology that must be generated by construction.",
   "spec": {
     "genre": "RPG",
-    "secondary": [],
-    "shape": "world-single",
-    "preset": "Action RPG",
+    "secondary": [
+      "Action"
+    ],
+    "shape": "world-open",
+    "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "safezone-town",
-        "text": "A small fortified landing-zone base at the forest edge, with squad staging space, a clear mech landing area, a dropship pad, and low defensive structures.",
+        "text": "A compact fortified landing-zone base near the forest edge, with squad staging space and a clear dropship pad.",
         "visible": true,
-        "count": -1
+        "count": 1
       },
       {
         "id": "hazard-aggro",
-        "text": "Broad alien-held clearings and ruin-like nests set back from the main travel routes, with red-and-black alien structures, patrol grounds, plasma-themed props, and spawn nests.",
+        "text": "Hostile alien-held clearings set away from the main travel routes.",
         "visible": true,
-        "count": -1
+        "count": 4
       },
       {
         "id": "collectible-nodes",
-        "text": "Scattered resource sites in forest clearings, along side paths, and in resource-rich ravines between destinations.",
+        "text": "Visible resource-site alcoves scattered through woodland and terrain, in small clusters beside long routes and within hostile areas rather than in the base.",
         "visible": true,
         "count": -1
       },
       {
         "id": "teleporter-link",
-        "text": "Repeated dropship landing pads at the major locations; linked travel endpoints are placed at each landing pad but are not rendered as UI or gameplay indicators.",
+        "text": "Standardized unlocked dropship landing pads at major locations.",
         "visible": true,
-        "count": -1
-      },
-      {
-        "id": "terrain-relief",
-        "text": "Uneven natural forest ground with low hills, ridges, gullies, exposed roots, rocks, and terrain fades.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "npc-population",
-        "text": "The player squad visibly occupies the landing zone and the field.",
-        "visible": true,
-        "count": -1
+        "count": 6
       },
       {
         "id": "spawner-npc",
-        "text": "Alien emergence points inside hostile nests, recovered as invisible layout markers and not rendered as UI or gameplay indicators.",
+        "text": "Origins within each hostile location, behind alien-held cover or at the far side of combat clearings, where red-and-black plasma-weapon aliens enter from readable directions.",
         "visible": false,
-        "count": -1
+        "count": 4
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "collectible-nodes",
+        "text": "Resource-site alcoves in small clusters.",
+        "count": -1,
+        "where": "Beside long routes and within hostile areas, rather than in the base."
+      },
+      {
+        "id": "teleporter-link",
+        "text": "Dropship arrival pads unlocked through progression.",
+        "count": 6,
+        "where": "One endpoint at the safe base and one at each of the five other locations."
+      },
+      {
+        "id": "spawner-npc",
+        "text": "Alien origins behind alien-held cover or at the far side of combat clearings, giving red-and-black plasma-weapon aliens readable entry directions.",
+        "count": 4,
+        "where": "Within each hostile location, behind alien-held cover or at the far side of combat clearings."
       }
     ],
     "layout": {
-      "composition": "The small fortified landing-zone base sits in the foreground or along the lower outer forest edge, with long branching routes visibly leading through dense woodland toward distant forest landmarks and hostile locations.",
+      "composition": "A broad readable forest expanse with the small safe base visibly distinct at the forest edge and hostile sites separated by substantial travel distance.",
       "zones": [
         {
-          "name": "Safe Landing-Zone Base",
-          "role": "Opening safe hub with squad staging, mech landing, dropship travel, and low defenses.",
-          "where": "Near one outer forest edge, in the foreground or lower edge.",
+          "name": "Safe landing-zone base",
+          "role": "Safe resupply point with squad arrival space, a dropship pad, and protected open ground.",
+          "where": "Near the forest edge.",
           "size": "small"
         },
         {
-          "name": "Early-Story Location",
-          "role": "The main early-story destination reached from the starting base by the first long ground route.",
-          "where": "Close enough to the starting base to reach by the first long ground route.",
+          "name": "Early-story location",
+          "role": "Main early-story destination.",
+          "where": "Close to the base on the nearest route.",
           "size": ""
         },
         {
-          "name": "Hostile Forest Clearing",
-          "role": "A deep-forest alien-held encounter location with patrol grounds and a practical dropship landing area.",
-          "where": "Deep across the forest.",
+          "name": "Hostile location 1",
+          "role": "Alien-held hostile combat location.",
+          "where": "Further out in Ayush Forest.",
           "size": ""
         },
         {
-          "name": "Alien Occupation Site",
-          "role": "A distinct hostile site of red-and-black alien structures, plasma-themed props, and nests, with a practical dropship landing area.",
-          "where": "Deep across the forest.",
+          "name": "Hostile location 2",
+          "role": "Alien-held hostile combat location.",
+          "where": "Further out in Ayush Forest.",
           "size": ""
         },
         {
-          "name": "Resource-Rich Ravine",
-          "role": "A resource gathering location in uneven natural terrain, with a practical dropship landing area.",
-          "where": "Deep across the forest.",
+          "name": "Hostile location 3",
+          "role": "Alien-held hostile combat location.",
+          "where": "Further out in Ayush Forest.",
           "size": ""
         },
         {
-          "name": "Elevated Woodland Ruins",
-          "role": "A raised hostile ruin location with a practical dropship landing area.",
-          "where": "Deep across the forest on elevated ground.",
+          "name": "Hostile location 4",
+          "role": "Alien-held hostile combat location.",
+          "where": "At the most remote points across Ayush Forest.",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Safe Landing-Zone Base",
-          "to": "Early-Story Location",
+          "from": "Safe landing-zone base",
+          "to": "Early-story location",
           "kind": "road"
         },
         {
-          "from": "Early-Story Location",
-          "to": "Hostile Forest Clearing",
+          "from": "Safe landing-zone base",
+          "to": "Hostile location 1",
           "kind": "road"
         },
         {
-          "from": "Early-Story Location",
-          "to": "Alien Occupation Site",
+          "from": "Safe landing-zone base",
+          "to": "Hostile location 2",
           "kind": "road"
         },
         {
-          "from": "Hostile Forest Clearing",
-          "to": "Resource-Rich Ravine",
+          "from": "Safe landing-zone base",
+          "to": "Hostile location 3",
           "kind": "road"
         },
         {
-          "from": "Alien Occupation Site",
-          "to": "Elevated Woodland Ruins",
+          "from": "Safe landing-zone base",
+          "to": "Hostile location 4",
           "kind": "road"
         }
       ],
-      "terrain": "Extremely large continuous dark-green forest terrain with dense woodland, uneven natural ground, low hills, ridges, gullies, exposed roots, rocks, scattered resource clearings, and dirt-and-rock mech routes.",
+      "terrain": "Uneven forest floor with shallow rises, gullies, rocks, dense tree clusters, and long dirt and worn-metal ground routes.",
       "props": [
         {
-          "name": "dropship landing pads",
-          "count": -1,
-          "where": "At the landing-zone base and major locations across the forest."
+          "name": "Dropship pad",
+          "count": 1,
+          "where": "At the safe landing-zone base."
         },
         {
-          "name": "low defensive structures",
+          "name": "Dense tree clusters",
           "count": -1,
-          "where": "Around the safe landing-zone base."
+          "where": "Throughout the woodland between locations."
         },
         {
-          "name": "red-and-black alien structures and plasma-themed props",
+          "name": "Rocks",
           "count": -1,
-          "where": "Concentrated in hostile clearings, occupation sites, and nests away from the safe base."
+          "where": "Across the uneven forest terrain."
         },
         {
-          "name": "resource sites",
+          "name": "Resource sites",
           "count": -1,
-          "where": "Forest clearings, side paths, and ravines between destinations."
+          "where": "Between locations and in alien-held clearings."
+        },
+        {
+          "name": "Alien-held cover",
+          "count": -1,
+          "where": "Within hostile locations."
         }
       ],
-      "boundary": "Dense impassable forest, cliffs, and terrain fades enclose the outer boundary.",
+      "boundary": "The world boundary is concealed by impassable dense forest and natural terrain.",
       "scale_band": "huge",
-      "theme": "Low-graphics sci-fi mech warfare; dark green woodland, industrial landing pads, and red-black alien intrusion."
+      "theme": "Low-graphics, low-poly sci-fi mech warfare in a dark alien forest."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the six-location route network must remain connected and navigable across the very large forest before the low-graphics isometric dressing is applied.",
+      "why": "Reliable route connectivity is required between all six locations across the large connected forest.",
       "set_piece": false
     },
     "route": [
-      "P0",
-      "tiered"
+      "P0"
     ],
     "notes": [],
     "scene_prompt": "Create a low-graphics 3D mech combat map set across Ayush Forest, an extremely large forested planet that forms the whole playable world. The team begins after ejecting from a warship, landing at a small safe landing-zone base near the forest edge, with space for the squad and a dropship pad. About six distinct locations are spread widely through the hostile forest and connected by long ground routes, including a main early-story location near the starting base; the dropship travels between unlocked landing areas. Dense woodland, uneven natural terrain, and scattered resource sites fill the spaces between locations, while red-and-black alien forces occupy hostile areas."
@@ -176,12 +190,12 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
   "mapper_notes": [
-    "blob asked for topdown first; the route ['P0', 'tiered'] gives isometric"
+    "blob asked for topdown first; the route ['P0'] gives isometric"
   ]
 }

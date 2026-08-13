@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a 3D game map showing a small, quirky, stylized contemporary suburban neighborhood for a lighthearted mystery game, with traversable streets and neighborhood locations that can serve as settings for self-contained cases involving missing items or unexplained events.",
-  "blob": "### Genre\nDominant genre: Puzzle, with Adventure as a secondary exploration flavor. The case-solving loop makes Puzzle primary; the neighborhood traversal supports it without changing the puzzle-led layout.\n\n### Shape and preset\nUse `puzzle-open`, an open-air suburban neighborhood whose streets and public-facing locations can host individual mysteries. This follows the Open-Air Puzzle preset in shape, while dropping its specific solve devices because none were requested.\n\n### Config requirements\nUse `settlement-density` as visible geometry: a compact, built-up suburban neighborhood rather than isolated buildings. No invisible triggers, pickup markers, or solve-input volumes are specified; keep those out of the image and defer them until individual cases are authored.\n\n### Layout components\nBuild one small contiguous neighborhood centered on a modest main intersection and a walkable street loop. Place a small cluster of quirky detached homes along the quieter outer streets, with varied yards, hedges, porches, mailboxes, and garden paths. Put several distinct case-setting locations along the loop and near the center: a corner shop, a neighborhood park, a small community notice area, and an unusual local landmark or decorative structure. Each location should have a readable exterior identity and a small adjacent forecourt or path where an event can be staged. Use paved sidewalks and lightly curving residential streets to connect every location, with short pedestrian cut-throughs between yards or beside the park so the map feels explorable without becoming maze-like. Terrain is mostly level, with grass verges, street trees, planted gardens, and subtle curb elevation. Bound the neighborhood with dense hedges, tree lines, and the suggestion of continuing streets beyond the playable edge. Compose the map as a coherent compact district, with the central intersection and landmark clearly legible from an elevated three-quarter view.\n\n### Render order\nUse `isometric`: render the stylized neighborhood look first, then project its top-down plan, because the street network is simple and does not require procedurally guaranteed topology.\n\n### Scale, theme, and pipeline cost\nScale band: small, driven by a single traversable neighborhood and a handful of distinct case locations. Theme: quirky, stylized contemporary suburb; lighthearted, colorful mystery-story atmosphere. Pipeline modifier: `P0`, since this is one exterior ground surface with no forced interiors, stacked structures, separate maps, volumetric movement, or validity-by-construction route.",
+  "blob": "### 1. Genre\nThe dominant genre is Puzzle, with Adventure as a secondary exploration tone. The mystery-solving progression makes Puzzle primary; the neighborhood is the open setting for cases rather than an objective-led journey.\n\n### 2. Shape and preset\nUse `puzzle-open`, an open-air neighborhood puzzle space where players can freely move between case locations. This matches the Open-Air Puzzle preset’s shape, but the preset’s explicit gates, sockets, and clue walls are not requested, so use preset none.\n\n### 3. Config requirements\nNo image configuration options are required beyond the requested traversable neighborhood streets and case-setting locations; do not add visual puzzle apparatus, interiors, residents, water, or terrain features that were not specified.\n\n### 4. Layout requirements\nUse `collectible-nodes` for missing-item evidence: place a small, case-specific set of item markers within each neighborhood location, tucked into readable local hiding places rather than scattered randomly. The exact count is case-authored; each item should sit within its associated location’s playable bounds and be reachable from the street network.\n\n### 5. Layout components\nBuild one compact suburban neighborhood on a flat contiguous surface. A central intersection or small shared block anchors the map, with short traversable sidewalks and calm two-way streets forming a simple loop and branches to several distinct case locations. Include a mix of stylized detached homes with front yards, a small corner shop or café, a neighborhood park or playground, and one visually unusual local landmark such as a brightly painted community notice board or oversized garden ornament. Each location needs a clear frontage, a small exploration pocket, and enough prop detail to plausibly host a missing-item or unexplained-event case. Keep house façades as exterior scenery rather than implied enterable buildings. Bound the neighborhood with hedges, fences, tree lines, and distant stylized suburban backdrops. Compose the map as a readable isometric neighborhood block, with the central streets and landmark immediately legible.\n\n### 6. Render order\nUse `isometric`: the quirky stylized look and readable neighborhood atmosphere lead, while the compact street plan can be projected afterward without topology-critical constraints.\n\n### 7. Scale, theme, and pipeline cost\nScale is small, driven by a single compact neighborhood intended for short, self-contained cases. Theme: quirky, stylized contemporary suburbia with a lighthearted detective-story mood. Pipeline modifier: `P0`, since this is one flat contiguous outdoor surface with no stacked layers, interior transition, separate maps, or topology requiring construction validation.",
   "spec": {
     "genre": "Puzzle",
     "secondary": [
@@ -25,141 +25,113 @@
     "axes": {},
     "options": [
       {
-        "id": "settlement-density",
-        "text": "a compact, built-up suburban neighborhood rather than isolated buildings",
-        "visible": true,
+        "id": "collectible-nodes",
+        "text": "Missing-item evidence markers: a small, case-specific set within each neighborhood location, tucked into readable local hiding places rather than scattered randomly.",
+        "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "collectible-nodes",
+        "text": "Missing-item evidence markers for each self-contained case.",
+        "count": -1,
+        "where": "Within each associated neighborhood location's playable bounds, in readable local hiding places and reachable from the street network."
+      }
+    ],
     "layout": {
-      "composition": "A coherent compact district seen from an elevated three-quarter view, with the central intersection and unusual local landmark clearly legible; detached homes line the quieter outer streets, while case-setting locations sit along the street loop and near the centre.",
+      "composition": "A readable isometric neighborhood block with central streets and the unusual local landmark immediately legible.",
       "zones": [
         {
-          "name": "Central intersection",
-          "role": "Modest neighborhood centre anchoring traversal and nearby case settings.",
-          "where": "centre",
-          "size": "modest"
-        },
-        {
-          "name": "Detached homes cluster",
-          "role": "Quirky residential case-setting exteriors with varied yards, hedges, porches, mailboxes, and garden paths.",
-          "where": "quieter outer streets",
-          "size": "small cluster"
-        },
-        {
-          "name": "Corner shop",
-          "role": "Distinct public-facing case-setting location with an adjacent forecourt or path for staging events.",
-          "where": "along the loop near the centre",
+          "name": "Central intersection or shared block",
+          "role": "Anchors the compact neighborhood map.",
+          "where": "Centre",
           "size": "small"
         },
         {
-          "name": "Neighborhood park",
-          "role": "Case-setting location with adjacent paths and a pedestrian cut-through.",
-          "where": "along the street loop",
+          "name": "Residential case locations",
+          "role": "Stylized detached homes with front yards, clear frontages, and small exploration pockets for missing-item or unexplained-event cases.",
+          "where": "Along branches from the central streets",
+          "size": ""
+        },
+        {
+          "name": "Corner shop or café",
+          "role": "A distinct neighborhood case-setting location with a clear frontage and exploration pocket.",
+          "where": "Connected to the central street loop",
           "size": "small"
         },
         {
-          "name": "Community notice area",
-          "role": "Public-facing case-setting location with a small adjacent forecourt or path for staging events.",
-          "where": "along the loop near the centre",
+          "name": "Neighborhood park or playground",
+          "role": "A distinct case-setting location with prop detail and a small exploration pocket.",
+          "where": "Connected to the central street loop",
           "size": "small"
         },
         {
-          "name": "Unusual local landmark or decorative structure",
-          "role": "Readable local landmark and case-setting location with a small adjacent forecourt or path for staging events.",
-          "where": "near the central intersection",
-          "size": "small"
+          "name": "Unusual local landmark",
+          "role": "A brightly painted community notice board or oversized garden ornament that makes the neighborhood easy to read.",
+          "where": "Immediately legible from the central streets",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Central intersection",
-          "to": "Detached homes cluster",
+          "from": "Central intersection or shared block",
+          "to": "Residential case locations",
           "kind": "road"
         },
         {
-          "from": "Central intersection",
-          "to": "Corner shop",
-          "kind": "sidewalk"
+          "from": "Central intersection or shared block",
+          "to": "Corner shop or café",
+          "kind": "road"
         },
         {
-          "from": "Central intersection",
-          "to": "Neighborhood park",
-          "kind": "sidewalk"
+          "from": "Central intersection or shared block",
+          "to": "Neighborhood park or playground",
+          "kind": "road"
         },
         {
-          "from": "Central intersection",
-          "to": "Community notice area",
-          "kind": "sidewalk"
-        },
-        {
-          "from": "Central intersection",
-          "to": "Unusual local landmark or decorative structure",
-          "kind": "sidewalk"
-        },
-        {
-          "from": "Detached homes cluster",
-          "to": "Neighborhood park",
-          "kind": "corridor"
-        },
-        {
-          "from": "Detached homes cluster",
-          "to": "Neighborhood park",
-          "kind": "path"
+          "from": "Neighborhood streets",
+          "to": "Neighborhood streets",
+          "kind": "road"
         }
       ],
-      "terrain": "Mostly level suburban ground with paved sidewalks, lightly curving residential streets, grass verges, street trees, planted gardens, and subtle curb elevation.",
+      "terrain": "Flat contiguous surface with calm two-way streets, short traversable sidewalks, front yards, hedges, fences, tree lines, and distant stylized suburban backdrops.",
       "props": [
         {
-          "name": "quirky detached homes",
+          "name": "Stylized detached homes with front yards",
           "count": -1,
-          "where": "along the quieter outer streets"
+          "where": "At the residential case locations along the streets"
         },
         {
-          "name": "yards",
-          "count": -1,
-          "where": "around the detached homes"
+          "name": "Small corner shop or café",
+          "count": 1,
+          "where": "In the neighborhood"
         },
         {
-          "name": "hedges",
-          "count": -1,
-          "where": "around yards and along the neighborhood boundary"
+          "name": "Neighborhood park or playground",
+          "count": 1,
+          "where": "In the neighborhood"
         },
         {
-          "name": "porches",
-          "count": -1,
-          "where": "at detached homes"
+          "name": "Brightly painted community notice board or oversized garden ornament",
+          "count": 1,
+          "where": "At a visually legible local landmark"
         },
         {
-          "name": "mailboxes",
+          "name": "Hedges, fences, tree lines, and distant stylized suburban backdrops",
           "count": -1,
-          "where": "at detached homes"
-        },
-        {
-          "name": "garden paths",
-          "count": -1,
-          "where": "around detached homes"
-        },
-        {
-          "name": "street trees",
-          "count": -1,
-          "where": "along residential streets and boundary tree lines"
-        },
-        {
-          "name": "planted gardens",
-          "count": -1,
-          "where": "throughout the neighborhood"
+          "where": "Around the neighborhood boundary"
         }
       ],
-      "boundary": "Dense hedges and tree lines bound the playable neighborhood, with suggested continuing streets beyond the edge.",
+      "boundary": "The neighborhood is bounded by hedges, fences, tree lines, and distant stylized suburban backdrops.",
       "scale_band": "small",
-      "theme": "quirky, stylized contemporary suburb; lighthearted, colorful mystery-story atmosphere"
+      "theme": "Quirky, stylized contemporary suburbia with a lighthearted detective-story mood."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "the street network is simple and does not require procedurally guaranteed topology.",
+      "why": "the quirky stylized look and readable neighborhood atmosphere lead, while the compact street plan has no topology-critical constraints.",
       "set_piece": false
     },
     "route": [
@@ -171,7 +143,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

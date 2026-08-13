@@ -19,110 +19,119 @@
     }
   ],
   "scene_prompt": "Create a 3D first-person combat map with a lobby area leading into a small modern military base battlefield designed for up to 8 players. The battlefield is a compact base with multiple cover-filled combat zones and clear routes between them, suitable for grenade-launcher fights; players enter it from the lobby for each round. No ground weapon pickups are present.",
-  "blob": "### Genre\nThe dominant genre is Shooter, specifically a last-player-standing Battle Royale. The original round structure establishes the genre; currency, purchasing, admin privileges, chat titles, and weapon rules do not alter the map layout.\n\n### Shape and preset\nUse `open-battlefield`, matching the Battle Royale preset’s compact free-for-all battlefield logic. Retain the shape but drop the preset’s shrinking boundary, scattered loot, and breachable structures because none were requested; weapons are not placed in the world.\n\n### Config requirements\nUse `cover-los` as visible geometry: dense, grenade-resistant-looking cover arrays break direct sightlines across each combat area and create safe movement between engagements. Do not use `collectible-loot`: there are explicitly no ground weapon pickups. No additional invisible layout markers are required by the prompt.\n\n### Layout components\nBuild two connected zones. At the near edge, make a compact lobby/staging courtyard sized to gather up to 8 players before a round, with a clear secured exit toward the battlefield. Beyond it, create a small modern military base battlefield occupying most of the map: a central open parade or vehicle yard, flanked by several distinct cover-filled combat zones such as sandbag positions, concrete barricade clusters, stacked cargo containers, low utility buildings, and parked military vehicles. Arrange multiple clear ground-level routes between the central yard and the flanking zones so players can rotate rather than becoming trapped in one firing lane.\n\nUse flat paved and packed-dirt ground with sparse grass edges. Enclose the playable battle area with a continuous military-base perimeter wall, fencing, and closed gates; the lobby sits just outside or immediately behind the entry gate. Do not show weapon pickups, loot crates, shops, currency displays, or UI. Compose the map as a readable compact base, with the lobby in the foreground and the central yard visually anchoring the battlefield.\n\n### Render order\nUse `isometric`: the compact combat base benefits from a look-led isometric render, and an imperfect route arrangement would not make the game structurally unplayable.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by matches of up to 8 players and a single compact battlefield. Theme: modern military base, practical concrete, sandbags, containers, muted tactical colors. Pipeline modifier: `P0`; this is one flat exterior surface with no required overhangs, interiors, separate maps, or topology that must be generated procedurally.",
+  "blob": "### Genre\nThe dominant genre is Shooter, specifically a compact last-player-standing battle royale round. The lobby-to-round structure is part of the match presentation, while the original economy, rewards, admin status, and chat title do not affect the map layout.\n\n### Shape and preset\nUse `space-staged`, taken from outside Shooter’s usual shapes: a separate lobby and a sealed match battlefield prevent waiting players from seeing or affecting active rounds. The closest Shooter preset is Battle Royale, but the prompt overrides its `open-battlefield` shape and does not request shrinking boundaries, world loot, or enterable buildings, so the preset is none.\n\n### Config requirements\nUse `cover-los` as dense, varied military-base cover: concrete barriers, stacked crates, low blast walls, and utility structures distributed across each combat area to break grenade-launcher sightlines. Do not include `collectible-loot`; no weapons are placed on the ground.\n\n### Layout requirements\nNo additional canonical placed pickups, emitters, scoring volumes, or weapon stations are required. The lobby-to-battle transfer is handled by the isolated-stage transition implied by `space-staged`; eight players enter the active battlefield at the beginning of each round.\n\n### Layout components\nBuild two fully separated zones. The lobby is a small secure military staging room, sized for up to 8 players, with a clear round-entry exit but no sightline or physical access into the match. The battlefield is a compact modern military base: a central open drill-yard conflict zone, two flanking cover-heavy yards, and a rear utility/service zone. Connect these areas with wide exterior paths and short protected side passages so players can rotate without every route becoming one long firing line. Use paved concrete ground, sparse grass at the perimeter, perimeter fencing, low base buildings used as exterior cover, cargo crates, jersey barriers, sandbag stacks, and blast barricades. Keep buildings non-enterable. Enclose the match area with base walls and fencing. Compose the battlefield as a readable compact footprint, with the lobby shown as a distinct separate map rather than attached scenery.\n\n### Render order\nUse `isometric`: the base is compact and visually led by its military cover composition; an invalid route arrangement would not inherently make the game unplayable.\n\n### Scale, theme, and pipeline cost\nScale band: small, driven by an 8-player maximum and close-range grenade-launcher combat. Theme: clean modern military base, functional concrete and olive-drab equipment. Pipeline modifier: `P4`, because the lobby and active battlefield are separate maps with an isolated round transition.",
   "spec": {
     "genre": "Shooter",
     "secondary": [],
-    "shape": "open-battlefield",
-    "preset": "Battle Royale",
+    "shape": "space-staged",
+    "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "cover-los",
-        "text": "Dense, grenade-resistant-looking cover arrays break direct sightlines across each combat area and create safe movement between engagements.",
+        "text": "Dense, varied military-base cover: concrete barriers, stacked crates, low blast walls, and utility structures distributed across each combat area to break grenade-launcher sightlines.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "A readable compact military base with the lobby/staging courtyard in the foreground at the near edge, leading through its secured exit toward the battlefield; the central open parade or vehicle yard anchors the midground, with cover-filled combat zones flanking it.",
+      "composition": "A readable compact battlefield footprint led by military cover composition, with the lobby shown as a distinct separate map rather than attached scenery.",
       "zones": [
         {
-          "name": "Lobby / staging courtyard",
-          "role": "A compact gathering area for up to 8 players before each round, with a clear secured exit toward the battlefield.",
-          "where": "Near edge / foreground, just outside or immediately behind the entry gate.",
-          "size": "compact; sized for up to 8 players"
+          "name": "Lobby",
+          "role": "A secure military staging room for up to 8 players, with a clear round-entry exit and no sightline or physical access into the match.",
+          "where": "separate map from the battlefield",
+          "size": "small, sized for up to 8 players"
         },
         {
-          "name": "Modern military base battlefield",
-          "role": "The main free-for-all combat area, containing a central open parade or vehicle yard and flanking cover-filled combat zones connected by multiple rotation routes.",
-          "where": "Beyond the lobby, occupying most of the map.",
-          "size": "small, compact battlefield"
+          "name": "Central drill-yard conflict zone",
+          "role": "The central open combat area of the compact modern military base.",
+          "where": "centre of the battlefield",
+          "size": ""
         },
         {
-          "name": "Central parade or vehicle yard",
-          "role": "Open central combat and navigation anchor between the flanking zones.",
-          "where": "Centre of the battlefield.",
-          "size": "open central area"
+          "name": "Flanking cover-heavy yards",
+          "role": "Two cover-filled flanking combat areas for rotation and grenade-launcher fights.",
+          "where": "on both flanks of the central drill-yard",
+          "size": ""
         },
         {
-          "name": "Flanking combat zones",
-          "role": "Cover-filled engagement areas with sandbag positions, concrete barricade clusters, stacked cargo containers, low utility buildings, and parked military vehicles.",
-          "where": "Flanking the central yard.",
-          "size": "-"
+          "name": "Rear utility/service zone",
+          "role": "The rear service area of the military base.",
+          "where": "rear of the battlefield",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Lobby / staging courtyard",
-          "to": "Modern military base battlefield",
-          "kind": "corridor"
+          "from": "Central drill-yard conflict zone",
+          "to": "Flanking cover-heavy yards",
+          "kind": "open ground"
         },
         {
-          "from": "Central parade or vehicle yard",
-          "to": "Flanking combat zones",
-          "kind": "open ground"
+          "from": "Flanking cover-heavy yards",
+          "to": "Rear utility/service zone",
+          "kind": "corridor"
         }
       ],
-      "terrain": "Flat paved and packed-dirt ground with sparse grass edges.",
+      "terrain": "Paved concrete ground with sparse grass at the perimeter.",
       "props": [
         {
-          "name": "Sandbag positions",
+          "name": "Perimeter fencing",
           "count": -1,
-          "where": "Flanking combat zones"
+          "where": "around the match area"
         },
         {
-          "name": "Concrete barricade clusters",
+          "name": "Low base buildings used as exterior cover",
           "count": -1,
-          "where": "Flanking combat zones"
+          "where": "across the battlefield"
         },
         {
-          "name": "Stacked cargo containers",
+          "name": "Cargo crates",
           "count": -1,
-          "where": "Flanking combat zones"
+          "where": "across combat areas"
         },
         {
-          "name": "Low utility buildings",
+          "name": "Jersey barriers",
           "count": -1,
-          "where": "Flanking combat zones"
+          "where": "across combat areas"
         },
         {
-          "name": "Parked military vehicles",
+          "name": "Sandbag stacks",
           "count": -1,
-          "where": "Flanking combat zones"
+          "where": "across combat areas"
+        },
+        {
+          "name": "Blast barricades",
+          "count": -1,
+          "where": "across combat areas"
         }
       ],
-      "boundary": "The playable battle area is enclosed by a continuous military-base perimeter wall, fencing, and closed gates.",
+      "boundary": "The match area is enclosed with base walls and perimeter fencing; the lobby is fully separated with no sightline or physical access into the match.",
       "scale_band": "small",
-      "theme": "Modern military base; practical concrete, sandbags, containers, muted tactical colors."
+      "theme": "Clean modern military base, functional concrete and olive-drab equipment."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "An imperfect route arrangement would not make the game structurally unplayable.",
+      "why": "The base is compact and visually led by its military cover composition; an invalid route arrangement would not inherently make the game unplayable.",
       "set_piece": false
     },
     "route": [
-      "P0"
+      "P4"
     ],
-    "notes": [],
+    "notes": [
+      "`space-staged` is used from outside Shooter’s usual shape set to keep the lobby and active battlefield as separate maps.",
+      "No additional canonical placed pickups, emitters, scoring volumes, or weapon stations were specified."
+    ],
     "scene_prompt": "Create a 3D first-person combat map with a lobby area leading into a small modern military base battlefield designed for up to 8 players. The battlefield is a compact base with multiple cover-filled combat zones and clear routes between them, suitable for grenade-launcher fights; players enter it from the lobby for each round. No ground weapon pickups are present."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

@@ -14,128 +14,191 @@
     }
   ],
   "scene_prompt": "Create a 3D hide-and-seek map set inside a large neon retro arcade, with rows of glowing arcade cabinets, game machines, prize counters, seating areas, and back corridors arranged to create clear hiding spaces.",
-  "blob": "### Genre\nThe dominant genre is Party & Casual: the author specifies a round-based hide-and-seek game. There is no secondary genre.\n\n### Shape and preset\nUse `space-continuous`, one connected indoor play space rather than a separated lobby and stage. The closest preset is Childhood Game, but its maze and social lobby bundle are not requested, so the preset is none.\n\n### Config requirements\nUse visible `cover-los`: dense, repeating rows of arcade cabinets, prize displays, tables, and seating break sightlines and form readable hiding pockets. Do not add invisible gameplay volumes or unrequested spawn, scoring, or transport markers.\n\n### Layout components\nBuild one large neon retro arcade hall. The main central zone is a broad grid of glowing upright cabinets and larger game machines, with aisles wide enough to circulate while repeatedly opening into concealment pockets. Put prize counters along one side wall, using their counter fronts and stocked displays as additional visual cover. Place several seating areas at the ends and intersections of cabinet rows, each with booths, tables, and benches that create small sheltered spaces without blocking circulation entirely. Run narrower back corridors behind the prize-counter and machine-wall zones, with occasional side recesses and service-door-like alcoves for deeper hiding spaces. Keep all areas physically connected through multiple aisles rather than making a maze. Use patterned dark carpet, luminous machine screens, ceiling strips, and colored wall glow; enclose the map with arcade walls, rear service partitions, and a visible entrance façade. Compose the isometric view from above one front corner so the bright central cabinet grid, side prize counter, seating pockets, and darker rear corridors are all legible.\n\n### Render order\nUse `isometric`: the arcade’s visual density and neon atmosphere lead, while its simple connected aisle plan can be projected afterward.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by the large arcade hall and numerous cabinet rows. Theme is saturated neon retro arcade: dark carpet, colorful glow, chrome, and blinking machines. Pipeline modifier `P0` applies because this is one enclosed but single-surface interior map with no stacked floors, separate maps, or topology requiring procedural validation.",
+  "blob": "### 1. Genre\nThe dominant genre is Party & Casual: this is a round-based hide-and-seek game with one seeker. There is no secondary genre.\n\n### 2. Shape and preset\nUse `space-bounded`, the Continuous Play Space shape, as one large enclosed arcade in which the lobby and active hiding game share the same physical map. Match the Childhood Game preset in its clutter-and-hiding emphasis, but do not use its maze component: cabinet rows and rear corridors provide the hiding structure instead.\n\n### 3. Config requirements\nUse `social-hub` as a neon-lit central entrance and waiting area within the arcade. Use `cover-los` for dense, repeating banks of glowing cabinets, machines, prize displays, booths, and seating that break sightlines and create hiding pockets. No universal options are requested.\n\n### 4. Layout requirements\nPlace `spawn-protected` round-start points evenly around the arcade perimeter, screened from immediate sightlines and separated so the seeker and hiders do not begin together. Place `trigger-scoring` detection volumes at the intended tag/finding interaction spaces throughout the active floor, especially at cabinet aisles, seating alcoves, prize-counter corners, and back-corridor entrances.\n\n### 5. Layout components\nThe map is one large enclosed neon retro arcade. Put the entrance and gathering area at the front, opening onto a broad central arcade floor. Fill the central and side zones with parallel rows of glowing arcade cabinets and larger game machines, leaving navigable aisles that branch and reconnect. Place prize counters along one side as long visual barriers, with seating clusters and booth-like resting areas in open corners. Run narrower back corridors behind cabinet banks and counters, with several entries and exits to prevent a single obvious hiding lane. Use glossy dark flooring, saturated neon signage, retro carpet accents, illuminated machine screens, and a closed arcade wall boundary. Compose the frame from an elevated three-quarter view so the front hub, cabinet-grid density, side counters, and rear corridors all read clearly.\n\n### 6. Render order\nUse `topdown` first, then dress the authoritative plan isometrically, because fair connected hiding routes and screened starting positions must remain playable rather than becoming disconnected decorative aisles.\n\n### 7. Scale, theme, and pipeline cost\nUse a large scale band, driven by the need for many cabinet rows, distinct seating pockets, counters, and rear corridors. Theme: neon retro arcade, dark glossy surfaces, saturated pink, cyan, violet, and warm machine lights. Pipeline modifier: `P0`; this is a single enclosed, single-level space with no geometry forcing an extra capture path.",
   "spec": {
     "genre": "Party & Casual",
     "secondary": [],
-    "shape": "space-continuous",
-    "preset": "none",
+    "shape": "space-bounded",
+    "preset": "Childhood Game",
     "axes": {},
     "options": [
       {
-        "id": "cover-los",
-        "text": "Dense, repeating rows of arcade cabinets, prize displays, tables, and seating break sightlines and form readable hiding pockets.",
+        "id": "social-hub",
+        "text": "A neon-lit central entrance and waiting area within the arcade.",
         "visible": true,
+        "count": -1
+      },
+      {
+        "id": "cover-los",
+        "text": "Dense repeating banks of glowing cabinets, machines, prize displays, booths, and seating that break sightlines and create hiding pockets.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "spawn-protected",
+        "text": "Round-start points evenly around the arcade perimeter, screened from immediate sightlines and separated so the seeker and hiders do not begin together.",
+        "visible": false,
+        "count": -1
+      },
+      {
+        "id": "trigger-scoring",
+        "text": "Detection volumes at intended tag and finding interaction spaces throughout the active floor.",
+        "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "spawn-protected",
+        "text": "Round-start points evenly around the arcade perimeter, screened from immediate sightlines and separated so the seeker and hiders do not begin together.",
+        "count": -1,
+        "where": "Evenly around the arcade perimeter, screened from immediate sightlines and separated from one another."
+      },
+      {
+        "id": "trigger-scoring",
+        "text": "Detection volumes at intended tag and finding interaction spaces.",
+        "count": -1,
+        "where": "Throughout the active floor, especially at cabinet aisles, seating alcoves, prize-counter corners, and back-corridor entrances."
+      }
+    ],
     "layout": {
-      "composition": "Isometric view from above one front corner, with the bright central cabinet grid dominant, the side prize counter visible along one wall, seating pockets at row ends and intersections, and darker rear corridors legible behind the machine-wall zones.",
+      "composition": "Elevated three-quarter view showing the front entrance hub opening onto the broad central arcade floor, dense cabinet-grid rows through the centre and sides, prize counters along one side, and rear corridors clearly visible behind the cabinet banks and counters.",
       "zones": [
         {
-          "name": "Central cabinet grid",
-          "role": "Broad circulation and primary hiding area among glowing upright cabinets and larger game machines.",
-          "where": "centre",
-          "size": "broad"
-        },
-        {
-          "name": "Prize-counter side wall",
-          "role": "Prize counters, counter fronts, and stocked displays provide additional visual cover.",
-          "where": "along one side wall",
+          "name": "Entrance and gathering area",
+          "role": "Neon-lit central entrance and waiting hub.",
+          "where": "Front of the arcade.",
           "size": ""
         },
         {
-          "name": "Seating pockets",
-          "role": "Booths, tables, and benches create small sheltered hiding spaces without fully blocking circulation.",
-          "where": "at ends and intersections of cabinet rows",
-          "size": "several"
+          "name": "Central arcade floor",
+          "role": "Active hide-and-seek floor with navigable cabinet aisles.",
+          "where": "Centre, opening from the front hub.",
+          "size": "broad"
         },
         {
-          "name": "Rear back corridors",
-          "role": "Narrower connected routes with side recesses and service-door-like alcoves for deeper hiding spaces.",
-          "where": "behind prize-counter and machine-wall zones",
-          "size": "narrower"
+          "name": "Cabinet and machine zones",
+          "role": "Dense hiding structure formed by parallel rows of glowing cabinets and larger game machines.",
+          "where": "Central and side zones.",
+          "size": ""
+        },
+        {
+          "name": "Prize counter side",
+          "role": "Long prize counters act as visual barriers and create corner hiding spaces.",
+          "where": "Along one side.",
+          "size": ""
+        },
+        {
+          "name": "Seating and booth corners",
+          "role": "Open-corner resting areas and hiding pockets.",
+          "where": "Open corners of the arcade.",
+          "size": ""
+        },
+        {
+          "name": "Rear corridors",
+          "role": "Narrower connected hiding routes behind cabinet banks and counters.",
+          "where": "Rear of the arcade.",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Central cabinet grid",
-          "to": "Prize-counter side wall",
-          "kind": "aisle"
+          "from": "Entrance and gathering area",
+          "to": "Central arcade floor",
+          "kind": "open ground"
         },
         {
-          "from": "Central cabinet grid",
-          "to": "Seating pockets",
-          "kind": "aisle"
-        },
-        {
-          "from": "Central cabinet grid",
-          "to": "Rear back corridors",
+          "from": "Central arcade floor",
+          "to": "Cabinet and machine zones",
           "kind": "corridor"
         },
         {
-          "from": "Rear back corridors",
-          "to": "Side recesses and service-door-like alcoves",
+          "from": "Cabinet and machine zones",
+          "to": "Cabinet and machine zones",
           "kind": "corridor"
+        },
+        {
+          "from": "Cabinet and machine zones",
+          "to": "Rear corridors",
+          "kind": "corridor"
+        },
+        {
+          "from": "Prize counter side",
+          "to": "Rear corridors",
+          "kind": "corridor"
+        },
+        {
+          "from": "Central arcade floor",
+          "to": "Seating and booth corners",
+          "kind": "open ground"
         }
       ],
-      "terrain": "Single-surface patterned dark carpet under glowing machines and luminous screens.",
+      "terrain": "Single-level glossy dark arcade flooring with retro carpet accents.",
       "props": [
         {
-          "name": "Glowing upright arcade cabinets",
+          "name": "glowing arcade cabinet rows",
           "count": -1,
-          "where": "central grid"
+          "where": "Central and side zones, arranged in parallel rows."
         },
         {
-          "name": "Larger game machines",
+          "name": "larger game machines",
           "count": -1,
-          "where": "central grid"
+          "where": "Among the central and side cabinet zones."
         },
         {
-          "name": "Prize counters with stocked displays",
+          "name": "prize counters",
           "count": -1,
-          "where": "side wall"
+          "where": "Along one side as long visual barriers."
         },
         {
-          "name": "Seating areas with booths, tables, and benches",
+          "name": "seating clusters",
           "count": -1,
-          "where": "ends and intersections of cabinet rows"
+          "where": "Open corners."
         },
         {
-          "name": "Ceiling strips",
+          "name": "booth-like resting areas",
           "count": -1,
-          "where": "overhead"
+          "where": "Open corners."
         },
         {
-          "name": "Colored wall glow",
+          "name": "neon signage",
           "count": -1,
-          "where": "walls"
+          "where": "Throughout the enclosed arcade."
+        },
+        {
+          "name": "illuminated machine screens",
+          "count": -1,
+          "where": "Across cabinet and machine banks."
         }
       ],
-      "boundary": "Enclosed by arcade walls, rear service partitions, and a visible entrance façade.",
+      "boundary": "Closed arcade wall boundary enclosing the single-level space.",
       "scale_band": "large",
-      "theme": "Saturated neon retro arcade: dark carpet, colorful glow, chrome, and blinking machines."
+      "theme": "Neon retro arcade with dark glossy surfaces, saturated pink, cyan, violet, and warm machine lights."
     },
     "render": {
-      "first": "isometric",
-      "then": "topdown",
-      "authoritative": "isometric",
-      "why": "the arcade’s visual density and neon atmosphere lead while its simple connected aisle plan can be projected afterward.",
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "Fair connected hiding routes and screened starting positions must remain playable rather than becoming disconnected decorative aisles.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
-    "notes": [],
+    "notes": [
+      "The Childhood Game preset is named, but its maze component is explicitly excluded; cabinet rows and rear corridors provide the hiding structure instead."
+    ],
     "scene_prompt": "Create a 3D hide-and-seek map set inside a large neon retro arcade, with rows of glowing arcade cabinets, game machines, prize counters, seating areas, and back corridors arranged to create clear hiding spaces."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
-  "mapper_notes": []
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P0'] gives isometric"
+  ]
 }

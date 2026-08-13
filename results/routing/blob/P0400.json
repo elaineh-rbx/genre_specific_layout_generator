@@ -19,145 +19,135 @@
     }
   ],
   "scene_prompt": "Create a bright, cartoony 3D factory map divided into multiple small individual engineer plots, where each player builds a separate room-sized disaster-course gauntlet from scratch. Each plot has a clear entrance at one end and exit at the other, with a compact route between them for NPCs to traverse quickly, leaving space for modular hazards such as lava channels, spinning blades, collapsing bridges, giant boulders, tornado devices, lightning emitters, lasers, explosive props, rolling obstacles, and swinging wrecking balls. Arrange the plots as a shared factory floor with visible neighboring courses, open viewing space around them, and an industrial factory backdrop with exaggerated machinery and room for chain-reaction setups.",
-  "blob": "### Genre\nThe dominant genre is Simulation: the original’s build-budget, unlock, and repeatable player-owned construction loop makes this a tycoon-like manager rather than a Survival disaster map. There is no secondary genre.\n\n### Shape and preset\nUse `plot-isolated`: each engineer owns a separate small build plot, while all plots coexist on one shared factory floor. Preset: none. The Sandbox preset shares the isolated-plot shape but its resource-node and bazaar bundle is not requested; the scene instead requires compact NPC gauntlets and physical contraptions.\n\n### Config requirements\nUse `physics-rig` as visible geometry: each plot supports exaggerated moving, swinging, rolling, collapsing, and chain-reaction assemblies. Do not add unrequested resource fields, shops, roads, or hazard-event terrain. No selected option is invisible; NPC routing and round-state logic are not rendered layout components.\n\n### Layout components\nBuild a bright shared factory hall containing an array of multiple small, neighboring engineer plots. Each plot is a room-sized rectangular gauntlet with a clearly marked entrance at one short end, a clearly marked exit at the opposite end, and one compact, readable route between them so an NPC crosses quickly. Keep enough open build area along and above that route for modular lava channels, spinning-blade rigs, collapsing bridge sections, giant boulders, tornado devices, lightning emitters, laser arrays, explosive props, giant rolling obstacles, and swinging wrecking balls. Leave generous open viewing aisles around the plots, allowing players to see adjacent courses and their chain reactions without entering them. The surrounding shell is an industrial factory backdrop of oversized pipes, conveyor-like machinery, tanks, gantries, warning stripes, and cartoony mechanical set dressing. The boundary is the factory’s exterior walls, with plot dividers low or open enough to preserve cross-floor visibility. Frame the whole floor in a high three-quarter view, with repeated plots forming the central pattern and the machinery ringing the perimeter.\n\n### Render order\nUse `topdown` first, then dress the isometric view from that plan, because every individual entrance-to-exit route must remain traversable for the NPC wave; an invalid route would make a plot nonfunctional.\n\n### Scale, theme, and pipeline cost\nScale is medium: each course is small, but the shared floor must hold multiple simultaneous plots and observation circulation. Theme: bright cartoony industrial disaster laboratory, exaggerated machinery, playful hazardous color coding. Pipeline modifier: `P0`; all plots coexist on one grounded factory surface, with no forced stacked, interior-transition, separate-map, or volumetric capture path.",
+  "blob": "### Genre\nThe dominant genre is Simulation: individual build plots, a timed construction loop, and progressive factory upgrades define a tycoon-like simulator rather than a survival course.\n\n### Shape and preset\nUse `plot-isolated`, taken from the Simulation Sandbox preset. It becomes a bank of small, equal, non-overlapping engineer plots rather than expansive sandbox terrain. Retain the preset’s isolated-plot logic, but drop its unrequested resource-node and bazaar dressing; the prompt instead requires disaster-machine space.\n\n### Config requirements\nUse `path-circulation` for broad, unobstructed factory-floor aisles and viewing aprons around every plot. Use `physics-rig` for visibly modular, exaggerated contraptions: spinning blades, collapsing bridge sections, boulders, tornado machines, lightning emitters, lasers, explosive props, rolling obstacles, and swinging wrecking balls. Use `hazard-kill` for the clearly legible dangerous portions of these machines, including lava channels and active impact or laser zones.\n\n### Layout requirements\nUse `spawner-npc`: place one NPC wave origin at the entrance end of each individual plot, aimed down that plot’s compact course toward its exit. No other placed option is required; construction budgets, scoring, timers, replay cameras, leaderboards, and unlocks are mechanics/UI rather than layout geometry.\n\n### Layout components\nCreate a shared indoor factory floor containing multiple small individual engineer plots, all equally sized and visibly separated by low industrial boundaries or floor markings. Every plot is a room-sized build pad with a clear entrance edge, a clear opposite exit edge, and a compact central route footprint sized for an NPC to traverse quickly. Leave flexible open slots along this route for modular hazard assemblies and chain-reaction setups rather than prebuilding a fixed obstacle sequence. Surround the plots with generous viewing aisles so players can watch neighbouring courses without entering them. Frame the floor with bright industrial walls, oversized pipes, conveyors, gears, gantries, warning stripes, and stylized factory machinery; keep the boundary as a single enclosed factory hall. Compose the image from an elevated three-quarter overview that shows several whole plots, their parallel entry-to-exit orientation, and the shared spectator circulation.\n\n### Render order\nUse `topdown` first, then derive the isometric view, because the separate plots, their non-overlapping circulation, and each entry-to-exit route must remain readable and usable even though the hazard builds are modular.\n\n### Scale, theme, and pipeline cost\nScale is medium: each course is deliberately room-sized, but the shared floor must accommodate multiple simultaneous player plots and viewing space. Theme: bright cartoony industrial disaster laboratory, oversized machinery, comic exaggeration, and clean zero-gore chaos. Pipeline modifier `P0` applies: this is one enclosed, single-surface factory floor with no stacked traversal, exterior/interior transition, or mandatory procedural topology.",
   "spec": {
     "genre": "Simulation",
     "secondary": [],
     "shape": "plot-isolated",
-    "preset": "none",
+    "preset": "Sandbox",
     "axes": {},
     "options": [
       {
+        "id": "path-circulation",
+        "text": "Broad, unobstructed factory-floor aisles and viewing aprons around every plot.",
+        "visible": true,
+        "count": -1
+      },
+      {
         "id": "physics-rig",
-        "text": "Each engineer plot supports exaggerated moving, swinging, rolling, collapsing, and chain-reaction assemblies, including modular lava channels, spinning-blade rigs, collapsing bridge sections, giant boulders, tornado devices, lightning emitters, laser arrays, explosive props, giant rolling obstacles, and swinging wrecking balls.",
+        "text": "Visibly modular, exaggerated contraptions: spinning blades, collapsing bridge sections, boulders, tornado machines, lightning emitters, lasers, explosive props, rolling obstacles, and swinging wrecking balls.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "hazard-kill",
+        "text": "Clearly legible dangerous portions of the machines, including lava channels and active impact or laser zones.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "High three-quarter view over the whole shared factory floor: repeated neighboring engineer plots form the central pattern, generous viewing aisles surround them, and oversized industrial machinery rings the perimeter.",
+      "composition": "Elevated three-quarter overview showing several whole plots in parallel entry-to-exit orientation, with shared spectator circulation visible around them.",
       "zones": [
         {
-          "name": "Shared factory hall",
-          "role": "Bright common factory floor holding all player-owned engineer plots and observation circulation.",
-          "where": "Whole framed floor",
-          "size": "medium"
+          "name": "Shared indoor factory floor",
+          "role": "Contains the individual engineer plots and shared spectator circulation.",
+          "where": "Entire enclosed hall",
+          "size": "Medium shared floor"
         },
         {
-          "name": "Engineer plots",
-          "role": "Separate room-sized disaster-course gauntlets for individual engineers, each with a fast NPC traversal route and space for chain-reaction contraptions.",
-          "where": "Centre of the shared factory floor in a repeated neighboring array",
-          "size": "small each"
+          "name": "Individual engineer plots",
+          "role": "Room-sized build pads for separate disaster-course gauntlets, each with an entrance edge, opposite exit edge, compact NPC route, and open slots for modular hazard assemblies.",
+          "where": "Across the shared factory floor in parallel orientation",
+          "size": "Small, equal, non-overlapping plots"
         },
         {
-          "name": "Viewing aisles",
-          "role": "Open circulation and viewing space for seeing adjacent courses and chain reactions without entering the plots.",
-          "where": "Around and between the plots",
-          "size": "generous"
-        },
-        {
-          "name": "Industrial perimeter shell",
-          "role": "Factory backdrop and mechanical set dressing surrounding the shared floor.",
-          "where": "Perimeter",
-          "size": ""
+          "name": "Viewing aisles and aprons",
+          "role": "Generous circulation for players to watch neighbouring courses without entering them.",
+          "where": "Around every plot",
+          "size": "Generous"
         }
       ],
       "paths": [
         {
-          "from": "Plot entrance",
-          "to": "Plot exit",
-          "kind": "corridor"
+          "from": "Each plot entrance edge",
+          "to": "Each plot exit edge",
+          "kind": "open ground"
+        },
+        {
+          "from": "Viewing aisles and aprons",
+          "to": "Individual engineer plots",
+          "kind": "open ground"
         }
       ],
-      "terrain": "One grounded factory surface with open build area along and above each compact route.",
+      "terrain": "Single-surface indoor factory floor with low industrial plot boundaries or floor markings, warning stripes, and open modular hazard slots.",
       "props": [
         {
-          "name": "Clearly marked plot entrance",
-          "count": 1,
-          "where": "One short end of each engineer plot"
-        },
-        {
-          "name": "Clearly marked plot exit",
-          "count": 1,
-          "where": "Opposite short end of each engineer plot"
-        },
-        {
-          "name": "Modular lava channels",
+          "name": "Low industrial plot boundaries or floor markings",
           "count": -1,
-          "where": "Open build area along and above plot routes"
+          "where": "Separating the equal individual plots"
         },
         {
-          "name": "Spinning-blade rigs",
+          "name": "Oversized pipes",
           "count": -1,
-          "where": "Open build area along and above plot routes"
+          "where": "Around the factory hall"
         },
         {
-          "name": "Collapsing bridge sections",
+          "name": "Conveyors",
           "count": -1,
-          "where": "Open build area along and above plot routes"
+          "where": "Around the factory hall"
         },
         {
-          "name": "Giant boulders",
+          "name": "Gears",
           "count": -1,
-          "where": "Engineer plots"
+          "where": "Around the factory hall"
         },
         {
-          "name": "Tornado devices",
+          "name": "Gantries",
           "count": -1,
-          "where": "Engineer plots"
+          "where": "Around the factory hall"
         },
         {
-          "name": "Lightning emitters",
+          "name": "Warning stripes",
           "count": -1,
-          "where": "Engineer plots"
+          "where": "Across the factory floor and machinery"
         },
         {
-          "name": "Laser arrays",
+          "name": "Stylized factory machinery",
           "count": -1,
-          "where": "Engineer plots"
+          "where": "Framing the factory floor"
         },
         {
-          "name": "Explosive props",
+          "name": "Modular hazard assemblies and chain-reaction setups",
           "count": -1,
-          "where": "Engineer plots"
-        },
-        {
-          "name": "Giant rolling obstacles",
-          "count": -1,
-          "where": "Engineer plots"
-        },
-        {
-          "name": "Swinging wrecking balls",
-          "count": -1,
-          "where": "Engineer plots"
-        },
-        {
-          "name": "Oversized pipes, conveyor-like machinery, tanks, gantries, warning stripes, and cartoony mechanical set dressing",
-          "count": -1,
-          "where": "Industrial factory perimeter"
+          "where": "Flexible open slots along each plot route"
         }
       ],
-      "boundary": "Factory exterior walls, with low or open plot dividers preserving cross-floor visibility.",
+      "boundary": "A single enclosed factory hall framed by bright industrial walls and stylized machinery.",
       "scale_band": "medium",
-      "theme": "Bright cartoony industrial disaster laboratory with exaggerated machinery and playful hazardous color coding."
+      "theme": "Bright cartoony industrial disaster laboratory, oversized machinery, comic exaggeration, clean zero-gore chaos."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "Every individual entrance-to-exit route must remain traversable for the NPC wave.",
+      "why": "Separate plots, non-overlapping circulation, and each entry-to-exit route must remain readable and usable.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
-    "notes": [],
+    "notes": [
+      "dropped option 'spawner-npc': not in Simulation",
+      "dropped placement 'spawner-npc': not in Simulation"
+    ],
     "scene_prompt": "Create a bright, cartoony 3D factory map divided into multiple small individual engineer plots, where each player builds a separate room-sized disaster-course gauntlet from scratch. Each plot has a clear entrance at one end and exit at the other, with a compact route between them for NPCs to traverse quickly, leaving space for modular hazards such as lava channels, spinning blades, collapsing bridges, giant boulders, tornado devices, lightning emitters, lasers, explosive props, rolling obstacles, and swinging wrecking balls. Arrange the plots as a shared factory floor with visible neighboring courses, open viewing space around them, and an industrial factory backdrop with exaggerated machinery and room for chain-reaction setups."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

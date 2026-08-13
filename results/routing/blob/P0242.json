@@ -14,142 +14,158 @@
     }
   ],
   "scene_prompt": "Create a peaceful, mysterious 3D floating-island cluster called Stars Alike. A central main island serves as a social hub with interactive seating areas, connected by simple bridges to separate compact islands: one for a small obstacle course, one for a target-hitting area, and one for a friendly race track. Scatter hidden secret areas around the islands and along less obvious paths, with no formal entrance or introductory structure so players explore and discover the space themselves.",
-  "blob": "### Genre\nThe dominant genre is Party & Casual, with Obby & Platformer as a secondary genre for the compact obstacle-course island. The social cluster and three lightweight friend-oriented activities make this a shared casual minigame space rather than three separate full games.\n\n### Shape and preset\nUse `space-continuous`: the central hub and all activity islands coexist in one connected floating-island space, linked by bridges rather than isolated stages. The closest preset is Minigame, but the prompt overrides its `space-staged` form and its lobby-to-stage transport; use no preset, because the continuous cluster and exploratory arrival discard most of that bundle.\n\n### Config requirements\nVisible geometry: `social-hub` is the central island’s open gathering area, with several interactive seating clusters arranged for friends to face one another. `island-cluster` is the small set of separate floating landmasses joined by simple bridges. From the secondary genre, `path-track` is the short ordered run of platforms on the obstacle island, and `obstacle-jump` gives it a few clear, compact jumps. No invisible config elements are required; targets, secrets, and race boundaries are represented as visible scene geometry only.\n\n### Layout components\nMake one modest central floating island, roughly half the cluster’s footprint, as the social hub. Place seating circles, benches, and small overlook pads around its calm open center. Three compact satellite islands connect directly or through short bridge spurs: an obstacle-course island with a brief ascending platform chain; a target-hitting island with a small firing line facing a grouped target wall or target props; and a friendly race-track island with one plainly readable short track loop around its perimeter. Scatter several small secret nooks beneath bridge approaches, behind rock outcrops, and on less obvious side ledges; keep them discoverable without signage or a formal entrance. Use grassy rock islands with soft stone undersides suspended in open sky, simple narrow bridges, sparse mystical foliage and glowing accents. The outer boundary is open sky and island edges, with no gatehouse, reception zone, or introductory structure. Compose the central hub as the visual anchor, with the three activity islands radiating around it and bridges clearly legible from above.\n\n### Render order\nUse `topdown`: the obstacle sequence and compact race route need a coherent, navigable plan before the isometric dressing is derived.\n\n### Scale, theme, and pipeline cost\nScale is medium: one social island plus three activity islands and secret side spaces, deliberately compact for a low-clutter feel. Theme: peaceful mysterious floating isles, soft fantasy, subtle star-like glow. Use `P6` because the obstacle path must remain clearable by construction, and `CHECK` because the separated islands sit over open air, although all intended movement remains on grounded island surfaces.",
+  "blob": "### Genre\nThe dominant genre is Party & Casual: the shared floating hub hosts compact social minigames rather than a single progression route. The obstacle and race islands borrow platforming and racing geometry, but remain activities within the party space rather than secondary full-map genres.\n\n### Shape and preset\nUse `space-bounded` from the Party & Casual typical shapes, interpreted as one connected floating-island activity space rather than a flat room. Preset: none. The Minigame preset's isolated lobby-and-stage arrangement conflicts with the author’s visible, bridge-linked hub and activity islands.\n\n### Config requirements\nUse `social-hub` for the central island’s peaceful gathering area with interactive seating. Use `island-cluster` for the small floating islands separated by open sky and joined by simple bridges. Use `path-track` and `obstacle-jump` for the compact sequential obstacle course. Use `target-practice` for a contained target-hitting range facing away from the hub. Use `lane-corridor`, `startpoint-line`, and `trigger-finish` for a clearly bounded friendly race route with a visible start and end. Hidden side ledges, caves, and less-obvious bridge approaches create the secret areas; do not add an entrance gate or tutorial structure.\n\n### Layout requirements\nPlace `target-practice` targets in one compact satellite range, graded from near to far and all facing inward toward a safe firing direction. Place one `startpoint-line` at the race island’s route entrance and one `trigger-finish` at its terminal finish marker. No checkpoint is needed for the intentionally small obstacle course or race. Place no formal spawn presentation marker: arrival should feed directly into the main hub without an introduction.\n\n### Layout components\nThe main, largest floating island is the social hub, with several interactive seating clusters around a calm open clearing. Three smaller satellite islands connect to it by simple, readable bridges: an obstacle island with a short chain of low platforms and jumps; a target island with a firing line, targets, and a quiet backdrop; and a race island with a compact marked route from start to finish. Tuck secret alcoves beneath island lips, behind foliage or rock formations, and along optional narrow side paths near bridges. Keep the cluster sparse and compact for low lag, with open sky as the boundary and no enclosing buildings. Frame the main island centrally, with the three activity islands clearly legible around it and secrets visually subdued.\n\n### Render order\nUse `topdown` first and make it authoritative, because every bridge, the obstacle sequence, and the compact race route must remain continuously connected and playable before the isometric dressing is derived.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by one social island and exactly three compact minigame islands. Theme: peaceful celestial mystery, soft floating rock, restrained foliage, quiet magical atmosphere. Use `CHECK` because separated floating islands create open-air gaps that must be reviewed for representability; movement remains surface-based rather than volumetric.",
   "spec": {
     "genre": "Party & Casual",
-    "secondary": [
-      "Obby & Platformer"
-    ],
-    "shape": "space-continuous",
+    "secondary": [],
+    "shape": "space-bounded",
     "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "social-hub",
-        "text": "the central island’s open gathering area, with several interactive seating clusters arranged for friends to face one another",
+        "text": "the central island’s peaceful gathering area with interactive seating",
         "visible": true,
-        "count": 1
+        "count": -1
       },
       {
         "id": "island-cluster",
-        "text": "the small set of separate floating landmasses joined by simple bridges",
+        "text": "small floating islands separated by open sky and joined by simple bridges",
         "visible": true,
         "count": 3
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "The central hub is the visual anchor, with three activity islands radiating around it and bridges clearly legible from above.",
+      "composition": "Frame the main island centrally, with the three activity islands clearly legible around it; keep secret areas visually subdued.",
       "zones": [
         {
-          "name": "Central social island",
-          "role": "Social hub with a calm open center and friend-facing seating.",
-          "where": "centre of the floating-island cluster",
-          "size": "modest; roughly half the cluster’s footprint"
+          "name": "Main social hub island",
+          "role": "Peaceful gathering area with interactive seating clusters around a calm open clearing.",
+          "where": "Centre",
+          "size": "Largest island"
         },
         {
-          "name": "Obstacle-course island",
-          "role": "A compact obstacle activity with a brief ascending platform chain.",
-          "where": "one satellite island connected by a bridge or short bridge spur",
-          "size": "compact"
+          "name": "Obstacle island",
+          "role": "Compact sequential obstacle course with low platforms and jumps.",
+          "where": "One satellite island connected to the hub by a simple bridge",
+          "size": "Small"
         },
         {
-          "name": "Target-hitting island",
-          "role": "A target-hitting activity with a firing line facing grouped targets.",
-          "where": "one satellite island connected by a bridge or short bridge spur",
-          "size": "compact"
+          "name": "Target island",
+          "role": "Contained target-hitting range with a firing line, graded targets, and a quiet backdrop.",
+          "where": "One satellite island connected to the hub by a simple bridge, facing away from the hub",
+          "size": "Small"
         },
         {
-          "name": "Friendly race-track island",
-          "role": "A friendly race activity with a plainly readable short track loop around the perimeter.",
-          "where": "one satellite island connected by a bridge or short bridge spur",
-          "size": "compact"
+          "name": "Race island",
+          "role": "Friendly compact marked route from a visible start to a terminal finish.",
+          "where": "One satellite island connected to the hub by a simple bridge",
+          "size": "Small"
         },
         {
-          "name": "Secret side spaces",
-          "role": "Discoverable secret nooks without signage or a formal entrance.",
-          "where": "beneath bridge approaches, behind rock outcrops, and on less obvious side ledges",
-          "size": "small"
+          "name": "Secret areas",
+          "role": "Hidden exploration areas in alcoves, caves, side ledges, and less-obvious bridge approaches.",
+          "where": "Beneath island lips, behind foliage or rock formations, and along optional narrow side paths near bridges",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Central social island",
-          "to": "Obstacle-course island",
+          "from": "Main social hub island",
+          "to": "Obstacle island",
           "kind": "bridge"
         },
         {
-          "from": "Central social island",
-          "to": "Target-hitting island",
+          "from": "Main social hub island",
+          "to": "Target island",
           "kind": "bridge"
         },
         {
-          "from": "Central social island",
-          "to": "Friendly race-track island",
+          "from": "Main social hub island",
+          "to": "Race island",
           "kind": "bridge"
         },
         {
-          "from": "Obstacle-course island",
-          "to": "Obstacle-course island",
+          "from": "Obstacle island",
+          "to": "Obstacle island",
           "kind": "track"
         },
         {
-          "from": "Friendly race-track island",
-          "to": "Friendly race-track island",
+          "from": "Race island",
+          "to": "Race island",
           "kind": "track"
+        },
+        {
+          "from": "Main social hub island",
+          "to": "Secret areas",
+          "kind": "open ground"
         }
       ],
-      "terrain": "Grassy rock islands with soft stone undersides suspended in open sky, sparse mystical foliage, and glowing accents.",
+      "terrain": "Soft floating rock islands with restrained foliage, rock formations, open-air gaps, and open sky.",
       "props": [
         {
-          "name": "interactive seating circles",
+          "name": "interactive seating clusters",
           "count": -1,
-          "where": "around the calm open center of the central social island"
+          "where": "Around the calm open clearing on the main social hub island"
         },
         {
-          "name": "benches",
+          "name": "low platforms",
           "count": -1,
-          "where": "around the calm open center of the central social island"
+          "where": "Along the obstacle island’s short sequential course"
         },
         {
-          "name": "small overlook pads",
+          "name": "targets",
           "count": -1,
-          "where": "around the calm open center of the central social island"
+          "where": "In the target island’s compact range, graded from near to far"
         },
         {
-          "name": "grouped target wall or target props",
-          "count": -1,
-          "where": "facing the small firing line on the target-hitting island"
+          "name": "firing line",
+          "count": 1,
+          "where": "On the target island, facing inward toward the safe firing direction"
         },
         {
-          "name": "simple narrow bridges",
-          "count": -1,
-          "where": "linking the central island and satellite islands"
+          "name": "quiet backdrop",
+          "count": 1,
+          "where": "Behind the target range"
+        },
+        {
+          "name": "bridges",
+          "count": 3,
+          "where": "Connecting the central hub to the three satellite islands"
         }
       ],
-      "boundary": "Open sky and island edges; no gatehouse, reception zone, or introductory structure.",
-      "scale_band": "medium",
-      "theme": "peaceful mysterious floating isles, soft fantasy, subtle star-like glow"
+      "boundary": "Open sky; no enclosing buildings.",
+      "scale_band": "small",
+      "theme": "peaceful celestial mystery, soft floating rock, restrained foliage, quiet magical atmosphere"
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the obstacle sequence and compact race route need a coherent, navigable plan before isometric dressing is derived.",
+      "why": "every bridge, the obstacle sequence, and the compact race route must remain continuously connected and playable before isometric dressing.",
       "set_piece": false
     },
     "route": [
-      "P6",
       "CHECK"
     ],
     "notes": [
-      "Dropped `path-track` and `obstacle-jump`: they are not canonical options for the dominant Party & Casual genre."
+      "dropped option 'path-track': not in Party & Casual",
+      "dropped option 'obstacle-jump': not in Party & Casual",
+      "dropped option 'target-practice': not in Party & Casual",
+      "dropped option 'lane-corridor': not in Party & Casual",
+      "dropped option 'startpoint-line': not in Party & Casual",
+      "dropped option 'trigger-finish': not in Party & Casual",
+      "dropped placement 'target-practice': not in Party & Casual",
+      "dropped placement 'startpoint-line': not in Party & Casual",
+      "dropped placement 'trigger-finish': not in Party & Casual"
     ],
     "scene_prompt": "Create a peaceful, mysterious 3D floating-island cluster called Stars Alike. A central main island serves as a social hub with interactive seating areas, connected by simple bridges to separate compact islands: one for a small obstacle course, one for a target-hitting area, and one for a friendly race track. Scatter hidden secret areas around the islands and along less obvious paths, with no formal entrance or introductory structure so players explore and discover the space themselves."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

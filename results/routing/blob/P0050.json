@@ -14,63 +14,51 @@
     }
   ],
   "scene_prompt": "Create a true 3D boss-battle map viewed from a first-person or over-the-shoulder camera: a dark stone-ruin arena formed as a circular pit, with open central ground for one large, distinctive fearsome boss creature rendered as a detailed custom 3D mesh. The player combat space surrounds the boss within the pit, enclosed by ruin walls.",
-  "blob": "### Genre\nDominant genre: Action. The single hostile boss and direct combat loop identify a boss encounter rather than an explorable world; mechanics such as health and victory do not alter the map geometry.\n\n### Shape and preset\nUse `arena-flat`, a level circular stone pit giving one large boss room to move while the player circulates around its perimeter. The closest preset is Boss Raid, but use preset none: only its broad combat-arena shape remains, while its wave emitters, breakable cover, and ring-out edges are not requested.\n\n### Config requirements\nNo additional Action options apply. In particular, there are no requested cover pillars, hazards, spawners, pickups, spectator areas, or invisible layout markers. The boss itself is visible geometry: one large, distinctive fearsome creature as a detailed custom 3D mesh, never primitive-block construction or a flat sprite.\n\n### Layout components\nBuild one circular, flat-bottomed arena zone. Keep most of the floor as broad, unobstructed central combat ground, with the custom boss occupying the visual and spatial centre. Provide a continuous walkable ring around the central fighting area for player movement; do not divide it into lanes or add clutter. Enclose the pit with tall, weathered dark-stone ruin walls, broken masonry, and uneven ruined wall crowns while keeping the floor surface clear. The boundary is the circular ruin wall, with no open ring-out edge. Compose the isometric view slightly above and outside the wall, looking across the pit so the circular enclosure, open arena floor, and central boss are all immediately legible.\n\n### Render order\nUse `isometric`: render the isometric arena first as authoritative, then derive the top-down view. The simple circular, unobstructed topology has no route-validity constraint requiring a plan-first pass.\n\n### Scale, theme, and pipeline cost\nScale band: medium, driven by a single large boss needing generous circulation room within one contained arena. Theme: dark ancient stone ruins, ominous and sparse. Use `P0`; the flat, single-surface pit has no forced overhangs, interiors, separate maps, volumetric movement, or validity-by-construction requirement.",
+  "blob": "### Genre\nThe dominant genre is Action: one player fights a single hostile boss in a real-time 3D combat arena. The boss health, weapon behavior, and victory logic establish the genre but do not alter the physical layout.\n\n### Shape and preset\nUse `space-bounded`, the Action flat-arena shape, as a circular pit rather than the usual rectangular field. Match the Boss Raid preset: its single contained clash space suits one large boss, while its emitter and destructible-cover options are not requested here.\n\n### Config requirements\nNo additional image configuration options apply. The prompt specifically asks for a clean, open combat floor enclosed by ruin walls; do not add cover, hazards, spectators, or extra structures that would obstruct the boss arena.\n\n### Layout requirements\nPlace one `spawner-npc` at the exact center of the circular pit, reserved for the single boss creature. It must be centered in the open ground with clear radial movement room on every side. No other placed gameplay components are required.\n\n### Layout components\nBuild one large circular, sunken dark stone-ruin arena. The central zone is an unobstructed, level stone combat floor sized around one large fearsome custom-mesh boss, with player traversal space forming a broad ring around it. Tall, weathered ruin walls fully enclose the pit and define the circular boundary; use broken masonry texture and dark aged stone without creating secondary paths, platforms, or clutter. There is no water, interior, settlement, or separate lobby. Compose the image from a slightly elevated third-person-readable viewpoint that clearly shows the full circular boundary, the boss centered on the floor, and ample surrounding player combat space.\n\n### Render order\nUse `isometric`: the arena is a simple, readable single-level combat bowl, so the visual ruin treatment can lead and its topology does not require a plan-first validation pass.\n\n### Scale, theme, and pipeline cost\nUse a medium scale, driven by the need to give one large boss generous movement space while retaining a legible enclosed duel arena. Theme: dark, foreboding ancient stone ruins. Pipeline modifier: `P0`; this is one bounded, single-level surface with no overhangs, transitions, separate maps, or topology that must be procedurally validated.",
   "spec": {
     "genre": "Action",
     "secondary": [],
-    "shape": "arena-flat",
-    "preset": "none",
+    "shape": "space-bounded",
+    "preset": "Boss Raid",
     "axes": {},
-    "options": [],
+    "options": [
+      {
+        "id": "spawner-npc",
+        "text": "One boss spawn at the exact center of the circular pit, reserved for the single boss creature.",
+        "visible": false,
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "spawner-npc",
+        "text": "One boss spawn at the exact center of the circular pit, reserved for the single boss creature.",
+        "count": 1,
+        "where": "At the exact center of the open circular combat floor, with clear radial movement room on every side."
+      }
+    ],
     "layout": {
-      "composition": "Isometric view slightly above and outside the ruin wall, looking across the pit so the circular enclosure, open arena floor, and central boss are immediately legible.",
+      "composition": "Slightly elevated third-person-readable viewpoint clearly showing the full circular boundary, the boss centered on the floor, and ample surrounding player combat space.",
       "zones": [
         {
-          "name": "Circular stone pit arena",
-          "role": "One large boss room with broad unobstructed central combat ground and continuous perimeter circulation.",
-          "where": "centre",
-          "size": "medium"
+          "name": "Central combat floor",
+          "role": "Unobstructed level stone combat ground for the single large boss, with broad player traversal space forming a ring around it.",
+          "where": "Centre of the circular pit.",
+          "size": "Medium-scale arena sized around one large boss with generous movement space."
         }
       ],
-      "paths": [
-        {
-          "from": "Perimeter circulation ring",
-          "to": "Perimeter circulation ring",
-          "kind": "open ground"
-        }
-      ],
-      "terrain": "Flat-bottomed dark stone arena floor, kept clear and unobstructed.",
-      "props": [
-        {
-          "name": "Large distinctive fearsome boss creature, rendered as a detailed custom 3D mesh",
-          "count": 1,
-          "where": "visual and spatial centre"
-        },
-        {
-          "name": "Tall weathered dark-stone ruin walls",
-          "count": -1,
-          "where": "around the circular pit boundary"
-        },
-        {
-          "name": "Broken masonry",
-          "count": -1,
-          "where": "along the ruin walls"
-        },
-        {
-          "name": "Uneven ruined wall crowns",
-          "count": -1,
-          "where": "top of the circular ruin walls"
-        }
-      ],
-      "boundary": "Circular ruin wall enclosing the pit; no open ring-out edge.",
+      "paths": [],
+      "terrain": "Sunken, level dark aged stone combat floor with broken masonry texture.",
+      "props": [],
+      "boundary": "Tall, weathered ruin walls fully enclose the circular pit; no secondary paths, platforms, or clutter.",
       "scale_band": "medium",
-      "theme": "Dark ancient stone ruins, ominous and sparse."
+      "theme": "Dark, foreboding ancient stone ruins."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "The simple circular, unobstructed topology has no route-validity constraint requiring a plan-first pass.",
+      "why": "The arena is a simple, readable single-level combat bowl whose topology does not require plan-first validation.",
       "set_piece": false
     },
     "route": [
@@ -82,7 +70,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

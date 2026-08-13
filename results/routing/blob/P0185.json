@@ -14,106 +14,114 @@
     }
   ],
   "scene_prompt": "Create a compact clean-tech-lab puzzle room with bright minimal walls and lighting, centered on a room-sized floor laid out as a standard computer keyboard. Build the keyboard from oversized 8x8-stud key tiles arranged in recognizable letter rows, including distinct Delete and F4 keys; leave a clear approach around the floor edges. Place a locked exit door on one side of the room beyond the keyboard, with the intended letter-tile route leading across the floor toward it.",
-  "blob": "### Genre\nDominant genre: Puzzle. The original request centers on a spatially solved sequence that releases an exit, making this an escape-room puzzle rather than a general tech-lab showcase.\n\n### Shape and preset\nUse `puzzle-rooms`: one enclosed clean-tech-lab chamber whose keyboard floor is the puzzle apparatus. The closest preset is Escape Room, but use **none** as the preset name because this build retains the sealed-room form and tile inputs while omitting its collectible chain, clue facade, and multiple progression barriers.\n\n### Config requirements\nUse `gate-solve` as visible geometry: a locked exit door beyond the keyboard floor is the room’s single forward gate. Use `button-solve` as both visible geometry and invisible layout logic: the oversized letter keys are visibly distinct floor tiles, with their stepped-on input regions placed over them after segmentation. Do not add unrequested clue walls, pickups, side corridors, or extra chambers.\n\n### Layout components\nBuild one compact rectangular puzzle chamber. Center a room-sized standard computer-keyboard floor, assembled from recognizable letter rows of large 8-by-8-stud tiles; include visibly distinct Delete and F4 keys in their conventional keyboard positions. Leave a clear continuous perimeter approach around all keyboard edges so players can enter, inspect, and traverse the tile field without clipping the walls. Place the locked exit door centered on one room side, just beyond the keyboard’s far edge; arrange the intended letter-tile traversal as a legible crossing route through the central keys toward that door, without adding text instructions to the environment. Use smooth pale floor strips around the keys, bright minimal wall panels, and even overhead lighting. The boundary is the enclosing four walls, ceiling, and exit-door wall. Compose the isometric view from the approach side, showing the full keyboard grid and door together.\n\n### Render order\nUse `isometric`: the single straightforward room and open tile grid do not require an image-model top-down plan to preserve playable topology.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the compact room-sized keyboard and stated 8-by-8-stud key tiles. Theme: bright, minimal clean tech lab with highly readable key labels. Pipeline modifier: `P0`; the room is a single enclosed surface with no overhangs, outside-to-inside transition, separate maps, or geometry that must be procedurally validated.",
+  "blob": "### Genre\nPuzzle is the dominant genre: progress depends on traversing a correct letter sequence to open an exit. There is no secondary genre.\n\n### Shape and preset\nUse `interior-single`, taken from the Puzzle genre’s typical shapes. This is one enclosed clean-tech-lab room containing the entire keyboard puzzle. The closest preset is Word / Quiz Puzzle, but the scene overrides its open-air shape; retain its puzzle-door intent while using the specified interior.\n\n### Config requirements\nUse `gate-solve` for the locked exit door beyond the keyboard, visually closed until the intended word route is completed. Use `hazard-kill` for the visibly distinct trap keys, including Delete, F4, and selected letter tiles, which read as dangerous or unstable floor tiles. Do not add unrequested clue walls, collectibles, or ambient characters.\n\n### Layout requirements\nNo named menu placement option cleanly represents the keyboard sequence sensors. Place one ordered series of invisible step-trigger regions over the letter keys spelling ESCAPE, each centered on its corresponding tile, and place individual trap trigger regions over Delete, F4, and the selected randomized-letter trap tiles. Site the exit-open trigger immediately before the locked door, activated only after the final E tile. The exact number of randomized trap tiles remains author-configurable.\n\n### Layout components\nMake a compact rectangular enclosed lab with bright minimal walls, even white lighting, and a clear circulation strip around all keyboard edges. The central floor is a room-sized standard computer keyboard made from oversized 8x8-stud tiles in recognizable rows, with distinct labeled Delete and F4 keys. Arrange the intended ESCAPE letter-tile route legibly across the keyboard toward a locked exit door centered on one side beyond the keyboard. Keep the floor otherwise flat and unobstructed; the door wall is the room boundary and the remaining walls fully enclose the space. Compose the frame top-down enough to read the full keyboard and its route, with the exit side clearly identifiable.\n\n### Render order\nUse `topdown` first and make it authoritative, because the ordered route across a recognizable keyboard must remain spatially valid and readable; the isometric view is dressed from that plan.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by a compact single-room keyboard of 8x8-stud keys. Theme is a bright, minimal clean tech lab with high-contrast readable key labels. Use `P0`: this is one enclosed, single-surface room with no forced multi-map, overhang, or volumetric capture path.",
   "spec": {
     "genre": "Puzzle",
     "secondary": [],
-    "shape": "puzzle-rooms",
-    "preset": "none",
+    "shape": "interior-single",
+    "preset": "Word / Quiz Puzzle",
     "axes": {},
     "options": [
       {
         "id": "gate-solve",
-        "text": "A locked exit door beyond the keyboard floor is the room’s single forward gate.",
+        "text": "The locked exit door beyond the keyboard, visibly closed until the intended word route is completed.",
         "visible": true,
         "count": 1
-      },
-      {
-        "id": "button-solve",
-        "text": "Oversized letter keys are visibly distinct floor tiles, with stepped-on input regions placed over them after segmentation.",
-        "visible": true,
-        "count": -1
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "Isometric view from the approach side, showing the full keyboard grid and the centered exit door together.",
+      "composition": "Top-down enough to read the full central keyboard and its ESCAPE route, with the exit side clearly identifiable beyond the keyboard on one side of the room.",
       "zones": [
         {
-          "name": "Clean-tech-lab puzzle chamber",
-          "role": "A compact enclosed escape-room chamber containing the keyboard-floor traversal and locked exit.",
-          "where": "single rectangular room",
-          "size": "small and compact"
+          "name": "Enclosed clean-tech lab room",
+          "role": "The compact single-room puzzle space containing the entire keyboard puzzle.",
+          "where": "Entire map",
+          "size": "compact"
+        },
+        {
+          "name": "Room-sized keyboard floor",
+          "role": "The central puzzle floor, arranged as a standard computer keyboard with the intended ESCAPE route across it.",
+          "where": "centre",
+          "size": "room-sized"
+        },
+        {
+          "name": "Locked exit side",
+          "role": "The door boundary beyond the keyboard, reached after the intended letter-tile route.",
+          "where": "one side of the room beyond the keyboard",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Perimeter approach",
-          "to": "Keyboard floor",
+          "from": "ESCAPE letter-tile route",
+          "to": "locked exit door",
           "kind": "open ground"
-        },
-        {
-          "from": "Keyboard floor",
-          "to": "Locked exit door",
-          "kind": "track"
         }
       ],
-      "terrain": "Smooth pale floor strips surround a room-sized standard computer-keyboard floor made from recognizable letter rows of 8-by-8-stud tiles.",
+      "terrain": "Flat, unobstructed floor around a room-sized standard computer keyboard made from oversized 8x8-stud tiles in recognizable rows.",
       "props": [
         {
-          "name": "Oversized letter key tiles",
+          "name": "Oversized keyboard key tiles",
           "count": -1,
-          "where": "center of the chamber in recognizable keyboard rows"
+          "where": "central floor in recognizable standard keyboard rows"
         },
         {
-          "name": "Delete key",
-          "count": 1,
-          "where": "conventional keyboard position"
-        },
-        {
-          "name": "F4 key",
-          "count": 1,
-          "where": "conventional keyboard position"
+          "name": "Distinct labeled Delete and F4 keys",
+          "count": 2,
+          "where": "within the keyboard layout"
         },
         {
           "name": "Locked exit door",
           "count": 1,
-          "where": "centered on one room side beyond the keyboard's far edge"
+          "where": "centred on one room side beyond the keyboard"
         },
         {
-          "name": "Bright minimal wall panels",
-          "count": -1,
-          "where": "around the chamber"
+          "name": "Ordered invisible step-trigger regions spelling ESCAPE",
+          "count": 6,
+          "where": "one centred on each corresponding ESCAPE letter tile"
         },
         {
-          "name": "Even overhead lighting",
+          "name": "Individual invisible trap trigger regions",
           "count": -1,
-          "where": "above the chamber"
+          "where": "over Delete, F4, and selected randomized-letter trap tiles"
+        },
+        {
+          "name": "Exit-open trigger",
+          "count": 1,
+          "where": "immediately before the locked door, activated only after the final E tile"
         }
       ],
-      "boundary": "Enclosing four walls, ceiling, and exit-door wall.",
+      "boundary": "The door wall forms the room boundary; all remaining bright minimal walls fully enclose the space.",
       "scale_band": "small",
-      "theme": "bright, minimal clean tech lab with highly readable key labels"
+      "theme": "Bright minimal clean-tech lab, even white lighting, high-contrast readable key labels."
     },
     "render": {
-      "first": "isometric",
-      "then": "topdown",
-      "authoritative": "isometric",
-      "why": "the single straightforward room and open tile grid do not require a top-down plan to preserve playable topology.",
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "the ordered route across a recognizable keyboard must remain spatially valid and readable.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
-    "notes": [],
+    "notes": [
+      "No named menu placement option cleanly represents the keyboard sequence sensors, trap trigger regions, or exit-open trigger; they are retained as layout components rather than canonical layout_placement rows.",
+      "The exact number of randomized letter-tile traps remains author-configurable.",
+      "dropped option 'hazard-kill': not in Puzzle"
+    ],
     "scene_prompt": "Create a compact clean-tech-lab puzzle room with bright minimal walls and lighting, centered on a room-sized floor laid out as a standard computer keyboard. Build the keyboard from oversized 8x8-stud key tiles arranged in recognizable letter rows, including distinct Delete and F4 keys; leave a clear approach around the floor edges. Place a locked exit door on one side of the room beyond the keyboard, with the intended letter-tile route leading across the floor toward it."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
-  "mapper_notes": []
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P0'] gives isometric"
+  ]
 }

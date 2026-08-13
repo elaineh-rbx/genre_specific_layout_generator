@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a compact, military-themed 3D battle arena for a 6-player free-for-all, with practical cover arranged to support fast movement. Build a clear central combat zone with low barriers, crates, and sightline breaks, surrounded by connected side lanes and elevated firing positions for varied assault-rifle, sniper, revolver, shotgun, and pistol engagements.",
-  "blob": "### Genre\nThe dominant genre is Shooter: a compact six-player free-for-all whose combat and respawning establish an arena deathmatch rather than a team-lane mode.\n\n### Shape and preset\nUse `lane-network`, matched from the Arena Deathmatch preset. Here it is a tight, non-symmetrical network around a shared central fight space, not opposing team lanes. Retain the preset’s elevated positions and interconnected routes, but omit its unrequested weapon-buff spawns.\n\n### Config requirements\nVisible geometry: `cover-los` supplies low military barriers, crates, and taller sightline-breaking obstacles throughout the centre and lanes. `cover-elevated` provides several raised firing perches, reached by exposed short stairs, looking into the central zone and across lane junctions. `path-loop` makes the side lanes connect back into one another and into the centre through multiple entrances, preventing dead-end combat routes. No invisible layout options are required by the scene.\n\n### Layout components\nMake one compact arena. The large central combat zone occupies the middle, with staggered waist-high barriers, crate clusters, and a few taller solid blocks that break direct sniper-length views without sealing the space. Ring this centre with connected side lanes on all four sides; each lane has at least two connections, allowing players to circle, flank, and re-enter the middle. Place several elevated firing positions at outer corners or lane overlooks, each accessible by a short exposed stair and screened with limited practical cover so they are useful but not dominant. Use hard-packed concrete, steel plating, and muted military ground surfaces. Enclose the arena with tall industrial perimeter walls and blocked service structures rather than open landscape. Compose the isometric view with the central combat zone clearly readable, side loops visible around it, and raised positions distinguishable at the perimeter.\n\n### Render order\nUse `isometric`: the arena’s visual combat readability, practical cover language, and compact military atmosphere lead, while the connected paths are simple enough to project afterward.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the stated six-player free-for-all and the requested fast, compact engagements. Theme is a grounded military training-yard arena with readable utilitarian cover and weapon-friendly sightlines. Use `tiered` because the elevated firing positions are raised surfaces without required overhangs; otherwise the arena remains a single connected exterior surface and requires no additional pipeline modifier.",
+  "blob": "### 1. Genre\nThe dominant genre is Shooter, specifically a compact free-for-all deathmatch rather than a team-lane objective mode.\n\n### 2. Shape and preset\nUse `lane-network`, matched from the Arena Deathmatch preset. Here it is a tight, interconnected combat arena: a central clash zone with several side loops rather than formal opposing team lanes. The preset remains recognisable, but omit its unrequested pickup option.\n\n### 3. Config requirements\nUse `cover-los` as practical low barriers, cargo crates, and taller solid sightline breakers distributed across the central zone and side routes. Use `cover-elevated` for accessible raised firing nests overlooking parts of the arena without dominating every route. Use `path-loop` as connected side lanes with multiple entrances and exits, preventing dead-end combat spaces. Use `spawn-protected` as screened spawn alcoves whose walls break direct sightlines into the arena.\n\n### 4. Layout requirements\nUse `spawn-protected` in the layout as six respawn markers, one in each separated protected alcove around the arena perimeter; each must have a short, safe exit into a different side lane and no direct sniper line to another spawn. No other placed gameplay volumes are required.\n\n### 5. Layout components\nBuild a compact, roughly square military training-yard arena. Put a broad central combat zone in the middle, filled with staggered waist-high barriers, crate clusters, and a few taller concrete sightline breakers. Encircle it with connected side lanes that loop between the outer edges and the centre, with multiple openings into the central zone. Place elevated firing positions at opposing corners or side edges, reached by exposed stairs and aimed across selected lanes rather than the whole map. Keep spawn alcoves at six dispersed perimeter positions, screened by concrete walls and crates. Use paved ground, concrete fortifications, industrial cargo props, and a hard outer boundary of military compound walls. Compose the frame from an elevated three-quarter view that clearly shows the central fight space, loops, cover density, and raised nests.\n\n### 6. Render order\nRender `isometric` first and treat it as authoritative, since this is a compact combat space whose connectivity is important but does not require procedurally validated topology.\n\n### 7. Scale, theme, and pipeline cost\nScale band: small, driven by a fast-paced six-player free-for-all. Theme: readable military training compound, practical concrete and cargo cover, restrained industrial detail. Pipeline modifier: `tiered`, forced by the raised firing positions and their stair-accessible elevation; there are no overhanging floors or separate maps.",
   "spec": {
     "genre": "Shooter",
     "secondary": [],
@@ -24,116 +24,129 @@
     "options": [
       {
         "id": "cover-los",
-        "text": "Low military barriers, crates, and taller sightline-breaking obstacles throughout the centre and lanes.",
+        "text": "Practical low barriers, cargo crates, and taller solid sightline breakers distributed across the central zone and side routes.",
         "visible": true,
         "count": -1
       },
       {
         "id": "cover-elevated",
-        "text": "Several raised firing perches, reached by exposed short stairs, looking into the central zone and across lane junctions.",
+        "text": "Accessible raised firing nests overlooking parts of the arena without dominating every route.",
         "visible": true,
         "count": -1
       },
       {
         "id": "path-loop",
-        "text": "Side lanes connect back into one another and into the centre through multiple entrances, preventing dead-end combat routes.",
+        "text": "Connected side lanes with multiple entrances and exits, preventing dead-end combat spaces.",
         "visible": true,
         "count": -1
+      },
+      {
+        "id": "spawn-protected",
+        "text": "Screened spawn alcoves whose walls break direct sightlines into the arena.",
+        "visible": true,
+        "count": 6
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "spawn-protected",
+        "text": "Six respawn markers, one in each separated protected alcove around the arena perimeter.",
+        "count": 6,
+        "where": "One in each separated protected alcove around the arena perimeter; each has a short safe exit into a different side lane and no direct sniper line to another spawn."
       }
     ],
     "layout": {
-      "composition": "Isometric view with the central combat zone clearly readable in the middle, side loops visible around it on all four sides, and raised firing positions distinguishable at the perimeter.",
+      "composition": "Elevated three-quarter view clearly showing the central fight space, looping side lanes, dense cover, and raised firing nests.",
       "zones": [
         {
           "name": "Central combat zone",
-          "role": "Shared main fight space for fast compact engagements.",
-          "where": "middle",
-          "size": "large"
+          "role": "Broad central clash space for free-for-all combat.",
+          "where": "Centre",
+          "size": "Broad"
         },
         {
-          "name": "Connected side lanes",
-          "role": "Circle, flank, and re-enter the central combat zone through multiple entrances.",
-          "where": "on all four sides around the centre",
+          "name": "Side lanes",
+          "role": "Connected looping routes between the outer edges and central zone, with multiple central openings.",
+          "where": "Encircling the central zone",
           "size": ""
         },
         {
           "name": "Elevated firing positions",
-          "role": "Overlooks into the central zone and across lane junctions, with limited practical cover so they are useful but not dominant.",
-          "where": "outer corners or lane overlooks at the perimeter",
+          "role": "Raised firing nests aimed across selected lanes.",
+          "where": "Opposing corners or side edges",
+          "size": ""
+        },
+        {
+          "name": "Protected spawn alcoves",
+          "role": "Screened respawn locations with safe exits into different side lanes.",
+          "where": "Six dispersed perimeter positions",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Connected side lanes",
+          "from": "Protected spawn alcoves",
+          "to": "Side lanes",
+          "kind": "corridor"
+        },
+        {
+          "from": "Side lanes",
           "to": "Central combat zone",
           "kind": "corridor"
         },
         {
-          "from": "Connected side lanes",
-          "to": "Connected side lanes",
-          "kind": "corridor"
-        },
-        {
-          "from": "Connected side lanes",
+          "from": "Side lanes",
           "to": "Elevated firing positions",
           "kind": "stair"
         }
       ],
-      "terrain": "Hard-packed concrete, steel plating, and muted military ground surfaces.",
+      "terrain": "Paved ground with concrete fortifications.",
       "props": [
         {
           "name": "Staggered waist-high barriers",
           "count": -1,
-          "where": "central combat zone"
+          "where": "Central combat zone"
         },
         {
           "name": "Crate clusters",
           "count": -1,
-          "where": "central combat zone"
+          "where": "Central combat zone and protected spawn alcoves"
         },
         {
-          "name": "Taller solid blocks",
+          "name": "Taller concrete sightline breakers",
           "count": -1,
-          "where": "central combat zone"
+          "where": "Central combat zone and side routes"
         },
         {
-          "name": "Low military barriers",
+          "name": "Industrial cargo props",
           "count": -1,
-          "where": "centre and lanes"
-        },
-        {
-          "name": "Short exposed stairs",
-          "count": -1,
-          "where": "leading to elevated firing positions"
-        },
-        {
-          "name": "Blocked service structures",
-          "count": -1,
-          "where": "industrial perimeter"
+          "where": "Across the arena"
         }
       ],
-      "boundary": "Tall industrial perimeter walls and blocked service structures enclose the arena.",
+      "boundary": "Hard outer boundary of military compound walls.",
       "scale_band": "small",
-      "theme": "Grounded military training-yard arena with readable utilitarian cover and weapon-friendly sightlines."
+      "theme": "Readable military training compound with practical concrete and cargo cover, restrained industrial detail."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "Visual combat readability, practical cover language, and compact military atmosphere lead while the connected paths are simple enough to project afterward.",
+      "why": "Connectivity matters, but the compact combat arena does not require procedurally validated topology.",
       "set_piece": false
     },
     "route": [
       "tiered"
     ],
-    "notes": [],
+    "notes": [
+      "The Arena Deathmatch preset is retained, while its unrequested powerup-buffs pickup option is omitted.",
+      "No other placed gameplay volumes are required."
+    ],
     "scene_prompt": "Create a compact, military-themed 3D battle arena for a 6-player free-for-all, with practical cover arranged to support fast movement. Build a clear central combat zone with low barriers, crates, and sightline breaks, surrounded by connected side lanes and elevated firing positions for varied assault-rifle, sniper, revolver, shotgun, and pistol engagements."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

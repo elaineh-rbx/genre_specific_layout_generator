@@ -5,21 +5,21 @@
     {
       "field": "theme",
       "ask": "No look was given - should this be a clean grass stadium pitch, a dusty street pitch, or something stylized?",
-      "answer": "خلوه ملعب كرة قدم عشبي نظيف وبسيط بأسلوب حديث، مع مرميين واضحين."
+      "answer": "Make it a clean grass stadium pitch, with a simple 3D football field and goals."
     },
     {
       "field": "goal",
       "ask": "Is this a real match with two teams and a score, or just a pitch to mess about kicking a ball on?",
-      "answer": "يكون ملعب بسيط للعب الحر: اللاعبون يركضون ويشوطون الكرة فقط، بدون نظام فريقين أو نقاط."
+      "answer": "Just a pitch to mess about kicking the ball on; no teams, match rules, or score system are needed."
     }
   ],
   "scene_prompt": "Create a 3D soccer map with a clean, simple modern grass pitch. Place two clear goals at opposite ends of the rectangular field, with open space across the pitch for freely running and kicking a ball.",
-  "blob": "### Genre\n`No Genre`: this is a free-play soccer pitch with no teams, scoring, or formal match structure. It is a place for running and kicking a ball, not a Sports game layout. Use the default `enclosure` exterior, `verticality` single-surface, `zone-count` single, `structure` dressed, and `play-space` grounded-surface.\n\n### Shape and preset\nNo shape applies under `No Genre`. Match the Explorable Place preset only in its simple open-space intent, but retain only the requested geometry; do not add landmarks, routes, or scenic vignettes.\n\n### Config requirements\nNo optional config requirements are selected. The goals and grass field are direct scene geometry rather than scoring triggers or gameplay markers; there are no invisible volumes to place.\n\n### Layout components\nBuild one medium-sized rectangular outdoor grass pitch as the entire play zone, with broad unobstructed running space across its center. Place exactly two clear soccer goals, centered at opposite short ends and facing each other across the length of the field. Keep the turf clean, level, and minimally marked in a modern style; use only subtle field boundary and center markings if needed to make the pitch read clearly, without creating a formal stadium or team areas. Leave the surroundings open and uncluttered, with no seating, buildings, obstacles, fences, or extra props. The field edge is the practical boundary, but the exterior scene remains visually open beyond it. Compose the view to show the full rectangular pitch, both goals, and the direct open line between them.\n\n### Render order\nUse `isometric`: render the isometric scene first as authoritative, then derive the top-down view, because the layout is a simple single-surface field with no topology that must be validated.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by a full playable pitch with room to run and kick freely. Theme: clean, simple, modern outdoor grass soccer field. Use `P0`; the flat open field forces no additional pipeline pass.",
+  "blob": "### Genre\n`No Genre`: this is a free-play football pitch with no teams, scoring, rounds, or other game loop. The prompt decides a single exterior, single-surface, grounded play space; all other No-Genre axes remain at their defaults.\n\n### Shape and preset\nNo shape applies under `No Genre`. Use the default exterior, `single-surface`, `single` zone, `dressed` structure, and `grounded-surface` axes. Preset: none.\n\n### Config requirements\nUse `boundary-edge` as a subtle outer limit beyond the open run-off around the field, without obstructing play. No other config options are requested.\n\n### Layout requirements\nNo placed gameplay volumes, markers, pickups, or emitters are needed; this is an unscored free-play space.\n\n### Layout components\nBuild one medium rectangular modern grass football pitch as the entire zone. Paint clear white touchlines, goal lines, a centre line, centre circle, and penalty-box markings. Place exactly two simple full-size goals, one centered on each short end of the rectangle, facing one another across the long axis. Keep the central and wing areas unobstructed for free running and kicking. Surround the marked field with a narrow grass run-off strip and a low, visually quiet perimeter boundary set outside it. Use level terrain throughout, with no buildings, stands, water, props, or interior areas. Compose the map symmetrically from an elevated isometric view so both goals and the complete rectangular field remain readable.\n\n### Render order\nUse `isometric`: the clean stadium-pitch appearance leads, and a top-down plan can be projected from the authoritative isometric render.\n\n### Scale, theme, and pipeline cost\nScale band: medium, driven by a full freely usable football field and its surrounding run-off. Theme: clean, simple modern grass stadium pitch with minimal geometry. Pipeline modifier: `P0`, because this is one flat exterior surface with no forced multi-level, interior, volumetric, or validity-by-construction geometry.",
   "spec": {
     "genre": "No Genre",
     "secondary": [],
     "shape": "",
-    "preset": "Explorable Place",
+    "preset": "none",
     "axes": {
       "enclosure": "exterior",
       "verticality": "single-surface",
@@ -27,35 +27,43 @@
       "structure": "dressed",
       "play-space": "grounded-surface"
     },
-    "options": [],
+    "options": [
+      {
+        "id": "boundary-edge",
+        "text": "A subtle outer limit beyond the open run-off around the field, without obstructing play.",
+        "visible": true,
+        "count": -1
+      }
+    ],
+    "layout_placement": [],
     "layout": {
-      "composition": "Full rectangular pitch in view, with both goals at opposite short ends and a direct unobstructed line across the field between them.",
+      "composition": "Symmetrical elevated isometric view with both goals and the complete rectangular field readable.",
       "zones": [
         {
-          "name": "grass pitch",
-          "role": "Free-play space for running and kicking a ball.",
-          "where": "entire scene",
+          "name": "Football pitch",
+          "role": "Free running and kicking on an unscored football field.",
+          "where": "Entire map",
           "size": "medium"
         }
       ],
       "paths": [],
-      "terrain": "Clean, level outdoor grass turf with only subtle field boundary and center markings if needed.",
+      "terrain": "Level modern grass pitch with clear white touchlines, goal lines, centre line, centre circle, and penalty-box markings; a narrow grass run-off strip surrounds the marked field.",
       "props": [
         {
-          "name": "soccer goals",
+          "name": "Simple full-size goals",
           "count": 2,
-          "where": "centered at opposite short ends, facing each other"
+          "where": "Centered on opposite short ends of the rectangle, facing one another across the long axis"
         }
       ],
-      "boundary": "The field edge is the practical boundary; the exterior remains visually open beyond it.",
+      "boundary": "A low, visually quiet perimeter boundary set outside the narrow grass run-off strip.",
       "scale_band": "medium",
-      "theme": "clean, simple, modern outdoor grass soccer field"
+      "theme": "Clean, simple modern grass stadium pitch with minimal geometry"
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "the layout is a simple single-surface field with no topology that must be validated.",
+      "why": "An invalid layout would not make this unscored free-play space unplayable.",
       "set_piece": false
     },
     "route": [
@@ -67,7 +75,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

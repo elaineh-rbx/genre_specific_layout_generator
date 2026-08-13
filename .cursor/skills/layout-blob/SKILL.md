@@ -66,7 +66,7 @@ a score, a finish line, an enemy, a build loop, a round. If it names none of
 those, do not supply one. Guessing "probably an obby" from a prompt that never
 said so builds a map nobody asked for.
 
-Choosing it changes one thing about your job. **`No Genre` has no shape table; it
+Choosing it changes one thing about your job. **`No Genre` has no shape; it
 asks five axes instead**, listed in the menu. Answer only the ones the prompt
 actually decides and say so by name — `enclosure`, `verticality`, `zone-count`,
 `structure`, `play-space`. Every axis has a default that costs nothing, so
@@ -75,8 +75,26 @@ answers force a pipeline pass.
 
 ### 2. Shape, and the preset it came from
 
-**Exactly one shape**, by ID, from the dominant genre's shape table. Say what
-that shape means *for this scene* — not the table's generic wording.
+**Exactly one shape**, by ID, from the shared catalogue. Say what that shape
+means *for this scene* — not the catalogue's generic wording.
+
+**Every shape is reachable from every genre.** Each genre publishes a short list
+of typical shapes with a default, and that list is presentation, not a
+restriction. When none of them fits, take any other row in the catalogue and say
+you took it from outside the genre's usual set. The shape you want is almost
+always elsewhere in the catalogue rather than missing from it — a prompt wanting
+one large interior finds Simulation assumes an outdoor shared world and
+Roleplay's housing shapes are all towns, while `interior-single` was there the
+whole time. Look before you settle for the nearest wrong answer.
+
+**When the catalogue genuinely has nothing, describe the shape instead.** Name no
+ID, answer the five routing axes directly — `enclosure`, `verticality`,
+`zone-count`, `structure`, `play-space` — and describe the space in the author's
+own words. The bar is specific: you must be able to say which catalogue shapes
+you rejected and why. Not "nothing fit" but *"`space-bounded` assumes one level
+and this is a stack of floors the player moves between; `rooms-sequence` assumes
+an order and these connect freely."* If you cannot write that sentence, a
+catalogue shape fits and you should use it.
 
 **Read the genre's presets before you settle, and name the one you matched.**
 Each is a shape plus a bundle of options, and they carry judgement the shape

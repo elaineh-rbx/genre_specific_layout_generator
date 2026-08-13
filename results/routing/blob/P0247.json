@@ -14,49 +14,31 @@
     }
   ],
   "scene_prompt": "Create a 3D school game map for cute animal students, beginning in a classroom with desks arranged toward a teaching area. Connect the classroom to a contrasting dark escape zone: a shadowy route with space for a dark creature to pursue the player, leading back to the classroom.",
-  "blob": "### Genre\nDominant genre: Survival, with Party & Casual as a secondary quiz framing. The chase by a dark creature makes threat evasion the governing spatial requirement; the classroom quiz supplies the contrast but does not own the route.\n\n### Shape and preset\nUse `warren-looping`: an enclosed school escape network whose corridors provide continuous evasive circulation and return to the classroom. The closest Survival preset is Escape, but use preset none because its escape exit, hiding cutouts, and shelter emphasis are not specified; the requested return loop replaces a terminal escape.\n\n### Config requirements\nUse `spawner-npc` as invisible layout-only geometry: place the dark creature’s hostile origin within the dark-zone network, away from the classroom threshold. Do not render this emitter. No additional gameplay options are implied by the desks or teaching area.\n\n### Layout components\nBuild one compact indoor school map. The bright classroom occupies roughly one third of the plan at the front: orderly rows of animal-scale desks face a teaching area with a teacher’s board, desk, and clear central aisle. A pair of substantial classroom doors on the rear or side wall lead into the contrasting dark escape zone, which occupies the remaining two thirds. This zone is a shadowy, maze-like network of school corridors, storage-like side bays, and intersecting hall junctions, arranged as connected loops rather than dead ends so a pursued player can continuously evade and reach a separate return doorway into the classroom. Keep the chase route broad and legible, with sparse overturned desks, lockers, and dim wall lights as corridor props, but no blocked critical passages. Enclose the entire play space in school walls and ceilings; the dark zone is an altered interior wing rather than an exterior landscape. Frame the classroom as the warm foreground anchor and let the dark corridor mouths recede behind it, emphasizing the sharp bright-to-dark transition.\n\n### Render order\nUse `topdown` first and make it authoritative, because the looping chase network must remain connected and free of trapping dead ends; an invalid corridor layout would make pursuit unfair.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by one classroom plus a substantial but contained looping interior route. Theme: cute animal schoolroom shifting into shadowy mascot-horror corridors. Pipeline modifier: `P6`, because the chase warren requires valid connected topology by construction.",
+  "blob": "### 1. Genre\nDominant genre: Party & Casual, specifically a school-answer quiz loop. Secondary genre: Survival, because incorrect answers send players into a creature chase sequence.\n\n### 2. Shape and preset\nUse `warren-looping`, taken from outside Party & Casual’s usual shapes. The classroom and dark chase zone must be one connected interior loop with no dead ends that could trap a fleeing player. Preset: none; neither Quiz nor 1 vs All remains recognisable after combining the classroom setting with a return-route chase layout.\n\n### 3. Config requirements\nNo additional image-config options are required beyond the requested school classroom and contrasting shadowy chase architecture. Do not add generic lobby, tile-grid, hiding props, or exterior school grounds.\n\n### 4. Layout requirements\nUse `spawner-npc`: place one dark-creature origin at the farthest point of the dark route from the classroom threshold, behind an obscuring bend, so its pursuit begins away from the player’s classroom entry and the creature has navigable looped ground.\n\n### 5. Layout components\nBuild a compact enclosed school interior. The bright classroom is the main zone: orderly student desks face a teaching area at the front, with an obvious doorway at the rear or side. That doorway leads into a deliberately contrasting dark escape zone of shadowy school corridors and connected rooms. Its corridors form a continuous loop, with at least two routes around its central dark section and no terminal dead ends. One route returns directly to the classroom through a clearly readable re-entry doorway. Keep the classroom bright, warm, and tidy; make the escape zone dim, ominous, and visually distinct through dark walls, sparse lighting, and long corridor silhouettes. The outer building walls enclose the entire map. Frame the classroom and its transition doorway as the primary readable composition.\n\n### 6. Render order\nUse `topdown` first, then dress the authoritative plan isometrically, because an invalid chase loop with dead ends would make the creature pursuit unfair and unplayable.\n\n### 7. Scale, theme, and pipeline cost\nScale band: medium, driven by one classroom plus a substantial looped chase wing. Theme: cute animal schoolhouse shifting into dark mascot-horror corridors. Pipeline modifier: `P6`, because the chase route must be valid, loop-connected, and free of trapping dead ends.",
   "spec": {
-    "genre": "Survival",
+    "genre": "Party & Casual",
     "secondary": [
-      "Party & Casual"
+      "Survival"
     ],
     "shape": "warren-looping",
     "preset": "none",
     "axes": {},
-    "options": [
-      {
-        "id": "spawner-npc",
-        "text": "Place the dark creature’s hostile origin within the dark-zone network, away from the classroom threshold.",
-        "visible": false,
-        "count": 1
-      }
-    ],
+    "options": [],
+    "layout_placement": [],
     "layout": {
-      "composition": "The bright classroom is the warm foreground anchor, with dark corridor mouths receding behind it to emphasize the sharp bright-to-dark transition.",
+      "composition": "Frame the bright classroom and its transition doorway as the primary readable composition; the contrasting dark chase wing leads away beyond the doorway.",
       "zones": [
         {
           "name": "Bright classroom",
-          "role": "Starting classroom for cute animal students, with desks facing the teaching area and a clear central aisle.",
-          "where": "Front of the plan / foreground",
-          "size": "Roughly one third of the plan"
+          "role": "Main school-answer quiz zone, with orderly student desks facing the teaching area and a clear exit into the chase route.",
+          "where": "Primary composition in the foreground or centre.",
+          "size": "compact"
         },
         {
           "name": "Dark escape zone",
-          "role": "A shadowy looping chase network where the dark creature pursues the player and players can evade before returning to the classroom.",
-          "where": "Behind and beyond the classroom doors",
-          "size": "Remaining two thirds of the plan"
-        },
-        {
-          "name": "Teaching area",
-          "role": "Classroom focal area for teaching.",
-          "where": "Front end of the bright classroom",
-          "size": ""
-        },
-        {
-          "name": "Dark-zone side bays and hall junctions",
-          "role": "Storage-like side bays and intersecting junctions supporting connected evasive loops.",
-          "where": "Within the dark escape zone",
-          "size": ""
+          "role": "Shadowy school corridors and connected rooms forming the creature chase loop, with at least two routes around its central dark section.",
+          "where": "Beyond the classroom transition doorway.",
+          "size": "substantial looped chase wing"
         }
       ],
       "paths": [
@@ -71,65 +53,45 @@
           "kind": "corridor"
         }
       ],
-      "terrain": "Indoor school floors; a bright classroom transitions into a shadowy altered interior wing.",
+      "terrain": "Enclosed school interior: bright, warm, tidy classroom surfaces contrasting with dark walls, sparse lighting, and long corridor silhouettes in the escape zone.",
       "props": [
         {
-          "name": "animal-scale desks",
+          "name": "Orderly student desks",
           "count": -1,
-          "where": "Orderly rows in the bright classroom facing the teaching area"
+          "where": "In the bright classroom, arranged facing the teaching area."
         },
         {
-          "name": "teacher’s board",
-          "count": 1,
-          "where": "Teaching area"
-        },
-        {
-          "name": "teacher’s desk",
-          "count": 1,
-          "where": "Teaching area"
-        },
-        {
-          "name": "classroom doors",
-          "count": 2,
-          "where": "Rear or side wall of the classroom leading to the dark escape zone"
-        },
-        {
-          "name": "overturned desks",
+          "name": "Teaching area",
           "count": -1,
-          "where": "Sparse placement in dark corridors"
-        },
-        {
-          "name": "lockers",
-          "count": -1,
-          "where": "Dark corridors"
-        },
-        {
-          "name": "dim wall lights",
-          "count": -1,
-          "where": "Dark corridors"
+          "where": "At the front of the bright classroom."
         }
       ],
-      "boundary": "The entire play space is enclosed by school walls and ceilings.",
+      "boundary": "Outer building walls enclose the entire map.",
       "scale_band": "medium",
-      "theme": "Cute animal schoolroom shifting into shadowy mascot-horror corridors"
+      "theme": "Cute animal schoolhouse shifting into dark mascot-horror corridors."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the looping chase network must remain connected and free of trapping dead ends; an invalid corridor layout would make pursuit unfair.",
+      "why": "an invalid chase loop with dead ends would make the creature pursuit unfair and unplayable.",
       "set_piece": false
     },
     "route": [
       "P6"
     ],
-    "notes": [],
+    "notes": [
+      "`warren-looping` is taken from outside Party & Casual’s usual shape set.",
+      "No additional image-config options were requested; generic lobby, tile-grid, hiding props, and exterior school grounds were explicitly excluded.",
+      "dropped option 'spawner-npc': not in Party & Casual",
+      "dropped placement 'spawner-npc': not in Party & Casual"
+    ],
     "scene_prompt": "Create a 3D school game map for cute animal students, beginning in a classroom with desks arranged toward a teaching area. Connect the classroom to a contrasting dark escape zone: a shadowy route with space for a dark creature to pursue the player, leading back to the classroom."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

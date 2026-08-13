@@ -72,8 +72,47 @@ Pick one only when the author named the thing it stands for; an option nobody as
 not inert, it is an instruction to the image model."""
 
 
+#: The document's own rule about the shared catalogue, quoted because the whole point of
+#: the shortlist is that it is not a restriction and a paraphrase would blur that.
+CATALOG_HEADER = """\
+Every shape lives in one catalogue and **every one is reachable from every genre**. What
+a genre publishes below is a short list of typical shapes naming a default - the handful
+worth putting on screen. That list is presentation and never a restriction: when a prompt
+fits none of them, take any other row in the catalogue, and say which one you took and
+that it came from outside the genre's usual set.
+
+When the shortlist misses, the shape you want is almost always elsewhere in the catalogue
+rather than missing from it. A prompt wanting one large interior finds Simulation assumes
+an outdoor shared world and Roleplay's housing shapes are all towns - while
+`interior-single` sits in the catalogue the whole time. Look before concluding nothing
+fits. A shared catalogue nobody reaches past the first five closes nothing.
+
+A genre may reword any shape: same ID, its genre's own sentence. The route below is the
+shape's, wherever it is used from."""
+
+
+def _catalog_lines() -> list[str]:
+    """The 45 shapes, once. Emitted before the genres rather than inside each one.
+
+    They were per-genre until the document made them shared, and rendering them per genre
+    afterwards cost 675 lines to say what 45 say - it tripled the menu and, worse, implied
+    fifteen separate catalogues at the exact moment the document had merged them into one.
+    """
+    out = [CATALOG_HEADER, "", "## The shape catalogue - pick exactly one, from any genre",
+           ""]
+    for s in br.SHAPES.values():
+        # Which shapes have a generator is a fact this repo holds and the blob was
+        # otherwise guessing at - it read "speed run minigame" as not-a-circuit and asked
+        # the image model to draw a plan a carver could have guaranteed.
+        kind = layout_kind("", s.id, [])
+        out.append(f"  `{s.id}` {s.label} — {s.what}"
+                   + (f" [{s.pipeline}]" if s.pipeline else "")
+                   + (f"  <-- CARVEABLE ({kind}): use `authored_plan`" if kind else ""))
+    return out + [""]
+
+
 def vocabulary(notes: bool = False) -> str:
-    """The whole menu - 15 genres, 49 shapes, 244 options - about 13k tokens.
+    """The whole menu - 45 shapes, 15 genres, their options and presets.
 
     Small enough to hand over in full, which removes the classify-then-load round trip
     the interactive skill needs: a genre cannot be picked here and then have its own
@@ -86,7 +125,7 @@ def vocabulary(notes: bool = False) -> str:
     an asset. The upstream agents this pipeline is measured against read all of it, so
     withholding it from stage 2 was measuring two different documents against each other.
     """
-    out = [UNIVERSAL_WARNING, ""]
+    out = [UNIVERSAL_WARNING, ""] + _catalog_lines()
     for g in br.GENRES.values():
         head = f"### {g.name} — {g.tagline}"
         if g.route:
@@ -95,20 +134,17 @@ def vocabulary(notes: bool = False) -> str:
         if notes and g.notes:
             out.append("Notes on this genre - read before you commit:")
             out += [f"  - {n}" for n in g.notes]
-        out.append("Shapes (pick exactly one):")
-        for s in g.shapes:
-            # Which shapes have a generator is a fact this repo holds and the blob was
-            # otherwise guessing at - it read "speed run minigame" as not-a-circuit and
-            # asked the image model to draw a plan a carver could have guaranteed.
-            #
-            # Shape alone, with no options: an option can also make a shape carveable,
-            # but only when it is actually picked, so listing it here against every shape
-            # in the genre would advertise a blueprint most of them cannot produce.
-            kind = layout_kind(g.name, s.id, [])
-            out.append(f"  `{s.id}` {s.label}"
-                       + (f" [{s.pipeline}]" if s.pipeline else "")
-                       + (f"  <-- CARVEABLE ({kind}): use `authored_plan`" if kind
-                          else ""))
+        if g.typical:
+            out.append(f"Typical shapes (default `{g.default_shape}`; any catalogue "
+                       f"shape is allowed): " + " ".join(f"`{s}`" for s in g.typical))
+        # Only where this genre words a catalogue row its own way. The sentence that
+        # reaches the image model is the genre's, so a decision made against the
+        # catalogue's generic wording would be made against text nobody will send.
+        if g.wording:
+            out.append("This genre words these its own way:")
+            for sid in g.wording:
+                if (s := g.shape(sid)) is not None:
+                    out.append(f"  `{s.id}` {s.label} — {s.what}")
         out.append("Options (combine freely):")
         for o in g.options:
             bits = f"goes_to={o.goes_to}"
@@ -393,17 +429,23 @@ def _placement() -> dict:
 
 
 def _axes() -> dict:
-    """What a `No Genre` spec carries instead of a shape.
+    """What a spec carries in place of a shape, on the two paths that have no shape ID.
+
+    Those are `No Genre`, which has no catalogue to pick from, and a **described shape**
+    on any of the fifteen, which is the document's escape hatch for a prompt the catalogue
+    does not cover. The axes are not genre-specific - every 3D game has a value on all
+    five - so the same table serves both.
 
     Every axis is required with its default as a legal value, because a strict schema
-    cannot express "only when the genre is No Genre" - so the five arrive on every spec
-    and `normalise` drops them where they mean nothing. Defaults cost nothing downstream:
-    `route_of` only reads an axis when it is set away from its default.
+    cannot express "only when there is no shape" - so the five arrive on every spec and
+    `normalise` drops them where a shape already answered. Defaults cost nothing
+    downstream: `route_of` only reads an axis when it is set away from its default.
     """
     return {
         "type": "object",
-        "description": "Only meaningful when genre is 'No Genre'. Leave every axis at "
-                       "its default unless the blob argued for another value.",
+        "description": "Only meaningful when `shape` is empty - No Genre, or a described "
+                       "shape the catalogue does not cover. Leave every axis at its "
+                       "default unless the blob argued for another value.",
         "properties": {
             a.key: {"type": "string", "enum": list(a.clauses),
                     "description": f"{a.name}. Default {a.default!r}. {a.what}"}
@@ -423,8 +465,10 @@ LAYOUT_SPEC_SCHEMA = {
             "secondary": {"type": "array",
                           "items": {"type": "string", "enum": list(br.GENRES)}},
             "shape": {"type": "string",
-                      "description": "Exactly one canonical shape ID from the dominant "
-                                     "genre. Empty string only for No Genre."},
+                      "description": "Exactly one shape ID from the shared catalogue - "
+                                     "any of the 45, not only the genre's typical ones. "
+                                     "Empty string for No Genre, and for a described "
+                                     "shape, where the axes answer instead."},
             "preset": {"type": "string",
                        "description": "Preset name, or 'none'."},
             "axes": _axes(),
@@ -510,8 +554,9 @@ only job is to move those decisions into fields without changing them.
    `isometric`. A field you would rather fill differently is still the blob's call.
 2. **Never invent.** Do not add a zone, prop, path or option the blob does not contain.
    An empty array is correct when the blob gave you nothing for it.
-3. **Take every canonical ID the blob names in backticks**, provided it is a real ID for
-   the dominant genre in the menu below. Silently drop an ID that is not in the menu, and
+3. **Take every canonical ID the blob names in backticks**, provided it appears in the
+   menu below. Options belong to the dominant genre; shapes come from the shared
+   catalogue and are not restricted by genre. Silently drop an ID that is in neither, and
    say so in `notes`.
 4. **`text` on an option comes from the blob's wording for this scene**, not from the
    menu's generic description. That scene-specific phrasing is the whole point of the
@@ -548,10 +593,15 @@ only job is to move those decisions into fields without changing them.
     It is a display name rather than an ID, so it will not be in backticks - take it from
     the prose. Do not infer one from the shape and options when the blob named none: a
     preset the blob did not claim is a decision you would be making, not transcribing.
-13. **`axes` only carries meaning when the genre is `No Genre`.** That build answers five
-    axis questions in place of picking a shape, so take each answer the blob stated and
-    leave the rest at the default the schema names. On any of the fifteen real genres,
-    leave all five at their defaults: the shape already said what they would say.
+13. **`axes` carries meaning only when `shape` is empty.** Two builds have no shape ID:
+    `No Genre`, and a **described shape** on one of the fifteen, where the blob says the
+    catalogue had nothing and describes the space instead. Both answer the five axis
+    questions in place of picking a shape, so take each answer the blob stated and leave
+    the rest at the default the schema names. Whenever the blob did name a shape, leave
+    all five at their defaults: the shape already said what they would say.
+14. **A shape ID may come from any genre's usual set.** The catalogue is shared and every
+    row is reachable from every genre, so `interior-single` on a Simulation build is not
+    an error to correct - take the ID the blob named. Only drop one that is in no genre.
 
 # Output
 
@@ -649,24 +699,33 @@ def normalise(spec: dict) -> dict:
     spec.setdefault("layout_placement", [])
     g = br.genre(spec.get("genre", ""))
 
-    # The five axes arrive on every spec because a strict schema cannot make them
-    # conditional. Only a No Genre build spends them, and a stray non-default axis on a
-    # real genre would add a pipeline pass the shape never asked for, so they are cleared
-    # rather than trusted.
-    if spec.get("genre") != br.NO_GENRE_NAME:
+    # Axes and shape are alternatives, not companions: a shape already answers all five,
+    # so a shape plus a non-default axis is two answers to one question and the axis would
+    # add a pipeline pass the shape never asked for. What decides which is in play is the
+    # *shape*, not the genre - the document's described-shape escape hatch answers the
+    # axes directly on any of the fifteen when nothing in the catalogue fits, and No Genre
+    # is only the case where that is the sole option.
+    if spec.get("genre") == br.NO_GENRE_NAME and spec.get("shape"):
+        notes.append(f"cleared shape {spec['shape']!r}: No Genre has axes, not shapes")
+        spec["shape"] = ""
+    if spec.get("shape"):
         moved = [f"{k}={v}" for k, v in (spec.get("axes") or {}).items()
                  if (a := br.NO_GENRE.axis(k)) is not None and v != a.default]
         if moved:
-            notes.append(f"cleared axes on a genre build: {', '.join(moved)}")
+            notes.append(f"cleared axes on a shape build: {', '.join(moved)}")
         spec["axes"] = {}
-    elif spec.get("shape"):
-        notes.append(f"cleared shape {spec['shape']!r}: No Genre has axes, not shapes")
-        spec["shape"] = ""
 
     if g is not None:
-        if spec.get("shape") and g.shape(spec["shape"]) is None:
-            notes.append(f"dropped shape {spec['shape']!r}: not in {g.name}")
-            spec["shape"] = ""
+        # A spec written against the per-genre shape tables names ids the shared
+        # catalogue absorbed. Renaming beats dropping: the build was decided, and an
+        # empty shape would read downstream as a described shape nobody described.
+        if (old := spec.get("shape")) and g.shape(old) is None:
+            if new := br.SHAPE_MIGRATION.get(old):
+                notes.append(f"migrated shape {old!r} -> {new!r}: the catalogue merged it")
+                spec["shape"] = new
+            else:
+                notes.append(f"dropped shape {old!r}: not in the shape catalogue")
+                spec["shape"] = ""
         kept = []
         for o in spec.get("options") or []:
             if g.option(o["id"]) is None:

@@ -14,85 +14,94 @@
     }
   ],
   "scene_prompt": "Create a 3D game map as a plain, functional park-like grassy arena for testing. The space is a small yard-sized field enclosed by simple boundary walls, with basic obstacles scattered across the grass and one or two NPC characters moving slowly within the enclosed area.",
-  "blob": "### Genre\nThis is Party & Casual, specifically a tag-style childhood game: the original request’s player pursuit and tagging loop determines the genre. The small test NPC count informs population placement but not game mechanics.\n\n### Shape and preset\nUse `space-continuous`, matching the Childhood Game preset. This is one compact shared play area rather than a lobby plus isolated round stage; retain the preset’s continuous, clutter-supported tag space while omitting its unrequested lobby and maze.\n\n### Config requirements\nUse visible `cover-los` as a sparse set of basic, solid obstacles that break direct running lines across the grass. Use visible `boundary-edge` only as the simple enclosing wall geometry requested; it keeps the yard legible and contained. Use `npc-population` with one or two visible slow-moving NPC characters distributed within the field; their movement setup is invisible and must not appear in the render. No other gameplay volumes or pickups are required.\n\n### Layout components\nBuild one small, yard-sized rectangular grassy arena. Keep an open central chase area taking most of the footprint, with a sparse scattering of plain obstacles around the center and near the sides: simple blocks, short barriers, or low boxy park fixtures, spaced so they provide brief route changes without forming corridors or a maze. Place one or two NPCs in separated parts of the open field, leaving clear run-around space on every side. Use flat green grass as the only terrain. Enclose all four edges with continuous, simple low-to-medium boundary walls, with no exits, buildings, water, or elevated platforms. Frame the full enclosure clearly in an isometric view, emphasizing the unobstructed central grass and the perimeter walls.\n\n### Render order\nUse `isometric`: topology is simple and an invalid plan would not make this compact tag-testing yard unplayable, so the visual scene can lead.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the yard-sized enclosed field and only one or two NPCs. Theme is plain functional park-test arena: grass, basic obstacles, and simple walls. Use `P0`; the map is a single flat exterior surface with no forced multi-level, interior, separate-map, volumetric, or validity-by-construction cost.",
+  "blob": "### Genre\nThe dominant genre is Party & Casual: this is a simple tag test with a contained physical play area and slow catchable NPC targets.\n\n### Shape and preset\nUse `space-bounded`, a single small, walled grassy yard where all tag play occurs on one level. The closest preset is Childhood Game, but use `none` because its hide-and-seek maze and social lobby are not requested.\n\n### Config requirements\nUse `cover-los` as scattered basic obstacles that interrupt direct running lines across the grass. Use `npc-population` for the one or two visible, non-hostile NPC characters moving within the yard. The simple enclosing walls are a boundary component rather than an added visual option.\n\n### Layout requirements\nUse `npc-population` in layout as one or two slow-moving NPC placements roaming the open central field, kept clear of wall corners and obstacle traps so they remain easy to approach. Use `trigger-scoring` as a small tag-detection volume on the back of each NPC, aligned to their body and reachable from the open field.\n\n### Layout components\nBuild one small yard-sized park arena, roughly square or gently rectangular, with short grass across the entire level ground. Enclose every edge with plain, continuous boundary walls high enough to prevent leaving the test space. Keep a broad open central running area, with basic low blocks, crates, short barriers, or simple shrub-like obstacle clusters scattered loosely around it; leave clear routes between every obstacle and along the wall perimeter. Place one or two NPCs in the open interior rather than against the walls. Frame the full enclosed yard from an elevated three-quarter view, keeping the walls, grass, obstacles, and NPCs all legible at once.\n\n### Render order\nUse `isometric`: the topology is a simple single-level enclosed field, so an isometric render can authoritatively establish its plain testing look before deriving the plan.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the yard-sized test arena and only one or two targets. Theme is plain functional park grass, simple walls, and minimal testing obstacles. Use `P0`; one continuous ground surface contains all required geometry without overhangs, interior transitions, or topology that must be procedurally validated.",
   "spec": {
     "genre": "Party & Casual",
     "secondary": [],
-    "shape": "space-continuous",
-    "preset": "Childhood Game",
+    "shape": "space-bounded",
+    "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "cover-los",
-        "text": "A sparse set of basic, solid obstacles across the grass—simple blocks, short barriers, or low boxy park fixtures—that break direct running lines without forming corridors or a maze.",
+        "text": "Scattered basic low blocks, crates, short barriers, or simple shrub-like obstacle clusters that interrupt direct running lines across the grass.",
         "visible": true,
         "count": -1
       },
       {
         "id": "npc-population",
-        "text": "One or two visible slow-moving NPC characters distributed in separated parts of the open field, with clear run-around space on every side; their movement setup is invisible.",
+        "text": "One or two visible, non-hostile NPC characters moving slowly within the open yard.",
         "visible": true,
+        "count": -1
+      },
+      {
+        "id": "trigger-scoring",
+        "text": "A small tag-detection volume on the back of each NPC, aligned to their body and reachable from the open field.",
+        "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "npc-population",
+        "text": "One or two slow-moving NPC placements roaming the open central field.",
+        "count": -1,
+        "where": "In the open central field, clear of wall corners and obstacle traps so they remain easy to approach."
+      },
+      {
+        "id": "trigger-scoring",
+        "text": "A small tag-detection volume on the back of each NPC.",
+        "count": -1,
+        "where": "Aligned to each NPC's body and reachable from the open field."
+      }
+    ],
     "layout": {
-      "composition": "Full rectangular enclosure framed clearly in isometric view, with unobstructed central grass taking most of the footprint, sparse obstacles around the centre and near the sides, and perimeter walls on all four edges.",
+      "composition": "Elevated three-quarter view framing the full enclosed yard, with the walls, grass, obstacles, and NPCs all legible at once.",
       "zones": [
         {
-          "name": "central chase area",
-          "role": "Open shared pursuit and tagging space.",
-          "where": "centre",
-          "size": "most of the footprint"
-        },
-        {
-          "name": "obstacle scatter",
-          "role": "Brief route changes and broken direct running lines.",
-          "where": "around the centre and near the sides",
-          "size": "sparse"
+          "name": "Park arena yard",
+          "role": "The single contained physical play area for the simple tag test and slow catchable NPC targets.",
+          "where": "Entire enclosed map, with a broad open central running area.",
+          "size": "Small, yard-sized; roughly square or gently rectangular."
         }
       ],
       "paths": [],
-      "terrain": "Flat green grass as the only terrain.",
+      "terrain": "Short grass across the entire level ground.",
       "props": [
         {
-          "name": "basic solid obstacles: simple blocks, short barriers, or low boxy park fixtures",
+          "name": "Basic low blocks, crates, short barriers, or simple shrub-like obstacle clusters",
           "count": -1,
-          "where": "sparsely around the centre and near the sides"
+          "where": "Scattered loosely around the broad open central running area, with clear routes between every obstacle and along the wall perimeter."
         },
         {
-          "name": "slow-moving NPC characters",
+          "name": "Non-hostile NPC characters",
           "count": -1,
-          "where": "separated parts of the open field"
-        },
-        {
-          "name": "continuous simple low-to-medium boundary walls",
-          "count": 4,
-          "where": "all four edges"
+          "where": "In the open interior rather than against the walls."
         }
       ],
-      "boundary": "Continuous simple low-to-medium boundary walls enclose all four edges, with no exits.",
+      "boundary": "Plain, continuous boundary walls enclose every edge and are high enough to prevent leaving the test space.",
       "scale_band": "small",
-      "theme": "Plain functional park-test arena: grass, basic obstacles, and simple walls."
+      "theme": "Plain functional park grass, simple walls, and minimal testing obstacles."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "topology is simple and an invalid plan would not make this compact tag-testing yard unplayable.",
+      "why": "The topology is a simple single-level enclosed field, so an isometric render can authoritatively establish its plain testing look before deriving the plan.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
     "notes": [
-      "Dropped `boundary-edge`: it is not a canonical option ID for the dominant Party & Casual genre; the requested enclosing wall geometry is retained in layout.boundary."
+      "The NPC and tag-detection-volume quantities are stated as a one-or-two range; their count fields use -1 because the schema accepts only one integer, while the range is retained in the text."
     ],
     "scene_prompt": "Create a 3D game map as a plain, functional park-like grassy arena for testing. The space is a small yard-sized field enclosed by simple boundary walls, with basic obstacles scattered across the grass and one or two NPC characters moving slowly within the enclosed area."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

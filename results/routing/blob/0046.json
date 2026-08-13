@@ -3,102 +3,99 @@
   "source": "Build a tropical fishing island for a Roblox fishing world game. The island should have: a sandy beach shoreline around the edges, lush green grass on top, a few palm trees, some rocks along the shore, and a small wooden dock extending into the water. Make it look like a cozy fishing island with a slightly elevated terrain. Include configurable attributes for: island size, sand color, grass color, number of palm trees, and dock length.",
   "answers": [],
   "scene_prompt": "Create a 3D tropical fishing island surrounded by water, with a sandy beach shoreline around its edges rising into slightly elevated, lush green grassy terrain. Scatter a few palm trees across the grass and place rocks along the shore. Extend a small wooden dock from the beach into the water, forming a cozy fishing spot. The island dimensions, sand and grass colors, palm-tree count, and dock length are variable.",
-  "blob": "### Genre\n`No Genre`: the request names a tropical island environment for a fishing-themed world but gives no player goal, scoring, combat, progression, or defined game loop. It is a place rather than a genre-owned map.\n\n### Shape and preset\nNo shape applies. Use the Explorable Place preset as the closest match in spirit, but retain only the prompt-supported island environment rather than adding an unrequested landmark, route, or scenic vignette. The axes are `enclosure`: exterior, `verticality`: `tiered` for the beach rising to the grassy top, `zone-count`: single, and `play-space`: grounded-surface. `structure` remains dressed.\n\n### Config requirements\nUse `water-body` as visible geometry: water fully surrounds the island. Use `terrain-relief` as visible geometry: a low, overhang-free rise from the sandy perimeter to the grassy interior. No other configuration options are required. The variable island dimensions, sand color, grass color, palm-tree count, and dock length are author-controlled appearance parameters, not additional layout components.\n\n### Layout components\nBuild one compact-to-medium, roughly rounded tropical island centered in frame. A continuous sandy beach shoreline wraps all edges, with shallow water immediately beyond it. The beach gently slopes upward into a single slightly elevated lush-green grass cap; keep the terrain low and smooth, without cliffs, caves, or stacked surfaces. Scatter a few palm trees across the grassy top, spaced loosely rather than in rows. Place a few natural rocks intermittently along the shore, partly embedded in sand near the waterline. On the near-facing beach, build one small wooden dock projecting straight out into the surrounding water as the fishing spot; its length is variable. The water is the open outer boundary, extending beyond the island on every side. Compose the isometric view with the dock visible in the foreground or lower side, the grass crown readable above the beach ring, and water framing the full island silhouette.\n\n### Render order\nUse `isometric`: render the isometric island scene first and derive the top-down projection from it, because the simple single-island topology has no validity constraint that requires plan-first construction.\n\n### Scale, theme, and pipeline cost\nScale band: small, driven by one island, a few palms and rocks, and one short dock. Theme: cozy, stylized tropical fishing retreat with warm sand, lush grass, calm water, and simple wood. Pipeline modifiers: `tiered` because the grass terrain rises above the beach without overhangs; `CHECK` because surrounding water is a visible volumetric water feature around the grounded island.",
+  "blob": "### Genre\nThe dominant genre is `Simulation`: fishing is a repeatable world activity, while the requested layout is a compact place for that activity rather than a combat or traversal course.\n\n### Shape and preset\nUse `space-bounded`, taken from outside Simulation’s usual shape shortlist. This is one clearly bounded tropical island surrounded by water, with all activity occurring on its single, gently raised landform. The closest Simulation preset is Role Sim, but the prompt does not establish its circulation network or multiple task locations, so the preset is none.\n\n### Config requirements\nUse `water-body` for the surrounding sea, which visibly encloses the island and receives the dock. Use `terrain-relief` for the sandy shore rising gently to the grassy center, with no cliffs, overhangs, or stacked surfaces. Use `trigger-task` for a simple visible fishing point at the dock end; its drawn form should remain a modest dockside fishing spot rather than a large service building.\n\n### Layout requirements\nPlace one `trigger-task` at the outer end of the wooden dock, facing open water and clear of shore rocks, as the island’s fishing interaction point. No other placed markers, pickups, spawners, checkpoints, or volumes are required by the prompt.\n\n### Layout components\nBuild one small-to-medium rounded island zone, centered in frame and surrounded on all sides by shallow-to-deeper blue water. A continuous sandy beach forms the perimeter, rising into a slightly elevated lush-green grassy interior. Scatter a few palm trees across the grass, with their count variable; place a few shoreline rocks near the waterline without obstructing the dock. Extend one small wooden dock from a clear beach segment toward the edge of frame and into open water. Island dimensions, sand color, grass color, palm-tree count, and dock length remain configurable. The boundary is the water surrounding the entire landmass; no built wall is needed. Compose the dock as the primary directional feature, with the island’s raised grass and palms behind it.\n\n### Render order\nUse `isometric` first and treat it as authoritative, since this is a simple single-surface island whose topology does not need procedural validation.\n\n### Scale, theme, and pipeline cost\nScale band: small, driven by the single cozy island and one dock. Theme: warm, cozy tropical fishing cove with stylized sand, bright grass, palms, weathered wood, and shoreline stones. Pipeline modifier: `tiered`, forced by the gently elevated grassy terrain above the beach; there are no overhangs or separate map layers.",
   "spec": {
-    "genre": "No Genre",
+    "genre": "Simulation",
     "secondary": [],
-    "shape": "",
-    "preset": "Explorable Place",
-    "axes": {
-      "enclosure": "exterior",
-      "verticality": "tiered",
-      "zone-count": "single",
-      "structure": "dressed",
-      "play-space": "grounded-surface"
-    },
+    "shape": "space-bounded",
+    "preset": "none",
+    "axes": {},
     "options": [
       {
         "id": "water-body",
-        "text": "Water fully surrounds the island, with shallow water immediately beyond the continuous sandy shoreline.",
+        "text": "The surrounding sea visibly encloses the island and receives the dock.",
         "visible": true,
         "count": -1
       },
       {
         "id": "terrain-relief",
-        "text": "A low, smooth, overhang-free rise from the sandy perimeter to a single slightly elevated lush-green grassy interior.",
+        "text": "The sandy shore rises gently to the grassy center, with no cliffs, overhangs, or stacked surfaces.",
         "visible": true,
         "count": -1
+      },
+      {
+        "id": "trigger-task",
+        "text": "A simple visible fishing point at the dock end, drawn as a modest dockside fishing spot rather than a large service building.",
+        "visible": true,
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "trigger-task",
+        "text": "A simple visible fishing point at the dock end.",
+        "count": 1,
+        "where": "At the outer end of the wooden dock, facing open water and clear of shore rocks."
       }
     ],
     "layout": {
-      "composition": "A roughly rounded tropical island is centered in frame, fully framed by surrounding water. The small wooden dock is visible on the foreground or lower near-facing beach, while the grass crown reads above the surrounding beach ring.",
+      "composition": "The small rounded island is centered in frame and surrounded on all sides by water. The dock is the primary directional feature extending from a clear beach segment toward the edge of frame, with raised grass and palms behind it.",
       "zones": [
         {
-          "name": "Sandy beach shoreline",
-          "role": "A continuous sandy perimeter wrapping the island and sloping gently toward the grass.",
-          "where": "All edges around the island",
-          "size": "Continuous ring"
-        },
-        {
-          "name": "Grassy interior cap",
-          "role": "The slightly elevated lush-green top of the island, with loosely scattered palms.",
-          "where": "Centre, above the beach ring",
-          "size": "Single slightly elevated cap"
-        },
-        {
-          "name": "Fishing dock",
-          "role": "A cozy fishing spot projecting from the beach into the water.",
-          "where": "Near-facing beach, foreground or lower side",
-          "size": "Small; length is variable"
+          "name": "Rounded tropical island",
+          "role": "The single compact fishing activity space, including beach, grassy interior, palms, rocks, dock, and fishing spot.",
+          "where": "Centered in frame, surrounded on all sides by water.",
+          "size": "small-to-medium"
         }
       ],
       "paths": [
         {
-          "from": "Sandy beach shoreline",
-          "to": "Fishing dock",
-          "kind": "bridge"
+          "from": "Clear beach segment",
+          "to": "Dockside fishing point",
+          "kind": "dock"
         }
       ],
-      "terrain": "Warm sandy shoreline rising smoothly and gently into a low lush-green grassy cap, with shallow calm water surrounding the island; no cliffs, caves, or stacked surfaces.",
+      "terrain": "Shallow-to-deeper blue water surrounds a continuous sandy beach perimeter, which rises gently into a slightly elevated lush-green grassy interior. No cliffs, overhangs, or stacked surfaces.",
       "props": [
         {
           "name": "Palm trees",
           "count": -1,
-          "where": "Loosely scattered across the grassy top"
+          "where": "Scattered across the grassy interior."
         },
         {
-          "name": "Natural rocks",
+          "name": "Shoreline rocks",
           "count": -1,
-          "where": "Intermittently along the shore, partly embedded in sand near the waterline"
+          "where": "Near the waterline, clear of the dock."
         },
         {
           "name": "Small wooden dock",
           "count": 1,
-          "where": "Projecting straight from the near-facing beach into the water"
+          "where": "Extending from a clear beach segment into open water toward the edge of frame."
         }
       ],
-      "boundary": "Open surrounding water extends beyond the island on every side.",
+      "boundary": "Water surrounds the entire landmass; no built wall is needed.",
       "scale_band": "small",
-      "theme": "Cozy, stylized tropical fishing retreat with warm sand, lush grass, calm water, and simple wood."
+      "theme": "Warm, cozy tropical fishing cove with stylized sand, bright grass, palms, weathered wood, and shoreline stones."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "the simple single-island topology has no validity constraint that requires plan-first construction.",
+      "why": "The simple single-surface island does not need procedural topology validation.",
       "set_piece": false
     },
     "route": [
-      "tiered",
-      "CHECK"
+      "tiered"
     ],
-    "notes": [],
+    "notes": [
+      "`space-bounded` is taken from outside Simulation’s usual shape shortlist."
+    ],
     "scene_prompt": "Create a 3D tropical fishing island surrounded by water, with a sandy beach shoreline around its edges rising into slightly elevated, lush green grassy terrain. Scatter a few palm trees across the grass and place rocks along the shore. Extend a small wooden dock from the beach into the water, forming a cozy fishing spot. The island dimensions, sand and grass colors, palm-tree count, and dock length are variable."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

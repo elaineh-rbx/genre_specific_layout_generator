@@ -1,0 +1,168 @@
+{
+  "scene": "P0300",
+  "source": "制作一款 3D 第三人称动作 Roguelike 探险游戏《深渊回响》，\n使用 3D 场景、3D 角色模型和 3D 战斗表现，\n镜头跟随主角背后，明确采用 3D 视角而非俯视或 2D 横版。\n玩家扮演一位被困在废弃神殿地下的探险者，需要向下探索 5 层地宫，\n最终击败最底层的\"回响之王\"逃出神殿。\n\n【核心玩法】\n· 每一层由 6～10 个 3D 房间组成，房间布局每次进入随机生成\n· 房间类型包括：战斗房、宝箱房、商店房、精英怪房、休息房\n· 玩家同时携带远程武器（默认魔法法杖，发射能量弹）和近战武器\n （默认短剑），可自由切换：远程用于风筝和精英怪压制，近战用于\n 快速清杂兵和处决残血敌人\n· 远程武器有弹药或冷却限制，鼓励与近战交替使用\n· 玩家可通过跳跃、翻滚闪避敌人攻击和弹幕\n· 击败敌人掉落\"回响碎片\"（货币）和随机符文\n\n【成长与随机性】\n· 每层结束后玩家可从 3 个随机符文中选 1 个，符文可叠加改变玩法，\n 例如\"每次翻滚释放冲击波\"\"近战命中回血\"\"射击弹返弹\"\"连击加速\"等\n· 商店房可用回响碎片购买血瓶、临时增益或武器升级（远程/近战独立升级）\n· 死亡后掉落所有符文，但保留少量永久强化点数用于下一局起始加强\n\n【Boss 战】\n· 第 5 层 Boss\"回响之王\"具有 3 阶段：召唤小怪 → 全屏弹幕 → 狂暴突进\n· 击败后播放逃出神殿的结局动画\n\n【氛围】\n· 昏暗神秘的地下神殿 3D 场景，石质墙壁与火把光影，蓝紫色调\n· 3D 角色带布料与武器建模，敌人为 3D 生物模型\n· 背景音乐为低沉的管弦乐 + 神秘音效",
+  "answers": [
+    {
+      "field": "scale",
+      "ask": "How big is one floor - are the 6-10 rooms tight chambers you cross in a few seconds, or full arenas?",
+      "answer": "采用紧凑型房间；每个房间是适合短时战斗与探索的小型 3D 场地，几秒即可穿过，战斗房仅需容纳一波敌人与翻滚周旋。"
+    },
+    {
+      "field": "shape",
+      "ask": "Should the five floors be five distinct looks, or one temple style that gets darker as you descend?",
+      "answer": "保持统一的废弃地下神殿风格，随着下潜逐层更昏暗、破败且蓝紫色调更强，以小幅环境变化体现深度。"
+    },
+    {
+      "field": "shape",
+      "ask": "Do the floors connect visibly (a stairwell you can see down) or is each descent a load into a new map?",
+      "answer": "每层结束后通过明显的向下石阶或升降通道进入下一层，并加载生成新的楼层地图。"
+    }
+  ],
+  "scene_prompt": "Create a 3D third-person action roguelike map set in an abandoned underground stone temple, viewed from behind the explorer. The descent spans five procedurally arranged dungeon floors, each containing 6–10 compact 3D chambers crossed in seconds, connected by short corridors and ending at a visible downward stone stairway or lift passage to the newly generated floor below. Include small combat arenas, treasure chambers, merchant rooms, elite chambers, and rest rooms within the room network. Keep one unified temple style that grows progressively darker, more ruined, and more saturated in blue-violet tones on deeper floors, with stone walls, torchlight, and shadowed passages. The fifth and lowest floor culminates in a larger boss chamber for the Echo King, with an escape route from the temple beyond it.",
+  "blob": "## Genre\nAction is dominant because the authored game explicitly centers physical real-time combat. RPG is secondary because the roguelike has weapon progression, merchants, loot, and a five-floor dungeon structure.\n\n## Shape and preset\nUse `world-chaptered` for five procedurally regenerated floor maps loaded one after another. This shape comes from outside Action’s usual set and matches the explicit per-floor loading. Use the secondary RPG’s Dungeon Crawler preset with this substituted shape.\n\n## Config requirements\nUse `social-hub` for compact merchant chambers integrated into each floor’s room network rather than a separate town. Use `gate-progression` for the visible downward stairway or lift passage that remains the clear threshold to the next generated floor. Draw small combat, treasure, elite, rest, and merchant chambers as distinct room types, with the fifth-floor boss chamber substantially larger than ordinary rooms.\n\n## Layout requirements\nPlace `spawner-npc` emitters inside combat, elite, and boss chambers, set away from room entrances and rest spaces. Place scene-specific treasure reward points within treasure chambers. Each floor needs one arrival marker and one descent destination, with the fifth floor instead linking the boss chamber to one escape destination beyond it. No journey checkpoints are required because restarting rather than saving mid-run defines the roguelike structure.\n\n## Layout components\nGenerate exactly five floors, each with 6–10 compact chambers connected by short stone corridors. Mix the five requested ordinary room roles while preserving a traversable network from arrival to descent. Chambers should be crossable in seconds and combat rooms should hold one wave with enough clear floor for rolling. Floors are separate, not vertically co-visible. Use stone walls, torch niches, worn floors, shadowed passages, and increasingly ruined details; deepen darkness and blue-violet saturation with each descent. Floor five terminates in one larger Echo King arena and a readable escape route. Frame each floor from its arrival toward the first junction or chamber threshold.\n\n## Render order\nUse `topdown`: every procedural floor must have connected room topology, reachable special rooms, and a valid arrival-to-descent route before visual dressing.\n\n## Scale, theme, and pipeline cost\nScale is large overall because there are five floors with 6–10 rooms each, though individual chambers are small. The theme is a unified abandoned subterranean stone temple, progressively darker and more blue-violet. Use `P4` because each descent loads a separate generated floor map.",
+  "agent_artifact": "# Scene prompt\nCreate a 3D third-person action roguelike map set in an abandoned underground stone temple, viewed from behind the explorer. The descent spans five procedurally arranged dungeon floors, each containing 6–10 compact 3D chambers crossed in seconds, connected by short corridors and ending at a visible downward stone stairway or lift passage to the newly generated floor below. Include small combat arenas, treasure chambers, merchant rooms, elite chambers, and rest rooms within the room network. Keep one unified temple style that grows progressively darker, more ruined, and more saturated in blue-violet tones on deeper floors, with stone walls, torchlight, and shadowed passages. The fifth and lowest floor culminates in a larger boss chamber for the Echo King, with an escape route from the temple beyond it.\n\n# Agent decision\n## Genre\nAction is dominant because the authored game explicitly centers physical real-time combat. RPG is secondary because the roguelike has weapon progression, merchants, loot, and a five-floor dungeon structure.\n\n## Shape and preset\nUse `world-chaptered` for five procedurally regenerated floor maps loaded one after another. This shape comes from outside Action’s usual set and matches the explicit per-floor loading. Use the secondary RPG’s Dungeon Crawler preset with this substituted shape.\n\n## Config requirements\nUse `social-hub` for compact merchant chambers integrated into each floor’s room network rather than a separate town. Use `gate-progression` for the visible downward stairway or lift passage that remains the clear threshold to the next generated floor. Draw small combat, treasure, elite, rest, and merchant chambers as distinct room types, with the fifth-floor boss chamber substantially larger than ordinary rooms.\n\n## Layout requirements\nPlace `spawner-npc` emitters inside combat, elite, and boss chambers, set away from room entrances and rest spaces. Place scene-specific treasure reward points within treasure chambers. Each floor needs one arrival marker and one descent destination, with the fifth floor instead linking the boss chamber to one escape destination beyond it. No journey checkpoints are required because restarting rather than saving mid-run defines the roguelike structure.\n\n## Layout components\nGenerate exactly five floors, each with 6–10 compact chambers connected by short stone corridors. Mix the five requested ordinary room roles while preserving a traversable network from arrival to descent. Chambers should be crossable in seconds and combat rooms should hold one wave with enough clear floor for rolling. Floors are separate, not vertically co-visible. Use stone walls, torch niches, worn floors, shadowed passages, and increasingly ruined details; deepen darkness and blue-violet saturation with each descent. Floor five terminates in one larger Echo King arena and a readable escape route. Frame each floor from its arrival toward the first junction or chamber threshold.\n\n## Render order\nUse `topdown`: every procedural floor must have connected room topology, reachable special rooms, and a valid arrival-to-descent route before visual dressing.\n\n## Scale, theme, and pipeline cost\nScale is large overall because there are five floors with 6–10 rooms each, though individual chambers are small. The theme is a unified abandoned subterranean stone temple, progressively darker and more blue-violet. Use `P4` because each descent loads a separate generated floor map.\n",
+  "agent_notes": "## Genre\nAction is dominant because the authored game explicitly centers physical real-time combat. RPG is secondary because the roguelike has weapon progression, merchants, loot, and a five-floor dungeon structure.\n\n## Shape and preset\nUse `world-chaptered` for five procedurally regenerated floor maps loaded one after another. This shape comes from outside Action’s usual set and matches the explicit per-floor loading. Use the secondary RPG’s Dungeon Crawler preset with this substituted shape.\n\n## Config requirements\nUse `social-hub` for compact merchant chambers integrated into each floor’s room network rather than a separate town. Use `gate-progression` for the visible downward stairway or lift passage that remains the clear threshold to the next generated floor. Draw small combat, treasure, elite, rest, and merchant chambers as distinct room types, with the fifth-floor boss chamber substantially larger than ordinary rooms.\n\n## Layout requirements\nPlace `spawner-npc` emitters inside combat, elite, and boss chambers, set away from room entrances and rest spaces. Place scene-specific treasure reward points within treasure chambers. Each floor needs one arrival marker and one descent destination, with the fifth floor instead linking the boss chamber to one escape destination beyond it. No journey checkpoints are required because restarting rather than saving mid-run defines the roguelike structure.\n\n## Layout components\nGenerate exactly five floors, each with 6–10 compact chambers connected by short stone corridors. Mix the five requested ordinary room roles while preserving a traversable network from arrival to descent. Chambers should be crossable in seconds and combat rooms should hold one wave with enough clear floor for rolling. Floors are separate, not vertically co-visible. Use stone walls, torch niches, worn floors, shadowed passages, and increasingly ruined details; deepen darkness and blue-violet saturation with each descent. Floor five terminates in one larger Echo King arena and a readable escape route. Frame each floor from its arrival toward the first junction or chamber threshold.\n\n## Render order\nUse `topdown`: every procedural floor must have connected room topology, reachable special rooms, and a valid arrival-to-descent route before visual dressing.\n\n## Scale, theme, and pipeline cost\nScale is large overall because there are five floors with 6–10 rooms each, though individual chambers are small. The theme is a unified abandoned subterranean stone temple, progressively darker and more blue-violet. Use `P4` because each descent loads a separate generated floor map.",
+  "secondary": [
+    "RPG"
+  ],
+  "spec": {
+    "genre": "Action",
+    "secondary": [
+      "RPG"
+    ],
+    "shape": "world-chaptered",
+    "preset": "none",
+    "axes": {},
+    "options": [
+      {
+        "id": "spawner-npc",
+        "text": "Emitters inside combat, elite, and boss chambers, set away from room entrances and rest spaces.",
+        "visible": false,
+        "count": -1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "spawner-npc",
+        "text": "Emitters inside combat, elite, and boss chambers, set away from room entrances and rest spaces.",
+        "count": -1,
+        "where": "Inside combat, elite, and boss chambers, away from room entrances and rest spaces."
+      }
+    ],
+    "layout": {
+      "composition": "Frame each floor from its arrival marker toward the first junction or chamber threshold.",
+      "zones": [
+        {
+          "name": "Floor 1",
+          "role": "A procedurally regenerated dungeon floor with 6–10 compact chambers, mixing combat, treasure, elite, rest, and merchant room roles in a traversable network from one arrival marker to one descent destination.",
+          "where": "First loaded floor.",
+          "size": "6–10 compact chambers"
+        },
+        {
+          "name": "Floor 2",
+          "role": "A procedurally regenerated dungeon floor with 6–10 compact chambers, mixing combat, treasure, elite, rest, and merchant room roles in a traversable network from one arrival marker to one descent destination.",
+          "where": "Loaded after the first descent.",
+          "size": "6–10 compact chambers"
+        },
+        {
+          "name": "Floor 3",
+          "role": "A procedurally regenerated dungeon floor with 6–10 compact chambers, mixing combat, treasure, elite, rest, and merchant room roles in a traversable network from one arrival marker to one descent destination.",
+          "where": "Loaded after the second descent.",
+          "size": "6–10 compact chambers"
+        },
+        {
+          "name": "Floor 4",
+          "role": "A procedurally regenerated dungeon floor with 6–10 compact chambers, mixing combat, treasure, elite, rest, and merchant room roles in a traversable network from one arrival marker to one descent destination.",
+          "where": "Loaded after the third descent.",
+          "size": "6–10 compact chambers"
+        },
+        {
+          "name": "Floor 5 — Echo King Arena",
+          "role": "The lowest floor terminates in one substantially larger Echo King boss chamber, with one escape destination beyond it instead of a descent destination.",
+          "where": "Loaded after the fourth descent.",
+          "size": "6–10 compact chambers, with one larger boss chamber"
+        }
+      ],
+      "paths": [
+        {
+          "from": "Floor 1 arrival marker",
+          "to": "Floor 1 descent destination",
+          "kind": "corridor"
+        },
+        {
+          "from": "Floor 2 arrival marker",
+          "to": "Floor 2 descent destination",
+          "kind": "corridor"
+        },
+        {
+          "from": "Floor 3 arrival marker",
+          "to": "Floor 3 descent destination",
+          "kind": "corridor"
+        },
+        {
+          "from": "Floor 4 arrival marker",
+          "to": "Floor 4 descent destination",
+          "kind": "corridor"
+        },
+        {
+          "from": "Floor 5 Echo King arena",
+          "to": "Escape destination beyond the temple",
+          "kind": "corridor"
+        }
+      ],
+      "terrain": "Abandoned subterranean stone temple with worn floors, stone walls, torch niches, and shadowed passages; details become increasingly ruined, dark, and blue-violet with each descent.",
+      "props": [
+        {
+          "name": "Stone walls",
+          "count": -1,
+          "where": "Around the compact chambers and short corridors of every floor."
+        },
+        {
+          "name": "Torch niches",
+          "count": -1,
+          "where": "Along stone walls and shadowed passages."
+        },
+        {
+          "name": "Worn stone floors",
+          "count": -1,
+          "where": "Across chambers and corridors on every floor."
+        },
+        {
+          "name": "Increasingly ruined blue-violet details",
+          "count": -1,
+          "where": "More pronounced on deeper floors."
+        }
+      ],
+      "boundary": "Each floor is an enclosed underground stone dungeon map; floors are separate and not vertically co-visible.",
+      "scale_band": "large",
+      "theme": "Unified abandoned subterranean stone temple, progressively darker, more ruined, and more blue-violet."
+    },
+    "render": {
+      "first": "isometric",
+      "then": "topdown",
+      "authoritative": "isometric",
+      "why": "Connected room topology, reachable special rooms, and a valid arrival-to-descent route must be established before visual dressing.",
+      "set_piece": false
+    },
+    "route": [
+      "P4"
+    ],
+    "notes": [
+      "`world-chaptered` is taken from outside Action's usual shape set, as specified.",
+      "`social-hub` and `gate-progression` were named in the blob but are not Action options, so they were dropped from options under the dominant-genre rule; their merchant-chamber and descent-threshold scene details remain transcribed in the layout.",
+      "No journey checkpoints were specified because the run restarts rather than saves mid-run.",
+      "unknown preset 'Dungeon Crawler'"
+    ],
+    "scene_prompt": "Create a 3D third-person action roguelike map set in an abandoned underground stone temple, viewed from behind the explorer. The descent spans five procedurally arranged dungeon floors, each containing 6–10 compact 3D chambers crossed in seconds, connected by short corridors and ending at a visible downward stone stairway or lift passage to the newly generated floor below. Include small combat arenas, treasure chambers, merchant rooms, elite chambers, and rest rooms within the room network. Keep one unified temple style that grows progressively darker, more ruined, and more saturated in blue-violet tones on deeper floors, with stone walls, torchlight, and shadowed passages. The fifth and lowest floor culminates in a larger boss chamber for the Echo King, with an escape route from the temple beyond it."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "1986e1975066",
+  "served_by": "subagent/genre-choice -> gateway/production/gpt-5.6-terra",
+  "schema_degraded": false,
+  "reused_uprez": true,
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": []
+}

@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a compact 3D asymmetrical horror game map as a reusable template: a tense but slightly chaotic, humorous environment with a central objective area, hazardous zones, and scattered interactive elements. Arrange multiple survivor routes through the space, with chokepoints and hiding or evasion areas, leading toward a locked exit at the edge of the map that opens after objectives are completed. Keep sightlines, paths, and distinct zones varied enough to support fast-paced pursuit and escape.",
-  "blob": "### Genre\nThe dominant genre is Survival, specifically an asymmetric monster-versus-survivor escape game. Its pursuit pressure, survivor evasion routes, and escape condition make it a Survival build rather than a Puzzle or Action arena.\n\n### Shape and preset\nUse `warren-looping`, matched to the 1 vs All preset. This is a compact interconnected horror warren whose loops prevent survivors from being permanently cornered while the monster can pressure several routes. The prompt supports the preset directly; retain its escape-focused structure and add the explicitly requested hazards.\n\n### Config requirements\nUse `cover-los` as visible geometry: hiding alcoves, lockers, low partitions, and broken sightline corners distributed along pursuit routes. Use `gate-escape` as both visible geometry and invisible logic: a large locked exit structure at the outer edge, with its escape trigger placed only after objectives are complete. Use `spawn-protected` as invisible layout markers: separated, screened survivor and monster round-start locations so neither role begins in immediate contact. Use `hazard-kill` as visible geometry: clearly readable hazardous side zones that create risk without sealing essential routes.\n\n### Layout components\nPlace a medium central objective chamber as the map’s anchor, with several interactive objective fixtures arranged around its perimeter and enough open floor for a tense confrontation. Build three or more looping survivor routes branching from this centre: a wider exposed main route, a cluttered hiding route with alcoves and lockers, and a hazardous shortcut route. Connect these through narrow chokepoint corridors and small transition rooms, ensuring every pursuit branch reconnects rather than ending in a dead end. Put the locked exit in a distinct edge zone beyond a final short approach corridor. Screen survivor start areas in opposite outer sections from the monster start area. Use worn industrial-comedy horror dressing, crooked props, exaggerated warning signs, and varied debris clusters; keep hazards visibly bounded. Enclose the playable warren with exterior walls, sealed doors, and unsafe perimeter voids. Compose the isometric view around the central chamber, with the exit edge and branching routes legible around it.\n\n### Render order\nUse `topdown`: the looping pursuit topology must be checked first so every survivor route remains connected and no unfair sealed dead end is produced, then dress the approved plan isometrically.\n\n### Scale, theme, and pipeline cost\nScale is medium: one compact reusable map with several distinct pursuit zones. Theme is chaotic, humorous asymmetrical horror in a tense industrial interior. Use `P6` because the looping warren must be valid by construction for fair escape and pursuit routing. Use `P0` otherwise; there are no overhangs, separate maps, or outside-to-inside transitions required.",
+  "blob": "### 1. Genre\nThe dominant genre is Survival, specifically an asymmetric 1-vs-all pursuit-and-escape round: survivors complete objectives to unlock an exit while one monster hunts them.\n\n### 2. Shape and preset\nUse `warren-looping`, following the 1 vs All preset. This compact map is an interconnected chase warren with multiple looping survivor routes around a central objective zone, so no route ends in an unavoidable dead end. The locked escape edge is added to the preset’s escape structure.\n\n### 3. Config requirements\nUse `cover-los` as hiding and evasion cutouts: lockers, crawl-through openings, short partitions, and cluttered side pockets that break the monster’s sightlines without trapping survivors. Use `gate-escape` as a large, visibly locked exit gate on the map edge. Use `hazard-kill` for clearly readable dangerous pockets that complicate chases without consuming the main circulation routes.\n\n### 4. Layout requirements\nUse `spawn-protected` with two separated role-assignment start areas: one survivor start zone screened from immediate pursuit near the central side of the map, and one monster start zone at a distant outer loop, with no direct opening sightline between them. Use `gate-escape` in both image and layout: place one escape trigger immediately inside the edge gate, spanning its full usable opening. The central objective area needs several distinct interaction anchor positions around its perimeter, but no additional scripted placement type is specified.\n\n### 5. Layout components\nBuild one compact enclosed horror-map template. Put a broad central objective chamber slightly off-center, large enough for several survivors to circulate while retaining cover islands and interactive prop clusters. Wrap it with two or three freely connected corridors and side rooms, each reconnecting to another route rather than terminating. Include varied hiding alcoves, lockers, crawlspaces, blocked sightlines, small maintenance rooms, and humorous-chaotic environmental dressing. Put hazardous zones in optional shortcut rooms and perimeter pockets, not across the only viable route. Place the locked exit gate on one outer boundary, approached by at least two converging survivor routes. Enclose the map with interior walls and inaccessible service dressing; frame the composition in a readable top-down plan with the objective chamber as the visual center and the exit legible at the edge.\n\n### 6. Render order\nUse `topdown` first and treat it as authoritative, because loop connectivity and viable pursuit/escape routes must remain valid for play, while this is not a carveable maze or racing circuit.\n\n### 7. Scale, theme, and pipeline cost\nScale band: small, driven by the requested compact reusable round-map template. Theme: stylized atmospheric horror with grimy industrial or abandoned-facility dressing, punctuated by slightly absurd props. Pipeline modifier: `P6`, because the looping chase topology must be valid with no dead-end traps.",
   "spec": {
     "genre": "Survival",
     "secondary": [],
@@ -24,163 +24,156 @@
     "options": [
       {
         "id": "cover-los",
-        "text": "Hiding alcoves, lockers, low partitions, and broken sightline corners distributed along pursuit routes.",
+        "text": "Hiding and evasion cutouts: lockers, crawl-through openings, short partitions, and cluttered side pockets that break the monster's sightlines without trapping survivors.",
         "visible": true,
         "count": -1
       },
       {
         "id": "gate-escape",
-        "text": "A large locked exit structure at the outer edge, with its escape trigger placed only after objectives are complete.",
+        "text": "A large, visibly locked exit gate on the map edge, approached by at least two converging survivor routes.",
+        "visible": true,
+        "count": 1
+      },
+      {
+        "id": "hazard-kill",
+        "text": "Clearly readable dangerous pockets that complicate chases without consuming the main circulation routes.",
         "visible": true,
         "count": -1
       },
       {
         "id": "spawn-protected",
-        "text": "Separated, screened survivor and monster round-start locations so neither role begins in immediate contact.",
+        "text": "Two separated role-assignment start areas: one survivor start zone screened from immediate pursuit near the central side of the map, and one monster start zone at a distant outer loop, with no direct opening sightline between them.",
         "visible": false,
-        "count": -1
+        "count": 2
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "gate-escape",
+        "text": "One escape trigger immediately inside the edge gate, spanning its full usable opening.",
+        "count": 1,
+        "where": "Immediately inside the locked exit gate on the outer boundary, spanning the gate's full usable opening."
       },
       {
-        "id": "hazard-kill",
-        "text": "Clearly readable hazardous side zones that create risk without sealing essential routes.",
-        "visible": true,
-        "count": -1
+        "id": "spawn-protected",
+        "text": "Two separated role-assignment start areas: one survivor start zone screened from immediate pursuit near the central side of the map, and one monster start zone at a distant outer loop, with no direct opening sightline between them.",
+        "count": 2,
+        "where": "Place the survivor start near the central side of the map and the monster start at a distant outer loop; screen both so there is no direct opening sightline between them."
       }
     ],
     "layout": {
-      "composition": "Compose the isometric view around the central objective chamber, with the exit edge and branching routes legible around it.",
+      "composition": "Readable top-down plan with the broad central objective chamber slightly off-center as the visual center, looping corridors and side rooms wrapped around it, and the locked exit legible at an outer edge.",
       "zones": [
         {
           "name": "Central objective chamber",
-          "role": "Map anchor with interactive objective fixtures around its perimeter and open floor for a tense confrontation.",
-          "where": "centre",
-          "size": "medium"
+          "role": "Several survivors circulate around central objective interactions while using cover islands and interactive prop clusters.",
+          "where": "Slightly off-center, serving as the visual center.",
+          "size": "Broad; large enough for several survivors to circulate."
         },
         {
-          "name": "Exposed main route",
-          "role": "Wider survivor pursuit route branching from the central chamber.",
-          "where": "branching from the centre",
-          "size": "wider"
+          "name": "Loop corridors and side rooms",
+          "role": "Freely connected survivor pursuit and escape routes that reconnect rather than end in unavoidable dead ends.",
+          "where": "Wrapped around the central objective chamber.",
+          "size": "Two or three connected corridors with side rooms."
         },
         {
-          "name": "Cluttered hiding route",
-          "role": "Survivor evasion route with alcoves and lockers.",
-          "where": "branching from the centre",
+          "name": "Survivor start zone",
+          "role": "Role-assignment start area screened from immediate pursuit.",
+          "where": "Near the central side of the map.",
           "size": ""
         },
         {
-          "name": "Hazardous shortcut route",
-          "role": "Risky survivor shortcut route with visibly bounded hazards.",
-          "where": "branching from the centre",
+          "name": "Monster start zone",
+          "role": "Role-assignment start area with no direct opening sightline to the survivor start.",
+          "where": "At a distant outer loop.",
           "size": ""
         },
         {
-          "name": "Chokepoint corridors and transition rooms",
-          "role": "Narrow connections between pursuit branches, ensuring routes reconnect rather than end in dead ends.",
-          "where": "between branching routes",
-          "size": "small transition rooms"
-        },
-        {
-          "name": "Locked exit edge zone",
-          "role": "Escape destination beyond the final short approach corridor, opened after objectives are complete.",
-          "where": "outer edge of the map",
-          "size": "distinct edge zone"
-        },
-        {
-          "name": "Survivor start areas",
-          "role": "Screened round-start areas for survivors.",
-          "where": "opposite outer sections from the monster start area",
+          "name": "Optional shortcut rooms and perimeter pockets",
+          "role": "Contain hazardous zones that complicate chases without blocking the only viable routes.",
+          "where": "Off the main circulation routes and around the perimeter.",
           "size": ""
         },
         {
-          "name": "Monster start area",
-          "role": "Screened round-start area for the monster.",
-          "where": "opposite outer sections from survivor start areas",
+          "name": "Locked exit edge",
+          "role": "Escape structure and trigger reached after objectives are completed.",
+          "where": "One outer boundary of the map.",
           "size": ""
         }
       ],
       "paths": [
         {
           "from": "Central objective chamber",
-          "to": "Exposed main route",
+          "to": "Loop corridors and side rooms",
           "kind": "corridor"
         },
         {
-          "from": "Central objective chamber",
-          "to": "Cluttered hiding route",
+          "from": "Loop corridors and side rooms",
+          "to": "Loop corridors and side rooms",
           "kind": "corridor"
         },
         {
-          "from": "Central objective chamber",
-          "to": "Hazardous shortcut route",
+          "from": "Survivor route 1",
+          "to": "Locked exit edge",
           "kind": "corridor"
         },
         {
-          "from": "Exposed main route",
-          "to": "Chokepoint corridors and transition rooms",
-          "kind": "corridor"
-        },
-        {
-          "from": "Cluttered hiding route",
-          "to": "Chokepoint corridors and transition rooms",
-          "kind": "corridor"
-        },
-        {
-          "from": "Hazardous shortcut route",
-          "to": "Chokepoint corridors and transition rooms",
-          "kind": "corridor"
-        },
-        {
-          "from": "Chokepoint corridors and transition rooms",
-          "to": "Locked exit edge zone",
+          "from": "Survivor route 2",
+          "to": "Locked exit edge",
           "kind": "corridor"
         }
       ],
-      "terrain": "Industrial interior ground with visibly bounded hazardous side zones and unsafe perimeter voids.",
+      "terrain": "Enclosed interior facility ground with hazardous pockets confined to optional shortcut rooms and perimeter pockets.",
       "props": [
         {
-          "name": "Interactive objective fixtures",
+          "name": "Cover islands and interactive prop clusters",
           "count": -1,
-          "where": "around the perimeter of the central objective chamber"
+          "where": "Around the perimeter of the central objective chamber."
         },
         {
-          "name": "Crooked props",
+          "name": "Hiding alcoves, lockers, crawlspaces, short partitions, and cluttered side pockets",
           "count": -1,
-          "where": "throughout the warren"
+          "where": "Throughout corridors, side rooms, and sightline-break locations."
         },
         {
-          "name": "Exaggerated warning signs",
+          "name": "Small maintenance rooms",
           "count": -1,
-          "where": "throughout the warren"
+          "where": "Along the looping corridor network."
         },
         {
-          "name": "Varied debris clusters",
+          "name": "Humorous-chaotic environmental dressing",
           "count": -1,
-          "where": "throughout the warren"
+          "where": "Throughout the enclosed horror map."
+        },
+        {
+          "name": "Interior walls and inaccessible service dressing",
+          "count": -1,
+          "where": "Around the outer boundary."
         }
       ],
-      "boundary": "Exterior walls, sealed doors, and unsafe perimeter voids enclose the playable warren.",
-      "scale_band": "medium",
-      "theme": "Chaotic, humorous asymmetrical horror in a tense worn industrial interior."
+      "boundary": "Enclosed by interior walls and inaccessible service dressing, with one locked exit gate on an outer boundary.",
+      "scale_band": "small",
+      "theme": "Stylized atmospheric horror; grimy industrial or abandoned-facility dressing punctuated by slightly absurd props."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the looping pursuit topology must be checked first so every survivor route remains connected and no unfair sealed dead end is produced.",
+      "why": "Loop connectivity and viable pursuit and escape routes must remain valid for play.",
       "set_piece": false
     },
     "route": [
-      "P6",
-      "P0"
+      "P6"
     ],
-    "notes": [],
+    "notes": [
+      "The central objective area's several interaction anchor positions were retained as layout content, but no additional canonical scripted placement option was specified for them."
+    ],
     "scene_prompt": "Create a compact 3D asymmetrical horror game map as a reusable template: a tense but slightly chaotic, humorous environment with a central objective area, hazardous zones, and scattered interactive elements. Arrange multiple survivor routes through the space, with chokepoints and hiding or evasion areas, leading toward a locked exit at the edge of the map that opens after objectives are completed. Keep sightlines, paths, and distinct zones varied enough to support fast-paced pursuit and escape."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

@@ -14,101 +14,110 @@
     }
   ],
   "scene_prompt": "Create a 3D horror game map showing an endless, cramped hallway packed with genuinely frightening monsters, with a continuous forward-running path through the corridor.",
-  "blob": "### Genre\nThe dominant genre is Infinite Runner: the player’s goal is to survive an endless forward run and see how far they get before the pursuing monsters catch them.\n\n### Shape and preset\nUse `lane-free`, a narrow continuous corridor that permits lateral dodging around threats rather than fixed marked lanes. Match the Chase Runner preset, retaining its pursuit-focused horror reading but omitting horizon occlusion because the prompt does not ask for fog, turns, or other concealment scenery.\n\n### Config requirements\n`chunk-modular` is visible geometry: repeatable cramped corridor segments align exactly end-to-end to sustain the endless hallway. `hazard-kill` is visible geometry: genuinely frightening monsters occupy and threaten the running path as the run-ending hazard. `obstacle-moving` is visible geometry: monster bodies and movements intermittently obstruct the corridor, creating dodge moments. `trigger-despawn` is invisible: a cleanup volume sits behind the runner to remove cleared hallway chunks.\n\n### Layout components\nBuild one long, enclosed horror hallway from modular straight corridor chunks, narrow enough to feel claustrophobic while preserving a continuous forward-running route. Each chunk has a central traversable strip with limited side-to-side clearance; frightening monsters emerge in the path, from recessed wall bays, doorless side alcoves, or behind the runner, while leaving readable openings to dodge through. Use stained, worn walls, a grimy hard floor, low ceiling, exposed pipes, intermittent ceiling fixtures, and sparse broken architectural clutter. The corridor boundary is solid on both sides and overhead, with the apparent distance fading into darkness. Compose the isometric view looking diagonally down the corridor so its repeating depth and monster silhouettes dominate the frame.\n\n### Render order\nUse `topdown`: the image model should establish the chunk sequence and continuous dodgeable route before the isometric horror dressing is generated, since a blocked corridor would make the run unplayable.\n\n### Scale, theme, and pipeline cost\nScale is large in perceived extent, driven by the endlessly repeatable chunk chain rather than a broad footprint. Theme is oppressive, genuinely frightening interior horror: dark industrial decay, harsh intermittent light, and threatening monster silhouettes. Apply `P6` because modular runner geometry and reaction-safe obstacle placement must be valid by construction. Apply `P0` otherwise; the hallway remains one ground-level surface with no forced additional capture path.",
+  "blob": "### Genre\nThe dominant genre is `Infinite Runner`: the player presses forward through an endless corridor, surviving until the pursuing monsters catch them.\n\n### Shape and preset\nUse `interior-endless`, taken from outside the Infinite Runner shortlist, because the whole map is an unbounded, cramped enclosed hallway rather than an open lane. The closest preset is Chase Runner, but use none: its corridor shape is replaced and the scene does not ask for separate moving obstacles or a horizon turn.\n\n### Config requirements\nUse `chunk-modular` for repeatable hallway segments whose aligned doorway pivots create one continuous forward route. Use `hazard-kill` as frightening monster-filled stretches that end the run on contact. Do not add non-hostile population, scenery, water, or unrelated pickups.\n\n### Layout requirements\nPlace `trigger-despawn` as one cleanup volume a fixed distance behind the advancing player/camera, spanning the hall width so cleared hallway chunks recycle cleanly. No other placed markers are required by the stated scene.\n\n### Layout components\nBuild one narrow, claustrophobic interior corridor as the sole zone, with repeating but subtly varied modular sections fading into darkness. Its continuous straight-ahead running path occupies the center, with walls close enough to deny broad lateral escape. Frightening monsters pack alcoves, doorways, wall recesses, and occasional constrictions along the route, leaving a readable forward passage rather than blocking it entirely. Use stained institutional walls, flickering ceiling lights, damaged floor tiles, pipes, shadowed side doors, and intermittent barricade-like clutter. The boundary is fully enclosed by ceiling, walls, and floor; no exterior is visible. Frame the render in a deep one-point-perspective corridor composition emphasizing the vanishing path and looming monster silhouettes.\n\n### Render order\nUse `topdown`: the modular hallway chain must remain continuous and clearable, while `authored_plan` is unavailable because this is neither a maze nor a racing circuit.\n\n### Scale, theme, and pipeline cost\nScale is huge in implied run length, represented through reusable corridor chunks rather than a finite endpoint. Theme is genuinely frightening cramped institutional horror, with oppressive darkness and grotesque monsters. Apply `P6` because the endless forward route and chunk connections must be valid by construction.",
   "spec": {
     "genre": "Infinite Runner",
     "secondary": [],
-    "shape": "lane-free",
-    "preset": "Chase Runner",
+    "shape": "interior-endless",
+    "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "chunk-modular",
-        "text": "Repeatable cramped corridor segments align exactly end-to-end to sustain the endless hallway.",
+        "text": "Repeatable hallway segments whose aligned doorway pivots create one continuous forward route.",
         "visible": true,
         "count": -1
       },
       {
         "id": "hazard-kill",
-        "text": "Genuinely frightening monsters occupy and threaten the running path as the run-ending hazard.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "obstacle-moving",
-        "text": "Monster bodies and movements intermittently obstruct the corridor, creating dodge moments.",
+        "text": "Frightening monster-filled stretches that end the run on contact.",
         "visible": true,
         "count": -1
       },
       {
         "id": "trigger-despawn",
-        "text": "A cleanup volume sits behind the runner to remove cleared hallway chunks.",
+        "text": "One cleanup volume behind the advancing player/camera that recycles cleared hallway chunks cleanly.",
         "visible": false,
-        "count": -1
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "trigger-despawn",
+        "text": "One cleanup volume behind the advancing player/camera that recycles cleared hallway chunks cleanly.",
+        "count": 1,
+        "where": "A fixed distance behind the advancing player/camera, spanning the hall width."
       }
     ],
     "layout": {
-      "composition": "Isometric view looking diagonally down the corridor so its repeating depth and monster silhouettes dominate the frame.",
+      "composition": "Deep one-point-perspective corridor composition emphasizing the central vanishing running path and looming monster silhouettes.",
       "zones": [
         {
-          "name": "endless horror hallway",
-          "role": "Continuous forward-running route through a claustrophobic modular corridor, with readable openings to dodge monsters.",
-          "where": "Extending into the distance through the frame",
-          "size": "Long in perceived extent, driven by an endlessly repeatable chunk chain"
+          "name": "Endless interior corridor",
+          "role": "The sole narrow, claustrophobic hallway zone for continuous forward running through monster-filled stretches.",
+          "where": "Centre, receding straight ahead into darkness.",
+          "size": "Huge implied run length, represented through reusable corridor chunks."
         }
       ],
       "paths": [
         {
-          "from": "central traversable strip",
-          "to": "endless hallway distance",
+          "from": "",
+          "to": "",
           "kind": "corridor"
         }
       ],
-      "terrain": "Grimy hard floor beneath stained, worn walls; low ceiling with exposed pipes and intermittent ceiling fixtures. The apparent distance fades into darkness.",
+      "terrain": "Damaged floor tiles within a fully enclosed institutional hallway.",
       "props": [
         {
-          "name": "frightening monsters",
+          "name": "Frightening monsters",
           "count": -1,
-          "where": "In the path, recessed wall bays, doorless side alcoves, or behind the runner"
+          "where": "Packed into alcoves, doorways, wall recesses, and occasional constrictions along the route, while leaving a readable forward passage."
         },
         {
-          "name": "exposed pipes",
+          "name": "Flickering ceiling lights",
           "count": -1,
-          "where": "Along the low ceiling"
+          "where": "Along the repeating hallway sections."
         },
         {
-          "name": "intermittent ceiling fixtures",
+          "name": "Pipes",
           "count": -1,
-          "where": "Ceiling"
+          "where": "Along the institutional corridor walls and ceiling."
         },
         {
-          "name": "sparse broken architectural clutter",
+          "name": "Shadowed side doors",
           "count": -1,
-          "where": "Corridor"
+          "where": "Along the corridor walls."
+        },
+        {
+          "name": "Barricade-like clutter",
+          "count": -1,
+          "where": "Intermittently along the corridor route."
         }
       ],
-      "boundary": "Solid corridor walls on both sides and overhead.",
-      "scale_band": "large",
-      "theme": "Oppressive genuinely frightening interior horror; dark industrial decay, harsh intermittent light, threatening monster silhouettes."
+      "boundary": "Fully enclosed by ceiling, walls, and floor; no exterior is visible.",
+      "scale_band": "huge",
+      "theme": "Genuinely frightening cramped institutional horror, oppressive darkness, grotesque monsters."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "A blocked corridor would make the run unplayable.",
+      "why": "the modular hallway chain must remain continuous and clearable.",
       "set_piece": false
     },
     "route": [
-      "P6",
-      "P0"
+      "P6"
     ],
-    "notes": [],
+    "notes": [
+      "`interior-endless` is taken from outside the Infinite Runner usual shape shortlist.",
+      "The blob specifies no non-hostile population, scenery, water, unrelated pickups, separate moving obstacles, or horizon turn."
+    ],
     "scene_prompt": "Create a 3D horror game map showing an endless, cramped hallway packed with genuinely frightening monsters, with a continuous forward-running path through the corridor."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

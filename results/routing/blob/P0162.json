@@ -14,110 +14,122 @@
     }
   ],
   "scene_prompt": "Create a 3D backrooms-style map: one large fixed indoor maze designed to feel endless, with repeating connected rooms, corridors, and dead ends that create a small but playable exploration floor. Include spaces where hostile entities can appear or roam; there is no exit.",
-  "blob": "### Genre\nThis is Survival, specifically the no-exit endurance form of Disaster Survival adapted to hostile entities: the player survives in place and explores rather than reaching an exit. The dominant shape is `arena-contained`; the fixed indoor floor is a single contained survival space, not a procedurally endless maze. The closest preset is Disaster Survival, but the prompt replaces its environmental disaster with roaming hostile entities, so retain the shape but not the preset bundle.\n\n### Shape and preset\nUse `arena-contained`. It is one large enclosed interior floor whose repeated rooms and corridors make a deliberately small build feel interminable. Preset: none, because the Disaster Survival preset’s high-ground and collapsing-structure bundle is not requested and its threat type differs.\n\n### Config requirements\nUse `spawner-npc` as invisible layout geometry: place hostile-entity origins and patrol-start areas in selected rooms and corridor junctions, never visibly render markers. Do not add an escape exit, shelters, resources, or disaster hazards; the prompt names none of these.\n\n### Layout components\nBuild one large but small-playable indoor backrooms floor. Its primary zone is a dense maze of repeating, yellowed office-like rooms and narrow connecting corridors, with varied room proportions and turns despite repeated finishes. Arrange a loose central circulation loop with several branching corridors, then add short dead-end rooms and longer side branches to create uncertainty without sealing the whole floor into an unsolvable trap. Reserve a handful of wider, emptier rooms and long hall stretches as hostile entity roaming and appearance spaces; these remain visually ordinary, with no visible spawn devices. Ground is stained carpet under low suspended fluorescent ceiling panels; walls are aged yellow patterned partitions. The boundary is fully enclosed by walls and ceiling, with no exterior, windows, exit door, or visible world edge. Frame the isometric composition from above one central junction so multiple corridors recede into the maze and the repeated architecture reads as endless.\n\n### Render order\nUse `topdown`: corridor connectivity and loop access must remain traversable for exploration, while the maze-like repetition needs a reliable plan before the isometric dressing.\n\n### Scale, theme, and pipeline cost\nScale is medium: one fixed floor, intentionally kept small and playable, but dense enough to imply a much larger maze. Theme is liminal backrooms horror—yellow fluorescent office interiors, stained carpet, repetition, and oppressive emptiness. Pipeline modifier `P0`: this is a single enclosed surface with no requested layered floors or exterior transition; valid exploration connectivity is handled by the top-down plan rather than requiring a carved procedural maze.",
+  "blob": "### Genre\nThe dominant genre is Survival, specifically a liminal-horror survival experience: players endure indefinitely while avoiding hostile entities, with no escape objective.\n\n### Shape and preset\nUse `interior-endless`, an enclosed Backrooms-like interior of repeating rooms, corridors, and intentional dead ends that feels unbounded despite being one fixed playable floor. This begins from the Liminal Horror preset, but the preset is otherwise `none`: the prompt requires hostile entities but does not ask for hiding furniture or collectibles.\n\n### Config requirements\nNo image-config options beyond the selected shape are required. Render the hostile-roaming ground as part of the ordinary rooms and corridors, but do not draw gameplay markers or entity spawn indicators.\n\n### Layout requirements\nUse `spawner-npc` for hostile entity origins and patrol starts. Use an unspecified small number of placements, distributed in deeper corridor branches and larger side rooms rather than directly at the initial arrival area; each must have connected patrol ground through the maze network.\n\n### Layout components\nBuild one large but deliberately compact indoor exploration floor. The arrival area is a modest, readable room near one edge of the floor, feeding into a dense central network of connected yellowed rooms and narrow fluorescent corridors. Branch this network into several looping connections, with repeated room proportions and wall patterns that obscure orientation, plus multiple dead-end side corridors and empty side rooms to create the endless impression. Include a few wider entity-roam rooms embedded away from the arrival area. Floors are worn beige carpet, walls are stained yellow patterned wallpaper, ceilings are low acoustic tiles with repeating fluorescent fixtures. The whole floor is enclosed by interior walls; its fixed outer extent is concealed by repetition and inaccessible perimeter architecture rather than an exit. Compose the plan as a dense maze-like field, with the arrival room legible at the edge and the most repetitive, disorienting branches concentrated toward the interior.\n\n### Render order\nUse `authored_plan`: the fixed maze topology must be connected and valid by construction so exploration and entity patrols cannot be broken by sealed or disconnected corridors.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the request to keep the first fixed floor playable despite its endless illusion. Theme: oppressive fluorescent Backrooms, faded yellow interiors, stained carpet, monotonous repetition. Apply `P6` because the connected maze structure must be valid by construction.",
   "spec": {
     "genre": "Survival",
     "secondary": [],
-    "shape": "arena-contained",
+    "shape": "interior-endless",
     "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "spawner-npc",
-        "text": "Hostile-entity origins and patrol-start areas in selected rooms and corridor junctions, with no visible spawn devices.",
+        "text": "Hostile entity origins and patrol starts in deeper corridor branches and larger side rooms, with connected patrol ground through the maze network.",
         "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "spawner-npc",
+        "text": "Hostile entity origins and patrol starts.",
+        "count": -1,
+        "where": "Distributed in deeper corridor branches and larger side rooms rather than directly at the initial arrival area; each has connected patrol ground through the maze network."
+      }
+    ],
     "layout": {
-      "composition": "Isometric composition from above one central junction, with multiple corridors receding into the maze so the repeated architecture reads as endless.",
+      "composition": "A dense maze-like interior field, with the readable arrival room at one edge and the most repetitive, disorienting branches concentrated toward the interior.",
       "zones": [
         {
-          "name": "Backrooms exploration floor",
-          "role": "One large enclosed indoor survival and exploration space.",
-          "where": "entire map",
-          "size": "large but small-playable"
+          "name": "Arrival area",
+          "role": "Initial arrival and readable entry into the exploration floor.",
+          "where": "Near one edge of the floor.",
+          "size": "modest"
         },
         {
-          "name": "Dense repeating room-and-corridor maze",
-          "role": "Primary exploration area with varied room proportions, turns, short dead ends, and longer side branches creating uncertainty without becoming an unsolvable trap.",
-          "where": "throughout the floor around the central circulation loop",
+          "name": "Central room and corridor network",
+          "role": "Dense connected exploration network of repeating yellowed rooms and narrow fluorescent corridors.",
+          "where": "Centre of the floor.",
           "size": "dense"
         },
         {
-          "name": "Central circulation loop",
-          "role": "Loose traversable loop connecting branching corridors.",
-          "where": "centre",
-          "size": "loose central loop"
+          "name": "Looping branches",
+          "role": "Connected loops with repeated room proportions and wall patterns that obscure orientation.",
+          "where": "Branching from the central network toward the interior.",
+          "size": ""
         },
         {
-          "name": "Roaming and appearance spaces",
-          "role": "Wider emptier rooms and long hall stretches where hostile entities roam or appear; visually ordinary.",
-          "where": "selected rooms and corridor stretches",
-          "size": "a handful"
+          "name": "Dead-end side corridors and empty side rooms",
+          "role": "Create the endless impression through intentional dead ends and repetition.",
+          "where": "Off the connected maze network.",
+          "size": "multiple"
+        },
+        {
+          "name": "Entity-roam rooms",
+          "role": "Wider rooms for hostile entities to appear or roam.",
+          "where": "Embedded away from the arrival area in deeper branches.",
+          "size": "a few"
         }
       ],
       "paths": [
         {
-          "from": "Central circulation loop",
-          "to": "Branching corridors",
+          "from": "Arrival area",
+          "to": "Central room and corridor network",
           "kind": "corridor"
         },
         {
-          "from": "Branching corridors",
-          "to": "Short dead-end rooms",
+          "from": "Central room and corridor network",
+          "to": "Looping branches",
           "kind": "corridor"
         },
         {
-          "from": "Branching corridors",
-          "to": "Longer side branches",
+          "from": "Looping branches",
+          "to": "Dead-end side corridors and empty side rooms",
           "kind": "corridor"
         },
         {
-          "from": "Central circulation loop",
-          "to": "Roaming and appearance spaces",
+          "from": "Looping branches",
+          "to": "Entity-roam rooms",
           "kind": "corridor"
         }
       ],
-      "terrain": "Stained carpet under low suspended fluorescent ceiling panels, with aged yellow patterned partition walls.",
+      "terrain": "Worn beige carpet floors, stained yellow patterned wallpaper walls, and low acoustic-tile ceilings with repeating fluorescent fixtures.",
       "props": [
         {
-          "name": "Suspended fluorescent ceiling panels",
+          "name": "Repeating fluorescent fixtures",
           "count": -1,
-          "where": "low ceiling throughout the floor"
-        },
-        {
-          "name": "Yellow patterned partitions",
-          "count": -1,
-          "where": "throughout the repeating rooms and corridors"
+          "where": "Across the low acoustic-tile ceilings throughout the rooms and corridors."
         }
       ],
-      "boundary": "Fully enclosed by walls and ceiling, with no exterior, windows, exit door, or visible world edge.",
-      "scale_band": "medium",
-      "theme": "Liminal backrooms horror; yellow fluorescent office interiors, stained carpet, repetition, and oppressive emptiness."
+      "boundary": "Fully enclosed by interior walls; the fixed outer extent is concealed by repetition and inaccessible perimeter architecture, with no exit.",
+      "scale_band": "small",
+      "theme": "Oppressive fluorescent Backrooms, faded yellow interiors, stained carpet, monotonous repetition."
     },
     "render": {
-      "first": "topdown",
-      "then": "isometric",
-      "authoritative": "topdown",
-      "why": "corridor connectivity and loop access must remain traversable for exploration.",
+      "first": "authored_plan",
+      "then": "topdown",
+      "authoritative": "authored_plan",
+      "why": "the fixed maze topology must be connected and valid by construction so exploration and entity patrols cannot be broken by sealed or disconnected corridors",
       "set_piece": false
     },
     "route": [
-      "P0"
+      "P6"
     ],
-    "notes": [],
+    "notes": [
+      "The Liminal Horror preset is referenced only as a starting point; the blob explicitly sets the preset to none.",
+      "No image-config options were requested beyond the selected shape; hostile entity spawn indicators and gameplay markers are layout-only."
+    ],
     "scene_prompt": "Create a 3D backrooms-style map: one large fixed indoor maze designed to feel endless, with repeating connected rooms, corridors, and dead ends that create a small but playable exploration floor. Include spaces where hostile entities can appear or roam; there is no exit."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
-  "order": "std",
-  "first": "isometric",
+  "order": "p6",
+  "first": "topdown",
   "mapper_notes": [
-    "blob asked for topdown first; the route ['P0'] gives isometric"
+    "blob asked for authored_plan first; the route ['P6'] gives topdown"
   ]
 }

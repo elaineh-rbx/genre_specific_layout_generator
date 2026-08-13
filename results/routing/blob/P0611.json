@@ -19,93 +19,99 @@
     }
   ],
   "scene_prompt": "Create a compact royal-themed driving simulator map set in a small palace and its grounds, sized for about one minute of driving from edge to edge. Arrange the palace as the central landmark with drivable paths and open grounds around it, and include three cars placed in the map.",
-  "blob": "### Genre\nThe dominant genre is Simulation, specifically a vehicle simulator: the original request establishes a driving loop, while the scene supplies its royal palace setting.\n\n### Shape and preset\nUse `world-shared`, matching the Vehicle Sim preset. This is one compact shared driving world rather than isolated plots or a race circuit. Retain the preset name Vehicle Sim, but include only the requested road network; no extraction field is implied.\n\n### Config requirements\n`path-road-vehicle` is visible geometry: a coherent network of broad, smooth drivable palace roads and driveways, with enough turning space around the central building and at the map edges. No invisible layout markers are requested.\n\n### Layout components\nBuild one compact exterior royal estate, sized so a player can drive from one edge to the other in about one minute. The palace is the central landmark and dominant mass, occupying the middle of the grounds; it is a grand but small-scale royal residence with a forecourt facing the main approach. Arrange open lawns, formal garden parcels, and lightly treed grounds around all sides of it rather than dense city blocks. A looping perimeter drive connects to branching approach roads: one reaches the palace forecourt, while the others sweep through the side and rear grounds and return to the loop. Keep roads wide, paved, and gently curved for easy vehicle turning. Place exactly three car props at separate, readable points on the network: one in the front forecourt, one on a side drive, and one near the rear grounds. Use hedges, low walls, gates, and tree lines as the estate boundary; do not add enterable palace interiors. Compose the view with the palace centered and roads visibly radiating or curving around it, so the estate reads clearly as a drivable whole.\n\n### Render order\nUse `isometric`: the compact estate’s visual composition and central palace are authoritative, and no race route, maze, or other topology whose failure makes play impossible requires plan-first generation.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by the stated one-minute edge-to-edge driving distance despite the deliberately compact palace grounds. Theme: polished royal palace estate, formal gardens, pale stone, manicured lawns, and ceremonial driveways. Pipeline modifier `P0`: this is one exterior ground surface with no required overhangs, interiors, separate maps, or construction-valid route.",
+  "blob": "### Genre\nThe dominant genre is `Simulation`, specifically a Vehicle Sim: players drive across a persistent royal palace grounds map. The later addition of cars is a content-update plan, not layout content.\n\n### Shape and preset\nUse `world-open`, a shared, contiguous palace estate that can be driven across freely rather than a race route or personal plot. Match the Vehicle Sim preset, retaining its road-network intent but omitting its unrequested shared extraction field.\n\n### Config requirements\nUse `path-road-vehicle` for a compact network of vehicle-width paved drives looping around the palace, connecting the forecourt, side grounds, and map edges. Do not add resource fields, interiors, NPCs, water, or extra settlement geometry.\n\n### Layout requirements\nNo additional placed gameplay markers are required. The three initial cars are visible map props/vehicles rather than a spawn, task, or collection system; their later expansion is outside this layout.\n\n### Layout components\nPlace a small royal palace as the central landmark, with a formal front forecourt large enough to display one car. Arrange open lawns and landscaped palace grounds on all sides, bounded by estate walls, hedges, gates, and tree lines that make the compact edge readable without feeling abruptly cut off. Build a connected paved drive loop around the palace, with a front approach, side lanes, and broad turning areas so vehicles can circulate rather than dead-end. Place exactly three cars: one in the front forecourt and two spaced at separate side parking or turnaround areas, making them immediately discoverable across the grounds. Keep the palace exterior dominant; no interior is implied. Frame the map in a readable isometric overview with the palace centered and the road loop visibly continuous.\n\n### Render order\nUse `topdown`: the image-model top-down plan is authoritative before the isometric dressing, because the drive network must remain connected and navigable from edge to edge.\n\n### Scale, theme, and pipeline cost\nUse a medium scale, driven by the stated approximately one minute of driving from one map edge to the other despite the intentionally compact estate. Theme: polished royal palace grounds, formal landscaping, pale stone, gates, and ceremonial paved drives. Use `P0`; this is one contiguous ground-level map with no overhangs, separate maps, interior transition, or construction-valid course requirement.",
   "spec": {
     "genre": "Simulation",
     "secondary": [],
-    "shape": "world-shared",
+    "shape": "world-open",
     "preset": "Vehicle Sim",
     "axes": {},
     "options": [
       {
         "id": "path-road-vehicle",
-        "text": "A coherent network of broad, smooth drivable palace roads and driveways, with enough turning space around the central building and at the map edges.",
+        "text": "A compact network of vehicle-width paved drives looping around the palace, connecting the forecourt, side grounds, and map edges.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "Palace centered as the dominant mass, with roads visibly radiating or curving around it so the compact estate reads clearly as a drivable whole; the forecourt faces the main approach.",
+      "composition": "Readable isometric overview with the small royal palace centered, its formal front forecourt visible in front, open lawns and landscaped grounds surrounding all sides, and the continuous paved drive loop clearly legible around it.",
       "zones": [
         {
-          "name": "Palace",
-          "role": "Central landmark and grand but small-scale royal residence.",
-          "where": "middle of the grounds",
-          "size": "dominant mass"
+          "name": "Royal palace",
+          "role": "Central exterior landmark.",
+          "where": "centre",
+          "size": "small"
         },
         {
           "name": "Front forecourt",
-          "role": "Ceremonial approach space for the palace.",
-          "where": "facing the main approach",
-          "size": ""
+          "role": "Formal approach and display area for one car.",
+          "where": "in front of the palace",
+          "size": "large enough to display one car"
         },
         {
-          "name": "Open lawns and formal garden parcels",
-          "role": "Open estate grounds around the palace.",
-          "where": "around all sides of the palace",
-          "size": ""
+          "name": "Side grounds",
+          "role": "Open landscaped grounds with separate parking or turnaround areas for cars.",
+          "where": "both sides of the palace",
+          "size": "-1"
         },
         {
-          "name": "Side and rear grounds",
-          "role": "Grounds swept through by branching drives before they return to the perimeter loop.",
-          "where": "side and rear of the palace",
-          "size": ""
+          "name": "Estate edge",
+          "role": "Readable compact map boundary.",
+          "where": "around the palace grounds",
+          "size": "-1"
         }
       ],
       "paths": [
         {
-          "from": "Looping perimeter drive",
-          "to": "Palace forecourt",
+          "from": "Front forecourt",
+          "to": "Royal palace",
           "kind": "road"
         },
         {
-          "from": "Looping perimeter drive",
-          "to": "Side and rear grounds",
+          "from": "Front forecourt",
+          "to": "Side grounds",
           "kind": "road"
         },
         {
-          "from": "Side and rear grounds",
-          "to": "Looping perimeter drive",
+          "from": "Side grounds",
+          "to": "Estate edge",
+          "kind": "road"
+        },
+        {
+          "from": "Side grounds",
+          "to": "Side grounds",
           "kind": "road"
         }
       ],
-      "terrain": "Open lawns, formal garden parcels, and lightly treed grounds around the palace; wide paved, gently curved roads and driveways.",
+      "terrain": "Open lawns and formal landscaped palace grounds with pale ceremonial paved drives.",
       "props": [
         {
-          "name": "car",
+          "name": "small royal palace",
           "count": 1,
-          "where": "front forecourt"
+          "where": "centre"
         },
         {
-          "name": "car",
-          "count": 1,
-          "where": "side drive"
+          "name": "cars",
+          "count": 3,
+          "where": "one in the front forecourt and two at separate side parking or turnaround areas"
         },
         {
-          "name": "car",
-          "count": 1,
-          "where": "near the rear grounds"
+          "name": "estate walls, hedges, gates, and tree lines",
+          "count": -1,
+          "where": "around the compact estate edge"
         }
       ],
-      "boundary": "Hedges, low walls, gates, and tree lines form the estate boundary.",
+      "boundary": "Estate walls, hedges, gates, and tree lines make the compact edge readable without an abrupt cutoff.",
       "scale_band": "medium",
-      "theme": "Polished royal palace estate, formal gardens, pale stone, manicured lawns, and ceremonial driveways."
+      "theme": "Polished royal palace grounds, formal landscaping, pale stone, gates, and ceremonial paved drives."
     },
     "render": {
-      "first": "isometric",
-      "then": "topdown",
-      "authoritative": "isometric",
-      "why": "The compact estate’s visual composition and central palace are authoritative, with no race route, maze, or other topology whose failure makes play impossible.",
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "the drive network must remain connected and navigable from edge to edge.",
       "set_piece": false
     },
     "route": [
@@ -117,10 +123,12 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
-  "mapper_notes": []
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P0'] gives isometric"
+  ]
 }

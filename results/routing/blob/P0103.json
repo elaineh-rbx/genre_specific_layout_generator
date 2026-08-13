@@ -19,61 +19,103 @@
     }
   ],
   "scene_prompt": "Create a 3D obby escape map built on a realistic, giant desktop keyboard that fills a room-sized platform. The floor is densely covered with oversized keys arranged in a compact keyboard layout, forming the jumping route across the deck.",
-  "blob": "### Género\nEl género dominante es Obby & Platformer: el jugador salta entre teclas para escapar. No hay género secundario.\n\n### Forma y preset\nUse la forma `course-flat`, una ruta corta y compacta sobre una única superficie de teclado a escala de habitación. El preset más próximo es Classic Obby por su cadena de saltos, pero se usa `none` como preset: se conserva la forma y la ruta de plataformas, mientras se omiten checkpoints, obstáculos móviles y demás elementos no solicitados.\n\n### Requisitos de configuración\n`path-track` es geometría visible: una secuencia legible de teclas grandes, con separaciones de salto físicas y claras, que cruza el teclado desde el borde de inicio hasta una tecla o borde final de salida. `obstacle-jump` es geometría visible: las diferencias de posición y altura entre las teclas crean los saltos discretos del recorrido. No se añaden peligros letales, monedas, checkpoints ni objetos invisibles que no fueron pedidos.\n\n### Componentes de layout\nLa única zona es una plataforma rectangular del tamaño de una habitación, ocupada casi por completo por un teclado de escritorio realista y gigante. El área de inicio queda en un extremo cercano del teclado; la ruta avanza de forma ordenada por grupos de teclas hacia el extremo opuesto, que funciona como salida visible. Las teclas son losas individuales elevadas, densamente dispuestas en una distribución compacta reconocible de teclado físico, con filas escalonadas y grupos diferenciados para letras, modificadores, espacio y bloque numérico si cabe sin alargar el curso. Solo las teclas de la ruta deben dejar huecos de salto legibles; las demás completan el suelo visual sin confundir el trayecto. El terreno es una base plana oscura bajo las teclas, sin agua ni relieve natural. El límite es el borde recto de la plataforma-teclado, con caída visual fuera de ella. Componer en vista isométrica ligeramente elevada para mostrar la distribución completa, el inicio y la salida en el mismo encuadre.\n\n### Orden de render\nUse `topdown`: la cadena de saltos debe ser válida y conectada para que el obby sea jugable, y un plano primero permite comprobar distancias y orden antes de vestirlo como teclado realista.\n\n### Escala, tema y coste de pipeline\nEscala pequeña: un solo teclado compacto del tamaño de una habitación para un obby corto. Tema: periférico de escritorio realista, ampliado a escala gigante, plástico oscuro y leyendas de teclas visibles. Modificador `P6`: la ruta crítica entre teclas exige espaciado de salto válido por construcción.",
+  "blob": "### 1. Genre\nThe dominant genre is Obby & Platformer: this is a short jump-based escape course, not a keyboard puzzle. There is no secondary genre.\n\n### 2. Shape and preset\nUse `course-flat`, matching the Classic Obby preset. The compact keyboard is one horizontal, room-sized course deck; its raised keys form the directed sequence of jumps. Retain the preset’s sequential route and checkpoint logic, but omit moving obstacles because none were requested.\n\n### 3. Config requirements\nUse `path-track`: the oversized keyboard keys are arranged as a readable, ordered jumping route across the deck. Use `obstacle-jump`: differing key heights, widths, and gaps create the individual jumps. Use `checkpoint-respawn`: include a clearly safe, flat checkpoint key or small pad integrated midway through the short course.\n\n### 4. Layout requirements\nPlace `checkpoint-respawn` once at approximately the midpoint of the keyboard route, on a broad stable key after an initial sequence of jumps. Its respawn marker should face toward the remaining keys. No pickups, emitters, or other placed gameplay components are required.\n\n### 5. Layout components\nBuild one compact, room-sized giant desktop keyboard platform. The entire floor is densely covered by oversized realistic keys in a conventional keyboard grid, including letter rows, modifier keys, a large spacebar, and an outer frame. Establish a clear start on one broad edge key, then route the player diagonally and forward across successive raised keys toward an escape endpoint at the opposite edge. Vary key sizes and elevations modestly to make the route legible while keeping every critical gap physics-legal. Leave non-route keys as nearby visual keyboard detail rather than ambiguous alternate paths. Use dark plastic keycaps, recessed seams, printed legends, and a subtle desk-like base beneath the key deck. The keyboard frame is the boundary; falling off its outer edge is the course failure area. Frame the full rectangular keyboard in an elevated isometric view, with start and endpoint visibly opposed.\n\n### 6. Render order\nUse `topdown` first, authoritative, because the jump chain must remain continuously connected and physically playable before the realistic keyboard dressing is applied.\n\n### 7. Scale, theme, and pipeline cost\nScale is small, driven by the requested short, room-sized, compact course. Theme: realistic giant desktop peripheral, dark contemporary keycaps and clean molded plastic. Use `P6` because the platform-jump route must be valid by construction.",
   "spec": {
     "genre": "Obby & Platformer",
     "secondary": [],
     "shape": "course-flat",
-    "preset": "none",
+    "preset": "Classic Obby",
     "axes": {},
     "options": [
       {
         "id": "path-track",
-        "text": "una secuencia legible de teclas grandes, con separaciones de salto físicas y claras, que cruza el teclado desde el borde de inicio hasta una tecla o borde final de salida",
+        "text": "Oversized keyboard keys arranged as a readable, ordered jumping route across the deck.",
         "visible": true,
         "count": -1
       },
       {
         "id": "obstacle-jump",
-        "text": "las diferencias de posición y altura entre las teclas crean los saltos discretos del recorrido",
+        "text": "Differing key heights, widths, and gaps create the individual jumps.",
         "visible": true,
         "count": -1
+      },
+      {
+        "id": "checkpoint-respawn",
+        "text": "A clearly safe, flat checkpoint key or small pad integrated midway through the short course.",
+        "visible": true,
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "checkpoint-respawn",
+        "text": "A safe, flat checkpoint key or small pad with its respawn marker facing toward the remaining keys.",
+        "count": 1,
+        "where": "Approximately at the midpoint of the keyboard route, on a broad stable key after an initial sequence of jumps."
       }
     ],
     "layout": {
-      "composition": "Vista isométrica ligeramente elevada que muestra la distribución completa del teclado, el inicio y la salida en el mismo encuadre.",
+      "composition": "Elevated isometric view framing the full rectangular keyboard, with the start on one broad edge key and the escape endpoint visibly opposed at the opposite edge.",
       "zones": [
         {
-          "name": "Plataforma-teclado",
-          "role": "Obby corto donde el jugador salta entre teclas para escapar.",
-          "where": "Una única plataforma rectangular; el inicio está en el extremo cercano y la salida en el extremo opuesto.",
-          "size": "Pequeña, del tamaño de una habitación; ocupada casi por completo por un teclado compacto."
+          "name": "Start",
+          "role": "Beginning of the directed jump route.",
+          "where": "One broad edge key.",
+          "size": ""
+        },
+        {
+          "name": "Keyboard jump route",
+          "role": "A diagonal and forward sequence of raised keys forming the short escape course.",
+          "where": "Across the compact keyboard deck from the start toward the opposite edge.",
+          "size": "compact, room-sized"
+        },
+        {
+          "name": "Midpoint checkpoint",
+          "role": "Safe respawn location after the initial jumps.",
+          "where": "Midway along the route on a broad stable key.",
+          "size": ""
+        },
+        {
+          "name": "Escape endpoint",
+          "role": "End of the directed jump route.",
+          "where": "Opposite edge of the keyboard from the start.",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Área de inicio",
-          "to": "Salida visible",
+          "from": "Start",
+          "to": "Escape endpoint",
           "kind": "track"
         }
       ],
-      "terrain": "Base plana oscura bajo las teclas, sin agua ni relieve natural.",
+      "terrain": "A subtle desk-like base beneath a compact keyboard deck; keys vary modestly in height, width, and gap while critical jumps remain physics-legal.",
       "props": [
         {
-          "name": "Teclas individuales elevadas de teclado realista gigante",
+          "name": "Oversized realistic keyboard keys",
           "count": -1,
-          "where": "Densamente dispuestas sobre toda la plataforma en filas escalonadas, con grupos de letras, modificadores, espacio y bloque numérico si cabe sin alargar el curso."
+          "where": "Densely covering the entire floor in a conventional keyboard grid, including letter rows, modifier keys, and a large spacebar."
+        },
+        {
+          "name": "Keyboard outer frame",
+          "count": -1,
+          "where": "Around the rectangular key deck."
+        },
+        {
+          "name": "Dark plastic keycaps with recessed seams and printed legends",
+          "count": -1,
+          "where": "Across the keyboard deck."
         }
       ],
-      "boundary": "El borde recto de la plataforma-teclado, con caída visual fuera de ella.",
+      "boundary": "The keyboard frame is the boundary; falling off its outer edge is the course failure area.",
       "scale_band": "small",
-      "theme": "Periférico de escritorio realista, ampliado a escala gigante, plástico oscuro y leyendas de teclas visibles."
+      "theme": "Realistic giant desktop peripheral, dark contemporary keycaps, clean molded plastic."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "la cadena de saltos debe ser válida y conectada para que el obby sea jugable.",
+      "why": "the jump chain must remain continuously connected and physically playable before realistic keyboard dressing is applied.",
       "set_piece": false
     },
     "route": [
@@ -85,7 +127,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

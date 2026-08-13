@@ -3,134 +3,130 @@
   "source": "Create a medium-sized PvP map in the style of a dark, abandoned old kingdom with ruined structures. The map should have: 1. A central ruined castle keep — a large stone tower with broken walls, missing sections, and debris. It should serve as the main focal point and high ground for PvP combat. Dark gray weathered stone material. 2. Surrounding broken castle walls — partially collapsed stone walls with gaps and rubble, providing cover and defining the arena boundary. Some sections should be intact, others crumbled. 3. Several small ruined buildings — collapsed stone huts and structures scattered around the map for cover and tactical positioning. Moss-covered, decayed appearance. 4. Stone rubble and debris piles — broken stone blocks scattered across the ground for low cover. 5. A cracked stone ground/floor platform as the base of the arena. 6. Broken pillars and archways — remnants of old architecture that provide verticality and cover. The overall aesthetic should be dark, gloomy, and abandoned — think mossy gray stone, weathered textures, dark color palette (grays, dark greens, browns). The layout should be designed for PvP combat with multiple paths, chokepoints, and elevated positions. Expose these configurable attributes: - MapSize (controls overall scale of the map) - CastleHeight (height of the central keep tower) - WallIntegrity (controls how broken/intact the surrounding walls are, 0 = fully ruined, 1 = mostly intact) - DebrisAmount (controls how much rubble and debris is scattered) - NumberOfRuins (number of small ruined buildings around the map) - StoneColor (base color of the stone structures) - MossAmount (controls how much moss/vegetation overlay appears)",
   "answers": [],
   "scene_prompt": "Create a medium-sized 3D PvP arena set in a dark, abandoned old kingdom. A large central ruined castle keep of weathered dark-gray stone forms the focal point and high ground, with a tall tower, broken walls, missing sections, and debris. Surround it with a boundary of partially collapsed castle walls, mixing intact sections with gaps, rubble, and chokepoint openings. Scatter several small moss-covered ruined stone buildings, broken pillars, and archways around the keep, connected by multiple routes across a cracked stone ground platform. Place scattered piles of broken stone blocks for low cover; use a gloomy palette of grays, dark greens, and browns with decayed, weathered textures. Make overall map scale, central keep height, wall intactness, debris density, number of small ruins, base stone color, and moss coverage configurable.",
-  "blob": "### Genre\nThe dominant genre is Action: a PvP fighting arena organized around a shared clash space rather than ranged firing lanes. There is no secondary genre.\n\n### Shape and preset\nUse `arena-tiered`: the central ruined keep supplies the principal elevated combat platform, while the surrounding arena remains broadly on one cracked stone surface. The closest preset is Fighting, but the prompt’s elevated keep requires the tiered shape rather than its flat arena, and its requested layout does not retain enough of the preset bundle to name it honestly; preset: none.\n\n### Config requirements\nUse visible `cover-los` for rubble piles, broken wall fragments, ruined huts, pillars, and archways that interrupt combat sightlines. Use visible `choke-bottleneck` for the deliberate gaps and narrowed openings in the surrounding castle-wall ring, plus tight passages between ruins. Do not add enterable interiors, hazards, NPCs, pickups, or spawn geometry. Expose MapSize, CastleHeight, WallIntegrity (0 fully ruined through 1 mostly intact), DebrisAmount, NumberOfRuins, StoneColor, and MossAmount as adjustable build parameters; they alter visible scale, geometry density, structural damage, and material treatment.\n\n### Layout components\nPlace one large ruined castle keep at the exact center, with a tall dark-gray stone tower, broken upper walls, missing sections, and debris around its base. It is the focal high ground and should have several accessible approaches from different sides. Ring it at medium distance with partially collapsed castle walls forming the arena boundary: alternate intact runs with breached gaps, rubble-filled breaks, and chokepoint entrances. Scatter several small moss-covered ruined stone buildings around the keep, distributed among the outer and mid-arena rather than clustered in one sector. Connect all sectors with multiple broad stone routes and tighter ruin-to-ruin passages. Cover the full base in a cracked stone platform, with low piles of broken blocks across open areas, and place broken pillars and archways at route junctions and near wall breaches. Keep the boundary physically legible through the ruined wall ring, without enclosing the scene in a roof. Frame the composition obliquely with the keep dominant at center and the broken perimeter readable around it.\n\n### Render order\nUse `isometric`: the ruined-arena look, central silhouette, weathered materials, and readable cover composition lead; no route is a precision-critical course that would become unplayable if image-authored.\n\n### Scale, theme, and pipeline cost\nScale band: medium, driven by one central keep, several surrounding ruins, and a complete perimeter arena. Theme: dark abandoned old kingdom, weathered mossy gray stone, dark greens and browns, gloomy decay. Pipeline modifier: `tiered`, forced by the accessible elevated keep and architectural high-ground surfaces; no overhanging stacked play surfaces are requested.",
+  "blob": "### Genre\nThe dominant genre is Action: this is a PvP combat arena organized around cover, chokepoints, and elevated fighting positions.\n\n### Shape and preset\nUse `arena-tiered`, a bounded ruined castle arena whose central keep rises above the surrounding combat floor without stacked walkable layers. Start from the Fighting preset, retaining its cover and chokepoint logic but replacing its flat `space-bounded` shape to honor the requested high ground.\n\n### Config requirements\nUse `cover-los` for collapsed wall segments, ruined huts, rubble piles, pillars, and archways that break combat sightlines. Use `choke-bottleneck` for gaps in the perimeter walls and narrow approaches around the keep. Use `spawn-protected` as screened, set-back arrival pockets behind substantial ruined-wall cover. The configurable scene attributes are MapSize, CastleHeight, WallIntegrity, DebrisAmount, NumberOfRuins, StoneColor, and MossAmount; they respectively vary arena footprint, keep elevation, intact-versus-collapsed wall proportion, rubble density, the count of small ruins, base stone hue, and vegetation coverage.\n\n### Layout requirements\nPlace `spawn-protected` at several evenly distributed perimeter spawn pockets, each behind intact or partially intact wall segments and outside direct sightlines to the central keep and opposing approaches. No pickups, NPC emitters, or scoring volumes are implied.\n\n### Layout components\nThe main zone is a medium-sized cracked-stone arena floor, dominated by a large central ruined castle keep: a tall dark-gray stone tower with broken walls, missing sections, debris, and accessible elevated combat positions. A ring of surrounding castle walls defines the arena boundary, mixing intact stretches with collapsed gaps and rubble-built chokepoint openings. Several small moss-covered ruined stone buildings occupy the outer and mid-arena spaces, with broken pillars, archways, and scattered stone-block debris piles providing both low and tall cover. Multiple routes loop from each boundary sector through the ruins and wall gaps toward the keep, avoiding a single dominant approach. The boundary is the broken castle-wall ring, with rubble and dark void-like exterior ground beyond it. Frame the keep centrally and prominently, with the wall ring legible around it.\n\n### Render order\nUse `isometric` first and treat it as authoritative: the arena benefits from a strong atmospheric ruined-kingdom composition, while its non-linear PvP routes do not require a carved topology.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by one central keep, several surrounding ruins, and a complete enclosing wall ring. Theme: gloomy abandoned old kingdom, weathered dark-gray stone, mossy decay, dark greens, browns, and rubble. Use `P0` and `tiered`: the keep and broken architectural relief create visible elevation, but no walkable surfaces need to overhang one another.",
   "spec": {
     "genre": "Action",
     "secondary": [],
     "shape": "arena-tiered",
-    "preset": "none",
+    "preset": "Fighting",
     "axes": {},
     "options": [
       {
         "id": "cover-los",
-        "text": "Rubble piles, broken wall fragments, ruined huts, pillars, archways, and low piles of broken blocks interrupt combat sightlines across the cracked stone arena.",
+        "text": "Collapsed wall segments, ruined huts, rubble piles, pillars, and archways that break combat sightlines.",
         "visible": true,
         "count": -1
       },
       {
         "id": "choke-bottleneck",
-        "text": "Deliberate gaps and narrowed openings in the surrounding castle-wall ring, plus tight passages between ruins.",
+        "text": "Gaps in the perimeter walls and narrow approaches around the keep.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "spawn-protected",
+        "text": "Screened, set-back arrival pockets behind substantial ruined-wall cover.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "spawn-protected",
+        "text": "Several evenly distributed perimeter spawn pockets, each behind intact or partially intact wall segments and outside direct sightlines to the central keep and opposing approaches.",
+        "count": -1,
+        "where": "Evenly distributed around the perimeter, behind intact or partially intact wall segments and outside direct sightlines to the central keep and opposing approaches."
+      }
+    ],
     "layout": {
-      "composition": "Oblique framing with the ruined keep dominant at exact center; the broken perimeter wall ring remains readable around it, with scattered ruins across the outer and mid-arena.",
+      "composition": "The large central ruined keep is framed centrally and prominently, with the complete surrounding wall ring legible around it; outer and mid-arena ruins spread around the keep.",
       "zones": [
         {
+          "name": "Cracked-stone arena floor",
+          "role": "Main combat floor.",
+          "where": "Across the enclosed arena.",
+          "size": "medium-sized"
+        },
+        {
           "name": "Central ruined castle keep",
-          "role": "Focal high ground and principal elevated combat platform, approached from several sides.",
-          "where": "exact center",
+          "role": "Focal point, high ground, and accessible elevated combat positions.",
+          "where": "Centre",
           "size": "large"
         },
         {
-          "name": "Ruined wall ring",
-          "role": "Physically legible arena boundary with intact runs, breached gaps, rubble-filled breaks, and chokepoint entrances.",
-          "where": "medium distance around the central keep",
-          "size": "complete perimeter"
-        },
-        {
           "name": "Outer and mid-arena ruins",
-          "role": "Distributed cover and combat spaces made of small moss-covered ruined stone buildings.",
-          "where": "around the keep across the outer and mid-arena",
-          "size": "several small ruins"
+          "role": "Provide low and tall cover and route variation.",
+          "where": "Around the central keep in outer and mid-arena spaces",
+          "size": ""
         },
         {
-          "name": "Cracked stone base",
-          "role": "Broad shared clash surface with scattered low broken-block cover.",
-          "where": "full base of the arena",
-          "size": "medium"
+          "name": "Broken castle-wall ring",
+          "role": "Defines the arena boundary and contains collapsed gaps and rubble-built chokepoint openings.",
+          "where": "Around the arena perimeter",
+          "size": "complete enclosing ring"
         }
       ],
       "paths": [
         {
-          "from": "Central ruined castle keep",
-          "to": "Outer and mid-arena ruins",
-          "kind": "road"
+          "from": "Each boundary sector",
+          "to": "Central ruined castle keep",
+          "kind": "open ground"
         },
         {
           "from": "Outer and mid-arena ruins",
-          "to": "Ruined wall ring",
-          "kind": "corridor"
-        },
-        {
-          "from": "Central ruined castle keep",
-          "to": "Ruined wall ring",
-          "kind": "road"
+          "to": "Broken castle-wall gaps",
+          "kind": "open ground"
         }
       ],
-      "terrain": "A full cracked stone platform with weathered dark-gray stone, moss treatment, debris around the keep base, and low piles of broken blocks across open areas.",
+      "terrain": "Cracked stone ground platform with weathered dark-gray stone, mossy decay, rubble, and dark void-like exterior ground beyond the wall ring.",
       "props": [
         {
-          "name": "tall dark-gray stone tower",
+          "name": "Tall dark-gray stone tower with broken walls, missing sections, and debris",
           "count": 1,
-          "where": "central ruined castle keep"
+          "where": "Central ruined castle keep"
         },
         {
-          "name": "broken upper keep walls and missing sections",
+          "name": "Small moss-covered ruined stone buildings",
           "count": -1,
-          "where": "central ruined castle keep"
+          "where": "Outer and mid-arena spaces"
         },
         {
-          "name": "debris",
+          "name": "Broken pillars and archways",
           "count": -1,
-          "where": "around the base of the central keep"
+          "where": "Around the keep and ruins"
         },
         {
-          "name": "partially collapsed castle-wall sections",
+          "name": "Scattered broken stone-block debris piles",
           "count": -1,
-          "where": "perimeter wall ring"
-        },
-        {
-          "name": "moss-covered ruined stone buildings",
-          "count": -1,
-          "where": "outer and mid-arena"
-        },
-        {
-          "name": "low piles of broken stone blocks",
-          "count": -1,
-          "where": "open areas"
-        },
-        {
-          "name": "broken pillars and archways",
-          "count": -1,
-          "where": "route junctions and near wall breaches"
+          "where": "Across the arena"
         }
       ],
-      "boundary": "A partially collapsed castle-wall ring, with alternating intact runs, breached gaps, rubble-filled breaks, and chokepoint openings; open to the sky with no roof.",
+      "boundary": "A broken castle-wall ring, mixing intact stretches with collapsed gaps and rubble-built chokepoint openings; rubble and dark void-like exterior ground lie beyond it.",
       "scale_band": "medium",
-      "theme": "dark abandoned old kingdom; weathered mossy gray stone, dark greens and browns, gloomy decay"
+      "theme": "Gloomy abandoned old kingdom; weathered dark-gray stone, mossy decay, dark greens, browns, and rubble."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "The ruined-arena look, central silhouette, weathered materials, and readable cover composition lead, and no route is precision-critical.",
+      "why": "Atmospheric ruined-kingdom composition matters more than carved topology for non-linear PvP routes.",
       "set_piece": false
     },
     "route": [
+      "P0",
       "tiered"
     ],
     "notes": [
-      "Adjustable build parameters: MapSize, CastleHeight, WallIntegrity (0 fully ruined through 1 mostly intact), DebrisAmount, NumberOfRuins, StoneColor, and MossAmount; these alter visible scale, geometry density, structural damage, and material treatment.",
-      "No enterable interiors, hazards, NPCs, pickups, or spawn geometry are included."
+      "Configurable scene attributes: MapSize varies arena footprint; CastleHeight varies keep elevation; WallIntegrity varies the intact-versus-collapsed wall proportion; DebrisAmount varies rubble density; NumberOfRuins varies the count of small ruins; StoneColor varies the base stone hue; MossAmount varies vegetation coverage.",
+      "No pickups, NPC emitters, or scoring volumes are implied.",
+      "visible on 'spawn-protected' set from goes_to=both"
     ],
     "scene_prompt": "Create a medium-sized 3D PvP arena set in a dark, abandoned old kingdom. A large central ruined castle keep of weathered dark-gray stone forms the focal point and high ground, with a tall tower, broken walls, missing sections, and debris. Surround it with a boundary of partially collapsed castle walls, mixing intact sections with gaps, rubble, and chokepoint openings. Scatter several small moss-covered ruined stone buildings, broken pillars, and archways around the keep, connected by multiple routes across a cracked stone ground platform. Place scattered piles of broken stone blocks for low cover; use a gloomy palette of grays, dark greens, and browns with decayed, weathered textures. Make overall map scale, central keep height, wall intactness, debris density, number of small ruins, base stone color, and moss coverage configurable."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

@@ -19,7 +19,7 @@
     }
   ],
   "scene_prompt": "Create a Roblox tower defense map set with four separate, player-selectable supernatural battle maps: a spiritual city, a forest, a castle, and a dimensional realm. Each map uses a short, compact enemy lane that largely fills the screen, running from an entry point through clear tower-placement spaces toward a defended core at the end. The spiritual city features urban spirit-world architecture, the forest is a wooded supernatural landscape, the castle uses fortified halls and courtyards, and the dimensional realm is an otherworldly environment surrounding the lane and core.",
-  "blob": "### Genre\nThe dominant genre is Strategy, specifically tower defense: enemies traverse a fixed lane toward a defended core across four selectable battle maps.\n\n### Shape and preset\nUse `lane-actor-track`, matching the Tower Defense preset. Each map is a compact, screen-filling enemy route rather than an open battlefield; retain the preset’s lane, placement ground, wave entry, and terminal core logic, while omitting an unrequested choke point.\n\n### Config requirements\n`buildzone-grid` is visible geometry: clear, flat tower-placement pads and shoulders flank the lane throughout each map. `tracker-core` is both visible and invisible: a prominent defended core anchors the route endpoint, with its protected detection region placed after segmentation. `spawner-npc` is invisible layout logic: place each hostile entry origin at the lane’s starting mouth, without rendering markers or UI-like emitters.\n\n### Layout components\nBuild four separate player-selectable maps: a spiritual city, forest, castle, and dimensional realm. Every map has one short, continuous lane that largely fills the screen from its entry edge to the defended core at the far end, with generous, readable placement strips on both sides. The spiritual city lane passes urban spirit-world streets, gates, and luminous architectural silhouettes. The forest lane winds through supernatural trees, roots, rocks, and misty clearings. The castle lane crosses fortified halls and a courtyard, using walls and arches as the route frame. The dimensional realm lane crosses an otherworldly void-scape with surreal rock forms and luminous spatial effects around the core. Keep each route unambiguous and contained by thematic scenery; do not add unrelated explorable districts. Compose each map from an elevated three-quarter view with the entry readable in the foreground or side and the core visually distinct at the route terminus.\n\n### Render order\nUse `topdown`: each short lane must remain continuously connected from entry to core, so an authoritative plan is needed before dressing the isometric view, but this is not a maze or racing circuit eligible for code-authored carving.\n\n### Scale, theme, and pipeline cost\nScale is medium overall: four compact maps, each built around a single short combat lane. Theme is stylized supernatural spirit warfare, with urban, woodland, fortress, and dimensional variations. Use `P4` because the four environments are separate selectable maps, and `P6` because every enemy lane must be valid and connected from its entry origin to the defended core.",
+  "blob": "### Genre\nThe dominant genre is Strategy, specifically tower defense: enemies follow a fixed lane toward a core while players defend from placement ground.\n\n### Shape and preset\nUse `lane-actor-track`, matching the Tower Defense preset. Its single continuous enemy route is retained, but the author’s four selectable environments are separate maps rather than one shared battlefield.\n\n### Config requirements\nUse `buildzone-grid` as clear, flat tower-placement pads and strips flanking the lane without blocking it. Use `tracker-core` as the defended end structure at the lane terminus in each theme. Do not add unrequested terrain, water, interiors, or ambient populations.\n\n### Layout requirements\nPlace `spawner-npc` once at the entry mouth of each map, facing directly into its lane. Place `tracker-core` once at the opposite end of each lane, beyond the final tower-placement zone; it is the visible defended core and its gameplay health location. The lane topology must remain a single unbroken route from each wave origin to its core.\n\n### Layout components\nBuild four distinct selectable maps: a spiritual city, supernatural forest, fortified castle, and dimensional realm. Each is a compact, screen-filling battle space with one short winding lane from an obvious enemy entry to the core, bordered by readable tower pads on both sides. The city uses spirit-world streets, gates, and urban facades; the forest uses dense magical trees, roots, and clearings; the castle uses fortified halls, walls, and courtyard stonework; and the dimensional realm uses abstract otherworldly terrain and energy formations around the route. Each map boundary should visually contain the lane and prevent ambiguous side routes. Compose every map in a broad top-down-readable view so the full lane, placement ground, origin, and core are legible at once.\n\n### Render order\nUse `topdown`: lane continuity and reachable core placement are essential to a playable defense map, so the plan must be established before the isometric dressing.\n\n### Scale, theme, and pipeline cost\nScale is medium overall: four compact maps, each built around a short lane. Theme is stylized supernatural soul-reaper fantasy, with spiritual architecture, haunted woodland, fortress stone, and dimensional energy. Use `P4` because the four environments are separate selectable maps, and `P6` because every enemy lane must be valid and continuous by construction.",
   "spec": {
     "genre": "Strategy",
     "secondary": [],
@@ -29,105 +29,98 @@
     "options": [
       {
         "id": "buildzone-grid",
-        "text": "clear, flat tower-placement pads and shoulders flank the lane throughout each map",
+        "text": "Clear, flat tower-placement pads and strips flanking the lane without blocking it.",
         "visible": true,
         "count": -1
       },
       {
         "id": "tracker-core",
-        "text": "a prominent defended core anchors the route endpoint, with its protected detection region placed after segmentation",
+        "text": "The visible defended core at the lane terminus in each theme, including its gameplay health location.",
         "visible": true,
-        "count": -1
+        "count": 4
       },
       {
         "id": "spawner-npc",
-        "text": "place each hostile entry origin at the lane’s starting mouth, without rendering markers or UI-like emitters",
+        "text": "Enemy wave origins at the entry mouth of each map, facing directly into their lanes.",
         "visible": false,
-        "count": -1
+        "count": 4
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "tracker-core",
+        "text": "The visible defended core and its gameplay health location.",
+        "count": 4,
+        "where": "Once at the opposite end of each lane, beyond the final tower-placement zone."
+      },
+      {
+        "id": "spawner-npc",
+        "text": "Enemy wave origins at the entry mouth of each map, facing directly into their lanes.",
+        "count": 4,
+        "where": "Once at the entry mouth of each map, facing directly into its lane."
       }
     ],
     "layout": {
-      "composition": "Elevated three-quarter view of each compact map, with the lane entry readable in the foreground or at the side and a visually distinct defended core at the far route terminus; the short lane largely fills the screen, with readable placement strips on both sides.",
+      "composition": "Broad top-down-readable views of four compact, screen-filling battle maps, with each full winding lane, flanking placement ground, enemy origin, and defended core legible at once.",
       "zones": [
         {
-          "name": "Spiritual city map",
-          "role": "A selectable tower-defense battle map where enemies traverse a short lane through urban spirit-world scenery to the defended core.",
-          "where": "entry edge to far end",
-          "size": "compact"
+          "name": "Spiritual city",
+          "role": "A selectable tower defense battle map with a short winding enemy lane from an obvious entry to the core.",
+          "where": "Separate selectable map",
+          "size": "Compact, screen-filling"
         },
         {
-          "name": "Forest map",
-          "role": "A selectable tower-defense battle map where enemies traverse a short lane through supernatural woodland scenery to the defended core.",
-          "where": "entry edge to far end",
-          "size": "compact"
+          "name": "Supernatural forest",
+          "role": "A selectable tower defense battle map with a short winding enemy lane from an obvious entry to the core.",
+          "where": "Separate selectable map",
+          "size": "Compact, screen-filling"
         },
         {
-          "name": "Castle map",
-          "role": "A selectable tower-defense battle map where enemies traverse a short lane through fortified halls and a courtyard to the defended core.",
-          "where": "entry edge to far end",
-          "size": "compact"
+          "name": "Fortified castle",
+          "role": "A selectable tower defense battle map with a short winding enemy lane from an obvious entry to the core.",
+          "where": "Separate selectable map",
+          "size": "Compact, screen-filling"
         },
         {
-          "name": "Dimensional realm map",
-          "role": "A selectable tower-defense battle map where enemies traverse a short lane through an otherworldly void-scape to the defended core.",
-          "where": "entry edge to far end",
-          "size": "compact"
+          "name": "Dimensional realm",
+          "role": "A selectable tower defense battle map with a short winding enemy lane from an obvious entry to the core.",
+          "where": "Separate selectable map",
+          "size": "Compact, screen-filling"
         }
       ],
       "paths": [
         {
-          "from": "Spiritual city entry origin",
+          "from": "Spiritual city enemy entry",
           "to": "Spiritual city defended core",
           "kind": "track"
         },
         {
-          "from": "Forest entry origin",
-          "to": "Forest defended core",
+          "from": "Supernatural forest enemy entry",
+          "to": "Supernatural forest defended core",
           "kind": "track"
         },
         {
-          "from": "Castle entry origin",
-          "to": "Castle defended core",
+          "from": "Fortified castle enemy entry",
+          "to": "Fortified castle defended core",
           "kind": "track"
         },
         {
-          "from": "Dimensional realm entry origin",
+          "from": "Dimensional realm enemy entry",
           "to": "Dimensional realm defended core",
           "kind": "track"
         }
       ],
-      "terrain": "The spiritual city route passes urban spirit-world streets, gates, and luminous architectural silhouettes. The forest route winds through supernatural trees, roots, rocks, and misty clearings. The castle route crosses fortified halls and a courtyard, framed by walls and arches. The dimensional realm route crosses an otherworldly void-scape with surreal rock forms and luminous spatial effects around the core.",
-      "props": [
-        {
-          "name": "urban spirit-world gates and luminous architectural silhouettes",
-          "count": -1,
-          "where": "along the spiritual city lane"
-        },
-        {
-          "name": "supernatural trees, roots, rocks, and misty clearings",
-          "count": -1,
-          "where": "around the forest lane"
-        },
-        {
-          "name": "fortified walls and arches",
-          "count": -1,
-          "where": "framing the castle lane through halls and courtyard"
-        },
-        {
-          "name": "surreal rock forms and luminous spatial effects",
-          "count": -1,
-          "where": "around the dimensional realm lane and core"
-        }
-      ],
-      "boundary": "Each route is unambiguous and contained by thematic scenery; no unrelated explorable districts.",
+      "terrain": "Spirit-world streets, gates, and urban facades in the city; dense magical trees, roots, and clearings in the forest; fortified halls, walls, and courtyard stonework in the castle; abstract otherworldly terrain and energy formations in the dimensional realm.",
+      "props": [],
+      "boundary": "Each map boundary visually contains its lane and prevents ambiguous side routes.",
       "scale_band": "medium",
-      "theme": "stylized supernatural spirit warfare; urban, woodland, fortress, and dimensional variations"
+      "theme": "Stylized supernatural soul-reaper fantasy with spiritual architecture, haunted woodland, fortress stone, and dimensional energy."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "each short enemy lane must remain continuously connected from entry to core.",
+      "why": "Lane continuity and reachable core placement are essential to a playable defense map.",
       "set_piece": false
     },
     "route": [
@@ -140,7 +133,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

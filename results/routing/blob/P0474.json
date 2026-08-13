@@ -19,132 +19,138 @@
     }
   ],
   "scene_prompt": "Create a 3D narrative walking map formed from five stitched life-chapter path segments, all physically present on one continuous expanding surface. The player progresses forward through Childhood, Adolescence, Early Adulthood, Middle Age, and Later Life, while the accumulated route stretches behind them; early sections remain close and readable at first, then recede into distant glowing landmarks and lights by old age. Each chapter contains three to five compact, active memory vignettes arranged directly along or beside the route, with transition walls, hallways, or doorways separating chapters.\n\nChildhood includes a warm kitchen with a parent cutting fruit, imaginative play space, a family campsite, and the original family photograph. Adolescence moves through a campsite with friends, a practical-skill scene with a parent, and a packed childhood bedroom leading out of home. Early adulthood contains a first shared home, hospital farewell room, child’s first-steps space, and sleepless nursery. Middle age includes a family kitchen, departing child’s room or doorway, aging parent’s home, and quiet dinner setting. Later life includes a campsite with younger family, photograph-sorting room, a home marked by a lost partner’s absence, and a final multi-generation gathering around a photograph. A teddy bear and family photograph recur visibly across these spaces. At each chapter transition, place a physical 90-row by 52-square week chart that becomes increasingly faded and framed with age. End in a hospital room, then a quiet childhood kitchen, with the completed path visible far below from above as individual memory scenes glow.",
-  "blob": "### Genre\nDominant genre is Adventure: this is a scripted, story-driven walking journey through a single life, with a terminal final memory but no combat or branching. The route and its accumulating retrospective vista are the experience.\n\n### Shape and preset\nUse `world-corridor`, a single continuous forward life-path whose five chapter segments are stitched on one physical surface rather than split into separate maps. The closest preset is Guided Trail: retain its guided route, focal scenes, and structural reveals, while adapting the trail into domestic memory vignettes rather than wilderness.\n\n### Config requirements\n`path-trail` is visible geometry: one clearly walkable route passes through Childhood, Adolescence, Early Adulthood, Middle Age, and Later Life. `landmark-focal` is visible geometry: earlier chapter scenes become recognizable distant lights and landmarks when viewed back from later life. `reveal-exit` is visible geometry: transition walls, halls, and doorways conceal the growing route until the player turns around. `building-interior` is visible geometry: homes, hospital rooms, nursery, bedrooms, and kitchens are entered along the route. `npc-population` is both visible and invisible: active family and friends inhabit each memory scene, with their occupied ground and movement placement retained outside the render prompt.\n\n### Layout components\nBuild five stitched chapter segments in chronological order, each holding three to five compact vignettes directly on or just beside the path. Childhood contains the warm fruit-cutting kitchen, imaginative play area, family campsite, and original photograph. Adolescence contains a friends’ campsite, practical-skill scene, and packed childhood bedroom exit. Early Adulthood contains a shared home, hospital farewell room, first-steps space, and sleepless nursery. Middle Age contains a family kitchen, departing child doorway or room, aging parent home, and quiet dinner. Later Life contains a younger-family campsite, photograph-sorting room, absent-partner home, and final multi-generation photograph gathering. Repeat a teddy bear and family photograph visibly through these scenes.\n\nAt each of the four chapter transitions, install a physical week-chart wall with exactly 90 rows and 52 squares per row; it progresses from colorful childhood poster to faded framed object. End at a hospital room, then a quiet childhood kitchen. The final overhead composition shows the entire completed route far below, with individual memory scenes glowing. Use doorways, walls, or halls as chapter thresholds; the route remains physically continuous and bounded by composed scene edges rather than open wandering terrain.\n\n### Render order\nUse `topdown` first and make it authoritative, because the five-part walk must remain continuously connected and preserve the accumulated backward vista; an invalid break would prevent the narrative journey.\n\n### Scale, theme, and pipeline cost\nScale is huge, driven by a 12–18 minute walk across five physically co-present chapters and their three-to-five vignettes each. Theme is warm, lively, bittersweet domestic memory, gradually faded with age. Use `P3` because the path repeatedly crosses exterior-to-interior boundaries; no separate-map pass is needed because all chapters coexist on one continuous surface.",
+  "blob": "### Genre\nThe dominant genre is Adventure: a linear narrative journey with no combat, score, or failure loop. The player follows one predetermined life story and reaches a terminal final memory.\n\n### Shape and preset\nUse `route-guided`, matching the Guided Trail preset: one continuous forward route through five stitched life chapters. Retain its route and structural reveal intent, but replace a single distant landmark with repeated memory scenes and turn-around vistas of the accumulated path.\n\n### Config requirements\nUse `path-trail` as the clearly readable walking route joining every vignette in chronological order. Use `reveal-exit` for chapter transition walls, halls, and doorways that conceal the newly extended route until the player passes through and turns back. Use `npc-population` for active family and friends inhabiting each memory vignette, rather than empty tableau sets.\n\n### Layout requirements\nPlace `npc-population` anchors in every active vignette: parent figures in childhood kitchen and practical-skill scenes, friend groups at campsites, family groups in homes and gatherings, and bedside family in the hospital ending. Use scene-appropriate groups rather than a fixed count; each chapter has three to five active memories. No combat spawners, pickups, checkpoints, or failure recovery markers are needed.\n\n### Layout components\nBuild five connected path segments on one continuous surface: Childhood, Adolescence, Early Adulthood, Middle Age, and Later Life. The route advances through compact memories directly on or immediately beside the path, separated by transition walls, hallways, or doorways. Childhood contains the warm fruit-cutting kitchen, imaginative play, family campsite, and original photograph. Adolescence contains the friends’ campsite, parent skill scene, and packed bedroom departure. Early Adulthood contains a shared home, hospital farewell, first-steps room, and nursery. Middle Age contains a family kitchen, departing-child threshold, aging parent home, and dinner setting. Later Life contains the younger-family campsite, photograph sorting, absent-partner home, and final multi-generation photograph gathering. Repeat the teddy bear and family photograph visibly throughout. Put one physical chart at each chapter transition, each exactly 90 rows by 52 squares, progressively more faded and framed. Continue to a hospital room and then the quiet childhood kitchen terminal memory. Earlier chapters remain physically behind the player, becoming distant glowing landmarks and lights. Compose the full route as an elongated readable timeline, with the late-life end allowing an elevated view down over the complete glowing path.\n\n### Render order\nUse `topdown`: the five segments must stitch into one unbroken, correctly ordered route whose backward vista remains physically truthful, so topology is authoritative before the isometric dressing.\n\n### Scale, theme, and pipeline cost\nScale is huge, driven by five chapter segments and roughly 19 named memory scenes across a 12–18 minute walk. Theme is warm, intimate, bittersweet domestic memory, shifting from colorful childhood warmth to faded later-life nostalgia. Pipeline modifier: `P0`; this is one contiguous, ground-level surface with no required overhangs, exterior/interior map split, or separate maps.",
   "spec": {
     "genre": "Adventure",
     "secondary": [],
-    "shape": "world-corridor",
+    "shape": "route-guided",
     "preset": "Guided Trail",
     "axes": {},
     "options": [
       {
         "id": "path-trail",
-        "text": "One clearly walkable route passes through Childhood, Adolescence, Early Adulthood, Middle Age, and Later Life.",
+        "text": "A clearly readable walking route joining every memory vignette in chronological order.",
         "visible": true,
-        "count": 1
-      },
-      {
-        "id": "landmark-focal",
-        "text": "Earlier chapter scenes become recognizable distant lights and landmarks when viewed back from later life.",
-        "visible": true,
-        "count": -1
+        "count": 5
       },
       {
         "id": "reveal-exit",
-        "text": "Transition walls, halls, and doorways conceal the growing route until the player turns around.",
-        "visible": true,
-        "count": 4
-      },
-      {
-        "id": "building-interior",
-        "text": "Homes, hospital rooms, nursery, bedrooms, and kitchens are entered along the route.",
+        "text": "Chapter transition walls, halls, and doorways conceal each newly extended route until the player passes through and turns back.",
         "visible": true,
         "count": -1
       },
       {
         "id": "npc-population",
-        "text": "Active family and friends inhabit each memory scene, with their occupied ground and movement placement retained outside the render prompt.",
+        "text": "Active family and friends inhabit every memory vignette rather than empty tableau sets: parent figures in childhood kitchen and practical-skill scenes, friend groups at campsites, family groups in homes and gatherings, and bedside family in the hospital ending.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "npc-population",
+        "text": "Active family and friends inhabit every memory vignette: parent figures in childhood kitchen and practical-skill scenes, friend groups at campsites, family groups in homes and gatherings, and bedside family in the hospital ending.",
+        "count": -1,
+        "where": "In every active vignette, using scene-appropriate groups rather than a fixed count; each chapter has three to five active memories."
+      }
+    ],
     "layout": {
-      "composition": "A final overhead view looks down on the entire completed five-part route far below, with individual memory scenes glowing; earlier scenes accumulate behind Later Life as distant readable landmarks and lights.",
+      "composition": "An elongated, readable chronological timeline of five stitched chapters on one continuous surface. The player advances toward the later-life end, while earlier chapters remain physically behind as distant glowing landmarks and lights; the late-life end provides an elevated view down over the complete glowing path.",
       "zones": [
         {
           "name": "Childhood",
-          "role": "The first chapter segment, holding a warm fruit-cutting kitchen, imaginative play area, family campsite, and original photograph.",
-          "where": "Start of the continuous forward route",
-          "size": "4 compact vignettes"
+          "role": "The first path segment, containing a warm fruit-cutting kitchen, imaginative play, a family campsite, and the original family photograph.",
+          "where": "At the beginning of the continuous chronological route.",
+          "size": "One chapter segment"
         },
         {
           "name": "Adolescence",
-          "role": "A chapter segment holding a friends' campsite, practical-skill scene, and packed childhood bedroom exit.",
-          "where": "After Childhood",
-          "size": "3 compact vignettes"
+          "role": "A path segment containing the friends' campsite, a practical-skill scene with a parent, and a packed bedroom departure.",
+          "where": "After Childhood, beyond the first transition reveal.",
+          "size": "One chapter segment"
         },
         {
           "name": "Early Adulthood",
-          "role": "A chapter segment holding a shared home, hospital farewell room, first-steps space, and sleepless nursery.",
-          "where": "After Adolescence",
-          "size": "4 compact vignettes"
+          "role": "A path segment containing a shared home, hospital farewell, first-steps room, and nursery.",
+          "where": "After Adolescence, beyond a transition wall, hall, or doorway.",
+          "size": "One chapter segment"
         },
         {
           "name": "Middle Age",
-          "role": "A chapter segment holding a family kitchen, departing child doorway or room, aging parent home, and quiet dinner.",
-          "where": "After Early Adulthood",
-          "size": "4 compact vignettes"
+          "role": "A path segment containing a family kitchen, departing-child threshold, aging parent home, and dinner setting.",
+          "where": "After Early Adulthood, beyond a transition wall, hall, or doorway.",
+          "size": "One chapter segment"
         },
         {
           "name": "Later Life",
-          "role": "The terminal chapter segment, holding a younger-family campsite, photograph-sorting room, absent-partner home, final multi-generation photograph gathering, hospital room, and quiet childhood kitchen ending.",
-          "where": "End of the continuous forward route",
-          "size": "4 compact vignettes"
+          "role": "The final chapter segment, containing the younger-family campsite, photograph sorting, absent-partner home, final multi-generation photograph gathering, a hospital room, and the quiet childhood kitchen terminal memory.",
+          "where": "At the far end of the route, elevated above the accumulated path.",
+          "size": "One chapter segment"
         }
       ],
       "paths": [
         {
           "from": "Childhood",
           "to": "Adolescence",
-          "kind": "corridor"
+          "kind": "track"
         },
         {
           "from": "Adolescence",
           "to": "Early Adulthood",
-          "kind": "hall"
+          "kind": "track"
         },
         {
           "from": "Early Adulthood",
           "to": "Middle Age",
-          "kind": "doorway"
+          "kind": "track"
         },
         {
           "from": "Middle Age",
           "to": "Later Life",
+          "kind": "track"
+        },
+        {
+          "from": "Later Life hospital room",
+          "to": "Quiet childhood kitchen terminal memory",
           "kind": "corridor"
         }
       ],
-      "terrain": "One continuous expanding physical surface, with domestic memory scenes directly on or just beside the route rather than open wandering terrain.",
+      "terrain": "One contiguous, ground-level surface with no required overhangs.",
       "props": [
         {
-          "name": "physical week-chart wall with 90 rows and 52 squares per row, progressing from colorful childhood poster to faded framed object",
-          "count": 4,
-          "where": "At each chapter transition"
+          "name": "Teddy bear",
+          "count": -1,
+          "where": "Repeated visibly throughout the memory scenes."
         },
         {
-          "name": "teddy bear",
+          "name": "Family photograph",
           "count": -1,
-          "where": "Repeated visibly through the memory scenes"
+          "where": "Repeated visibly throughout the memory scenes, including the original photograph and final multi-generation gathering."
         },
         {
-          "name": "family photograph",
+          "name": "Physical week chart",
+          "count": 1,
+          "where": "At each chapter transition; each chart is exactly 90 rows by 52 squares and becomes progressively more faded and framed."
+        },
+        {
+          "name": "Transition walls, hallways, and doorways",
           "count": -1,
-          "where": "Repeated visibly through the memory scenes"
+          "where": "Between chapter segments, concealing the newly extended route until it is passed through."
         }
       ],
-      "boundary": "The physically continuous route is bounded by composed scene edges, transition walls, halls, and doorways rather than open wandering terrain.",
+      "boundary": "",
       "scale_band": "huge",
-      "theme": "Warm, lively, bittersweet domestic memory, gradually faded with age"
+      "theme": "Warm, intimate, bittersweet domestic memory, shifting from colorful childhood warmth to faded later-life nostalgia."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the five-part walk must remain continuously connected and preserve the accumulated backward vista.",
+      "why": "the five segments must stitch into one unbroken, correctly ordered route whose backward vista remains physically truthful.",
       "set_piece": false
     },
     "route": [
-      "P3"
+      "P0"
     ],
     "notes": [],
     "scene_prompt": "Create a 3D narrative walking map formed from five stitched life-chapter path segments, all physically present on one continuous expanding surface. The player progresses forward through Childhood, Adolescence, Early Adulthood, Middle Age, and Later Life, while the accumulated route stretches behind them; early sections remain close and readable at first, then recede into distant glowing landmarks and lights by old age. Each chapter contains three to five compact, active memory vignettes arranged directly along or beside the route, with transition walls, hallways, or doorways separating chapters.\n\nChildhood includes a warm kitchen with a parent cutting fruit, imaginative play space, a family campsite, and the original family photograph. Adolescence moves through a campsite with friends, a practical-skill scene with a parent, and a packed childhood bedroom leading out of home. Early adulthood contains a first shared home, hospital farewell room, child’s first-steps space, and sleepless nursery. Middle age includes a family kitchen, departing child’s room or doorway, aging parent’s home, and quiet dinner setting. Later life includes a campsite with younger family, photograph-sorting room, a home marked by a lost partner’s absence, and a final multi-generation gathering around a photograph. A teddy bear and family photograph recur visibly across these spaces. At each chapter transition, place a physical 90-row by 52-square week chart that becomes increasingly faded and framed with age. End in a hospital room, then a quiet childhood kitchen, with the completed path visible far below from above as individual memory scenes glow."
@@ -152,7 +158,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

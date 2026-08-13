@@ -14,179 +14,177 @@
     }
   ],
   "scene_prompt": "Create a 3D cooperative adventure map set on one compact, continuous frozen mountain road crossing a stormy alpine region. A single truck route winds through snowbound slopes and tight mountain passes, with three checkpoints spaced along the journey toward a distant dying town in the background, the delivery destination. Route conditions can include deep snow with very short sightlines, a frozen lake crossing where the road vanishes beneath ice, fallen-tree blockages, and avalanche-altered sections where one path is closed and another is exposed. Place scattered abandoned trucks along the route, each visually identical to the players’ truck, plus occasional strange tyre tracks beside the road. An abandoned village sits off the roadside as an omittable, intermittent location rather than a fixed stop, with small buildings that can be searched. Near the final stretch, the road becomes almost obscured by the intensified storm before descending into the town.",
-  "blob": "### Genre\nThe dominant genre is Adventure, specifically a cooperative, story-led expedition; the mystery-horror tone is thematic rather than a second layout genre. The road, destination, and sequence of discoveries give the journey its directional pull.\n\n### Shape and preset\nUse `world-corridor`: one continuous mountain-road journey rather than separate chapters. It most closely matches the Guided Trail preset, retaining its directed route and distant destination, but the prompt overrides its pedestrian-trail emphasis with a truck-width alpine road and omits its required reveal-exit treatment.\n\n### Config requirements\n`path-trail` is visible geometry: the single ploughed, partially snow-buried truck road winding through passes from the opening to town. `landmark-focal` is visible geometry: the distant dying town remains a small, warm-lit destination on the horizon until the final descent. `hazard-kill` is visible geometry: unstable ice, blocked shoulders, deep snow, and avalanche-affected roadside danger shape the route. `terrain-relief` is visible geometry: steep alpine slopes, ridges, narrow passes, and avalanche scars define the corridor. `water-body` is visible geometry: a frozen lake crossing where the normal road disappears beneath ice. `building-interior` is visible geometry: the occasional abandoned village has small searchable buildings entered from the roadside. No invisible gameplay volumes are required.\n\n### Layout components\nBuild one long but compact region-scale route, beginning at a snowbound mountain approach and ending in a descending final stretch into the distant town. Place three checkpoint waystations sequentially along the road, each a clear roadside pause landmark rather than a separate map. The middle route crosses a broad frozen lake; its road markings vanish into windblown ice. Other stretches thread tight rock-and-snow passes, include fallen-tree blockages, and show avalanche debris closing one roadside branch while exposing another passable branch. Scatter abandoned trucks beside the road, all visually identical to the player truck, and add intermittent parallel tyre tracks in the snow. Put the abandoned village off one roadside branch, with several small dark buildings; it is optional and must not interrupt the main route when absent. Intensify snow density and reduce visible road definition near the final descent. Natural cliffs, snowbanks, and storm fade form the boundary. Compose the route as a diagonal winding ribbon, with the town held in the far background beyond successive ridges.\n\n### Render order\nUse `topdown`: the continuous drivable route, lake crossing, and avalanche detours need a valid, readable connection before the isometric scene is dressed. This is not `authored_plan`, since it is neither a maze nor a racing circuit.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by one compact region-scale road spanning three checkpoints and a final town approach. Theme: isolated alpine expedition, muted blue-white snowstorm, sparse warm lights, uncanny abandoned infrastructure. Use `tiered` for non-overhanging mountain relief, `P3` for entering village buildings from the exterior route, and `CHECK` for the frozen-lake water feature.",
+  "blob": "### Genre\nDominant genre: Adventure, with Survival as a secondary horror-pressure register. The continuous delivery journey, checkpoints, and distant destination make Adventure own the route and map shape; the storm and unexplained pursuer contribute atmosphere rather than a separate survival map.\n\n### Shape and preset\nUse `route-guided`, following the Guided Trail preset: one continuous mountain-road journey toward a visible destination. Retain the trail and focal-destination logic, but omit its reveal-exit device because the prompt does not describe an outside-to-inside reveal.\n\n### Config requirements\nUse `path-trail` as a snow-covered vehicle road winding through passes, exposed slopes, and the lake crossing. Use `landmark-focal` for the distant dying town, visible as a small final destination beyond the storm. Use `terrain-relief` for steep alpine slopes, cliffs, passes, and the final descent. Use `water-body` for the frozen lake where the road disappears under ice. Use `building-interior` for the searchable small buildings in the optional abandoned village.\n\n### Layout requirements\nUse `checkpoint-respawn`: place exactly three recovery checkpoints in safe widened roadside pull-offs, spaced at the major thirds of the continuous journey—after the opening pass, beyond the lake/blockage region, and before the final stormbound descent. No hostile emitter is required; the following presence is environmental and unseen.\n\n### Layout components\nBuild one compact region-scale alpine strip, not separate chapter maps. The route begins at a snowy mountain approach, winds through tight cliffside passes and deep-snow sections, crosses a broad frozen lake, passes fallen-tree and avalanche-altered road segments with one visibly closed branch and one exposed continuation, then enters an almost whiteout-obscured final descent to the town. Scatter identical abandoned trucks at unsettling roadside pull-offs and add intermittent tyre-track traces beside the road. Set the abandoned village in an optional side pocket off the road, with a small cluster of searchable buildings; it is not a required stop or fixed route gate. The boundary is impassable mountain relief, ravines, and storm-blurred outer slopes. Compose the road as a legible S-curve through the frame, with the town held distant near the far end.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because every altered road condition must still preserve one driveable continuous route; authored planning is not available outside mazes and racing circuits.\n\n### Scale, theme, and pipeline cost\nScale band: large, driven by a full 20–30 minute vehicle journey across three checkpoints, compressed into one region. Theme: bleak cinematic alpine mystery-horror, blue-grey snowstorm, isolated industrial truck and dying-town lights. Pipeline modifiers: `tiered` for non-overhanging mountain elevation; `P3` because players enter village buildings from the exterior route; `CHECK` for the frozen-lake water feature beneath the traversable ice.",
   "spec": {
     "genre": "Adventure",
-    "secondary": [],
-    "shape": "world-corridor",
+    "secondary": [
+      "Survival"
+    ],
+    "shape": "route-guided",
     "preset": "Guided Trail",
     "axes": {},
     "options": [
       {
         "id": "path-trail",
-        "text": "the single ploughed, partially snow-buried truck road winding through passes from the opening to town",
-        "visible": true,
-        "count": 1
-      },
-      {
-        "id": "landmark-focal",
-        "text": "the distant dying town remains a small, warm-lit destination on the horizon until the final descent",
+        "text": "A snow-covered vehicle road winding through mountain passes, exposed slopes, and the frozen-lake crossing.",
         "visible": true,
         "count": -1
       },
       {
-        "id": "hazard-kill",
-        "text": "unstable ice, blocked shoulders, deep snow, and avalanche-affected roadside danger shape the route",
+        "id": "landmark-focal",
+        "text": "The distant dying town, held as a small final destination beyond the storm.",
         "visible": true,
         "count": -1
       },
       {
         "id": "terrain-relief",
-        "text": "steep alpine slopes, ridges, narrow passes, and avalanche scars define the corridor",
+        "text": "Steep alpine slopes, cliffs, passes, and the final descent.",
         "visible": true,
         "count": -1
       },
       {
         "id": "water-body",
-        "text": "a frozen lake crossing where the normal road disappears beneath ice",
+        "text": "The frozen lake where the road disappears beneath ice.",
         "visible": true,
-        "count": 1
+        "count": -1
       },
       {
         "id": "building-interior",
-        "text": "the occasional abandoned village has small searchable buildings entered from the roadside",
+        "text": "Small searchable buildings in the optional abandoned village.",
         "visible": true,
         "count": -1
+      },
+      {
+        "id": "checkpoint-respawn",
+        "text": "Recovery checkpoints in safe widened roadside pull-offs.",
+        "visible": false,
+        "count": 3
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "checkpoint-respawn",
+        "text": "Recovery checkpoints in safe widened roadside pull-offs.",
+        "count": 3,
+        "where": "Spaced at the major thirds of the continuous journey: after the opening pass, beyond the lake/blockage region, and before the final stormbound descent."
       }
     ],
     "layout": {
-      "composition": "A diagonal winding road ribbon runs from the snowbound mountain approach through successive ridges and tight passes, across the broad frozen lake, then through an intensified storm into a final descent; the small warm-lit dying town is held in the far background.",
+      "composition": "A legible snow-covered road forms an S-curve through the frame, beginning at the snowy mountain approach in the foreground, winding through cliffside passes and the broad frozen lake in the midground, then descending through near-whiteout toward the distant dying town near the far end.",
       "zones": [
         {
-          "name": "Snowbound mountain approach",
-          "role": "Opening of the continuous truck-road journey.",
-          "where": "foreground start of the diagonal route",
+          "name": "Snowy mountain approach",
+          "role": "Beginning of the continuous delivery route.",
+          "where": "Foreground",
           "size": ""
         },
         {
-          "name": "Checkpoint waystations",
-          "role": "Three sequential roadside pause landmarks along the road.",
-          "where": "spaced sequentially from the opening toward the final approach",
+          "name": "Cliffside passes and deep-snow sections",
+          "role": "Tight road journey through exposed slopes and short sightlines.",
+          "where": "Early to middle route",
           "size": ""
         },
         {
-          "name": "Frozen lake crossing",
-          "role": "Middle-route crossing where road markings vanish into windblown ice.",
-          "where": "middle of the route",
+          "name": "Frozen lake and blockage region",
+          "role": "Lake crossing with fallen-tree and avalanche-altered road conditions, including a visibly closed branch and exposed continuation.",
+          "where": "Midground",
           "size": "broad"
         },
         {
-          "name": "Tight mountain passes",
-          "role": "Rock-and-snow route stretches with fallen-tree blockages and avalanche-altered branches.",
-          "where": "along the route between the approach, lake, and final descent",
+          "name": "Optional abandoned village",
+          "role": "An omittable side pocket with searchable small buildings, not a required stop or fixed route gate.",
+          "where": "Off the roadside",
+          "size": "small cluster"
+        },
+        {
+          "name": "Stormbound final descent",
+          "role": "Almost whiteout-obscured road descent into the delivery destination.",
+          "where": "Far end",
           "size": ""
         },
         {
-          "name": "Abandoned village",
-          "role": "Optional roadside branch with searchable small dark buildings that does not interrupt the main route.",
-          "where": "off one roadside branch",
-          "size": ""
-        },
-        {
-          "name": "Final town descent",
-          "role": "Storm-obscured final stretch descending into the delivery destination.",
-          "where": "far end of the route beneath the distant town",
-          "size": ""
+          "name": "Dying town",
+          "role": "Distant final delivery destination.",
+          "where": "Background",
+          "size": "small"
         }
       ],
       "paths": [
         {
-          "from": "Snowbound mountain approach",
-          "to": "Checkpoint waystations",
+          "from": "Snowy mountain approach",
+          "to": "Cliffside passes and deep-snow sections",
           "kind": "road"
         },
         {
-          "from": "Checkpoint waystations",
-          "to": "Frozen lake crossing",
+          "from": "Cliffside passes and deep-snow sections",
+          "to": "Frozen lake and blockage region",
           "kind": "road"
         },
         {
-          "from": "Frozen lake crossing",
-          "to": "Tight mountain passes",
+          "from": "Frozen lake and blockage region",
+          "to": "Stormbound final descent",
           "kind": "road"
         },
         {
-          "from": "Tight mountain passes",
-          "to": "Abandoned village",
+          "from": "Stormbound final descent",
+          "to": "Dying town",
           "kind": "road"
         },
         {
-          "from": "Tight mountain passes",
-          "to": "Final town descent",
-          "kind": "road"
-        },
-        {
-          "from": "Final town descent",
-          "to": "Distant dying town",
+          "from": "Cliffside passes and deep-snow sections",
+          "to": "Optional abandoned village",
           "kind": "road"
         }
       ],
-      "terrain": "Stormy alpine snowbound slopes, steep ridges, narrow rock-and-snow passes, avalanche scars and debris, deep snow, and a broad frozen lake with windblown ice.",
+      "terrain": "Blue-grey deep snow, steep alpine slopes, cliffs, tight passes, ravines, avalanche-altered road segments, a broad frozen lake beneath traversable ice, and storm-blurred outer slopes.",
       "props": [
         {
-          "name": "checkpoint waystations",
-          "count": 3,
-          "where": "sequentially along the road"
-        },
-        {
-          "name": "fallen-tree blockages",
+          "name": "Identical abandoned trucks",
           "count": -1,
-          "where": "on tight pass stretches beside the road"
+          "where": "Scattered at unsettling roadside pull-offs along the route."
         },
         {
-          "name": "avalanche debris",
-          "count": 1,
-          "where": "closing one roadside branch while exposing another passable branch"
-        },
-        {
-          "name": "abandoned trucks visually identical to the player truck",
+          "name": "Tyre-track traces",
           "count": -1,
-          "where": "scattered beside the road"
+          "where": "Intermittently beside the road."
         },
         {
-          "name": "parallel tyre tracks",
+          "name": "Searchable small buildings",
           "count": -1,
-          "where": "intermittently beside the road in the snow"
+          "where": "In the optional abandoned village side pocket."
         },
         {
-          "name": "small dark abandoned village buildings",
+          "name": "Fallen-tree blockages",
           "count": -1,
-          "where": "off one roadside branch"
+          "where": "Along the route near the lake/blockage region."
         }
       ],
-      "boundary": "Natural cliffs, snowbanks, and storm fade form the boundary.",
+      "boundary": "Impassable mountain relief, ravines, and storm-blurred outer slopes.",
       "scale_band": "large",
-      "theme": "isolated alpine expedition, muted blue-white snowstorm, sparse warm lights, uncanny abandoned infrastructure"
+      "theme": "Bleak cinematic alpine mystery-horror; blue-grey snowstorm, isolated industrial truck, and dying-town lights."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the continuous drivable route, lake crossing, and avalanche detours need a valid, readable connection before dressing.",
+      "why": "Every altered road condition must preserve one driveable continuous route.",
       "set_piece": false
     },
     "route": [
-      "P3",
       "tiered",
+      "P3",
       "CHECK"
     ],
-    "notes": [],
+    "notes": [
+      "The Guided Trail preset is retained, but its reveal-exit device is omitted because no outside-to-inside reveal is described.",
+      "No hostile emitter is included; the following presence is environmental and unseen."
+    ],
     "scene_prompt": "Create a 3D cooperative adventure map set on one compact, continuous frozen mountain road crossing a stormy alpine region. A single truck route winds through snowbound slopes and tight mountain passes, with three checkpoints spaced along the journey toward a distant dying town in the background, the delivery destination. Route conditions can include deep snow with very short sightlines, a frozen lake crossing where the road vanishes beneath ice, fallen-tree blockages, and avalanche-altered sections where one path is closed and another is exposed. Place scattered abandoned trucks along the route, each visually identical to the players’ truck, plus occasional strange tyre tracks beside the road. An abandoned village sits off the roadside as an omittable, intermittent location rather than a fixed stop, with small buildings that can be searched. Near the final stretch, the road becomes almost obscured by the intensified storm before descending into the town."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

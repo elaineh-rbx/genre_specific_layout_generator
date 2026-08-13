@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a realistic 3D forest exploration map set at night in deep darkness, with a flashlight-lit view. The forest spans a few minutes of walking across, with winding paths through dense trees leading to scattered houses, searchable items, and distinct points of interest.",
-  "blob": "### Genre\nThe dominant genre is Adventure: players explore a forest to locate items, houses, and points of interest, with no pursuing threat or combat loop. This is a discovery-led exploration game rather than Survival. \n\n### Shape and preset\nUse `world-open`, a single broad, freely explorable night forest whose paths branch between discoveries rather than forcing a chapter sequence. Match the Scavenger Hunt preset in its open-world item-finding intent, while dropping its unrequested quest board and hidden-alcove assumptions.\n\n### Config requirements\nUse visible `path-trail` for winding, walkable dirt paths that give the dense forest a readable movement grain without making it linear. Use visible `landmark-focal` for distinct, recognizable houses and other points of interest that can be spotted through breaks in the trees and draw exploration outward. Use invisible `collectible-nodes` for the searchable items distributed at houses, path edges, and points of interest; their exact pickup markers must not appear in the render. Do not add enemy spawns, hazards, interiors, settlement density, water, or terrain relief because none were requested.\n\n### Layout components\nBuild one large contiguous forest zone, sized to take a few minutes to walk across. Place a loose central path junction slightly forward of center, then send several winding dirt trails into dense woodland in different directions. Space scattered individual houses well apart along these routes and at small clearings; they must read as isolated finds, not a settlement. Create several distinct points of interest, each with a different silhouette or clearing treatment, distributed around the outer and mid-depth forest so no single route contains every discovery. Place item locations invisibly around these houses, along trail margins, and at points of interest. Terrain is predominantly dark, uneven forest floor with leaf litter, roots, low undergrowth, and dense tree trunks; retain mostly level ground. The boundary is a deep wall of increasingly dense forest and darkness rather than a built barrier. Compose the map with a flashlight-lit foreground path and near trees, fading into deep night shadows, with distant house lights or landmark silhouettes acting as navigational pulls.\n\n### Render order\nUse `isometric`: render the isometric night-forest scene from text first as the authoritative image, then derive the top-down plan from it. This exploration space does not require a procedurally guaranteed route topology.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by the requested few-minute cross-map walk and multiple dispersed discoveries. Theme: realistic, atmospheric nocturnal woodland, deep darkness, narrow flashlight illumination, and sparse warm house lights. Pipeline modifier: `P0`, since this is one contiguous, mostly level exterior surface with no overhangs, interior transition, separate map, or validity-critical structure.",
+  "blob": "### 1. Genre\nThe dominant genre is Adventure: the player explores a forest and searches for items and houses, with no pursuing threat or combat loop.\n\n### 2. Shape and preset\nUse `world-open`, a single contiguous night forest that can be explored in any order over several minutes of walking. This follows the Scavenger Hunt preset in its open-world exploration intent, retaining only the explicitly requested discovery elements and dropping its unrequested quest board and secret alcoves.\n\n### 3. Config requirements\nUse `path-trail` for winding, readable woodland paths that connect the forest discoveries without turning the map into a linear route.\n\n### 4. Layout requirements\nUse `collectible-nodes`: place an unspecified multiple of searchable item markers along the paths, beside houses, and at distinct points of interest, with some on the main routes and others slightly off-route to reward exploration. No other placed gameplay markers are required.\n\n### 5. Layout components\nBuild one large contiguous forest zone, broad enough to take a few minutes to cross on foot. Dense realistic trees and undergrowth occupy most of the ground, while a branching network of winding dirt paths creates the primary circulation. Scatter several isolated houses through clearings or path-side pockets, each reading as an individual exploration destination rather than a settlement. Add distinct points of interest such as unusual clearings, prominent tree formations, abandoned-looking path junctions, or small forest landmarks, but keep the item locations and houses spatially varied. The outer boundary is a naturally thickening wall of forest, brush, and uneven terrain that conceals the map limit. Compose the frame from above at a slight angle so the branching paths, clearings, houses, and dense canopy remain legible; preserve a dark nighttime atmosphere with localized flashlight-like illumination.\n\n### 6. Render order\nUse `isometric`: the realistic nocturnal forest mood and readable discovery compositions lead, while the connected path plan can be projected afterward.\n\n### 7. Scale, theme, and pipeline cost\nScale is large, driven by the requested several-minute walking distance and dispersed destinations. Theme: realistic deep-night woodland, dense canopy, dark paths, isolated houses, and narrow pools of carried light. Use `P0`; this is one continuous ground-level forest with no geometry that forces an additional capture path.",
   "spec": {
     "genre": "Adventure",
     "secondary": [],
@@ -24,105 +24,64 @@
     "options": [
       {
         "id": "path-trail",
-        "text": "Winding, walkable dirt paths that give the dense forest a readable movement grain without making it linear.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "landmark-focal",
-        "text": "Distinct, recognizable houses and other points of interest spotted through breaks in the trees, drawing exploration outward.",
+        "text": "Winding, readable woodland paths connecting forest discoveries without turning the map into a linear route.",
         "visible": true,
         "count": -1
       },
       {
         "id": "collectible-nodes",
-        "text": "Searchable items distributed at houses, path edges, and points of interest; their exact pickup markers must not appear in the render.",
+        "text": "An unspecified multiple of searchable item markers along paths, beside houses, and at distinct points of interest, with some on the main routes and others slightly off-route to reward exploration.",
         "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "collectible-nodes",
+        "text": "Searchable item markers placed along paths, beside houses, and at distinct points of interest, with some on the main routes and others slightly off-route to reward exploration.",
+        "count": -1,
+        "where": "Along the paths, beside houses, and at distinct points of interest; some on main routes and others slightly off-route."
+      }
+    ],
     "layout": {
-      "composition": "A flashlight-lit foreground path and near trees lead toward a loose central junction slightly forward of centre; winding trails branch into dense, shadowed woodland, with distant warm house lights and landmark silhouettes pulling the eye through the night forest.",
+      "composition": "Viewed from above at a slight angle, with branching paths, clearings, isolated houses, and dense canopy kept legible; dark nighttime atmosphere with localized flashlight-like illumination.",
       "zones": [
         {
           "name": "Contiguous night forest",
-          "role": "Freely explorable forest holding dispersed discoveries.",
-          "where": "Across the full map",
-          "size": "Large; a few minutes to walk across"
-        },
-        {
-          "name": "Central path junction",
-          "role": "Loose branching point for the forest trails.",
-          "where": "Slightly forward of centre",
-          "size": ""
-        },
-        {
-          "name": "House clearings",
-          "role": "Isolated house discoveries with searchable item locations.",
-          "where": "Well apart along routes and in small clearings",
-          "size": ""
-        },
-        {
-          "name": "Points of interest",
-          "role": "Distinct discoveries with different silhouettes or clearing treatments.",
-          "where": "Outer and mid-depth forest",
-          "size": ""
+          "role": "Exploration space containing woodland paths, isolated houses, searchable items, and distinct points of interest.",
+          "where": "Across the full map.",
+          "size": "Large; broad enough to take a few minutes to cross on foot."
         }
       ],
       "paths": [
         {
-          "from": "Central path junction",
-          "to": "Dense woodland discoveries",
-          "kind": "track"
-        },
-        {
-          "from": "Central path junction",
-          "to": "House clearings",
-          "kind": "track"
-        },
-        {
-          "from": "Central path junction",
-          "to": "Points of interest",
+          "from": "Forest discoveries",
+          "to": "Forest discoveries",
           "kind": "track"
         }
       ],
-      "terrain": "Predominantly dark, uneven forest floor with leaf litter, roots, low undergrowth, and dense tree trunks; mostly level ground.",
+      "terrain": "Dense realistic trees and undergrowth cover most ground, with winding dirt paths, clearings, brush, and uneven terrain.",
       "props": [
         {
-          "name": "Scattered individual houses",
+          "name": "Isolated houses",
           "count": -1,
-          "where": "Well apart along routes and at small clearings"
+          "where": "Scattered through clearings or path-side pockets."
         },
         {
-          "name": "Distinct points of interest",
+          "name": "Distinct forest points of interest",
           "count": -1,
-          "where": "Distributed around the outer and mid-depth forest"
-        },
-        {
-          "name": "Dense tree trunks",
-          "count": -1,
-          "where": "Throughout the forest"
-        },
-        {
-          "name": "Low undergrowth, leaf litter, and roots",
-          "count": -1,
-          "where": "Across the forest floor"
-        },
-        {
-          "name": "Distant house lights or landmark silhouettes",
-          "count": -1,
-          "where": "In deep night shadows beyond the foreground"
+          "where": "Spatially varied across the forest, including unusual clearings, prominent tree formations, abandoned-looking path junctions, or small forest landmarks."
         }
       ],
-      "boundary": "A deep wall of increasingly dense forest and darkness rather than a built barrier.",
+      "boundary": "A naturally thickening wall of forest, brush, and uneven terrain conceals the map limit.",
       "scale_band": "large",
-      "theme": "Realistic, atmospheric nocturnal woodland; deep darkness, narrow flashlight illumination, and sparse warm house lights."
+      "theme": "Realistic deep-night woodland, dense canopy, dark paths, isolated houses, and narrow pools of carried light."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "This exploration space does not require a procedurally guaranteed route topology.",
+      "why": "The realistic nocturnal forest mood and readable discovery compositions lead, while the connected path plan can be projected afterward.",
       "set_piece": false
     },
     "route": [
@@ -134,7 +93,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

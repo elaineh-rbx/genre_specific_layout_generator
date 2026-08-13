@@ -24,115 +24,145 @@
     }
   ],
   "scene_prompt": "Create a 3D game map showing a shared traditional Georgian village made of neighbouring personal farmyards that players can visit. Each compact starting yard is enclosed by wooden fencing and contains a small traditional Georgian house, a modest storage shed, and exactly 24 planting plots arranged in clear rows, with open space reserved for later expansion. Populate the plots with a varied visual mix of grapevines, orchard trees, berry bushes, vegetables, herbs, and melons representing the large collection of Georgian crops. Frame the village with a rural Georgian panorama in the background; do not include animals.",
-  "blob": "### Genre\nThe dominant genre is Simulation: crop growing and selling is the progression loop, expressed as a shared persistent farming world. There is no secondary genre.\n\n### Shape and preset\nUse `world-shared`. This is a single connected Georgian village of adjacent personal yards rather than isolated tycoon plots. It most closely matches the Vehicle Sim preset in its shared-world shape only; its options do not apply, so the preset is none.\n\n### Config requirements\nUse visible `path-circulation`: compact dirt or stone pedestrian lanes connect every neighbouring yard and allow farm visits. Use visible `settlement-density`: the yards form one small, built-up rural Georgian village rather than scattered farms. No other options are requested. There are no invisible layout-only components.\n\n### Layout components\nBuild one compact village zone on a broad, mostly level rural surface, with a central pedestrian lane branching to a close-knit ring or grid of neighbouring, fenced personal farmyards. Each starting yard is similarly sized and enclosed with wooden fencing. Within every yard, place one small traditional Georgian house near the lane-facing edge, one modest storage shed offset beside it, and exactly 24 rectangular planting plots in clear, readable rows. Leave a contiguous open patch within or directly behind each yard for later plot expansion. Visually vary the planted rows among grapevines, orchard trees, berry bushes, vegetable beds, herb beds, and melon patches, without attempting to show all 300 crop types as separate plot varieties. Keep all paths walkable and yards visibly visitable through gates or openings in the fences. The village boundary dissolves into open rural fields and a wide Georgian countryside panorama; no animals appear anywhere. Compose the isometric view from above the central lane so multiple repeated yards, their 24-plot grids, and the mountain-and-field backdrop are legible at once.\n\n### Render order\nUse `isometric`: the pastoral visual identity, repeated fenced yards, and rural panorama lead; the simple connected pedestrian layout can be projected afterward without topology risk.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by the shared village and multiple complete neighbouring yards, despite each individual yard being compact. Theme: warm traditional Georgian rural homestead, timber fences, cultivated earth, vines and orchards, pastoral mountain panorama. Use `P0`; all play sits on one exterior ground surface and the requested layout has no forced overhangs, interiors, separate maps, volumetric traversal, or validity-by-construction route.",
+  "blob": "### Genre\nThe dominant genre is `Simulation`: a shared farming-and-selling loop with persistent personal yards. There is no secondary genre.\n\n### Shape and preset\nUse `world-open`, the Simulation shared persistent world shape: one contiguous Georgian village where neighbouring farmyards are mutually visitable. This matches the shape directly, but no named preset is recognisable because the prompt specifies a farming village rather than a tycoon, vehicle, or role-sim arrangement.\n\n### Config requirements\nUse `settlement-density` for a compact traditional Georgian village composed of repeated neighbouring farmyards. Use `path-circulation` for simple walkable village lanes connecting every fenced yard without isolating any player plot.\n\n### Layout requirements\nUse `collectible-nodes` as harvest locations: place one harvest node in each of the exactly 24 planting plots within every starting yard, aligned to the planted crop rows. No other placed triggers, emitters, or markers are required by the prompt.\n\n### Layout components\nBuild one shared village on a continuous ground surface. Its repeating residential-farm zone consists of neighbouring compact personal yards, each enclosed by a wooden fence. Every yard contains one small traditional Georgian house, one modest storage shed, and exactly 24 rectangular planting plots in clear, orderly rows. Reserve a visibly open strip or rear portion of each yard for later expansion rather than filling it with crops. Populate the 24 plots with a varied visual mix of grapevine rows, orchard trees, berry bushes, vegetable beds, herb beds, and melon patches; this represents the large Georgian crop collection without attempting to show all 300 types at once. Narrow dirt or stone village lanes run between the fence lines and connect all yards for visiting and trading. The outer composition opens toward a rural Georgian panorama of fields and distant countryside. Do not include animals. Frame the village as a readable clustered settlement, with repeating yards in the foreground and middle ground and the panorama beyond.\n\n### Render order\nUse `isometric`: the village’s visual character, repeated yard modules, crop variety, and rural Georgian panorama lead; strict topology is not essential to playability.\n\n### Scale, theme, and pipeline cost\nScale band: large, driven by a shared village containing multiple personal yards, while each individual starting yard remains compact at 24 plots. Theme: warm traditional Georgian rural village, timber fencing, modest homes, productive gardens and vineyards. Pipeline modifier: `P0`; this is one continuous exterior surface with no required overhangs, interiors, separate maps, or topology-valid route.",
   "spec": {
     "genre": "Simulation",
     "secondary": [],
-    "shape": "world-shared",
+    "shape": "world-open",
     "preset": "none",
     "axes": {},
     "options": [
       {
-        "id": "path-circulation",
-        "text": "compact dirt or stone pedestrian lanes connect every neighbouring yard and allow farm visits",
+        "id": "settlement-density",
+        "text": "a compact traditional Georgian village composed of repeated neighbouring farmyards",
         "visible": true,
         "count": -1
       },
       {
-        "id": "settlement-density",
-        "text": "the yards form one small, built-up rural Georgian village rather than scattered farms",
+        "id": "path-circulation",
+        "text": "simple walkable village lanes connecting every fenced yard without isolating any player plot",
         "visible": true,
         "count": -1
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "harvest locations",
+        "visible": false,
+        "count": 24
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "collectible-nodes",
+        "text": "harvest locations",
+        "count": 24,
+        "where": "Place one harvest node in each planting plot within every starting yard, aligned to the planted crop rows."
       }
     ],
     "layout": {
-      "composition": "Isometric view from above the central lane, with multiple repeated fenced yards and their 24-plot grids legible at once against a mountain-and-field backdrop.",
+      "composition": "A readable clustered settlement with repeating fenced yards in the foreground and middle ground, opening toward a rural Georgian panorama beyond.",
       "zones": [
         {
-          "name": "Compact Georgian village",
-          "role": "Shared persistent farming world of adjacent, visitable personal farmyards for crop growing and selling.",
-          "where": "Centre of a broad rural surface, extending around a central pedestrian lane.",
-          "size": "Large shared village; each individual yard is compact."
+          "name": "residential-farm zone",
+          "role": "Neighbouring compact personal yards for farming, visiting, and trading.",
+          "where": "foreground and middle ground",
+          "size": "large"
         },
         {
-          "name": "Personal farmyards",
-          "role": "Starting yards with planting space and reserved contiguous expansion patches.",
-          "where": "Close-knit ring or grid around the central pedestrian lane.",
-          "size": "Similarly sized compact yards."
-        },
-        {
-          "name": "Open rural fields and countryside panorama",
-          "role": "Pastoral backdrop beyond the village.",
-          "where": "Surrounding the village boundary and in the background.",
-          "size": "Wide."
+          "name": "rural Georgian panorama",
+          "role": "Fields and distant countryside framing the village.",
+          "where": "background",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Central pedestrian lane",
-          "to": "Neighbouring fenced personal farmyards",
-          "kind": "road"
-        },
-        {
-          "from": "Neighbouring fenced personal farmyards",
-          "to": "Other neighbouring yards",
+          "from": "every fenced yard",
+          "to": "every other fenced yard",
           "kind": "road"
         }
       ],
-      "terrain": "Broad, mostly level rural ground with cultivated earth, open rural fields, and a wide Georgian mountain-and-field countryside panorama.",
+      "terrain": "One shared continuous ground surface with narrow dirt or stone village lanes, rural fields, and distant countryside.",
       "props": [
         {
-          "name": "Traditional Georgian house",
+          "name": "small traditional Georgian house",
           "count": 1,
-          "where": "Near the lane-facing edge within every yard."
+          "where": "in every yard"
         },
         {
-          "name": "Modest storage shed",
+          "name": "modest storage shed",
           "count": 1,
-          "where": "Offset beside the house within every yard."
+          "where": "in every yard"
         },
         {
-          "name": "Rectangular planting plots",
+          "name": "rectangular planting plots",
           "count": 24,
-          "where": "Within every yard in clear, readable rows."
+          "where": "in every starting yard, arranged in clear orderly rows"
         },
         {
-          "name": "Wooden fencing",
+          "name": "grapevine rows",
           "count": -1,
-          "where": "Enclosing each compact starting yard."
+          "where": "across the planting plots"
         },
         {
-          "name": "Grapevines, orchard trees, berry bushes, vegetable beds, herb beds, and melon patches",
+          "name": "orchard trees",
           "count": -1,
-          "where": "Varied among the planting plot rows."
+          "where": "across the planting plots"
         },
         {
-          "name": "Open expansion patch",
+          "name": "berry bushes",
           "count": -1,
-          "where": "Within or directly behind every yard."
+          "where": "across the planting plots"
+        },
+        {
+          "name": "vegetable beds",
+          "count": -1,
+          "where": "across the planting plots"
+        },
+        {
+          "name": "herb beds",
+          "count": -1,
+          "where": "across the planting plots"
+        },
+        {
+          "name": "melon patches",
+          "count": -1,
+          "where": "across the planting plots"
+        },
+        {
+          "name": "wooden fences",
+          "count": -1,
+          "where": "enclosing every yard"
+        },
+        {
+          "name": "open expansion space",
+          "count": -1,
+          "where": "a visibly open strip or rear portion of every yard"
         }
       ],
-      "boundary": "The village boundary dissolves into open rural fields and the wide Georgian countryside panorama.",
+      "boundary": "Wooden fence lines enclose each personal yard; the outer composition opens toward rural fields and distant countryside.",
       "scale_band": "large",
-      "theme": "Warm traditional Georgian rural homestead, timber fences, cultivated earth, vines and orchards, pastoral mountain panorama."
+      "theme": "warm traditional Georgian rural village, timber fencing, modest homes, productive gardens and vineyards"
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "The pastoral visual identity, repeated fenced yards, and rural panorama lead; the simple connected pedestrian layout can be projected afterward without topology risk.",
+      "why": "Strict topology is not essential to playability.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
-    "notes": [],
+    "notes": [
+      "No animals are included."
+    ],
     "scene_prompt": "Create a 3D game map showing a shared traditional Georgian village made of neighbouring personal farmyards that players can visit. Each compact starting yard is enclosed by wooden fencing and contains a small traditional Georgian house, a modest storage shed, and exactly 24 planting plots arranged in clear rows, with open space reserved for later expansion. Populate the plots with a varied visual mix of grapevines, orchard trees, berry bushes, vegetables, herbs, and melons representing the large collection of Georgian crops. Frame the village with a rural Georgian panorama in the background; do not include animals."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

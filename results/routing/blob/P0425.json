@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a 3D exploration map on a tropical terrain island bounded by water. Sandy beaches ring lush grassy interior terrain with palm trees, rocks, and light jungle foliage. Hide 10 unique ornate custom-modeled treasure chests across the island terrain, including among foliage and around natural land features.",
-  "blob": "### Genre\nThe dominant genre is Adventure: a compact collectible-driven exploration loop. It matches the Scavenger Hunt preset, with searching for every chest providing the focal activity.\n\n### Shape and preset\nUse `world-open`, an open, freely walkable tropical island rather than a corridor or chapter sequence. The matched preset is Scavenger Hunt; retain its open search pattern, but add the explicitly requested island and water geography.\n\n### Config requirements\nUse `collectible-nodes` for the 10 chest locations. The chest models themselves are visible geometry, while their collectible interaction points are invisible layout markers. Use `island-cluster` only as the island-with-surrounding-water treatment: one main landmass isolated by open sea, not several islands. Use `water-body` for the visible ocean enclosing the shore. No other options are required.\n\n### Layout components\nBuild one compact, roughly oval tropical island. A continuous sandy beach forms its outer ring, with shallow surrounding water extending to the map edge. The broad central interior is lush grass, irregular rock outcrops, scattered palm trees, and light jungle-foliage clusters; use small natural rises and dense foliage patches as concealment without creating separate zones. Place exactly 10 unique ornate custom-modeled treasure chests across the terrain: some partly screened among foliage, some tucked beside rocks, and others near distinctive beach-to-grass transitions or natural features. Keep each chest physically readable once discovered rather than reducing it to a plain block. Informal walkable routes emerge along the beach ring and through breaks in the vegetation, connecting all concealment areas without a mandatory route. The water is the clear outer boundary. Frame the island as a complete, readable landform with the beach perimeter and dense green center visible.\n\n### Render order\nUse `isometric`: render the isometric island first as authoritative, then derive the top-down plan. No exact route topology is required for this free exploration space.\n\n### Scale, theme, and pipeline cost\nScale is small: exactly 10 finds support a compact, plainly traversable exploration loop. Theme is bright tropical island—sand, turquoise water, lush grass, palms, rocks, and light jungle. Pipeline modifier is `CHECK`, forced by the enclosing water surface; it remains a single, non-self-occluding outdoor map.",
+  "blob": "### Genre\nThe dominant genre is Adventure: the player explores a contiguous island to find a finite set of hidden treasures. There is no secondary genre.\n\n### Shape and preset\nUse `world-open`, matching the Adventure Scavenger Hunt preset: one freely explored island where chests may be found in any order. Retain the preset’s open-map and collectible intent, but do not add unrequested clue alcoves or a quest board.\n\n### Config requirements\nUse `water-body` for the sea enclosing the island, visibly wrapping its sandy shoreline. No other image options are required; the tropical vegetation and natural rock formations are scene-specific dressing rather than additional gameplay configuration.\n\n### Layout requirements\nUse `collectible-nodes`: place exactly 10 unique ornate, custom-modelled 3D treasure chests. Distribute them across distinct, reachable concealment sites: several tucked among light jungle foliage, several beside rock outcrops or other natural landforms, and several near but not exposed on the beach-to-grass transition. Keep every chest on walkable terrain and visibly separable from nearby foliage once approached. No other gameplay volumes or markers are required by the stated layout.\n\n### Layout components\nBuild one compact-to-medium tropical island, with a lush grassy interior occupying most of the frame and a continuous ring of pale sandy beaches around its perimeter. The surrounding ocean is the clear map boundary. Scatter palms, rocks, and light jungle foliage in varied clusters, leaving broad traversable grassy and beach corridors between cover clusters so the whole island can be explored without a prescribed route. Use terrain undulations and rock groupings as natural chest-hiding landmarks without creating inaccessible cliffs. Compose the island as a complete readable landmass centered in frame, with water visible on all sides and the denser jungle interior contrasted against open shoreline.\n\n### Render order\nUse `isometric` first and treat it as authoritative; this is a compact free-roam environment whose visual tropical composition leads, while chest placements are added afterward against the segmented terrain.\n\n### Scale, theme, and pipeline cost\nUse a medium scale, driven by the need to spread 10 discoveries across a plainly playable island without making their search trivial. Theme: bright tropical treasure-island exploration, sandy beaches, lush grass, palms, weathered rocks, and light jungle foliage. Apply `CHECK` because the enclosing water is a real map feature; it remains a single visible surface and does not require stacked-map handling.",
   "spec": {
     "genre": "Adventure",
     "secondary": [],
@@ -23,84 +23,76 @@
     "axes": {},
     "options": [
       {
+        "id": "water-body",
+        "text": "The sea visibly wraps the island's sandy shoreline.",
+        "visible": true,
+        "count": -1
+      },
+      {
         "id": "collectible-nodes",
-        "text": "10 chest locations; ornate custom-modeled treasure chests are visible geometry, while their collectible interaction points are invisible layout markers.",
+        "text": "Exactly 10 unique ornate, custom-modelled 3D treasure chests hidden across the island terrain.",
         "visible": false,
         "count": 10
-      },
+      }
+    ],
+    "layout_placement": [
       {
-        "id": "island-cluster",
-        "text": "One main landmass isolated by open sea, not several islands.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "water-body",
-        "text": "Visible ocean enclosing the shore, with shallow surrounding water extending to the map edge.",
-        "visible": true,
-        "count": -1
+        "id": "collectible-nodes",
+        "text": "Exactly 10 unique ornate, custom-modelled 3D treasure chests, distributed across reachable concealment sites among light jungle foliage, beside rock outcrops or other natural landforms, and near but not exposed on the beach-to-grass transition.",
+        "count": 10,
+        "where": "Across distinct, reachable concealment sites on walkable terrain: several among light jungle foliage, several beside rock outcrops or other natural landforms, and several near the beach-to-grass transition; each chest remains visibly separable from nearby foliage once approached."
       }
     ],
     "layout": {
-      "composition": "Frame the island as a complete, readable landform, with the continuous beach perimeter and dense green central interior visible.",
+      "composition": "A complete readable tropical island is centered in frame, with water visible on all sides. The lush, denser jungle-and-grass interior occupies most of the frame, contrasted against an open continuous sandy shoreline around the perimeter.",
       "zones": [
         {
+          "name": "Lush grassy interior",
+          "role": "Open free-roam exploration ground with light jungle foliage, palms, rocks, terrain undulations, and natural chest-hiding landmarks.",
+          "where": "Centre of the island, occupying most of the frame.",
+          "size": "Most of the island"
+        },
+        {
           "name": "Sandy beach ring",
-          "role": "Outer walkable shoreline ring and chest concealment area near beach-to-grass transitions.",
-          "where": "Around the outer perimeter",
-          "size": ""
+          "role": "Open shoreline exploration and concealment near the beach-to-grass transition.",
+          "where": "Continuously around the island perimeter.",
+          "size": "Continuous ring"
         },
         {
-          "name": "Lush central interior",
-          "role": "Broad grassy exploration terrain with natural concealment among foliage, rocks, and small rises.",
-          "where": "Centre of the island",
-          "size": "broad"
+          "name": "Surrounding ocean",
+          "role": "Clear map boundary enclosing the island.",
+          "where": "On all sides beyond the sandy shoreline.",
+          "size": "Surrounding the entire island"
         }
       ],
-      "paths": [
-        {
-          "from": "Sandy beach ring",
-          "to": "Sandy beach ring",
-          "kind": "open ground"
-        },
-        {
-          "from": "Sandy beach ring",
-          "to": "Lush central interior",
-          "kind": "open ground"
-        }
-      ],
-      "terrain": "A compact, roughly oval tropical island with a continuous sandy beach, lush grass, irregular rock outcrops, scattered palm trees, light jungle-foliage clusters, small natural rises, and shallow turquoise surrounding water.",
+      "paths": [],
+      "terrain": "A compact-to-medium tropical island with lush grassy interior terrain, a continuous ring of pale sandy beaches, gentle terrain undulations, natural rock groupings, and surrounding ocean; no inaccessible cliffs.",
       "props": [
-        {
-          "name": "Unique ornate custom-modeled treasure chests",
-          "count": 10,
-          "where": "Across the terrain: partly screened among foliage, tucked beside rocks, and near distinctive beach-to-grass transitions or natural features."
-        },
         {
           "name": "Palm trees",
           "count": -1,
-          "where": "Across the lush grassy interior"
+          "where": "Scattered across the island in varied clusters."
         },
         {
-          "name": "Irregular rock outcrops",
+          "name": "Weathered rocks and rock groupings",
           "count": -1,
-          "where": "Across the central interior"
+          "where": "Across the grassy interior as natural landmarks and chest-hiding cover."
         },
         {
-          "name": "Light jungle-foliage clusters",
+          "name": "Light jungle foliage",
           "count": -1,
-          "where": "Across the central interior and concealment areas"
+          "where": "In varied clusters across the lush interior, leaving broad traversable grassy corridors between clusters."
         }
       ],
-      "boundary": "The surrounding water is the clear outer boundary, extending to the map edge.",
-      "scale_band": "small",
-      "theme": "Bright tropical island: sand, turquoise water, lush grass, palms, rocks, and light jungle."
+      "boundary": "The surrounding ocean is the clear map boundary, visibly enclosing the island on all sides.",
+      "scale_band": "medium",
+      "theme": "Bright tropical treasure-island exploration, sandy beaches, lush grass, palms, weathered rocks, and light jungle foliage."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "No exact route topology is required for this free exploration space.",
+      "why": "A compact free-roam environment whose visual tropical composition leads, while chest placements are added afterward against the segmented terrain.",
       "set_piece": false
     },
     "route": [
@@ -112,7 +104,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

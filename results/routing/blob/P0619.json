@@ -19,128 +19,135 @@
     }
   ],
   "scene_prompt": "Create a small, playable free-driving steam railway map set on a period New Zealand branch line, spanning one or two valleys. Rail lines run through mountainous hills and alongside or across rivers, with a few simple stations, small rail yards, and depots placed along the route as places to assemble trains. Include open track areas suitable for placing passenger and freight cars anywhere in the world, with steam engines as the rolling-stock focus. The landscape supports changing weather conditions.",
-  "blob": "### Genre\nThe dominant genre is Simulation, specifically a free-driving rail vehicle simulation rather than Racing: there is no lap, finish, or competitive route. \n\n### Shape and preset\nUse the Simulation shape `world-shared`: one connected railway landscape that all players and rolling stock occupy. The closest preset is Vehicle Sim, but the prompt overrides its road-and-resource bundle with a rail network, so retain the shared-world shape while not adding those unrelated preset options.\n\n### Config requirements\nUse visible `path-circulation` for the continuous drivable rail alignment, including main line, sidings, station approaches, and yard leads. Use visible `terrain-relief` for the mountainous hills shaping one or two valleys, and visible `water-body` for rivers that run beside and cross beneath or alongside the railway. Do not add invisible gameplay options: car spawning, coupling, weather control, vehicle controls, and sounds are mechanics, not rendered layout.\n\n### Layout components\nBuild a small playable map spanning one or two connected rural valleys. A single branch line is the primary route, entering from one valley edge, following riverbanks through rolling foothills, crossing rivers on simple rail bridges, and climbing gently around mountainous terrain into the second valley if present. Keep broad open stretches of track and sidings clear enough to place passenger and freight cars anywhere along the network.\n\nPlace a few simple rural stations at spaced intervals on the main line, each with a platform, modest station building, passing loop or siding, and open rail apron. Add small yards and depots beside selected stations: compact fan sidings, a locomotive servicing/depot shed, freight loading space, and passenger-car storage tracks. Steam engines are the visible rolling-stock focus, with passenger and freight cars staged selectively near yards but leaving much of the line open. Natural terrain forms the outer boundary through mountain slopes, ridges, and river valleys rather than hard walls. Frame the map in a high three-quarter isometric view, with the railway drawing the eye diagonally through the valleys and stations acting as readable landmarks.\n\n### Render order\nUse `topdown` first, then dress it isometrically, because connected rail alignment, bridge approaches, station loops, and yard switches must remain navigable; an invalid route would undermine free driving.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the requested one or two valleys and a few stations, yards, and depots. Theme is a period New Zealand rural steam branch line: practical timber stations, compact depots, green valleys, rugged hills, and river crossings. Use `tiered` for non-overhanging mountainous relief and `CHECK` for rivers as real water features; otherwise no additional pipeline modifier is forced.",
+  "blob": "### Genre\nThe dominant genre is `Simulation`, specifically free vehicle operation rather than racing: there is no lap, finish, or competitive route. No secondary genre is needed.\n\n### Shape and preset\nUse `world-open`, a single connected rail-and-landscape map spanning one or two compact valleys. Match the Vehicle Sim preset in intent, but adapt its road circulation to a continuous branch-line railway network; the prompt overrides the preset’s vehicle-road emphasis.\n\n### Config requirements\nUse `path-circulation` for the connected rail corridor linking operational locations along the branch line. Use `terrain-relief` for mountainous hills enclosing and separating the valleys, with rail grades and cuttings following the terrain. Use `water-body` for rivers running alongside and beneath the railway, crossed where necessary by rail bridges. Do not add unrequested roads, resource fields, or buildings with enterable interiors.\n\n### Layout requirements\nNo dedicated placed gameplay volumes are required. The free-driving and rolling-stock placement systems are mechanics rather than rendered layout components.\n\n### Layout components\nBuild a small, contiguous outdoor map of one or two valleys. A main single-track steam railway should run through both valleys, following riverbanks, passing through low hill cuttings, and using one or more simple bridges to cross rivers. Include passing loops and open sidings so trains can be assembled without blocking the main line. Place a few simple rural stations along the route, each with a platform, station shelter, loop or siding, and clear track access. Add small rail yards and depots at selected stations, with several parallel assembly tracks, turnout fans, freight sidings, and locomotive servicing space. Keep broad open track sections and sidings distributed across the map. Terrain is grassy New Zealand branch-line countryside, with mountains at the outer boundary and rivers defining the valley floors. Compose the route as a readable continuous line from one valley through a hill pass into the next, with stations acting as visual anchors.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because the rail network, turnouts, yards, and bridge approaches must remain continuously connected and driveable; an invalid route would undermine the simulation.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the requested one- or two-valley playable map. Theme is a period New Zealand rural steam branch line: restrained historic stations, practical yards, rolling green hills, and mountain river scenery. Apply `tiered` for non-overhanging hill relief and `CHECK` for rivers as real water features; no other pipeline modifier is forced.",
   "spec": {
     "genre": "Simulation",
     "secondary": [],
-    "shape": "world-shared",
+    "shape": "world-open",
     "preset": "Vehicle Sim",
     "axes": {},
     "options": [
       {
         "id": "path-circulation",
-        "text": "continuous drivable rail alignment, including main line, sidings, station approaches, and yard leads",
+        "text": "Connected rail corridor linking operational locations along the branch line.",
         "visible": true,
         "count": -1
       },
       {
         "id": "terrain-relief",
-        "text": "mountainous hills shaping one or two valleys",
+        "text": "Mountainous hills enclosing and separating the valleys, with rail grades and cuttings following the terrain.",
         "visible": true,
         "count": -1
       },
       {
         "id": "water-body",
-        "text": "rivers that run beside and cross beneath or alongside the railway",
+        "text": "Rivers running alongside and beneath the railway, crossed where necessary by rail bridges.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "High three-quarter isometric view, with the railway drawing the eye diagonally through the valleys; stations act as readable landmarks along the route.",
+      "composition": "A readable continuous rail line runs from one valley through a hill pass into the next, with stations acting as visual anchors. Rivers define the valley floors, while mountains sit at the outer boundary.",
       "zones": [
         {
-          "name": "Rural valley railway landscape",
-          "role": "Shared connected landscape for free-driving rail vehicles and rolling stock.",
-          "where": "Spanning one or two connected rural valleys",
-          "size": "small"
+          "name": "Valleys",
+          "role": "Contiguous outdoor railway landscape containing the branch line, broad open track sections, sidings, and operational locations.",
+          "where": "Across the map, on either side of the hill pass.",
+          "size": "One or two compact valleys."
         },
         {
-          "name": "Branch main line",
-          "role": "Primary free-driving route with open stretches suitable for placing passenger and freight cars.",
-          "where": "Entering from one valley edge and continuing through the valleys",
+          "name": "Hill pass",
+          "role": "Connects the valleys through low hill cuttings and rail grades.",
+          "where": "Between the valleys.",
           "size": ""
         },
         {
           "name": "Rural stations",
-          "role": "Places to stop and assemble trains, each with a platform, modest station building, passing loop or siding, and open rail apron.",
-          "where": "At spaced intervals on the main line",
-          "size": ""
+          "role": "Places to assemble trains, each with a platform, station shelter, loop or siding, and clear track access.",
+          "where": "Along the route.",
+          "size": "A few simple stations."
         },
         {
-          "name": "Station yards and depots",
-          "role": "Compact fan sidings, locomotive servicing or depot shed, freight loading space, and passenger-car storage tracks.",
-          "where": "Beside selected stations",
-          "size": "small"
+          "name": "Rail yards and depots",
+          "role": "Train assembly and locomotive servicing, with parallel assembly tracks, turnout fans, and freight sidings.",
+          "where": "At selected stations.",
+          "size": "Small."
         }
       ],
       "paths": [
         {
-          "from": "Valley edge",
-          "to": "Second valley",
+          "from": "First valley",
+          "to": "Hill pass",
           "kind": "track"
         },
         {
-          "from": "Branch main line",
-          "to": "Rural stations",
+          "from": "Hill pass",
+          "to": "Next valley",
           "kind": "track"
         },
         {
-          "from": "Rural stations",
-          "to": "Station yards and depots",
+          "from": "Main single-track railway",
+          "to": "Stations, passing loops, sidings, yards, and depots",
           "kind": "track"
+        },
+        {
+          "from": "Railway",
+          "to": "River crossings",
+          "kind": "bridge"
         }
       ],
-      "terrain": "Rolling foothills and mountainous terrain form one or two rural valleys; rivers follow, cross beneath, or run alongside the railway, with simple rail bridges for crossings.",
+      "terrain": "Grassy New Zealand branch-line countryside with rolling green hills, mountainous outer boundaries, low hill cuttings, river-defined valley floors, and rivers alongside and beneath the railway.",
       "props": [
         {
-          "name": "simple rail bridges",
-          "count": -1,
-          "where": "Where the branch line crosses rivers"
+          "name": "Main single-track steam railway",
+          "count": 1,
+          "where": "Through both valleys, following riverbanks and passing through low hill cuttings."
         },
         {
-          "name": "platforms",
+          "name": "Simple rail bridges",
           "count": -1,
-          "where": "At rural stations"
+          "where": "Where the railway crosses rivers."
         },
         {
-          "name": "modest timber station buildings",
+          "name": "Passing loops and open sidings",
           "count": -1,
-          "where": "At rural stations"
+          "where": "Along the main line and distributed across the map."
         },
         {
-          "name": "compact fan sidings",
+          "name": "Rural stations with platforms and station shelters",
           "count": -1,
-          "where": "In small yards beside selected stations"
+          "where": "Along the route."
         },
         {
-          "name": "locomotive servicing and depot sheds",
+          "name": "Rail yards and depots",
           "count": -1,
-          "where": "In depots beside selected stations"
+          "where": "At selected stations."
         },
         {
-          "name": "steam engines",
+          "name": "Parallel assembly tracks, turnout fans, freight sidings, and locomotive servicing space",
           "count": -1,
-          "where": "Visible rolling-stock focus along the railway and near yards"
+          "where": "Within the small rail yards and depots."
         },
         {
-          "name": "passenger and freight cars",
+          "name": "Steam engines and passenger and freight rolling stock",
           "count": -1,
-          "where": "Staged selectively near yards, with much of the line left open"
+          "where": "Placeable anywhere on broad open track sections and sidings."
         }
       ],
-      "boundary": "Natural outer boundary formed by mountain slopes, ridges, and river valleys rather than hard walls.",
+      "boundary": "Mountains at the outer boundary enclose the valleys; the map is otherwise a contiguous outdoor landscape.",
       "scale_band": "small",
-      "theme": "Period New Zealand rural steam branch line: practical timber stations, compact depots, green valleys, rugged hills, and river crossings."
+      "theme": "Period New Zealand rural steam branch line; restrained historic stations, practical yards, rolling green hills, mountain river scenery, and changing weather."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "Connected rail alignment, bridge approaches, station loops, and yard switches must remain navigable for free driving.",
+      "why": "The rail network, turnouts, yards, and bridge approaches must remain continuously connected and driveable.",
       "set_piece": false
     },
     "route": [
+      "P0",
       "tiered",
       "CHECK"
     ],
@@ -150,7 +157,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

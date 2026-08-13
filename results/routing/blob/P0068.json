@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a small stylized tabletop strategy board, about 5 hexes across, viewed from an elevated top-down/isometric camera. Arrange colorful terrain hexes in a compact hexagonal grid, with distinct resource terrain types and 3–4 visibly graded production tiers expressed through increasing hex height, brightness, glow, or particle density; high and rare tier hexes are sparse. Place buildable junctions at hex corners and routes along shared edges for simple wooden-style settlement, city, and road pieces. Keep the board clean and readable as a single-player-visible prototype, with a neutral tabletop surround framing the terrain.",
-  "blob": "### Genre\nThe dominant genre is Strategy, established by the real-time resource economy, settlement construction, and board-based territorial play. The mechanics classify it; the layout remains a readable tabletop board.\n\n### Shape and preset\nUse `board-grid`, matching the Board & Card Games preset. This is a compact hexagonal tabletop rather than a square checkerboard: the board itself is the complete playable surface. The preset remains recognisable, with its tile-based play field retained; no additional preset options are implied.\n\n### Config requirements\nUse `tile-grid` as visible geometry: a tightly packed hex grid with clearly bounded, colorful terrain tiles. No invisible layout options are required. Tier readability is rendered directly into the hex geometry through 3–4 stepped height and emissive/particle grades, rather than through labels or UI.\n\n### Layout components\nCenter a small, approximately 5-hex-across compact hexagonal board on a neutral tabletop surround. Fill the board with interlocking terrain hexes in distinct resource-terrain colors; distribute low, medium, high, and rare production tiers, making high and rare tiles visibly sparse. Each tier increases through a combination of raised hex height, stronger brightness or glow, and denser subtle particles, while preserving clean tile boundaries.\n\nAt every shared terrain corner, provide a small clear buildable junction sized for a simple wooden settlement or city piece. Trace each shared hex edge as a narrow, legible route for wooden road pieces, producing a connected lattice without cluttering the terrain faces. Keep all pieces low-profile and color-neutral wood so terrain types and tier differences remain the visual priority. The boundary is the outer edge of the compact hex cluster, surrounded on all sides by a broad, flat neutral tabletop with no extra scenery. Compose the board symmetrically and centrally, with the entire outer hex perimeter visible in frame and the raised rare tiles readable at a glance.\n\n### Render order\nUse `isometric`: render the elevated isometric tabletop view first and derive the top-down plan from it. The board is a simple fixed set, so visual readability of height-based production tiers is authoritative rather than traversal topology.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the stated approximately 5-hex-across prototype board. Theme is a clean stylized tabletop strategy game: colorful terrain hexes, restrained glow, and simple wooden game pieces. Use `SET`, because this is real tabletop geometry viewed from above rather than a space players traverse; skip traversal and jump-gap checks.",
+  "blob": "### Genre\nThe dominant genre is `Strategy`: the original message is a real-time settlement and resource game on a shared board. There is no secondary genre.\n\n### Shape and preset\nUse `board-grid`, adapted from the Strategy Board & Card Games preset as a compact hexagonal tabletop rather than a square board. The preset remains recognizable because the entire playable system is a fixed tabletop board viewed from above; its grid option is adapted to hex cells. This is a display-scale play surface, not an avatar-walkable world.\n\n### Config requirements\nUse `tile-grid` as a clearly bounded, regular hex-cell playing board: colorful resource-terrain hexes form the readable grid. Render production tiers directly into the terrain pieces with three to four escalating visual states: progressively taller hex tiles plus stronger brightness, glow, or particle density, with high and rare tiles sparse. Do not add unrequested scenery, buildings, water, NPCs, or settlement districts.\n\n### Layout requirements\nNo additional canonical layout option is required. The board generator must index every hex corner as a settlement/city build slot and every shared hex edge as a road slot; these are geometric placement anchors for the later build system, not extra rendered gameplay effects. Keep the initial prototype single-player-visible and leave all slots unoccupied except for optional neutral example wooden pieces used to demonstrate scale.\n\n### Layout components\nThe sole zone is a small central hex board, about 5 hexes across, laid out as a compact hexagonal cluster on a neutral tabletop surround. Each cell is a distinct colorful terrain resource tile with one of 3–4 visibly graded production tiers. Shared edges form a connected road lattice, while corner junctions provide settlement and city positions. Use simple wooden-style road segments, small settlement houses, and larger city pieces as the visual vocabulary; keep them sparse or presented as templates so the junction grid stays legible. The tabletop is the boundary and frame, with no exterior terrain beyond it. Compose the board centrally with a clean margin on all sides and a slightly elevated top-down/isometric view that exposes cell height and every edge connection.\n\n### Render order\nUse `topdown`: the exact hex adjacency, corner junctions, and shared-edge route network must remain valid and readable for construction, then the isometric render can dress that authoritative plan.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the approximately 5-hex-wide prototype board. Theme: bright stylized tabletop strategy, colorful terrain tiles, neutral table surface, and simple wooden game pieces. Apply `tiered` because production tier is communicated by stepped hex heights with no overhang, and `SET` because this is a tabletop board viewed and operated from outside rather than traversed by avatars.",
   "spec": {
     "genre": "Strategy",
     "secondary": [],
@@ -24,59 +24,60 @@
     "options": [
       {
         "id": "tile-grid",
-        "text": "A tightly packed compact hex grid with clearly bounded, colorful terrain tiles forming the complete playable tabletop surface.",
+        "text": "A clearly bounded, regular hex-cell playing board of colorful resource-terrain hexes, with three to four visibly graded production tiers expressed through progressively taller hex tiles and stronger brightness, glow, or particle density; high and rare tiles are sparse.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "A small compact hexagonal board is centered symmetrically on a broad neutral tabletop surround, with the entire outer hex perimeter visible in frame and raised rare tiles readable at a glance.",
+      "composition": "The compact hexagonal board is centered in frame with a clean neutral tabletop margin on all sides, viewed from a slightly elevated top-down/isometric angle that exposes cell heights and every shared-edge connection.",
       "zones": [
         {
-          "name": "Compact hex board",
-          "role": "Complete playable tabletop surface for board-based territorial play, resource terrain, and wooden pieces.",
-          "where": "centre",
-          "size": "approximately 5 hexes across"
-        },
-        {
-          "name": "Neutral tabletop surround",
-          "role": "Broad flat framing surface with no extra scenery.",
-          "where": "surrounding all sides of the board",
-          "size": "broad"
+          "name": "Central hex board",
+          "role": "A single-player-visible tabletop strategy prototype with resource terrain cells, shared-edge road slots, and corner settlement/city build slots.",
+          "where": "Centre of the neutral tabletop surround.",
+          "size": "Small, about 5 hexes across."
         }
       ],
       "paths": [
         {
-          "from": "shared hex edge",
-          "to": "shared hex edge",
+          "from": "Shared hex edge",
+          "to": "Adjacent shared hex edge",
           "kind": "road"
         }
       ],
-      "terrain": "Interlocking resource-terrain hexes in distinct colorful terrain types. Low, medium, high, and rare production tiers use 3–4 stepped height and emissive or particle grades; higher tiers have stronger brightness or glow and denser subtle particles, while high and rare tiles remain sparse.",
+      "terrain": "Colorful distinct resource-terrain hex tiles in a compact hexagonal cluster, with three to four escalating stepped production tiers shown by increasing tile height, brightness, glow, or particle density.",
       "props": [
         {
-          "name": "simple wooden settlement or city piece",
+          "name": "Wooden-style road segments",
           "count": -1,
-          "where": "small clear buildable junctions at every shared terrain corner"
+          "where": "Sparse or template segments along shared hex-edge road slots."
         },
         {
-          "name": "wooden road piece",
+          "name": "Small wooden settlement houses",
           "count": -1,
-          "where": "narrow legible routes traced along shared hex edges"
+          "where": "Sparse or template pieces at hex-corner junction build slots."
+        },
+        {
+          "name": "Larger wooden city pieces",
+          "count": -1,
+          "where": "Sparse or template pieces at hex-corner junction build slots."
         }
       ],
-      "boundary": "The outer edge of the compact hex cluster, surrounded on all sides by a broad flat neutral tabletop.",
+      "boundary": "A neutral tabletop surround frames the board; there is no exterior terrain beyond the tabletop.",
       "scale_band": "small",
-      "theme": "Clean stylized tabletop strategy game with colorful terrain hexes, restrained glow, and simple color-neutral wooden game pieces."
+      "theme": "Bright stylized tabletop strategy, colorful terrain tiles, neutral table surface, simple wooden game pieces."
     },
     "render": {
-      "first": "isometric",
-      "then": "topdown",
-      "authoritative": "isometric",
-      "why": "Visual readability of height-based production tiers is authoritative rather than traversal topology.",
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "exact hex adjacency, corner junctions, and shared-edge route connections must remain valid and readable for construction.",
       "set_piece": true
     },
     "route": [
+      "tiered",
       "SET"
     ],
     "notes": [],
@@ -85,10 +86,12 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
-  "mapper_notes": []
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P0', 'SET'] gives isometric"
+  ]
 }

@@ -14,84 +14,115 @@
     }
   ],
   "scene_prompt": "Create a compact 3D car-crash map centered on one medium-tall, roughly 10-story building that serves as both the vehicle spawn point and crash area, with surrounding open ground for wreckage.",
-  "blob": "### Genre\nSimulation is dominant: the requested experience is a physics-driven vehicle wrecking set, not a race or objective game. Match the Physics Sim preset, which already fits a compact contraption-focused crash space.\n\n### Shape and preset\nUse `world-shared`, interpreted here as one small continuous crash-test yard centered on the tower. The matched preset is Physics Sim; its shared-world form is retained, while its generic hazards are represented specifically by the destructible crash building.\n\n### Config requirements\nUse `physics-rig` as visible geometry: the roughly 10-story building is a deliberately breakable structural assembly that can shed façade, floors, and crash debris under vehicle impact. Use `path-circulation` as visible geometry: a clear vehicle approach and exit apron connects the spawn building to the surrounding crash ground. Do not add scoring, pickups, resource areas, roads beyond the needed crash approach, or unrequested interior gameplay spaces.\n\n### Layout components\nMake one compact rectangular crash yard. Place a single medium-tall, roughly 10-story building centrally, slightly toward the rear of the site; it is the sole vehicle spawn structure and primary collision target. Give it an open, vehicle-scale ground-level exit facing the foreground and a simple internal vehicle launch path descending or driving outward from the spawn area. Keep the building’s exterior visibly modular, with breakable façade panels, supports, and floor-edge elements designed to read as crashable rather than as a dense city building. In front and to both sides, lay out a broad, flat open ground apron for impacts, slides, rollovers, and wreckage settling. Use hard paved concrete or asphalt throughout, with sparse perimeter barriers only at the outer map edge; the play space is otherwise open. Frame the building as the dominant vertical focal point, with the empty crash apron clearly legible in plan and isometric views.\n\n### Render order\nUse `isometric`: the compact crash-test composition and visible destructible tower are the authoritative visual decisions, while no exact connected race route or solvable topology is required.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the author’s request for one roughly 10-story building rather than a city block. Theme: realistic industrial vehicle-crash test yard, exposed concrete, asphalt, modular destructible architecture. Use `P0`; the tower is a single visible vertical structure but does not force stacked traversable surfaces, interior/exterior traversal, or construction-valid route geometry.",
+  "blob": "### Genre\nSimulation is the dominant genre: this is a physics-driven vehicle-crash sandbox with wrecking the car as the entire activity, not a scored race or combat game.\n\n### Shape and preset\nUse `arena-stacked`, taken from outside Simulation’s usual shape set, for the ten-story building’s vertically stacked floors and open crash voids. Preset: none; the Physics Sim preset’s open-world circulation and environmental-event assumptions do not describe this compact single-building crash set.\n\n### Config requirements\nUse `physics-rig` for the building’s breakable floor slabs, façade panels, structural frames, and crash props, visibly arranged for vehicular impacts. Use `building-interior` for the vehicle-accessible interior levels and the exit from the building onto the exterior wreckage ground.\n\n### Layout requirements\nNo additional menu-based placed markers are required. Vehicle spawning is tied to the building’s designated upper-level launch area, but no score volumes, pickups, checkpoints, or task stations are needed.\n\n### Layout components\nBuild one compact medium-tall building of roughly 10 stories as the sole central crash structure. The upper floors contain a clear vehicle spawn/launch bay, while the lower levels form progressively open crash-through floors with wide vehicle-sized openings, breakable partitions, exposed structural columns, and partial façade sections. A broad, flat open ground apron surrounds the building on all sides as the final impact and wreckage field. Keep adjacent scenery minimal: sparse barriers or low perimeter debris boundaries only, with no city block or secondary buildings. The building interior connects directly to the exterior through broken ground-floor openings and collapsed-looking access bays. Compose the frame around the full building height, with enough surrounding ground visible to read the complete crash fall and debris landing area.\n\n### Render order\nUse `isometric` first and treat it as authoritative, because the crash set’s visual destruction staging matters more than a topology that must be valid for route progression.\n\n### Scale, theme, and pipeline cost\nScale band: small, driven by one roughly 10-story building and its immediate open crash apron. Theme: realistic industrial demolition and vehicle-testing facility, with concrete, steel, shattered façade panels, and exposed structural framing. Pipeline modifiers: `P2` because the ten stacked floors overhang one another and occlude lower crash spaces in a single top-down view; `P3` because play crosses between the building interior and the exterior wreckage ground.",
   "spec": {
     "genre": "Simulation",
     "secondary": [],
-    "shape": "world-shared",
-    "preset": "Physics Sim",
+    "shape": "arena-stacked",
+    "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "physics-rig",
-        "text": "The roughly 10-story building is a deliberately breakable structural assembly that can shed façade, floors, and crash debris under vehicle impact.",
+        "text": "Breakable floor slabs, façade panels, structural frames, and crash props visibly arranged for vehicular impacts.",
         "visible": true,
-        "count": 1
+        "count": -1
       },
       {
-        "id": "path-circulation",
-        "text": "A clear vehicle approach and exit apron connects the spawn building to the surrounding crash ground.",
+        "id": "building-interior",
+        "text": "Vehicle-accessible interior levels and the exit from the building onto the exterior wreckage ground.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "A compact rectangular crash yard frames a single medium-tall tower as the dominant vertical focal point, centred slightly toward the rear. A broad empty crash apron fills the foreground and extends to both sides, remaining clearly legible in plan and isometric views.",
+      "composition": "Frame the full height of the central ten-story building, with enough open ground surrounding it on all sides to show the complete crash fall and debris landing area.",
       "zones": [
         {
-          "name": "Crash building",
-          "role": "The sole vehicle spawn structure and primary collision target, with a ground-level vehicle exit and internal launch path driving outward.",
-          "where": "Centre, slightly toward the rear of the site",
-          "size": "Medium-tall, roughly 10-story building"
+          "name": "Upper-level launch bay",
+          "role": "Vehicle spawn and launch area.",
+          "where": "upper floors of the central building",
+          "size": ""
         },
         {
-          "name": "Crash apron",
-          "role": "Open impact, slide, rollover, and wreckage-settling ground.",
-          "where": "In front of and to both sides of the crash building",
-          "size": "Broad"
+          "name": "Crash-through floors",
+          "role": "Progressively open interior crash spaces with vehicle-sized openings, breakable partitions, exposed columns, and partial façades.",
+          "where": "lower levels of the central building",
+          "size": ""
+        },
+        {
+          "name": "Exterior wreckage ground",
+          "role": "Final impact and wreckage field.",
+          "where": "surrounding the building on all sides",
+          "size": "broad, flat apron"
         }
       ],
       "paths": [
         {
-          "from": "Crash building spawn area",
-          "to": "Crash apron",
-          "kind": "ramp"
-        }
-      ],
-      "terrain": "Broad flat hard paved concrete or asphalt crash ground throughout.",
-      "props": [
-        {
-          "name": "Breakable façade panels, supports, and floor-edge elements",
-          "count": -1,
-          "where": "Crash building exterior"
+          "from": "Upper-level launch bay",
+          "to": "Crash-through floors",
+          "kind": "open ground"
         },
         {
-          "name": "Sparse perimeter barriers",
-          "count": -1,
-          "where": "Outer map edge"
+          "from": "Crash-through floors",
+          "to": "Exterior wreckage ground",
+          "kind": "open ground"
         }
       ],
-      "boundary": "Sparse perimeter barriers at the outer map edge; otherwise open.",
+      "terrain": "Broad, flat open ground apron surrounding the building, with sparse barriers or low perimeter debris.",
+      "props": [
+        {
+          "name": "Breakable floor slabs",
+          "count": -1,
+          "where": "throughout the building"
+        },
+        {
+          "name": "Shattered façade panels",
+          "count": -1,
+          "where": "building exterior and partial façade sections"
+        },
+        {
+          "name": "Exposed structural framing and columns",
+          "count": -1,
+          "where": "lower crash-through floors"
+        },
+        {
+          "name": "Crash props",
+          "count": -1,
+          "where": "arranged for vehicular impacts"
+        },
+        {
+          "name": "Sparse barriers or low perimeter debris",
+          "count": -1,
+          "where": "adjacent scenery around the crash apron"
+        }
+      ],
+      "boundary": "Sparse barriers or low perimeter debris boundaries only; no city block or secondary buildings.",
       "scale_band": "small",
-      "theme": "Realistic industrial vehicle-crash test yard, exposed concrete, asphalt, modular destructible architecture."
+      "theme": "Realistic industrial demolition and vehicle-testing facility with concrete, steel, shattered façade panels, and exposed structural framing."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "The compact crash-test composition and visible destructible tower are authoritative visual decisions, while no exact connected race route or solvable topology is required.",
+      "why": "visual destruction staging matters more than topology that must be valid for route progression.",
       "set_piece": false
     },
     "route": [
-      "P0"
+      "P2",
+      "P3"
     ],
-    "notes": [],
+    "notes": [
+      "`arena-stacked` is taken from outside Simulation’s usual shape set.",
+      "No additional menu-based placed markers are required; vehicle spawning is tied to the designated upper-level launch area, but no canonical spawn option was named."
+    ],
     "scene_prompt": "Create a compact 3D car-crash map centered on one medium-tall, roughly 10-story building that serves as both the vehicle spawn point and crash area, with surrounding open ground for wreckage."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

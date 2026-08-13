@@ -14,101 +14,109 @@
     }
   ],
   "scene_prompt": "Create a 3D survival island map with a separate lobby spawn area connected by a walkable path to a game-options area containing five distinct selection points for 1-, 2-, 3-, 4-, and 5-player sessions. The playable island is small and tropical, with sandy beaches around its edge, palm trees and rocks scattered across the shore and inland, and a simple forest interior.",
-  "blob": "### Genre\nThe dominant genre is Survival: hunger and weather define cooperative survival, while the lobby’s player-count selection is only access geometry, not a Party mode. No secondary genre applies.\n\n### Shape and preset\nUse `arena-contained` as a compact, bounded survival island rather than a disaster arena. The closest preset is none: Resource Survival assumes a multi-map biome world and build/resource systems that this prompt does not describe; the single small island overrides it.\n\n### Config requirements\nUse `water-body` as visible geometry: shallow tropical ocean wraps the sandy shoreline. No threat, hostile-origin, resource, shelter, or build-ground options apply, since hunger and weather are mechanics here and must not add animals, PvP, timed hazards, or invented survival infrastructure. The five session selectors are visible physical selection points with invisible interaction volumes placed afterward; these volumes must not appear in the image.\n\n### Layout components\nBuild one small tropical island, with a broad beach ring around a compact forest interior. Put the separate lobby spawn terrace near one beach edge, slightly set apart from the main island activity area. A simple walkable sandy path leads from this spawn terrace to a game-options clearing. In that clearing, arrange exactly five distinct, clearly separated selection pedestals or pads in a readable row or shallow arc, labelled by their physical positions for 1-player, 2-player, 3-player, 4-player, and 5-player sessions. The remainder of the island is a simple explorable survival ground: palms and rocks scatter along the shore and continue more sparsely inland among the forest trees. Keep terrain mostly flat and grounded, with sand transitioning into grass and dense simple forest. The ocean is the natural open boundary; use the beach and waterline to make the island silhouette legible. Frame the whole island in a clean three-quarter view, with the lobby, path, and five-option clearing immediately readable against the forest.\n\n### Render order\nUse `isometric`: no complex route, maze, or circuit must be valid by construction, so the composed tropical island view is authoritative and the top-down plan follows it.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by one compact island plus a lobby and exactly five selection points. Theme: bright, simple tropical survival island with sandy beaches, palms, rocks, and a forested center. Use `CHECK` because the surrounding ocean is a real water feature; otherwise the single exterior surface adds no further pipeline cost.",
+  "blob": "### Genre\nThe dominant genre is Survival: players endure hunger and weather cooperatively, with no hostile animals, PvP, or timed disaster condition.\n\n### Shape and preset\nUse `space-bounded`, the Survival Contained Arena shape: one small, clearly edged tropical island with its lobby and session-selection forecourt attached as accessible parts of the same surface. The matched preset is none; Resource Survival would imply resource gathering and base ground that were not requested, while Disaster Survival would wrongly introduce a timed damaging event.\n\n### Config requirements\nUse `water-body` for the surrounding tropical sea defining the beach edge. Do not add `hazard-kill`, `spawner-npc`, `cover-los`, `collectible-nodes`, or `buildzone-plot`; the prompt explicitly excludes hostile threats and does not request combat, gathering nodes, or construction.\n\n### Layout requirements\nNo canonical placed gameplay option is required. Place one lobby arrival marker in the lobby spawn area and five distinct session-selection trigger points in the options area, one each for 1-, 2-, 3-, 4-, and 5-player sessions; arrange them as a readable row or shallow arc facing the incoming path.\n\n### Layout components\nBuild a small tropical island as the main playable zone, with a simple forest interior occupying its centre and sandy beaches wrapping the full shoreline. Scatter palm trees and rocks across both the beaches and inland edge of the forest, leaving clear walking ground through the middle. Put the separate lobby spawn area at one side of the island, visually calmer and slightly set apart from the wilderness, then connect it by one broad walkable path to a game-options forecourt near the island approach. The forecourt contains exactly five clearly separated selection pedestals or pads labelled by their distinct session sizes. The sea forms the open boundary around the island; frame the island, lobby, path, and five-point forecourt together in a compact isometric composition.\n\n### Render order\nUse `isometric` first and treat it as authoritative, because this is a compact, visually led island layout with simple, non-critical topology.\n\n### Scale, theme, and pipeline cost\nScale band: small, driven by the single compact island, one lobby, and five selection points. Theme: bright simple tropical survival island, sandy shore, palms, rocks, and a modest green forest. Use `CHECK` because the surrounding water is a real map feature; no other modifier is forced.",
   "spec": {
     "genre": "Survival",
     "secondary": [],
-    "shape": "arena-contained",
+    "shape": "space-bounded",
     "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "water-body",
-        "text": "Shallow tropical ocean wraps the sandy shoreline around the compact island.",
+        "text": "The surrounding tropical sea defining the beach edge.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "Clean three-quarter view framing the whole compact island: the lobby spawn terrace sits near one beach edge, with a sandy path leading inward to the immediately readable five-option clearing against the forested centre; beach ring and ocean outline the island.",
+      "composition": "Compact isometric composition framing the island, lobby, broad connecting path, and five-point options forecourt together; the lobby sits to one side, with the forecourt near the island approach.",
       "zones": [
         {
           "name": "Tropical island",
-          "role": "Simple explorable cooperative survival ground.",
-          "where": "Whole map",
+          "role": "Main playable survival zone with clear walking ground through its middle.",
+          "where": "Centre of the composition",
           "size": "small"
         },
         {
-          "name": "Beach ring",
-          "role": "Sandy shoreline around the forest interior.",
-          "where": "Around the island edge",
-          "size": "broad"
-        },
-        {
           "name": "Forest interior",
-          "role": "Dense simple forest ground inland from the sand.",
+          "role": "Simple green forest occupying the island centre.",
           "where": "Centre of the island",
-          "size": "compact"
-        },
-        {
-          "name": "Lobby spawn terrace",
-          "role": "Separate lobby arrival area.",
-          "where": "Near one beach edge, slightly set apart from the main island activity area",
           "size": ""
         },
         {
-          "name": "Game-options clearing",
-          "role": "Session-selection area containing the five physical selection points.",
-          "where": "Connected to the lobby spawn terrace by the sandy path",
+          "name": "Sandy beaches",
+          "role": "Shoreline wrapping the island.",
+          "where": "Full island edge",
+          "size": ""
+        },
+        {
+          "name": "Lobby spawn area",
+          "role": "Calmer separate arrival area, slightly set apart from the wilderness.",
+          "where": "One side of the island",
+          "size": ""
+        },
+        {
+          "name": "Game-options forecourt",
+          "role": "Session-selection area with distinct choices for 1-, 2-, 3-, 4-, and 5-player sessions.",
+          "where": "Near the island approach",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Lobby spawn terrace",
-          "to": "Game-options clearing",
-          "kind": "path"
+          "from": "Lobby spawn area",
+          "to": "Game-options forecourt",
+          "kind": "open ground"
         }
       ],
-      "terrain": "Mostly flat, grounded tropical island terrain: sand transitions into grass and dense simple forest, surrounded by shallow tropical ocean.",
+      "terrain": "Bright tropical island with a simple forest interior, sandy beaches around the full shoreline, and surrounding tropical sea.",
       "props": [
-        {
-          "name": "Selection pedestals or pads",
-          "count": 5,
-          "where": "In a readable row or shallow arc in the game-options clearing, physically positioned for 1-player, 2-player, 3-player, 4-player, and 5-player sessions"
-        },
         {
           "name": "Palm trees",
           "count": -1,
-          "where": "Scattered along the shore and more sparsely inland among the forest trees"
+          "where": "Scattered across the beaches and inland forest edge"
         },
         {
           "name": "Rocks",
           "count": -1,
-          "where": "Scattered along the shore and more sparsely inland among the forest trees"
+          "where": "Scattered across the beaches and inland forest edge"
+        },
+        {
+          "name": "Lobby arrival marker",
+          "count": 1,
+          "where": "Lobby spawn area"
+        },
+        {
+          "name": "Session-selection pedestals or pads",
+          "count": 5,
+          "where": "Game-options forecourt, arranged as a readable row or shallow arc facing the incoming path"
         }
       ],
-      "boundary": "The ocean is the natural open boundary; the beach and waterline make the island silhouette legible.",
+      "boundary": "Open tropical sea surrounding the island and defining the beach edge.",
       "scale_band": "small",
-      "theme": "bright, simple tropical survival island with sandy beaches, palms, rocks, and a forested center"
+      "theme": "Bright simple tropical survival island, sandy shore, palms, rocks, and a modest green forest"
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "no complex route, maze, or circuit must be valid by construction.",
+      "why": "a compact, visually led island layout with simple, non-critical topology",
       "set_piece": false
     },
     "route": [
       "CHECK"
     ],
-    "notes": [],
+    "notes": [
+      "The lobby arrival marker and five session-selection trigger points are retained as layout components, but no canonical placed gameplay option was specified."
+    ],
     "scene_prompt": "Create a 3D survival island map with a separate lobby spawn area connected by a walkable path to a game-options area containing five distinct selection points for 1-, 2-, 3-, 4-, and 5-player sessions. The playable island is small and tropical, with sandy beaches around its edge, palm trees and rocks scattered across the shore and inland, and a simple forest interior."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

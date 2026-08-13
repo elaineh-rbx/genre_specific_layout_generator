@@ -19,103 +19,111 @@
     }
   ],
   "scene_prompt": "Create a 3D low-poly retro arena for a platform brawler, framed for PC and console play. A tight duel/practice stage centers on a 60-stud-wide main platform, with two side platforms 24 studs apart and 10 studs above the main stage; a smaller center platform sits directly between them another 8 studs higher. Leave open space around and below the platforms to the stage borders, with a clear sky-facing spawn area above the arena. Use an upscaled N64/PS1-to-GameCube-era visual style, and include a stationary practice dummy on the main platform.",
-  "blob": "### Genre\nThe dominant genre is Action: a platform fighter. The original’s Smash-style combat and lives identify the genre; only the requested stage geometry is carried into the layout.\n\n### Shape and preset\nUse `arena-tiered`, matching the Platform Fighter preset. Here it is a compact three-tier duel arena rather than a broad terraced battlefield. The preset’s cover and edge-hazard options are not added because the scene requests only the clean platform arrangement.\n\n### Config requirements\nNo additional configuration options apply. The stationary practice dummy is a visible stage prop, not an ambient population system or an invisible emitter. The open air below the platforms is visible geometry only; do not render gameplay triggers or spawn logic.\n\n### Layout components\nBuild one small, symmetrical practice arena. A 60-stud-wide rectangular main platform occupies the center and is the largest safe fighting surface. Two matching side platforms sit above it, one left and one right, with 24 studs between them and each 10 studs above the main platform. A smaller center platform is directly centered between the side platforms, another 8 studs higher. Place one stationary practice dummy on the central area of the main platform. Leave generous open sky around the structure and clear empty volume beneath every platform down to the unseen stage boundary; no walls, scenery, cover props, or ground should crowd the jumps. The spawn approach is an unobstructed sky-facing area above the highest platform. Frame the whole platform stack clearly from an elevated three-quarter view, with the main platform dominant and every jump relationship readable.\n\n### Render order\nUse `isometric`: the retro low-poly presentation and clearly visible stacked silhouette lead, while the plan can be projected afterward. The stated platform heights and compact spacing are already explicit enough for this simple arena.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the tight duel/practice footprint and 60-stud main platform. Theme: clean upscaled N64/PS1-to-GameCube low-poly arena, simple bold forms, bright open sky. Use `tiered` because the three platform elevations must be captured without overhanging floors, and `P0` otherwise; all geometry remains one open exterior surface.",
+  "blob": "### 1. Genre\nThe dominant genre is Action: a platform-fighter brawl defined by knockback, ring-outs, and combat on elevated platforms.\n\n### 2. Shape and preset\nUse `arena-stacked`, a multi-level combat arena whose three raised platforms overhang the main stage. This comes from Action’s typical shape set. The nearest preset is Platform Fighter, but use `none` because the prompt’s explicitly stacked, compact three-platform geometry replaces its terraced interpretation and omits unrequested cover.\n\n### 3. Config requirements\nUse `hazard-kill` as open ring-out space: the platform edges fall away into a clear void below and around the stage. Use `spawn-protected` as a sky-facing arrival zone above the arena, visibly clear of combat geometry. Use `npc-population` for the single stationary practice dummy, rendered on the main platform.\n\n### 4. Layout requirements\nPlace `spawn-protected` at one protected aerial spawn point centered above the main platform, allowing a clean vertical drop without intersecting any upper platform. Place `npc-population` as exactly one practice dummy at the center of the 60-stud main platform, below the upper center platform. No pickups, enemy emitters, checkpoints, or scoring volumes are required.\n\n### 5. Layout components\nBuild one tight duel arena. The main zone is a flat, roughly 60-stud-wide rectangular main platform at frame center. Two equal side platforms sit symmetrically 10 studs above it, with their centers 24 studs apart. A smaller center platform sits directly between the side platforms, another 8 studs higher. Keep generous open air on every side and beneath the stage so falls clearly read as ring-outs; the sky above remains unobstructed for spawning. There is no terrain, road, water, or enclosing architecture. Compose the arena frontally and symmetrically, with all four platforms readable at once and the practice dummy visible on the main floor.\n\n### 6. Render order\nRender `isometric` first and treat it as authoritative, because the requested low-poly retro presentation and immediately readable stacked silhouette lead the scene; the top-down is projected from that view.\n\n### 7. Scale, theme, and pipeline cost\nScale band: small, driven by a single 60-stud practice-stage platform and three auxiliary platforms. Theme: upscaled low-poly N64/PS1-to-GameCube-era Roblox arena, clean geometric forms and open sky. Pipeline modifier: `P2`, because the side and center platforms occupy surfaces directly above the main platform and occlude one another from a single top-down capture.",
   "spec": {
     "genre": "Action",
     "secondary": [],
-    "shape": "arena-tiered",
-    "preset": "Platform Fighter",
+    "shape": "arena-stacked",
+    "preset": "none",
     "axes": {},
-    "options": [],
+    "options": [
+      {
+        "id": "hazard-kill",
+        "text": "Open ring-out space: the platform edges fall away into a clear void below and around the stage.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "spawn-protected",
+        "text": "A sky-facing arrival zone above the arena, visibly clear of combat geometry.",
+        "visible": true,
+        "count": 1
+      },
+      {
+        "id": "npc-population",
+        "text": "The single stationary practice dummy, rendered on the main platform.",
+        "visible": true,
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "spawn-protected",
+        "text": "One protected aerial spawn point centered above the main platform, allowing a clean vertical drop without intersecting any upper platform.",
+        "count": 1,
+        "where": "Centered above the main platform, clear of all upper platforms for a vertical drop."
+      },
+      {
+        "id": "npc-population",
+        "text": "Exactly one practice dummy at the center of the 60-stud main platform, below the upper center platform.",
+        "count": 1,
+        "where": "At the center of the 60-stud main platform, below the upper center platform."
+      }
+    ],
     "layout": {
-      "composition": "Elevated three-quarter view framing the whole compact symmetrical platform stack, with the dominant main platform at centre, matching side platforms above left and right, and the small highest platform centred above them; generous bright open sky surrounds the structure and clear empty volume sits beneath it.",
+      "composition": "Frontal and symmetrical composition with all four platforms readable at once: the rectangular main platform at frame center, equal side platforms above it to the left and right, and the smaller center platform highest between them. The practice dummy is visible on the main floor, with generous open sky around, above, and beneath the arena.",
       "zones": [
         {
           "name": "Main platform",
-          "role": "Largest safe fighting surface and central duel/practice area.",
-          "where": "centre",
-          "size": "60 studs wide"
+          "role": "Flat central duel and practice stage holding the practice dummy.",
+          "where": "Frame center.",
+          "size": "Roughly 60 studs wide."
         },
         {
-          "name": "Left side platform",
-          "role": "Elevated side fighting platform.",
-          "where": "above the main platform on the left",
-          "size": "matching side platform, 10 studs above the main platform"
+          "name": "Side platforms",
+          "role": "Two equal raised combat platforms.",
+          "where": "Symmetrically above the main platform, left and right.",
+          "size": "Their centers are 24 studs apart; 10 studs above the main platform."
         },
         {
-          "name": "Right side platform",
-          "role": "Elevated side fighting platform.",
-          "where": "above the main platform on the right",
-          "size": "matching side platform, 10 studs above the main platform"
+          "name": "Upper center platform",
+          "role": "Smaller elevated combat platform.",
+          "where": "Directly between the side platforms.",
+          "size": "8 studs higher than the side platforms."
         },
         {
-          "name": "Upper centre platform",
-          "role": "Highest central platform for jump relationships.",
-          "where": "directly centred between the side platforms",
-          "size": "smaller platform, another 8 studs higher"
-        },
-        {
-          "name": "Spawn approach",
-          "role": "Unobstructed sky-facing approach area.",
-          "where": "above the highest platform",
+          "name": "Aerial spawn area",
+          "role": "Protected arrival point for a clean vertical drop into the arena.",
+          "where": "Centered above the main platform, in unobstructed sky.",
           "size": ""
+        },
+        {
+          "name": "Ring-out void",
+          "role": "Open fall-away space defining ring-outs.",
+          "where": "Around every side of and beneath the stage.",
+          "size": "Generous open air."
         }
       ],
-      "paths": [
-        {
-          "from": "Main platform",
-          "to": "Left side platform",
-          "kind": "open ground"
-        },
-        {
-          "from": "Main platform",
-          "to": "Right side platform",
-          "kind": "open ground"
-        },
-        {
-          "from": "Left side platform",
-          "to": "Upper centre platform",
-          "kind": "open ground"
-        },
-        {
-          "from": "Right side platform",
-          "to": "Upper centre platform",
-          "kind": "open ground"
-        }
-      ],
-      "terrain": "Bright open sky, with open air around and below every platform; no ground, walls, scenery, or cover props.",
+      "paths": [],
+      "terrain": "No terrain, road, or water; open sky and clear void around and below the platforms.",
       "props": [
         {
-          "name": "Stationary practice dummy",
+          "name": "practice dummy",
           "count": 1,
-          "where": "central area of the main platform"
+          "where": "At the center of the main platform, below the upper center platform."
         }
       ],
-      "boundary": "Clear empty volume extends beneath the platforms to an unseen stage boundary.",
+      "boundary": "Open ring-out space falls away into a clear void below and around the stage; no enclosing architecture.",
       "scale_band": "small",
-      "theme": "Clean upscaled N64/PS1-to-GameCube low-poly arena, simple bold forms, bright open sky."
+      "theme": "Upscaled low-poly N64/PS1-to-GameCube-era Roblox arena, clean geometric forms and open sky."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "The retro low-poly presentation and clearly visible stacked silhouette lead, while the explicit heights and compact spacing can be projected afterward.",
+      "why": "the low-poly retro presentation and immediately readable stacked silhouette lead the scene.",
       "set_piece": false
     },
     "route": [
-      "P0",
-      "tiered"
+      "P2"
     ],
-    "notes": [
-      "The Platform Fighter preset is named by the blob, but its cover and edge-hazard options are explicitly not added.",
-      "The stationary practice dummy is retained as a visible prop rather than an ambient population system or emitter."
-    ],
+    "notes": [],
     "scene_prompt": "Create a 3D low-poly retro arena for a platform brawler, framed for PC and console play. A tight duel/practice stage centers on a 60-stud-wide main platform, with two side platforms 24 studs apart and 10 studs above the main stage; a smaller center platform sits directly between them another 8 studs higher. Leave open space around and below the platforms to the stage borders, with a clear sky-facing spawn area above the arena. Use an upscaled N64/PS1-to-GameCube-era visual style, and include a stationary practice dummy on the main platform."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

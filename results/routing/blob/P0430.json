@@ -14,115 +14,131 @@
     }
   ],
   "scene_prompt": "Create a compact fishing map centered on one lake with a river leading away from it, with accessible shorelines and fishing spots around both bodies of water for finding mythical fish.",
-  "blob": "### Genre\nSimulation is dominant: catching fish by rod is a repeatable fishing activity, so this is a small `world-shared` fishing role-sim rather than an unstructured environment.\n\n### Shape and preset\nUse `world-shared`, one compact continuous outdoor fishing ground shared by all players. The closest preset is Role Sim, but the prompt overrides its road-focused bundle: retain shore access and fishing stations rather than vehicle routes or a generic job-world layout.\n\n### Config requirements\nUse `path-circulation` as visible geometry: a continuous footpath follows enough of the lake shore and riverbank to reach each fishing location. Use `trigger-task` as both visible geometry and invisible placement: small, clear fishing clearings, piers, or bank platforms visibly mark where rods are used, while their interaction areas are placed afterward and are not rendered. Use `water-body` as visible geometry: one lake and one river are the map’s defining physical features.\n\n### Layout components\nBuild one compact lakeside zone occupying the centre and most of the frame, with accessible banks around its perimeter. A single river exits one side of the lake and leads away through the edge of the map, creating a second, narrower sequence of riverbank fishing locations. Link the lake circuit and riverbank with a simple packed-earth or timber-edged walking path; keep every fishing clearing directly reachable from this route. Place several modest docks, flat shore shelves, and small bank platforms distributed around the lake and along the river, leaving water views open. Use grass, reeds, rocks, and sparse shoreline trees as dressing, with no buildings or extra regions. The outer boundary is natural: thick trees and rising bank vegetation close the landward edge, while the river visibly continues out of the map. Compose the lake as the central readable shape, with the river drawing the eye diagonally toward the frame edge.\n\n### Render order\nUse `isometric`: the compact natural-water composition is more important than procedural topology, and no invalid route would make the fishing activity unplayable.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by exactly one lake and one river intended to stay easy to explore. Theme: tranquil mythical lakeside wilderness, natural shores and lightly magical fishing atmosphere. Use `CHECK` because the lake and river water geometry requires review as a water/play-space feature; it remains a single readable surface with no stacked or self-occluding geometry.",
+  "blob": "### Genre\nThe dominant genre is `Simulation`, specifically a compact Role Sim: the player repeatedly fishes from shore locations. No secondary genre is needed.\n\n### Shape and preset\nUse `world-open`, a single contiguous waterside map freely explored around one lake and its outgoing river. This matches the Role Sim preset; retain its `trigger-task` and `path-circulation` intent, while dropping vehicle roads as unsupported by the prompt.\n\n### Config requirements\nUse `water-body` for one central lake and one river flowing away from it. Use `path-circulation` as continuous accessible shoreline paths, banks, and small fishing clearings connecting the lake perimeter to riverbank spots. Use `trigger-task` for visibly prepared fishing positions such as docks, flat bank pads, and small jetties.\n\n### Layout requirements\nPlace `trigger-task` fishing interaction markers at every prepared fishing spot: distribute them around the accessible lake shore and at intervals along both reachable riverbanks, including each dock or jetty. The prompt gives no fixed count; keep the number sparse enough for the compact map while ensuring both water bodies have several distinct stops.\n\n### Layout components\nThe lake is the central and largest zone, with a walkable natural shore wrapping most of its perimeter. A narrower river exits one side of the lake and leads away through the remainder of the map. Build fishing clearings, short wooden docks, and occasional jetties along the lake edge and riverbanks, each facing open water. Link all clearings with simple dirt paths or packed shoreline trails, avoiding inaccessible banks at the intended fishing locations. Use grassy ground, reeds, rocks, and modest trees to frame the water without obstructing access. The boundary is a natural edge of dense vegetation, rock, and the river continuing out of view. Compose the lake centrally in frame, with the river creating a clear diagonal lead outward.\n\n### Render order\nUse `isometric`; the compact natural layout does not require topology validation before dressing.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the stated single lake and river. Theme: tranquil, lightly fantastical mythical-fishing wilderness. Use `P0`: one grounded, contiguous exterior surface with no forced extra capture path.",
   "spec": {
     "genre": "Simulation",
     "secondary": [],
-    "shape": "world-shared",
+    "shape": "world-open",
     "preset": "Role Sim",
     "axes": {},
     "options": [
       {
+        "id": "water-body",
+        "text": "One central lake and one river flowing away from it.",
+        "visible": true,
+        "count": 2
+      },
+      {
         "id": "path-circulation",
-        "text": "a continuous footpath follows enough of the lake shore and riverbank to reach each fishing location",
+        "text": "Continuous accessible shoreline paths, banks, and small fishing clearings connecting the lake perimeter to riverbank spots.",
         "visible": true,
         "count": -1
       },
       {
         "id": "trigger-task",
-        "text": "small, clear fishing clearings, piers, or bank platforms visibly mark where rods are used, while their interaction areas are placed afterward and are not rendered",
+        "text": "Visibly prepared fishing positions such as docks, flat bank pads, and small jetties.",
         "visible": true,
         "count": -1
-      },
+      }
+    ],
+    "layout_placement": [
       {
-        "id": "water-body",
-        "text": "one lake and one river are the map’s defining physical features",
-        "visible": true,
-        "count": 2
+        "id": "trigger-task",
+        "text": "Fishing interaction markers at every prepared fishing spot.",
+        "count": -1,
+        "where": "Distribute around the accessible lake shore and at intervals along both reachable riverbanks, including each dock or jetty."
       }
     ],
     "layout": {
-      "composition": "The lake is the central readable shape, occupying the centre and most of the frame; the river exits one side and draws the eye diagonally toward the frame edge.",
+      "composition": "The central lake is the largest feature in frame, with its walkable shore wrapping most of the perimeter. The river exits one side of the lake and creates a clear diagonal lead outward through the remainder of the map.",
       "zones": [
         {
-          "name": "Lakeside fishing ground",
-          "role": "Shared outdoor fishing around accessible lake banks and fishing locations.",
-          "where": "Centre and most of the frame, around the lake perimeter.",
-          "size": "Compact"
+          "name": "Central lake",
+          "role": "The main fishing water body, surrounded by accessible shoreline fishing stops.",
+          "where": "Centre",
+          "size": "Largest zone"
         },
         {
-          "name": "Riverbank fishing sequence",
-          "role": "Narrower fishing locations along the riverbank.",
-          "where": "Leading from one side of the lake through the map edge.",
-          "size": "Narrow"
+          "name": "Outgoing river",
+          "role": "A narrower fishing water body leading away from the lake with reachable riverbank spots.",
+          "where": "Exiting one side of the lake and extending diagonally outward",
+          "size": "Narrower than the lake"
+        },
+        {
+          "name": "Fishing clearings",
+          "role": "Prepared shore locations for fishing, with docks, flat bank pads, or small jetties facing open water.",
+          "where": "Along the accessible lake edge and both reachable riverbanks",
+          "size": "Small"
         }
       ],
       "paths": [
         {
-          "from": "Lakeside fishing ground",
-          "to": "Riverbank fishing sequence",
-          "kind": "path"
+          "from": "Central lake shoreline",
+          "to": "Fishing clearings",
+          "kind": "trail"
+        },
+        {
+          "from": "Central lake perimeter",
+          "to": "Riverbank fishing spots",
+          "kind": "trail"
         }
       ],
-      "terrain": "One lake and one river with accessible banks; grass, reeds, rocks, sparse shoreline trees, and thick trees with rising bank vegetation along the landward edge.",
+      "terrain": "Grassy ground with accessible natural shores, reeds, rocks, modest trees, one central lake, and a narrower outgoing river.",
       "props": [
         {
-          "name": "modest docks",
+          "name": "Fishing clearings",
           "count": -1,
-          "where": "Distributed around the lake and along the river"
+          "where": "Along the lake edge and riverbanks"
         },
         {
-          "name": "flat shore shelves",
+          "name": "Short wooden docks",
           "count": -1,
-          "where": "Distributed around the lake and along the river"
+          "where": "At prepared fishing spots along the lake edge and riverbanks"
         },
         {
-          "name": "small bank platforms",
+          "name": "Small jetties",
           "count": -1,
-          "where": "Distributed around the lake and along the river"
+          "where": "At occasional prepared fishing spots along the lake edge and riverbanks"
         },
         {
-          "name": "grass",
+          "name": "Reeds",
           "count": -1,
-          "where": "Shoreline dressing"
+          "where": "Framing the water without obstructing access"
         },
         {
-          "name": "reeds",
+          "name": "Rocks",
           "count": -1,
-          "where": "Shoreline dressing"
+          "where": "Framing the water without obstructing access"
         },
         {
-          "name": "rocks",
+          "name": "Modest trees",
           "count": -1,
-          "where": "Shoreline dressing"
-        },
-        {
-          "name": "sparse shoreline trees",
-          "count": -1,
-          "where": "Along the shore"
+          "where": "Framing the water without obstructing access"
         }
       ],
-      "boundary": "Natural boundary: thick trees and rising bank vegetation close the landward edge, while the river visibly continues out of the map.",
+      "boundary": "A natural edge of dense vegetation and rock, with the river continuing out of view.",
       "scale_band": "small",
-      "theme": "Tranquil mythical lakeside wilderness, natural shores and lightly magical fishing atmosphere."
+      "theme": "Tranquil, lightly fantastical mythical-fishing wilderness"
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "the compact natural-water composition is more important than procedural topology, and no invalid route would make the fishing activity unplayable.",
+      "why": "The compact natural layout does not require topology validation before dressing.",
       "set_piece": false
     },
     "route": [
-      "CHECK"
+      "P0"
     ],
-    "notes": [],
+    "notes": [
+      "Vehicle roads from the Role Sim preset are omitted because the prompt does not support them."
+    ],
     "scene_prompt": "Create a compact fishing map centered on one lake with a river leading away from it, with accessible shorelines and fishing spots around both bodies of water for finding mythical fish."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

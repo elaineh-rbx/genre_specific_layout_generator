@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a 3D journey map made of small harbor scenes, one per chapter, linked by boat travel. Begin at an Israeli harbor with docks and material-gathering areas for building or upgrading a boat, then move through compact Egyptian and Moroccan port stops with coastal waters and patrol boats along each travel route. End at a United States harbor with a clearly visible immigration or visa checkpoint near the arrival docks.",
-  "blob": "### Género\nEl género dominante es Adventure: es un viaje narrativo por etapas con un destino final, no un mundo de supervivencia ni un RPG de progreso. Las misiones sólo establecen el carácter de viaje; no añaden mecánicas al plano.\n\n### Forma y preset\nUse exactamente la forma `world-chaptered`, con escenas portuarias separadas por capítulo. Corresponde al preset Story: se conserva la progresión por umbrales entre capítulos, pero se omiten su salida de revelación y sus caídas unidireccionales porque el viaje se realiza entre muelles por mar.\n\n### Requisitos de configuración\n`gate-chapter` es geometría visible: cada muelle de salida y llegada funciona como umbral marítimo claramente legible entre el puerto actual y la siguiente travesía. `water-body` es geometría visible: franjas de mar costero rodean cada puerto y forman los corredores de navegación. `collectible-nodes` es invisible: sitúe los marcadores de materiales dentro de las áreas de acopio y talleres de los puertos, sin mostrarlos en la imagen. No represente volúmenes de detección ni reglas de patrulla.\n\n### Componentes de layout\nConstruya cuatro escenas pequeñas y separadas: un puerto israelí inicial, una parada egipcia compacta, una parada marroquí compacta y un puerto estadounidense final. El primer puerto tiene muelle de partida, un pequeño astillero/taller y áreas de materiales junto a almacenes bajos. Egipto y Marruecos repiten una escala de parada clara: muelle de atraque, almacén o patio de carga, casetas portuarias y una salida marítima visible hacia el siguiente capítulo. En cada ruta de agua coloque algunos barcos patrulla como utilería distante, fuera de los muelles de atraque. El puerto estadounidense termina en un muelle de llegada conectado por una pasarela corta a un puesto de inmigración o visado claramente visible. Cada capítulo queda bordeado por agua, rompeolas, muros de puerto y fachadas de almacenes; no son costas extensas explorables. Componga cada escena en vista oblicua amplia, con el muelle y la salida marítima legibles de un vistazo.\n\n### Orden de render\nUse `topdown`: el plano de cada puerto y su conexión secuencial de atraque a salida deben ser legibles y transitables antes de vestir la vista isométrica, aunque no requieren geometría procedimental de circuito o laberinto.\n\n### Escala, tema y coste de pipeline\nEscala media, impulsada por cuatro puertos compactos en mapas de capítulo separados. Tema: viaje marítimo mediterráneo, puertos funcionales, almacenes costeros y llegada administrativa. Modificadores: `P4` porque los cuatro capítulos son mapas separados; `CHECK` porque las aguas costeras son un volumen navegable que debe comprobarse visualmente sin autoocluirse.",
+  "blob": "### 1. Genre\nThe dominant genre is Adventure: the original message defines a mission-driven journey through sequential travel legs, with gathering materials and completing each leg as the player’s purpose.\n\n### 2. Shape and preset\nUse `world-chaptered`, taken from the Adventure Story preset. Each country is a genuinely separate, compact harbor chapter rather than one explorable coastline; boat departure and arrival connect the chapters in a fixed journey order. The Story preset’s chapter structure remains recognizable, but do not add unrequested one-way drops or cinematic exit geometry.\n\n### 3. Config requirements\nUse `water-body` for the coastal water surrounding every harbor and forming the visible boat-travel approaches. The water should read as sheltered harbor water near docks, opening toward the outbound route. Do not render invisible patrol-avoidance rules; show only the named patrol boats as scene props.\n\n### 4. Layout requirements\nUse `collectible-nodes` for material caches. Place several clearly readable material pickup locations in each departure harbor’s gathering area—Israel, Egypt, and Morocco—near docks, workshops, storage stacks, or shoreline salvage rather than in open water. No additional placed triggers, respawns, or NPC emitters are required by the prompt.\n\n### 5. Layout components\nBuild four separate small harbor maps in chronological order: an Israeli starting harbor, an Egyptian stop, a Moroccan stop, and a United States arrival harbor. The Israel chapter has a central dock, a small boat-building or upgrade work area, and material-gathering ground nearby. Egypt and Morocco are compact port stops with arrival docks, supply or salvage areas, and clear departure docks. Each harbor has coastal water at its outer edge and one or more patrol boats visible along the seaward travel approach. The United States harbor ends at arrival docks facing a prominent immigration or visa checkpoint on shore. Use short piers, quay walls, moored boats, crates, workshop materials, and modest port buildings; keep each chapter bounded as a harbor scene rather than a full city or coastline. Compose each map with the dock-to-shore route immediately legible and the next boat departure direction oriented toward open water.\n\n### 6. Render order\nUse `isometric`: render each harbor chapter isometrically first and treat that scene as authoritative, since the compact harbor topology is simple and does not require a procedurally authored plan.\n\n### 7. Scale, theme, and pipeline cost\nScale is medium overall, driven by four distinct but small harbor chapters. Theme: grounded maritime journey, compact Mediterranean and Atlantic ports, practical docks and coastal travel. Use `P4` because the country chapters are separate maps, and `CHECK` because boat travel uses real water surfaces that must remain readable without self-occluding the harbor layout.",
   "spec": {
     "genre": "Adventure",
     "secondary": [],
@@ -23,111 +23,123 @@
     "axes": {},
     "options": [
       {
-        "id": "gate-chapter",
-        "text": "Cada muelle de salida y llegada funciona como un umbral marítimo claramente legible entre el puerto actual y la siguiente travesía.",
-        "visible": true,
-        "count": -1
-      },
-      {
         "id": "water-body",
-        "text": "Franjas de mar costero rodean cada puerto y forman los corredores de navegación entre capítulos.",
+        "text": "Coastal water surrounding every harbor, sheltered near the docks and opening toward the outbound boat route.",
         "visible": true,
-        "count": -1
+        "count": 4
       },
       {
         "id": "collectible-nodes",
-        "text": "Marcadores de materiales dentro de las áreas de acopio y talleres de los puertos, sin mostrarlos en la imagen.",
+        "text": "Several clearly readable material pickup locations in each departure harbor's gathering area for boat building or upgrades.",
         "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "collectible-nodes",
+        "text": "Several clearly readable material pickup locations in each departure harbor's gathering area for boat building or upgrades.",
+        "count": -1,
+        "where": "In Israel, Egypt, and Morocco near docks, workshops, storage stacks, or shoreline salvage, rather than in open water."
+      }
+    ],
     "layout": {
-      "composition": "Vista oblicua amplia de cada escena, con el muelle y la salida marítima legibles de un vistazo; los cuatro puertos se presentan como capítulos separados en secuencia de viaje.",
+      "composition": "Four separate compact harbor chapters in chronological order, each composed with a legible dock-to-shore route and its next departure direction facing open water.",
       "zones": [
         {
-          "name": "Puerto israelí inicial",
-          "role": "Inicio del viaje y preparación de la embarcación, con muelle de partida, astillero/taller y áreas de materiales junto a almacenes bajos.",
-          "where": "primer capítulo",
-          "size": "pequeño"
+          "name": "Israeli starting harbor",
+          "role": "Starting chapter with a central dock, boat-building or upgrade work area, and nearby material-gathering ground.",
+          "where": "First chapter",
+          "size": "small"
         },
         {
-          "name": "Parada egipcia",
-          "role": "Escala portuaria compacta con muelle de atraque, almacén o patio de carga, casetas portuarias y salida marítima hacia el siguiente capítulo.",
-          "where": "segundo capítulo",
-          "size": "compacta"
+          "name": "Egyptian port stop",
+          "role": "Compact stop with arrival docks, supply or salvage areas, and clear departure docks.",
+          "where": "Second chapter",
+          "size": "small"
         },
         {
-          "name": "Parada marroquí",
-          "role": "Escala portuaria compacta con muelle de atraque, almacén o patio de carga, casetas portuarias y salida marítima hacia el siguiente capítulo.",
-          "where": "tercer capítulo",
-          "size": "compacta"
+          "name": "Moroccan port stop",
+          "role": "Compact stop with arrival docks, supply or salvage areas, and clear departure docks.",
+          "where": "Third chapter",
+          "size": "small"
         },
         {
-          "name": "Puerto estadounidense final",
-          "role": "Llegada final con muelle de llegada conectado por una pasarela corta a un puesto de inmigración o visado claramente visible.",
-          "where": "cuarto capítulo",
-          "size": "pequeño"
+          "name": "United States arrival harbor",
+          "role": "Final arrival chapter with arrival docks facing a prominent immigration or visa checkpoint on shore.",
+          "where": "Fourth chapter",
+          "size": "small"
         }
       ],
       "paths": [
         {
-          "from": "Puerto israelí inicial",
-          "to": "Parada egipcia",
-          "kind": "track"
+          "from": "Israeli starting harbor",
+          "to": "Egyptian port stop",
+          "kind": "boat travel"
         },
         {
-          "from": "Parada egipcia",
-          "to": "Parada marroquí",
-          "kind": "track"
+          "from": "Egyptian port stop",
+          "to": "Moroccan port stop",
+          "kind": "boat travel"
         },
         {
-          "from": "Parada marroquí",
-          "to": "Puerto estadounidense final",
-          "kind": "track"
-        },
-        {
-          "from": "Muelle de llegada",
-          "to": "Puesto de inmigración o visado",
-          "kind": "bridge"
+          "from": "Moroccan port stop",
+          "to": "United States arrival harbor",
+          "kind": "boat travel"
         }
       ],
-      "terrain": "Agua costera navegable alrededor de cada puerto y en los corredores marítimos; muelles funcionales, rompeolas y suelo portuario junto a almacenes costeros.",
+      "terrain": "Coastal harbor water at the outer edge of each chapter, sheltered around docks and opening into visible seaward travel approaches.",
       "props": [
         {
-          "name": "barcos patrulla distantes",
+          "name": "Patrol boats",
           "count": -1,
-          "where": "en cada ruta de agua, fuera de los muelles de atraque"
+          "where": "Along the seaward travel approach of each harbor."
         },
         {
-          "name": "almacenes bajos",
+          "name": "Short piers",
           "count": -1,
-          "where": "junto a las áreas de materiales del puerto israelí"
+          "where": "At harbor docks."
         },
         {
-          "name": "astillero/taller pequeño",
+          "name": "Quay walls",
+          "count": -1,
+          "where": "Along the harbor shore."
+        },
+        {
+          "name": "Moored boats",
+          "count": -1,
+          "where": "At docks in the harbor chapters."
+        },
+        {
+          "name": "Crates",
+          "count": -1,
+          "where": "Near docks, storage stacks, and supply areas."
+        },
+        {
+          "name": "Workshop materials",
+          "count": -1,
+          "where": "In the Israeli boat-building or upgrade work area."
+        },
+        {
+          "name": "Modest port buildings",
+          "count": -1,
+          "where": "On shore in each compact harbor chapter."
+        },
+        {
+          "name": "Immigration or visa checkpoint",
           "count": 1,
-          "where": "puerto israelí inicial"
-        },
-        {
-          "name": "casetas portuarias",
-          "count": -1,
-          "where": "paradas egipcia y marroquí"
-        },
-        {
-          "name": "puesto de inmigración o visado",
-          "count": 1,
-          "where": "junto al muelle de llegada del puerto estadounidense"
+          "where": "On shore near the United States arrival docks."
         }
       ],
-      "boundary": "Cada capítulo queda bordeado por agua, rompeolas, muros de puerto y fachadas de almacenes; no hay costas extensas explorables.",
+      "boundary": "Each chapter is bounded as a compact harbor scene rather than a full city or coastline, with coastal water at its outer edge.",
       "scale_band": "medium",
-      "theme": "viaje marítimo mediterráneo, puertos funcionales, almacenes costeros y llegada administrativa"
+      "theme": "Grounded maritime journey, compact Mediterranean and Atlantic ports, practical docks and coastal travel."
     },
     "render": {
-      "first": "topdown",
-      "then": "isometric",
-      "authoritative": "topdown",
-      "why": "La secuencia de atraque a salida de cada puerto debe ser legible y transitable antes de vestir la vista isométrica.",
+      "first": "isometric",
+      "then": "topdown",
+      "authoritative": "isometric",
+      "why": "the compact harbor topology is simple and does not require a procedurally authored plan.",
       "set_piece": false
     },
     "route": [
@@ -140,12 +152,10 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
-  "mapper_notes": [
-    "blob asked for topdown first; the route ['P4', 'CHECK'] gives isometric"
-  ]
+  "mapper_notes": []
 }

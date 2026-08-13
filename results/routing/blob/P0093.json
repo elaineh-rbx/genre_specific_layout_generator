@@ -14,128 +14,147 @@
     }
   ],
   "scene_prompt": "Create a true 3D third-person obstacle-course parkour map in a clean, colorful cartoon style. A compact course of roughly 10–15 distinct elevated obstacle sections progresses from a clear start platform through platforms separated by real gaps, rising and shifting through space toward a visible finish line; include a few checkpoint platforms spaced along the route. Use bright, readable 3D platform geometry and clearly visible hazards such as spinning bars, sliding blocks, and disappearing-tile sections, with open fall space beneath the course rather than a flat baseplate.",
-  "blob": "### Genre\nThe dominant genre is Obby & Platformer: player-paced 3D parkour across a sequence of jumps and obstacle sections. No secondary genre is needed.\n\n### Shape and preset\nUse `course-terraced`, a compact ascending course whose route rises, shifts laterally, and remains suspended over open fall space rather than sitting on a baseplate. This matches the Classic Obby preset in its sequential jump-course structure and retains most of its options, but the prompt’s required elevation overrides that preset’s flat shape.\n\n### Config requirements\nUse visible `path-track` for the ordered chain of distinct, real 3D platforms and legal gaps. Use `checkpoint-respawn`, with visible broad checkpoint pads and invisible respawn markers placed on them. Use visible `obstacle-jump` for the gap jumps and stepped elevation changes, visible `obstacle-moving` for spinning bars and sliding blocks, and visible `obstacle-timing` for disappearing-tile stretches. Use `winner-zone` as a visible, unmistakable finish platform and finish-line structure with its invisible completion area. Do not add contact-lethal surfaces: falling into the open space is the stated failure condition.\n\n### Layout components\nBegin on a generous start platform at the near, low end. Build roughly 10–15 compact obstacle sections in one continuous, upward zigzag: initial simple gap platforms, a staggered rising-jump section, rotating-bar crossings, sliding-block timing lanes, a disappearing-tile bridge, and progressively tighter elevated platforms. Place a few flat checkpoint platforms at natural safe breaks, roughly after every three to four sections. The far, highest end is a broad finish platform with a bright arch or flag line. All platforms are bright, clean cartoon solids with strongly contrasting hazard colors; leave open air and a visible void beneath every section. There is no flat ground plane or enclosing wall. Compose the full course diagonally through frame from lower foreground start to raised background finish, with the rising route legible in one view.\n\n### Render order\nUse `topdown`: the obstacle sequence, jump connections, and safe landings must remain playable and cannot tolerate invalid gaps, while this is not a maze or racing circuit eligible for `authored_plan`.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by roughly 10–15 elevated sections plus safe checkpoint pads in a compact footprint. Theme is clean colorful cartoon obby, with high-contrast readable platforms and hazards. Pipeline modifiers are `P6`, because the critical jump chain requires valid construction, and `tiered`, because the course rises across non-overhanging terraces.",
+  "blob": "### 1. Genre\nThe dominant genre is Obby & Platformer: the player advances at their own pace through discrete 3D jumps, hazards, checkpoints, and a finish.\n\n### 2. Shape and preset\nUse `course-tower`, matching the Tower Obby preset. The compact route rises and shifts through open space, with later platforms positioned above earlier sections rather than spread across a flat baseplate. Retain the preset’s vertical course logic while adding the explicitly requested moving hazards and checkpoints.\n\n### 3. Config requirements\nUse `path-track` for one continuous, clearly ordered chain of elevated platforms with real gaps. Use `checkpoint-respawn` as broad, flat, enclosed-looking safe platforms that visibly interrupt the hazard sequence. Use `obstacle-jump` for varied gap jumps and stepped ascents; `obstacle-moving` for prominent spinning bars and sliding blocks; and `obstacle-timing` for disappearing-tile sections. The finish is represented by `winner-zone`, a distinct, visible end platform at the tower’s top.\n\n### 4. Layout requirements\nPlace `checkpoint-respawn` at the start platform and at two or three evenly spaced safe platforms, approximately after every three to four obstacle sections, each before a harder vertical or moving-hazard sequence. Site `winner-zone` once on the final elevated finish platform. No separate pickups, NPC emitters, or other placed gameplay elements are required.\n\n### 5. Layout components\nBuild a compact vertical course of roughly 10–15 distinct obstacle sections. Begin with a broad start platform at the lowest level, then lead through isolated bright platforms over open fall space: simple gap jumps, stepped vertical blocks, a spinning-bar platform, sliding-block crossings, a disappearing-tile run, and mixed elevated landing pads. Progress upward in a readable zigzag/spiral so each next landing is visible from the prior section. Include a few larger checkpoint platforms along the ascent and end at a clearly marked finish platform above the course. Leave the boundary open, with no baseplate beneath the route; the void is the fall space. Compose the full tower diagonally in frame so its ascending path and finish are legible.\n\n### 6. Render order\nUse `topdown` first, authoritative, because the critical jump chain must remain continuously connected and physics-legal before the isometric dressing is derived.\n\n### 7. Scale, theme, and pipeline cost\nScale is medium: a compact but complete 10–15-section vertical course. Theme is clean, colorful cartoon obby, with bright contrasting platforms and highly readable hazards. Use `P6` because the sequential platform route and gaps must be valid by construction, and `P2` because elevated sections stack above lower parts of the tower.",
   "spec": {
     "genre": "Obby & Platformer",
     "secondary": [],
-    "shape": "course-terraced",
-    "preset": "Classic Obby",
+    "shape": "course-tower",
+    "preset": "Tower Obby",
     "axes": {},
     "options": [
       {
         "id": "path-track",
-        "text": "ordered chain of distinct, real 3D platforms and legal gaps in one continuous upward zigzag",
+        "text": "One continuous, clearly ordered chain of elevated platforms with real gaps.",
         "visible": true,
-        "count": -1
+        "count": 1
       },
       {
         "id": "checkpoint-respawn",
-        "text": "a few flat broad checkpoint pads at natural safe breaks, with invisible respawn markers placed on them",
+        "text": "Broad, flat, enclosed-looking safe platforms that visibly interrupt the hazard sequence.",
         "visible": true,
         "count": -1
       },
       {
         "id": "obstacle-jump",
-        "text": "initial simple gap platforms, staggered rising jumps, and progressively tighter elevated platforms",
+        "text": "Varied gap jumps and stepped ascents.",
         "visible": true,
         "count": -1
       },
       {
         "id": "obstacle-moving",
-        "text": "spinning-bar crossings and sliding-block timing lanes",
+        "text": "Prominent spinning bars and sliding blocks.",
         "visible": true,
         "count": -1
       },
       {
         "id": "obstacle-timing",
-        "text": "disappearing-tile bridge stretches",
+        "text": "Disappearing-tile sections.",
         "visible": true,
         "count": -1
       },
       {
         "id": "winner-zone",
-        "text": "a broad, unmistakable finish platform at the highest end with a bright arch or flag line and an invisible completion area",
+        "text": "A distinct, visible end platform at the tower's top.",
         "visible": true,
         "count": 1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "checkpoint-respawn",
+        "text": "Broad, flat, enclosed-looking safe platforms that visibly interrupt the hazard sequence.",
+        "count": -1,
+        "where": "At the start platform and at two or three evenly spaced safe platforms, approximately after every three to four obstacle sections, each before a harder vertical or moving-hazard sequence."
+      },
+      {
+        "id": "winner-zone",
+        "text": "A distinct, visible end platform at the tower's top.",
+        "count": 1,
+        "where": "Once on the final elevated finish platform."
+      }
+    ],
     "layout": {
-      "composition": "The full course runs diagonally through frame from a low foreground start platform to a raised background finish, with the complete rising zigzag route legible in one view.",
+      "composition": "Compose the full tower diagonally in frame so its ascending zigzag/spiral path and finish are legible; the broad start platform sits at the lowest level and the clearly marked finish platform is above the course.",
       "zones": [
         {
           "name": "Start platform",
-          "role": "Generous low-end starting point for the course.",
-          "where": "near lower foreground",
-          "size": "generous"
+          "role": "Broad lowest-level course start and checkpoint platform.",
+          "where": "Lowest level.",
+          "size": "broad"
         },
         {
-          "name": "Ascending obstacle course",
-          "role": "Continuous upward zigzag of compact jumps and obstacle sections.",
-          "where": "diagonally through the centre of the frame",
-          "size": "roughly 10–15 compact sections"
+          "name": "Obstacle ascent",
+          "role": "A compact vertical sequence of bright elevated obstacle sections progressing through gap jumps, stepped blocks, spinning bars, sliding blocks, disappearing tiles, and mixed landing pads.",
+          "where": "Rising through open space in a readable zigzag/spiral.",
+          "size": "roughly 10–15 distinct obstacle sections"
         },
         {
-          "name": "Checkpoint pads",
-          "role": "Safe breaks and respawn locations along the route.",
-          "where": "at natural breaks after every three to four sections",
-          "size": "a few flat broad pads"
+          "name": "Checkpoint platforms",
+          "role": "Safe platforms interrupting the hazard sequence before harder vertical or moving-hazard sections.",
+          "where": "At the start and two or three evenly spaced points along the ascent.",
+          "size": "larger"
         },
         {
           "name": "Finish platform",
-          "role": "Course completion area marked by a bright arch or flag line.",
-          "where": "far raised background at the highest end",
-          "size": "broad"
+          "role": "Clearly marked end platform and winner zone.",
+          "where": "At the tower's top, above the course.",
+          "size": "distinct"
         }
       ],
       "paths": [
         {
           "from": "Start platform",
-          "to": "Ascending obstacle course",
-          "kind": "track"
-        },
-        {
-          "from": "Ascending obstacle course",
           "to": "Finish platform",
           "kind": "track"
         }
       ],
-      "terrain": "Open air and visible void beneath every suspended section; no flat ground plane.",
+      "terrain": "Open fall space and void beneath isolated bright platforms; no flat baseplate.",
       "props": [
         {
-          "name": "spinning bars",
+          "name": "Simple gap jumps",
           "count": -1,
-          "where": "rotating-bar crossings"
+          "where": "Along the rising course."
         },
         {
-          "name": "sliding blocks",
+          "name": "Stepped vertical blocks",
           "count": -1,
-          "where": "sliding-block timing lanes"
+          "where": "Along the ascent."
         },
         {
-          "name": "disappearing tiles",
-          "count": -1,
-          "where": "disappearing-tile bridge"
-        },
-        {
-          "name": "bright arch or flag line",
+          "name": "Spinning-bar platform",
           "count": 1,
-          "where": "finish platform"
+          "where": "Along the obstacle sequence."
+        },
+        {
+          "name": "Sliding-block crossings",
+          "count": -1,
+          "where": "Along the obstacle sequence."
+        },
+        {
+          "name": "Disappearing-tile run",
+          "count": 1,
+          "where": "Along the obstacle sequence."
+        },
+        {
+          "name": "Mixed elevated landing pads",
+          "count": -1,
+          "where": "Along the rising zigzag/spiral."
         }
       ],
-      "boundary": "Open fall space with no enclosing wall.",
+      "boundary": "Open boundary with no baseplate beneath the route; the void is the fall space.",
       "scale_band": "medium",
-      "theme": "clean colorful cartoon obby with bright, high-contrast readable platforms and hazards"
+      "theme": "Clean, colorful cartoon obby with bright contrasting platforms and highly readable hazards."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the obstacle sequence, jump connections, and safe landings must remain playable with no invalid gaps.",
+      "why": "the critical jump chain must remain continuously connected and physics-legal before isometric dressing is derived.",
       "set_piece": false
     },
     "route": [
       "P6",
-      "tiered"
+      "P2"
     ],
     "notes": [],
     "scene_prompt": "Create a true 3D third-person obstacle-course parkour map in a clean, colorful cartoon style. A compact course of roughly 10–15 distinct elevated obstacle sections progresses from a clear start platform through platforms separated by real gaps, rising and shifting through space toward a visible finish line; include a few checkpoint platforms spaced along the route. Use bright, readable 3D platform geometry and clearly visible hazards such as spinning bars, sliding blocks, and disappearing-tile sections, with open fall space beneath the course rather than a flat baseplate."
@@ -143,7 +162,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

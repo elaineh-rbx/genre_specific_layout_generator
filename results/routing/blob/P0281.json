@@ -19,175 +19,191 @@
     }
   ],
   "scene_prompt": "Create two small, separate 3D maps in a classic old Roblox dark-fantasy style, built from simple blocky parts with visible studs, medieval structures, dark lighting, fog, and a void-like atmosphere. The first is The Soul Highway, a compact dark staging space between ruined realms, centered on one large Crossing portal with role-selection space around it.\n\nThe Crossing leads to a compact ruined medieval fortress mission map, roughly 300–500 studs across. The outer area is a defensible courtyard enclosed by damaged stone walls, with a damaged main gate on one approach, barricade positions around the courtyard, and open lanes for incoming attackers. Behind the courtyard, place an inner keep with a clear retreat route from the gate and courtyard; its interior is the final defended space, with a second breached entrance. Include rooftop access on fortress structures, small positions for friendly soldier squads, and a larger approach area outside the walls for enemy waves. Keep the composition readable and prototype-like, using placeholder blocky characters and simple medieval props rather than realistic terrain or detailed assets.",
-  "blob": "### Genre\nThe dominant genre is Survival, with Action as a secondary combat register. The wave-defense objective and fortress hold make Survival decisive; melee combat only informs the visual treatment.\n\n### Shape and preset\nUse `arena-contained` for the fortress mission: a compact defended enclosure that changes from an outer courtyard to an inner keep without becoming a sprawling world. Match the Horde Defense preset, retaining its hostile-entry and defensive-cover logic while omitting collapse geometry not requested. The separate Soul Highway lobby is a linked staging map, not a second combat arena.\n\n### Config requirements\nVisible geometry: `cover-los` is formed by barricade lines, broken wall stubs, gatehouse corners, and low ruined masonry that create protected fighting positions in the courtyard and keep. `building-interior` is the enterable inner keep, with a defended hall and a second breached entrance. `npc-population` supplies blocky friendly soldier squads at small mustering positions around the courtyard and keep. Invisible layout: `spawner-npc` places hostile wave origins in the approach ground beyond the walls and at the later breach, outside the rendered prop emphasis.\n\n### Layout components\nBuild two small separate maps. The Soul Highway is a compact void-dark staging platform, centered on exactly one large Crossing portal, with five evenly spaced blocky role-selection bays around its approach and open standing room for 1–5 players. Its boundary dissolves into fog and void.\n\nThe mission map is a compact ruined fortress roughly 300–500 studs across. A broad outer approach sits before damaged enclosing stone walls. Inside, the main outer courtyard is the largest zone, with the damaged main gate on one side, open attacker lanes from that direction, barricade pockets along the walls, squad positions, and simple rooftop access on gatehouse and wall structures. A clear, short retreat route runs from the gate and courtyard rear into the inner keep. The keep contains one enclosed final-hold hall, defended corners, and a distinct second breached entrance. Use dark stone, studded block parts, sparse medieval props, placeholder blocky soldiers, heavy fog, and no realistic terrain. Frame the fortress in a readable three-quarter view, with the courtyard foreground and keep rising behind it.\n\n### Render order\nUse `topdown`: the courtyard lanes, retreat connection, entrances, and interior defense room must remain connected and readable for play before the isometric dressing is produced.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the single 300–500-stud fortress and compact separate lobby. Theme: classic old Roblox dark fantasy, blocky ruined medieval masonry, visible studs, low light, fog, and mysterious void. Use `P2` for accessible rooftop surfaces above the courtyard, `P3` for the outside-to-inner-keep transition, and `P4` because the Soul Highway and fortress are separate maps.",
+  "blob": "### Genre\nDominant genre: Survival, with Action as a secondary combat register. The wave-defense objective, hostile waves, NPC defenders, repair-and-retreat sequence, and timed final hold make Survival primary; Action only informs the melee battlefield.\n\n### Shape and preset\nUse `space-staged`, taken from outside Survival’s usual shapes: The Soul Highway is a separate lobby map and the fortress is an isolated mission map. This is the Horde Defense preset modified for a staged lobby-to-mission structure; retain its defensive combat emphasis while adding the explicit retreat into an enterable keep.\n\n### Config requirements\nUse `cover-los` as blocky barricades, broken wall segments, and rooftop parapets that give defenders local sightline breaks in the courtyard. Use `building-interior` for the inner keep, whose defended interior is reached from the exterior courtyard. Use `npc-population` for placeholder friendly medieval soldier squads visibly occupying barricades, wall positions, and the keep defense floor.\n\n### Layout requirements\nPlace `spawner-npc` enemy-wave origins across the larger approach outside the damaged main gate for the first three courtyard waves, then at the keep’s second breached entrance for the final hold. Place `npc-population` squad occupancy markers in small groups at courtyard barricades, accessible rooftops, and the inner keep fallback positions. Place one `checkpoint-respawn` safe respawn point behind the courtyard defense line, moving players to the protected keep-side staging area when they return on the next wave.\n\n### Layout components\nThe Soul Highway is a compact void-dark staging map centered on exactly one large Crossing portal, with role-selection pads arranged in a clear ring around it. The separate fortress mission is roughly 300–500 studs across. Its main zone is a compact ruined outer courtyard enclosed by damaged studded stone walls, open attacker lanes, barricade pockets, rooftop stairs, and a damaged main gate on the forward wall. Outside that gate, create a broad hostile approach area. Behind the courtyard, a direct, readable retreat route leads into the inner keep. The keep has one defensible interior hall as the final hold space and a second breached entrance facing the later attack. Use simple blocky medieval props, cracked walls, wooden barricades, and placeholder characters; avoid realistic terrain. Frame the fortress in a readable elevated three-quarter composition, with the gate approach in front and the keep behind.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because the attack approaches, retreat connection, and final keep defense must remain traversable and readable before the isometric dressing is generated.\n\n### Scale, theme, and pipeline cost\nScale band: small, driven by the compact two-map prototype and 300–500-stud fortress. Theme: classic old Roblox dark fantasy, visible studs, blocky ruined medieval stone, dense fog, dark void atmosphere. Pipeline modifiers: `P4` for the separate Soul Highway lobby and fortress mission maps; `P3` for exterior courtyard play transitioning into the keep interior; `P2` for accessible rooftop and wall-walk surfaces above the courtyard.",
   "spec": {
     "genre": "Survival",
     "secondary": [
       "Action"
     ],
-    "shape": "arena-contained",
+    "shape": "space-staged",
     "preset": "Horde Defense",
     "axes": {},
     "options": [
       {
         "id": "cover-los",
-        "text": "Barricade lines, broken wall stubs, gatehouse corners, and low ruined masonry create protected fighting positions in the courtyard and keep.",
+        "text": "Blocky barricades, broken wall segments, and rooftop parapets that give defenders local sightline breaks in the courtyard.",
         "visible": true,
         "count": -1
       },
       {
         "id": "building-interior",
-        "text": "The enterable inner keep contains a defended hall and a distinct second breached entrance.",
+        "text": "The inner keep, whose defended interior is reached from the exterior courtyard.",
         "visible": true,
         "count": 1
       },
       {
         "id": "npc-population",
-        "text": "Blocky friendly soldier squads stand at small mustering positions around the courtyard and keep.",
+        "text": "Placeholder friendly medieval soldier squads visibly occupying barricades, wall positions, and the keep defense floor.",
         "visible": true,
         "count": -1
       },
       {
         "id": "spawner-npc",
-        "text": "Hostile wave origins sit in the approach ground beyond the walls and at the later breach, outside the rendered prop emphasis.",
+        "text": "Enemy-wave origins across the larger approach outside the damaged main gate for the first three courtyard waves, then at the keep's second breached entrance for the final hold.",
         "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "npc-population",
+        "text": "Friendly medieval soldier squad occupancy markers.",
+        "count": -1,
+        "where": "In small groups at courtyard barricades, accessible rooftops, and inner keep fallback positions."
+      },
+      {
+        "id": "spawner-npc",
+        "text": "Enemy-wave origins for the first three courtyard waves, then the final hold.",
+        "count": -1,
+        "where": "Across the larger hostile approach outside the damaged main gate for the first three courtyard waves; at the inner keep's second breached entrance for the final hold."
+      }
+    ],
     "layout": {
-      "composition": "Readable three-quarter fortress view: the outer courtyard fills the foreground, damaged walls and gatehouse frame the combat space, and the inner keep rises behind it. The separate Soul Highway staging platform is centered on its Crossing portal.",
+      "composition": "Frame the fortress in a readable elevated three-quarter composition, with the gate approach in front and the keep behind. The Soul Highway is a separate compact void-dark staging map.",
       "zones": [
         {
-          "name": "Soul Highway",
-          "role": "Compact void-dark staging map with role selection and standing room for 1–5 players.",
-          "where": "Separate linked map",
+          "name": "The Soul Highway",
+          "role": "Separate void-dark staging map for role selection and entry to the fortress mission.",
+          "where": "Separate lobby map.",
           "size": "compact"
         },
         {
-          "name": "Crossing portal",
-          "role": "Portal connecting the Soul Highway lobby to the fortress mission.",
-          "where": "Centre of the Soul Highway platform",
+          "name": "Crossing Portal",
+          "role": "Portal from the Soul Highway to the fortress mission.",
+          "where": "Centre of The Soul Highway.",
           "size": "large"
         },
         {
-          "name": "Role-selection bays",
-          "role": "Evenly spaced selection spaces around the portal approach.",
-          "where": "Around the Crossing portal approach",
-          "size": "-"
+          "name": "Role-Selection Ring",
+          "role": "Role-selection space around the Crossing portal.",
+          "where": "Around the central Crossing portal.",
+          "size": ""
         },
         {
-          "name": "Outer approach",
-          "role": "Attacker approach area and hostile wave origin ground before the fortress walls.",
-          "where": "Outside the damaged enclosing stone walls, in front of the main gate",
-          "size": "broad"
+          "name": "Hostile Approach",
+          "role": "Broad exterior approach for incoming enemy waves.",
+          "where": "Outside the damaged main gate, in front of the fortress.",
+          "size": "larger"
         },
         {
-          "name": "Outer courtyard",
-          "role": "Primary defended fighting zone with open attacker lanes, barricade pockets, squad positions, and rooftop access.",
-          "where": "Inside the fortress walls, foreground",
-          "size": "largest zone"
+          "name": "Ruined Outer Courtyard",
+          "role": "Defensible first hold space for the courtyard waves, with open attacker lanes and barricade pockets.",
+          "where": "Inside the damaged stone walls, behind the main gate.",
+          "size": "compact"
         },
         {
-          "name": "Inner keep",
-          "role": "Final defense area containing the enclosed hold hall, defended corners, and second breached entrance.",
-          "where": "Behind the courtyard",
-          "size": "-"
-        },
-        {
-          "name": "Final-hold hall",
-          "role": "Enclosed final defended space inside the inner keep.",
-          "where": "Interior of the inner keep",
-          "size": "-"
+          "name": "Inner Keep",
+          "role": "Defensible interior hall serving as the final hold and fallback space.",
+          "where": "Behind the outer courtyard.",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Soul Highway",
-          "to": "Crossing portal",
-          "kind": "open ground"
-        },
-        {
-          "from": "Crossing portal",
-          "to": "Outer approach",
+          "from": "The Soul Highway",
+          "to": "Ruined Outer Courtyard",
           "kind": "portal"
         },
         {
-          "from": "Outer approach",
-          "to": "Outer courtyard",
+          "from": "Hostile Approach",
+          "to": "Ruined Outer Courtyard",
+          "kind": "open ground"
+        },
+        {
+          "from": "Ruined Outer Courtyard",
+          "to": "Inner Keep",
           "kind": "corridor"
         },
         {
-          "from": "Damaged main gate",
-          "to": "Inner keep",
-          "kind": "corridor"
-        },
-        {
-          "from": "Outer courtyard rear",
-          "to": "Final-hold hall",
-          "kind": "corridor"
+          "from": "Ruined Outer Courtyard",
+          "to": "Accessible Rooftops and Wall Walks",
+          "kind": "stair"
         }
       ],
-      "terrain": "No realistic terrain; dark stone ground and damaged blocky medieval masonry under heavy fog and void-dark atmosphere.",
+      "terrain": "Avoid realistic terrain. Use a void-dark atmosphere, dense fog, and simple blocky fortress ground.",
       "props": [
         {
           "name": "Crossing portal",
           "count": 1,
-          "where": "Centre of the Soul Highway"
+          "where": "Centered in The Soul Highway."
         },
         {
-          "name": "Role-selection bays",
-          "count": 5,
-          "where": "Evenly spaced around the Crossing approach"
-        },
-        {
-          "name": "Placeholder blocky soldiers",
+          "name": "Role-selection pads",
           "count": -1,
-          "where": "Small mustering positions around the courtyard and keep"
+          "where": "Arranged in a clear ring around the Crossing portal."
         },
         {
-          "name": "Barricade lines",
+          "name": "Damaged studded stone walls",
           "count": -1,
-          "where": "Courtyard and wall pockets"
+          "where": "Enclosing the ruined outer courtyard."
         },
         {
-          "name": "Broken wall stubs and low ruined masonry",
-          "count": -1,
-          "where": "Courtyard walls and keep defenses"
+          "name": "Damaged main gate",
+          "count": 1,
+          "where": "On the forward wall facing the hostile approach."
         },
         {
-          "name": "Simple medieval props",
+          "name": "Wooden barricades",
           "count": -1,
-          "where": "Fortress and staging space"
+          "where": "In courtyard defense pockets and along defender positions."
+        },
+        {
+          "name": "Rooftop stairs",
+          "count": -1,
+          "where": "On fortress structures leading to accessible rooftops and wall walks."
+        },
+        {
+          "name": "Second breached entrance",
+          "count": 1,
+          "where": "Facing the later attack at the inner keep."
+        },
+        {
+          "name": "Placeholder blocky characters",
+          "count": -1,
+          "where": "At barricades, wall positions, rooftops, and the keep defense floor."
         }
       ],
-      "boundary": "Soul Highway dissolves into fog and void; the mission map is enclosed by damaged stone fortress walls.",
+      "boundary": "The Soul Highway is surrounded by dark void atmosphere. The fortress courtyard is enclosed by damaged studded stone walls, with the damaged main gate opening onto the hostile approach.",
       "scale_band": "small",
-      "theme": "Classic old Roblox dark fantasy; blocky ruined medieval masonry, visible studs, low light, heavy fog, and mysterious void."
+      "theme": "Classic old Roblox dark fantasy; visible studs, blocky ruined medieval stone, dense fog, dark void atmosphere."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "The courtyard lanes, retreat connection, entrances, and interior defense room must remain connected and readable for play.",
+      "why": "the attack approaches, retreat connection, and final keep defense must remain traversable and readable before isometric dressing.",
       "set_piece": false
     },
     "route": [
-      "P2",
+      "P4",
       "P3",
-      "P4"
+      "P2"
     ],
-    "notes": [],
+    "notes": [
+      "The shape `space-staged` is taken from outside Survival's usual shapes.",
+      "The requested `checkpoint-respawn` was not included because it is not an option in the dominant Survival genre, despite appearing in other genre menus."
+    ],
     "scene_prompt": "Create two small, separate 3D maps in a classic old Roblox dark-fantasy style, built from simple blocky parts with visible studs, medieval structures, dark lighting, fog, and a void-like atmosphere. The first is The Soul Highway, a compact dark staging space between ruined realms, centered on one large Crossing portal with role-selection space around it.\n\nThe Crossing leads to a compact ruined medieval fortress mission map, roughly 300–500 studs across. The outer area is a defensible courtyard enclosed by damaged stone walls, with a damaged main gate on one approach, barricade positions around the courtyard, and open lanes for incoming attackers. Behind the courtyard, place an inner keep with a clear retreat route from the gate and courtyard; its interior is the final defended space, with a second breached entrance. Include rooftop access on fortress structures, small positions for friendly soldier squads, and a larger approach area outside the walls for enemy waves. Keep the composition readable and prototype-like, using placeholder blocky characters and simple medieval props rather than realistic terrain or detailed assets."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
   "mapper_notes": [
-    "blob asked for topdown first; the route ['P3'] gives isometric"
+    "blob asked for topdown first; the route ['P4', 'P3'] gives isometric"
   ]
 }

@@ -14,166 +14,155 @@
     }
   ],
   "scene_prompt": "Create a cartoon-style 3D game map viewed from the kitten’s first-person perspective: a small kitten navigates a compact, oversized mansion on one floor. Arrange several connected rooms with household objects placed on tables, shelves, and other surfaces that can be knocked over, leading through puzzle spaces toward an escape route out of the house. Include the old woman moving through and reacting to the messy rooms, with clear checkpoint locations along the route.",
-  "blob": "### 1. Genre\nDominant genre: Puzzle, with Survival as a secondary genre because the kitten must escape while avoiding a pursuing old woman. The puzzle structure owns the mansion’s route and room sequence; the chase contributes the hostile presence and escape pressure.\n\n### 2. Shape and preset\nUse `puzzle-rooms`: a compact, single-storey mansion divided into several connected interior rooms. Match the Escape Room preset, but adapt it to a cartoon cat-scale household rather than a conventional human escape room; retain its room-to-room puzzle progression and omit unrequested collectible chains.\n\n### 3. Config requirements\nUse visible `gate-solve` for household puzzle barriers that open the route toward the exterior escape, such as blocked doors or a final locked exit. Use visible `facade-clue` for readable environmental clues on furniture, walls, shelves, or arranged household objects. Use `gate-escape` from the secondary Survival genre for the final exterior door or pet-sized exit opening. Use invisible `spawner-npc` as the old woman’s patrol/chase origin and movement staging points; do not render markers. Place invisible checkpoint markers after major puzzle rooms so capture returns the kitten to the latest safe room; these markers are layout-only and must not appear in the image.\n\n### 4. Layout components\nBuild a compact one-floor oversized mansion, with several rooms connected in a clear forward sequence: an entry/living room, a dining room, a kitchen, a cluttered study or storage room, and a final hall leading to the escape exit. Each room is large from the kitten’s low first-person scale, with table legs, sofas, cabinets, shelves, and door thresholds forming navigable cover and routes. Place knockable household objects across tables, shelves, counters, and sideboards, especially along puzzle interactions, while keeping a readable safe path through each room. Put checkpoint locations in sheltered corners or room transitions. The old woman patrols the connected rooms and can enter messy spaces; ensure the mansion route has alternate furniture-scale circulation rather than trapping the kitten in a dead end. The boundary is the mansion’s outer walls, with the final exit clearly located at the far end of the progression. Compose the map around low kitten-height sightlines: looming furniture, long floor-level corridors, and the escape door visible only near the final hall.\n\n### 5. Render order\nUse `topdown`: the connected puzzle rooms, chase circulation, checkpoints, and final escape must form a valid playable route before the first-person cartoon dressing is derived.\n\n### 6. Scale, theme, and pipeline cost\nScale band: small, driven by several compact rooms on one floor. Theme: colorful cartoon oversized mansion, playful domestic clutter, kitten-scale perspective. Pipeline modifiers: `P0`; the single enclosed floor has no stacked geometry or separate maps. `P6` is not forced because this is a connected room plan rather than a carveable maze, though the top-down plan should preserve continuous circulation.",
+  "blob": "### Genre\nThe dominant genre is `Puzzle`, with `Survival` as a secondary genre because the old woman actively chases and catches the kitten. Puzzle owns the room-to-room escape route and solve-gated progression; the chase only adds a moving threat and checkpoint recovery.\n\n### Shape and preset\nUse `rooms-sequence`, a compact, single-floor chain of enclosed mansion rooms leading from the kitten’s starting area to the house exit. Match the Escape Room preset: the player advances by solving environmental puzzles, but do not assume specific keypads, keys, or clue walls not named in the prompt.\n\n### Config requirements\nUse `gate-solve` for household puzzle barriers that keep the escape route closed until a room’s puzzle is resolved. Use `npc-population` for the visibly present old woman moving through the mansion and reacting to disturbed rooms; she should read as the oversized resident from the kitten’s low viewpoint.\n\n### Layout requirements\nPlace `checkpoint-respawn` markers at safe, clear stopping points after major puzzle rooms, so capture by the old woman returns the kitten to the latest checkpoint rather than the start. Place at least two along the compact route, on unobstructed floor areas just beyond completed puzzle gates. Use `spawner-npc` for one old-woman patrol origin and route network, beginning away from the kitten’s initial room and covering the connected central rooms rather than blocking the exit immediately. `npc-population` also needs her patrol ground placed around the room sequence.\n\n### Layout components\nBuild several oversized rooms on one floor: a small entry or kitten start room, a central hallway, a cluttered living room, a kitchen or dining puzzle room, and a study or storage room leading to the final exterior door. Connect them with short interior corridors and open doorways in a readable forward sequence, with occasional side alcoves for puzzle interactions but no second floor. Put knockable household objects on tables, shelves, counters, and low furniture throughout: cups, books, picture frames, lamps, and small decorative items. Keep the mansion fully enclosed, with the final locked escape door at the far end of the route. Compose the render at kitten eye height, emphasizing towering furniture, long table legs, and the old woman’s scale.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because the room chain, puzzle gates, patrol circulation, checkpoints, and reachable exit must form a playable connected plan before the first-person cartoon dressing is added.\n\n### Scale, theme, and pipeline cost\nUse a medium scale: the mansion is compact for a human floor plan but feels large to a small kitten. Theme: colorful cartoon domestic mansion, playful mischief, oversized furniture, gentle suspense. Use `P0`; this is one enclosed, single-level surface with no forced outside-to-inside traversal, overhangs, or separate maps.",
   "spec": {
     "genre": "Puzzle",
     "secondary": [
       "Survival"
     ],
-    "shape": "puzzle-rooms",
+    "shape": "rooms-sequence",
     "preset": "Escape Room",
     "axes": {},
     "options": [
       {
         "id": "gate-solve",
-        "text": "Household puzzle barriers, including blocked doors and a final locked exit, open the route toward the exterior escape.",
+        "text": "Household puzzle barriers keep the escape route closed until each room's puzzle is resolved.",
         "visible": true,
         "count": -1
       },
       {
-        "id": "facade-clue",
-        "text": "Readable environmental clues on furniture, walls, shelves, and arranged household objects.",
+        "id": "npc-population",
+        "text": "One visibly present oversized old woman moves through the mansion, reacts to disturbed rooms, and is seen from the kitten's low viewpoint.",
         "visible": true,
-        "count": -1
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "npc-population",
+        "text": "One oversized old woman patrols through the connected central mansion rooms and reacts to disturbed rooms.",
+        "count": 1,
+        "where": "On patrol ground around the connected central rooms, beginning away from the kitten's initial room and not immediately blocking the exit."
       }
     ],
     "layout": {
-      "composition": "Low kitten-height sightlines through looming furniture and long floor-level corridors; the route progresses from the entry/living room through connected interior rooms to a far-end final hall, where the escape door becomes visible only near the end.",
+      "composition": "Kitten-eye-height first-person dressing emphasizes towering furniture, long table legs, and the old woman's oversized scale along the forward room sequence.",
       "zones": [
         {
-          "name": "Entry/living room",
-          "role": "First puzzle room and start of the forward mansion route.",
-          "where": "start of progression",
-          "size": "large at kitten scale"
+          "name": "Kitten start room",
+          "role": "Small entry or starting area for the kitten.",
+          "where": "At the beginning of the route.",
+          "size": "small"
         },
         {
-          "name": "Dining room",
-          "role": "Connected puzzle room with navigable furniture-scale routes.",
-          "where": "after the entry/living room",
-          "size": "large at kitten scale"
-        },
-        {
-          "name": "Kitchen",
-          "role": "Puzzle room with counters, cabinets, and a readable safe path.",
-          "where": "mid-progression",
-          "size": "large at kitten scale"
-        },
-        {
-          "name": "Cluttered study or storage room",
-          "role": "Messy puzzle space the old woman can enter, with alternate furniture-scale circulation.",
-          "where": "after the kitchen",
-          "size": "large at kitten scale"
-        },
-        {
-          "name": "Final hall",
-          "role": "Final approach leading to the exterior escape exit.",
-          "where": "far end of progression",
-          "size": "large at kitten scale"
-        },
-        {
-          "name": "Sheltered checkpoint locations",
-          "role": "Latest-safe-room return locations after major puzzle rooms.",
-          "where": "sheltered corners or room transitions",
+          "name": "Central hallway",
+          "role": "Connects the mansion rooms and carries the readable forward sequence.",
+          "where": "Centre of the compact room chain.",
           "size": ""
         },
         {
-          "name": "Old woman patrol and chase staging",
-          "role": "Hostile patrol through the connected rooms and messy spaces.",
-          "where": "across connected rooms",
+          "name": "Cluttered living room",
+          "role": "Puzzle room with household clutter and knockable objects.",
+          "where": "Along the central route after the hallway.",
+          "size": ""
+        },
+        {
+          "name": "Kitchen or dining puzzle room",
+          "role": "Household puzzle space on the escape route.",
+          "where": "After the living room.",
+          "size": ""
+        },
+        {
+          "name": "Study or storage room",
+          "role": "Final room leading to the exterior escape door.",
+          "where": "Far end of the route.",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Entry/living room",
-          "to": "Dining room",
+          "from": "Kitten start room",
+          "to": "Central hallway",
           "kind": "corridor"
         },
         {
-          "from": "Dining room",
-          "to": "Kitchen",
+          "from": "Central hallway",
+          "to": "Cluttered living room",
+          "kind": "open ground"
+        },
+        {
+          "from": "Cluttered living room",
+          "to": "Kitchen or dining puzzle room",
           "kind": "corridor"
         },
         {
-          "from": "Kitchen",
-          "to": "Cluttered study or storage room",
+          "from": "Kitchen or dining puzzle room",
+          "to": "Study or storage room",
           "kind": "corridor"
         },
         {
-          "from": "Cluttered study or storage room",
-          "to": "Final hall",
-          "kind": "corridor"
-        },
-        {
-          "from": "Final hall",
-          "to": "Exterior escape exit",
-          "kind": "doorway"
-        },
-        {
-          "from": "Connected rooms",
-          "to": "Connected rooms",
+          "from": "Study or storage room",
+          "to": "Final exterior door",
           "kind": "open ground"
         }
       ],
-      "terrain": "Single enclosed mansion floor with household thresholds, floor-level corridors, and furniture-scale cover and circulation.",
+      "terrain": "Single-floor enclosed mansion interior with unobstructed floor areas, short interior corridors, open doorways, and occasional side alcoves for puzzle interactions.",
       "props": [
         {
-          "name": "table legs",
+          "name": "Cups",
           "count": -1,
-          "where": "throughout rooms"
+          "where": "On tables, shelves, counters, and low furniture throughout the rooms."
         },
         {
-          "name": "sofas",
+          "name": "Books",
           "count": -1,
-          "where": "entry/living room and connected rooms"
+          "where": "On tables, shelves, counters, and low furniture throughout the rooms."
         },
         {
-          "name": "cabinets",
+          "name": "Picture frames",
           "count": -1,
-          "where": "kitchen and connected rooms"
+          "where": "On tables, shelves, counters, and low furniture throughout the rooms."
         },
         {
-          "name": "shelves",
+          "name": "Lamps",
           "count": -1,
-          "where": "study/storage room and connected rooms"
+          "where": "On tables, shelves, counters, and low furniture throughout the rooms."
         },
         {
-          "name": "knockable household objects",
+          "name": "Small decorative items",
           "count": -1,
-          "where": "across tables, shelves, counters, and sideboards, especially along puzzle interactions"
+          "where": "On tables, shelves, counters, and low furniture throughout the rooms."
         }
       ],
-      "boundary": "The mansion's outer walls enclose the play space; the final exterior exit is clearly at the far end of progression.",
-      "scale_band": "small",
-      "theme": "colorful cartoon oversized mansion, playful domestic clutter, kitten-scale perspective"
+      "boundary": "The mansion is fully enclosed, with a final locked exterior escape door at the far end of the route.",
+      "scale_band": "medium",
+      "theme": "Colorful cartoon domestic mansion, playful mischief, oversized furniture, gentle suspense."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the connected puzzle rooms, chase circulation, checkpoints, and final escape must form a valid playable route before cartoon dressing is derived.",
+      "why": "The room chain, puzzle gates, patrol circulation, checkpoints, and reachable exit must form a playable connected plan before dressing.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
     "notes": [
-      "Dropped `gate-escape`: it is not a canonical Puzzle option ID.",
-      "Dropped `spawner-npc`: it is not a canonical Puzzle option ID.",
-      "Checkpoint markers were described as layout-only but no canonical Puzzle option ID was named for them.",
-      "The Escape Room preset was named, but its collectible chain was explicitly omitted and no additional preset option IDs were explicitly retained."
+      "`checkpoint-respawn` was named for layout placement but is not an option in the dominant Puzzle genre, so it was not transcribed.",
+      "`spawner-npc` was named for layout placement but is not an option in the dominant Puzzle genre, so it was not transcribed."
     ],
     "scene_prompt": "Create a cartoon-style 3D game map viewed from the kitten’s first-person perspective: a small kitten navigates a compact, oversized mansion on one floor. Arrange several connected rooms with household objects placed on tables, shelves, and other surfaces that can be knocked over, leading through puzzle spaces toward an escape route out of the house. Include the old woman moving through and reacting to the messy rooms, with clear checkpoint locations along the route."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
   "mapper_notes": [
-    "blob asked for topdown first; the route ['P0', 'P3'] gives isometric"
+    "blob asked for topdown first; the route ['P0'] gives isometric"
   ]
 }

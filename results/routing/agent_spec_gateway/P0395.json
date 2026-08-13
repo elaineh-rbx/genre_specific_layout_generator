@@ -1,0 +1,195 @@
+{
+  "scene": "P0395",
+  "source": "Create a high-speed, arcade-style speedrun game where players move at super-speed and have an electric dash ability.\n\nBuild 3 distinct levels connected linearly:\n\nLevel 1: A neon cyberpunk highway with moving grid walls, glowing laser beams to jump over, and high-speed booster pads.\n\nLevel 2: A futuristic factory with rotating electric rollers, timed vertical laser gates, and toxic waste pits.\n\nLevel 3: A crumbling space station with floating platforms that disappear 1 second after touch, and swinging electric pendulums.\n\nCore Mechanics to Include:\n\nSuper-Speed: Set player default walk speed to 40.\n\nElectric Dash: Press 'Q' or 'E' to instantly burst forward with an electric particle trail.\n\nCoin System: Scatter spinning, glowing gold coins across all levels. Give coins a spinning animation script. Collectible coins must add +1 to a global 'Coins' leaderboard and play a ding sound.\n\nShop System: Add a basic UI menu button labeled 'Shop' where players can spend coins on trail effects.\n\nKill Hazards: Any contact with lasers or electric obstacles instantly resets the player to the nearest checkpoint.\n\nCheckpoints: Place glowing green pad checkpoints at the start of every new level section\nthis should be 3d",
+  "answers": [
+    {
+      "field": "scale",
+      "ask": "How long should each of the three levels run? At walk speed 40 a course crosses ground four times faster than the usual baseline.",
+      "answer": "Make each level a compact 45–60 second run at the intended super-speed, with a few clearly spaced obstacle sections and checkpoints."
+    },
+    {
+      "field": "shape",
+      "ask": "Are the three levels one continuous course or three separate maps joined by a teleport?",
+      "answer": "Build them as one continuous linear 3D course, with each themed level flowing directly into the next."
+    },
+    {
+      "field": "goal",
+      "ask": "Is there a timer or a finish line the run is scored against?",
+      "answer": "Add a finish line at the end of Level 3 and a simple run timer so players can race for faster completion times."
+    }
+  ],
+  "scene_prompt": "Create a 3D high-speed arcade speedrun course as one continuous linear route of three distinct themed levels flowing directly into each other. Each level is a compact 45–60 second run at super-speed, with a few clearly spaced obstacle sections and glowing green checkpoint pads at the start of each new section. Level 1 is a neon cyberpunk highway with a fast, open forward route framed by moving grid walls, glowing laser-beam barriers, and booster pads. Level 2 transitions into a futuristic factory containing rotating electric rollers, timed vertical laser gates, and toxic-waste pits along the path. Level 3 becomes a crumbling space station with floating platforms, swinging electric pendulums, and a finish line at the far end. Scatter spinning glowing gold coins throughout all three levels, especially along routes, jumps, and obstacle sections.",
+  "blob": "## Genre\nThe dominant genre is Racing because this is a timed, finite super-speed run to a finish. Obby & Platformer is secondary because discrete jumps and timing hazards shape the route.\n\n## Shape and preset\nUse `route-point-to-point`, one continuous start-to-finish course through 3 themes. The preset is Obstacle Race.\n\n## Config requirements\nUse `hazard-kill` for lasers, electric obstacles, toxic-waste pits, and fall-away space edges. Use `trigger-finish` for the terminal finish structure, `checkpoint-respawn` for glowing green recovery pads, `obstacle-moving` for grid walls, rollers, and pendulums, and `obstacle-timing` for laser gates and disappearing platforms. Use `powerup-buffs` for booster pads. The three themed environments remain contiguous rather than separate maps.\n\n## Layout requirements\nPlace one `startpoint-line` at the cyberpunk highway entrance and the layout half of `trigger-finish` at Level 3’s far end. Place `checkpoint-respawn` pads at each level entrance and at the start of every major obstacle section, restoring the nearest safe point. Place `collectible-nodes` as spinning gold coin lines along all 3 routes, jumps, and higher-risk obstacle approaches. Place `powerup-buffs` on clear highway acceleration lines.\n\n## Layout components\nBuild 3 consecutive 45–60-second levels. Level 1 is an open neon highway with grid walls, laser bars, and boosters; Level 2 is a factory corridor with rollers, timed gates, and waste pits; Level 3 is a crumbling station route of floating disappearing platforms and swinging pendulums. Use direct transition thresholds, not teleports. Keep the critical path centered and unmistakable from start to finish.\n\n## Render order\nRender `topdown` first and make it authoritative, because the complete route, jumps, hazards, and checkpoints must remain continuously clearable.\n\n## Scale, theme, and pipeline cost\nScale is huge, driven by 3 super-speed levels lasting 45–60 seconds each. The theme progresses from neon cyberpunk to industrial electric factory to ruined space station. Use `P6` because the race and obstacle chain must be valid by construction.",
+  "agent_artifact": "# Scene prompt\nCreate a 3D high-speed arcade speedrun course as one continuous linear route of three distinct themed levels flowing directly into each other. Each level is a compact 45–60 second run at super-speed, with a few clearly spaced obstacle sections and glowing green checkpoint pads at the start of each new section. Level 1 is a neon cyberpunk highway with a fast, open forward route framed by moving grid walls, glowing laser-beam barriers, and booster pads. Level 2 transitions into a futuristic factory containing rotating electric rollers, timed vertical laser gates, and toxic-waste pits along the path. Level 3 becomes a crumbling space station with floating platforms, swinging electric pendulums, and a finish line at the far end. Scatter spinning glowing gold coins throughout all three levels, especially along routes, jumps, and obstacle sections.\n\n# Agent decision\n## Genre\nThe dominant genre is Racing because this is a timed, finite super-speed run to a finish. Obby & Platformer is secondary because discrete jumps and timing hazards shape the route.\n\n## Shape and preset\nUse `route-point-to-point`, one continuous start-to-finish course through 3 themes. The preset is Obstacle Race.\n\n## Config requirements\nUse `hazard-kill` for lasers, electric obstacles, toxic-waste pits, and fall-away space edges. Use `trigger-finish` for the terminal finish structure, `checkpoint-respawn` for glowing green recovery pads, `obstacle-moving` for grid walls, rollers, and pendulums, and `obstacle-timing` for laser gates and disappearing platforms. Use `powerup-buffs` for booster pads. The three themed environments remain contiguous rather than separate maps.\n\n## Layout requirements\nPlace one `startpoint-line` at the cyberpunk highway entrance and the layout half of `trigger-finish` at Level 3’s far end. Place `checkpoint-respawn` pads at each level entrance and at the start of every major obstacle section, restoring the nearest safe point. Place `collectible-nodes` as spinning gold coin lines along all 3 routes, jumps, and higher-risk obstacle approaches. Place `powerup-buffs` on clear highway acceleration lines.\n\n## Layout components\nBuild 3 consecutive 45–60-second levels. Level 1 is an open neon highway with grid walls, laser bars, and boosters; Level 2 is a factory corridor with rollers, timed gates, and waste pits; Level 3 is a crumbling station route of floating disappearing platforms and swinging pendulums. Use direct transition thresholds, not teleports. Keep the critical path centered and unmistakable from start to finish.\n\n## Render order\nRender `topdown` first and make it authoritative, because the complete route, jumps, hazards, and checkpoints must remain continuously clearable.\n\n## Scale, theme, and pipeline cost\nScale is huge, driven by 3 super-speed levels lasting 45–60 seconds each. The theme progresses from neon cyberpunk to industrial electric factory to ruined space station. Use `P6` because the race and obstacle chain must be valid by construction.\n",
+  "agent_notes": "## Genre\nThe dominant genre is Racing because this is a timed, finite super-speed run to a finish. Obby & Platformer is secondary because discrete jumps and timing hazards shape the route.\n\n## Shape and preset\nUse `route-point-to-point`, one continuous start-to-finish course through 3 themes. The preset is Obstacle Race.\n\n## Config requirements\nUse `hazard-kill` for lasers, electric obstacles, toxic-waste pits, and fall-away space edges. Use `trigger-finish` for the terminal finish structure, `checkpoint-respawn` for glowing green recovery pads, `obstacle-moving` for grid walls, rollers, and pendulums, and `obstacle-timing` for laser gates and disappearing platforms. Use `powerup-buffs` for booster pads. The three themed environments remain contiguous rather than separate maps.\n\n## Layout requirements\nPlace one `startpoint-line` at the cyberpunk highway entrance and the layout half of `trigger-finish` at Level 3’s far end. Place `checkpoint-respawn` pads at each level entrance and at the start of every major obstacle section, restoring the nearest safe point. Place `collectible-nodes` as spinning gold coin lines along all 3 routes, jumps, and higher-risk obstacle approaches. Place `powerup-buffs` on clear highway acceleration lines.\n\n## Layout components\nBuild 3 consecutive 45–60-second levels. Level 1 is an open neon highway with grid walls, laser bars, and boosters; Level 2 is a factory corridor with rollers, timed gates, and waste pits; Level 3 is a crumbling station route of floating disappearing platforms and swinging pendulums. Use direct transition thresholds, not teleports. Keep the critical path centered and unmistakable from start to finish.\n\n## Render order\nRender `topdown` first and make it authoritative, because the complete route, jumps, hazards, and checkpoints must remain continuously clearable.\n\n## Scale, theme, and pipeline cost\nScale is huge, driven by 3 super-speed levels lasting 45–60 seconds each. The theme progresses from neon cyberpunk to industrial electric factory to ruined space station. Use `P6` because the race and obstacle chain must be valid by construction.",
+  "secondary": [
+    "Obby & Platformer"
+  ],
+  "spec": {
+    "genre": "Racing",
+    "secondary": [
+      "Obby & Platformer"
+    ],
+    "shape": "route-point-to-point",
+    "preset": "Obstacle Race",
+    "axes": {},
+    "options": [
+      {
+        "id": "hazard-kill",
+        "text": "Lasers, electric obstacles, toxic-waste pits, and fall-away space edges.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "trigger-finish",
+        "text": "The terminal finish structure at Level 3's far end.",
+        "visible": true,
+        "count": 1
+      },
+      {
+        "id": "checkpoint-respawn",
+        "text": "Glowing green recovery pads that restore the nearest safe point.",
+        "visible": false,
+        "count": -1
+      },
+      {
+        "id": "startpoint-line",
+        "text": "The start line at the cyberpunk highway entrance.",
+        "visible": true,
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "trigger-finish",
+        "text": "The terminal finish structure.",
+        "count": 1,
+        "where": "At Level 3's far end."
+      },
+      {
+        "id": "checkpoint-respawn",
+        "text": "Glowing green recovery pads restoring the nearest safe point.",
+        "count": -1,
+        "where": "At each level entrance and at the start of every major obstacle section."
+      },
+      {
+        "id": "startpoint-line",
+        "text": "The start line at the cyberpunk highway entrance.",
+        "count": 1,
+        "where": "At the Level 1 cyberpunk highway entrance."
+      }
+    ],
+    "layout": {
+      "composition": "A huge, centered, unmistakable critical path runs straight through three consecutive themed levels from the cyberpunk highway entrance to the distant Level 3 finish.",
+      "zones": [
+        {
+          "name": "Level 1",
+          "role": "Open neon highway opening level with a fast forward route, grid walls, laser bars, and boosters.",
+          "where": "Start of the course.",
+          "size": "45–60 seconds"
+        },
+        {
+          "name": "Level 2",
+          "role": "Futuristic factory level with rollers, timed gates, and toxic-waste pits.",
+          "where": "Directly after Level 1.",
+          "size": "45–60 seconds"
+        },
+        {
+          "name": "Level 3",
+          "role": "Crumbling space station level with floating disappearing platforms, swinging pendulums, and the finish line.",
+          "where": "Far end of the course, directly after Level 2.",
+          "size": "45–60 seconds"
+        }
+      ],
+      "paths": [
+        {
+          "from": "Level 1",
+          "to": "Level 2",
+          "kind": "open ground"
+        },
+        {
+          "from": "Level 2",
+          "to": "Level 3",
+          "kind": "open ground"
+        }
+      ],
+      "terrain": "An open neon highway transitions directly into an industrial electric factory corridor, then into a crumbling ruined space-station route with toxic-waste pits, floating platforms, and fall-away edges.",
+      "props": [
+        {
+          "name": "Moving grid walls",
+          "count": -1,
+          "where": "Level 1 neon highway."
+        },
+        {
+          "name": "Glowing laser-beam barriers",
+          "count": -1,
+          "where": "Level 1 neon highway."
+        },
+        {
+          "name": "Booster pads",
+          "count": -1,
+          "where": "Clear highway acceleration lines in Level 1."
+        },
+        {
+          "name": "Rotating electric rollers",
+          "count": -1,
+          "where": "Level 2 factory corridor."
+        },
+        {
+          "name": "Timed vertical laser gates",
+          "count": -1,
+          "where": "Level 2 factory corridor."
+        },
+        {
+          "name": "Toxic-waste pits",
+          "count": -1,
+          "where": "Along the Level 2 path."
+        },
+        {
+          "name": "Floating disappearing platforms",
+          "count": -1,
+          "where": "Level 3 crumbling station route."
+        },
+        {
+          "name": "Swinging electric pendulums",
+          "count": -1,
+          "where": "Level 3 crumbling station route."
+        },
+        {
+          "name": "Spinning glowing gold coin lines",
+          "count": -1,
+          "where": "Throughout all three levels, especially along routes, jumps, and obstacle sections."
+        }
+      ],
+      "boundary": "Fall-away space edges and toxic-waste pits punish leaving the centered route.",
+      "scale_band": "huge",
+      "theme": "Neon cyberpunk highway progressing to industrial electric factory and ruined space station."
+    },
+    "render": {
+      "first": "authored_plan",
+      "then": "topdown",
+      "authoritative": "authored_plan",
+      "why": "the complete route, jumps, hazards, and checkpoints must remain continuously clearable.",
+      "set_piece": false
+    },
+    "route": [
+      "P6"
+    ],
+    "notes": [
+      "`obstacle-moving`, `obstacle-timing`, `powerup-buffs`, and `collectible-nodes` were named in the blob but are not Racing options, so they were not emitted as options or layout placements under the dominant-genre rule. Their described scene elements remain transcribed as layout props.",
+      "The blob states checkpoints at three level entrances plus every major obstacle section, but does not state a total checkpoint-pad count.",
+      "visible on 'checkpoint-respawn' set from goes_to=layout"
+    ],
+    "scene_prompt": "Create a 3D high-speed arcade speedrun course as one continuous linear route of three distinct themed levels flowing directly into each other. Each level is a compact 45–60 second run at super-speed, with a few clearly spaced obstacle sections and glowing green checkpoint pads at the start of each new section. Level 1 is a neon cyberpunk highway with a fast, open forward route framed by moving grid walls, glowing laser-beam barriers, and booster pads. Level 2 transitions into a futuristic factory containing rotating electric rollers, timed vertical laser gates, and toxic-waste pits along the path. Level 3 becomes a crumbling space station with floating platforms, swinging electric pendulums, and a finish line at the far end. Scatter spinning glowing gold coins throughout all three levels, especially along routes, jumps, and obstacle sections."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "1986e1975066",
+  "served_by": "subagent/genre-choice -> gateway/production/gpt-5.6-terra",
+  "schema_degraded": false,
+  "reused_uprez": true,
+  "order": "layout",
+  "first": "authored_plan",
+  "mapper_notes": []
+}

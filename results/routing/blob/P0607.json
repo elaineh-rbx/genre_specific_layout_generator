@@ -14,95 +14,82 @@
     }
   ],
   "scene_prompt": "Create a 3D free-driving map set in a small realistic city-street environment, with interconnected paved roads for driving a Pagani-style supercar. Include an open street network without a race start, finish line, or track layout.",
-  "blob": "### Genre\nThe dominant genre is Simulation: this is free vehicle operation with no lap, start, or finish condition. Use the Vehicle Sim preset.\n\n### Shape and preset\nUse `world-shared`, interpreted here as one compact, continuously drivable city-street district rather than a circuit. The Vehicle Sim preset matches and its shape and core road-network intent remain recognisable.\n\n### Config requirements\nUse visible-geometry `path-road-vehicle`: interconnected realistic paved city streets, wide and flat enough for a Pagani-style supercar to turn and travel freely. Do not add racing-specific start lines, finish gates, lanes, checkpoints, barriers, or resource fields; none were requested. There are no invisible layout markers required by the prompt.\n\n### Layout components\nBuild one small city-street zone, with a compact open street network occupying most of the map. Arrange several connected asphalt streets in a readable block pattern with intersections, gentle corners, and at least one broader avenue so the supercar has room to turn and accelerate. Keep all roads mutually connected; there is no designated route, circuit, or terminal. Line the street edges with realistic urban curb geometry, sidewalks, modest low-rise city-front building facades, streetlights, road markings, traffic signs, and sparse roadside parking or street furniture as visual dressing. The Pagani-style supercar belongs on the road network as the driving vehicle. Use mostly level paved ground, with built frontage forming the practical boundary around the district; avoid dead-end track presentation and avoid a visible race enclosure. Frame the map as an isometric three-quarter overview that clearly shows the street connectivity while retaining street-level realism.\n\n### Render order\nUse `isometric`: the city’s realistic visual character leads, and no topology failure would make this free-driving space unplayable because it has no mandatory race route.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the author’s request for a small city map rather than a regional driving world. Theme: realistic contemporary urban streets, clean asphalt, understated city architecture, and a high-end Italian-style supercar. Use `P0`; this is one connected exterior surface with ordinary drivable roads and no forced multi-level, interior, volumetric, separate-map, or validity-by-construction capture path.",
+  "blob": "### Genre\nThe dominant genre is Simulation: this is free vehicle operation with no race start, finish, or lap structure. There is no secondary genre.\n\n### Shape and preset\nUse `world-open`, taken from the Vehicle Sim preset. It is one compact, contiguous city street map where the driver can choose routes freely, rather than a directed racing course.\n\n### Config requirements\nUse `path-road-vehicle` for realistic paved, vehicle-width streets forming the complete drivable network. No other image options are requested: do not add a race corridor, start grid, finish structure, resource field, or unrelated city population.\n\n### Layout requirements\nNo placed gameplay markers are needed. In particular, omit `startpoint-line`, `trigger-finish`, checkpoints, race triggers, and task stations; the map is solely for unrestricted driving.\n\n### Layout components\nBuild a small realistic city-street map as one connected urban district. Place a compact central intersection with several paved streets branching into short blocks and reconnecting through cross streets, creating multiple continuous driving loops rather than dead-end track segments. Roads should be broad enough for a Pagani-style supercar to turn naturally at intersections, with realistic lane proportions, curbs, sidewalks, streetlights, road markings, and restrained low-rise urban frontage as visual dressing. Keep the street grid open and legible, with no formal circuit, starting grid, finish line, or racing barriers. Enclose the outer edge naturally with perimeter buildings, walls, and the end of the surrounding blocks; driving remains within the city streets. Compose the map from an elevated isometric view that clearly shows the connected road network and the central junction.\n\n### Render order\nUse `topdown` first, authoritative, because the connected street topology and vehicle-turning network must remain coherent for free driving before the isometric view is dressed.\n\n### Scale, theme, and pipeline cost\nScale band: small, driven by the requested small city-street map. Theme: realistic contemporary urban streets, clean asphalt, subtle road furniture, and exotic-supercar scale. Pipeline modifier: `P0`; this is one connected ground-level surface with no required overhangs, interior transitions, separate maps, or topology that must be procedurally carved.",
   "spec": {
     "genre": "Simulation",
     "secondary": [],
-    "shape": "world-shared",
+    "shape": "world-open",
     "preset": "Vehicle Sim",
     "axes": {},
     "options": [
       {
         "id": "path-road-vehicle",
-        "text": "Interconnected realistic paved city streets, wide and flat enough for a Pagani-style supercar to turn and travel freely.",
+        "text": "Realistic paved, vehicle-width streets forming the complete drivable network.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "Isometric three-quarter overview clearly showing the compact street connectivity while retaining street-level realism; the open street network occupies most of the map.",
+      "composition": "Elevated isometric view clearly showing the connected road network and compact central junction, with paved streets branching into short blocks and reconnecting through cross streets.",
       "zones": [
         {
-          "name": "City-street district",
-          "role": "Free vehicle operation across a compact, continuously drivable urban street network.",
-          "where": "Across most of the map",
+          "name": "Central intersection",
+          "role": "Compact central junction for unrestricted vehicle turning and route choice.",
+          "where": "centre",
+          "size": "compact"
+        },
+        {
+          "name": "Urban street blocks",
+          "role": "Short connected blocks and cross streets creating multiple continuous driving loops.",
+          "where": "branching around the central intersection",
           "size": "small"
         }
       ],
       "paths": [
         {
-          "from": "connected asphalt streets",
-          "to": "intersections and gentle corners",
+          "from": "Central intersection",
+          "to": "Short urban blocks",
           "kind": "road"
         },
         {
-          "from": "connected asphalt streets",
-          "to": "broader avenue",
+          "from": "Short urban blocks",
+          "to": "Cross streets",
+          "kind": "road"
+        },
+        {
+          "from": "Cross streets",
+          "to": "Central intersection",
           "kind": "road"
         }
       ],
-      "terrain": "Mostly level paved ground with clean asphalt, realistic urban curb geometry, and sidewalks.",
+      "terrain": "Clean asphalt streets with realistic lane proportions, curbs, sidewalks, and open, legible street-grid ground level.",
       "props": [
         {
-          "name": "connected asphalt streets",
+          "name": "Streetlights",
           "count": -1,
-          "where": "readable block pattern across the district"
+          "where": "along the paved streets"
         },
         {
-          "name": "broader avenue",
-          "count": 1,
-          "where": "within the street network"
+          "name": "Road markings",
+          "count": -1,
+          "where": "on the streets"
         },
         {
-          "name": "low-rise city-front building facades",
+          "name": "Restrained low-rise urban frontage",
           "count": -1,
-          "where": "lining the street edges"
-        },
-        {
-          "name": "streetlights",
-          "count": -1,
-          "where": "along street edges"
-        },
-        {
-          "name": "road markings",
-          "count": -1,
-          "where": "on paved streets"
-        },
-        {
-          "name": "traffic signs",
-          "count": -1,
-          "where": "along streets"
-        },
-        {
-          "name": "sparse roadside parking or street furniture",
-          "count": -1,
-          "where": "at street edges"
-        },
-        {
-          "name": "Pagani-style supercar",
-          "count": -1,
-          "where": "on the road network"
+          "where": "along the surrounding blocks"
         }
       ],
-      "boundary": "Built frontage forms the practical boundary around the district; no visible race enclosure.",
+      "boundary": "The outer edge is naturally enclosed by perimeter buildings, walls, and the ends of the surrounding blocks; driving remains within the city streets.",
       "scale_band": "small",
-      "theme": "Realistic contemporary urban streets, clean asphalt, understated city architecture, high-end Italian-style supercar."
+      "theme": "Realistic contemporary urban streets, subtle road furniture, clean asphalt, and exotic-supercar scale."
     },
     "render": {
-      "first": "isometric",
-      "then": "topdown",
-      "authoritative": "isometric",
-      "why": "the city’s realistic visual character leads, and no topology failure would make this free-driving space unplayable because it has no mandatory race route.",
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "the connected street topology and vehicle-turning network must remain coherent for unrestricted driving before the isometric view is dressed.",
       "set_piece": false
     },
     "route": [
@@ -114,10 +101,12 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
-  "mapper_notes": []
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P0'] gives isometric"
+  ]
 }

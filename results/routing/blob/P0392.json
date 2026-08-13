@@ -14,106 +14,137 @@
     }
   ],
   "scene_prompt": "Create a 3D endless runner map set in a bright, stylized jungle-temple environment. A forward-running track forms three parallel lanes through dense jungle ruins, with temple stonework, foliage, and obstacles arranged along the route; no chasing character, animal characters, or themed signage.",
-  "blob": "### Genre\nThe dominant genre is Infinite Runner: automatic endless forward travel on a fixed three-lane route. There is no secondary genre.\n\n### Shape and preset\nUse `lane-snap`, expressing three parallel, clearly separated lanes through jungle-temple ruins. Preset: none. The scene shares the fixed-lane endless-run form of Lane Runner, but the requested obstacle-focused route does not call for that preset’s coin trails or moving traffic.\n\n### Config requirements\n`chunk-modular` is visible geometry: build repeatable straight jungle-temple track modules with precisely aligned lane exits and entries so the three lanes continue without drift. `hazard-kill` is visible geometry: place route-blocking temple obstacles and gaps that visibly end a run on contact. Do not depict a chasing character, animal characters, or themed signage.\n\n### Layout components\nCreate one long forward-running corridor made from modular track chunks. Each chunk carries exactly three parallel stone lanes, with low lane dividers or contrasting paving that make the lane choices immediately readable. The route runs through dense, bright stylized jungle: carved temple slabs, broken columns, vine-wrapped walls, broad-leaf foliage, and ruin gateways frame the track without obscuring the next obstacle sequence. Place obstacle clusters across individual lanes or paired lanes, preserving a visibly clear onward lane in each readable segment. Use occasional broken stone floor sections and temple debris as hazardous blockers, but keep the route planar and continuously forward. Dense foliage and ruin walls form the side boundary and conceal the endless continuation beyond the active route. Frame the composition from a slightly elevated forward isometric view, with the three lanes converging toward a jungle-temple horizon.\n\n### Render order\nUse `topdown`: the three-lane route and its obstacle clearance must remain coherent and continuously playable from plan view before the isometric jungle dressing is derived.\n\n### Scale, theme, and pipeline cost\nScale is huge because the map is an endlessly repeated sequence of modular route chunks. Theme: bright stylized jungle-temple adventure, colorful stone ruins, saturated foliage, and clean readable lane geometry. Pipeline modifier `P6` applies because chunk joins, lane alignment, and obstacle sequences must be valid by construction. No other modifier is forced; the route is a single ground-level surface.",
+  "blob": "### Genre\nThe dominant genre is `Infinite Runner`: automatic endless forward movement through a three-lane obstacle path, ending on collision rather than through a pursuing character.\n\n### Shape and preset\nUse `lane-snap`, the Lane Runner preset. It is a fixed three-parallel-lane jungle-temple run where lateral movement snaps cleanly between lanes. Retain the preset’s modular-run logic but omit its coin trails and moving obstacles because neither was requested.\n\n### Config requirements\nUse `chunk-modular` for repeatable jungle-temple track segments whose entry and exit align exactly along the forward axis. Use `hazard-kill` for the route obstacles: temple debris, stone barriers, root-blocked lane hazards, and ruin obstacles that visibly end a run on contact. Do not draw a chaser, anthropomorphic animals, or Zootopia-like signage; the influence is only bright, stylized art direction.\n\n### Layout requirements\nPlace `trigger-despawn` as a cleanup volume a fixed distance behind the player camera, spanning all three lanes and recycling cleared track chunks. No pickups, boosts, or NPC placements are required.\n\n### Layout components\nBuild one endless, straight-ahead modular route made of connected jungle-temple chunks. Each chunk contains exactly three equal-width, parallel stone lanes with crisp lane boundaries and sufficient open lateral space for instant snapping. Dense jungle foliage, vines, broad-leaf plants, carved stone walls, broken temple facades, and scattered masonry tightly frame the corridor without obscuring lane readability. Arrange collision obstacles in alternating lane patterns so at least one lane remains visibly clear through each obstacle group. Use compact ruin clearings and short stone gateway moments as chunk variations, but maintain one continuous forward direction. The boundary is dense jungle and temple retaining walls rather than an exposed map edge. Compose the frame along the vanishing point of the three lanes, with bright saturated jungle greens, warm stone, and playful stylized lighting.\n\n### Render order\nUse `topdown` first, authoritative, because the repeated three-lane topology and every obstacle pattern must remain clearable; an invalid chunk sequence would make the runner unplayable.\n\n### Scale, theme, and pipeline cost\nScale is large because the visible build represents a reusable endless sequence of modular chunks. Theme: bright stylized jungle-temple ruins, colorful foliage, clean readable stone obstacles. Use `P6` because chunk connectivity, lane alignment, and obstacle clearance must be valid by construction.",
   "spec": {
     "genre": "Infinite Runner",
     "secondary": [],
     "shape": "lane-snap",
-    "preset": "none",
+    "preset": "Lane Runner",
     "axes": {},
     "options": [
       {
         "id": "chunk-modular",
-        "text": "Repeatable straight jungle-temple track modules with precisely aligned lane exits and entries so the three lanes continue without drift.",
+        "text": "Repeatable jungle-temple track segments whose entry and exit align exactly along the forward axis.",
         "visible": true,
         "count": -1
       },
       {
         "id": "hazard-kill",
-        "text": "Route-blocking temple obstacles and gaps that visibly end a run on contact.",
+        "text": "Temple debris, stone barriers, root-blocked lane hazards, and ruin obstacles that visibly end a run on contact.",
         "visible": true,
+        "count": -1
+      },
+      {
+        "id": "trigger-despawn",
+        "text": "A cleanup volume behind the player camera that recycles cleared track chunks.",
+        "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "trigger-despawn",
+        "text": "A cleanup volume behind the player camera that recycles cleared track chunks.",
+        "count": -1,
+        "where": "A fixed distance behind the player camera, spanning all three lanes."
+      }
+    ],
     "layout": {
-      "composition": "Slightly elevated forward isometric view down the three parallel lanes, converging toward a jungle-temple horizon; dense foliage, vine-wrapped ruin walls, columns, slabs, and gateways frame both sides without obscuring the next obstacle sequence.",
+      "composition": "Frame the scene along the vanishing point of the three parallel lanes, with the straight route receding forward through tightly framing jungle and temple ruins.",
       "zones": [
         {
-          "name": "endless three-lane jungle-temple corridor",
-          "role": "Automatic forward-running route built from modular track chunks, with readable lane choices and obstacle clearance.",
-          "where": "Running from the foreground toward the jungle-temple horizon.",
-          "size": "Endlessly repeated sequence of modular route chunks."
+          "name": "Endless modular jungle-temple route",
+          "role": "Automatic forward-running obstacle path made from connected modular chunks.",
+          "where": "Extending straight ahead through the frame.",
+          "size": "large"
+        },
+        {
+          "name": "Compact ruin clearings",
+          "role": "Chunk variations along the continuous forward route.",
+          "where": "Within occasional route chunks.",
+          "size": "compact"
+        },
+        {
+          "name": "Short stone gateway moments",
+          "role": "Chunk variations that frame the continuous route.",
+          "where": "Along the forward route.",
+          "size": "short"
         }
       ],
       "paths": [
         {
-          "from": "foreground track",
-          "to": "jungle-temple horizon",
+          "from": "Chunk entry",
+          "to": "Chunk exit",
           "kind": "track"
         }
       ],
-      "terrain": "Planar continuous stone track through dense bright stylized jungle-temple ruins, with broken stone floor sections and temple debris used as hazardous blockers.",
+      "terrain": "Bright saturated jungle greens around warm stone lanes, with dense jungle foliage, vines, broad-leaf plants, carved stone walls, broken temple facades, and scattered masonry.",
       "props": [
         {
-          "name": "parallel stone lanes",
+          "name": "Equal-width parallel stone lanes",
           "count": 3,
-          "where": "Within every modular track chunk along the forward-running corridor."
+          "where": "Running continuously through every modular chunk."
         },
         {
-          "name": "low lane dividers or contrasting paving",
+          "name": "Temple debris",
           "count": -1,
-          "where": "Between the three stone lanes."
+          "where": "In alternating lane obstacle patterns."
         },
         {
-          "name": "carved temple slabs",
+          "name": "Stone barriers",
           "count": -1,
-          "where": "Along the route through the jungle ruins."
+          "where": "In alternating lane obstacle patterns."
         },
         {
-          "name": "broken columns",
+          "name": "Root-blocked lane hazards",
           "count": -1,
-          "where": "Framing the track."
+          "where": "In alternating lane obstacle patterns."
         },
         {
-          "name": "vine-wrapped walls",
+          "name": "Ruin obstacles",
           "count": -1,
-          "where": "Along both side boundaries."
+          "where": "In alternating lane obstacle patterns."
         },
         {
-          "name": "broad-leaf foliage",
+          "name": "Dense jungle foliage",
           "count": -1,
-          "where": "Dense along both sides of the active route."
+          "where": "Tightly framing the corridor."
         },
         {
-          "name": "ruin gateways",
+          "name": "Vines",
           "count": -1,
-          "where": "Framing the track along its forward route."
+          "where": "Tightly framing the corridor."
         },
         {
-          "name": "obstacle clusters",
+          "name": "Broad-leaf plants",
           "count": -1,
-          "where": "Across individual lanes or paired lanes, preserving a clear onward lane in each readable segment."
+          "where": "Tightly framing the corridor."
         },
         {
-          "name": "broken stone floor sections",
+          "name": "Carved stone walls",
           "count": -1,
-          "where": "Occasionally along the track as hazardous blockers."
+          "where": "Tightly framing the corridor."
         },
         {
-          "name": "temple debris",
+          "name": "Broken temple facades",
           "count": -1,
-          "where": "Occasionally along the track as hazardous blockers."
+          "where": "Tightly framing the corridor."
+        },
+        {
+          "name": "Scattered masonry",
+          "count": -1,
+          "where": "Tightly framing the corridor."
         }
       ],
-      "boundary": "Dense foliage and ruin walls form the side boundary and conceal endless continuation beyond the active route.",
-      "scale_band": "huge",
-      "theme": "Bright stylized jungle-temple adventure; colorful stone ruins, saturated foliage, and clean readable lane geometry."
+      "boundary": "Dense jungle and temple retaining walls rather than an exposed map edge.",
+      "scale_band": "large",
+      "theme": "Bright stylized jungle-temple ruins, colorful foliage, clean readable stone obstacles, playful stylized lighting."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "The three-lane route and obstacle clearance must remain coherent and continuously playable from plan view.",
+      "why": "The repeated three-lane topology and every obstacle pattern must remain clearable; an invalid chunk sequence would make the runner unplayable.",
       "set_piece": false
     },
     "route": [
@@ -125,7 +156,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

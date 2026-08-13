@@ -19,84 +19,97 @@
     }
   ],
   "scene_prompt": "Create a true 3D, third-person room-decorating map set in one modern apartment room with a clean, simple interior. The enclosed room has a floor and walls with a set of clearly distributed floor-level furniture placement slots, leaving open walking space between them; furnishable real 3D models include a sofa, table, chair, lamp, plant, and rug, all sized to rest naturally on the floor.",
-  "blob": "### Genre\nThe dominant genre is Simulation: a focused 3D decorating simulator in which the player works within a furnished-space build rather than a UI-only screen.\n\n### Shape and preset\nUse `plot-isolated`, interpreted as one self-contained apartment room allocated to a single decorating session. No Simulation preset is recognisable: the room is neither a resource sandbox nor a tycoon, training ladder, role-sim world, or shared vehicle space.\n\n### Config requirements\nNo menu configuration options apply beyond the stated room geometry. The furniture locations are visible geometry: clearly readable floor-level placement markers distributed around the room. Their associated placement-detection volumes are invisible layout objects, placed after segmentation and excluded from the image render.\n\n### Layout components\nBuild one medium-small enclosed modern apartment room, approximately square or slightly rectangular, with a clean simple interior and generous circulation through its centre. The main zone is the open furnishing floor, with distributed floor-level locations around the perimeter and in a few interior positions so no location blocks the walking route. Give each location enough clear footprint for its intended object: a sofa against a long wall, a table in a central or dining-side position, a chair beside the table, a lamp near seating or a wall, a plant in a corner, and a rug on an open floor area. Use recognizable real 3D furniture models with natural proportions: one sofa, one table, one chair, one lamp, one plant, and one rug, all resting directly on the floor. Leave clear walking lanes between every location and avoid clutter or extra rooms. The room boundary is continuous walls enclosing a single interior, with a finished floor and a simple ceiling implied above. Compose the isometric view from a high front corner with the furniture positions legible at once and the open central walking space visible.\n\n### Render order\nUse `isometric`: render the isometric room first as the authoritative image, then derive the top-down view. The single room has simple, non-critical circulation, so an authored plan is unnecessary.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the explicitly single-room scope and six named furniture models. Theme is a clean, modern apartment interior with restrained neutral finishes and uncluttered contemporary forms. Use `P0`: this is one enclosed, walkable interior surface with no described outside-to-inside transition, stacked floors, separate maps, volumetric movement, or validity-critical route.",
+  "blob": "### Genre\nThe dominant genre is Simulation: a focused 3D furnishing loop with a completion goal. There is no secondary genre.\n\n### Shape and preset\nUse `interior-single`, taken from outside Simulation’s usual shape set. This is one enclosed modern apartment room that contains the entire playable build, with no exterior or additional apartment rooms. The closest Simulation presets assume shared worlds, plots, or progression areas, so the preset is none.\n\n### Config requirements\nUse `trigger-task` for clearly legible, floor-level furnishing slots distributed around the room. They appear as subtle placement outlines or pads integrated into the clean apartment floor, not as UI elements, and leave clear walking space between them.\n\n### Layout requirements\nPlace `trigger-task` volumes at every visible furniture placement slot; each volume sits flush with the floor and is sized and oriented for its intended furnishing footprint, such as the sofa against a wall, the rug in open floor space, and smaller lamp or plant positions beside larger furniture. The exact slot count is not specified, but every authored slot must receive one placement volume. No other gameplay markers are required.\n\n### Layout components\nBuild one small-to-medium rectangular apartment room. The main zone is the open furnishing floor, with clean walls enclosing it on all sides and generous circulation through the center. Arrange distributed floor slots around the perimeter and in a central seating/dining grouping without blocking the walking routes between them. Provide recognizable real 3D furniture models suitable for the slots: a sofa, table, chair, lamp, plant, and rug, each with natural scale and grounded contact on the floor. Use a simple finished floor, plain modern walls, minimal trim, and no exterior boundary beyond the room walls. Compose the frame to show the room’s full footprint, the open central circulation, and the spread of furnishing positions.\n\n### Render order\nUse `isometric` first and treat it as authoritative, because the visual read of a clean furnished interior leads; the room topology is simple and does not require a plan-first validity pass.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the author’s explicit one-room scope. Theme: clean, simple modern apartment interior with recognizable Roblox Toolbox-style 3D furniture assets. Use `P0`: this is one enclosed, single-surface room with no outside-to-inside transition, overhanging floors, separate maps, or topology that must be procedurally validated.",
   "spec": {
     "genre": "Simulation",
     "secondary": [],
-    "shape": "plot-isolated",
+    "shape": "interior-single",
     "preset": "none",
     "axes": {},
-    "options": [],
+    "options": [
+      {
+        "id": "trigger-task",
+        "text": "Clearly legible, floor-level furnishing slots distributed around the room, appearing as subtle placement outlines or pads integrated into the clean apartment floor rather than UI elements.",
+        "visible": true,
+        "count": -1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "trigger-task",
+        "text": "Furnishing placement volumes at every visible furniture slot, flush with the floor and sized and oriented for the intended furnishing footprint.",
+        "count": -1,
+        "where": "At every authored furniture placement slot: sofa slots against walls, rug slots in open floor space, and smaller lamp or plant slots beside larger furniture."
+      }
+    ],
     "layout": {
-      "composition": "High isometric view from a front corner, showing the enclosing walls, distributed furniture positions, and open central walking space legibly at once.",
+      "composition": "Isometric view showing the room’s full rectangular footprint, enclosing walls, open central circulation, perimeter furnishing slots, and the central seating/dining grouping.",
       "zones": [
         {
-          "name": "open furnishing floor",
-          "role": "A single decorating-session room with floor-level furniture locations arranged around the perimeter and at a few interior positions while preserving central circulation.",
-          "where": "entire enclosed room",
-          "size": "medium-small, approximately square or slightly rectangular"
+          "name": "Open furnishing floor",
+          "role": "The single apartment-room play area for placing and arranging furniture, with circulation kept clear through the center.",
+          "where": "Entire enclosed room, with slots around the perimeter and in the central seating/dining grouping.",
+          "size": "small-to-medium"
         }
       ],
       "paths": [],
-      "terrain": "Finished floor inside a clean modern apartment room; simple ceiling implied above.",
+      "terrain": "Simple finished floor with clean, plain modern walls and minimal trim.",
       "props": [
         {
           "name": "sofa",
-          "count": 1,
-          "where": "against a long wall"
+          "count": -1,
+          "where": "At a floor slot against a wall."
         },
         {
           "name": "table",
-          "count": 1,
-          "where": "central or dining-side position"
+          "count": -1,
+          "where": "In the central seating/dining grouping."
         },
         {
           "name": "chair",
-          "count": 1,
-          "where": "beside the table"
+          "count": -1,
+          "where": "In the central seating/dining grouping."
         },
         {
           "name": "lamp",
-          "count": 1,
-          "where": "near seating or a wall"
+          "count": -1,
+          "where": "At smaller slots beside larger furniture."
         },
         {
           "name": "plant",
-          "count": 1,
-          "where": "corner"
+          "count": -1,
+          "where": "At smaller slots beside larger furniture."
         },
         {
           "name": "rug",
-          "count": 1,
-          "where": "open floor area"
-        },
-        {
-          "name": "floor-level furniture placement markers",
           "count": -1,
-          "where": "distributed around the perimeter and in a few interior positions"
+          "where": "At an open-floor-space slot."
         }
       ],
-      "boundary": "Continuous walls enclose one interior room, with a finished floor and simple ceiling implied above.",
+      "boundary": "Clean apartment room walls enclose the space on all sides; there is no exterior beyond them.",
       "scale_band": "small",
-      "theme": "Clean modern apartment interior with restrained neutral finishes and uncluttered contemporary forms."
+      "theme": "Clean, simple modern apartment interior with recognizable Roblox Toolbox-style 3D furniture assets."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "The single room has simple, non-critical circulation, so an authored plan is unnecessary.",
+      "why": "the visual read of a clean furnished interior leads, and the simple room topology does not require a plan-first validity pass.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
-    "notes": [],
+    "notes": [
+      "`interior-single` is taken from outside Simulation’s usual shape set.",
+      "The exact furnishing-slot count is not specified; every authored visible slot receives a trigger-task placement volume."
+    ],
     "scene_prompt": "Create a true 3D, third-person room-decorating map set in one modern apartment room with a clean, simple interior. The enclosed room has a floor and walls with a set of clearly distributed floor-level furniture placement slots, leaving open walking space between them; furnishable real 3D models include a sofa, table, chair, lamp, plant, and rug, all sized to rest naturally on the floor."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

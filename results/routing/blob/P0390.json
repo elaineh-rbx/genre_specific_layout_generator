@@ -14,97 +14,113 @@
     }
   ],
   "scene_prompt": "Create a 3D meme-bright cartoon game map with colorful, simple environments. An open central collection area leads toward a clearly separated safe zone, with larger brainrot characters positioned around the active paths. Place multiple individual player bases around the safe zone, each with its own area for displaying collected brainrots.",
-  "blob": "### Genre\nThe dominant genre is Simulation, specifically a collection-and-base loop with individual player-owned plots; Survival is secondary only for the pressure of avoiding larger roaming brainrots. The economy, index, and collection rules do not become layout content.\n\n### Shape and preset\nUse `plot-isolated`: each player has a distinct base plot rather than contributing to one shared base. This most closely matches the Sandbox preset because it retains its isolated personal plots and collectible-focused world structure, while omitting the unrequested upgrades bazaar.\n\n### Config requirements\nUse `path-circulation` as visible geometry: broad, readable cartoon paths lead from the open collection ground into the safe zone and branch to player bases. Use `collectible-nodes` as invisible layout placements: distributed collection positions along the active paths, represented visually by the collectible brainrot characters. Do not add a shop, resource field, vehicle roads, or unrequested buildings.\n\n### Layout components\nThe central and largest zone is an open, colorful collection area, with simple terrain and enough clear space for players to move around the larger brainrot characters placed at path edges and within the active ground. A clearly separated safe zone sits beyond this central area, visually marked as calm, protected ground. Arrange multiple individual player base plots around the safe-zone perimeter, each large enough for a personal display area of collected brainrots. Keep unobstructed circulation paths between the collection area, safe zone, and every base. Use bright simple ground materials, playful oversized props, and a soft outer map edge rather than dense walls. Frame the safe zone and its ring of bases as the compositional anchor, with the collection area extending outward in the foreground.\n\n### Render order\nUse `isometric`: the space is a readable open collection-and-base layout, and no exact maze, circuit, or physics-critical route topology must be generated first.\n\n### Scale, theme, and pipeline cost\nUse a medium scale, driven by one central activity zone plus multiple personal bases. Theme: meme-bright cartoon, colorful simple 3D scenery, exaggerated brainrot character silhouettes. Pipeline modifier: `P0`, since this is one exterior ground surface with no overhangs, interiors, separate maps, or validity-by-construction geometry.",
+  "blob": "### 1. Genre\nSimulation is dominant: players collect valuables, bank them for money, and develop individual bases. Survival is secondary because larger hostile brainrots chase players along the collection routes.\n\n### 2. Shape and preset\nUse `plot-isolated`, taken from Simulation’s usual shapes. It means multiple separate, equally readable personal display bases arranged around one shared collection field and safe zone. Preset: none; this keeps the isolated-base structure but does not otherwise match Sandbox or Tycoon.\n\n### 3. Config requirements\nNo additional image configuration option is required. The colorful collectible brainrots, hostile larger brainrots, safe zone, and personal bases are concrete scene geometry described below rather than unasked-for generic features.\n\n### 4. Layout requirements\nUse `collectible-nodes` for collectible brainrots, distributed through the central active collection area and along its outward paths, with denser but riskier clusters near the larger pursuers. Use `spawner-npc` for the larger hostile brainrots: place origins at the outer edges and beside active routes, never inside the safe zone or player bases. Each player base needs one arrival/placement point at its display area, sited just inside the safe-zone-facing edge.\n\n### 5. Layout components\nThe map has a broad central collection field, visually open and colorful, where small collectible brainrot figures appear. Several active paths radiate through this field toward a clearly separated safe zone. Larger brainrot characters occupy the outer path edges and patrol pressure points, leaving a readable safer route back toward the safe zone. The safe zone is a protected central-to-inner ring with a clear boundary and direct access to the bases. Arrange multiple individual player bases evenly around this ring; each is a separate compact plot with a dedicated display pad or shelf area for placed brainrots. Keep bases outside the hostile paths but visibly connected by short safe walkways. Use simple cartoon ground shapes, saturated colors, and an open perimeter rather than enclosing walls. Frame the safe zone and surrounding base ring as the compositional center, with the collection field extending beyond it.\n\n### 6. Render order\nUse `isometric`, with the isometric scene authoritative, because the map’s chase paths and base arrangement do not require a procedurally validated topology.\n\n### 7. Scale, theme, and pipeline cost\nScale is large enough to separate the shared collection field, safe zone, and multiple personal plots. Theme: meme-bright cartoon, colorful simple 3D forms, oversized silly brainrot characters. Pipeline modifier: `P0`; this is one contiguous ground-level map with no forced overhangs, interior transitions, or separate maps.",
   "spec": {
     "genre": "Simulation",
     "secondary": [
       "Survival"
     ],
     "shape": "plot-isolated",
-    "preset": "Sandbox",
+    "preset": "none",
     "axes": {},
     "options": [
       {
-        "id": "path-circulation",
-        "text": "broad, readable cartoon paths lead from the open collection ground into the safe zone and branch to player bases",
-        "visible": true,
-        "count": -1
-      },
-      {
         "id": "collectible-nodes",
-        "text": "distributed collection positions along the active paths, represented visually by the collectible brainrot characters",
+        "text": "Collectible brainrots distributed through the central active collection area and along its outward paths, with denser but riskier clusters near the larger pursuers.",
         "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "collectible-nodes",
+        "text": "Collectible brainrots distributed through the central active collection area and along its outward paths, with denser but riskier clusters near the larger pursuers.",
+        "count": -1,
+        "where": "Through the central active collection area and along outward paths, with denser riskier clusters near the larger pursuers."
+      }
+    ],
     "layout": {
-      "composition": "Frame the safe zone and its ring of bases as the compositional anchor, with the collection area extending outward in the foreground.",
+      "composition": "Frame the protected safe zone and surrounding ring of personal bases as the compositional center, with the broad colorful collection field extending beyond it.",
       "zones": [
         {
-          "name": "Open collection area",
-          "role": "Central active collection ground where players move around larger brainrot characters.",
-          "where": "centre and foreground, extending outward from the safe zone",
-          "size": "largest"
+          "name": "Central collection field",
+          "role": "Open active collection area containing small collectible brainrot figures and chase paths.",
+          "where": "Beyond the central-to-inner safe-zone ring.",
+          "size": "broad"
         },
         {
           "name": "Safe zone",
-          "role": "Calm, protected ground separating the collection area from player bases.",
-          "where": "beyond the central collection area",
-          "size": "clearly separated"
+          "role": "Protected area with a clear boundary and direct access to the bases.",
+          "where": "Central-to-inner ring.",
+          "size": ""
         },
         {
-          "name": "Individual player base plots",
-          "role": "Personal display areas for collected brainrots.",
-          "where": "around the safe-zone perimeter",
-          "size": "multiple plots, each large enough for a personal display area"
+          "name": "Individual player bases",
+          "role": "Separate compact personal display plots, each with a display pad or shelf area for placed brainrots and an arrival/placement point.",
+          "where": "Evenly arranged around the safe-zone ring, outside hostile paths.",
+          "size": "compact"
         }
       ],
       "paths": [
         {
-          "from": "Open collection area",
+          "from": "Central collection field",
           "to": "Safe zone",
           "kind": "open ground"
         },
         {
           "from": "Safe zone",
-          "to": "Individual player base plots",
-          "kind": "path"
+          "to": "Individual player bases",
+          "kind": "walkway"
         }
       ],
-      "terrain": "Simple terrain with bright simple ground materials and clear open space.",
+      "terrain": "Simple cartoon ground shapes with saturated colors; a visually open, colorful collection field.",
       "props": [
         {
-          "name": "larger brainrot characters",
+          "name": "Small collectible brainrot figures",
           "count": -1,
-          "where": "at path edges and within the active collection ground"
+          "where": "Throughout the central collection field and along outward paths."
         },
         {
-          "name": "playful oversized props",
+          "name": "Larger hostile brainrot characters",
           "count": -1,
-          "where": "throughout the map"
+          "where": "Along outer path edges and patrol pressure points."
+        },
+        {
+          "name": "Display pads or shelf areas for placed brainrots",
+          "count": -1,
+          "where": "In each individual player base."
+        },
+        {
+          "name": "Arrival/placement points",
+          "count": -1,
+          "where": "Just inside the safe-zone-facing edge of each player base display area."
         }
       ],
-      "boundary": "Soft outer map edge rather than dense walls.",
-      "scale_band": "medium",
-      "theme": "meme-bright cartoon, colorful simple 3D scenery, exaggerated brainrot character silhouettes"
+      "boundary": "Open perimeter with no enclosing walls.",
+      "scale_band": "large",
+      "theme": "Meme-bright cartoon, colorful simple 3D forms, oversized silly brainrot characters."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "no exact maze, circuit, or physics-critical route topology must be generated first.",
+      "why": "The chase paths and base arrangement do not require a procedurally validated topology.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
-    "notes": [],
+    "notes": [
+      "The per-base arrival/placement points are retained as layout components; the blob did not name a canonical Simulation option for them.",
+      "dropped option 'spawner-npc': not in Simulation",
+      "dropped placement 'spawner-npc': not in Simulation"
+    ],
     "scene_prompt": "Create a 3D meme-bright cartoon game map with colorful, simple environments. An open central collection area leads toward a clearly separated safe zone, with larger brainrot characters positioned around the active paths. Place multiple individual player bases around the safe zone, each with its own area for displaying collected brainrots."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

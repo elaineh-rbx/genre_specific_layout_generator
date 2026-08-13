@@ -19,43 +19,84 @@
     }
   ],
   "scene_prompt": "Create a bright, cartoony 3D exploration map sized for about a five-minute full sweep, with 10 brainrot collectibles distributed across the map in distinct reachable locations.",
-  "blob": "### Genre\nThe dominant genre is Adventure: the player’s objective is to explore the map and collect all 10 brainrots. This is a scavenger-hunt style exploration game rather than a generic environment, because completing the collectible set is the stated win condition.\n\n### Shape and preset\nUse `world-open`, an open contiguous exploration map whose full walkable extent supports an approximately five-minute sweep. The closest preset is Scavenger Hunt, but use **none** as the preset name: the requested scene retains its open-world form and collectible objective, while not specifying the preset’s quest board or secret alcoves.\n\n### Config requirements\nUse `collectible-nodes` as invisible layout placement: 10 brainrot pickup markers occupy distinct, reachable locations across the map and must not appear as technical markers in the render. No other options are implied by the prompt.\n\n### Layout components\nBuild one medium-sized contiguous outdoor exploration zone, broad enough that traversing its full extent on foot takes about five minutes. Distribute the 10 brainrots across the map rather than clustering them: place each at a distinct reachable destination with clear surrounding footing and no isolated or inaccessible placement. Keep the ground as a readable, gently varied cartoony exterior surface, with open traversal space between collectible locations; terrain types, buildings, water, landmarks, and formal roads are unspecified and should not be introduced. The outer edge is an unobtrusive natural map limit rather than a hard architectural wall. Compose the map from an elevated three-quarter view that shows the whole exploration footprint and the spatial spread of the pickup destinations without depicting invisible pickup markers.\n\n### Render order\nUse `topdown`: the plan must first establish that all 10 collectible destinations are connected and reachable across the full sweep, then the isometric view dresses that valid footprint. This is not `authored_plan`, since it is neither a maze nor a racing circuit.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by the requested five-minute full-map sweep and 10 distributed destinations. Theme is bright, cartoony 3D exploration. Pipeline modifier: `P0`, because this is one contiguous exterior ground surface with no forced overhangs, interiors, separate maps, or volumetric traversal.",
+  "blob": "### Genre\nThe dominant genre is Adventure: players explore a map to locate all ten collectibles. There is no secondary genre.\n\n### Shape and preset\nUse `world-open`, matching the Scavenger Hunt preset. This is one contiguous, freely explored cartoony world rather than a directed route; retain the preset’s open-search intent but do not add an unrequested quest board or hidden alcoves.\n\n### Config requirements\nNo image-config options are required beyond the open-world geometry stated in the scene prompt. The bright cartoony treatment applies across the terrain and landmarks.\n\n### Layout requirements\nUse `collectible-nodes`: place exactly 10 brainrot collectibles, each at a distinct, clearly reachable landmark location across the map. Distribute them so a complete sweep takes about five minutes, with none isolated behind an impossible route or hidden in unrendered geometry.\n\n### Layout components\nBuild one medium-sized contiguous exploration map with a central open arrival area and branching, readable walking routes leading to ten separated points of interest. Make each collectible location visually distinct—such as a hilltop, grove, pond edge, small bridge, rock outcrop, flower field, and other simple cartoony landmarks—without turning the map into separate zones. Use gently varied grassy ground, colorful trees, rounded rocks, bushes, flowers, and small terrain rises to distinguish areas while preserving clear traversal. Keep the outer boundary naturally closed by distant cliffs, dense foliage, or low hills. Compose the map from an elevated three-quarter view with the central area readable and the outer landmarks visibly radiating around it.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because all ten collectible sites must be connected by a practical, complete exploration sweep.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by the approximately five-minute traversal loop and ten distributed destinations. Theme is bright, playful, cartoony outdoor exploration. Pipeline modifier: `P0`; the map is one contiguous ground surface with only gentle, non-overhanging relief.",
   "spec": {
     "genre": "Adventure",
     "secondary": [],
     "shape": "world-open",
-    "preset": "none",
+    "preset": "Scavenger Hunt",
     "axes": {},
     "options": [
       {
         "id": "collectible-nodes",
-        "text": "10 brainrot pickup markers occupy distinct, reachable locations across the map and must not appear as technical markers in the render.",
+        "text": "Exactly 10 brainrot collectibles, each at a distinct, clearly reachable landmark location across the map.",
         "visible": false,
         "count": 10
       }
     ],
+    "layout_placement": [
+      {
+        "id": "collectible-nodes",
+        "text": "Exactly 10 brainrot collectibles, each at a distinct, clearly reachable landmark location across the map.",
+        "count": 10,
+        "where": "Distribute them across the map so a complete sweep takes about five minutes, with none isolated behind an impossible route or hidden in unrendered geometry."
+      }
+    ],
     "layout": {
-      "composition": "Elevated three-quarter view showing the whole outdoor exploration footprint and the spatial spread of pickup destinations, without depicting invisible pickup markers.",
+      "composition": "Elevated three-quarter view with the central open arrival area readable and outer landmarks visibly radiating around it.",
       "zones": [
         {
-          "name": "Outdoor exploration zone",
-          "role": "One contiguous exploration area containing the distributed reachable collectible destinations.",
-          "where": "Across the full map",
-          "size": "Medium-sized; approximately a five-minute full sweep on foot"
+          "name": "Central open arrival area",
+          "role": "Arrival point and central exploration area.",
+          "where": "centre",
+          "size": ""
+        },
+        {
+          "name": "Separated points of interest",
+          "role": "Distinct, reachable collectible landmark locations across the contiguous exploration map.",
+          "where": "radiating around the central area",
+          "size": ""
         }
       ],
-      "paths": [],
-      "terrain": "Readable, gently varied cartoony exterior ground surface with open traversal space between collectible locations.",
-      "props": [],
-      "boundary": "An unobtrusive natural map limit rather than a hard architectural wall.",
+      "paths": [
+        {
+          "from": "Central open arrival area",
+          "to": "Separated points of interest",
+          "kind": "open ground"
+        }
+      ],
+      "terrain": "Gently varied grassy ground with small terrain rises; a hilltop, grove, pond edge, small bridge, rock outcrop, flower field, and other simple cartoony landmarks distinguish areas while preserving clear traversal.",
+      "props": [
+        {
+          "name": "colorful trees",
+          "count": -1,
+          "where": "across the map"
+        },
+        {
+          "name": "rounded rocks",
+          "count": -1,
+          "where": "across the map"
+        },
+        {
+          "name": "bushes",
+          "count": -1,
+          "where": "across the map"
+        },
+        {
+          "name": "flowers",
+          "count": -1,
+          "where": "across the map"
+        }
+      ],
+      "boundary": "Naturally closed by distant cliffs, dense foliage, or low hills.",
       "scale_band": "medium",
-      "theme": "Bright, cartoony 3D exploration"
+      "theme": "bright, playful, cartoony outdoor exploration"
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "All 10 collectible destinations must be connected and reachable across the full sweep.",
+      "why": "all ten collectible sites must be connected by a practical, complete exploration sweep.",
       "set_piece": false
     },
     "route": [
@@ -67,7 +108,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

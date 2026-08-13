@@ -14,72 +14,157 @@
     }
   ],
   "scene_prompt": "Create a 3D obby map as a ten-level vertical tower, with stacked platforming sections that rise upward and become progressively more difficult on each higher level. Use one consistent simple cartoon obby look throughout, and place treadmill platforms along the course.",
-  "blob": "### Genre\nDominant genre: Simulation, with Obby & Platformer as a secondary genre because the player traverses increasingly demanding platforming sections. The original speed-training loop makes this a Simulation `Stat Grinder` rather than a standard obby; Simulation owns the shape and route.\n\n### Shape and preset\nUse the Simulation shape `tier-ladder`, expressed here as ten vertically stacked progression tiers in a tower rather than a ground-level line. Match the Stat Grinder preset: its training-station-led progression is retained, while the author’s requested tower arrangement overrides its usual flat-ground implication.\n\n### Config requirements\nUse `station-training`: visible treadmill platforms are distributed along the tower’s ten level sections as the recurring training fixtures. Their interaction/activation areas are invisible layout elements and must not appear in the render. Do not add unrequested shops, rebirth pads, gates, pickups, or hazards.\n\n### Layout components\nBuild one compact vertical tower containing exactly ten stacked levels. Each level is a distinct upward platforming section, with the lowest level at the base and every successive level arranged above it and visibly more difficult in route complexity and platform placement. Connect each completed section to the next higher section with a clear ascending platform route, keeping the full climb readable from below and in isometric view. Place treadmill platforms at intervals along the course, on stable platform sections rather than in midair. Use a simple flat base footprint beneath the tower and open air around the exterior; no separate lobby or additional zones are required. The tower itself is the boundary and composition anchor, filling the frame from base foreground to upper levels.\n\n### Render order\nUse `isometric`: render the isometric tower first as authoritative, then derive the top-down view from it. The tower’s visual vertical progression and readable stacked silhouette are more important than a flat plan.\n\n### Scale, theme, and pipeline cost\nScale: medium, driven by ten complete stacked levels in one structure. Theme: consistent simple cartoon obby styling across all ten levels, with clean colorful platforms and treadmills. Pipeline modifier: `P2`, because the tower’s stacked platforming surfaces overlap and occlude one another from top-down view.",
+  "blob": "### Genre\n`Simulation` is dominant: the stated 1+ speed progression and treadmill training define a Stat Grinder. `Obby & Platformer` is secondary because each tier is a player-controlled platforming section; it contributes the obstacle route, but Simulation owns the overall progression structure.\n\n### Shape and preset\nUse `course-tower`, taken from outside Simulation’s usual shape set because the author explicitly requires ten stacked tower levels. This is a vertical sequence of platforming tiers, each directly above the preceding one. Preset: none; the Stat Grinder preset’s training concept remains, but its tier-ladder shape and most of its hub, gate, and rebirth bundle do not describe this tower.\n\n### Config requirements\nUse `path-track` as a clearly readable ascending chain of platforms through all ten levels. Use `obstacle-jump` for the increasingly demanding jumps, wraps, and stepped climbs at higher floors. Use `station-training` for simple cartoon treadmill platforms integrated into the course. Use `checkpoint-respawn` as visible, flat safe landing pads between levels.\n\n### Layout requirements\nPlace `station-training` ten times: one treadmill platform at the start of each numbered level, before its obstacle sequence. Place `checkpoint-respawn` ten times, on the protected arrival pad of each level, including the tower base; each pad returns a fallen player to its corresponding tier. The platform route must remain one continuous, physically valid climb from level 1 to level 10, with difficulty increasing upward.\n\n### Layout components\nBuild one narrow vertical tower composed of ten stacked platforming zones, numbered bottom to top. Level 1 is broad and forgiving at the ground-level entrance; each successive level occupies a compact floor directly above it and uses tighter, longer, or more vertically demanding platform arrangements. A single upward platform track links every level, beginning at each treadmill, crossing its obstacle section, and ending on its checkpoint landing pad before rising into the next tier. Use bright simple cartoon blocks, ramps, stepping platforms, and truss-like climb elements; retain open air around the tower but use a clear outer tower frame and low safety rails only where they do not obscure jumps. Center the whole tower in frame in a tall cutaway/isometric composition so all ten stacked sections read as one ascent.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because the continuous jump chain must be valid and reachable from tier to tier; the isometric view should dress that verified vertical plan.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by ten compact but vertically stacked levels. Theme: consistent simple cartoon obby, bright and uncluttered across every tier. Pipeline modifiers: `P2` because platform floors and routes stack above one another; `P6` because the critical platform route must be valid by construction.",
   "spec": {
     "genre": "Simulation",
     "secondary": [
       "Obby & Platformer"
     ],
-    "shape": "tier-ladder",
-    "preset": "Stat Grinder",
+    "shape": "course-tower",
+    "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "station-training",
-        "text": "Visible treadmill platforms distributed at intervals along the tower's ten level sections, placed on stable platform sections rather than in midair; their interaction and activation areas remain invisible.",
+        "text": "Simple cartoon treadmill platforms integrated into the course, one at the start of each numbered level.",
         "visible": true,
-        "count": -1
+        "count": 10
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "station-training",
+        "text": "One treadmill platform at the start of each numbered level, before its obstacle sequence.",
+        "count": 10,
+        "where": "At the start of every level, before that level's obstacle sequence."
       }
     ],
     "layout": {
-      "composition": "One compact vertical tower fills the frame from the flat base in the foreground to its upper stacked levels, with the full upward climb readable from below in isometric view.",
+      "composition": "The narrow vertical tower is centred in frame in a tall cutaway isometric composition, with open air around the structure so all ten stacked sections read as one upward ascent.",
       "zones": [
         {
-          "name": "Vertical tower",
-          "role": "A single structure containing exactly ten stacked progression levels; each successive upward platforming section is more difficult in route complexity and platform placement.",
-          "where": "Centre, rising from the base foreground to the upper frame.",
-          "size": "Medium; exactly ten stacked levels."
+          "name": "Level 1",
+          "role": "Broad, forgiving ground-level entrance with a treadmill start, obstacle sequence, and protected checkpoint landing pad.",
+          "where": "Tower base.",
+          "size": "Broad"
+        },
+        {
+          "name": "Level 2",
+          "role": "Platforming tier beginning at its treadmill and ending at its protected checkpoint landing pad.",
+          "where": "Directly above level 1.",
+          "size": "Compact"
+        },
+        {
+          "name": "Level 3",
+          "role": "Platforming tier beginning at its treadmill and ending at its protected checkpoint landing pad.",
+          "where": "Directly above level 2.",
+          "size": "Compact"
+        },
+        {
+          "name": "Level 4",
+          "role": "Platforming tier beginning at its treadmill and ending at its protected checkpoint landing pad.",
+          "where": "Directly above level 3.",
+          "size": "Compact"
+        },
+        {
+          "name": "Level 5",
+          "role": "Platforming tier beginning at its treadmill and ending at its protected checkpoint landing pad.",
+          "where": "Directly above level 4.",
+          "size": "Compact"
+        },
+        {
+          "name": "Level 6",
+          "role": "More demanding platforming tier beginning at its treadmill and ending at its protected checkpoint landing pad.",
+          "where": "Directly above level 5.",
+          "size": "Compact"
+        },
+        {
+          "name": "Level 7",
+          "role": "More demanding platforming tier beginning at its treadmill and ending at its protected checkpoint landing pad.",
+          "where": "Directly above level 6.",
+          "size": "Compact"
+        },
+        {
+          "name": "Level 8",
+          "role": "More demanding platforming tier beginning at its treadmill and ending at its protected checkpoint landing pad.",
+          "where": "Directly above level 7.",
+          "size": "Compact"
+        },
+        {
+          "name": "Level 9",
+          "role": "More demanding platforming tier beginning at its treadmill and ending at its protected checkpoint landing pad.",
+          "where": "Directly above level 8.",
+          "size": "Compact"
+        },
+        {
+          "name": "Level 10",
+          "role": "Highest and most demanding platforming tier, beginning at its treadmill and ending at its protected checkpoint landing pad.",
+          "where": "Top of the tower, directly above level 9.",
+          "size": "Compact"
         }
       ],
       "paths": [
         {
-          "from": "Lowest base level",
-          "to": "Successive higher levels",
-          "kind": "ascending platform route"
+          "from": "Level 1",
+          "to": "Level 10",
+          "kind": "track"
         }
       ],
-      "terrain": "Simple flat base footprint beneath the tower with open air around the exterior.",
+      "terrain": "Open air around a narrow tower of bright simple cartoon blocks, ramps, stepping platforms, and truss-like climb elements.",
       "props": [
         {
-          "name": "Treadmill platforms",
+          "name": "Cartoon treadmill platform",
+          "count": 10,
+          "where": "At the start of each numbered level before its obstacle sequence."
+        },
+        {
+          "name": "Protected checkpoint landing pad",
+          "count": 10,
+          "where": "At the arrival point of each level, including the tower base."
+        },
+        {
+          "name": "Outer tower frame",
+          "count": 1,
+          "where": "Surrounding the stacked tower without obscuring the jumps."
+        },
+        {
+          "name": "Low safety rails",
           "count": -1,
-          "where": "At intervals along the course on stable platform sections across the tower's ten levels."
+          "where": "Only where they do not obscure jumps."
         }
       ],
-      "boundary": "The tower itself is the boundary and composition anchor; open air surrounds its exterior.",
+      "boundary": "Open air surrounds the tower; a clear outer tower frame defines the structure, with low safety rails only where they do not obscure jumps.",
       "scale_band": "medium",
-      "theme": "Consistent simple cartoon obby styling with clean colorful platforms and treadmills."
+      "theme": "Consistent bright, simple, uncluttered cartoon obby."
     },
     "render": {
-      "first": "isometric",
-      "then": "topdown",
-      "authoritative": "isometric",
-      "why": "the tower's visual vertical progression and readable stacked silhouette are more important than a flat plan.",
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "the continuous jump chain must be valid and reachable from tier to tier.",
       "set_piece": false
     },
     "route": [
-      "P2"
+      "P2",
+      "P6"
     ],
-    "notes": [],
+    "notes": [
+      "course-tower is taken from outside Simulation's usual shape set because the blob explicitly requires ten stacked tower levels.",
+      "All axes remain at their schema defaults because a shape ID was named.",
+      "dropped option 'path-track': not in Simulation",
+      "dropped option 'obstacle-jump': not in Simulation",
+      "dropped option 'checkpoint-respawn': not in Simulation",
+      "dropped placement 'checkpoint-respawn': not in Simulation"
+    ],
     "scene_prompt": "Create a 3D obby map as a ten-level vertical tower, with stacked platforming sections that rise upward and become progressively more difficult on each higher level. Use one consistent simple cartoon obby look throughout, and place treadmill platforms along the course."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
-  "order": "std",
-  "first": "isometric",
+  "order": "p6",
+  "first": "topdown",
   "mapper_notes": []
 }

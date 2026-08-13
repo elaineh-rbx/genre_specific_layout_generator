@@ -19,7 +19,7 @@
     }
   ],
   "scene_prompt": "Crea un mapa 3D de escape obby ambientado en un laberinto de neón, no basado en un teclado. Organiza 5 etapas pequeñas conectadas en un recorrido de avance, con saltos y obstáculos de neón a través de pasillos y secciones del laberinto. La salida final es un punto brillante y claramente visible al final del recorrido.",
-  "blob": "### Género\nEl género dominante es Obby & Platformer: el jugador progresa por saltos y obstáculos, escapando de un laberinto hasta una salida final. No hay género secundario.\n\n### Forma y preset\nUsa la forma `course-flat`, una secuencia horizontal y compacta de cinco microetapas de laberinto neón, sin torre ni desniveles estructurales. Parte del preset Classic Obby: conserva su ruta secuencial, saltos y puntos seguros, pero sustituye los obstáculos móviles no solicitados por un segmento de laberinto; el preset sigue siendo reconocible.\n\n### Requisitos de configuración\n`path-track` es geometría visible: una cadena ordenada de plataformas, pasillos y huecos de salto que atraviesa las cinco etapas. `checkpoint-respawn` es visible e invisible: coloca una pequeña plataforma de aterrizaje segura y luminosa al cierre de cada etapa, con su marcador de reaparición fuera del render. `obstacle-jump` es visible: saltos entre plataformas, huecos y bloques escalonados de neón. `obstacle-maze` es visible: pasillos compactos y bifurcaciones de laberinto dentro de las etapas. `winner-zone` es visible e invisible: la salida brillante final y su volumen de completado, que no debe aparecer en la imagen.\n\n### Componentes de layout\nConstruye cinco etapas pequeñas conectadas linealmente, leídas de izquierda a derecha o desde primer plano al fondo. La etapa 1 funciona como entrada corta y enseña los primeros saltos; las etapas 2 a 4 alternan corredores de laberinto con plataformas separadas por huecos claros; la etapa 5 es el último tramo de precisión y termina en una gran salida brillante de neón, visible como foco al final del recorrido. Cada transición lleva directamente a la siguiente etapa mediante un pasillo o una cadena de plataformas, sin rutas muertas en la línea crítica. Sitúa pads de control al final de cada etapa. El suelo es una base oscura y lisa, con paredes bajas o altas de neón que delimitan el laberinto; el vacío oscuro bajo los huecos refuerza la lectura de altura sin añadir paisaje. Encierra el conjunto con muros exteriores oscuros de neón para que la ruta no se confunda con el fondo. Composición isométrica amplia, mostrando las cinco etapas, la progresión y la salida como punto más intenso.\n\n### Orden de render\nUsa `authored_plan`: primero se genera en código el plano del laberinto y la cadena de saltos, después se viste en top-down e isométrico. La topología debe ser válida por construcción: el laberinto necesita una salida alcanzable y cada salto crítico debe ser físicamente posible.\n\n### Escala, tema y coste\nEscala pequeña: son exactamente cinco etapas pequeñas, pensadas para una experiencia simple y jugable. Tema: laberinto futurista 3D, negro profundo, neón eléctrico brillante y alto contraste. Aplica `P6`, forzado por el recorrido de obby validado y el laberinto resoluble; no se requieren otros pases.",
+  "blob": "### Genre\nThe dominant genre is Obby & Platformer: the player advances at their own pace through jumps and obstacles to escape. There is no secondary genre; the maze is a traversal setting rather than a puzzle-solving loop.\n\n### Shape and preset\nUse `course-flat`, matching the Classic Obby preset. It is a single, flat neon maze course divided into five short consecutive stages, not a keyboard-themed environment. Retain the preset’s sequential track, safe landings, and jump obstacles; omit moving obstacles because none were requested, and add a maze segment and final reward exit.\n\n### Config requirements\nUse `path-track` as the continuous ordered platform route through all five stages. Use `checkpoint-respawn` as clearly marked, flat neon-safe pads between stages. Use `obstacle-jump` for the gaps, stepped blocks, and precision jumps within each maze section. Use `obstacle-maze` for maze corridors that still preserve one valid forward route. Use `winner-zone` as the bright, unmistakable neon final exit at the end of stage five.\n\n### Layout requirements\nPlace five `checkpoint-respawn` markers: one safe starting pad at stage one and one at the completion of each subsequent short stage, located immediately after its last obstacle and before the next maze section. Place one `winner-zone` trigger at the glowing final exit beyond stage five, spanning the exit threshold. No pickups, NPC emitters, or other placed gameplay objects are needed.\n\n### Layout components\nBuild five small sequential maze stages arranged in a readable forward progression across one level. Each stage contains enclosed neon-lit corridors and a compact obstacle section, with platforms, gaps, low stepped blocks, and jump routes connecting its entry to its exit. The path must never ambiguously branch away from the critical route; dead-end decorative maze passages may be short and visually distinct. Connect each stage by a short, safe checkpoint landing pad. Place the bright final exit as the strongest focal point at the far end of the fifth stage. Use dark floor and background surfaces, vivid cyan, magenta, and violet neon wall trims, luminous platform edges, and glowing obstacle accents. Enclose the course with tall maze walls and an outer boundary; frame it in a clear three-quarter isometric composition that shows the five-stage progression and the distant glowing exit.\n\n### Render order\nUse `authored_plan`: this is a maze-containing obby whose connected route and jump topology must be valid before it is dressed in neon visuals.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by exactly five compact stages. Theme is a futuristic 3D neon labyrinth, dark and high-contrast with cyan, magenta, and violet illumination. Apply `P6` because the maze route and critical jump sequence must be valid by construction.",
   "spec": {
     "genre": "Obby & Platformer",
     "secondary": [],
@@ -29,129 +29,142 @@
     "options": [
       {
         "id": "path-track",
-        "text": "Una cadena ordenada de plataformas, pasillos y huecos de salto que atraviesa las cinco etapas de laberinto neón.",
+        "text": "A continuous ordered platform route through all five maze stages.",
         "visible": true,
         "count": 5
       },
       {
         "id": "checkpoint-respawn",
-        "text": "Una pequeña plataforma de aterrizaje segura y luminosa al cierre de cada etapa, con su marcador de reaparición fuera del render.",
+        "text": "Clearly marked, flat neon-safe landing pads between stages.",
         "visible": true,
         "count": 5
       },
       {
         "id": "obstacle-jump",
-        "text": "Saltos entre plataformas, huecos y bloques escalonados de neón.",
+        "text": "Gaps, low stepped blocks, and precision jumps within each maze section.",
         "visible": true,
-        "count": -1
+        "count": 5
       },
       {
         "id": "obstacle-maze",
-        "text": "Pasillos compactos y bifurcaciones de laberinto dentro de las etapas.",
+        "text": "Maze corridors that preserve one valid forward route.",
         "visible": true,
         "count": 5
       },
       {
         "id": "winner-zone",
-        "text": "La gran salida brillante final de neón y su volumen de completado, que no debe aparecer en la imagen.",
+        "text": "A bright, unmistakable neon final exit at the end of stage five.",
         "visible": true,
         "count": 1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "checkpoint-respawn",
+        "text": "One safe starting pad at stage one and safe pads at the completion of each subsequent short stage.",
+        "count": 5,
+        "where": "At stage one, and immediately after the last obstacle of each subsequent stage before the next maze section."
+      },
+      {
+        "id": "winner-zone",
+        "text": "A trigger at the glowing final exit.",
+        "count": 1,
+        "where": "Beyond stage five, spanning the exit threshold."
+      }
+    ],
     "layout": {
-      "composition": "Composición isométrica amplia que muestra las cinco etapas compactas en progresión lineal, de izquierda a derecha o desde el primer plano al fondo; la salida final es el punto más intenso al final del recorrido.",
+      "composition": "Clear three-quarter isometric composition showing the five-stage forward progression across one level, with the distant glowing final exit at the far end of the fifth stage as the strongest focal point.",
       "zones": [
         {
-          "name": "Etapa 1",
-          "role": "Entrada corta que enseña los primeros saltos.",
-          "where": "Inicio del recorrido",
-          "size": "pequeña"
+          "name": "Stage one",
+          "role": "Small enclosed neon-lit maze stage with a compact obstacle section, entry route, and safe starting checkpoint pad.",
+          "where": "Near end of the forward progression.",
+          "size": "small"
         },
         {
-          "name": "Etapa 2",
-          "role": "Corredores de laberinto y plataformas separadas por huecos claros.",
-          "where": "Después de la etapa 1",
-          "size": "pequeña"
+          "name": "Stage two",
+          "role": "Small enclosed neon-lit maze stage with a compact obstacle section connecting entry to exit.",
+          "where": "After stage one.",
+          "size": "small"
         },
         {
-          "name": "Etapa 3",
-          "role": "Corredores de laberinto y plataformas separadas por huecos claros.",
-          "where": "Centro del recorrido",
-          "size": "pequeña"
+          "name": "Stage three",
+          "role": "Small enclosed neon-lit maze stage with a compact obstacle section connecting entry to exit.",
+          "where": "After stage two.",
+          "size": "small"
         },
         {
-          "name": "Etapa 4",
-          "role": "Corredores de laberinto y plataformas separadas por huecos claros.",
-          "where": "Después de la etapa 3",
-          "size": "pequeña"
+          "name": "Stage four",
+          "role": "Small enclosed neon-lit maze stage with a compact obstacle section connecting entry to exit.",
+          "where": "After stage three.",
+          "size": "small"
         },
         {
-          "name": "Etapa 5",
-          "role": "Último tramo de precisión que termina en la salida brillante final.",
-          "where": "Final del recorrido",
-          "size": "pequeña"
-        },
-        {
-          "name": "Salida final",
-          "role": "Finalización del escape obby.",
-          "where": "Al final de la etapa 5",
-          "size": "grande"
+          "name": "Stage five",
+          "role": "Small enclosed neon-lit maze stage with a compact obstacle section leading to the final reward exit.",
+          "where": "Far end of the forward progression.",
+          "size": "small"
         }
       ],
       "paths": [
         {
-          "from": "Etapa 1",
-          "to": "Etapa 2",
-          "kind": "corridor"
-        },
-        {
-          "from": "Etapa 2",
-          "to": "Etapa 3",
+          "from": "Stage one",
+          "to": "Stage two",
           "kind": "track"
         },
         {
-          "from": "Etapa 3",
-          "to": "Etapa 4",
-          "kind": "corridor"
-        },
-        {
-          "from": "Etapa 4",
-          "to": "Etapa 5",
+          "from": "Stage two",
+          "to": "Stage three",
           "kind": "track"
         },
         {
-          "from": "Etapa 5",
-          "to": "Salida final",
+          "from": "Stage three",
+          "to": "Stage four",
+          "kind": "track"
+        },
+        {
+          "from": "Stage four",
+          "to": "Stage five",
+          "kind": "track"
+        },
+        {
+          "from": "Stage five",
+          "to": "Final exit",
           "kind": "track"
         }
       ],
-      "terrain": "Base oscura y lisa, con vacío oscuro bajo los huecos; paredes bajas o altas de neón delimitan el laberinto.",
+      "terrain": "Dark floor and background surfaces, with vivid cyan, magenta, and violet neon wall trims, luminous platform edges, and glowing obstacle accents.",
       "props": [
         {
-          "name": "pads de control seguros y luminosos",
-          "count": 5,
-          "where": "Al final de cada etapa"
-        },
-        {
-          "name": "paredes exteriores oscuras de neón",
+          "name": "Platforms, gaps, low stepped blocks, and precision jump routes",
           "count": -1,
-          "where": "Alrededor de todo el conjunto"
+          "where": "Within each maze stage, connecting its entry to its exit."
         },
         {
-          "name": "salida brillante de neón",
+          "name": "Tall maze walls",
+          "count": -1,
+          "where": "Enclosing the course and its five maze stages."
+        },
+        {
+          "name": "Short decorative dead-end maze passages",
+          "count": -1,
+          "where": "Off the critical route, visually distinct from the valid forward path."
+        },
+        {
+          "name": "Glowing final exit",
           "count": 1,
-          "where": "Al final del recorrido"
+          "where": "At the far end of stage five."
         }
       ],
-      "boundary": "Muros exteriores oscuros de neón encierran el conjunto para que la ruta no se confunda con el fondo.",
+      "boundary": "Tall maze walls and an outer boundary enclose the course.",
       "scale_band": "small",
-      "theme": "Laberinto futurista 3D, negro profundo, neón eléctrico brillante y alto contraste."
+      "theme": "Futuristic 3D neon labyrinth, dark and high-contrast, with cyan, magenta, and violet illumination."
     },
     "render": {
       "first": "authored_plan",
       "then": "topdown",
       "authoritative": "authored_plan",
-      "why": "La topología debe ser válida por construcción: el laberinto necesita una salida alcanzable y cada salto crítico debe ser físicamente posible.",
+      "why": "The connected maze route and critical jump topology must be valid before neon dressing.",
       "set_piece": false
     },
     "route": [
@@ -163,7 +176,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "layout",

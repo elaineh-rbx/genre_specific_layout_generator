@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Build a 3D underground maze of carved stone tunnels, with looping routes, dead ends, and a single exit placed as the clear destination.",
-  "blob": "### Genre\nPuzzle is the dominant genre: reaching the exit depends on routing through a physical maze.\n\n### Shape and preset\nUse `puzzle-maze`, matching the Maze / Labyrinth preset. The preset remains recognisable: this is a single underground labyrinth of looping carved-stone passages, with dead ends and one reachable destination.\n\n### Config requirements\nUse `path-loop` as visible geometry: interconnected tunnel loops provide alternate routes and prevent the maze from reading as a simple corridor chain. No other option is required; the exit is concrete destination geometry rather than an added mechanics component.\n\n### Layout components\nBuild one medium-sized underground maze zone, arranged as a dense, broadly rectangular network of carved stone tunnels. Establish a clear entrance at one outer side and place the single exit at the distant opposing side, visually distinct with a brighter stone archway or recessed destination chamber. Thread multiple closed loops through the central and outer portions of the maze so routes reconnect, while shorter side branches terminate in frequent dead ends. Keep all paths at one underground floor level, with rough-hewn stone walls, stone floor, arched or irregular tunnel ceilings, and occasional exposed roots embedded in the masonry. The enclosing boundary is continuous solid earth and stone around the entire labyrinth; no exterior space is visible. Compose it as a readable overhead/isometric maze mass, with the entrance and exit separated across the plan and the loop structure evident.\n\n### Render order\nUse `authored_plan`: maze connectivity and the single reachable exit must be valid by construction before the stone dressing is rendered.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by the dense network needed for several loops and dead ends without becoming a multi-map complex. Theme: classic subterranean labyrinth, rough carved stone, dim earthy atmosphere. Use `P6` because the maze must be solvable with a connected route from entrance to exit, and `P0` otherwise; the single-level underground surface has no overhangs or outside-to-inside transition.",
+  "blob": "### 1. Genre\nPuzzle is the dominant genre: the player’s goal is to navigate the maze and reach its single exit.\n\n### 2. Shape and preset\nUse `puzzle-maze`, matching the Maze / Labyrinth preset. This is a fully underground carved-stone labyrinth whose topology—not combat or decoration—is the puzzle. Retain looping routes and deliberate dead ends, while ensuring one reachable exit is the clear destination.\n\n### 3. Config requirements\nUse `path-loop` for interconnected carved-stone tunnel loops that offer alternate circulation and prevent the maze from becoming a single corridor. The requested dead ends remain physical tunnel branches, not a separate config option.\n\n### 4. Layout requirements\nNo additional placed layout components are required. The single exit is built geometry at the far destination of the generated maze, rather than an invisible trigger requirement supplied by the prompt.\n\n### 5. Layout components\nCreate one enclosed underground maze zone, medium in extent, formed from rough carved-stone corridors, chambers, junctions, looping branches, and dead-end passages. The entrance sits at one outer edge of the maze; the sole exit sits far from it on the opposing or deepest reachable side, visually distinct as the destination but still embedded in the stone construction. Corridors connect as a solvable network with several loops, while multiple branches terminate in genuine dead ends. Use uneven carved-stone walls, stone floors, and arched or rough-hewn tunnel ceilings throughout. The boundary is fully enclosed by surrounding rock, with no exterior terrain or surface access shown. Compose the frame as a readable oblique overview with selected ceiling cutaways or a plan-like sectional view so the maze connectivity remains legible.\n\n### 6. Render order\nUse `authored_plan`: a procedurally generated maze plan is authoritative because an unreachable exit or disconnected tunnel topology would make the puzzle unplayable; dress that validated plan as carved stone afterward.\n\n### 7. Scale, theme, and pipeline cost\nScale band: medium, driven by a complete maze network with loops, dead ends, and one distant exit. Theme: classic underground labyrinth, rough carved stone, dim and ancient. Pipeline modifier: `P6`, because the maze must be solvable by construction with a connected entrance-to-exit route.",
   "spec": {
     "genre": "Puzzle",
     "secondary": [],
@@ -24,55 +24,54 @@
     "options": [
       {
         "id": "path-loop",
-        "text": "Interconnected looping carved-stone tunnel routes reconnect through the central and outer maze, with alternate routes rather than a simple corridor chain.",
+        "text": "Interconnected carved-stone tunnel loops that offer alternate circulation and prevent the maze from becoming a single corridor.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "A readable overhead/isometric maze mass, with the entrance on one outer side and the brighter exit separated at the distant opposing side; the dense loop structure is evident across the plan.",
+      "composition": "A readable oblique overview with selected ceiling cutaways or a plan-like sectional view, keeping maze connectivity legible.",
       "zones": [
         {
           "name": "Underground maze",
-          "role": "A dense physical labyrinth to route through from the entrance to the single reachable exit.",
-          "where": "Single enclosed underground zone, spanning from one outer side to the distant opposing side.",
+          "role": "A solvable carved-stone labyrinth with looping routes, chambers, junctions, dead-end passages, one entrance, and a single distant exit.",
+          "where": "Fully enclosed underground; the entrance is at one outer edge and the sole exit is on the opposing or deepest reachable side.",
           "size": "medium"
         }
       ],
-      "paths": [
-        {
-          "from": "Entrance",
-          "to": "Exit",
-          "kind": "corridor"
-        }
-      ],
-      "terrain": "One underground floor level of rough-hewn stone floor and carved-stone tunnel walls, with arched or irregular tunnel ceilings and occasional exposed roots embedded in the masonry.",
+      "paths": [],
+      "terrain": "Uneven carved-stone walls, stone floors, and arched or rough-hewn tunnel ceilings throughout; no exterior terrain or surface access is shown.",
       "props": [
         {
-          "name": "Brighter stone exit archway or recessed destination chamber",
-          "count": 1,
-          "where": "Distant opposing outer side of the maze"
+          "name": "Looping carved-stone branches",
+          "count": -1,
+          "where": "Throughout the maze network."
         },
         {
-          "name": "Exposed roots embedded in masonry",
+          "name": "Dead-end tunnel branches",
           "count": -1,
-          "where": "Occasionally along the tunnel walls and ceilings"
+          "where": "Terminating from multiple maze junctions."
+        },
+        {
+          "name": "Single visually distinct stone exit",
+          "count": 1,
+          "where": "At the far opposing or deepest reachable side of the maze."
         }
       ],
-      "boundary": "Continuous solid earth and stone encloses the entire labyrinth; no exterior space is visible.",
+      "boundary": "Fully enclosed by surrounding rock.",
       "scale_band": "medium",
-      "theme": "Classic subterranean labyrinth, rough carved stone, dim earthy atmosphere"
+      "theme": "Classic underground labyrinth, rough carved stone, dim and ancient."
     },
     "render": {
       "first": "authored_plan",
       "then": "topdown",
       "authoritative": "authored_plan",
-      "why": "Maze connectivity and the single reachable exit must be valid by construction before stone dressing is rendered.",
+      "why": "An unreachable exit or disconnected tunnel topology would make the puzzle unplayable.",
       "set_piece": false
     },
     "route": [
-      "P6",
-      "P0"
+      "P6"
     ],
     "notes": [],
     "scene_prompt": "Build a 3D underground maze of carved stone tunnels, with looping routes, dead ends, and a single exit placed as the clear destination."
@@ -80,7 +79,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "layout",

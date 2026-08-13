@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create the first large playable map for a tense horror-lit Prey-versus-Predators survival game: a Big School building under low, moody lighting with deep shadows and unsettling ambience, while routes and interactive objects remain readable. Build a connected school interior with classroom wings and hallways, a gym, cafeteria, rooftop access, lockers for hiding, chokepoints, and multiple escape routes; include physical hiding places such as closets, lockers, dumpsters, and space beneath furniture. Arrange the building as a compact vertical slice with distinct routes between its major rooms and varied spawn locations. Other rotating map layouts include a multi-floor shopping mall with stores, food court, escalators, parking garage, and security rooms; an abandoned outdoor neighborhood of empty houses, backyards, alleyways, and a small park; plus optional hospital, subway station, office building, and summer camp maps. For the menu’s 3D background, show a dark nighttime forest with tall silhouetted trees, thick ground fog, dim moonlight through branches, and a glowing campfire centered in the scene.",
-  "blob": "### Genre\nThe dominant genre is Survival, specifically asymmetric Prey-versus-Predators chase survival. The first build is the hunted school map, not the menu UI or the later rotating maps.\n\n### Shape and preset\nUse `warren-looping`: a dense, connected school interior whose hallways and rooms create chase loops rather than terminal dead ends. Match the 1 vs All preset, retaining its looping escape-oriented circulation, hiding cover, and separated role starts; add the explicitly requested school interior. The timed survival structure means the listed escape routes are traversal alternatives, not a round-winning `gate-escape`.\n\n### Config requirements\n`cover-los` is visible geometry: banks of lockers, supply closets, dumpsters near service exits, and desks or furniture with crawl-under clearance break predator sightlines. `spawn-protected` is invisible layout geometry: varied, separated prey and predator start locations positioned so neither role begins directly on the other’s route. `building-interior` is visible geometry: the fully enterable school building, including its classrooms and major facilities.\n\n### Layout components\nMake one large compact school as the playable zone. A central main hall sits near the middle and branches into two classroom wings, with classrooms of varied sizes, locker-lined hallways, closet recesses, and furniture hiding spaces. Put the gym at one end as a broad, open risk zone, and the cafeteria at the opposite end with tables, kitchen-side service passages, and rear exits. Connect these major rooms through at least two distinct hall routes plus narrower connector corridors that form readable chokepoints without sealing prey into corners. Add rooftop access through a stairwell as a high-risk alternate route, with a second stair/service route elsewhere to preserve loops. Place varied spawn locations in screened classrooms, side halls, and facility edges. Bound the playable school with locked exterior doors, walls, and fenced service edges, while retaining multiple internal escape routes. Render the school in a readable horror-lit register: dim institutional lights, deep shadows, worn surfaces, and clear route silhouettes. Build the menu background as a separate non-walkable nighttime forest set: tall silhouetted trees around thick ground fog, sparse moonlight through branches, and one glowing campfire centered as the focal point.\n\n### Render order\nUse `topdown`: the school plan must be authoritative first because an invalid corridor loop or sealed chase route would make the survival match unfair; dress the isometric render from that validated plan.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by the school’s several major facilities, branching classroom wings, and alternate chase routes. Theme is moody institutional horror with an eerie moonlit forest menu set. Use `P6` for valid looping chase topology, `P3` for enterable interior capture, `P4` because the menu forest set is separate from the school map, and `SET` for that non-walkable menu-background geometry.",
+  "blob": "### 1. Genre\nThe dominant genre is Survival, specifically the asymmetric chase format of the 1 vs All preset: prey evade player-controlled predators through a tense school rather than solve an escape-room sequence.\n\n### 2. Shape and preset\nUse `warren-looping`, matched from the 1 vs All preset. Its looping, no-dead-end chase topology fits the school’s multiple escape routes; classroom wings, gym, cafeteria, and rooftop routes must reconnect rather than trap prey in isolated corridors. The preset remains recognisable with `cover-los` and `spawn-protected`; the prompt additionally requires enterable school architecture.\n\n### 3. Config requirements\nUse `cover-los` for lockers, closets, dumpsters, and under-furniture hiding cutouts that break predator sightlines. Use `building-interior` for the connected enclosed school, with rooftop access creating an inside-to-outside transition. Do not depict the other rotating maps in this first playable-map render.\n\n### 4. Layout requirements\nUse `spawn-protected` with several varied, separated role-assignment spawn markers: distribute prey starts among protected classroom-side and cafeteria-side pockets, and site predator starts away from immediate sightlines into those pockets. These markers must be placed against the completed route network, not rendered as scene props.\n\n### 5. Layout components\nBuild a large but compact multi-level school vertical slice. Place a central main hall as the circulation spine, with two classroom wings that each loop back through secondary halls. Put the gym on one side as a broad open chase zone, the cafeteria on the opposite side with tables and under-furniture hiding space, and connect both through at least two distinct hall routes. Add classrooms, a security-like utility corridor, locker banks along halls, closets, dumpsters near a service exit, and stairwells leading to a readable rooftop route. Keep every major chase route connected in loops, with narrow chokepoints at doorways and stair landings but alternative bypasses. Enclose the playable space within the school and roof perimeter. Separately render the non-playable menu backdrop as a dark nighttime forest set: tall silhouetted trees, thick ground fog, dim moonlight, and one centered glowing campfire. Compose the school in a legible top-down plan; compose the menu set around the campfire.\n\n### 6. Render order\nUse `topdown`: the interconnected chase loops and alternate escapes must be topologically valid before the horror-lit isometric dressing is derived. `authored_plan` does not apply because this is neither a maze nor a racing circuit.\n\n### 7. Scale, theme, and pipeline cost\nScale is large, driven by the gym, cafeteria, classroom wings, rooftop, and multiple route loops. Theme: oppressive horror-lit institutional school, low moody lighting, deep shadows, readable traversal. Use `P3` for the school interior-to-rooftop transition, `P4` because the menu forest is a separate rendered scene from the school map, and `P6` because the looping chase topology must remain valid by construction.",
   "spec": {
     "genre": "Survival",
     "secondary": [],
@@ -24,73 +24,102 @@
     "options": [
       {
         "id": "cover-los",
-        "text": "Banks of lockers, supply closets, dumpsters near service exits, and desks or furniture with crawl-under clearance break predator sightlines.",
+        "text": "Lockers, closets, dumpsters, and under-furniture hiding cutouts that break predator sightlines.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "building-interior",
+        "text": "A connected enclosed school interior with rooftop access creating an inside-to-outside transition.",
         "visible": true,
         "count": -1
       },
       {
         "id": "spawn-protected",
-        "text": "Varied, separated prey and predator start locations positioned so neither role begins directly on the other’s route.",
+        "text": "Several varied, separated role-assignment spawn markers for prey and predators, positioned away from immediate sightlines.",
         "visible": false,
-        "count": -1
-      },
-      {
-        "id": "building-interior",
-        "text": "The fully enterable school building, including its classrooms and major facilities.",
-        "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "spawn-protected",
+        "text": "Several varied, separated role-assignment spawn markers for prey and predators.",
+        "count": -1,
+        "where": "Distribute prey starts among protected classroom-side and cafeteria-side pockets; site predator starts away from immediate sightlines into those pockets, against the completed route network."
+      }
+    ],
     "layout": {
-      "composition": "A compact large school interior fills the playable frame: the central main hall sits near the middle, with two classroom wings branching from it; the gym anchors one end and the cafeteria anchors the opposite end. Rooftop stair access provides a high-risk alternate route, while a separate nighttime forest menu set holds a centered campfire focal point.",
+      "composition": "A legible top-down plan of the compact school vertical slice: the central main hall forms the spine, classroom wings extend on either side through reconnecting secondary halls, with the gym on one side and cafeteria opposite. Rooftop access is visibly connected by stairwells. The separate menu backdrop is composed around a centered glowing campfire in a dark forest.",
       "zones": [
         {
-          "name": "School interior",
-          "role": "Large compact playable hunted school map with connected chase loops.",
-          "where": "main playable map",
-          "size": "large"
-        },
-        {
-          "name": "Central main hall",
-          "role": "Central circulation hub branching into classroom wings and major facilities.",
-          "where": "near the middle",
+          "name": "Central Main Hall",
+          "role": "Primary circulation spine for the school chase network.",
+          "where": "Centre",
           "size": ""
         },
         {
-          "name": "Classroom wings",
-          "role": "Varied classrooms, locker-lined hallways, closet recesses, furniture hiding spaces, and screened spawn locations.",
-          "where": "branching from the central main hall",
+          "name": "Classroom Wing One",
+          "role": "Classroom route looping back to the central hall through a secondary hall, with protected prey-side pockets.",
+          "where": "One side of the main hall",
+          "size": ""
+        },
+        {
+          "name": "Classroom Wing Two",
+          "role": "Classroom route looping back to the central hall through a secondary hall.",
+          "where": "Opposite side of the main hall",
           "size": ""
         },
         {
           "name": "Gym",
-          "role": "Broad open risk zone.",
-          "where": "one end of the school",
+          "role": "Broad open chase zone connected into the looping hall network.",
+          "where": "One side of the school",
           "size": "broad"
         },
         {
           "name": "Cafeteria",
-          "role": "Table-filled facility with kitchen-side service passages and rear exits.",
-          "where": "opposite end from the gym",
+          "role": "Open chase zone with tables and under-furniture hiding space, including protected prey-side pockets.",
+          "where": "Opposite the gym",
           "size": ""
         },
         {
-          "name": "Rooftop access",
-          "role": "High-risk alternate chase route.",
-          "where": "through a stairwell",
+          "name": "Security-Like Utility Corridor",
+          "role": "Secondary connected service route.",
+          "where": "Within the school route network",
           "size": ""
         },
         {
-          "name": "Menu forest set",
-          "role": "Separate non-walkable nighttime menu-background geometry.",
-          "where": "separate from the school map",
+          "name": "Rooftop Route",
+          "role": "Readable exterior escape route reached by stairwells and reconnecting to the chase layout.",
+          "where": "Above the school interior",
+          "size": ""
+        },
+        {
+          "name": "Menu Forest Set",
+          "role": "Non-playable separate menu backdrop.",
+          "where": "Separate rendered scene from the school map",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Central main hall",
-          "to": "Classroom wings",
+          "from": "Central Main Hall",
+          "to": "Classroom Wing One",
+          "kind": "corridor"
+        },
+        {
+          "from": "Classroom Wing One",
+          "to": "Central Main Hall",
+          "kind": "corridor"
+        },
+        {
+          "from": "Central Main Hall",
+          "to": "Classroom Wing Two",
+          "kind": "corridor"
+        },
+        {
+          "from": "Classroom Wing Two",
+          "to": "Central Main Hall",
           "kind": "corridor"
         },
         {
@@ -99,93 +128,80 @@
           "kind": "corridor"
         },
         {
-          "from": "Major rooms",
-          "to": "Major rooms",
+          "from": "Gym",
+          "to": "Cafeteria",
           "kind": "corridor"
         },
         {
-          "from": "Major rooms",
-          "to": "Major rooms",
-          "kind": "corridor"
-        },
-        {
-          "from": "Classroom wings",
-          "to": "Major rooms",
-          "kind": "corridor"
-        },
-        {
-          "from": "School interior",
-          "to": "Rooftop access",
+          "from": "Central Main Hall",
+          "to": "Rooftop Route",
           "kind": "stair"
         },
         {
-          "from": "School interior",
-          "to": "Rooftop access",
-          "kind": "service route"
+          "from": "Security-Like Utility Corridor",
+          "to": "Service Exit",
+          "kind": "corridor"
         }
       ],
-      "terrain": "Worn institutional school surfaces under dim lights and deep shadows; the separate forest set has thick ground fog beneath tall silhouetted trees and sparse moonlight through branches.",
+      "terrain": "Enclosed institutional school floors and halls with rooftop access; the separate menu set is a dark nighttime forest with thick ground fog, dim moonlight through branches, and tall silhouetted trees.",
       "props": [
         {
-          "name": "Lockers",
+          "name": "Locker banks",
           "count": -1,
-          "where": "locker-lined hallways"
+          "where": "Along halls"
         },
         {
-          "name": "Supply closets",
+          "name": "Closets",
           "count": -1,
-          "where": "classroom wings and hall recesses"
+          "where": "Within the connected school interior"
         },
         {
           "name": "Dumpsters",
           "count": -1,
-          "where": "near service exits"
-        },
-        {
-          "name": "Desks and furniture",
-          "count": -1,
-          "where": "classrooms and hiding spaces"
+          "where": "Near the service exit"
         },
         {
           "name": "Cafeteria tables",
           "count": -1,
-          "where": "cafeteria"
+          "where": "In the cafeteria, with hiding space beneath them"
+        },
+        {
+          "name": "Stairwells",
+          "count": -1,
+          "where": "Leading to the rooftop route"
         },
         {
           "name": "Glowing campfire",
           "count": 1,
-          "where": "centered in the menu forest set"
-        },
-        {
-          "name": "Tall silhouetted trees",
-          "count": -1,
-          "where": "around the menu forest set"
+          "where": "Centered in the separate menu forest set"
         }
       ],
-      "boundary": "Locked exterior doors, school walls, and fenced service edges bound the playable school while multiple internal escape routes remain open.",
+      "boundary": "The playable space is enclosed within the school and roof perimeter.",
       "scale_band": "large",
-      "theme": "Moody institutional horror with a separate eerie moonlit forest menu set."
+      "theme": "Oppressive horror-lit institutional school, low moody lighting, deep shadows, unsettling ambience, readable traversal."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "an invalid corridor loop or sealed chase route would make the survival match unfair.",
-      "set_piece": true
+      "why": "The interconnected chase loops and alternate escapes must be topologically valid before horror-lit isometric dressing is derived.",
+      "set_piece": false
     },
     "route": [
-      "P6",
       "P3",
       "P4",
-      "SET"
+      "P6"
     ],
-    "notes": [],
+    "notes": [
+      "The separate nighttime forest menu backdrop is included as a separate rendered scene from the playable school map.",
+      "No count was stated for the several spawn markers, so their count is -1."
+    ],
     "scene_prompt": "Create the first large playable map for a tense horror-lit Prey-versus-Predators survival game: a Big School building under low, moody lighting with deep shadows and unsettling ambience, while routes and interactive objects remain readable. Build a connected school interior with classroom wings and hallways, a gym, cafeteria, rooftop access, lockers for hiding, chokepoints, and multiple escape routes; include physical hiding places such as closets, lockers, dumpsters, and space beneath furniture. Arrange the building as a compact vertical slice with distinct routes between its major rooms and varied spawn locations. Other rotating map layouts include a multi-floor shopping mall with stores, food court, escalators, parking garage, and security rooms; an abandoned outdoor neighborhood of empty houses, backyards, alleyways, and a small park; plus optional hospital, subway station, office building, and summer camp maps. For the menu’s 3D background, show a dark nighttime forest with tall silhouetted trees, thick ground fog, dim moonlight through branches, and a glowing campfire centered in the scene."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

@@ -19,115 +19,133 @@
     }
   ],
   "scene_prompt": "Create a 3D game map showing a compact, clear cartoon-adventure escape tower with three stacked floors, each a visually distinct themed challenge room. Players begin on the first floor; each floor has a readable objective area and a physical elevator or stair route that opens upward to the next floor. The third floor leads to a top-level exit. Include at least one physical damage hazard and a single revival-item pickup placed somewhere inside the tower. Design the tower for multiple players to occupy and attempt simultaneously, with enough open circulation space around each floor’s challenge area and vertical connections.",
-  "blob": "## Genre\nDominant genre: Puzzle. This is a compact multiplayer escape-tower game whose progression is owned by sequential puzzle solves, not by combat or free exploration.\n\n## Shape and preset\nUse `puzzle-rooms`, matching the Escape Room preset. Here it is one enclosed tower made of three vertically stacked challenge chambers, each with an upward route unlocked only by that chamber’s solve. The preset remains recognisable; add `gate-solve` for the explicitly required objective-to-unlock progression and `hazard-kill` for the stated damage source.\n\n## Config requirements\nVisible geometry: `gate-solve` appears as a clearly readable locked elevator door or stair barrier at each floor’s upward exit; `button-solve` appears as floor-specific physical controls; `facade-clue` is a clue wall placed in each room’s natural approach view; `gate-progression` is the successive sealed route upward; and `hazard-kill` is a clearly bounded damaging obstacle on the second-floor challenge route. `collectible-nodes` is invisible placement data for exactly one revival-item pickup, positioned in an optional side alcove rather than on the direct ascent route. The revival pickup marker and all solve-state triggers are invisible and must not enter the image render.\n\n## Layout components\nBuild a three-floor enclosed tower with generous shared circulation around each central puzzle area. Floor 1 is a bright mechanical workshop chamber: an entry landing, a large clue facade, simple wall and floor controls, and a locked elevator or stair at the rear leading up. Floor 2 is a contrasting overgrown greenhouse/ruin chamber, with a central hazardous channel or dangerous floor strip, safe side platforms containing its controls, and the single revival-item pickup in a recessed side alcove. Its opened vertical route rises to Floor 3. Floor 3 is a cool observatory-like summit room with a final objective zone, a prominent top-level exit portal or roof door, and a broad arrival platform that avoids congestion. Use solid exterior tower walls and internal floor slabs; stairs and elevator shafts align vertically on one side so every upward connection reads immediately. Frame the tower as a clean cutaway, showing all three themed rooms and the continuous ascent.\n\n## Render order\nUse `topdown`: render an authoritative plan first because the three-floor sequence, hazard bypass, and aligned vertical routes must remain traversable and connected; dress the isometric cutaway from that plan.\n\n## Scale, theme, and pipeline cost\nScale band: small, driven by exactly three compact rooms in one tower, while each room remains wide enough for simultaneous players. Theme: colorful, readable cartoon adventure, with sharply contrasting workshop, greenhouse ruin, and observatory summit palettes. Pipeline modifier: `P2`, forced by the three stacked floor surfaces and vertical shaft, which cannot be fully represented by one unobscured top-down capture.",
+  "blob": "### 1. Genre\nThe dominant genre is Puzzle: the game is a three-room escape sequence whose progression depends on solving each floor’s distinct challenge. There is no secondary genre.\n\n### 2. Shape and preset\nUse `rooms-sequence`, a vertical chain of three enclosed challenge chambers connected in mandatory order by a central upward route. Match the Escape Room preset: retain its sequential chambers and progression gates, while adapting the rooms into a stacked tower and omitting unrequested key-item chains.\n\n### 3. Config requirements\nUse `gate-solve` for a visible objective on every floor that unlocks the ascent only after its challenge is completed. Use `button-solve` for distinct physical puzzle inputs: a floor-one symbol console, a floor-two timing lever, and a floor-three constellation control. Use `gate-progression` for locked elevator/stair doors between floors and at the final roof exit. Use `hazard-kill` for a clearly readable damage hazard in the clockwork-furnace floor.\n\n### 4. Layout requirements\nPlace three `button-solve` input stations, one centered in each floor’s objective zone and facing its upward door. Place one revival-item pickup in a safe, visible side alcove on floor two, before the hazardous crossing, so it can be collected once per attempt. Site independent player arrival and full-reset spawn markers in the floor-one entry bay, away from the first puzzle. The top exit needs a completion/reset trigger immediately beyond its opened door.\n\n### 5. Layout components\nThe compact tower has exactly three stacked interior floors around a central vertical elevator shaft with an adjacent enclosed stair route. Floor one is a bright overgrown garden-workshop chamber: a broad entry bay, color-symbol console, planters, and a locked ascent door. Floor two is an orange clockwork furnace room with open circulation around a timed mechanism, moving gear motifs, a short lava or heated-floor damage channel, the revival alcove, and the second locked ascent. Floor three is a cool blue celestial observatory with a constellation console, circular viewing floor, and the top-level exit. Each chamber is similarly sized for simultaneous players, with clear perimeter circulation around the central objective. Thick tower walls enclose all floors; frame the isometric view with the roof partly cut away to reveal the three-level stack.\n\n### 6. Render order\nUse `topdown`: the ordered vertical connections, hazard crossing, and mandatory progression route must remain playable and unambiguous before the isometric dressing is generated.\n\n### 7. Scale, theme, and pipeline cost\nScale is medium, driven by three full multiplayer-capable chambers in one compact tower. Theme: clear, colorful cartoon adventure, shifting from garden workshop to furnace machinery to celestial observatory. Use `P2` because the three playable floors stack directly above one another and occlude each other in a single top-down capture.",
   "spec": {
     "genre": "Puzzle",
     "secondary": [],
-    "shape": "puzzle-rooms",
+    "shape": "rooms-sequence",
     "preset": "Escape Room",
     "axes": {},
     "options": [
       {
+        "id": "gate-solve",
+        "text": "A visible objective on every floor that unlocks the ascent only after that floor's challenge is completed.",
+        "visible": true,
+        "count": 3
+      },
+      {
         "id": "button-solve",
-        "text": "Floor-specific physical controls: simple wall and floor controls in the workshop, controls on safe side platforms in the greenhouse ruin, and final objective controls in the observatory summit.",
+        "text": "Distinct physical puzzle inputs: a floor-one symbol console, a floor-two timing lever, and a floor-three constellation control.",
         "visible": true,
         "count": 3
-      },
-      {
-        "id": "facade-clue",
-        "text": "A large clue facade placed in each room's natural approach view.",
-        "visible": true,
-        "count": 3
-      },
-      {
-        "id": "collectible-nodes",
-        "text": "Exactly one revival-item pickup positioned in a recessed optional side alcove rather than on the direct ascent route.",
-        "visible": false,
-        "count": 1
       },
       {
         "id": "gate-progression",
-        "text": "Successive sealed upward routes through the tower, unlocked floor by floor.",
-        "visible": true,
-        "count": 3
-      },
-      {
-        "id": "gate-solve",
-        "text": "Clearly readable locked elevator doors or stair barriers at each floor's upward exit, unlocked by that chamber's solve.",
+        "text": "Locked elevator or stair doors between floors and at the final roof exit.",
         "visible": true,
         "count": 3
       }
     ],
+    "layout_placement": [
+      {
+        "id": "button-solve",
+        "text": "Three input stations: a floor-one symbol console, a floor-two timing lever, and a floor-three constellation control.",
+        "count": 3,
+        "where": "One centered in each floor's objective zone, facing its upward door."
+      }
+    ],
     "layout": {
-      "composition": "Clean tower cutaway showing all three stacked themed rooms and the continuous ascent; Floor 1 at the bottom, Floor 2 in the middle, and Floor 3 at the summit, with vertically aligned stairs and elevator shafts on one side.",
+      "composition": "Partly cut-away roof frames an isometric view into a compact three-level tower stack, revealing the bright garden-workshop floor below, orange furnace floor in the middle, and cool blue observatory at the top around the central vertical shaft.",
       "zones": [
         {
-          "name": "Floor 1 mechanical workshop chamber",
-          "role": "Entry landing and first puzzle challenge with a clue facade, wall and floor controls, and a locked upward elevator or stair.",
-          "where": "bottom floor",
-          "size": "compact room with generous shared circulation"
+          "name": "Floor One Garden-Workshop Chamber",
+          "role": "Entry floor with independent arrival and full-reset spawn markers in the broad entry bay, a color-symbol objective console, perimeter circulation, and a locked ascent door.",
+          "where": "Bottom floor of the tower around the central elevator shaft and adjacent enclosed stair route.",
+          "size": "Similarly sized to the other multiplayer-capable chambers."
         },
         {
-          "name": "Floor 2 overgrown greenhouse ruin chamber",
-          "role": "Second puzzle challenge with controls on safe side platforms, a central hazard, an optional revival-item alcove, and an opened route upward.",
-          "where": "middle floor",
-          "size": "compact room with generous shared circulation"
+          "name": "Floor Two Clockwork-Furnace Chamber",
+          "role": "Timed-mechanism challenge with a central timing lever, open circulation, a short lava or heated-floor damage crossing, a safe side revival-item pickup alcove before the crossing, and the second locked ascent.",
+          "where": "Middle floor, directly above floor one.",
+          "size": "Similarly sized to the other multiplayer-capable chambers."
         },
         {
-          "name": "Floor 3 observatory summit room",
-          "role": "Final objective zone with a prominent top-level exit portal or roof door and a broad arrival platform.",
-          "where": "top floor",
-          "size": "compact room with a broad arrival platform"
+          "name": "Floor Three Celestial Observatory Chamber",
+          "role": "Constellation-control challenge on a circular viewing floor, with perimeter circulation and the top-level exit containing a completion/reset trigger immediately beyond its opened door.",
+          "where": "Top floor, directly above floor two beneath the partly cut-away roof.",
+          "size": "Similarly sized to the other multiplayer-capable chambers."
         }
       ],
       "paths": [
         {
-          "from": "Floor 1 mechanical workshop chamber",
-          "to": "Floor 2 overgrown greenhouse ruin chamber",
+          "from": "Floor One Garden-Workshop Chamber",
+          "to": "Floor Two Clockwork-Furnace Chamber",
           "kind": "stair"
         },
         {
-          "from": "Floor 2 overgrown greenhouse ruin chamber",
-          "to": "Floor 3 observatory summit room",
+          "from": "Floor Two Clockwork-Furnace Chamber",
+          "to": "Floor Three Celestial Observatory Chamber",
           "kind": "stair"
+        },
+        {
+          "from": "Floor Three Celestial Observatory Chamber",
+          "to": "Top-Level Exit",
+          "kind": "elevator"
         }
       ],
-      "terrain": "Internal floor slabs; the second floor has a central hazardous channel or dangerous floor strip with safe side platforms.",
+      "terrain": "Enclosed interior floors shift from bright overgrown garden-workshop surfaces to orange clockwork furnace machinery with a short lava or heated-floor damage channel, then to a cool blue celestial observatory with a circular viewing floor.",
       "props": [
         {
-          "name": "revival-item pickup",
+          "name": "Central vertical elevator shaft",
           "count": 1,
-          "where": "recessed optional side alcove on Floor 2"
+          "where": "Center of the three stacked floors."
+        },
+        {
+          "name": "Enclosed stair route",
+          "count": 1,
+          "where": "Adjacent to the central elevator shaft, linking the floors in mandatory order."
+        },
+        {
+          "name": "Planters",
+          "count": -1,
+          "where": "Floor one garden-workshop chamber."
+        },
+        {
+          "name": "Moving gear motifs",
+          "count": -1,
+          "where": "Floor two clockwork-furnace chamber."
         }
       ],
-      "boundary": "Solid exterior tower walls enclosing all rooms.",
-      "scale_band": "small",
-      "theme": "Colorful, readable cartoon adventure; sharply contrasting workshop, greenhouse ruin, and observatory summit palettes."
+      "boundary": "Thick tower walls enclose all three interior floors; the roof is partly cut away for the isometric reveal.",
+      "scale_band": "medium",
+      "theme": "Clear, colorful cartoon adventure: garden workshop, clockwork furnace, and celestial observatory."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "The three-floor sequence, hazard bypass, and aligned vertical routes must remain traversable and connected.",
+      "why": "The ordered vertical connections, hazard crossing, and mandatory progression route must remain playable and unambiguous.",
       "set_piece": false
     },
     "route": [
       "P2"
     ],
     "notes": [
-      "dropped option 'hazard-kill': not in Puzzle"
+      "`hazard-kill` was named for the clockwork-furnace floor but is not an option published by the dominant Puzzle genre, so it is retained as described terrain rather than emitted as an option.",
+      "The revival-item pickup, floor-one arrival and full-reset spawn markers, and top-exit completion/reset trigger were specified as layout components but have no matching Puzzle option ID; their stated locations are retained in the affected zone descriptions.",
+      "The Escape Room preset was explicitly matched, while its unrequested key-item chain was omitted."
     ],
     "scene_prompt": "Create a 3D game map showing a compact, clear cartoon-adventure escape tower with three stacked floors, each a visually distinct themed challenge room. Players begin on the first floor; each floor has a readable objective area and a physical elevator or stair route that opens upward to the next floor. The third floor leads to a top-level exit. Include at least one physical damage hazard and a single revival-item pickup placed somewhere inside the tower. Design the tower for multiple players to occupy and attempt simultaneously, with enough open circulation space around each floor’s challenge area and vertical connections."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
   "mapper_notes": [
-    "blob asked for topdown first; the route ['P0', 'P3'] gives isometric"
+    "blob asked for topdown first; the route ['P0'] gives isometric"
   ]
 }

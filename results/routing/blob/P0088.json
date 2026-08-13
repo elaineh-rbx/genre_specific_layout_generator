@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a real 3D obby map in a simple bright sky-world, with a small floating course suspended above clouds. Arrange clear, readable 3D platforms, moving spinner obstacles, and gaps in a sequential route toward a finish area, sized for a short 3–5 minute run. Include a few physical checkpoint markers along the course.",
-  "blob": "### Genre\nThe dominant genre is Obby & Platformer: the player-controlled avatar crosses discrete jumps, gaps, and moving obstacles at its own pace. The race framing does not change the course’s platforming-first layout.\n\n### Shape and preset\nUse `course-flat`, a single forward floating course held broadly at one elevation above the cloud layer, with local jumps rather than a tower ascent. Match the Classic Obby preset, retaining its readable sequential route, checkpoint pads, jump sections, and moving obstacles; add the explicitly requested finish area.\n\n### Config requirements\n`path-track` is visible geometry: an ordered chain of clear floating platforms and legal gaps leading from the start to the finish. `checkpoint-respawn` is both visible and invisible: a few prominent physical checkpoint markers sit on safe enclosed landing pads, with their respawn placements assigned after segmentation. `obstacle-jump` is visible geometry in the form of gaps and varied platform jumps. `obstacle-moving` is visible geometry in the form of moving spinner obstacles placed between safe landings. `winner-zone` is both visible and invisible: a distinct finish platform at the route terminus contains the completion area and its placed trigger.\n\n### Layout components\nBuild one small, linear sky-course sized for a first clear in 3–5 minutes. Begin on a generous start platform, then lead through successive floating platform clusters separated by readable gaps, with spinner sections placed on or between wider platforms. Space a few checkpoint pads evenly along the route after meaningful obstacle clusters. End on a larger, visually distinct finish platform. Everything floats above a broad layer of bright white clouds; there is no ground terrain, settlement, or interior. Keep the outer boundary open to sky, with the clouds and empty space below clearly communicating the fall-away. Frame the whole course diagonally from an elevated isometric view so its start-to-finish progression remains legible.\n\n### Render order\nUse `topdown` first and make the plan authoritative, because the ordered jump chain and moving-obstacle clearances must remain playable rather than merely look connected.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the requested 3–5 minute run and few checkpoints. Theme: simple, bright, readable sky-world above clouds. Use `P6` because the critical platform sequence and gaps must be physics-valid by construction.",
+  "blob": "### 1. Genre\nThe dominant genre is Obby & Platformer: the avatar crosses discrete floating platforms and gaps under direct walk-and-jump control. No secondary genre is needed.\n\n### 2. Shape and preset\nUse `course-flat`, matching the Classic Obby preset. Although the course floats above clouds, it is a short, sequential horizontal progression rather than a stacked tower or a hillside ascent. The preset remains recognisable; retain its platform track, checkpoints, jump obstacles, and moving obstacles.\n\n### 3. Config requirements\nUse `path-track` as a clearly ordered chain of readable floating platforms with physics-legal gaps. Use `checkpoint-respawn` as visible, flat checkpoint pads and markers along safe course sections. Use `obstacle-jump` for the gaps and platform-to-platform jumps. Use `obstacle-moving` for rotating spinner hazards placed over or beside selected platforms. Do not add contact-lethal surfaces: failure is by falling.\n\n### 4. Layout requirements\nPlace `checkpoint-respawn` at a few safe landing pads, spaced across the short 3–5 minute route: one after the opening section, one around the midpoint, and one before the final obstacle sequence; each returns a fallen player to its own pad. No other placed gameplay elements are required. The timer is mechanics/UI and is not part of the layout.\n\n### 5. Layout components\nBuild one small open-air sky course. Begin with a broad start platform at the near edge, then run a single forward sequence of floating platforms above a soft cloud layer. Alternate simple landing blocks, modest gaps, and spinner sections, with generous readable clearance around every obstacle. Put three physical checkpoint pads on wider stable platforms at the stated intervals. End on a distinct, larger finish platform beyond the last jump sequence. There is no terrain, building, or enclosing boundary; clouds form the distant lower backdrop and the course edge falls away into open sky. Compose the course diagonally through frame from foreground start to background finish, keeping the entire route legible and its platform silhouettes separated.\n\n### 6. Render order\nUse `topdown` first and treat it as authoritative, because the connected jump chain and all critical gaps must remain playable and physics-legal before the isometric sky dressing is generated.\n\n### 7. Scale, theme, and pipeline cost\nScale is small, driven by the requested 3–5 minute first-clear run and only a few checkpoints. Theme is bright, clean sky-world obby: saturated readable platforms, white clouds, and open blue sky. Use `P6` because the sequential platform route and jump spacing must be valid by construction; use `CHECK` because the course is suspended in open air above clouds.",
   "spec": {
     "genre": "Obby & Platformer",
     "secondary": [],
@@ -24,106 +24,98 @@
     "options": [
       {
         "id": "path-track",
-        "text": "an ordered chain of clear floating platforms and legal gaps leading from the start to the finish",
+        "text": "A clearly ordered chain of readable floating platforms with physics-legal gaps.",
         "visible": true,
         "count": -1
       },
       {
         "id": "checkpoint-respawn",
-        "text": "a few prominent physical checkpoint markers sit on safe enclosed landing pads, with their respawn placements assigned after segmentation",
+        "text": "Visible, flat checkpoint pads and markers along safe course sections; each returns a fallen player to its own pad.",
         "visible": true,
-        "count": -1
+        "count": 3
       },
       {
         "id": "obstacle-jump",
-        "text": "gaps and varied platform jumps",
+        "text": "Gaps and platform-to-platform jumps.",
         "visible": true,
         "count": -1
       },
       {
         "id": "obstacle-moving",
-        "text": "moving spinner obstacles placed between safe landings",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "winner-zone",
-        "text": "a distinct finish platform at the route terminus contains the completion area and its placed trigger",
+        "text": "Rotating spinner hazards placed over or beside selected platforms.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "checkpoint-respawn",
+        "text": "Physical checkpoint pads and markers on wider stable platforms, each returning a fallen player to its own pad.",
+        "count": 3,
+        "where": "One after the opening section, one around the midpoint, and one before the final obstacle sequence."
+      }
+    ],
     "layout": {
-      "composition": "Frame the whole floating course diagonally from an elevated isometric view, keeping the start-to-finish progression legible above the broad cloud layer.",
+      "composition": "A single diagonal course runs from the broad start platform at the foreground near edge toward the distinct larger finish platform in the background. Floating platform silhouettes remain separated and the entire route stays legible, above a distant soft cloud layer.",
       "zones": [
         {
           "name": "Start platform",
-          "role": "Generous course beginning.",
-          "where": "start of the linear route",
-          "size": "generous"
+          "role": "Broad opening platform where the course begins.",
+          "where": "Foreground at the near edge.",
+          "size": "Broad"
         },
         {
-          "name": "Floating platform clusters",
-          "role": "Successive jump sections with readable gaps and spinner obstacles.",
-          "where": "between the start and finish",
-          "size": ""
-        },
-        {
-          "name": "Checkpoint pads",
-          "role": "Safe enclosed landing pads with physical checkpoint markers.",
-          "where": "evenly along the route after meaningful obstacle clusters",
-          "size": ""
+          "name": "Sequential sky course",
+          "role": "A forward chain of landing blocks, modest gaps, and spinner sections with generous readable clearance.",
+          "where": "Diagonally through the frame between start and finish.",
+          "size": "Small"
         },
         {
           "name": "Finish platform",
-          "role": "Distinct route terminus containing the completion area.",
-          "where": "end of the linear route",
-          "size": "larger"
+          "role": "The end area beyond the last jump sequence.",
+          "where": "Background at the far end of the route.",
+          "size": "Larger"
         }
       ],
       "paths": [
         {
           "from": "Start platform",
-          "to": "Floating platform clusters",
-          "kind": "track"
-        },
-        {
-          "from": "Floating platform clusters",
-          "to": "Checkpoint pads",
-          "kind": "track"
-        },
-        {
-          "from": "Checkpoint pads",
           "to": "Finish platform",
           "kind": "track"
         }
       ],
-      "terrain": "No ground terrain; everything floats above a broad layer of bright white clouds with empty sky below.",
+      "terrain": "No terrain; a soft cloud layer forms the distant lower backdrop beneath the suspended course.",
       "props": [
         {
-          "name": "moving spinner obstacles",
+          "name": "Floating platforms",
           "count": -1,
-          "where": "on or between wider platforms"
+          "where": "Along the sequential route above the clouds."
         },
         {
-          "name": "physical checkpoint markers",
+          "name": "Rotating spinner hazards",
           "count": -1,
-          "where": "on safe enclosed checkpoint pads"
+          "where": "Over or beside selected platforms."
+        },
+        {
+          "name": "Cloud layer",
+          "count": -1,
+          "where": "Distantly below the course."
         }
       ],
-      "boundary": "Open to sky; clouds and empty space below clearly communicate the fall-away.",
+      "boundary": "Open sky; the course edge falls away with no enclosing boundary.",
       "scale_band": "small",
-      "theme": "simple, bright, readable sky-world above clouds"
+      "theme": "Bright, clean sky-world obby with saturated readable platforms, white clouds, and open blue sky."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the ordered jump chain and moving-obstacle clearances must remain playable rather than merely look connected",
+      "why": "The connected jump chain and all critical gaps must remain playable and physics-legal.",
       "set_piece": false
     },
     "route": [
-      "P6"
+      "P6",
+      "CHECK"
     ],
     "notes": [],
     "scene_prompt": "Create a real 3D obby map in a simple bright sky-world, with a small floating course suspended above clouds. Arrange clear, readable 3D platforms, moving spinner obstacles, and gaps in a sequential route toward a finish area, sized for a short 3–5 minute run. Include a few physical checkpoint markers along the course."
@@ -131,7 +123,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

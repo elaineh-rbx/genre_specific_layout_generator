@@ -19,134 +19,180 @@
     }
   ],
   "scene_prompt": "Create a simple dungeon layout with four connected rooms: one contains a monster to avoid, one is the exit, and the remaining rooms form the route between them. The exit leads into a separate dungeon-like other world, where a simple axis-shaped object is hidden.",
-  "blob": "### Genre\nDominant genre: Survival, with Adventure secondary because surviving the monster enables an onward search. The monster is a lethal threat rather than a puzzle, so Survival owns the dungeon topology.\n\n### Shape and preset\nUse `warren-looping`, matching the Escape preset. Adapt it to a compact four-room dungeon rather than a large warren: the critical route must remain connected and provide a way around the monster room. The separate other world is an additional linked map, required by the prompt.\n\n### Config requirements\nUse `hazard-kill` as visible geometry: the monster occupies its dedicated room as the lethal danger to avoid. Use `gate-escape` as both visible geometry and invisible layout: a marked dungeon exit doorway is the transition point into the other world. Use `collectible-nodes` as invisible layout: the axis-shaped completion object is hidden in the other world. Do not add unrequested cover, shelters, or population.\n\n### Layout components\nBuild a simple stone dungeon with exactly four connected rooms in the first map. Place an entry-side transit room at one end, a monster room as a dangerous side branch or bypassed chamber, a second connecting room forming the safe route, and an exit room at the far end. Link rooms with narrow stone corridors and door openings; arrange circulation so the route to the exit does not require entering the monster room. The monster room is visibly distinct, with a threatening central monster and a clear threshold. The exit room contains a large portal-like dungeon doorway.\n\nBeyond that doorway, create a separate, smaller dungeon-like other world: one searchable stone chamber or short connected chamber sequence with the simple axis-shaped object concealed off the direct arrival view. Use stone floors, block walls, dim torchlight, and enclosed dungeon boundaries. Frame the first map in a readable isometric cutaway, with the exit visually leading toward the second map.\n\n### Render order\nUse `topdown` first, authoritative because connected escape circulation and a safe route around the lethal monster must remain playable before the isometric dressing is produced.\n\n### Scale, theme, and pipeline cost\nScale: medium, driven by two linked dungeon maps despite the first map having only four rooms. Theme: simple dark stone dungeon, torches, portal exit, ominous monster chamber. Pipeline modifiers: `P4` because the other world is a separate linked map; `P6` because the escape route and bypass topology must be valid by construction.",
+  "blob": "### 1. Genre\nThe dominant genre is Survival, specifically an escape-style survival game: the player must avoid a lethal monster, reach an exit, and continue into another world to find the goal object.\n\n### 2. Shape and preset\nUse `world-chaptered`, taken from outside Survival’s usual shapes, because the exit transfers the player from the first dungeon to a genuinely separate other-world dungeon map. The preset is none: Escape supplies the threat-and-exit intent, but its looping-warren shape does not match these two sequential maps.\n\n### 3. Config requirements\nUse `gate-escape` as a clearly visible dungeon exit doorway in the first map, leading to the other world. Do not add unrequested hiding structures, resources, or environmental hazards.\n\n### 4. Layout requirements\nPlace one `spawner-npc` in the dedicated monster room, with its patrol ground confined to that room so entering it is the lethal risk. Place one `gate-escape` trigger across the exit doorway in the first dungeon. Place one `collectible-nodes` marker on the single hidden axis-shaped object in the other-world dungeon; collecting it completes the game.\n\n### 5. Layout components\nThe first chapter is a compact simple-stone dungeon of four connected enclosed rooms. One room is the dangerous monster chamber, one is the exit room, and the other two are intervening route rooms connecting the safe approach to the exit; keep the monster room as a distinct side or blocked-risk branch rather than the required safe route. Corridors with dungeon doors join the rooms. The exit room ends at a substantial arched portal or door boundary.\n\nThe second chapter is a separate dungeon-like other world: a small enclosed ruin or chamber network with one main search area and side recesses. Hide the simple axis-shaped object in one recess, visible only after entering and searching the other world. Use stone floors, dark walls, sparse torchlight, and enclosed outer walls in both maps. Frame the first map as a readable four-room plan and the second as a compact mysterious destination.\n\n### 6. Render order\nUse `topdown` first and treat it as authoritative, because the room connections, safe route, monster branch, and exit transition must remain playable across the two maps.\n\n### 7. Scale, theme, and pipeline cost\nScale is small, driven by exactly four rooms in the first dungeon and one compact other-world dungeon. Theme is simple dark fantasy dungeon stonework. Use `P4` because the exit leads to a separate map, and `P0` otherwise; no overhangs, exterior/interior transition, or volumetric play space is required.",
   "spec": {
     "genre": "Survival",
-    "secondary": [
-      "Adventure"
-    ],
-    "shape": "warren-looping",
-    "preset": "Escape",
+    "secondary": [],
+    "shape": "world-chaptered",
+    "preset": "none",
     "axes": {},
     "options": [
       {
-        "id": "hazard-kill",
-        "text": "the monster occupies its dedicated room as the lethal danger to avoid",
+        "id": "gate-escape",
+        "text": "A clearly visible dungeon exit doorway in the first map, leading to the other world.",
         "visible": true,
         "count": 1
       },
       {
-        "id": "gate-escape",
-        "text": "a marked dungeon exit doorway is the transition point into the other world",
-        "visible": true,
+        "id": "spawner-npc",
+        "text": "A monster spawn in the dedicated monster room, with patrol ground confined to that room.",
+        "visible": false,
         "count": 1
       },
       {
         "id": "collectible-nodes",
-        "text": "the axis-shaped completion object is hidden in the other world",
+        "text": "A marker on the single hidden axis-shaped object in the other-world dungeon; collecting it completes the game.",
         "visible": false,
         "count": 1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "gate-escape",
+        "text": "An exit trigger across the exit doorway in the first dungeon.",
+        "count": 1,
+        "where": "Across the exit doorway in the first dungeon."
+      },
+      {
+        "id": "spawner-npc",
+        "text": "A monster spawn with patrol ground confined to the dedicated monster room.",
+        "count": 1,
+        "where": "In the dedicated monster room, confined to that room."
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "A marker on the single hidden axis-shaped object; collecting it completes the game.",
+        "count": 1,
+        "where": "On the hidden axis-shaped object in one recess of the other-world dungeon."
+      }
+    ],
     "layout": {
-      "composition": "Readable isometric cutaway of the first dungeon map, with the entry-side transit room at one end, the monster chamber visibly distinct as a side branch or bypassed chamber, the safe connecting route leading to the far exit room, and the portal-like exit visually leading toward the second map.",
+      "composition": "Frame the first map as a readable four-room plan, with the monster chamber as a distinct side or blocked-risk branch and the route rooms leading to the exit room; frame the second map as a compact mysterious destination.",
       "zones": [
         {
-          "name": "Entry-side transit room",
-          "role": "Entry-side transit at one end of the first dungeon map.",
-          "where": "one end of the first map",
+          "name": "First dungeon",
+          "role": "The first chapter, containing the safe approach, intervening route rooms, monster branch, and exit.",
+          "where": "First separate map",
+          "size": "Compact; exactly four connected enclosed rooms."
+        },
+        {
+          "name": "Monster chamber",
+          "role": "Dangerous room containing the lethal monster; entering it is the lethal risk.",
+          "where": "A distinct side or blocked-risk branch of the first dungeon",
           "size": ""
         },
         {
-          "name": "Monster room",
-          "role": "Dangerous side branch or bypassed chamber containing the lethal monster and a clear threshold.",
-          "where": "off the safe route in the first map",
+          "name": "Route room 1",
+          "role": "Intervening room on the safe route to the exit.",
+          "where": "First dungeon",
           "size": ""
         },
         {
-          "name": "Second connecting room",
-          "role": "Forms the safe route around the monster room toward the exit.",
-          "where": "between the entry-side transit room and exit room",
+          "name": "Route room 2",
+          "role": "Intervening room on the safe route to the exit.",
+          "where": "First dungeon",
           "size": ""
         },
         {
           "name": "Exit room",
-          "role": "Far-end dungeon exit room containing the large portal-like doorway into the other world.",
-          "where": "far end of the first map",
+          "role": "Ends at the exit doorway leading to the other-world dungeon.",
+          "where": "End of the safe route in the first dungeon",
           "size": ""
         },
         {
-          "name": "Other world",
-          "role": "Separate smaller dungeon-like searchable stone chamber or short connected chamber sequence, with the axis-shaped object concealed off the direct arrival view.",
-          "where": "beyond the exit doorway",
-          "size": "smaller"
+          "name": "Other-world dungeon",
+          "role": "Second chapter and destination where the hidden object is searched for.",
+          "where": "Separate other-world map beyond the exit",
+          "size": "One compact dungeon-like ruin or chamber network."
+        },
+        {
+          "name": "Main search area",
+          "role": "Primary area to search for the hidden object.",
+          "where": "Other-world dungeon",
+          "size": ""
+        },
+        {
+          "name": "Side recesses",
+          "role": "Recesses off the main search area, one hiding the axis-shaped object.",
+          "where": "Other-world dungeon",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Entry-side transit room",
-          "to": "Monster room",
+          "from": "Route room 1",
+          "to": "Route room 2",
           "kind": "corridor"
         },
         {
-          "from": "Entry-side transit room",
-          "to": "Second connecting room",
-          "kind": "corridor"
-        },
-        {
-          "from": "Second connecting room",
+          "from": "Route room 2",
           "to": "Exit room",
           "kind": "corridor"
         },
         {
+          "from": "First dungeon",
+          "to": "Monster chamber",
+          "kind": "corridor"
+        },
+        {
           "from": "Exit room",
-          "to": "Other world",
+          "to": "Other-world dungeon",
           "kind": "portal"
+        },
+        {
+          "from": "Main search area",
+          "to": "Side recesses",
+          "kind": "corridor"
         }
       ],
-      "terrain": "Stone floors, block walls, dim torchlight, and enclosed dungeon boundaries.",
+      "terrain": "Stone floors, dark walls, and sparse torchlight in both maps.",
       "props": [
         {
-          "name": "threatening central monster",
-          "count": 1,
-          "where": "Monster room"
+          "name": "Dungeon doors",
+          "count": -1,
+          "where": "Along corridors joining rooms in the first dungeon."
         },
         {
-          "name": "large portal-like dungeon doorway",
+          "name": "Substantial arched portal or door boundary",
           "count": 1,
-          "where": "Exit room"
+          "where": "At the end of the exit room."
         },
         {
-          "name": "axis-shaped completion object",
+          "name": "Simple axis-shaped object",
           "count": 1,
-          "where": "concealed in the other world off the direct arrival view"
+          "where": "Hidden in one recess of the other-world dungeon."
         }
       ],
-      "boundary": "Enclosed dungeon boundaries.",
-      "scale_band": "medium",
-      "theme": "simple dark stone dungeon, torches, portal exit, ominous monster chamber"
+      "boundary": "Enclosed outer walls in both dungeon maps.",
+      "scale_band": "small",
+      "theme": "Simple dark fantasy dungeon stonework."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "connected escape circulation and a safe route around the lethal monster must remain playable before isometric dressing.",
+      "why": "Room connections, the safe route, monster branch, and exit transition must remain playable across two maps.",
       "set_piece": false
     },
     "route": [
       "P4",
-      "P6"
+      "P0"
     ],
-    "notes": [],
+    "notes": [
+      "`world-chaptered` is taken from outside Survival’s usual shapes.",
+      "No unrequested hiding structures, resources, or environmental hazards were added."
+    ],
     "scene_prompt": "Create a simple dungeon layout with four connected rooms: one contains a monster to avoid, one is the exit, and the remaining rooms form the route between them. The exit leads into a separate dungeon-like other world, where a simple axis-shaped object is hidden."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
-  "order": "p6",
-  "first": "topdown",
-  "mapper_notes": []
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P4'] gives isometric"
+  ]
 }

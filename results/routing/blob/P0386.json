@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a 3D endless-runner-style neighborhood street course about 500 studs long, arranged as a straight three-lane road. Gloo, a light-brown mini goldendoodle, runs down the center of the scene through incoming cars, garbage trucks, pedestrians blocking lanes, ground trash, and low overhead obstacles, with dog treats placed along the road. Neighborhood buildings and sidewalks frame both sides of the street. At the far end of the course, Andy, an Asian man with glasses, waits as the finish-point figure.",
-  "blob": "### Genre\nThe dominant genre is Infinite Runner: automatic forward movement in a Subway Surfers-style three-lane run. The stated 500-stud endpoint makes this a finite runner rather than an actually endless world, but the runner genre still owns the lane-based course.\n\n### Shape and preset\nUse `lane-snap`, matching the Lane Runner preset: Gloo moves between three fixed, parallel road lanes. Retain the preset’s lane logic but use a single straight, authored 500-stud neighborhood street rather than an endless or turning sequence.\n\n### Config requirements\nUse visible `chunk-modular` road segments, joined cleanly along one forward axis, to organize the long street without drift. Use visible `obstacle-moving` for incoming cars and garbage trucks crossing or occupying lanes. Use visible `obstacle-jump` for trash piles on the pavement and low overhead barriers that require a duck-under clearance. Use invisible `collectible-nodes` pickup placements along selected lane lines; render the corresponding dog treats as visible props. Do not use `hazard-kill`: the obstacles cause trips rather than immediate run-ending contact.\n\n### Layout components\nBuild one long, straight three-lane asphalt road, about 500 studs from the start to the finish. The center lane is Gloo’s initial run line, with the other two lanes equally wide and clearly separated by painted markings. Distribute cars, garbage trucks, lane-blocking pedestrians, trash piles, and low overhead obstacles in readable alternating lane patterns, leaving a continuous clear route through every sequence. Place treat props in short lines on safe and riskier lane changes. Continuous sidewalks and closely spaced neighborhood buildings frame both sides for the full length, with driveways, curbside bins, and street furniture providing suburban context without obstructing the road. Andy, an Asian man with glasses, stands visibly at the far end as the finish-point figure. The road is bounded laterally by curbs, buildings, and sidewalks; frame the composition from a slightly elevated forward isometric view so all three lanes, obstacle spacing, and Andy’s distant silhouette remain legible.\n\n### Render order\nUse `topdown`: the straight lane topology and every obstacle sequence must first be checked as a clearable forward route before the isometric scene is dressed.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by the stated 500-stud run. Theme is bright, playful suburban neighborhood, with a dog-centered cartoon runner feel. Apply `P6` because the three-lane obstacle route must remain valid and clearable by construction.",
+  "blob": "### Genre\nThe dominant genre is Infinite Runner: the Subway Surfers-style automatic three-lane run and distance-based course define it. There is no secondary genre.\n\n### Shape and preset\nUse `lane-snap`, a straight three-lane neighborhood road where lateral movement snaps cleanly between the three equal lanes. This matches the Lane Runner preset, adapted from an endless modular run into a fixed, winning 500-stud street ending at Andy rather than an indefinitely extending route.\n\n### Config requirements\nUse `chunk-modular` as visually seamless, repeatable suburban street segments aligned along one axis, while retaining one authored 500-stud course. Use `obstacle-moving` for incoming cars and garbage trucks occupying and crossing individual lanes. Use `obstacle-jump` for ground trash and low overhead street obstacles that create clear hurdle and duck moments. Use `npc-population` for the pedestrians blocking lanes and for Andy as the named waiting figure at the endpoint.\n\n### Layout requirements\nPlace `collectible-nodes` as dog-treat pickup trails staggered between the three lanes, with occasional lane changes around obstacles; no count was specified. Place one `npc-population` endpoint marker for Andy at the terminal finish area, centered beyond the road’s final obstacle zone. No cleanup volume is needed for this fixed-length course.\n\n### Layout components\nBuild one long, straight, approximately 500-stud neighborhood street. The starting zone is a clear road entrance at the near end, feeding directly into three parallel, equally readable lanes. The middle majority is a continuous obstacle corridor: incoming cars, garbage trucks, lane-blocking pedestrians, scattered trash, and low overhead barriers alternate without obscuring the lane boundaries. Dog treats form visible collectible lines on safe and riskier lane choices. Sidewalks run continuously on both sides, framed by neighborhood buildings, driveways, trees, bins, and curbside detail; these are backdrop and boundary dressing, not alternate routes. At the far end, create a clear open finish apron with Andy, an Asian man wearing glasses, waiting directly ahead. Compose the view down the road’s strong central vanishing point, with Andy visibly readable at the distant endpoint.\n\n### Render order\nUse `topdown`: the three-lane corridor, obstacle order, and route-clearance relationships must be valid before the isometric dressing is generated.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by the single approximately 500-stud course and its continuous roadside dressing. Theme is bright, friendly suburban dog-adventure with readable arcade obstacles. Apply `P6` because lane and obstacle sequencing must remain clearable by construction; no additional pipeline modifier is forced.",
   "spec": {
     "genre": "Infinite Runner",
     "secondary": [],
@@ -24,124 +24,155 @@
     "options": [
       {
         "id": "chunk-modular",
-        "text": "visible road segments, joined cleanly along one forward axis, organize the long street without drift",
+        "text": "Visually seamless, repeatable suburban street segments aligned along one axis, while retaining one authored 500-stud course.",
         "visible": true,
         "count": -1
       },
       {
         "id": "obstacle-moving",
-        "text": "incoming cars and garbage trucks crossing or occupying lanes",
+        "text": "Incoming cars and garbage trucks occupying and crossing individual lanes.",
         "visible": true,
         "count": -1
       },
       {
         "id": "obstacle-jump",
-        "text": "trash piles on the pavement and low overhead barriers that require a duck-under clearance",
+        "text": "Ground trash and low overhead street obstacles that create clear hurdle and duck moments.",
         "visible": true,
         "count": -1
       },
       {
+        "id": "npc-population",
+        "text": "Pedestrians blocking lanes and Andy as the named waiting figure at the endpoint.",
+        "visible": true,
+        "count": 1
+      },
+      {
         "id": "collectible-nodes",
-        "text": "pickup placements along selected lane lines, with dog treats in short lines on safe and riskier lane changes",
+        "text": "Dog-treat pickup trails staggered between the three lanes, with occasional lane changes around obstacles.",
         "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "npc-population",
+        "text": "Andy as the named waiting figure at the endpoint.",
+        "count": 1,
+        "where": "At the terminal finish area, centered beyond the road's final obstacle zone."
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "Dog-treat pickup trails staggered between the three lanes, with occasional lane changes around obstacles.",
+        "count": -1,
+        "where": "Staggered between the three lanes, with occasional lane changes around obstacles."
+      }
+    ],
     "layout": {
-      "composition": "Slightly elevated forward isometric view along the straight road, keeping all three lanes and obstacle spacing legible; Andy's distant silhouette is at the far end, while sidewalks and neighborhood buildings frame both sides.",
+      "composition": "View straight down the road's strong central vanishing point, with the clear three-lane entrance in the foreground, the continuous obstacle corridor through the middle, and Andy visibly readable directly ahead at the distant endpoint.",
       "zones": [
         {
-          "name": "three-lane road",
-          "role": "Gloo's continuous forward runner route, with alternating readable obstacle patterns and a clear route through every sequence.",
-          "where": "from the start to the far finish",
-          "size": "about 500 studs long"
+          "name": "Starting zone",
+          "role": "Clear road entrance feeding directly into the run.",
+          "where": "Near end of the street.",
+          "size": ""
         },
         {
-          "name": "finish point",
-          "role": "Andy waits as the finish-point figure.",
-          "where": "far end of the road",
+          "name": "Three-lane obstacle corridor",
+          "role": "Continuous running corridor with alternating obstacles, pedestrians, and dog-treat choices.",
+          "where": "Middle majority of the street.",
+          "size": ""
+        },
+        {
+          "name": "Finish apron",
+          "role": "Clear terminal finish area with Andy waiting ahead.",
+          "where": "Far end beyond the final obstacle zone.",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "start",
-          "to": "finish point",
-          "kind": "road"
+          "from": "Starting zone",
+          "to": "Three-lane obstacle corridor",
+          "kind": "track"
+        },
+        {
+          "from": "Three-lane obstacle corridor",
+          "to": "Finish apron",
+          "kind": "track"
         }
       ],
-      "terrain": "Straight three-lane asphalt road with equally wide parallel lanes and painted lane markings; continuous sidewalks run along both sides.",
+      "terrain": "One long, straight neighborhood road with three parallel, equally readable lanes; continuous sidewalks run along both sides.",
       "props": [
-        {
-          "name": "Gloo, a light-brown mini goldendoodle",
-          "count": -1,
-          "where": "initially in the center lane"
-        },
         {
           "name": "incoming cars",
           "count": -1,
-          "where": "crossing or occupying road lanes"
+          "where": "In individual lanes throughout the continuous obstacle corridor."
         },
         {
           "name": "garbage trucks",
           "count": -1,
-          "where": "crossing or occupying road lanes"
+          "where": "Occupying and crossing individual lanes throughout the continuous obstacle corridor."
         },
         {
           "name": "lane-blocking pedestrians",
           "count": -1,
-          "where": "alternating road lanes"
+          "where": "In lanes throughout the continuous obstacle corridor."
         },
         {
-          "name": "trash piles",
+          "name": "scattered trash",
           "count": -1,
-          "where": "on the pavement"
+          "where": "On the road in the continuous obstacle corridor."
         },
         {
-          "name": "low overhead obstacles",
+          "name": "low overhead barriers",
           "count": -1,
-          "where": "over road lanes"
+          "where": "Above lanes in the continuous obstacle corridor."
         },
         {
           "name": "dog treats",
           "count": -1,
-          "where": "short lines on safe and riskier lane changes"
+          "where": "In visible collectible lines on safe and riskier lane choices."
         },
         {
           "name": "neighborhood buildings",
           "count": -1,
-          "where": "closely spaced along both sides of the street"
+          "where": "Framing both sides of the street."
         },
         {
           "name": "driveways",
           "count": -1,
-          "where": "beside the sidewalks"
+          "where": "Along both roadside sidewalks."
         },
         {
-          "name": "curbside bins",
+          "name": "trees",
           "count": -1,
-          "where": "along the sidewalks"
+          "where": "Along both roadside sidewalks."
         },
         {
-          "name": "street furniture",
+          "name": "bins",
           "count": -1,
-          "where": "along both sides without obstructing the road"
+          "where": "Along both roadside sidewalks."
         },
         {
-          "name": "Andy, an Asian man with glasses",
+          "name": "curbside detail",
           "count": -1,
-          "where": "far end of the course"
+          "where": "Along both roadside sidewalks."
+        },
+        {
+          "name": "Andy, an Asian man wearing glasses",
+          "count": 1,
+          "where": "Centered in the far-end finish apron, directly ahead beyond the final obstacle zone."
         }
       ],
-      "boundary": "Laterally bounded by curbs, buildings, and sidewalks.",
+      "boundary": "Continuous sidewalks and neighborhood buildings, driveways, trees, bins, and curbside detail frame both sides as backdrop and boundary dressing, not alternate routes.",
       "scale_band": "medium",
-      "theme": "bright, playful suburban neighborhood; dog-centered cartoon runner"
+      "theme": "Bright, friendly suburban dog-adventure with readable arcade obstacles."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the straight lane topology and every obstacle sequence must be checked as a clearable forward route before the isometric scene is dressed.",
+      "why": "the three-lane corridor, obstacle order, and route-clearance relationships must be valid before dressing.",
       "set_piece": false
     },
     "route": [
@@ -153,7 +184,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

@@ -19,7 +19,7 @@
     }
   ],
   "scene_prompt": "Create a small asymmetrical horror map inspired by a classic Roblox headquarters building, designed for four onion-ring survivors and one cheeseburger killer. Arrange a simple office-like HQ with a central interior space and a few clear looping routes through connected rooms and corridors; include exterior approaches around the building to support alternate movement paths. Keep the layout compact, with recognizable blocky headquarters architecture and open sightlines balanced by corners and room connections.",
-  "blob": "### Genre\n`Survival` is the dominant genre: this is an asymmetric 1-vs-all horror round in which four survivors evade one killer until the timer expires. No secondary genre is needed.\n\n### Shape and preset\nUse `warren-looping`, matching the 1 vs All preset. Here it is a compact classic Roblox HQ whose office rooms and corridors form several short, readable loops rather than dead ends. Keep the preset’s separated role-start intent, but drop its Escape Exit because the stated win condition is surviving the round timer, not escaping.\n\n### Config requirements\nUse `spawn-protected` as invisible layout geometry: place one isolated killer arrival point and a separated survivor arrival area so the cheeseburger killer cannot begin on top of the four onion-ring survivors. Use `building-interior` as visible geometry: the headquarters is enterable office architecture with an inside-to-outside transition. Do not add an exit gate, objectives, AI emitters, or unrequested hiding props.\n\n### Layout components\nBuild one small HQ complex. The main zone is a central, blocky office lobby or open workroom, roughly the visual heart of the map, with sightlines across it broken naturally by room corners, doorways, and connected side rooms. Arrange a few compact office rooms around this center and connect them through corridors that loop back into the central space and into each other; every pursued route must have an alternate continuation rather than a terminal dead end. Include exterior approach paths wrapping around the building’s perimeter, linked to the interior by several visible entrances, so players can circle the HQ instead of being forced through one hall. Use simple paved exterior ground, classic Roblox HQ-style block architecture, and a compact outer site boundary around the building and approaches. Frame the HQ as the dominant central mass, with the exterior circulation visibly readable around it.\n\n### Render order\nUse `topdown`: the connected interior and exterior loops must be checked as a valid chase layout before the isometric dressing is derived from it.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the four-survivor-versus-one-killer count and the requested few simple loops. Theme is classic blocky Roblox headquarters, office-like and lightly uncanny. Apply `P3` because movement crosses between exterior approaches and enterable HQ interiors. Apply `P6` because the looping chase network must be valid by construction, with no unfair dead ends.",
+  "blob": "### Genre\nThe dominant genre is Survival, specifically asymmetrical 1-vs-All horror: four onion-ring survivors evade one cheeseburger killer until the round timer expires. Combat rules and abilities do not alter the map layout.\n\n### Shape and preset\nUse `warren-looping`, matched to the 1 vs All preset. This is a compact classic Roblox HQ whose rooms and corridors form several readable, connected loops with no dead-end traps. Retain the preset’s looping circulation and role-separated starts, but drop its escape exit because survival is timer-based rather than escape-based.\n\n### Config requirements\nUse `cover-los` as office corners, cubicle-like partitions, door recesses, and small side rooms where survivors can break the killer’s sightline. Use `building-interior` for the enterable blocky HQ building and its connected exterior approaches; players can move from indoor office routes to outdoor perimeter paths and back.\n\n### Layout requirements\nUse `spawn-protected` for five separated role-assignment starts: four survivor start markers placed in paired, screened positions on opposite sides of the HQ circulation network, and one cheeseburger killer start marker in a distinct central-service or rear-office zone. Starts must have immediate access to different loops without direct opening sightlines between roles.\n\n### Layout components\nThe small map centers on a recognizable blocky classic Roblox headquarters building. A central lobby or open office acts as the visual anchor, with two office wings, a meeting-room-sized side space, and a rear utility/service room arranged around it. Corridors connect these rooms in a few simple loops: an inner loop around the central office and outer side routes through the wings, with multiple door connections preventing cornering. Exterior approaches wrap around the building on at least two sides, linking side entrances and a rear entrance as alternate movement paths. Use clean pale headquarters walls, broad windows, simple office furniture, blocky signage, and open internal sightlines interrupted by deliberate corners and partitions. The building boundary is enclosed indoors, while the exterior perimeter path remains compact and visibly contained by the HQ grounds. Frame the full building footprint and its surrounding paths clearly in plan.\n\n### Render order\nRender `topdown` first and treat it as authoritative, because the connected loops and absence of unfair dead ends are necessary for playable asymmetrical pursuit and cannot be trusted from an isometric-first image.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by a four-survivor-versus-one-killer round and the requested compact HQ. Theme: nostalgic classic Roblox corporate headquarters, lightly eerie but clean and blocky. Use `P6` because the looping pursuit topology must be valid by construction, and `P3` because play crosses between the exterior approaches and the enterable HQ interior.",
   "spec": {
     "genre": "Survival",
     "secondary": [],
@@ -28,96 +28,141 @@
     "axes": {},
     "options": [
       {
-        "id": "spawn-protected",
-        "text": "One isolated killer arrival point and a separated survivor arrival area prevent the cheeseburger killer from beginning on top of the four onion-ring survivors.",
-        "visible": false,
-        "count": 4
+        "id": "cover-los",
+        "text": "Office corners, cubicle-like partitions, door recesses, and small side rooms where survivors can break the killer’s sightline.",
+        "visible": true,
+        "count": -1
       },
       {
         "id": "building-interior",
-        "text": "Enterable classic Roblox HQ office architecture with an inside-to-outside transition through several visible entrances.",
+        "text": "An enterable blocky HQ building with connected exterior approaches; players can move from indoor office routes to outdoor perimeter paths and back.",
         "visible": true,
         "count": -1
+      },
+      {
+        "id": "spawn-protected",
+        "text": "Five separated role-assignment starts: four survivor start markers in paired, screened positions on opposite sides of the HQ circulation network, and one cheeseburger killer start marker in a distinct central-service or rear-office zone.",
+        "visible": false,
+        "count": 5
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "spawn-protected",
+        "text": "Five separated role-assignment starts: four survivor start markers in paired, screened positions on opposite sides of the HQ circulation network, and one cheeseburger killer start marker in a distinct central-service or rear-office zone.",
+        "count": 5,
+        "where": "Place survivor markers in paired, screened positions on opposite sides of the HQ circulation network; place the killer marker in a distinct central-service or rear-office zone. Give every start immediate access to different loops without direct opening sightlines between roles."
       }
     ],
     "layout": {
-      "composition": "The blocky HQ is the dominant central mass and visual heart of the map, with readable paved exterior circulation wrapping around its perimeter. Compact office rooms and corridors surround the central lobby or open workroom.",
+      "composition": "Top-down plan framing the full compact blocky HQ footprint and its surrounding perimeter paths clearly. The central lobby or open office is the visual anchor, with office wings to either side, a meeting-room-sized side space, and a rear utility/service room around it; exterior approaches wrap around at least two sides.",
       "zones": [
         {
-          "name": "Central HQ lobby / open workroom",
-          "role": "Main chase space with open sightlines naturally broken by room corners, doorways, and connected side rooms.",
-          "where": "centre",
-          "size": "small"
+          "name": "Central lobby or open office",
+          "role": "Visual anchor and central circulation space for the inner loop.",
+          "where": "centre of the HQ",
+          "size": ""
         },
         {
-          "name": "Compact office rooms",
-          "role": "Connected side rooms that create alternate continuations for pursued survivors.",
-          "where": "around the central workroom",
-          "size": "a few compact rooms"
+          "name": "Office wing",
+          "role": "One side of the connected office circulation network and outer side route.",
+          "where": "one side of the central office",
+          "size": ""
         },
         {
-          "name": "Looping interior corridors",
-          "role": "Short readable pursuit loops connecting rooms back into the central space and into each other without terminal dead ends.",
-          "where": "between and around the office rooms",
-          "size": "a few simple loops"
+          "name": "Office wing",
+          "role": "The opposite side of the connected office circulation network and outer side route.",
+          "where": "opposite side of the central office",
+          "size": ""
+        },
+        {
+          "name": "Meeting-room-sized side space",
+          "role": "Connected side room within the looping office layout.",
+          "where": "side of the central office",
+          "size": "meeting-room-sized"
+        },
+        {
+          "name": "Rear utility/service room",
+          "role": "Rear connected room and distinct possible killer-start zone.",
+          "where": "rear of the HQ",
+          "size": ""
         },
         {
           "name": "Exterior approaches",
-          "role": "Alternate circulation around the HQ rather than forcing players through a single hall.",
-          "where": "wrapping the building perimeter",
+          "role": "Alternate movement paths linking side entrances and a rear entrance.",
+          "where": "wrapping around at least two sides of the building",
           "size": "compact"
-        },
-        {
-          "name": "Killer arrival point",
-          "role": "Isolated arrival point for one cheeseburger killer.",
-          "where": "separated from the survivor arrival area",
-          "size": ""
-        },
-        {
-          "name": "Survivor arrival area",
-          "role": "Separated arrival area for four onion-ring survivors.",
-          "where": "separated from the killer arrival point",
-          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Central HQ lobby / open workroom",
-          "to": "Compact office rooms",
+          "from": "Central lobby or open office",
+          "to": "Office wings",
           "kind": "corridor"
         },
         {
-          "from": "Compact office rooms",
-          "to": "Looping interior corridors",
+          "from": "Office wings",
+          "to": "Meeting-room-sized side space",
           "kind": "corridor"
         },
         {
-          "from": "Looping interior corridors",
-          "to": "Central HQ lobby / open workroom",
+          "from": "Office wings",
+          "to": "Rear utility/service room",
           "kind": "corridor"
+        },
+        {
+          "from": "Central lobby or open office",
+          "to": "Central lobby or open office",
+          "kind": "corridor"
+        },
+        {
+          "from": "Office wings",
+          "to": "Exterior approaches",
+          "kind": "open ground"
         },
         {
           "from": "Exterior approaches",
-          "to": "Central HQ lobby / open workroom",
+          "to": "Rear utility/service room",
           "kind": "open ground"
         }
       ],
-      "terrain": "Simple paved exterior ground around classic blocky HQ architecture.",
-      "props": [],
-      "boundary": "A compact outer site boundary encloses the building and its exterior approaches.",
+      "terrain": "Clean compact HQ grounds around a pale-walled blocky headquarters building, with exterior perimeter paths around at least two sides.",
+      "props": [
+        {
+          "name": "cubicle-like partitions",
+          "count": -1,
+          "where": "office routes and open internal sightlines"
+        },
+        {
+          "name": "simple office furniture",
+          "count": -1,
+          "where": "central office, wings, and side rooms"
+        },
+        {
+          "name": "blocky signage",
+          "count": -1,
+          "where": "throughout the recognizable headquarters building"
+        },
+        {
+          "name": "broad windows",
+          "count": -1,
+          "where": "HQ walls"
+        }
+      ],
+      "boundary": "Indoor routes are enclosed by the HQ building boundary; the compact exterior perimeter paths are visibly contained by the HQ grounds.",
       "scale_band": "small",
-      "theme": "Classic blocky Roblox headquarters, office-like and lightly uncanny horror."
+      "theme": "nostalgic classic Roblox corporate headquarters, lightly eerie, clean and blocky"
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the connected interior and exterior chase loops must be valid before isometric dressing is derived from them",
+      "why": "connected loops and the absence of unfair dead ends must be valid for asymmetrical pursuit.",
       "set_piece": false
     },
     "route": [
-      "P3",
-      "P6"
+      "P6",
+      "P3"
     ],
     "notes": [],
     "scene_prompt": "Create a small asymmetrical horror map inspired by a classic Roblox headquarters building, designed for four onion-ring survivors and one cheeseburger killer. Arrange a simple office-like HQ with a central interior space and a few clear looping routes through connected rooms and corridors; include exterior approaches around the building to support alternate movement paths. Keep the layout compact, with recognizable blocky headquarters architecture and open sightlines balanced by corners and room connections."
@@ -125,7 +170,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

@@ -9,7 +9,7 @@
     }
   ],
   "scene_prompt": "Create a 3D kart racing map with a bright toy-kart look: a colorful compact looped race circuit with a clearly marked start/finish line, simple cheerful surroundings, and continuous safety barriers or walls enclosing the course so karts cannot leave the track.",
-  "blob": "### Genre\nThe dominant genre is Racing: the original specifies kart laps on a closed course. There is no secondary genre.\n\n### Shape and preset\nUse `route-circuit`, a compact, continuous closed kart loop with a clearly readable direction of travel and no ambiguous crossings. This matches the Circuit Racing preset, though omit its unrequested multi-lane grid and turnaround treatment in favor of the prompt’s simple toy-kart circuit.\n\n### Config requirements\nUse `startpoint-line` as the visible, brightly marked start/finish stripe on the home straight, with its associated start/reset placement kept invisible. Use `trigger-lap` as an invisible detection region precisely across that stripe for lap registration. Use `barrier-guardrail` as visible, continuous cheerful safety walls enclosing both sides of the driveable course so karts cannot leave it. No other options are requested.\n\n### Layout components\nBuild one compact circuit zone: a broad, colorful paved loop occupying most of the map, with a straight home section at the front edge holding the start/finish line. The route should make a legible clockwise loop through several broad toy-like bends, returning cleanly to the home straight without overlaps, dead ends, or intersections. Put the simple cheerful surroundings in the infield and beyond the outer edge—bright grass, oversized stylized trees, flowers, low decorative hills, and small colorful scenery that does not obscure turns. Continuous low safety barriers trace the entire inner and outer track edges. The boundary is therefore the barrier-wrapped course perimeter rather than open void. Frame the entire loop in an elevated three-quarter isometric view, with the start/finish straight prominent in the foreground and the colorful infield visible at center.\n\n### Render order\nUse `authored_plan`: a racing circuit must be valid by construction as one closed, connected route before its toy-kart dressing is rendered.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the requested compact circuit. Theme is bright toy-kart racing, colorful, clean, and cheerful. Apply `P6` because the closed lap route and its start/finish continuity must be structurally valid by construction.",
+  "blob": "### 1. Genre\nThe dominant genre is Racing: the looped track and set lap count define a circuit race.\n\n### 2. Shape and preset\nUse `route-circuit`, matching the Circuit Racing preset. It is one compact, closed toy-kart loop rather than a point-to-point route; retain the preset’s circuit logic while omitting unrequested starting-grid and turnaround features.\n\n### 3. Config requirements\nUse `startpoint-line` as a bright, clearly painted start/finish stripe spanning the track. Use `barrier-guardrail` as continuous colorful safety walls around both outer and inner track edges, preventing karts from leaving the drivable circuit.\n\n### 4. Layout requirements\nPlace `startpoint-line` once on a straight, wide section of the loop, with the start direction clearly facing into the first corner. Place `trigger-lap` as one full-width detection region aligned exactly with that start/finish line, registering each completed circuit lap. No other placed gameplay markers are required.\n\n### 5. Layout components\nBuild one continuous compact asphalt circuit with a readable closed loop, broad bends, and a single prominent start/finish straight. The central infield and the outer perimeter contain simple cheerful toy-kart scenery: colorful grass, rounded trees, oversized decorative blocks, small flags, and bright signboards kept outside the driving corridor. Continuous low, chunky guard walls trace both sides of the entire route, including the infield boundary, with no openings through which a kart can leave the course. Keep the course surface clear and unobstructed. Frame the full loop in an elevated three-quarter view, with the start/finish straight visible in the foreground and the colorful infield providing a clear center.\n\n### 6. Render order\nUse `authored_plan`: a circuit must be valid by construction, with one unbroken, followable closed route and barriers that consistently contain the drivable surface.\n\n### 7. Scale, theme, and pipeline cost\nScale is medium, driven by a complete but compact circuit with enough space for readable turns and an infield. Theme: bright toy-kart racing, colorful, cheerful, clean, and chunky. Apply `P6` because the closed racing route must be structurally valid; no other modifier is forced.",
   "spec": {
     "genre": "Racing",
     "secondary": [],
@@ -19,72 +19,98 @@
     "options": [
       {
         "id": "startpoint-line",
-        "text": "A visible, brightly marked start/finish stripe on the foreground home straight, with its associated start/reset placement kept invisible.",
+        "text": "A bright, clearly painted start/finish stripe spanning the track.",
+        "visible": true,
+        "count": 1
+      },
+      {
+        "id": "barrier-guardrail",
+        "text": "Continuous colorful safety walls around both outer and inner track edges, preventing karts from leaving the drivable circuit.",
         "visible": true,
         "count": -1
       },
       {
         "id": "trigger-lap",
-        "text": "An invisible detection region precisely across the start/finish stripe for lap registration.",
+        "text": "One full-width detection region aligned exactly with the start/finish line, registering each completed circuit lap.",
         "visible": false,
-        "count": -1
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "startpoint-line",
+        "text": "A bright, clearly painted start/finish stripe spanning the track.",
+        "count": 1,
+        "where": "On a straight, wide section of the loop, with the start direction clearly facing into the first corner."
       },
       {
-        "id": "barrier-guardrail",
-        "text": "Continuous cheerful low safety walls tracing both sides of the driveable course so karts cannot leave it.",
-        "visible": true,
-        "count": -1
+        "id": "trigger-lap",
+        "text": "One full-width detection region registering each completed circuit lap.",
+        "count": 1,
+        "where": "Aligned exactly with the start/finish line."
       }
     ],
     "layout": {
-      "composition": "Elevated three-quarter isometric framing of the entire compact loop, with the start/finish home straight prominent along the foreground and the colorful infield visible at centre.",
+      "composition": "Elevated three-quarter view framing the full loop, with the start/finish straight visible in the foreground and the colorful infield forming a clear center.",
       "zones": [
         {
-          "name": "Compact kart circuit",
-          "role": "A broad, colorful paved closed lap loop for clockwise toy-kart racing, returning cleanly to its home straight.",
-          "where": "Occupying most of the map, with the home straight at the front edge.",
-          "size": "compact"
+          "name": "Closed circuit",
+          "role": "A continuous drivable compact loop for the kart race, with broad bends and a prominent start/finish straight.",
+          "where": "Around the central infield.",
+          "size": "Compact"
+        },
+        {
+          "name": "Central infield",
+          "role": "Cheerful toy-kart scenery kept outside the driving corridor.",
+          "where": "Center of the loop.",
+          "size": ""
+        },
+        {
+          "name": "Outer perimeter",
+          "role": "Cheerful toy-kart scenery kept outside the driving corridor.",
+          "where": "Outside the loop.",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Home straight",
-          "to": "Home straight",
+          "from": "Start/finish straight",
+          "to": "First corner",
           "kind": "track"
         }
       ],
-      "terrain": "Bright grass in the infield and beyond the outer course edge, with low decorative hills, oversized stylized trees, flowers, and small colorful scenery that does not obscure turns.",
+      "terrain": "Asphalt circuit surface with colorful grass in the infield and outer perimeter.",
       "props": [
         {
-          "name": "Oversized stylized trees",
+          "name": "Rounded trees",
           "count": -1,
-          "where": "In the infield and beyond the outer edge"
+          "where": "Central infield and outer perimeter, outside the driving corridor."
         },
         {
-          "name": "Flowers",
+          "name": "Oversized decorative blocks",
           "count": -1,
-          "where": "In the infield and beyond the outer edge"
+          "where": "Central infield and outer perimeter, outside the driving corridor."
         },
         {
-          "name": "Low decorative hills",
+          "name": "Small flags",
           "count": -1,
-          "where": "In the cheerful surroundings beyond the track"
+          "where": "Central infield and outer perimeter, outside the driving corridor."
         },
         {
-          "name": "Small colorful scenery",
+          "name": "Bright signboards",
           "count": -1,
-          "where": "In the infield and beyond the outer edge"
+          "where": "Central infield and outer perimeter, outside the driving corridor."
         }
       ],
-      "boundary": "Continuous low safety barriers wrapping the entire inner and outer track edges; the barrier-wrapped course perimeter forms the boundary.",
-      "scale_band": "small",
-      "theme": "Bright toy-kart racing, colorful, clean, cheerful"
+      "boundary": "Continuous low, chunky guard walls trace both sides of the entire route, including the infield boundary, with no openings through which a kart can leave the course.",
+      "scale_band": "medium",
+      "theme": "Bright toy-kart racing; colorful, cheerful, clean, chunky."
     },
     "render": {
       "first": "authored_plan",
       "then": "topdown",
       "authoritative": "authored_plan",
-      "why": "The closed lap route and its start/finish continuity must be structurally valid by construction.",
+      "why": "The closed circuit must be one unbroken, followable route with barriers consistently containing the drivable surface.",
       "set_piece": false
     },
     "route": [
@@ -96,7 +122,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "layout",

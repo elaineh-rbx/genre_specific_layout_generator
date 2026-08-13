@@ -3,112 +3,111 @@
   "source": "A medium-sized off-road racetrack in a forest/muddy environment. The track is a winding dirt path that loops around with muddy brown terrain, green grass borders, and scattered woodland obstacles. Include the following features as named parts:\n\n1. A winding track surface made of muddy brown/dark terrain parts that curves and loops\n2. Green grass borders along the edges of the track\n3. Several wooden log obstacles placed on the track\n4. Ramp sections for jumps (angled wedges)\n5. Bumpy terrain sections with small hills/mounds\n6. A few stylized trees scattered around the track edges (brown trunk with green foliage)\n7. Rocks and boulders as obstacles\n8. A start/finish line marker\n\nThe aesthetic should be stylized/blocky using primitive parts. Use earthy colors: mud brown, dark green, forest green, wood brown, stone gray. The track should be wide enough for vehicles to drive on but there are no cars included. Make it look like a natural forest off-road racing course with a muddy, rugged feel.\n\nExpose configurable attributes for:\n- TrackColor (the color of the track surface)\n- GrassColor (color of the grass borders)\n- Muddiness (how dark/wet the track looks)\n- TreeCount (number of trees around the track)\n- ObstacleDensity (how many obstacles are on the track)\n- TrackWidth (width of the racing path)",
   "answers": [],
   "scene_prompt": "Create a medium-sized stylized, blocky 3D off-road racing course in a muddy forest environment. A wide winding dirt track of muddy brown and dark terrain curves and loops through the map, bordered by green grass strips. Place a start/finish line marker on the course, with wooden log obstacles, stone-gray rocks and boulders, angled wedge ramps, and bumpy sections of small hills and mounds distributed along the track. Scatter stylized trees with brown trunks and green foliage around the outer track edges, framing the rugged natural course without placing vehicles.",
-  "blob": "### Genre\nThe dominant genre is Racing: the original request specifies an off-road racetrack for vehicles with a start/finish marker. There is no secondary genre.\n\n### Shape and preset\nUse `route-circuit`, a single wide dirt course that winds and loops back to its start/finish marker through forest terrain. The closest preset is Circuit Racing because the course is explicitly a loop, but its guardrails, starting grid, turnaround, and lap-detection bundle are not requested, so the recognisable preset match is `none`.\n\n### Config requirements\n`startpoint-line` is visible geometry: place a clear blocky start band across the muddy track at the shared start/finish location. `trigger-finish` is both visible and invisible: the same marker has a finish-line form in the render and an aligned detection plane placed afterward. `terrain-relief` is visible geometry: small rolling mounds and bumpy dirt sections interrupt the otherwise continuous track surface. No invisible obstacle, checkpoint, or vehicle placements are required.\n\n### Layout components\nBuild one medium-sized circuit occupying most of the frame. The track is a wide, continuous winding loop of muddy brown and dark dirt, broad enough for vehicles, with a green grass strip continuously bordering both edges. Put the start/finish marker on a relatively straight, readable portion of the loop near the foreground. Distribute several wooden log obstacles across selected track segments, along with stone-gray rocks and boulders. Add angled wedge ramps as jump sections and several low hills and mounds as bumpy sections, while preserving a legible continuous driving route around them.\n\nScatter a few stylized blocky trees around the outer track edges, each with a brown trunk and forest-green foliage; keep the central and inner portions mostly track and open muddy ground. The boundary is a natural forest edge of trees, grass, rocks, and darker terrain rather than a built wall. Compose the full loop clearly from an elevated three-quarter view, with the start/finish and successive curves easy to trace.\n\n### Render order\nUse `authored_plan`: a racing circuit must be a valid, closed, continuous route, so generate its plan in code before dressing it with terrain and props.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by one complete vehicle-width circuit with forest dressing. Theme: stylized blocky primitive-part forest motocross, in mud brown, dark green, forest green, wood brown, and stone gray. Use `P6` for the procedurally valid circuit and `tiered` for the low rolling mounds; no stacked surfaces, interiors, separate maps, or volumetric play are required.",
+  "blob": "### Genre\nThe dominant genre is Racing: the original request specifies an off-road racetrack with a start/finish marker. There is no secondary genre.\n\n### Shape and preset\nUse `route-circuit`, matching the Circuit Racing preset. This is a single closed, vehicle-wide muddy loop through forest terrain, rather than a point-to-point course. Retain the preset’s circuit topology but only the explicitly requested visual elements; do not add unrequested grid slots, guardrails, or spectator areas.\n\n### Config requirements\nUse `startpoint-line` as a clearly visible start/finish stripe or gate spanning the dirt track. Use `trigger-finish` for the same finish-line location, with its visible marker integrated into the course. Use `terrain-relief` for the low bumpy sections, small hills, and mounds that roughen selected track stretches without creating stacked road surfaces.\n\n### Layout requirements\nPlace one `startpoint-line` at a broad, readable straight section of the loop, immediately paired with one `trigger-finish` detection line across the full drivable width. The marker should be away from ramps, logs, and boulder obstacles so vehicles begin and complete a lap on stable ground. No other placed gameplay volumes are required.\n\n### Layout components\nBuild one medium-sized continuous racing zone: a wide winding closed-loop dirt track of muddy brown and dark terrain, with green grass strips tightly following both edges. The route should have varied curves and loops but remain unambiguously followable from above. Distribute several wooden log obstacles, stone-gray rocks and boulders, angled wedge ramps, and bumpy mound sections along distinct portions of the loop, leaving a viable vehicle-width route through each feature. Scatter a few stylized primitive trees with brown trunks and forest-green foliage around the outer track edges, framing the course without obstructing the driving surface. Keep the boundary natural and open-looking, implied by dense woodland and terrain beyond the grass verge. Compose the full loop legibly in an elevated three-quarter frame, with the start/finish marker prominent and the winding route visible across the map.\n\n### Render order\nUse `authored_plan`: a racing circuit must be a valid, continuous closed route by construction before its muddy terrain, obstacles, and forest dressing are rendered.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by one complete vehicle-wide loop with multiple obstacle sections. Theme: stylized blocky primitive-part forest motocross course, in mud brown, dark and forest green, wood brown, and stone gray. Apply `P6` because the closed racing circuit must remain connected and unambiguous, and `tiered` for the small ground-level hills and mounds with no overhangs.",
   "spec": {
     "genre": "Racing",
     "secondary": [],
     "shape": "route-circuit",
-    "preset": "none",
+    "preset": "Circuit Racing",
     "axes": {},
     "options": [
       {
         "id": "startpoint-line",
-        "text": "a clear blocky start band across the muddy track at the shared start/finish location",
+        "text": "A clearly visible start/finish stripe or gate spanning the dirt track.",
         "visible": true,
-        "count": -1
+        "count": 1
       },
       {
         "id": "trigger-finish",
-        "text": "the same start/finish marker has a finish-line form in the render and an aligned detection plane placed afterward",
+        "text": "A finish-line detection line paired with the visible marker across the full drivable width.",
         "visible": true,
-        "count": -1
+        "count": 1
       },
       {
         "id": "terrain-relief",
-        "text": "small rolling mounds and bumpy dirt sections interrupt the otherwise continuous track surface",
+        "text": "Low bumpy sections, small hills, and mounds roughening selected track stretches without stacked road surfaces.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "startpoint-line",
+        "text": "A clearly visible start/finish stripe or gate spanning the dirt track.",
+        "count": 1,
+        "where": "At a broad, readable straight section of the loop, away from ramps, logs, and boulder obstacles on stable ground."
+      },
+      {
+        "id": "trigger-finish",
+        "text": "A finish-line detection line paired with the visible marker across the full drivable width.",
+        "count": 1,
+        "where": "Immediately paired with the start/finish marker at the broad straight section of the loop, across the full drivable width."
+      }
+    ],
     "layout": {
-      "composition": "Elevated three-quarter view of the full loop, with the foreground start/finish on a readable straight and successive curves easy to trace through the frame.",
+      "composition": "The complete closed loop is legible in an elevated three-quarter frame, with the prominent start/finish marker on a broad straight and the winding route visible across the map.",
       "zones": [
         {
-          "name": "circuit",
-          "role": "A wide, continuous vehicle driving loop with the shared start/finish marker, obstacles, ramps, and bumpy sections.",
-          "where": "Occupying most of the frame, with the start/finish near the foreground.",
-          "size": "medium-sized"
-        },
-        {
-          "name": "outer forest edge",
-          "role": "Natural dressing that frames the rugged course.",
-          "where": "Around the outer track edges.",
-          "size": ""
-        },
-        {
-          "name": "central and inner ground",
-          "role": "Mostly track and open muddy ground.",
-          "where": "Central and inner portions of the loop.",
-          "size": ""
+          "name": "Continuous racing zone",
+          "role": "A single vehicle-wide closed muddy circuit with obstacle sections and forest dressing.",
+          "where": "Across the full map.",
+          "size": "medium"
         }
       ],
       "paths": [
         {
-          "from": "start/finish marker",
-          "to": "start/finish marker",
+          "from": "Start/finish straight",
+          "to": "Continuous racing zone",
           "kind": "track"
         }
       ],
-      "terrain": "A wide winding loop of muddy brown and dark dirt, continuously bordered by green grass strips, with low hills, rolling mounds, and bumpy dirt sections; darker terrain around the natural forest edge.",
+      "terrain": "Muddy brown and dark dirt track terrain bordered tightly by green grass strips; low bumpy sections, small hills, and mounds occur on selected stretches. Dense woodland and terrain extend naturally beyond the grass verge.",
       "props": [
         {
           "name": "wooden log obstacles",
           "count": -1,
-          "where": "Across selected track segments"
+          "where": "Along distinct portions of the loop, leaving a viable vehicle-width route through each feature."
         },
         {
           "name": "stone-gray rocks and boulders",
           "count": -1,
-          "where": "Along the track and natural forest edge"
+          "where": "Along distinct portions of the loop, leaving a viable vehicle-width route through each feature."
         },
         {
           "name": "angled wedge ramps",
           "count": -1,
-          "where": "As jump sections along the track"
+          "where": "Along distinct portions of the loop, leaving a viable vehicle-width route through each feature."
         },
         {
-          "name": "low hills and mounds",
+          "name": "stylized primitive trees with brown trunks and forest-green foliage",
           "count": -1,
-          "where": "As bumpy sections along the track"
-        },
-        {
-          "name": "stylized blocky trees with brown trunks and forest-green foliage",
-          "count": -1,
-          "where": "Around the outer track edges"
+          "where": "Around the outer track edges, framing the course without obstructing the driving surface."
         }
       ],
-      "boundary": "A natural forest edge of trees, grass, rocks, and darker terrain rather than a built wall.",
+      "boundary": "Natural and open-looking, implied by dense woodland and terrain beyond the grass verge.",
       "scale_band": "medium",
-      "theme": "stylized blocky primitive-part forest motocross in mud brown, dark green, forest green, wood brown, and stone gray"
+      "theme": "Stylized blocky primitive-part forest motocross course in mud brown, dark and forest green, wood brown, and stone gray."
     },
     "render": {
       "first": "authored_plan",
       "then": "topdown",
       "authoritative": "authored_plan",
-      "why": "the racing circuit must be a valid, closed, continuous route.",
+      "why": "a racing circuit must be a valid, continuous closed route by construction before its terrain, obstacles, and forest dressing are rendered.",
       "set_piece": false
     },
     "route": [
       "P6",
       "tiered"
     ],
-    "notes": [],
+    "notes": [
+      "visible on 'trigger-finish' set from goes_to=both"
+    ],
     "scene_prompt": "Create a medium-sized stylized, blocky 3D off-road racing course in a muddy forest environment. A wide winding dirt track of muddy brown and dark terrain curves and loops through the map, bordered by green grass strips. Place a start/finish line marker on the course, with wooden log obstacles, stone-gray rocks and boulders, angled wedge ramps, and bumpy sections of small hills and mounds distributed along the track. Scatter stylized trees with brown trunks and green foliage around the outer track edges, framing the rugged natural course without placing vehicles."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "layout",

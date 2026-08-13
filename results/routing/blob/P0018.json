@@ -24,7 +24,7 @@
     }
   ],
   "scene_prompt": "Create a colourful, cartoony 3D snowy battlefield for two opposing penguin kingdoms. Place a distinct kingdom base at each end of a small map, with open snow-covered ground and several territory capture points distributed between and around them so both sides have areas to contest.",
-  "blob": "### 1. Genre\nThe dominant genre is Shooter: two opposing teams fight over multiple territorial points. The roles are loadouts only and add no dedicated base geometry.\n\n### 2. Shape and preset\nUse the `lane-network` shape. It is a compact snowy network linking two penguin kingdom bases through several contested clearings and side approaches. Match the King of the Hill preset for its distributed held points, but adapt it to several capture points rather than one central hill.\n\n### 3. Config requirements\nUse `spawn-teambase` as visible, balanced kingdom bases at opposite ends, with invisible team spawn placements inside them. Use `control-zone` as visible capture-point landmarks with invisible territorial occupancy volumes; distribute several across the map. Use `cover-los` as visible ice boulders, snowbanks, small ice walls, and penguin-themed structures that break firing sightlines. These are the only requested gameplay-facing layout features.\n\n### 4. Layout components\nPut one colourful penguin kingdom base at the far left end and the other at the far right, matched in footprint but distinguished by opposing bright kingdom colours. Each base is a sheltered snow-and-ice compound facing inward toward the battlefield. Between them, build open snow-covered ground as the main central fighting lane, broad enough for visible confrontations but broken by low snowbanks, ice boulders, and compact ice-wall cover clusters.\n\nPlace several capture-point landmarks across the small map: one in the central open clearing and additional points offset into left and right side clearings, so neither kingdom owns all objectives from its base. Connect every point with readable packed-snow routes, including a central direct approach and two flanking routes that weave between cover. Keep all routes on one flat snowy surface. Use natural snow ridges, ice formations, and the outer edges of the kingdom compounds as the boundary; do not add unrelated buildings or interiors. Frame the whole compact battlefield in a clear three-quarter isometric view, with both bases visible at opposite ends and the capture landmarks legible between them.\n\n### 5. Render order\nUse `topdown`: valid connected routes between both bases and every capture point are necessary for fair territorial combat, so establish the plan before dressing it isometrically.\n\n### 6. Scale, theme, and pipeline cost\nScale is small, driven by the requested compact map and several closely spaced contested points. Theme is colourful cartoony snowy penguin kingdoms, with readable ice-and-snow silhouettes and bright opposing accents. Pipeline modifier: `P0`; this is one connected, flat outdoor surface with no geometry that requires an additional capture path.",
+  "blob": "### Genre\nThe dominant genre is `Shooter`: two opposing teams fight to secure multiple territorial points. The role choices are loadouts only and add no dedicated map structures.\n\n### Shape and preset\nUse `lane-network`, adapted as a compact snowy front with parallel approaches between rival penguin kingdoms. This matches the King of the Hill preset: retain its team-base and held-point logic, while omitting unrequested elevated firing nests and cover arrays.\n\n### Config requirements\nUse `spawn-teambase` for two visually distinct penguin kingdom bases at opposite ends of the battlefield. Use `control-zone` for several clear, readable territory-capture landmarks spread across the central ground and side approaches.\n\n### Layout requirements\nPlace `spawn-teambase` markers inside each kingdom base, screened from direct sightlines into the contested snowfield. Place one `control-zone` volume at every territory landmark: distribute several points between the bases, with a central point and additional points on flanking approaches; each must be reachable from both kingdoms without a dead-end route.\n\n### Layout components\nBuild a small, symmetric battlefield. Put one colourful snow-and-ice penguin kingdom base at the left end and its rival counterpart at the right end, each large enough to read as a protected team origin. Between them, form open snow-covered ground with several capture-point plazas distributed along the middle and around the outer flanks. Connect bases to every plaza by broad packed-snow lanes, creating a central direct approach and parallel side routes. Use low ice banks, snowdrifts, coloured kingdom banners, and capture-point poles as readable landmarks without cluttering the open combat ground. Enclose the play area with continuous icy cliffs and deep snowbanks. Compose the map as a clean, balanced horizontal confrontation, with both bases and the contested centre legible in one frame.\n\n### Render order\nUse `isometric` first and treat it as authoritative; this compact battlefield is visually led, while no strict carved route or circuit topology is required.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by two bases and several closely contested territory points. Theme is colourful, cartoony snowy penguin kingdoms: bright ice, soft snow, playful banners, and readable silhouettes. Pipeline modifier: `P0`, because the battlefield is one continuous ground surface with no forced overhangs, interior transition, separate map, or construction-valid route.",
   "spec": {
     "genre": "Shooter",
     "secondary": [],
@@ -34,132 +34,107 @@
     "options": [
       {
         "id": "spawn-teambase",
-        "text": "Visible, balanced colourful penguin kingdom bases at opposite ends, with invisible team spawn placements inside them.",
+        "text": "Two visually distinct penguin kingdom bases at opposite ends of the battlefield.",
         "visible": true,
         "count": 2
       },
       {
         "id": "control-zone",
-        "text": "Visible capture-point landmarks with invisible territorial occupancy volumes, distributed across the small map.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "cover-los",
-        "text": "Ice boulders, low snowbanks, small ice walls, and penguin-themed structures that break firing sightlines.",
+        "text": "Several clear, readable territory-capture landmarks spread across the central ground and side approaches.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "spawn-teambase",
+        "text": "Markers inside each kingdom base, screened from direct sightlines into the contested snowfield.",
+        "count": 2,
+        "where": "Inside each kingdom base, screened from direct sightlines into the contested snowfield."
+      },
+      {
+        "id": "control-zone",
+        "text": "One control-zone volume at every territory landmark, with a central point and additional points on flanking approaches.",
+        "count": -1,
+        "where": "Distributed between the bases, with a central point and additional points on flanking approaches; each reachable from both kingdoms without a dead-end route."
+      }
+    ],
     "layout": {
-      "composition": "Clear three-quarter isometric view of the whole compact battlefield, with matched opposing kingdom bases visible at the far left and far right and capture landmarks legible between them.",
+      "composition": "A clean, balanced horizontal confrontation, with the left and right penguin kingdom bases and the contested centre legible in one frame.",
       "zones": [
         {
           "name": "Left penguin kingdom base",
-          "role": "Sheltered snow-and-ice compound containing one team's spawn placements and facing inward toward the battlefield.",
-          "where": "far left end",
-          "size": "matched footprint"
+          "role": "Protected team origin.",
+          "where": "Left end of the battlefield.",
+          "size": "Large enough to read as a protected team origin."
         },
         {
-          "name": "Central fighting lane",
-          "role": "Open snow-covered main battlefield and central contested clearing.",
-          "where": "centre between both bases",
-          "size": "broad"
-        },
-        {
-          "name": "Central capture point",
-          "role": "Contested territorial capture landmark.",
-          "where": "central open clearing",
-          "size": ""
-        },
-        {
-          "name": "Left side clearing",
-          "role": "Offset contested approach containing a capture-point landmark.",
-          "where": "left side between the left base and centre",
-          "size": ""
-        },
-        {
-          "name": "Right side clearing",
-          "role": "Offset contested approach containing a capture-point landmark.",
-          "where": "right side between the right base and centre",
-          "size": ""
+          "name": "Contested snowfield",
+          "role": "Open combat ground containing capture-point plazas.",
+          "where": "Between the two bases, across the middle and outer flanks.",
+          "size": "Small, compact battlefield."
         },
         {
           "name": "Right penguin kingdom base",
-          "role": "Sheltered snow-and-ice compound containing the opposing team's spawn placements and facing inward toward the battlefield.",
-          "where": "far right end",
-          "size": "matched footprint"
+          "role": "Protected team origin.",
+          "where": "Right end of the battlefield.",
+          "size": "Large enough to read as a protected team origin."
         }
       ],
       "paths": [
         {
           "from": "Left penguin kingdom base",
-          "to": "Right penguin kingdom base",
-          "kind": "packed-snow route"
+          "to": "Capture-point plazas",
+          "kind": "broad packed-snow lanes"
+        },
+        {
+          "from": "Right penguin kingdom base",
+          "to": "Capture-point plazas",
+          "kind": "broad packed-snow lanes"
         },
         {
           "from": "Left penguin kingdom base",
-          "to": "Central capture point",
-          "kind": "packed-snow route"
-        },
-        {
-          "from": "Central capture point",
           "to": "Right penguin kingdom base",
-          "kind": "packed-snow route"
+          "kind": "central direct approach"
         },
         {
           "from": "Left penguin kingdom base",
-          "to": "Left side clearing",
-          "kind": "packed-snow route"
-        },
-        {
-          "from": "Left side clearing",
-          "to": "Central capture point",
-          "kind": "packed-snow route"
-        },
-        {
-          "from": "Central capture point",
-          "to": "Right side clearing",
-          "kind": "packed-snow route"
-        },
-        {
-          "from": "Right side clearing",
           "to": "Right penguin kingdom base",
-          "kind": "packed-snow route"
+          "kind": "parallel side routes"
         }
       ],
-      "terrain": "One flat snowy surface of open snow-covered ground, with natural snow ridges and ice formations; low snowbanks, ice boulders, and compact ice-wall cover clusters break up the central lane and flanking routes.",
+      "terrain": "Open snow-covered ground, bright ice, soft snow, low ice banks, and snowdrifts.",
       "props": [
         {
-          "name": "low snowbanks",
+          "name": "Low ice banks",
           "count": -1,
-          "where": "central fighting lane and flanking routes"
+          "where": "Across the battlefield as readable landmarks without cluttering the open combat ground."
         },
         {
-          "name": "ice boulders",
+          "name": "Snowdrifts",
           "count": -1,
-          "where": "central fighting lane and flanking routes"
+          "where": "Across the battlefield as readable landmarks without cluttering the open combat ground."
         },
         {
-          "name": "compact ice-wall cover clusters",
+          "name": "Coloured kingdom banners",
           "count": -1,
-          "where": "central fighting lane and flanking routes"
+          "where": "At the rival penguin kingdom bases and across the battlefield as readable landmarks."
         },
         {
-          "name": "capture-point landmarks",
+          "name": "Capture-point poles",
           "count": -1,
-          "where": "central clearing and left and right side clearings"
+          "where": "At the capture-point plazas."
         }
       ],
-      "boundary": "Natural snow ridges, ice formations, and the outer edges of the kingdom compounds enclose the compact battlefield.",
+      "boundary": "Continuous icy cliffs and deep snowbanks enclose the play area.",
       "scale_band": "small",
-      "theme": "colourful cartoony snowy penguin kingdoms, with readable ice-and-snow silhouettes and bright opposing kingdom accents"
+      "theme": "Colourful, cartoony snowy penguin kingdoms with bright ice, soft snow, playful banners, and readable silhouettes."
     },
     "render": {
-      "first": "topdown",
-      "then": "isometric",
-      "authoritative": "topdown",
-      "why": "Valid connected routes between both bases and every capture point are necessary for fair territorial combat.",
+      "first": "isometric",
+      "then": "topdown",
+      "authoritative": "isometric",
+      "why": "the compact battlefield is visually led, while no strict carved route or circuit topology is required.",
       "set_piece": false
     },
     "route": [
@@ -171,12 +146,10 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
-  "mapper_notes": [
-    "blob asked for topdown first; the route ['P0'] gives isometric"
-  ]
+  "mapper_notes": []
 }

@@ -24,7 +24,7 @@
     }
   ],
   "scene_prompt": "Crea un mapa 3D de una calle de ciudad moderna, sencilla y clara, corta y compacta. Alinea cuatro bases separadas, una para cada jugador, a lo largo de la calle; cada base tiene espacio para colocar objetivos coleccionables y crece verticalmente de forma visible hasta 15 pisos. Sitúa una zona de aparición de objetos y un estacionamiento en la calle, conectados claramente con las cuatro bases mediante la vía principal.",
-  "blob": "### Género\nEl género dominante es Simulation, identificado por el bucle de tycoon de bases individuales que se amplían mediante objetivos recolectables. No se traslada la economía ni las reglas a la geometría.\n\n### Forma y preset\nUsa la forma `plot-isolated`: cuatro parcelas-base separadas para cuatro jugadores a lo largo de una misma calle. El preset es none: Tycoon aporta la lectura general de parcelas y circulación, pero su parcela compartida y su conjunto de opciones no corresponden a estas cuatro bases individuales.\n\n### Requisitos de configuración\n`path-circulation` es geometría visible: una calle principal corta, recta y legible, con aceras, que enlaza todas las parcelas, el área de aparición y el estacionamiento. `collectible-nodes` es colocación invisible: marcadores de aparición distribuidos dentro de una zona dedicada; los objetivos coleccionables visibles se manifiestan como pequeños objetos claros sobre esa zona. No añadir tiendas, puertas de compra ni otros elementos no solicitados.\n\n### Componentes de layout\nLa zona principal es una calle compacta de ciudad moderna y sencilla, orientada longitudinalmente en el centro del mapa. Coloca cuatro bases iguales y claramente separadas, una por jugador, alineadas a lo largo de un lado o repartidas simétricamente a ambos lados de la calle, cada una con una plataforma o patio de depósito visible para los objetivos. Cada base debe tener una huella reducida pero una silueta de torre modular capaz de crecer de forma visible hasta 15 pisos; representa los quince niveles como pisos apilados, repetibles y legibles desde lejos.\n\nReserva una zona de aparición de objetos aproximadamente en el tramo medio o extremo de la calle, abierta y despejada para que los objetos se distingan. Sitúa un estacionamiento adyacente a esa zona, con bahías pintadas y pocos coches estáticos como utilería. Conecta directamente spawn, parking y las cuatro bases mediante la calzada y aceras, sin callejones ni rutas secundarias. El terreno es plano, de asfalto, hormigón y bordillos; el límite es un bloque urbano compacto con fachadas bajas o bordes de acera en el perímetro, manteniendo abiertos los extremos visuales de la calle. En composición, mostrar la calle en diagonal y las cuatro torres-base como hitos verticales reconocibles.\n\n### Orden de render\nUsa `isometric`: el aspecto limpio de calle urbana y la lectura inmediata de las cuatro parcelas son prioritarios; no hay una ruta cuya invalidez haga el espacio injugable.\n\n### Escala, tema y coste de pipeline\nEscala media: la calle es corta, pero las cuatro bases de hasta 15 pisos crean altura y presencia. Tema: bloque urbano moderno, minimalista, claro y funcional. Modificador `P2`, porque las bases alcanzan 15 pisos apilados y sus superficies verticales se ocluyen en una única vista superior.",
+  "blob": "### 1. Genre\nThe dominant genre is Simulation: a tycoon-style collection and base-upgrade loop for four individual players.\n\n### 2. Shape and preset\nUse `plot-isolated`, with four separate player-owned base footprints aligned along one compact street. This is a Simulation shape. The Tycoon preset is not retained because its `plot-shared` structure is one cooperative plot, while this scene requires four distinct bases; use no preset.\n\n### 3. Config requirements\nUse `path-circulation` for the short, clear main street that directly connects every base, the object-spawn zone, and the parking area. No unrequested decorative or universal options apply.\n\n### 4. Layout requirements\nUse `collectible-nodes` for spawned collectible objectives, placed within the dedicated spawn zone at one end or side of the street, with several active spawn positions spread across that zone. Use `trigger-task` for four base delivery/display points, one inside each player base footprint beside its vertical growth structure, where returned objectives are placed.\n\n### 5. Layout components\nBuild one short, compact modern-city street as the central circulation spine. Place exactly four separated bases, one per player, evenly spaced and aligned along the street; each has a clear ground-level objective display/drop-off area and a visibly vertical upgrade tower capable of reaching 15 floors. Put the shared object-spawn zone at a readable street endpoint, separate from the four bases but directly accessible from the main road. Add a simple parking lot adjacent to the street and near the spawn zone, with marked parking bays. Use clean pavement, sidewalks, restrained curbs, streetlights, and sparse modern block façades as non-enterable dressing. The boundary is a compact city-block edge beyond the street ends and building fronts. Compose the view diagonally along the street so all four bases, the spawn area, and parking remain legible.\n\n### 6. Render order\nUse `isometric`: the compact street arrangement is straightforward and does not require a topology-valid procedural plan; the isometric view should authoritatively establish the modern city presentation.\n\n### 7. Scale, theme, and pipeline cost\nScale is medium, driven by four player bases and their visible 15-floor vertical progression within a compact street. Theme: simple, clear modern city block. Use `P2` because each base visibly stacks up to 15 floors, with upper floors occluding lower surfaces in a single top-down capture.",
   "spec": {
     "genre": "Simulation",
     "secondary": [],
@@ -34,127 +34,147 @@
     "options": [
       {
         "id": "path-circulation",
-        "text": "Una calle principal corta, recta y legible, con aceras, que enlaza las cuatro parcelas, el área de aparición y el estacionamiento.",
+        "text": "A short, clear main street directly connecting every base, the object-spawn zone, and the parking area.",
         "visible": true,
-        "count": -1
+        "count": 1
       },
       {
         "id": "collectible-nodes",
-        "text": "Marcadores de aparición distribuidos dentro de una zona dedicada; los objetivos coleccionables visibles se manifiestan como pequeños objetos claros sobre esa zona.",
+        "text": "Spawned collectible objectives, with several active spawn positions spread across the dedicated spawn zone.",
         "visible": false,
         "count": -1
+      },
+      {
+        "id": "trigger-task",
+        "text": "Four base delivery and display points, one inside each player base beside its vertical growth structure, where returned objectives are placed.",
+        "visible": true,
+        "count": 4
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "collectible-nodes",
+        "text": "Spawned collectible objectives with several active spawn positions.",
+        "count": -1,
+        "where": "Within the dedicated object-spawn zone at one end or side of the street."
+      },
+      {
+        "id": "trigger-task",
+        "text": "Base delivery and display points where returned objectives are placed.",
+        "count": 4,
+        "where": "One inside each player base footprint, beside its vertical growth structure."
       }
     ],
     "layout": {
-      "composition": "Vista isométrica con la calle corta en diagonal; las cuatro torres-base aparecen como hitos verticales reconocibles a lo largo de ella, con la zona de aparición y el estacionamiento adyacentes en el tramo medio o extremo.",
+      "composition": "Diagonal view along the compact central street, keeping all four aligned bases, the street-end spawn area, and the adjacent parking lot legible.",
       "zones": [
         {
-          "name": "Calle principal",
-          "role": "Circulación directa que conecta todas las parcelas, el área de aparición y el estacionamiento.",
-          "where": "Longitudinalmente en el centro del mapa.",
-          "size": "Corta y compacta."
+          "name": "Main street",
+          "role": "Central circulation spine connecting the bases, object-spawn zone, and parking area.",
+          "where": "Centre, running diagonally through the view.",
+          "size": "Short and compact."
         },
         {
-          "name": "Base del jugador 1",
-          "role": "Parcela-base individual con plataforma o patio de depósito para objetivos coleccionables y una torre modular ampliable.",
-          "where": "Alineada a lo largo de la calle.",
-          "size": "Huella reducida; hasta 15 pisos."
-        },
-        {
-          "name": "Base del jugador 2",
-          "role": "Parcela-base individual con plataforma o patio de depósito para objetivos coleccionables y una torre modular ampliable.",
-          "where": "Alineada a lo largo de la calle.",
-          "size": "Huella reducida; hasta 15 pisos."
-        },
-        {
-          "name": "Base del jugador 3",
-          "role": "Parcela-base individual con plataforma o patio de depósito para objetivos coleccionables y una torre modular ampliable.",
-          "where": "Alineada a lo largo de la calle.",
-          "size": "Huella reducida; hasta 15 pisos."
-        },
-        {
-          "name": "Base del jugador 4",
-          "role": "Parcela-base individual con plataforma o patio de depósito para objetivos coleccionables y una torre modular ampliable.",
-          "where": "Alineada a lo largo de la calle.",
-          "size": "Huella reducida; hasta 15 pisos."
-        },
-        {
-          "name": "Zona de aparición de objetos",
-          "role": "Zona dedicada, abierta y despejada para que los objetos se distingan.",
-          "where": "Tramo medio o extremo de la calle.",
+          "name": "Player base 1",
+          "role": "Individual player-owned base with a ground-level objective display and drop-off area beside a vertical upgrade tower capable of reaching 15 floors.",
+          "where": "Aligned along the main street.",
           "size": ""
         },
         {
-          "name": "Estacionamiento",
-          "role": "Aparcamiento con bahías pintadas y coches estáticos como utilería.",
-          "where": "Adyacente a la zona de aparición de objetos.",
+          "name": "Player base 2",
+          "role": "Individual player-owned base with a ground-level objective display and drop-off area beside a vertical upgrade tower capable of reaching 15 floors.",
+          "where": "Aligned along the main street.",
+          "size": ""
+        },
+        {
+          "name": "Player base 3",
+          "role": "Individual player-owned base with a ground-level objective display and drop-off area beside a vertical upgrade tower capable of reaching 15 floors.",
+          "where": "Aligned along the main street.",
+          "size": ""
+        },
+        {
+          "name": "Player base 4",
+          "role": "Individual player-owned base with a ground-level objective display and drop-off area beside a vertical upgrade tower capable of reaching 15 floors.",
+          "where": "Aligned along the main street.",
+          "size": ""
+        },
+        {
+          "name": "Object-spawn zone",
+          "role": "Dedicated shared area for spawned collectible objectives.",
+          "where": "At a readable endpoint or side of the street, separate from the four bases.",
+          "size": ""
+        },
+        {
+          "name": "Parking area",
+          "role": "Simple parking lot with marked parking bays.",
+          "where": "Adjacent to the street and near the object-spawn zone.",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Zona de aparición de objetos",
-          "to": "Estacionamiento",
+          "from": "Player base 1",
+          "to": "Object-spawn zone",
           "kind": "road"
         },
         {
-          "from": "Zona de aparición de objetos",
-          "to": "Base del jugador 1",
+          "from": "Player base 2",
+          "to": "Object-spawn zone",
           "kind": "road"
         },
         {
-          "from": "Zona de aparición de objetos",
-          "to": "Base del jugador 2",
+          "from": "Player base 3",
+          "to": "Object-spawn zone",
           "kind": "road"
         },
         {
-          "from": "Zona de aparición de objetos",
-          "to": "Base del jugador 3",
+          "from": "Player base 4",
+          "to": "Object-spawn zone",
           "kind": "road"
         },
         {
-          "from": "Zona de aparición de objetos",
-          "to": "Base del jugador 4",
+          "from": "Main street",
+          "to": "Parking area",
           "kind": "road"
         }
       ],
-      "terrain": "Terreno plano de asfalto, hormigón y bordillos.",
+      "terrain": "Clean pavement, sidewalks, restrained curbs, and a compact modern city-block ground treatment.",
       "props": [
         {
-          "name": "Torres-base modulares de pisos apilados, repetibles y legibles desde lejos",
+          "name": "Vertical upgrade towers capable of reaching 15 floors",
           "count": 4,
-          "where": "Una en cada parcela-base a lo largo de la calle."
+          "where": "One within each separated player base footprint."
         },
         {
-          "name": "Pisos apilados por torre-base",
-          "count": 15,
-          "where": "En cada una de las cuatro torres-base."
+          "name": "Ground-level objective display and drop-off areas",
+          "count": 4,
+          "where": "One inside each player base beside its vertical upgrade tower."
         },
         {
-          "name": "Coches estáticos",
+          "name": "Marked parking bays",
           "count": -1,
-          "where": "En el estacionamiento adyacente a la zona de aparición."
+          "where": "In the parking lot adjacent to the street near the object-spawn zone."
         },
         {
-          "name": "Bahías de estacionamiento pintadas",
+          "name": "Streetlights",
           "count": -1,
-          "where": "En el estacionamiento."
+          "where": "Along the compact main street."
         },
         {
-          "name": "Objetivos coleccionables visibles como pequeños objetos claros",
+          "name": "Sparse modern block façades",
           "count": -1,
-          "where": "Sobre la zona dedicada de aparición de objetos."
+          "where": "Along the street as non-enterable dressing."
         }
       ],
-      "boundary": "Bloque urbano compacto con fachadas bajas o bordes de acera en el perímetro; los extremos visuales de la calle permanecen abiertos.",
+      "boundary": "A compact city-block edge beyond the street ends and building fronts.",
       "scale_band": "medium",
-      "theme": "Bloque urbano moderno, minimalista, claro y funcional."
+      "theme": "Simple, clear modern city block."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "La lectura inmediata de la calle urbana y las cuatro parcelas prioritiza el aspecto, sin una ruta cuya invalidez haga el espacio injugable.",
+      "why": "The compact street arrangement is straightforward and does not require a topology-valid procedural plan.",
       "set_piece": false
     },
     "route": [
@@ -166,7 +186,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

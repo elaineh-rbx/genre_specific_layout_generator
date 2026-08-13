@@ -19,114 +19,141 @@
     }
   ],
   "scene_prompt": "Create a 3D open-city map based on a compact but drivable Tokyo slice, built district by district. Connect several city blocks with drivable streets and intersections, featuring a dense downtown commercial area of tall buildings and storefront-lined roads alongside a quieter residential area of lower-rise homes and narrow streets. Include distinct destination points across both districts for vehicle pickup and delivery locations, with open road routes between them.",
-  "blob": "### Genre\nThe dominant genre is Action: the original request establishes GTA-style third-person combat and police response within an open city. There is no secondary Racing genre because driving supports open-city missions rather than a timed or lap-based course.\n\n### Shape and preset\nUse `arena-flat`, keeping the playable street network on one primarily ground-level urban surface. The closest preset is Open World Action, but the prompt overrides its `arena-stacked` form: this compact Tokyo slice is organized as connected city blocks, not a vertically layered combat arena.\n\n### Config requirements\nUse `settlement-density` as visible geometry: a dense built-up Tokyo city district with commercial towers, storefronts, homes, and continuous street-facing façades. No invisible configuration options are required; destination logic, police behavior, combat, and mission rules are not image content.\n\n### Layout components\nBuild two connected urban districts. Downtown occupies the central and foreground mass of the map, with several dense blocks of tall commercial buildings, storefront-lined roads, broad intersections, and open curbside vehicle access. A quieter residential district branches from one side of downtown, using lower-rise homes, tighter blocks, and narrow streets while remaining fully drivable. Link the districts through several connected streets and intersections, avoiding isolated roads or dead-end-only access. Place a few distinct, readable curbside or lot-based pickup and delivery bays across both districts, with open road routes between every destination. Use asphalt roads, concrete sidewalks, crosswalks, streetlights, signs, parked-car space, and dense building façades. The boundary is an urban edge of continuous blocks and distant skyline mass rather than open countryside. Compose the map as a readable oblique city slice, with downtown height concentrated near the center and residential texture spreading outward.\n\n### Render order\nUse `topdown`: the connected drivable road network must be valid and continuous before the isometric city dressing is derived.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by multiple compact but drivable districts and connected city blocks. Theme: stylized contemporary Tokyo, dense neon commercial streets transitioning to calm residential lanes. Pipeline modifier `P0`: the city is one exterior ground-level map; tall buildings dress the streets but do not create required stacked traversal surfaces.",
+  "blob": "### Genre\nDominant genre: `Action`, specifically GTA-style open-city action with driving, third-person combat, and police response. No secondary genre is needed; the city exists to support open-world action missions.\n\n### Shape and preset\nUse `world-open`, taken from outside Action’s usual shape set, because this is one contiguous drivable city slice whose streets and districts can be approached in flexible order. Preset: none; Open World Action’s `arena-stacked` combat-space bundle does not describe the requested connected Tokyo street grid.\n\n### Config requirements\nApply `settlement-density`: a dense Tokyo commercial district of tall buildings and storefront-lined roads contrasts with a quieter, lower-rise residential district of narrow streets. Do not add unrequested combat cover, interiors, water, or terrain relief.\n\n### Layout requirements\nUse `spawner-npc` for police-response entry points. Place several concealed vehicle-entry locations on perimeter streets and at district-edge intersections, so responding units enter through the road network rather than appearing in the player’s immediate view. Site distinct mission destination markers at vehicle pickup and delivery bays across both districts: at least one in downtown and one in the residential area; these are placed against accessible curbside or lot geometry.\n\n### Layout components\nBuild one compact, fully connected Tokyo city slice. The downtown commercial zone occupies the denser central side of the map, with several tall building blocks, storefront frontages, broad drivable roads, and major signalized intersections. The quieter residential zone branches from downtown along connected secondary streets, using lower-rise homes, tighter lots, and narrow but vehicle-passable roads. Link all blocks with an unbroken hierarchy of main streets, side streets, turns, and intersections, leaving open road routes between every mission destination. Put pickup and delivery bays at recognizable curbside landmarks in both zones. Bound the city slice with convincing outer building walls, closed street ends, and distant urban backdrops rather than abrupt open edges. Compose the frame to show downtown density transitioning into the residential grid, with the primary road connection clearly legible.\n\n### Render order\nUse `topdown` first and make it authoritative, because a connected, drivable street network must remain navigable between districts; the isometric view is dressed from that validated street plan.\n\n### Scale, theme, and pipeline cost\nScale band: medium, driven by a compact but drivable multi-block city rather than a full metropolis. Theme: contemporary neon-accented Tokyo urban action, dense commercial streets against subdued residential lanes. Pipeline modifier: `P0`; this is one continuous ground-level city surface with no required overhangs, interiors, separate maps, or volumetric traversal.",
   "spec": {
     "genre": "Action",
     "secondary": [],
-    "shape": "arena-flat",
-    "preset": "Open World Action",
+    "shape": "world-open",
+    "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "settlement-density",
-        "text": "A dense built-up Tokyo city district with commercial towers, storefronts, homes, and continuous street-facing façades.",
+        "text": "A dense Tokyo commercial district of tall buildings and storefront-lined roads contrasts with a quieter, lower-rise residential district of narrow streets.",
         "visible": true,
+        "count": -1
+      },
+      {
+        "id": "spawner-npc",
+        "text": "Police-response entry points at concealed vehicle-entry locations on perimeter streets and district-edge intersections.",
+        "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "spawner-npc",
+        "text": "Police-response entry points at concealed vehicle-entry locations.",
+        "count": -1,
+        "where": "On perimeter streets and at district-edge intersections, entering through the road network rather than appearing in the player’s immediate view."
+      }
+    ],
     "layout": {
-      "composition": "A readable oblique city slice, with downtown height concentrated in the centre and foreground mass while quieter residential texture branches outward from one side.",
+      "composition": "Show downtown density transitioning into the residential grid, with the primary road connection clearly legible.",
       "zones": [
         {
-          "name": "Downtown",
-          "role": "Dense commercial district with tall buildings, storefront-lined roads, broad intersections, and open curbside vehicle access.",
-          "where": "Central and foreground mass",
-          "size": "Several dense blocks"
+          "name": "Downtown commercial zone",
+          "role": "Dense central commercial district supporting open-world action missions and vehicle destinations.",
+          "where": "Denser central side of the map.",
+          "size": "-1"
         },
         {
-          "name": "Residential district",
-          "role": "Quieter lower-rise homes, tighter blocks, and narrow but fully drivable streets.",
-          "where": "Branching from one side of downtown",
-          "size": ""
-        },
-        {
-          "name": "Pickup and delivery bays",
-          "role": "Distinct curbside or lot-based vehicle pickup and delivery destinations.",
-          "where": "Across both districts",
-          "size": "A few"
+          "name": "Residential zone",
+          "role": "Quieter lower-rise district with vehicle pickup and delivery destinations.",
+          "where": "Branching from downtown along connected secondary streets.",
+          "size": "-1"
         }
       ],
       "paths": [
         {
-          "from": "Downtown",
-          "to": "Residential district",
+          "from": "Downtown commercial zone",
+          "to": "Residential zone",
           "kind": "road"
         },
         {
-          "from": "Downtown",
-          "to": "Pickup and delivery bays",
+          "from": "Downtown commercial zone",
+          "to": "Downtown commercial zone",
           "kind": "road"
         },
         {
-          "from": "Residential district",
-          "to": "Pickup and delivery bays",
+          "from": "Residential zone",
+          "to": "Residential zone",
           "kind": "road"
         }
       ],
-      "terrain": "One primarily ground-level urban surface of asphalt roads, concrete sidewalks, and crosswalks.",
+      "terrain": "One continuous ground-level Tokyo city surface with broad drivable roads in downtown and narrow but vehicle-passable roads in the residential district.",
       "props": [
         {
-          "name": "Tall commercial buildings",
+          "name": "Tall building blocks",
           "count": -1,
-          "where": "Downtown"
+          "where": "Downtown commercial zone."
         },
         {
-          "name": "Storefronts and continuous street-facing façades",
+          "name": "Storefront frontages",
           "count": -1,
-          "where": "Downtown and across the city district"
+          "where": "Along downtown commercial roads."
+        },
+        {
+          "name": "Major signalized intersections",
+          "count": -1,
+          "where": "Downtown commercial zone and the primary road connection."
         },
         {
           "name": "Lower-rise homes",
           "count": -1,
-          "where": "Residential district"
+          "where": "Residential zone."
         },
         {
-          "name": "Streetlights",
+          "name": "Tighter lots",
           "count": -1,
-          "where": "Along streets"
+          "where": "Residential zone."
         },
         {
-          "name": "Signs",
+          "name": "Vehicle pickup and delivery bays",
           "count": -1,
-          "where": "Along streets and storefronts"
+          "where": "At recognizable accessible curbside or lot landmarks across both districts, with at least one in downtown and one in the residential area."
         },
         {
-          "name": "Parked-car space",
+          "name": "Outer building walls",
           "count": -1,
-          "where": "Curbside"
+          "where": "City-slice perimeter."
+        },
+        {
+          "name": "Closed street ends",
+          "count": -1,
+          "where": "City-slice perimeter."
+        },
+        {
+          "name": "Distant urban backdrops",
+          "count": -1,
+          "where": "Beyond the city-slice boundary."
         }
       ],
-      "boundary": "An urban edge of continuous blocks and distant skyline mass rather than open countryside.",
-      "scale_band": "large",
-      "theme": "Stylized contemporary Tokyo; dense neon commercial streets transitioning to calm residential lanes."
+      "boundary": "Convincing outer building walls, closed street ends, and distant urban backdrops rather than abrupt open edges.",
+      "scale_band": "medium",
+      "theme": "Contemporary neon-accented Tokyo urban action, with dense commercial streets against subdued residential lanes."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the connected drivable road network must be valid and continuous before the city dressing is derived.",
+      "why": "a connected, drivable street network must remain navigable between districts.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
-    "notes": [],
+    "notes": [
+      "`world-open` is taken from outside Action’s usual shape set.",
+      "The blob names distinct mission destination markers but supplies no canonical option ID for them; they are retained as layout props rather than options.",
+      "The blob says several police-response entry locations and at least one destination in each district, but gives no exact total count; matching counts remain -1."
+    ],
     "scene_prompt": "Create a 3D open-city map based on a compact but drivable Tokyo slice, built district by district. Connect several city blocks with drivable streets and intersections, featuring a dense downtown commercial area of tall buildings and storefront-lined roads alongside a quieter residential area of lower-rise homes and narrow streets. Include distinct destination points across both districts for vehicle pickup and delivery locations, with open road routes between them."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

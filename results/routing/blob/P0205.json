@@ -19,118 +19,119 @@
     }
   ],
   "scene_prompt": "Create a bright, stylized 3D jungle map with an immersive, layered presentation. During the peaceful exploration area, winding jungle paths pass through dense trees, foliage, and animal gathering areas, with simple feeding spots distributed around the map. The jungle has a clear escape route leading toward its outer edge; at night, the same paths and vegetation become a tense, darkened route to escape, while remaining non-graphic and suitable for Roblox.",
-  "blob": "### Genre\n`Survival` is dominant: the peaceful jungle becomes an animal-threat escape scenario. There is no secondary genre.\n\n### Shape and preset\nUse `warren-looping`, matching the Escape preset. The jungle’s winding routes must form connected loops and short branches that always return to a viable escape route, rather than trapping players in dead ends. The preset remains recognisable, but omit its enterable-shelter option because no shelter building is requested.\n\n### Config requirements\n`gate-escape` is visible geometry and an invisible completion volume: make a clear, substantial exit gate at the jungle’s outer edge, visibly distinct even in the darkened night version. `spawner-npc` is invisible layout data: place hostile-animal origin markers within the named animal gathering clearings, with navigable ground surrounding them. No feeding option is selected; instead, the requested feeding spots are visible small jungle feeding stations distributed as props along the exploration routes.\n\n### Layout components\nBuild one medium-sized contiguous jungle. A central peaceful exploration zone occupies most of the map, with dense stylized trees, broad-leaf foliage, vines, rocks, and several animal gathering clearings distributed off winding main paths. Put simple feeding stations in and beside these clearings, readable as small bowls, baskets, or low wooden platforms. Thread a primary escape trail from the inner jungle toward the outer boundary, with at least two looping side connections so the night route remains navigable if animals occupy a path. Keep dense vegetation as visual screening between paths while preserving clear walkable corridors. The outer perimeter is enclosed by thick jungle growth, cliff-like root walls, and natural rock barriers, except for the obvious escape gate on one edge. Frame the map isometrically with the central canopy and clearings visible, while the exit reads as a distant directional landmark.\n\n### Render order\nUse `topdown`: the looping path connectivity and guaranteed route to the exit must be validated before the isometric jungle dressing is produced.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by a compact explorable jungle with multiple clearings and a full escape route. Theme is bright, stylized Roblox jungle by day, shifting to tense, dark, non-graphic night lighting. Use `P6` because the escape-path topology must remain valid with no trapping dead ends.",
+  "blob": "### Genre\n`Survival` is dominant: the peaceful exploration turns into a hostile-animal escape, with survival pressure rather than a quest progression loop.\n\n### Shape and preset\nUse `world-open`, taken from outside Survival’s usual shape set, as one contiguous jungle players may explore freely before following the visible route to the edge. Adapt the Escape preset: retain its escape emphasis and sightline-breaking cover, but replace its looping indoor warren with an open jungle and omit enterable shelters.\n\n### Config requirements\nUse `cover-los` as dense tree trunks, broad leaves, vines, and undergrowth that break views along jungle paths. Use `gate-escape` as a clearly readable, non-graphic exit structure at the jungle’s outer edge. Use `npc-population` for animal groups occupying recognizable gathering clearings during the peaceful phase; these same areas visually support their later hostile role.\n\n### Layout requirements\nPlace `gate-escape` once at the terminal outer-edge exit, with its escape trigger immediately inside the opening. Place `npc-population` animal occupancy markers at every animal gathering clearing, set back from the main path so groups have distinct spaces. Add simple physical feeding stations at those clearings, each beside rather than blocking the path; their interaction logic is not part of the render.\n\n### Layout components\nBuild one medium-sized contiguous jungle. A broad central exploration zone contains several animal gathering clearings and their feeding stations, surrounded by dense stylized trees, layered foliage, roots, and groundcover. Winding dirt paths branch through the peaceful jungle but progressively converge into one legible escape trail leading toward the outer edge. Keep the escape route readable through vegetation, with occasional open sightlines toward the exit. The boundary is a dense natural jungle wall, with one deliberate exit opening and gate. Frame the composition from above at an oblique isometric angle so the branching exploration paths, animal clearings, and final escape direction remain visible.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because the exploration paths must remain connected to a reachable escape exit once the animals become hostile.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by a two-minute exploration area with multiple distinct animal clearings and a full route to the perimeter. Theme: bright stylized Roblox jungle that can darken into tense, scary-but-non-graphic nighttime atmosphere. Use `P0`; dense foliage creates visual layering but no required overhangs, separate maps, or volumetric play space.",
   "spec": {
     "genre": "Survival",
     "secondary": [],
-    "shape": "warren-looping",
+    "shape": "world-open",
     "preset": "Escape",
     "axes": {},
     "options": [
       {
-        "id": "gate-escape",
-        "text": "A clear, substantial exit gate at the jungle's outer edge, visibly distinct even in the darkened night version, with an invisible completion volume.",
+        "id": "cover-los",
+        "text": "Dense tree trunks, broad leaves, vines, and undergrowth that break views along jungle paths.",
         "visible": true,
         "count": -1
       },
       {
-        "id": "spawner-npc",
-        "text": "Hostile-animal origin markers within the animal gathering clearings, with navigable ground surrounding them.",
-        "visible": false,
+        "id": "gate-escape",
+        "text": "A clearly readable, non-graphic exit structure at the jungle's outer edge.",
+        "visible": true,
+        "count": 1
+      },
+      {
+        "id": "npc-population",
+        "text": "Animal groups occupying recognizable gathering clearings during the peaceful phase, visually supporting their later hostile role.",
+        "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "gate-escape",
+        "text": "The escape trigger immediately inside the terminal outer-edge exit opening.",
+        "count": 1,
+        "where": "Immediately inside the opening of the terminal outer-edge exit."
+      },
+      {
+        "id": "npc-population",
+        "text": "Animal occupancy markers at every animal gathering clearing, set back from the main path so groups have distinct spaces.",
+        "count": -1,
+        "where": "At every animal gathering clearing, set back from the main path."
+      }
+    ],
     "layout": {
-      "composition": "Isometric frame with the central canopy and animal gathering clearings visible; the exit gate reads as a distant directional landmark at the outer edge.",
+      "composition": "Above at an oblique isometric angle, keeping the branching exploration paths, animal clearings, and final escape direction visible.",
       "zones": [
         {
-          "name": "Central peaceful exploration zone",
-          "role": "Exploration through dense stylized jungle and animal gathering clearings.",
-          "where": "Centre and most of the map",
-          "size": "medium-sized"
+          "name": "Central exploration zone",
+          "role": "Peaceful jungle exploration through animal gathering clearings before the escape.",
+          "where": "Centre of the contiguous jungle.",
+          "size": "broad"
         },
         {
           "name": "Animal gathering clearings",
-          "role": "Hostile-animal gathering ground and feeding-station locations off the winding main paths.",
-          "where": "Distributed through the central jungle, off main paths",
-          "size": "several clearings"
+          "role": "Recognizable spaces for animal groups during the peaceful phase and their later hostile role.",
+          "where": "Branching off the main jungle paths, set back from the main path.",
+          "size": ""
         },
         {
-          "name": "Escape gate",
-          "role": "The clear outer-edge escape destination and completion point.",
-          "where": "One outer edge",
-          "size": "substantial"
+          "name": "Terminal outer-edge exit",
+          "role": "The final escape destination.",
+          "where": "Outer edge of the jungle.",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Inner jungle",
-          "to": "Escape gate",
+          "from": "Central exploration zone",
+          "to": "Animal gathering clearings",
+          "kind": "dirt path"
+        },
+        {
+          "from": "Central exploration zone",
+          "to": "Terminal outer-edge exit",
           "kind": "trail"
-        },
-        {
-          "from": "Primary escape trail",
-          "to": "Primary escape trail",
-          "kind": "looping side connection"
-        },
-        {
-          "from": "Primary escape trail",
-          "to": "Primary escape trail",
-          "kind": "looping side connection"
         }
       ],
-      "terrain": "Dense stylized jungle with broad-leaf foliage, vines, rocks, thick jungle growth, cliff-like root walls, and natural rock barriers. Dense vegetation screens paths while preserving clear walkable corridors.",
+      "terrain": "Bright stylized jungle ground with winding dirt paths, dense stylized trees, layered foliage, roots, and groundcover; occasional open sightlines toward the exit.",
       "props": [
         {
-          "name": "Dense stylized trees",
+          "name": "Simple physical feeding stations",
           "count": -1,
-          "where": "Across the central jungle"
-        },
-        {
-          "name": "Broad-leaf foliage",
-          "count": -1,
-          "where": "Across the jungle and between paths"
-        },
-        {
-          "name": "Vines",
-          "count": -1,
-          "where": "Throughout the jungle"
-        },
-        {
-          "name": "Rocks",
-          "count": -1,
-          "where": "Throughout the jungle and outer perimeter"
-        },
-        {
-          "name": "Jungle feeding stations",
-          "count": -1,
-          "where": "In and beside animal gathering clearings along exploration routes"
+          "where": "At animal gathering clearings, beside rather than blocking the path."
         }
       ],
-      "boundary": "The outer perimeter is enclosed by thick jungle growth, cliff-like root walls, and natural rock barriers, except for the obvious escape gate on one edge.",
+      "boundary": "A dense natural jungle wall with one deliberate exit opening and gate.",
       "scale_band": "medium",
-      "theme": "Bright, stylized Roblox jungle by day, shifting to tense, dark, non-graphic night lighting."
+      "theme": "Bright stylized Roblox jungle, darkening into a tense, scary-but-non-graphic nighttime atmosphere."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "Looping path connectivity and a guaranteed route to the exit must be validated before jungle dressing.",
+      "why": "the exploration paths must remain connected to a reachable escape exit once the animals become hostile.",
       "set_piece": false
     },
     "route": [
-      "P6"
+      "P0"
     ],
-    "notes": [],
+    "notes": [
+      "`world-open` is taken from outside Survival’s usual shape set.",
+      "The Escape preset is adapted: its escape emphasis and sightline-breaking cover are retained, while the looping indoor warren is replaced with an open jungle and enterable shelters are omitted.",
+      "Feeding-station interaction logic is not part of the render."
+    ],
     "scene_prompt": "Create a bright, stylized 3D jungle map with an immersive, layered presentation. During the peaceful exploration area, winding jungle paths pass through dense trees, foliage, and animal gathering areas, with simple feeding spots distributed around the map. The jungle has a clear escape route leading toward its outer edge; at night, the same paths and vegetation become a tense, darkened route to escape, while remaining non-graphic and suitable for Roblox."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
-  "order": "p6",
-  "first": "topdown",
-  "mapper_notes": []
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P0'] gives isometric"
+  ]
 }

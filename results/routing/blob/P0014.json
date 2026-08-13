@@ -19,7 +19,7 @@
     }
   ],
   "scene_prompt": "Create a 3D high-fantasy medieval adventure map set in a small, walkable valley for a knight avatar. The valley contains explorable terrain and distinct areas for undead encounters, with boss locations distributed across the world.",
-  "blob": "### Genre\nDominant genre: Adventure, with Action as a secondary genre for the knight’s undead and boss combat. The exploration-and-boss objective owns the world structure; combat contributes encounter placement only.\n\n### Shape and preset\nUse `world-open`, a compact, freely explorable medieval valley whose distinct encounter grounds branch off its natural terrain. Match the Exploration preset: retain its open-world exploration logic and focal destinations, but omit unrequested secret alcoves.\n\n### Config requirements\n`landmark-focal` is visible geometry: each boss site is a distinct distant landmark, such as a ruined chapel, fortified crypt, or hilltop keep, readable across the valley. `path-trail` is visible geometry: worn medieval paths and valley-floor tracks connect the major grounds without making the world a rigid corridor. `terrain-relief` is visible geometry: enclosing slopes, ridges, rocky rises, and shallow gullies shape the walkable valley. From secondary Action, `spawner-npc` is invisible layout geometry: place undead and boss encounter origins inside their designated clearings, ruins, and crypt approaches; do not render markers.\n\n### Layout components\nBuild one small walkable valley, roughly oval in plan, with the main approach and open grassy floor at its center. Put several separated undead encounter areas around the outer valley: a graveyard near one slope, ruined stone hamlets among the lower paths, and a dark crypt approach at the base of a ridge. Distribute boss locations at strong terrain endpoints rather than clustering them: one on a hilltop ruin, one in a secluded woodland or rocky hollow, and one at the far end of the valley in a larger ruined fortress or chapel complex. Link all sites through branching dirt trails and old stone paths that repeatedly return toward the central valley floor. Use grass, dirt, weathered stone, sparse trees, rocky outcrops, and low medieval ruins. Close the outer perimeter with continuous hills, cliff faces, dense woodland, and distant mountain walls rather than artificial barriers. Compose the isometric view with the central valley visible, boss landmarks rising on the perimeter, and paths visibly leading outward.\n\n### Render order\nUse `isometric`: the scene’s high-fantasy atmosphere, landmark silhouettes, and valley reveal are authoritative; a top-down plan can be projected from that composition afterward.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the author’s requirement for a fully walkable valley with no fast travel. Theme: bright-to-melancholy high-fantasy medieval wilderness, with undead ruins rather than post-apocalyptic horror. Use `tiered` because the valley’s slopes, ridges, and hills require elevation capture without overhanging surfaces.",
+  "blob": "### Genre\nAdventure is dominant, with Action as a secondary genre for the undead and boss combat. Exploration and reaching boss sites own the world layout; combat contributes encounter placement only.\n\n### Shape and preset\nUse `world-open`, matching the Exploration preset’s contiguous freely explorable world, but retain only the prompt-supported terrain rather than inventing its trail, landmark, or hidden alcoves. This is one small valley map, not separate dungeon instances.\n\n### Config requirements\nUse `terrain-relief` for the enclosing valley slopes, ridges, and distinct elevated or sheltered encounter ground. No other drawn option is required by the prompt.\n\n### Layout requirements\nUse `spawner-npc` for undead encounter origins: place several zombie spawn points within each distinct encounter area, set back from the main traversal ground, and one boss origin at each major boss location. The exact number of boss sites is not specified, so distribute them across the valley’s distinct regions rather than clustering them at the entrance.\n\n### Layout components\nBuild a small walkable high-fantasy medieval valley as the single central play space. Form a low central valley floor with surrounding grassy slopes, rocky ridges, sparse ruins, and forested edges that create distinct undead encounter clearings. Place boss locations at separated, visually memorable sites around the world, such as a ruined hilltop keep, a shadowed woodland shrine, and a broken stone arena, without making any one site an instanced interior. Connect the valley floor and encounter areas with readable dirt paths, shallow passes, and climbing routes over tiered terrain. Use the surrounding ridgelines, cliffs, dense woodland, and distant mountains as the natural boundary. Compose the map with the valley floor readable in the foreground and boss sites distributed around the perimeter as visible destinations.\n\n### Render order\nUse `isometric`: the small open valley is visually led, and no exact maze, circuit, or physics-validated route topology is required.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by a compact but fully walkable valley containing multiple distributed combat areas and boss sites. Theme: bright high-fantasy medieval wilderness with ancient ruins and undead menace. Use `tiered` because the valley’s slopes and ridges create real elevation without overhanging surfaces.",
   "spec": {
     "genre": "Adventure",
     "secondary": [
@@ -30,124 +30,96 @@
     "axes": {},
     "options": [
       {
-        "id": "landmark-focal",
-        "text": "Each boss site is a distinct distant landmark, such as a ruined chapel, fortified crypt, or hilltop keep, readable across the valley.",
-        "visible": true,
-        "count": 3
-      },
-      {
-        "id": "path-trail",
-        "text": "Worn medieval paths and valley-floor tracks connect the major grounds without making the world a rigid corridor.",
-        "visible": true,
-        "count": -1
-      },
-      {
         "id": "terrain-relief",
-        "text": "Enclosing slopes, ridges, rocky rises, and shallow gullies shape the walkable valley.",
+        "text": "Enclosing valley slopes, ridges, and distinct elevated or sheltered encounter ground.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "Isometric view with the central valley and open grassy floor visible at centre, boss landmarks rising around the perimeter, and paths visibly leading outward.",
+      "composition": "The low central valley floor is readable in the foreground, with boss sites distributed around the perimeter as visible destinations.",
       "zones": [
         {
           "name": "Central valley floor",
-          "role": "Main approach and open grassy walkable floor that the trails repeatedly return toward.",
-          "where": "centre",
-          "size": "small"
+          "role": "Single central walkable play space and main traversal ground.",
+          "where": "Foreground and centre.",
+          "size": "Small"
         },
         {
-          "name": "Graveyard",
-          "role": "Separated undead encounter area.",
-          "where": "near one valley slope",
+          "name": "Undead encounter clearings",
+          "role": "Distinct combat areas for undead encounters.",
+          "where": "Around the valley within forested edges, slopes, ridges, and sheltered ground.",
           "size": ""
         },
         {
-          "name": "Ruined stone hamlets",
-          "role": "Separated undead encounter areas.",
-          "where": "among the lower paths around the outer valley",
+          "name": "Ruined hilltop keep",
+          "role": "Major boss location.",
+          "where": "Around the perimeter on a hilltop.",
           "size": ""
         },
         {
-          "name": "Dark crypt approach",
-          "role": "Undead encounter area and crypt approach.",
-          "where": "at the base of a ridge",
+          "name": "Shadowed woodland shrine",
+          "role": "Major boss location.",
+          "where": "Around the perimeter in woodland.",
           "size": ""
         },
         {
-          "name": "Hilltop ruin",
-          "role": "Boss location.",
-          "where": "hilltop perimeter",
+          "name": "Broken stone arena",
+          "role": "Major boss location.",
+          "where": "Around the perimeter.",
           "size": ""
-        },
-        {
-          "name": "Secluded woodland or rocky hollow",
-          "role": "Boss location.",
-          "where": "outer valley terrain endpoint",
-          "size": ""
-        },
-        {
-          "name": "Ruined fortress or chapel complex",
-          "role": "Boss location.",
-          "where": "far end of the valley",
-          "size": "larger"
         }
       ],
       "paths": [
         {
           "from": "Central valley floor",
-          "to": "Graveyard",
-          "kind": "track"
+          "to": "Undead encounter clearings",
+          "kind": "dirt paths"
         },
         {
           "from": "Central valley floor",
-          "to": "Ruined stone hamlets",
-          "kind": "path"
+          "to": "Undead encounter clearings",
+          "kind": "shallow passes"
         },
         {
           "from": "Central valley floor",
-          "to": "Dark crypt approach",
-          "kind": "path"
-        },
-        {
-          "from": "Central valley floor",
-          "to": "Hilltop ruin",
-          "kind": "trail"
-        },
-        {
-          "from": "Central valley floor",
-          "to": "Secluded woodland or rocky hollow",
-          "kind": "trail"
-        },
-        {
-          "from": "Central valley floor",
-          "to": "Ruined fortress or chapel complex",
-          "kind": "old stone path"
+          "to": "Undead encounter clearings",
+          "kind": "climbing routes"
         }
       ],
-      "terrain": "Roughly oval grassy valley with dirt, weathered stone, enclosing slopes, ridges, rocky rises, shallow gullies, sparse trees, rocky outcrops, and low medieval ruins.",
+      "terrain": "A low central valley floor surrounded by grassy slopes, rocky ridges, sparse ruins, forested edges, tiered terrain, cliffs, and distant mountains.",
       "props": [
         {
-          "name": "Boss locations",
-          "count": 3,
-          "where": "distributed across terrain endpoints around the valley"
+          "name": "Sparse ruins",
+          "count": -1,
+          "where": "Across the valley."
         },
         {
-          "name": "Undead encounter areas",
-          "count": -1,
-          "where": "around the outer valley"
+          "name": "Ruined hilltop keep",
+          "count": 1,
+          "where": "Hilltop around the world."
+        },
+        {
+          "name": "Shadowed woodland shrine",
+          "count": 1,
+          "where": "Woodland around the world."
+        },
+        {
+          "name": "Broken stone arena",
+          "count": 1,
+          "where": "Around the world."
         }
       ],
-      "boundary": "Continuous hills, cliff faces, dense woodland, and distant mountain walls close the outer perimeter rather than artificial barriers.",
-      "scale_band": "small",
-      "theme": "Bright-to-melancholy high-fantasy medieval wilderness with undead ruins."
+      "boundary": "Surrounding ridgelines, cliffs, dense woodland, and distant mountains form the natural boundary.",
+      "scale_band": "medium",
+      "theme": "Bright high-fantasy medieval wilderness with ancient ruins and undead menace."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "High-fantasy atmosphere, landmark silhouettes, and the valley reveal are authoritative.",
+      "why": "the small open valley is visually led and requires no exact maze, circuit, or physics-validated route topology.",
       "set_piece": false
     },
     "route": [
@@ -155,14 +127,15 @@
       "tiered"
     ],
     "notes": [
-      "Dropped `spawner-npc`: it is not a canonical option ID for the dominant Adventure genre."
+      "dropped option 'spawner-npc': not in Adventure",
+      "dropped placement 'spawner-npc': not in Adventure"
     ],
     "scene_prompt": "Create a 3D high-fantasy medieval adventure map set in a small, walkable valley for a knight avatar. The valley contains explorable terrain and distinct areas for undead encounters, with boss locations distributed across the world."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

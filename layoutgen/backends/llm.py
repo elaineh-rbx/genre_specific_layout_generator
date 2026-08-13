@@ -13,6 +13,7 @@ import base64
 import json
 import os
 import pathlib
+import threading
 import urllib.error
 import urllib.request
 
@@ -74,6 +75,12 @@ PROVIDER = os.getenv("LAYOUTGEN_LLM_PROVIDER", "gateway").strip().lower()
 #: enforced locally. Worth checking after a batch: a run of loosely-enforced answers is
 #: not the same contract as a run of strict ones.
 degraded_calls = 0
+_call = threading.local()
+
+
+def schema_degraded() -> bool:
+    """Whether this thread's most recent call used local schema enforcement."""
+    return bool(getattr(_call, "degraded", False))
 
 
 def served_by() -> str:
@@ -102,6 +109,7 @@ def ask(system: str, user: str | list[dict], schema: dict, *, retries: int = 3,
         from layoutgen.backends import gateway
         out, degraded = gateway.ask(system, user, schema, retries=retries,
                                     timeout=timeout)
+        _call.degraded = degraded
         if degraded:
             degraded_calls += 1
         return out
@@ -112,6 +120,7 @@ def ask(system: str, user: str | list[dict], schema: dict, *, retries: int = 3,
                          {"role": "user", "content": user}],
             "response_format": {"type": "json_schema", "json_schema": schema},
             "seed": SEED}
+    _call.degraded = False
     url = (f"{ENDPOINT.rstrip('/')}/openai/deployments/{DEPLOYMENT}/chat/completions"
            f"?api-version={API_VERSION}")
     last: Exception | None = None

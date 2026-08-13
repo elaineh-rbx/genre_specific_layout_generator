@@ -14,85 +14,95 @@
     }
   ],
   "scene_prompt": "Create a bright, cartoonish party-game map with a separate lobby waiting area leading into a compact large arena sized for 12 players. The main arena is an open hazard floor with clear sightlines, arranged for players to encounter one another, while vivid glowing laser beams spawn at the arena edges and travel across the space at varying paths and heights.",
-  "blob": "### Genre\nDominant genre: Party & Casual, indicated by round-based elimination and a last-player-standing outcome. There is no secondary genre.\n\n### Shape and preset\nUse `space-staged`, with a distinct pre-round lobby and isolated match arena. The closest preset is Minigame, but its transport, leaderboard, scoring, and spectator bundle is not requested, so the preset is none.\n\n### Config requirements\nUse visible `social-hub` geometry for the lobby: an open, compact waiting area that can comfortably gather the full 12-player group before a round. Use visible `hazard-kill` geometry for vivid glowing laser beams crossing the arena from edge emitters at varied heights and directions; render only the beams and emitters, not their collision behavior. No invisible config components are required.\n\n### Layout components\nBuild two separate zones. The lobby is a bright waiting plaza with a clearly legible match entrance, kept smaller than the arena and visually separated from active hazards. The main zone is a compact but large, open-sided arena sized for 12 players, dominated by one broad hazard floor with clear long sightlines so players regularly encounter each other. Place laser emitters around the arena perimeter, aimed across the floor in multiple crossing directions; show several luminous beam paths at low and mid jumpable heights while leaving readable open dodge space between them. Keep terrain completely flat, with no cover, raised platforms, water, buildings, or clutter. Define the arena edge with a clean sci-fi rim and emitter housings rather than enclosing walls. Frame the arena centrally in a wide isometric composition, with the glowing beams as the strongest visual pattern.\n\n### Render order\nUse `isometric`: the arena is a simple open clash space whose topology does not need plan-first validation.\n\n### Scale, theme, and pipeline cost\nScale is medium: the arena is large enough for 12 players but intentionally compact. Theme is bright cartoonish party-game sci-fi, with vivid, highly readable laser effects. Pipeline modifier: P4, because the lobby and match arena are separate staged maps.",
+  "blob": "### 1. Genre\nThe dominant genre is `Party & Casual`: this is an elimination-based round minigame, with a waiting lobby and a last-player-standing arena.\n\n### 2. Shape and preset\nUse `space-staged`, taken from the Minigame preset. It is a compact 12-player hazard arena fully separated from the lobby, preventing waiting players from affecting or observing active play directly. Retain the preset’s staged lobby-to-match relationship but omit its unrequested leaderboard and spectator area.\n\n### 3. Config requirements\nApply `social-hub` as a bright waiting lobby with ample open standing space and a clear match-entry point. The vivid travelling laser hazards are essential rendered arena geometry: glowing beam paths cross the floor at readable heights, with visible edge-mounted emitters, but their elimination behavior is not part of the image configuration.\n\n### 4. Layout requirements\nApply `spawn-protected` with 12 evenly distributed round-start markers around the safe outer edge of the arena, screened from immediate laser paths and from direct player collisions at round start. Place no scoring volume: the elimination and winner logic is mechanics. Site laser emitter anchors around all four arena edges, alternating their travel lines and beam heights so crossings remain legible while the central floor stays navigable.\n\n### 5. Layout components\nThe first zone is a separate compact lobby, sized for all 12 players to wait together, with a clean transition into the match stage. The second zone is a large-but-compact square or rounded-square arena: a broad open hazard floor with no cover or clutter, keeping long sightlines and frequent player encounters. A sealed portal-like entry or enclosed transfer connection links lobby to arena without exposing the active match to the waiting space. Around the arena perimeter, place repeated sci-fi laser emitter banks aimed across the floor; their glowing beams travel in varied straight and diagonal sweeps at low jumpable and mid-height dodgeable elevations. Use a solid raised perimeter wall as the arena boundary, with the emitters integrated into it. Compose the arena centrally and clearly in frame, with the lobby presented as its separate companion zone.\n\n### 6. Render order\nUse `isometric`: the bright party-game look and readable laser staging lead, while the flat arena plan can be projected afterward without topology risk.\n\n### 7. Scale, theme, and pipeline cost\nScale is large, driven by a dedicated arena sized for 12 simultaneous players plus its separate waiting lobby. Theme is bright cartoon sci-fi party-game technology, with vivid high-contrast lasers and clean simplified surfaces. Use `P4` because the lobby and active arena are isolated maps rather than one shared play surface.",
   "spec": {
     "genre": "Party & Casual",
     "secondary": [],
     "shape": "space-staged",
-    "preset": "none",
+    "preset": "Minigame",
     "axes": {},
     "options": [
       {
         "id": "social-hub",
-        "text": "an open, compact waiting area that can comfortably gather the full 12-player group before a round",
+        "text": "A bright waiting lobby with ample open standing space and a clear match-entry point.",
         "visible": true,
+        "count": 12
+      },
+      {
+        "id": "spawn-protected",
+        "text": "12 evenly distributed round-start markers around the arena's safe outer edge, screened from immediate laser paths and direct player collisions.",
+        "visible": false,
         "count": 12
       }
     ],
+    "layout_placement": [
+      {
+        "id": "spawn-protected",
+        "text": "12 evenly distributed round-start markers around the arena's safe outer edge, screened from immediate laser paths and direct player collisions.",
+        "count": 12,
+        "where": "Around the safe outer edge of the arena, screened from immediate laser paths and direct player collisions at round start."
+      }
+    ],
     "layout": {
-      "composition": "Wide isometric composition with the open-sided arena centred in frame; luminous crossing laser beams form the strongest visual pattern across the central floor, while the smaller bright waiting plaza sits separately with a clearly legible match entrance.",
+      "composition": "The large-but-compact arena is central and clearly readable in frame, with the separate bright lobby shown as its companion zone and linked by a sealed transfer connection.",
       "zones": [
         {
-          "name": "Lobby",
-          "role": "Pre-round waiting plaza for the full 12-player group, visually separated from active hazards.",
-          "where": "separate from the match arena at the clearly legible match entrance",
-          "size": "smaller than the arena"
+          "name": "Waiting lobby",
+          "role": "A separate bright waiting area where all players gather before the round and enter the match.",
+          "where": "Separate companion zone to the arena.",
+          "size": "Compact, sized for all 12 players."
         },
         {
-          "name": "Main arena",
-          "role": "Last-player-standing match space with open dodge space and crossing laser hazards.",
-          "where": "centre of the composition",
-          "size": "compact but large, sized for 12 players"
+          "name": "Hazard arena",
+          "role": "Last-player-standing elimination arena with frequent player encounters and laser-dodging hazards.",
+          "where": "Centre of the composition, isolated from the lobby.",
+          "size": "Large-but-compact; sized for 12 simultaneous players."
         }
       ],
       "paths": [
         {
-          "from": "Lobby",
-          "to": "Main arena",
+          "from": "Waiting lobby",
+          "to": "Hazard arena",
           "kind": "portal"
         }
       ],
-      "terrain": "Completely flat broad hazard floor; no raised platforms, water, cover, buildings, or clutter.",
+      "terrain": "A broad, flat open hazard floor with clean simplified surfaces and no cover or clutter. Glowing beams sweep across it at low jumpable and mid-height dodgeable elevations.",
       "props": [
         {
-          "name": "broad hazard floor",
-          "count": 1,
-          "where": "main arena"
+          "name": "Sci-fi laser emitter banks",
+          "count": -1,
+          "where": "Integrated around all four raised arena-wall edges, aimed across the floor with alternating straight and diagonal travel lines and beam heights."
         },
         {
-          "name": "laser emitter housings",
+          "name": "Glowing travelling laser beams",
           "count": -1,
-          "where": "around the arena perimeter"
-        },
-        {
-          "name": "luminous laser beam paths",
-          "count": -1,
-          "where": "crossing the arena floor at low and mid jumpable heights"
+          "where": "Crossing the arena floor in varied straight and diagonal sweeps while keeping the central floor navigable."
         }
       ],
-      "boundary": "A clean sci-fi rim and emitter housings define the open-sided arena edge rather than enclosing walls.",
-      "scale_band": "medium",
-      "theme": "bright cartoonish party-game sci-fi with vivid, highly readable laser effects"
+      "boundary": "A solid raised perimeter wall encloses the arena, with laser emitters integrated into all four edges; the lobby and active arena are isolated from each other by a sealed portal-like entry or enclosed transfer connection.",
+      "scale_band": "large",
+      "theme": "Bright cartoon sci-fi party-game technology, vivid high-contrast lasers, clean simplified surfaces."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "the arena is a simple open clash space whose topology does not need plan-first validation",
+      "why": "The bright party-game look and readable laser staging lead, while the flat arena plan can be projected afterward without topology risk.",
       "set_piece": false
     },
     "route": [
       "P4"
     ],
     "notes": [
-      "dropped option 'hazard-kill': not in Party & Casual"
+      "The Minigame preset's leaderboard and spectator area are explicitly omitted.",
+      "No scoring volume is included because elimination and winner logic are mechanics rather than layout configuration."
     ],
     "scene_prompt": "Create a bright, cartoonish party-game map with a separate lobby waiting area leading into a compact large arena sized for 12 players. The main arena is an open hazard floor with clear sightlines, arranged for players to encounter one another, while vivid glowing laser beams spawn at the arena edges and travel across the space at varying paths and heights."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

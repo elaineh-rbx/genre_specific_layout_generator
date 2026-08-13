@@ -19,7 +19,7 @@
     }
   ],
   "scene_prompt": "Create a compact 3D tower defense map viewed from directly overhead so the physical parts read like a 2D board. Use a grassy toy-soldier board theme with one simple dirt path winding across the map as the single enemy lane, surrounded by clearly marked build areas for towers. Keep the full play space comfortably within one overhead view, with room along the path for a modest number of tower placements.",
-  "blob": "### Genre\nThe dominant genre is Strategy: tower defense is established by the enemy-wave and tower-placement loop in the original request. The map is physical 3D geometry presented from overhead, not a GUI board.\n\n### Shape and preset\nUse `lane-actor-track`, matching the Tower Defense preset. This is one compact, continuous enemy lane rather than several converging routes, as explicitly clarified. The preset remains recognizable, but omit its default pinch point because the requested first map needs a simple, legible dirt route rather than a deliberately narrow combat section.\n\n### Config requirements\nUse visible `buildzone-grid`: clearly marked grass-side tower pads or outlined build plots run alongside the dirt lane, never on it. Use `tracker-core`, with a visible toy-soldier base or command bunker at the lane’s terminal end and an invisible core-health tracking volume colocated there. Use invisible `spawner-npc`: place the enemy-wave origin just beyond the lane entrance at the opposite edge; it must not appear as an image-model gameplay marker. No other options are required.\n\n### Layout components\nBuild one small, square-ish grassy board that fits entirely within a direct overhead frame. A single light-brown dirt path enters at one outer edge, winds in broad, readable S-curves through the centre, and terminates at the core bunker on the far side. Keep generous grass margins around every curve for a modest number of clearly delineated tower placements; distribute them on both the inner and outer sides of turns, with no pads overlapping the path. The path is the only traversable enemy route and remains continuously connected from origin to core. Use low toy-board relief only, such as shallow turf edging around the dirt, with no buildings, water, or occluding props. Define the board’s outer grass edge as the boundary. Compose it as a clean near-orthographic overhead plan, with the spawn at the upper edge and core at the lower edge so the full route reads immediately.\n\n### Render order\nUse `authored_plan`: the single enemy lane must be a valid, unbroken route from the wave origin to the core, so its topology is generated first and then dressed as a toy-soldier board.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the requirement that the entire map, winding path, and modest tower capacity fit comfortably in one overhead view. Theme: grassy toy-soldier tabletop board, simple dirt trail, crisp marked build pads, miniature command bunker. Apply `P6` because the enemy lane must be valid by construction. No additional pipeline modifier is forced.",
+  "blob": "### 1. Genre\nThe dominant genre is Strategy, specifically tower defense: enemies follow a fixed lane while players place defensive towers on designated ground.\n\n### 2. Shape and preset\nUse `lane-actor-track`, a single continuous dirt lane that winds across this compact board from its enemy entrance to the defended endpoint. This matches the Tower Defense preset, whose fixed, unambiguous enemy route and flanking placement ground suit the requested first map.\n\n### 3. Config requirements\nUse `buildzone-grid` as clearly marked, flat tower-placement pads or grass cells arranged along both sides of the dirt lane, never overlapping it. Use `tracker-core` as a small toy-soldier command bunker or base at the lane’s terminal end, visibly distinct as the object being defended. No extra terrain, water, structures, or decorative zones are required.\n\n### 4. Layout requirements\nPlace one `spawner-npc` at the lane’s starting edge, facing into the route, as the single enemy-wave origin. Place one `tracker-core` detection and health location inside the terminal bunker at the opposite end of the lane. The `buildzone-grid` is drawn in the image; its placement rule is to provide a modest number of evenly spaced valid tower pads along the route’s outside curves and straights, with no pad blocking enemy traversal.\n\n### 5. Layout components\nBuild one compact rectangular grassy board zone, sized to fit entirely in a single overhead view. A simple tan dirt path enters at one map edge, winds through several readable bends across the center, and terminates at the command bunker on the far edge. Surround the path with marked build pads in a clean, sparse arrangement, leaving enough grass between pads for the path silhouette to remain legible. Keep the terrain flat, with short toy-scale grass edging and minimal props only; no water or elevation. The board boundary is a low raised rim or toy diorama edge that cleanly frames the whole play area. Compose it directly top-down, with the lane readable from spawn to core at a glance.\n\n### 6. Render order\nUse `authored_plan`: the single enemy lane must be generated as one valid, connected, non-self-crossing route before the overhead board is dressed, because a broken path would make the game unplayable.\n\n### 7. Scale, theme, and pipeline cost\nScale is small, driven by the requirement for one compact map and a modest number of tower placements within one overhead frame. Theme: grassy toy-soldier board with a simple dirt path and crisp marked build ground. Pipeline modifier `P6` applies because the enemy lane must be valid by construction. No other modifier is forced.",
   "spec": {
     "genre": "Strategy",
     "secondary": [],
@@ -29,81 +29,65 @@
     "options": [
       {
         "id": "buildzone-grid",
-        "text": "Clearly marked grass-side tower pads or outlined build plots run alongside the dirt lane, never on it.",
+        "text": "Clearly marked, flat tower-placement pads or grass cells arranged along both sides of the dirt lane, never overlapping it.",
         "visible": true,
         "count": -1
       },
       {
         "id": "tracker-core",
-        "text": "A visible toy-soldier base or command bunker sits at the lane’s terminal end, with an invisible core-health tracking volume colocated there.",
+        "text": "A small toy-soldier command bunker or base at the lane's terminal end, visibly distinct as the object being defended, with one detection and health location inside it.",
         "visible": true,
         "count": 1
       },
       {
         "id": "spawner-npc",
-        "text": "Place the enemy-wave origin just beyond the lane entrance at the opposite edge; it must not appear as an image-model gameplay marker.",
+        "text": "One enemy-wave origin at the lane's starting edge, facing into the route.",
         "visible": false,
-        "count": -1
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "tracker-core",
+        "text": "One detection and health location inside the command bunker.",
+        "count": 1,
+        "where": "Inside the terminal bunker at the opposite end of the lane."
+      },
+      {
+        "id": "spawner-npc",
+        "text": "One enemy-wave origin.",
+        "count": 1,
+        "where": "At the lane's starting edge, facing into the route."
       }
     ],
     "layout": {
-      "composition": "Clean near-orthographic direct overhead plan of the entire small square-ish board, with the spawn at the upper edge and the core at the lower edge so the full winding route reads immediately.",
+      "composition": "Directly top-down overhead view of the entire compact rectangular board, with the dirt lane readable from the spawn edge through central bends to the command bunker on the far edge; build pads sit sparsely along both sides of the route.",
       "zones": [
         {
-          "name": "grassy board",
-          "role": "The compact full play space containing the single enemy lane and tower placements.",
-          "where": "entire overhead frame",
-          "size": "small, square-ish"
-        },
-        {
-          "name": "lane entrance",
-          "role": "Enemy-wave origin just beyond the path entrance.",
-          "where": "upper outer edge",
-          "size": ""
-        },
-        {
-          "name": "dirt enemy lane",
-          "role": "The only traversable enemy route, continuously connected from origin to core.",
-          "where": "winding through the centre from upper edge to lower edge",
-          "size": ""
-        },
-        {
-          "name": "tower placement margins",
-          "role": "Clearly delineated tower placements distributed on both inner and outer sides of turns, never overlapping the path.",
-          "where": "generous grass margins around every curve",
-          "size": "modest capacity"
-        },
-        {
-          "name": "core terminal",
-          "role": "Toy-soldier command bunker and colocated core-health tracking volume.",
-          "where": "lower edge at the far side of the lane",
-          "size": ""
+          "name": "Compact grassy board",
+          "role": "The complete tower-defense play area containing the enemy lane, tower-placement ground, enemy entrance, and defended bunker.",
+          "where": "Entire overhead frame",
+          "size": "compact"
         }
       ],
       "paths": [
         {
-          "from": "lane entrance",
-          "to": "core terminal",
+          "from": "Enemy entrance",
+          "to": "Command bunker",
           "kind": "track"
         }
       ],
-      "terrain": "Grassy toy-soldier tabletop board with a single light-brown dirt path, shallow turf edging, and low toy-board relief only.",
-      "props": [
-        {
-          "name": "miniature command bunker",
-          "count": 1,
-          "where": "lane terminal at the lower edge"
-        }
-      ],
-      "boundary": "The board’s outer grass edge defines the boundary.",
+      "terrain": "Flat grassy toy-scale board with short grass edging, a simple tan dirt lane, and no water or elevation.",
+      "props": [],
+      "boundary": "A low raised rim or toy diorama edge cleanly frames the whole play area.",
       "scale_band": "small",
-      "theme": "grassy toy-soldier tabletop board, simple dirt trail, crisp marked build pads, miniature command bunker"
+      "theme": "Grassy toy-soldier board with a simple dirt path and crisp marked build ground."
     },
     "render": {
       "first": "authored_plan",
       "then": "topdown",
       "authoritative": "authored_plan",
-      "why": "the single enemy lane must be a valid, unbroken route from the wave origin to the core.",
+      "why": "the single enemy lane must be a valid connected non-self-crossing route or the game is unplayable.",
       "set_piece": false
     },
     "route": [
@@ -115,7 +99,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a 3D obby map built as a small, plainly playable tower—a quick vertical course rising through stacked platform sections—with a silly bright candy-colour look.",
-  "blob": "### 1. Genre\nThe dominant genre is Obby & Platformer: this is a short skill-based vertical obstacle course, not a race or an explorable tower.\n\n### 2. Shape and preset\nUse `course-tower`, a compact vertical ascent whose stacked platform sections form one quick climb rather than a long Tower-of-Hell-scale tower. It most closely matches the Tower Obby preset, but retain only the vertical course structure; the prompt does not request timed or climbing-specific obstacles, so the preset is not otherwise applied.\n\n### 3. Config requirements\nUse visible `path-track`: a clearly ordered chain of brightly coloured platforms rising through the tower, with each jump physically reachable. No additional obstacle, checkpoint, reward, pickup, or universal option is requested. There are no invisible layout components specified.\n\n### 4. Layout components\nBuild one small, plainly playable enclosed tower volume. Start on a broad, safe ground-level platform, then rise through several stacked platform sections in a compact spiral or zig-zag sequence, ending at a simple top landing. Keep every section visually legible from below and avoid long falls or dense, punishing routes; this is a quick climb. Use solid candy-colour floors, platforms, walls, and accent rails, varying bright pink, cyan, yellow, purple, and lime surfaces without introducing gag props. The outer tower shell or open structural frame bounds the course and makes its vertical silhouette clear. Compose it as a single centered tower, with the ascent readable through the open sides or cutaway-like gaps.\n\n### 5. Render order\nUse `topdown`: the platform chain must remain continuously connected and have physics-legal jump spacing, so a plan is authoritative before the isometric dressing is generated.\n\n### 6. Scale, theme, and pipeline cost\nScale is small, driven by the requested quick climb rather than a lengthy tower ascent. Theme is cheerful, minimal, silly bright candy-colour obby architecture. Use `P6` because the critical jump route must be valid by construction, and `P2` because stacked platform sections occupy vertically overlapping levels within the tower.",
+  "blob": "### 1. Genre\nThe dominant genre is Obby & Platformer: the author specifies an obby tower, with player-paced jumping as the activity.\n\n### 2. Shape and preset\nUse `course-tower`, matching the Tower Obby preset. This is a compact vertical ascent through stacked platform sections, but the requested quick climb overrides the preset’s usual long Tower-of-Hell scale. Keep the preset recognizable through the vertically layered obstacle route; omit its unrequested timed, climbing, and reward elements.\n\n### 3. Config requirements\nUse `path-track` as one continuous, visibly ordered chain of bright candy-coloured platforms rising from the base to the summit. Use `obstacle-jump` for plainly readable short jumps, stepped rises, and simple wrap-around platform moves sized as a forgiving quick climb.\n\n### 4. Layout requirements\nPlace `checkpoint-respawn` markers at the base and at the top of each stacked platform section, each on a flat safe landing pad, so a fall returns the player to the latest completed section rather than restarting the tower. No other placed gameplay elements are requested.\n\n### 5. Layout components\nBuild one small tower zone, narrow in footprint and clearly bounded, with a ground-level start pad and several compact stacked course sections directly above it. A single upward platform track spirals or zigzags around the tower core from section to section, terminating on a distinct top landing. Use a simple solid tower frame or central column as the visual anchor, with open air around the route and no extra rooms, hub, shop, hazards, props, or gag objects. Keep each platform broad and each gap plainly playable. Compose the isometric view to show the entire short ascent from start pad through the stacked route to the summit.\n\n### 6. Render order\nUse `topdown` first, authoritative because the complete vertical jump chain must remain connected and physics-legal before the isometric view dresses it.\n\n### 7. Scale, theme, and pipeline cost\nScale is small, driven by the explicitly requested quick climb rather than a long tower ascent. Theme is silly, clean, bright candy colours with playful high-contrast platform materials and no specific gag props. Apply `P6` because the obby’s critical platform route must be valid by construction, and `P2` because stacked platforms directly overhang lower sections.",
   "spec": {
     "genre": "Obby & Platformer",
     "secondary": [],
@@ -24,67 +24,59 @@
     "options": [
       {
         "id": "path-track",
-        "text": "A clearly ordered chain of brightly coloured platforms rising through the tower, with each jump physically reachable.",
+        "text": "One continuous, visibly ordered chain of bright candy-coloured platforms rising from the base to the summit.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "obstacle-jump",
+        "text": "Plainly readable short jumps, stepped rises, and simple wrap-around platform moves sized as a forgiving quick climb.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "checkpoint-respawn",
+        "text": "Checkpoint markers at the base and at the top of each stacked platform section, on flat safe landing pads, returning a fallen player to the latest completed section.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "checkpoint-respawn",
+        "text": "Checkpoint markers at the base and at the top of each stacked platform section, on flat safe landing pads, returning a fallen player to the latest completed section.",
+        "count": -1,
+        "where": "At the ground-level start pad and at the top of each stacked platform section, each on a flat safe landing pad."
+      }
+    ],
     "layout": {
-      "composition": "A single centered tower with the ascent readable through open sides or cutaway-like gaps; the broad ground-level start sits below stacked rising platforms, ending at a simple top landing.",
+      "composition": "Isometric view showing the entire short ascent: the ground-level start pad at the base, the stacked zigzagging or spiralling platform route around the tower core through the middle, and the distinct summit landing at the top.",
       "zones": [
         {
-          "name": "Start platform",
-          "role": "Broad, safe ground-level starting point for the quick climb.",
-          "where": "ground level at the base of the centered tower",
-          "size": "broad"
-        },
-        {
-          "name": "Stacked ascent",
-          "role": "Compact spiral or zig-zag sequence of physically reachable platform jumps.",
-          "where": "through the centre of the tower, rising above the start",
-          "size": "several compact stacked sections"
-        },
-        {
-          "name": "Top landing",
-          "role": "Simple end landing for the quick climb.",
-          "where": "top of the tower",
-          "size": "simple"
+          "name": "Tower course",
+          "role": "A compact vertical obby ascent with a ground-level start, stacked platform sections, and a summit landing.",
+          "where": "Centre of the map, rising vertically from the base to the top.",
+          "size": "Small, narrow footprint"
         }
       ],
       "paths": [
         {
-          "from": "Start platform",
-          "to": "Stacked ascent",
-          "kind": "track"
-        },
-        {
-          "from": "Stacked ascent",
-          "to": "Top landing",
+          "from": "Ground-level start pad",
+          "to": "Summit landing",
           "kind": "track"
         }
       ],
-      "terrain": "Solid candy-colour floors and platforms in bright pink, cyan, yellow, purple, and lime.",
-      "props": [
-        {
-          "name": "accent rails",
-          "count": -1,
-          "where": "along the tower course"
-        },
-        {
-          "name": "outer tower shell or open structural frame",
-          "count": -1,
-          "where": "around the course"
-        }
-      ],
-      "boundary": "The outer tower shell or open structural frame bounds the enclosed tower volume while leaving open sides or cutaway-like gaps for readability.",
+      "terrain": "Open air surrounds the route. A simple solid tower frame or central column anchors the stacked platform sections.",
+      "props": [],
+      "boundary": "The small tower course is clearly bounded within its narrow footprint.",
       "scale_band": "small",
-      "theme": "cheerful, minimal, silly bright candy-colour obby architecture"
+      "theme": "Silly, clean, bright candy colours with playful high-contrast platform materials"
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the continuously connected platform chain needs physics-legal jump spacing.",
+      "why": "the complete vertical jump chain must remain connected and physics-legal before the isometric view dresses it.",
       "set_piece": false
     },
     "route": [
@@ -97,7 +89,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

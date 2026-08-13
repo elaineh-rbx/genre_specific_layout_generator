@@ -19,7 +19,7 @@
     }
   ],
   "scene_prompt": "Create a 3D obby map as a plain, neutral classic colorful Roblox-style course: a finite 20-stage platform route that progresses from easier sections to noticeably more difficult sections, ending at a finish area. Keep the overall course compact and plainly playable, sized for roughly 10–15 minutes to complete.",
-  "blob": "### Genre\nThe dominant genre is Obby & Platformer: the author specifies a finite course of escalating movement challenges ending at a finish. There is no secondary genre.\n\n### Shape and preset\nUse `course-flat`, matching the Classic Obby preset. This is a compact, mostly level 20-stage course whose difficulty rises through denser and more demanding platform sequences rather than through a tower ascent or natural terrain. The preset remains recognisable; omit its unrequested moving-obstacle emphasis.\n\n### Config requirements\nUse visible `path-track` for one clearly ordered chain of jumpable platforms through all 20 stages. Use visible `obstacle-jump` for increasingly difficult gaps, stepped platforms, wraparounds, and precision landings. Use visible `hazard-kill` for the simple colorful hazard surfaces and void-fall risk between safe platforms. Use `checkpoint-respawn` as both visible geometry and invisible respawn placement: flat, enclosed safe pads placed at sensible stage breaks. Use `winner-zone` as a visible finish platform and an invisible completion trigger at the final stage. These invisible respawn and completion markers are layout-only and must not appear in the render.\n\n### Layout components\nBegin with a small start pad at the near edge, leading immediately into 20 numbered-feeling but unlabeled sequential stages. The first several stages use broad, closely spaced colored blocks and generous safe landings. Middle stages tighten gaps and add stepped climbs, longer jumps, and wraparound routes. The last stages are the most precise, with narrow colored platforms, longer gaps within legal jump spacing, and hazards below or beside the route. Break the chain with checkpoint pads at natural difficulty transitions, each visibly larger and safer than its adjacent challenge. Place a distinct raised finish area beyond stage 20, with a celebratory arch or simple trophy-like marker. Keep all geometry on a flat neutral base with open edges and no buildings, terrain, water, or side zones. Compose the full route as a compact left-to-right or shallow zigzag progression, readable at a glance without self-crossing.\n\n### Render order\nUse `topdown`: an invalid jump chain would make the course unplayable, so the connected stage order and legal gaps must be established in plan before the isometric dressing pass.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the requested 10–15 minute completion time and compact 20-stage count. Theme is classic colorful Roblox obby: plain bright blocks, simple hazards, clean neutral presentation. Apply `P6` because the ordered platform route and every critical jump gap must be valid by construction.",
+  "blob": "### Genre\nThe dominant genre is Obby & Platformer: a finite, self-paced obstacle course whose challenge escalates across its stated 20 stages.\n\n### Shape and preset\nUse `course-flat`, matching the Classic Obby preset. It is one compact sequential platform course on a broadly level base, with difficulty increasing through obstacle design rather than a tower or hillside ascent.\n\n### Config requirements\nUse `path-track` as a clearly ordered chain of simple colorful platforms, with each successive stage visibly leading to the next. Use `obstacle-jump` for progressively tighter gaps, narrower landings, wrap-arounds, and more demanding stepped jumps. Use `checkpoint-respawn` as flat, enclosed safe pads between sections. Use `winner-zone` as the distinct finish area at the route endpoint. Do not add contact-lethal hazards merely because the course has fall hazards; failure is primarily falling from the platform route.\n\n### Layout requirements\nPlace `checkpoint-respawn` pads at the end of each of stages 1–19, immediately after that stage’s final challenge and before the next stage begins, for 19 intermediate recovery points. Place one `winner-zone` trigger on the final platform of stage 20, beyond its last obstacle, as the course finish. Nothing else needs placed.\n\n### Layout components\nBuild 20 compact sequential stages, beginning with wide, forgiving jumps and clear spacing, then steadily reducing landing margins and combining jump patterns so every later stage is noticeably harder than the last. A continuous colorful platform track links all stages in one readable direction. Each stage should have a small safe landing/checkpoint platform before the following stage. The final zone is a larger celebratory finish platform after stage 20. Use simple bright Roblox primary-color platforms and neutral void surroundings; keep props minimal, with no terrain, buildings, water, or side areas. Bound the playable route through open fall-away space rather than enclosing it. Compose the map as a legible diagonal or gently bending progression so the early, middle, and difficult late sections read as one compact course.\n\n### Render order\nUse `authored_plan` first and treat it as authoritative, because the 20-stage critical jump chain must be physics-valid and continuously connected; the rendered views only dress that computed course.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the requested compact 10–15 minute completion time. Theme is plain neutral classic colorful Roblox obby: clean geometric platforms and simple visual contrast. Use `P6` because the full progression route and every critical jump gap must be valid by construction.",
   "spec": {
     "genre": "Obby & Platformer",
     "secondary": [],
@@ -29,114 +29,105 @@
     "options": [
       {
         "id": "path-track",
-        "text": "one clearly ordered chain of jumpable platforms through all 20 numbered-feeling but unlabeled sequential stages, arranged as a compact left-to-right or shallow zigzag progression without self-crossing",
-        "visible": true,
-        "count": 20
-      },
-      {
-        "id": "obstacle-jump",
-        "text": "increasingly difficult gaps, stepped platforms, wraparounds, and precision landings: broad close blocks early, tighter gaps and climbs in the middle, then narrow platforms and longer legal jumps at the end",
+        "text": "A clearly ordered chain of simple colorful platforms, with each successive stage visibly leading to the next.",
         "visible": true,
         "count": -1
       },
       {
-        "id": "hazard-kill",
-        "text": "simple colorful hazard surfaces and void-fall risk below or beside the route between safe platforms",
+        "id": "obstacle-jump",
+        "text": "Progressively tighter gaps, narrower landings, wrap-arounds, and more demanding stepped jumps.",
         "visible": true,
         "count": -1
       },
       {
         "id": "checkpoint-respawn",
-        "text": "flat enclosed safe checkpoint pads at natural difficulty transitions, visibly larger and safer than adjacent challenges, with invisible respawn placement",
+        "text": "Flat, enclosed safe pads between sections, with a small safe landing/checkpoint platform before each following stage.",
         "visible": true,
-        "count": -1
+        "count": 19
       },
       {
         "id": "winner-zone",
-        "text": "a distinct raised finish platform beyond stage 20 with a celebratory arch or simple trophy-like marker, plus an invisible completion trigger",
+        "text": "A distinct larger celebratory finish platform at the route endpoint after stage 20.",
         "visible": true,
-        "count": -1
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "checkpoint-respawn",
+        "text": "Flat, enclosed safe pads at the end of each of stages 1–19, immediately after that stage's final challenge and before the next stage begins.",
+        "count": 19,
+        "where": "At the end of stages 1–19, immediately after each stage's final challenge and before the following stage."
+      },
+      {
+        "id": "winner-zone",
+        "text": "One finish trigger on the final platform of stage 20, beyond its last obstacle.",
+        "count": 1,
+        "where": "On the final platform of stage 20, beyond its last obstacle."
       }
     ],
     "layout": {
-      "composition": "A compact full route reads at a glance from the near-edge start pad across a left-to-right or shallow zigzag chain: broad early blocks lead through tighter middle climbs and wraparounds to precise late platforms, ending at the raised finish beyond stage 20.",
+      "composition": "A compact legible diagonal or gently bending progression through open neutral void, with early forgiving stages leading through middle sections to visibly difficult late stages and the celebratory finish at the endpoint.",
       "zones": [
         {
-          "name": "Start pad",
-          "role": "Begins the course and leads immediately into the platform chain.",
-          "where": "near edge",
-          "size": "small"
+          "name": "Stages 1–6",
+          "role": "Early course sections with wide, forgiving jumps and clear spacing.",
+          "where": "Start of the diagonal or gently bending route.",
+          "size": "compact"
         },
         {
-          "name": "Early stages",
-          "role": "Broad, closely spaced colored blocks with generous safe landings.",
-          "where": "first several stages after the start",
-          "size": ""
+          "name": "Stages 7–13",
+          "role": "Middle course sections with steadily reduced landing margins and combined jump patterns.",
+          "where": "Middle of the continuous route.",
+          "size": "compact"
         },
         {
-          "name": "Middle stages",
-          "role": "Tighter gaps, stepped climbs, longer jumps, and wraparound routes.",
-          "where": "middle of the chain",
-          "size": ""
-        },
-        {
-          "name": "Late stages",
-          "role": "The most precise challenge, with narrow colored platforms, longer legal gaps, and hazards below or beside the route.",
-          "where": "last stages before the finish",
-          "size": ""
-        },
-        {
-          "name": "Checkpoint pads",
-          "role": "Safe breaks at natural difficulty transitions, including invisible respawn placements.",
-          "where": "between challenge sections along the chain",
-          "size": "larger and safer than adjacent challenges"
+          "name": "Stages 14–20",
+          "role": "Late course sections with the most demanding jump patterns, ending at the finish.",
+          "where": "End of the continuous route.",
+          "size": "compact"
         },
         {
           "name": "Finish area",
-          "role": "Final visible finish platform and invisible completion trigger.",
-          "where": "beyond stage 20",
-          "size": "raised"
+          "role": "Celebratory endpoint beyond stage 20's final obstacle.",
+          "where": "Route endpoint.",
+          "size": "larger"
         }
       ],
       "paths": [
         {
-          "from": "Start pad",
-          "to": "Early stages",
+          "from": "Stages 1–6",
+          "to": "Stages 7–13",
           "kind": "track"
         },
         {
-          "from": "Early stages",
-          "to": "Middle stages",
+          "from": "Stages 7–13",
+          "to": "Stages 14–20",
           "kind": "track"
         },
         {
-          "from": "Middle stages",
-          "to": "Late stages",
-          "kind": "track"
-        },
-        {
-          "from": "Late stages",
+          "from": "Stages 14–20",
           "to": "Finish area",
           "kind": "track"
         }
       ],
-      "terrain": "Flat neutral base with simple colorful hazard surfaces and open void-fall edges; no natural terrain or water.",
+      "terrain": "No terrain; simple bright Roblox primary-color platforms over neutral void surroundings.",
       "props": [
         {
-          "name": "celebratory arch or simple trophy-like marker",
+          "name": "Simple colorful geometric platforms",
           "count": -1,
-          "where": "finish area"
+          "where": "Across the continuous 20-stage platform track"
         }
       ],
-      "boundary": "Open edges around the compact course, with void-fall risk; no buildings or side zones.",
+      "boundary": "The playable route is bounded by open fall-away space rather than enclosing geometry.",
       "scale_band": "small",
-      "theme": "Classic colorful Roblox obby; plain bright blocks, simple hazards, clean neutral presentation."
+      "theme": "Plain neutral classic colorful Roblox obby; clean geometric platforms and simple visual contrast."
     },
     "render": {
-      "first": "topdown",
-      "then": "isometric",
-      "authoritative": "topdown",
-      "why": "an invalid jump chain would make the course unplayable.",
+      "first": "authored_plan",
+      "then": "topdown",
+      "authoritative": "authored_plan",
+      "why": "the 20-stage critical jump chain must be physics-valid and continuously connected.",
       "set_piece": false
     },
     "route": [
@@ -148,10 +139,12 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",
   "first": "topdown",
-  "mapper_notes": []
+  "mapper_notes": [
+    "blob asked for authored_plan first; the route ['P6'] gives topdown"
+  ]
 }

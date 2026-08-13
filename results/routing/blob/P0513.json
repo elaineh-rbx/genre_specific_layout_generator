@@ -19,7 +19,7 @@
     }
   ],
   "scene_prompt": "Create a 3D game map centered on a modern city high-rise, with an exterior climbing route running up its facade to a rooftop. The roof is a broad open jumping area for multiple players, with the city ground far below and clear space around the tower for long jumps or falls.",
-  "blob": "### Genre\nThe dominant genre is Obby & Platformer: the exterior ascent is a fail-able movement challenge. There is no secondary genre; the rooftop social jumping is the course destination, not a separate game mode.\n\n### Shape and preset\nUse `course-tower`, interpreted as a vertical exterior climb up one modern high-rise facade rather than an internal spiral. Match the Tower Obby preset in its tall ascent-to-roof form, but omit its unsupported timed obstacles and reward-specific dressing; the prompt’s simple climbing route takes precedence.\n\n### Config requirements\n`path-track` is visible geometry: an ordered chain of exterior climbing ledges, narrow maintenance platforms, facade grips, and balcony-like landings rises continuously from street level to the roof. `obstacle-climb` is visible geometry: the route uses vertical wall sections, ladders, pipes, window ledges, and short wrap-around moves on the building exterior. No invisible configuration options are required.\n\n### Layout components\nThe map is dominated by one tall modern city high-rise centered in frame. At its base, provide a compact street-level start apron facing the climb. Run the primary route visibly upward on the most readable facade, beginning with broad low ledges and progressing through tighter staggered platforms, exposed pipes, window-washing rails, and side-corner traversals. Keep every critical jump and climb connection clear and physically legal. A few wider facade landings break the ascent and give climbers safe visual pauses without becoming separate interiors.\n\nAt the summit, create a broad, flat, open rooftop occupying the tower crown. It is the main multiplayer jumping area, with a low parapet, rooftop mechanical housings kept around the perimeter, and generous unobstructed edges facing open air. The city ground lies far below, with surrounding streets and simplified neighboring buildings providing scale but not competing routes. The tower is the clear boundary and focal object; open sky surrounds it. Compose the climb as a strong bottom-to-top vertical line, with the roof clearly visible as the destination.\n\n### Render order\nUse `topdown`: the vertical climbing chain must remain connected and clearable, so its topology is planned before the isometric facade dressing.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by one dense vertical tower and its rooftop play area. Theme: clean modern city high-rise, glass, steel, concrete, rooftop utilities, and distant urban streets. Apply `P6` because the climb route must be valid by construction, and `P2` because the building’s stacked floors, ledges, and roof occupy vertically overlapping surfaces.",
+  "blob": "### Genre\nThe dominant genre is Obby & Platformer: players attempt a failure-capable climb through discrete exterior traversal challenges before reaching the roof. The social rooftop jump space is secondary to that climb and does not add a second genre.\n\n### Shape and preset\nUse `course-tower`, matching the Tower Obby preset. Its stacked ascent fits a vertical high-rise facade with route segments directly above one another. Retain the preset’s climbing emphasis but replace its timed-obstacle and reward assumptions with the prompt’s exterior climbing route and rooftop play area.\n\n### Config requirements\nUse `path-track` as a continuous ordered chain of exterior ledges, wall-mounted grips, narrow platforms, and facade-side climbing elements rising to the roof. Use `obstacle-climb` for the climbable architectural features attached to the modern tower’s outer walls. Use `checkpoint-respawn` as visible safe landing platforms integrated at major facade rest sections. The broad open roof needs no additional image option: it is the final course platform and shared jumping area.\n\n### Layout requirements\nPlace `checkpoint-respawn` pads at the ground-level start and at each major vertical section of the ascent, against broad exterior ledges where a failed climber can safely resume; use roughly four evenly spaced climb sections from street to roof. No pickups, emitters, or separate end-reward placement are required.\n\n### Layout components\nThe single central structure is a tall modern city high-rise, with glass-and-steel facade panels, vertical columns, recessed service ledges, and a flat broad rooftop. At street level, create a compact start apron at the tower base. The exterior route begins on this apron and climbs one visible facade face in a clear upward zigzag, alternating between wall grips, projecting ledges, short wrap-around corners, ladder-like maintenance elements, and small rest platforms. Keep every critical jump and climb transition physically legal. The roof occupies the top of the tower as a large unobstructed shared landing and jumping deck, enclosed only by low edge detailing that does not block the open skyline. Ground and surrounding city blocks sit far below; leave generous clear air around the tower so falls read as dramatic. Frame the entire tower from an elevated isometric three-quarter view, with the route legible from base to roof.\n\n### Render order\nUse `topdown`: the vertically stacked, failure-sensitive climb chain must be topology-checked before the isometric image dresses the high-rise.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by the full-height tower ascent and rooftop multiplayer area. Theme: clean modern urban high-rise, glass, steel, concrete, and distant city streets. Use `P2` because the exterior route’s ledges and platforms stack above one another; use `P6` because the climb route must be valid by construction.",
   "spec": {
     "genre": "Obby & Platformer",
     "secondary": [],
@@ -29,104 +29,115 @@
     "options": [
       {
         "id": "path-track",
-        "text": "An ordered chain of exterior climbing ledges, narrow maintenance platforms, facade grips, and balcony-like landings rises continuously from street level to the roof.",
+        "text": "A continuous ordered chain of exterior ledges, wall-mounted grips, narrow platforms, and facade-side climbing elements rising to the roof.",
         "visible": true,
         "count": -1
       },
       {
         "id": "obstacle-climb",
-        "text": "Vertical wall sections, ladders, pipes, window ledges, and short wrap-around moves on the building exterior.",
+        "text": "Climbable architectural features attached to the modern tower's outer walls.",
         "visible": true,
         "count": -1
+      },
+      {
+        "id": "checkpoint-respawn",
+        "text": "Visible safe landing platforms integrated at major facade rest sections, at the ground-level start and each of roughly four evenly spaced climb sections.",
+        "visible": true,
+        "count": 4
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "checkpoint-respawn",
+        "text": "Safe landing platforms at the ground-level start and each major vertical section of the ascent.",
+        "count": 4,
+        "where": "Against broad exterior ledges at the compact start apron and at major facade rest sections, so a failed climber can safely resume."
       }
     ],
     "layout": {
-      "composition": "One tall modern city high-rise is centered in frame, with the climb forming a strong bottom-to-top vertical line on its most readable facade. A street-level start apron sits at the base, while the broad rooftop is clearly visible at the summit as the destination. Open sky surrounds the tower; distant streets and simplified neighboring buildings lie far below.",
+      "composition": "Elevated isometric three-quarter view framing the entire tower, with the compact start apron at the base, a clear upward-zigzag climbing route across one visible facade face, and the broad open rooftop deck at the top; distant city blocks and streets sit far below around generous clear air.",
       "zones": [
         {
-          "name": "Street-level start apron",
-          "role": "Starting area facing the exterior climb.",
-          "where": "At the base of the tower",
+          "name": "Start apron",
+          "role": "Ground-level starting area for the exterior climb.",
+          "where": "At the tower base at street level.",
           "size": "compact"
         },
         {
-          "name": "Exterior climbing route",
-          "role": "Fail-able vertical ascent from street level to the roof through ledges, platforms, pipes, rails, and corner traversals.",
-          "where": "Up the most readable tower facade",
-          "size": ""
+          "name": "Facade ascent",
+          "role": "Failure-capable exterior climbing route through discrete traversal challenges.",
+          "where": "Up one visible face of the central tower, from base to roof.",
+          "size": "full-height tower ascent with roughly four vertical climb sections"
         },
         {
-          "name": "Facade safe landings",
-          "role": "Safe visual pauses during the ascent without becoming separate interiors.",
-          "where": "Along the exterior climbing route",
-          "size": "a few wider landings"
-        },
-        {
-          "name": "Rooftop jumping area",
-          "role": "Main multiplayer jumping area and course destination.",
-          "where": "At the tower crown",
-          "size": "broad, flat, open"
+          "name": "Rooftop deck",
+          "role": "Final course platform and shared open jumping area for multiple players.",
+          "where": "On top of the tower.",
+          "size": "large and broad"
         }
       ],
       "paths": [
         {
-          "from": "Street-level start apron",
-          "to": "Facade safe landings",
-          "kind": "track"
-        },
-        {
-          "from": "Facade safe landings",
-          "to": "Rooftop jumping area",
+          "from": "Start apron",
+          "to": "Rooftop deck",
           "kind": "track"
         }
       ],
-      "terrain": "City ground far below with surrounding streets and simplified neighboring buildings; open sky around the tower.",
+      "terrain": "Distant city ground and surrounding city blocks far below the tower, with generous clear air around the facade for dramatic falls.",
       "props": [
         {
-          "name": "Modern high-rise facade",
+          "name": "Tall modern city high-rise",
           "count": 1,
-          "where": "Centered in frame"
+          "where": "Central structure"
         },
         {
-          "name": "Rooftop mechanical housings",
+          "name": "Glass-and-steel facade panels",
           "count": -1,
-          "where": "Around the rooftop perimeter"
+          "where": "Across the tower exterior"
         },
         {
-          "name": "Low parapet",
+          "name": "Vertical columns",
           "count": -1,
-          "where": "Around the rooftop edge"
+          "where": "Along the facade"
         },
         {
-          "name": "Surrounding simplified neighboring buildings",
+          "name": "Recessed service ledges",
           "count": -1,
-          "where": "Far below around the tower"
+          "where": "On the climbing facade"
+        },
+        {
+          "name": "Wall grips, projecting ledges, wrap-around corners, ladder-like maintenance elements, and small rest platforms",
+          "count": -1,
+          "where": "Alternating along the upward-zigzag exterior route"
+        },
+        {
+          "name": "Low rooftop edge detailing",
+          "count": -1,
+          "where": "Around the rooftop deck edge"
         }
       ],
-      "boundary": "The tower is the clear boundary and focal object; open sky surrounds it.",
-      "scale_band": "medium",
-      "theme": "Clean modern city high-rise: glass, steel, concrete, rooftop utilities, and distant urban streets."
+      "boundary": "The rooftop is enclosed only by low edge detailing that leaves the skyline open; otherwise the tower is surrounded by clear air and distant city below.",
+      "scale_band": "large",
+      "theme": "Clean modern urban high-rise; glass, steel, concrete, and distant city streets."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "The vertical climbing chain must remain connected and clearable.",
+      "why": "the vertically stacked, failure-sensitive climb chain must be topology-checked before the high-rise is dressed.",
       "set_piece": false
     },
     "route": [
-      "P6",
-      "P2"
+      "P2",
+      "P6"
     ],
-    "notes": [
-      "Tower Obby preset is matched, but its unsupported timed obstacles and reward-specific dressing are omitted."
-    ],
+    "notes": [],
     "scene_prompt": "Create a 3D game map centered on a modern city high-rise, with an exterior climbing route running up its facade to a rooftop. The roof is a broad open jumping area for multiple players, with the city ground far below and clear space around the tower for long jumps or falls."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

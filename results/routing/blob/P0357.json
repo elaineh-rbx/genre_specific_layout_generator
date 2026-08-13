@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a 3D first-person shooter map set in a bright, stylized forest, with open navigable ground among trees and scattered ammo pickups placed on the forest floor. Frame the view for a visible blaster in the foreground, with clear nearby spaces around the player for enemy approaches.",
-  "blob": "### Genre\nThe dominant genre is Shooter, specifically an endless PvE survival encounter against bots in a forest.\n\n### Shape and preset\nUse `open-battlefield`: a broad, freely navigable woodland rather than a lane-based combat map. The closest preset is PvE Shooter, but the forest’s open approach space overrides its `lane-network` shape and most of its bundled options, so the preset is none.\n\n### Config requirements\n`cover-los` is visible geometry: scattered tree trunks, low rocks, and foliage clumps break sightlines and create short cover-to-cover encounters without forming formal lanes. `spawner-npc` is invisible layout: distributed bot-entry markers around the playable forest clearings, placed after segmentation and not rendered. `collectible-loot` is invisible layout: ammo pickup placement markers distributed across the forest floor, also omitted from the image render.\n\n### Layout components\nBuild one medium-sized forest combat space with a large central clearing and several smaller connected clearings around it. Keep the central area open enough for nearby enemy approaches, while irregular belts of bright stylized trees, bushes, rocks, and fallen logs separate sightlines between clearings. Use broad, walkable dirt-and-grass routes between the clearings rather than corridors; these routes should loop around tree clusters so players can reposition instead of being trapped. Place ammo pickup markers along the outer edges of clearings and beside cover, not in dense foliage. Terrain is mostly level, with gently varied ground texture only. The boundary is a dense wall of trees and undergrowth that visually closes the forest play space. Compose the scene from a low player-height view into the central clearing, with readable open ground in the foreground and layered tree cover beyond.\n\n### Render order\nUse `isometric`: the open forest has no critical route or carveable topology whose failure would make play impossible, so the visual woodland composition should lead.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by multiple maneuvering clearings within one continuous forest. Theme is bright, stylized, readable woodland combat. Pipeline modifier: `P0`, because the terrain remains one non-overhanging surface and no extra capture path is forced.",
+  "blob": "### Genre\nThe dominant genre is Shooter, specifically an endless PvE shooter: the player survives repeated bot attacks in a forest. No secondary genre is needed.\n\n### Shape and preset\nUse `open-battlefield`, taking the open forest ground over the PvE Shooter preset’s `lane-network`; this scene has free enemy approaches through woodland rather than defined combat lanes. Preset: none, because the open-field shape and lack of breachable structures or lane chokepoints make the PvE Shooter preset no longer recognisable.\n\n### Config requirements\nNo named image-config option is required beyond the described forest geometry. Render a bright, stylized woodland with tree trunks, canopies, low shrubs, and broad uncluttered patches of ground; preserve clear short-range approach routes between tree clusters. Do not draw bot spawn markers or ammo as image-config geometry.\n\n### Layout requirements\nUse `spawner-npc` for continuous bot origins: place dynamic valid-ground spawn positions in a ring approximately 20 studs from the current player position, selecting open forest floor and avoiding positions inside trunks, dense brush, or immediate direct sightlines. Use `collectible-loot` for ammunition pickups: distribute them as small pickup nodes on the forest floor, concentrated around accessible clearings and tree-edge paths rather than embedded in obstacles. The endless mode needs no terminal objective placement.\n\n### Layout components\nBuild one medium-sized contiguous forest arena. Its central zone is a broad, mostly open clearing that gives the player readable nearby space in every direction. Surround it with irregular clusters of stylized trees, shrubs, and occasional small secondary clearings, spaced to create several navigable approach corridors without becoming formal lanes. The ground is gently varied grass and dirt, but remains broadly level and continuously walkable. Scatter ammo pickup locations across the clearing edges and along the open gaps between tree clusters. Use a dense outer tree line and low natural embankment as the map boundary, while keeping the interior readable. Compose from a low, first-person-height view facing across the central clearing, with foreground trees framing several visible enemy approach routes and open ground preserved near the player.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because the open ground, tree spacing, and reachable 20-stud enemy-spawn ring must remain navigable rather than being blocked by decorative forest geometry.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by a single arena large enough to support all-direction bot approaches and scattered ammo. Theme is a bright, stylized, readable forest with clean silhouettes and playful color. Pipeline modifier: `P0`, since this is one contiguous, mostly level outdoor surface with no overhangs, interior transition, or separately mapped zones.",
   "spec": {
     "genre": "Shooter",
     "secondary": [],
@@ -23,94 +23,93 @@
     "axes": {},
     "options": [
       {
-        "id": "cover-los",
-        "text": "Scattered tree trunks, low rocks, and foliage clumps break sightlines and create short cover-to-cover encounters without forming formal lanes.",
-        "visible": true,
-        "count": -1
-      },
-      {
         "id": "spawner-npc",
-        "text": "Distributed bot-entry markers around the playable forest clearings, placed after segmentation and not rendered.",
+        "text": "Continuous bot origins using dynamic valid-ground spawn positions in a ring approximately 20 studs from the current player position, selecting open forest floor and avoiding trunks, dense brush, and immediate direct sightlines.",
         "visible": false,
         "count": -1
       },
       {
         "id": "collectible-loot",
-        "text": "Ammo pickup placement markers distributed across the forest floor, omitted from the image render.",
+        "text": "Ammunition pickups distributed as small pickup nodes on the forest floor, concentrated around accessible clearings and tree-edge paths rather than embedded in obstacles.",
         "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "spawner-npc",
+        "text": "Continuous bot origins using dynamic valid-ground spawn positions in a ring approximately 20 studs from the current player position, selecting open forest floor and avoiding trunks, dense brush, and immediate direct sightlines.",
+        "count": -1,
+        "where": "In a ring approximately 20 studs from the current player position, on open forest floor and outside trunks, dense brush, and immediate direct sightlines."
+      },
+      {
+        "id": "collectible-loot",
+        "text": "Ammunition pickups distributed as small pickup nodes on the forest floor, concentrated around accessible clearings and tree-edge paths rather than embedded in obstacles.",
+        "count": -1,
+        "where": "On the forest floor around accessible clearing edges and along open gaps between tree clusters, not embedded in obstacles."
+      }
+    ],
     "layout": {
-      "composition": "Low player-height view into the central clearing, with readable open ground in the foreground, a visible blaster in the foreground, and layered tree cover beyond.",
+      "composition": "Low, first-person-height view facing across the central clearing, with foreground trees framing several visible enemy approach routes and open ground preserved near the player; a visible blaster is in the foreground.",
       "zones": [
         {
           "name": "Central clearing",
-          "role": "Open combat area for nearby enemy approaches.",
-          "where": "centre",
-          "size": "large"
+          "role": "Broad, mostly open player space providing readable nearby room and all-direction bot approaches.",
+          "where": "Centre of the contiguous forest arena.",
+          "size": "Broad"
         },
         {
-          "name": "Connected forest clearings",
-          "role": "Smaller maneuvering combat spaces around the central clearing.",
-          "where": "around the central clearing",
-          "size": "smaller"
+          "name": "Surrounding forest clusters",
+          "role": "Irregular stylized tree and shrub clusters create several navigable approach corridors without becoming formal lanes.",
+          "where": "Around the central clearing.",
+          "size": ""
+        },
+        {
+          "name": "Secondary clearings",
+          "role": "Occasional small open spaces within the surrounding woodland.",
+          "where": "Among the tree clusters.",
+          "size": "Small"
         }
       ],
       "paths": [
         {
           "from": "Central clearing",
-          "to": "Connected forest clearings",
+          "to": "Surrounding forest clusters",
           "kind": "open ground"
         },
         {
-          "from": "Connected forest clearings",
-          "to": "Connected forest clearings",
+          "from": "Surrounding forest clusters",
+          "to": "Secondary clearings",
           "kind": "open ground"
         }
       ],
-      "terrain": "Mostly level dirt-and-grass forest ground with gently varied ground texture only; irregular belts of bright stylized trees, bushes, rocks, and fallen logs separate sightlines between clearings.",
+      "terrain": "Gently varied grass and dirt, broadly level and continuously walkable, with bright stylized tree trunks, canopies, low shrubs, and broad uncluttered ground patches.",
       "props": [
         {
-          "name": "Bright stylized trees",
+          "name": "Stylized trees",
           "count": -1,
-          "where": "Irregular belts between clearings and as the dense outer boundary"
+          "where": "In irregular clusters surrounding the central clearing and forming the dense outer tree line."
         },
         {
-          "name": "Bushes",
+          "name": "Low shrubs",
           "count": -1,
-          "where": "Irregular belts between clearings and in the boundary undergrowth"
+          "where": "Among woodland clusters, kept clear of navigable approach routes."
         },
         {
-          "name": "Low rocks",
+          "name": "Low natural embankment",
           "count": -1,
-          "where": "Between and beside forest clearings as cover"
-        },
-        {
-          "name": "Foliage clumps",
-          "count": -1,
-          "where": "Between clearings as sightline-breaking cover"
-        },
-        {
-          "name": "Fallen logs",
-          "count": -1,
-          "where": "Between clearings as cover"
-        },
-        {
-          "name": "Visible blaster",
-          "count": -1,
-          "where": "Foreground"
+          "where": "Along the outer map boundary."
         }
       ],
-      "boundary": "A dense wall of trees and undergrowth visually closes the forest play space.",
+      "boundary": "A dense outer tree line and low natural embankment enclose the arena while keeping the interior readable.",
       "scale_band": "medium",
-      "theme": "Bright, stylized, readable woodland combat"
+      "theme": "Bright, stylized, readable forest with clean silhouettes and playful color."
     },
     "render": {
-      "first": "isometric",
-      "then": "topdown",
-      "authoritative": "isometric",
-      "why": "the open forest has no critical route or carveable topology whose failure would make play impossible.",
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "The open ground, tree spacing, and reachable 20-stud enemy-spawn ring must remain navigable rather than being blocked by decorative forest geometry.",
       "set_piece": false
     },
     "route": [
@@ -122,10 +121,12 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
-  "mapper_notes": []
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P0'] gives isometric"
+  ]
 }

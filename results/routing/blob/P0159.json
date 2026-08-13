@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a 3D multiplayer escape map set across a dense cluster of connected city blocks. Arrange buildings along intersecting streets, with a central or side park, tunnels linking parts of the block network, scattered obstacles, and accessible hiding spots within the urban layout. Include a clear starting point and multiple checkpoints distributed through the streets, buildings, park, and tunnels.",
-  "blob": "### Genre\nThe dominant genre is Survival: an endless multiplayer chase against a hostile NPC, with evasion and survival rather than a finish objective.\n\n### Shape and preset\nUse `warren-looping`, adapted into a dense outdoor-and-indoor city network whose streets, tunnels, parks, and building routes form reliable escape loops. The closest preset is none: this keeps the looping chase topology but deliberately has no escape exit and adds the specific NPC pursuit origin.\n\n### Config requirements\nUse `cover-los` as visible geometry: accessible hiding spots, street clutter, park features, recessed doorways, and tunnel alcoves interrupt the pursuer's sightlines. Use `spawner-npc` as invisible layout data: place the hostile NPC's initial and re-entry origins on navigable city ground, away from the player start. Use `building-interior` as visible geometry: selected buildings contain traversable hiding rooms and interior shortcuts. Use `settlement-density` as visible geometry: the map is a compact, built-up cluster of city blocks. Checkpoints are visible safe marker pads plus invisible respawn markers distributed through the route network.\n\n### Layout components\nBuild a medium-sized network of a few connected city blocks. Intersecting streets form the main circulation loops, with dense building frontages on their edges. Put a modest park either centrally or along one side as an open but obstacle-dotted crossing space, with trees, benches, planters, and small structures that provide hiding breaks. Run tunnels beneath or through block edges to connect otherwise distant streets and create alternate routes. Include selected accessible buildings with short interior passages and hiding rooms; do not make them dead ends. Scatter obstacles and hiding spots across streets, the park, tunnels, and interiors. Place the clear starting point at a readable edge of the network, then distribute multiple checkpoints across streets, buildings, the park, and tunnels. Enclose the playable district with continuous outer building façades, blocked roads, walls, or skyline barriers. Compose the map as a compact urban maze with visible route choices at every junction.\n\n### Render order\nUse `topdown` first and make it authoritative, because an invalid city loop or a dead-end hiding route would make NPC pursuit unfair and unplayable.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by the requested few dense connected blocks rather than a city sprawl. Theme: colorful, fun Roblox-style modern city with readable streets and playful urban props. Pipeline modifiers: `P6` because the looping chase network must be valid by construction with no trapping dead ends; `P3` because play crosses between exterior streets and enterable building interiors.",
+  "blob": "### 1. Genre\nThe dominant genre is Survival: players endlessly evade a powerful pursuing NPC, with survival distance rather than an exit as the objective.\n\n### 2. Shape and preset\nUse `warren-looping`, interpreted as a dense urban pursuit network whose streets, building passages, park paths, and tunnels form interconnected loops without dead ends. The nearest preset is 1 vs All, but use none because its escape exit contradicts the explicitly endless loop.\n\n### 3. Config requirements\nUse `cover-los` for accessible hiding spots: recessed doorways, alley clutter, interior rooms, park structures, and tunnel bends that break the pursuer’s sightline. Use `building-interior` for enterable ground-floor building spaces connected to the street network; these provide both hiding routes and checkpoint locations.\n\n### 4. Layout requirements\nUse `spawner-npc` for one Invincible origin positioned away from the player start, with access into the connected street network rather than a sealed side area. Use `checkpoint-respawn` for multiple safe checkpoint pads: distribute them across streets, building interiors, the park, and tunnels, with each placed at a readable junction or sheltered landing rather than inside a hiding dead end. The clear starting point is the primary respawn area at one edge of the city network.\n\n### 5. Layout components\nBuild a few dense, connected city blocks. Put the starting plaza on an outer block, then run intersecting streets through commercial and residential building fronts toward a central or side park. Place several enterable buildings along the streets, each with short interior passages, rooms, and alternate exits. Thread tunnels beneath selected block edges to connect distant intersections and create pursuit shortcuts. The park is a medium open zone with paths, trees, small structures, and scattered obstacles; streets and alleys provide the main circulation. Keep every route looped back into at least one other route, with hiding alcoves distributed at corners and inside buildings. Bound the playable district with building facades, blocked roads, and tunnel closures. Compose the map as a readable compact city grid, with the park as the visual breathing space amid denser blocks.\n\n### 6. Render order\nUse `topdown` first and treat it as authoritative, because the chase map must preserve valid loop connectivity and avoid unfair dead ends before the isometric city dressing is generated.\n\n### 7. Scale, theme, and pipeline cost\nScale is medium, driven by a few connected blocks designed for dense replayable pursuit rather than a sprawling city. Theme: colorful Roblox-style comic-book superhero city, lively but tense. Pipeline modifiers: `P3` because players move repeatedly between exterior streets and enterable building and tunnel interiors; `P6` because the zero-dead-end looping pursuit topology must be valid by construction.",
   "spec": {
     "genre": "Survival",
     "secondary": [],
@@ -24,163 +24,150 @@
     "options": [
       {
         "id": "cover-los",
-        "text": "Accessible hiding spots, street clutter, park features, recessed doorways, and tunnel alcoves interrupt the pursuer's sightlines.",
+        "text": "Accessible hiding spots: recessed doorways, alley clutter, interior rooms, park structures, and tunnel bends that break the pursuer's sightline.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "building-interior",
+        "text": "Enterable ground-floor building spaces connected to the street network, providing hiding routes and checkpoint locations.",
         "visible": true,
         "count": -1
       },
       {
         "id": "spawner-npc",
-        "text": "Hostile NPC initial and re-entry origins on navigable city ground, away from the player start.",
+        "text": "One Invincible origin positioned away from the player start, with access into the connected street network rather than a sealed side area.",
         "visible": false,
-        "count": 2
-      },
+        "count": 1
+      }
+    ],
+    "layout_placement": [
       {
-        "id": "building-interior",
-        "text": "Selected buildings contain traversable hiding rooms and interior shortcuts that do not become dead ends.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "settlement-density",
-        "text": "A compact, built-up cluster of dense city blocks with building frontages along intersecting streets.",
-        "visible": true,
-        "count": -1
+        "id": "spawner-npc",
+        "text": "One Invincible origin positioned away from the player start, with access into the connected street network rather than a sealed side area.",
+        "count": 1,
+        "where": "Away from the starting plaza, with access into the connected street network."
       }
     ],
     "layout": {
-      "composition": "A compact urban maze of connected city blocks, with intersecting streets as the main loops, dense frontages around their edges, a modest park centrally or along one side, and tunnels and interiors creating visible alternate route choices at junctions.",
+      "composition": "A readable compact city grid of dense connected blocks fills the frame, with the starting plaza on an outer block and a central or side park as the visual breathing space amid the denser streets, buildings, alleys, and tunnels.",
       "zones": [
         {
-          "name": "Starting Edge",
-          "role": "Clear readable player starting point.",
-          "where": "At an edge of the route network",
+          "name": "Starting Plaza",
+          "role": "Clear starting point and primary respawn area.",
+          "where": "One edge of the city network on an outer block.",
           "size": ""
         },
         {
-          "name": "City Block Loop Network",
-          "role": "Main chase circulation through intersecting streets, building edges, obstacles, and hiding spots.",
-          "where": "Centre of the playable district",
-          "size": "Medium-sized network of a few connected blocks"
+          "name": "Connected City Blocks",
+          "role": "Dense replayable pursuit network of intersecting streets, commercial and residential fronts, alleys, and hiding alcoves.",
+          "where": "Across the compact city grid.",
+          "size": "a few dense connected blocks"
         },
         {
-          "name": "Park Crossing",
-          "role": "Open but obstacle-dotted crossing space with sightline breaks and hiding opportunities.",
-          "where": "Centrally or along one side",
-          "size": "Modest"
-        },
-        {
-          "name": "Tunnel Routes",
-          "role": "Alternate routes connecting otherwise distant streets beneath or through block edges.",
-          "where": "Beneath or through block edges",
+          "name": "Enterable Buildings",
+          "role": "Ground-floor hiding routes with short interior passages, rooms, alternate exits, and checkpoint locations.",
+          "where": "Several along the streets.",
           "size": ""
         },
         {
-          "name": "Accessible Building Routes",
-          "role": "Short interior passages and hiding rooms that connect back into the chase network rather than ending it.",
-          "where": "Selected buildings around the streets",
-          "size": ""
+          "name": "Park",
+          "role": "Medium open pursuit zone with paths, trees, small structures, scattered obstacles, and checkpoints.",
+          "where": "Central or side of the block network.",
+          "size": "medium"
         },
         {
-          "name": "Checkpoint Network",
-          "role": "Visible safe marker pads and invisible respawn markers distributed through the route network.",
-          "where": "Across streets, buildings, the park, and tunnels",
-          "size": "Multiple"
+          "name": "Tunnels",
+          "role": "Pursuit shortcuts connecting distant intersections and holding checkpoints.",
+          "where": "Beneath selected block edges.",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Starting Edge",
-          "to": "City Block Loop Network",
+          "from": "Starting Plaza",
+          "to": "Connected City Blocks",
           "kind": "street"
         },
         {
-          "from": "City Block Loop Network",
-          "to": "Park Crossing",
-          "kind": "open ground"
+          "from": "Connected City Blocks",
+          "to": "Park",
+          "kind": "street"
         },
         {
-          "from": "City Block Loop Network",
-          "to": "Tunnel Routes",
-          "kind": "tunnel"
-        },
-        {
-          "from": "City Block Loop Network",
-          "to": "Accessible Building Routes",
+          "from": "Connected City Blocks",
+          "to": "Enterable Buildings",
           "kind": "corridor"
         },
         {
-          "from": "Tunnel Routes",
-          "to": "City Block Loop Network",
+          "from": "Connected City Blocks",
+          "to": "Tunnels",
           "kind": "tunnel"
         },
         {
-          "from": "Accessible Building Routes",
-          "to": "City Block Loop Network",
-          "kind": "corridor"
+          "from": "Tunnels",
+          "to": "Connected City Blocks",
+          "kind": "tunnel"
         }
       ],
-      "terrain": "Modern urban street ground with compact city blocks, a modest park, and tunnels beneath or through block edges.",
+      "terrain": "Compact urban ground with intersecting streets and alleys; a park with paths, trees, small structures, and scattered obstacles.",
       "props": [
         {
-          "name": "Dense building frontages",
+          "name": "recessed doorways",
           "count": -1,
-          "where": "Along the edges of intersecting streets"
+          "where": "At street and building corners."
         },
         {
-          "name": "Trees",
+          "name": "alley clutter",
           "count": -1,
-          "where": "Park crossing"
+          "where": "In alleys between connected blocks."
         },
         {
-          "name": "Benches",
+          "name": "hiding alcoves",
           "count": -1,
-          "where": "Park crossing"
+          "where": "At corners and inside buildings."
         },
         {
-          "name": "Planters",
+          "name": "trees",
           "count": -1,
-          "where": "Park crossing"
+          "where": "In the park."
         },
         {
-          "name": "Small park structures",
+          "name": "small park structures",
           "count": -1,
-          "where": "Park crossing"
+          "where": "In the park."
         },
         {
-          "name": "Street, park, tunnel, and interior obstacles",
+          "name": "scattered obstacles",
           "count": -1,
-          "where": "Across the route network"
-        },
-        {
-          "name": "Visible checkpoint safe marker pads",
-          "count": -1,
-          "where": "Streets, buildings, park, and tunnels"
+          "where": "In the park and urban layout."
         }
       ],
-      "boundary": "Continuous outer building façades, blocked roads, walls, or skyline barriers enclose the playable district.",
+      "boundary": "Building facades, blocked roads, and tunnel closures bound the playable district.",
       "scale_band": "medium",
-      "theme": "Colorful, fun Roblox-style modern city with readable streets and playful urban props."
+      "theme": "Colorful Roblox-style comic-book superhero city, lively but tense."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "An invalid city loop or dead-end hiding route would make NPC pursuit unfair and unplayable.",
+      "why": "The chase map must preserve valid loop connectivity and avoid unfair dead ends.",
       "set_piece": false
     },
     "route": [
-      "P6",
-      "P3"
+      "P3",
+      "P6"
     ],
     "notes": [
-      "Checkpoints are retained as visible safe marker pads and invisible respawn markers in the layout; no canonical Survival checkpoint option was named in the blob."
+      "dropped option 'checkpoint-respawn': not in Survival",
+      "dropped placement 'checkpoint-respawn': not in Survival"
     ],
     "scene_prompt": "Create a 3D multiplayer escape map set across a dense cluster of connected city blocks. Arrange buildings along intersecting streets, with a central or side park, tunnels linking parts of the block network, scattered obstacles, and accessible hiding spots within the urban layout. Include a clear starting point and multiple checkpoints distributed through the streets, buildings, park, and tunnels."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

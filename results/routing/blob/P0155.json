@@ -14,152 +14,176 @@
     }
   ],
   "scene_prompt": "Create a 3D horror survival map set inside a sprawling mansion that players can get lost in, with many connected rooms, long hallways, and search areas. Scatter five physical keys throughout separate parts of the house, with small paper clues placed in rooms or corridors indicating their locations. Place a single locked escape door at the mansion’s exit, opening from the interior to end the route.",
-  "blob": "### Genre\nThe dominant genre is Survival: the original request is a chase-and-escape survival game, while the scene is its mansion search space. There is no secondary genre.\n\n### Shape and preset\nUse `warren-looping`, a dense indoor mansion warren whose rooms and halls reconnect so players can search without being cornered by dead ends. The closest preset is Escape, but the prompt overrides its broader bundle: retain the looping escape structure and explicit exit, while omit unrequested hiding cutouts and exterior-to-interior shelter treatment. The preset is therefore none.\n\n### Config requirements\nUse `gate-escape` as both visible geometry and invisible logic: a single substantial locked escape door at the mansion boundary, with its exit trigger placed behind it. Use `collectible-nodes` as invisible pickup anchors for exactly five keys, each in a separate search region; these anchors do not enter the image render. Small paper clue sheets are visible props, placed along natural hall and room search paths and pointing toward the key regions.\n\n### Layout components\nBuild one large, fully enclosed mansion interior with many connected rooms and long hallways. Organize it as several wings around a central circulation hall, with loop-back connections between adjacent wings and occasional secondary doors so every search area has more than one route out. Make five distinct key search zones: for example a library, dining suite, bedroom wing, cellar-like service corridor, and upper study, each containing one physical key pickup location and nearby or preceding paper clues. Place the locked escape door at one outer-end entrance hall, visible as the final boundary rather than a new area beyond it. Use dark wood floors, wallpapered rooms, worn carpets, furniture clusters, bookcases, side tables, and sparse wall lighting. Outer mansion walls enclose all play space. Compose the isometric view to reveal the central hall, branching wings, and the exit-door side while preserving the maze-like density.\n\n### Render order\nUse `authored_plan`: a procedurally authored mansion plan must establish loop connectivity and a reachable escape route before top-down and isometric dressing, because a sealed corridor or unreachable key area would make the escape game unplayable.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by a mansion players can genuinely get lost in and five separated search regions. Theme: oppressive gothic domestic horror, dim and dusty rather than ruined. Apply `P6` because the looping indoor topology, all five reachable key regions, and the final escape route must be valid by construction.",
+  "blob": "### Genre\nDominant genre: Survival, with Puzzle as a secondary genre because escape depends on collecting keys and interpreting clues. The chase-and-escape loop owns the layout.\n\n### Shape and preset\nUse `warren-looping`: a sprawling, enclosed mansion whose rooms and halls interconnect in loops, preventing the pursuing monster from trapping players in dead ends. The closest source is the Escape preset, but the applicable preset is none because its hiding and outside-to-inside assumptions are not requested.\n\n### Config requirements\nUse `gate-escape` as one prominent locked exit door at the mansion boundary, visibly built into the final interior exit wall. No other image config is required: the keys and clue papers are concrete props and placed objectives rather than generic scene options.\n\n### Layout requirements\nUse `spawner-npc` for one hostile monster origin in a remote service, basement, or rear-wing room, with access into the mansion loop network rather than beside the entrance. Use `collectible-nodes` for exactly five keys, one in each separate mansion section, placed in searchable rooms rather than directly in hallways. Use `gate-escape` for one completion trigger immediately inside the locked escape door. The five clue papers are placed as readable prop markers in rooms or corridors, each directing players toward a key location.\n\n### Layout components\nBuild a large mansion interior with an entry foyer, central hall, two residential wings, library or study, dining and kitchen service wing, basement or utility area, and a rear exit corridor. Make the central hall a navigational hub, with long corridors repeatedly reconnecting rooms and wings into alternate loops. Distribute the five keys across distinct sections: one per wing or major search zone. Place small paper clues on desks, side tables, walls, or corridor noticeboards before the related key area. The single locked escape door sits at the far outer edge of the mansion, reached from the rear exit corridor. Use enclosed walls as the boundary; frame the composition from above to clearly read the central hub, branching wings, and loop connections.\n\n### Render order\nUse `topdown` first and make it authoritative, because the mansion’s connected escape topology must remain navigable and must not create unfair pursuit dead ends.\n\n### Scale, theme, and pipeline cost\nScale band: large, driven by a mansion with many rooms and hallways players can genuinely get lost in. Theme: dim, decaying haunted mansion horror with oppressive corridors and sparse pools of light. Pipeline modifiers: `P6`, because the looped interior topology must be valid for both search and chase play.",
   "spec": {
     "genre": "Survival",
-    "secondary": [],
+    "secondary": [
+      "Puzzle"
+    ],
     "shape": "warren-looping",
     "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "gate-escape",
-        "text": "A single substantial locked escape door at the mansion boundary, with its exit trigger placed behind it.",
+        "text": "One prominent locked escape door built into the mansion boundary's final interior exit wall.",
         "visible": true,
         "count": 1
       },
       {
+        "id": "spawner-npc",
+        "text": "One hostile monster origin in a remote service, basement, or rear-wing room with access into the mansion loop network.",
+        "visible": false,
+        "count": 1
+      },
+      {
         "id": "collectible-nodes",
-        "text": "Invisible pickup anchors for exactly five keys, each in a separate search region; these anchors do not enter the image render.",
+        "text": "Exactly five keys, one in each separate mansion section, placed in searchable rooms rather than directly in hallways.",
         "visible": false,
         "count": 5
       }
     ],
+    "layout_placement": [
+      {
+        "id": "gate-escape",
+        "text": "One completion trigger immediately inside the locked escape door.",
+        "count": 1,
+        "where": "Immediately inside the locked escape door at the far outer edge of the mansion."
+      },
+      {
+        "id": "spawner-npc",
+        "text": "One hostile monster origin in a remote service, basement, or rear-wing room with access into the mansion loop network.",
+        "count": 1,
+        "where": "In a remote service, basement, or rear-wing room, with access into the mansion loop network rather than beside the entrance."
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "Exactly five keys, one in each separate mansion section, placed in searchable rooms rather than directly in hallways.",
+        "count": 5,
+        "where": "One in each separate mansion section or major search zone, in searchable rooms rather than directly in hallways."
+      }
+    ],
     "layout": {
-      "composition": "Isometric view reveals the central circulation hall, branching wings, and the exit-door side while preserving the maze-like mansion density.",
+      "composition": "Frame the enclosed mansion from above so the central hall reads as the hub, with branching wings and their repeated loop connections clearly visible.",
       "zones": [
         {
-          "name": "Central circulation hall",
-          "role": "Central hub organizing the mansion wings.",
-          "where": "centre",
-          "size": "large"
-        },
-        {
-          "name": "Library",
-          "role": "Key search region containing one physical key pickup location and nearby or preceding paper clues.",
-          "where": "branching wing",
+          "name": "entry foyer",
+          "role": "Mansion entrance area.",
+          "where": "Entrance side of the mansion.",
           "size": ""
         },
         {
-          "name": "Dining suite",
-          "role": "Key search region containing one physical key pickup location and nearby or preceding paper clues.",
-          "where": "branching wing",
+          "name": "central hall",
+          "role": "Navigational hub connecting the mansion's rooms and wings.",
+          "where": "Centre.",
           "size": ""
         },
         {
-          "name": "Bedroom wing",
-          "role": "Key search region containing one physical key pickup location and nearby or preceding paper clues.",
-          "where": "branching wing",
+          "name": "residential wing one",
+          "role": "Separate searchable mansion section containing one key.",
+          "where": "Branching from the central hall.",
           "size": ""
         },
         {
-          "name": "Cellar-like service corridor",
-          "role": "Key search region containing one physical key pickup location and nearby or preceding paper clues.",
-          "where": "branching wing",
+          "name": "residential wing two",
+          "role": "Separate searchable mansion section containing one key.",
+          "where": "Branching from the central hall.",
           "size": ""
         },
         {
-          "name": "Upper study",
-          "role": "Key search region containing one physical key pickup location and nearby or preceding paper clues.",
-          "where": "branching wing",
+          "name": "library or study",
+          "role": "Search zone containing one key.",
+          "where": "Connected into the mansion loop network.",
           "size": ""
         },
         {
-          "name": "Entrance hall exit",
-          "role": "Final boundary holding the locked escape door rather than a new area beyond it.",
-          "where": "outer end",
+          "name": "dining and kitchen service wing",
+          "role": "Search zone containing one key and service access.",
+          "where": "Connected into the mansion loop network.",
+          "size": ""
+        },
+        {
+          "name": "basement or utility area",
+          "role": "Remote utility or service section; possible hostile monster origin and a search zone containing one key.",
+          "where": "Remote from the entrance.",
+          "size": ""
+        },
+        {
+          "name": "rear exit corridor",
+          "role": "Leads to the locked escape door and completion trigger.",
+          "where": "Far outer edge of the mansion.",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Central circulation hall",
-          "to": "Library",
+          "from": "entry foyer",
+          "to": "central hall",
           "kind": "corridor"
         },
         {
-          "from": "Central circulation hall",
-          "to": "Dining suite",
+          "from": "central hall",
+          "to": "residential wing one",
           "kind": "corridor"
         },
         {
-          "from": "Central circulation hall",
-          "to": "Bedroom wing",
+          "from": "central hall",
+          "to": "residential wing two",
           "kind": "corridor"
         },
         {
-          "from": "Central circulation hall",
-          "to": "Cellar-like service corridor",
+          "from": "central hall",
+          "to": "library or study",
           "kind": "corridor"
         },
         {
-          "from": "Central circulation hall",
-          "to": "Upper study",
+          "from": "central hall",
+          "to": "dining and kitchen service wing",
           "kind": "corridor"
         },
         {
-          "from": "Adjacent wings",
-          "to": "Adjacent wings",
+          "from": "dining and kitchen service wing",
+          "to": "basement or utility area",
           "kind": "corridor"
         },
         {
-          "from": "Search areas",
-          "to": "Alternate routes out",
-          "kind": "door"
+          "from": "central hall",
+          "to": "rear exit corridor",
+          "kind": "corridor"
         },
         {
-          "from": "Central circulation hall",
-          "to": "Entrance hall exit",
+          "from": "rear exit corridor",
+          "to": "locked escape door",
+          "kind": "corridor"
+        },
+        {
+          "from": "mansion rooms and wings",
+          "to": "mansion rooms and wings",
           "kind": "corridor"
         }
       ],
-      "terrain": "Dark wood floors, wallpapered rooms, worn carpets, and a fully enclosed indoor mansion interior.",
+      "terrain": "Enclosed mansion interior floors and long hallways.",
       "props": [
         {
-          "name": "Paper clue sheets",
-          "count": -1,
-          "where": "Along natural hall and room search paths, pointing toward the key regions."
+          "name": "paper clues",
+          "count": 5,
+          "where": "In rooms or corridors before the related key area, on desks, side tables, walls, or corridor noticeboards."
         },
         {
-          "name": "Furniture clusters",
-          "count": -1,
-          "where": "Rooms throughout the mansion."
-        },
-        {
-          "name": "Bookcases",
-          "count": -1,
-          "where": "Library and mansion rooms."
-        },
-        {
-          "name": "Side tables",
-          "count": -1,
-          "where": "Rooms and hallways."
-        },
-        {
-          "name": "Sparse wall lighting",
-          "count": -1,
-          "where": "Mansion walls throughout."
+          "name": "locked escape door",
+          "count": 1,
+          "where": "At the far outer edge of the mansion, reached from the rear exit corridor."
         }
       ],
-      "boundary": "Outer mansion walls enclose all play space; the locked escape door forms the final boundary.",
+      "boundary": "Enclosed mansion walls form the boundary.",
       "scale_band": "large",
-      "theme": "Oppressive gothic domestic horror, dim and dusty rather than ruined."
+      "theme": "Dim, decaying haunted mansion horror with oppressive corridors and sparse pools of light."
     },
     "render": {
-      "first": "authored_plan",
-      "then": "topdown",
-      "authoritative": "authored_plan",
-      "why": "Loop connectivity, all five reachable key regions, and the final escape route must be valid by construction.",
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "the mansion's connected escape topology must remain navigable and must not create unfair pursuit dead ends.",
       "set_piece": false
     },
     "route": [
@@ -171,12 +195,10 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",
   "first": "topdown",
-  "mapper_notes": [
-    "blob asked for authored_plan first; the route ['P6'] gives topdown"
-  ]
+  "mapper_notes": []
 }

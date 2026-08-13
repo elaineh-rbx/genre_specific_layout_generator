@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a realistic, modern 3D Tower Defense experience with a detailed central lobby: a main waiting plaza with several match-entry elevators arranged around it. Build exactly five compact battle maps, each designed so players can see most of its enemy lane at a glance, with a clearly marked enemy entry point, a defended base endpoint, designated tower-placement ground beside the lane, and blocked or unsuitable placement areas along paths and obstacles. Give every map a distinct route and environmental layout: a modern city with streets weaving between urban structures; a forest with a trail around trees and natural obstacles; a desert with a route through dunes and rock formations; an industrial area with lanes between factories, pipes, and machinery; and a military zone with a defended route through fortified structures and barriers. Use detailed models, quality textures, clear lighting, environmental cover, and readable combat space without obstructing visibility.",
-  "blob": "### 1. Genre\nThe dominant genre is Strategy, specifically a Tower Defense experience: enemy waves follow fixed lanes toward a defended base while players deploy towers beside them.\n\n### 2. Shape and preset\nUse the Strategy shape `lane-actor-track`, matched from the Tower Defense preset. The preset remains recognisable, but this build expands it into exactly five separate compact battle maps plus a central lobby; each map has its own readable, continuous enemy lane rather than sharing one route with alternate dressing.\n\n### 3. Config requirements\nUse visible `buildzone-grid`: clearly bounded tower-placement pads and ground strips flank each lane, while roads, trails, obstacles, and blocked terrain remain visibly unavailable. Use `tracker-core` as visible defended base structures at every route endpoint, with invisible base-health tracking volumes placed there after segmentation. Use invisible `spawner-npc` at each clearly marked enemy entry point. Use visible `choke-bottleneck` only where each setting’s obstacles naturally narrow the lane—street turns, tree gaps, rock passes, pipe corridors, and fortified gates. Do not render invisible emitters or tracking volumes.\n\n### 4. Layout components\nThe lobby is a detailed central waiting plaza, medium-sized and open, with several match-entry elevators arranged around its perimeter and clear walking space between them. It is a separate social arrival zone, visually consistent with the realistic modern treatment.\n\nBuild exactly five compact, self-contained battle maps, each largely readable at a glance from play level and plan view. The modern city map has a winding street lane between urban blocks, parked environmental structures, and side pavement placement ground; its base sits beyond a final street bend. The forest map uses a packed-earth trail threading around tree clusters, roots, boulders, and small clearings for towers. The desert map routes through low dunes and rock formations, with hard-packed pads beside the path and a base set against a canyon-side outpost. The industrial map snakes between factories, pipes, tanks, machinery, and fenced work yards. The military map follows a defended route through barriers, checkpoints, bunkers, and fortified walls to a protected command-base endpoint.\n\nEvery map has a single unbroken lane from entry to base, marked placement zones beside it, visibly blocked placement on the lane and obstacle footprints, realistic textures, controlled lighting, and environmental cover that does not hide the route. Frame each battle map in a broad three-quarter isometric view with the full lane legible; frame the lobby around its central plaza and elevator ring.\n\n### 5. Render order\nUse `authored_plan`: each Tower Defense lane must be a valid, continuous route from emitter to core, so the five route blueprints are generated first and then dressed with their setting-specific geometry.\n\n### 6. Scale, theme, and pipeline cost\nScale is large overall because it includes one lobby and exactly five distinct maps, although each individual combat map is compact. Theme: realistic modern Roblox military-urban presentation, detailed materials, crisp readable combat terrain. Pipeline modifiers are `P4` for the lobby and five separate battle maps, and `P6` because every enemy lane must be valid by construction.",
+  "blob": "### 1. Genre\nThe dominant genre is Strategy, specifically a Tower Defense game: enemy waves follow fixed lanes while players defend a base with placed towers.\n\n### 2. Shape and preset\nUse `lane-actor-track`, matched from the Tower Defense preset. Each battle map is a compact, readable enemy lane from a visible entry point to a defended core, with tower ground flanking the route. The preset remains recognisable; the five distinct maps are separate instances of that same functional lane form.\n\n### 3. Config requirements\nUse `buildzone-grid` for clearly designated, unobstructed tower-placement pads and ground strips alongside each lane; paths, obstacle footprints, and blocked terrain remain visibly unsuitable for placement. Use `tracker-core` for a defended base structure at the endpoint of every map. Use `choke-bottleneck` where each setting’s environmental geometry naturally narrows the lane, such as urban street turns, forest rock passages, desert defiles, factory pipe corridors, and military barriers.\n\n### 4. Layout requirements\nUse `tracker-core` in both image and layout: place exactly one defended core at the terminal end of each of the five battle-map lanes. Use `spawner-npc`: place exactly one enemy-wave origin at the opposite start of each lane, with a clear forward direction and no ambiguous branch. No other placed gameplay volumes are required from the described space. The lobby elevators are entry fixtures, not rendered gameplay triggers.\n\n### 5. Layout components\nBuild one central lobby plaza, sized as a shared waiting area, with several match-entry elevators arranged around its perimeter and facing inward toward the plaza. Create exactly five separate compact battle maps: a modern city lane weaving through urban buildings and streets; a forest trail curving around dense trees, roots, and natural rock obstacles; a desert route through dunes and rock formations; an industrial lane between factories, pipes, machinery, and service barriers; and a fortified military route through defensive structures and barricades. Each map has one continuous, largely at-a-glance route from its entry origin to its defended base, broad tower ground beside the route, and visibly blocked lane, prop, and obstacle areas. Keep combat sightlines open despite detailed dressing. Frame the lobby as a symmetric central plaza and each battle map as a legible top-down route with its core and entry at opposing ends.\n\n### 6. Render order\nUse `topdown` first and make it authoritative, because every lane must remain an unbroken, playable route with valid tower ground and a clear start-to-core progression; a look-first isometric render cannot reliably preserve that topology.\n\n### 7. Scale, theme, and pipeline cost\nScale is huge overall because it includes a detailed central lobby plus exactly five individually dressed battle maps, although each combat map is compact. Theme: modern realistic Roblox Tower Defense, clean combat readability, detailed environmental dressing, quality materials, and restrained effects. Pipeline modifiers: `P4` because the lobby and five battle maps are separate maps; `P6` because every enemy lane must be valid as one continuous route; `P0` otherwise.",
   "spec": {
     "genre": "Strategy",
     "secondary": [],
@@ -24,168 +24,158 @@
     "options": [
       {
         "id": "buildzone-grid",
-        "text": "Clearly bounded tower-placement pads and ground strips flank each lane; roads, trails, obstacles, and blocked terrain are visibly unavailable for placement.",
+        "text": "Clearly designated, unobstructed tower-placement pads and ground strips alongside each lane; paths, obstacle footprints, and blocked terrain remain visibly unsuitable for placement.",
         "visible": true,
-        "count": 5
+        "count": -1
       },
       {
         "id": "tracker-core",
-        "text": "Visible defended base structures sit at every route endpoint, with base-health tracking volumes placed there after segmentation.",
+        "text": "A defended base structure at the endpoint of every map.",
         "visible": true,
-        "count": 5
-      },
-      {
-        "id": "spawner-npc",
-        "text": "Clearly marked enemy entry points on each map, with the enemy emitters placed invisibly after segmentation.",
-        "visible": false,
         "count": 5
       },
       {
         "id": "choke-bottleneck",
-        "text": "Natural lane narrowings at street turns, tree gaps, rock passes, pipe corridors, and fortified gates.",
+        "text": "Environmental geometry naturally narrows the lane at urban street turns, forest rock passages, desert defiles, factory pipe corridors, and military barriers.",
         "visible": true,
+        "count": -1
+      },
+      {
+        "id": "spawner-npc",
+        "text": "One enemy-wave origin at the opposite start of each lane, with a clear forward direction and no ambiguous branch.",
+        "visible": false,
         "count": 5
       }
     ],
+    "layout_placement": [
+      {
+        "id": "tracker-core",
+        "text": "Exactly one defended core at the terminal end of each of the five battle-map lanes.",
+        "count": 5,
+        "where": "At the terminal end of each battle-map lane."
+      },
+      {
+        "id": "spawner-npc",
+        "text": "Exactly one enemy-wave origin at the opposite start of each lane, with a clear forward direction and no ambiguous branch.",
+        "count": 5,
+        "where": "At the entry start opposite the defended core on each battle-map lane."
+      }
+    ],
     "layout": {
-      "composition": "Broad three-quarter isometric framing holds each compact battle map's full lane legibly in view; the lobby is framed around its central open plaza and perimeter elevator ring.",
+      "composition": "A symmetric central lobby plaza is framed as the shared hub, with several match-entry elevators around its perimeter facing inward. Each separate battle map is framed as a legible top-down route, with its enemy entry and defended core at opposing ends and broad tower ground flanking the lane.",
       "zones": [
         {
-          "name": "Central lobby",
-          "role": "Separate social arrival and waiting zone with match entry.",
-          "where": "central",
-          "size": "medium-sized and open"
+          "name": "Central lobby plaza",
+          "role": "Shared waiting area with match-entry elevators.",
+          "where": "Centre",
+          "size": "Large shared lobby area"
         },
         {
           "name": "Modern city battle map",
-          "role": "Compact tower-defense route from enemy entry through a winding street lane to the defended base.",
-          "where": "separate battle map",
-          "size": "compact"
+          "role": "Compact enemy lane weaving through urban buildings and streets, from entry origin to defended core.",
+          "where": "Separate battle-map instance",
+          "size": "Compact"
         },
         {
           "name": "Forest battle map",
-          "role": "Compact tower-defense route along a packed-earth trail around natural obstacles and tower clearings.",
-          "where": "separate battle map",
-          "size": "compact"
+          "role": "Compact enemy lane following a trail around dense trees, roots, and natural rock obstacles, from entry origin to defended core.",
+          "where": "Separate battle-map instance",
+          "size": "Compact"
         },
         {
           "name": "Desert battle map",
-          "role": "Compact tower-defense route through dunes and rock formations to a canyon-side outpost base.",
-          "where": "separate battle map",
-          "size": "compact"
+          "role": "Compact enemy lane through dunes and rock formations, from entry origin to defended core.",
+          "where": "Separate battle-map instance",
+          "size": "Compact"
         },
         {
           "name": "Industrial battle map",
-          "role": "Compact tower-defense route between industrial structures and work yards.",
-          "where": "separate battle map",
-          "size": "compact"
+          "role": "Compact enemy lane between factories, pipes, machinery, and service barriers, from entry origin to defended core.",
+          "where": "Separate battle-map instance",
+          "size": "Compact"
         },
         {
-          "name": "Military battle map",
-          "role": "Compact tower-defense route through defended fortifications to a protected command-base endpoint.",
-          "where": "separate battle map",
-          "size": "compact"
+          "name": "Fortified military battle map",
+          "role": "Compact enemy lane through defensive structures and barricades, from entry origin to defended core.",
+          "where": "Separate battle-map instance",
+          "size": "Compact"
         }
       ],
       "paths": [
         {
-          "from": "Central lobby",
-          "to": "Modern city battle map",
-          "kind": "portal"
-        },
-        {
-          "from": "Central lobby",
-          "to": "Forest battle map",
-          "kind": "portal"
-        },
-        {
-          "from": "Central lobby",
-          "to": "Desert battle map",
-          "kind": "portal"
-        },
-        {
-          "from": "Central lobby",
-          "to": "Industrial battle map",
-          "kind": "portal"
-        },
-        {
-          "from": "Central lobby",
-          "to": "Military battle map",
-          "kind": "portal"
-        },
-        {
-          "from": "Modern city enemy entry",
-          "to": "Modern city defended base",
-          "kind": "road"
-        },
-        {
-          "from": "Forest enemy entry",
-          "to": "Forest defended base",
+          "from": "Modern city enemy entry origin",
+          "to": "Modern city defended core",
           "kind": "track"
         },
         {
-          "from": "Desert enemy entry",
-          "to": "Desert canyon-side outpost base",
+          "from": "Forest enemy entry origin",
+          "to": "Forest defended core",
           "kind": "track"
         },
         {
-          "from": "Industrial enemy entry",
-          "to": "Industrial defended base",
-          "kind": "corridor"
+          "from": "Desert enemy entry origin",
+          "to": "Desert defended core",
+          "kind": "track"
         },
         {
-          "from": "Military enemy entry",
-          "to": "Military protected command-base endpoint",
-          "kind": "corridor"
+          "from": "Industrial enemy entry origin",
+          "to": "Industrial defended core",
+          "kind": "track"
+        },
+        {
+          "from": "Fortified military enemy entry origin",
+          "to": "Fortified military defended core",
+          "kind": "track"
         }
       ],
-      "terrain": "Realistic modern materials and crisp readable combat terrain: city streets and side pavement, packed earth in forest, low dunes and rock formations in desert, industrial yards, and fortified military ground. Environmental cover does not hide any route.",
+      "terrain": "Modern city streets and urban structures; forest trail with dense trees, roots, and natural rock obstacles; desert dunes and rock formations; industrial factory ground with pipes, machinery, and service barriers; fortified military ground with defensive structures and barricades. Each lane has broad tower ground beside it, visibly blocked lane, prop, and obstacle areas, and open combat sightlines.",
       "props": [
         {
-          "name": "match-entry elevators",
+          "name": "Match-entry elevators",
           "count": -1,
-          "where": "around the central lobby perimeter"
+          "where": "Around the perimeter of the central lobby plaza, facing inward."
         },
         {
-          "name": "urban blocks and parked environmental structures",
+          "name": "Urban buildings and streets",
           "count": -1,
-          "where": "along the modern city lane"
+          "where": "Modern city battle map."
         },
         {
-          "name": "tree clusters, roots, boulders, and tower clearings",
+          "name": "Dense trees, roots, and natural rock obstacles",
           "count": -1,
-          "where": "around the forest trail"
+          "where": "Forest battle map."
         },
         {
-          "name": "low dunes, rock formations, and canyon-side outpost",
+          "name": "Dunes and rock formations",
           "count": -1,
-          "where": "along the desert route and base endpoint"
+          "where": "Desert battle map."
         },
         {
-          "name": "factories, pipes, tanks, machinery, and fenced work yards",
+          "name": "Factories, pipes, machinery, and service barriers",
           "count": -1,
-          "where": "around the industrial lane"
+          "where": "Industrial battle map."
         },
         {
-          "name": "barriers, checkpoints, bunkers, fortified walls, and command base",
+          "name": "Defensive structures and barricades",
           "count": -1,
-          "where": "along the military route"
+          "where": "Fortified military battle map."
         }
       ],
-      "boundary": "Five separate self-contained compact battle maps; placement is visibly blocked on lanes and obstacle footprints.",
-      "scale_band": "large",
-      "theme": "realistic modern Roblox military-urban presentation, detailed materials, quality textures, controlled crisp lighting"
+      "boundary": "",
+      "scale_band": "huge",
+      "theme": "Modern realistic Roblox Tower Defense, clean combat readability, detailed environmental dressing, quality materials, restrained effects."
     },
     "render": {
-      "first": "authored_plan",
-      "then": "topdown",
-      "authoritative": "authored_plan",
-      "why": "each Tower Defense lane must be a valid, continuous route from emitter to core.",
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "every lane must remain an unbroken playable route with valid tower ground and a clear start-to-core progression.",
       "set_piece": false
     },
     "route": [
       "P4",
-      "P6"
+      "P6",
+      "P0"
     ],
     "notes": [],
     "scene_prompt": "Create a realistic, modern 3D Tower Defense experience with a detailed central lobby: a main waiting plaza with several match-entry elevators arranged around it. Build exactly five compact battle maps, each designed so players can see most of its enemy lane at a glance, with a clearly marked enemy entry point, a defended base endpoint, designated tower-placement ground beside the lane, and blocked or unsuitable placement areas along paths and obstacles. Give every map a distinct route and environmental layout: a modern city with streets weaving between urban structures; a forest with a trail around trees and natural obstacles; a desert with a route through dunes and rock formations; an industrial area with lanes between factories, pipes, and machinery; and a military zone with a defended route through fortified structures and barriers. Use detailed models, quality textures, clear lighting, environmental cover, and readable combat space without obstructing visibility."
@@ -193,12 +183,10 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",
   "first": "topdown",
-  "mapper_notes": [
-    "blob asked for authored_plan first; the route ['P6'] gives topdown"
-  ]
+  "mapper_notes": []
 }

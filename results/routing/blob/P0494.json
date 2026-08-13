@@ -9,7 +9,7 @@
     }
   ],
   "scene_prompt": "Create a compact, stylized 3D industrial foundry tower-defense arena on a mostly flat 120-by-120-stud floor, viewed from a fixed isometric angle. Use metal platforms, pipes, furnaces, and warm orange molten-metal lighting in original low-poly placeholder geometry. Lay an ordered conveyor-like enemy route from a spawn area to a core at the far end: include a long straightaway, a perpendicular crossing, and a central bend or loop, with open dodgeable floor around it. Arrange distinct build areas around the route with varied exposure to crossing and radial fire, while invisible placement-blocking volumes protect the path, core, arena boundaries, and decorations. Keep sightlines open with no tall geometry obscuring the player, towers, projectiles, scrap pickups, or path; place the player spawn near the main build area and group map geometry, build zones, blockers, path waypoints, spawn, and core separately.",
-  "blob": "### Genre\nThe dominant genre is Strategy: a tower-defense game with a player-present combat arena. There is no secondary genre; the player’s movement and projectile danger decorate the tower-defense lane rather than replacing its core loop.\n\n### Shape and preset\nUse `lane-actor-track`, matching the Tower Defense preset. Here it is a compact conveyor-like foundry route that carries enemies from an entry bay through the arena to the core. Retain the preset’s route-facing build areas, core, and wave origin, but omit a forced narrow choke because the requested crossing and bend must remain open enough for player dodging.\n\n### Config requirements\n`buildzone-grid` is visible geometry: distinct flat metal build pads around the conveyor route, with different firing angles and exposure to crossing or radial shots. `tracker-core` is both visible geometry and invisible logic: a large foundry power core at the far end, with its health detection state placed separately. `spawner-npc` is invisible layout data at the visible enemy entry bay; it marks the wave origin without rendering gameplay markers. Invisible placement-blocking volumes protect the route, core, perimeter, and decorative machinery and must not enter the image render.\n\n### Layout components\nBuild one mostly planar 120-by-120-stud arena. Place the player spawn beside the main build area in the near side of the frame. Run the ordered enemy route from a foundry intake/spawn bay through a long straightaway, across a perpendicular crossing, around a central bend or loop, and onward to the core at the far end. Keep broad, open metal floor around every route segment for projectile dodging and scrap collection. Put build pads along the straightaway for long firing lanes, around the crossing for risky crossfire, and around the central bend for high-risk radial coverage. Use low metal platforms, exposed pipes, compact furnaces, conveyor segments, and restrained safety rails; do not use tall walls or machinery that hides the player, towers, bullets, pickups, or route. Enclose the square with a low industrial perimeter and blocked edge strips. Organize geometry, build zones, blockers, ordered waypoint parts, spawn, and core as separate map groups. Frame the core beyond the central route and preserve readable isometric diagonals.\n\n### Render order\nUse `topdown`: the enemy route must remain continuously connected from spawn to core, since a broken or ambiguous lane makes the tower-defense match unplayable; dress the validated plan into the isometric view afterward.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by the compact 120-by-120-stud single arena and its several tactical build pads. Theme: stylized low-poly industrial foundry, dark metal, pipes, furnaces, conveyor machinery, and warm orange molten-metal glow. Use `P6` because the ordered enemy track must be valid by construction. No other modifier is forced: the arena is one open, flat surface with no interior transition, stacked floors, separate maps, or volumetric traversal.",
+  "blob": "### Genre\nThe dominant genre is Strategy, specifically tower defense: enemy waves follow one fixed route toward a core while the player places defenses. There is no secondary genre.\n\n### Shape and preset\nUse `lane-actor-track`, matching the Tower Defense preset. It is a single continuous conveyor-like enemy lane from spawn to core, rather than open RTS terrain. The compact foundry’s crossing and central loop must remain an unambiguous, non-self-intersecting route in plan view.\n\n### Config requirements\nUse `buildzone-grid` as distinct flat metal build pads around the lane, with deliberately varied exposure to long-line, crossing, and radial tower fire. Use `tracker-core` as a prominent protected foundry core at the route terminus, visually readable as the objective structure. The ordered conveyor route, low pipework, furnaces, and original low-poly metal dressing are scene geometry, not additional config options.\n\n### Layout requirements\nUse `tracker-core` in the layout as one core-health target volume centered inside the far-end core structure. Use `spawner-npc` as one enemy-wave origin at the route’s starting spawn machinery, positioned before the first waypoint and directed into the conveyor lane. No pickups, player spawn markers, tower placements, or projectile effects should be rendered as gameplay markers; site them after segmentation. Place the player arrival point beside the main build area, with a clear view of the lane and core.\n\n### Layout components\nBuild one mostly flat, approximately 120-by-120-stud square industrial foundry floor. Put the enemy spawn at one edge and the core at the far opposing end. Route a 9–12-stud-wide conveyor-like lane through a long straightaway, a perpendicular crossing, and a central bend or loop before it reaches the core. Keep broad open metal floor around the route for dodging and tower placement. Arrange several clearly separated build-pad clusters around the straight lane, crossing, bend, and core approach, each with a different firing-risk relationship to the route. Use low metal platforms, pipes, furnace housings, rails, and orange molten-metal channels or glow accents without tall sightline-blocking structures. Invisible blocker volumes protect the lane, core, map perimeter, decorations, and prohibited tower locations. Frame the whole arena in a readable fixed-isometric composition, with the crossing and core visible together.\n\n### Render order\nUse `authored_plan`: the lane must be valid by construction as one continuous enemy path, since a broken or ambiguously crossing route makes tower defense unplayable. Dress the computed plan with foundry geometry afterward.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by one compact 120-by-120-stud arena with several tactical build zones. Theme: stylized low-poly industrial foundry, dark metal, conveyors, furnace shapes, and warm molten-orange lighting. Use `P6` because the enemy track must be topologically valid by construction; otherwise use `P0`, since the arena is one mostly flat surface with no required overhangs or interior transition.",
   "spec": {
     "genre": "Strategy",
     "secondary": [],
@@ -19,141 +19,139 @@
     "options": [
       {
         "id": "buildzone-grid",
-        "text": "Distinct flat metal build pads around the conveyor route, with long firing lanes on the straightaway, risky crossfire at the crossing, and high-risk radial coverage around the central bend.",
+        "text": "Distinct flat metal build pads around the lane, with deliberately varied exposure to long-line, crossing, and radial tower fire.",
         "visible": true,
         "count": -1
       },
       {
         "id": "tracker-core",
-        "text": "A large foundry power core at the far end of the route, beyond the central route.",
+        "text": "A prominent protected foundry core at the route terminus, visually readable as the objective structure.",
         "visible": true,
-        "count": -1
+        "count": 1
       },
       {
         "id": "spawner-npc",
-        "text": "The invisible wave-origin placement data at the visible foundry intake and enemy entry bay.",
+        "text": "One enemy-wave origin at the route's starting spawn machinery, directed into the conveyor lane.",
         "visible": false,
-        "count": -1
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "tracker-core",
+        "text": "One core-health target volume centered inside the far-end core structure.",
+        "count": 1,
+        "where": "Centered inside the core structure at the far opposing end of the foundry floor."
+      },
+      {
+        "id": "spawner-npc",
+        "text": "One enemy-wave origin at the route's starting spawn machinery.",
+        "count": 1,
+        "where": "At one edge of the floor, before the first waypoint and directed into the conveyor lane."
       }
     ],
     "layout": {
-      "composition": "Fixed isometric view with the player spawn and main build area on the near side, the conveyor route reading diagonally from the foundry intake through the centre, and the core framed at the far end beyond the central route.",
+      "composition": "Fixed readable isometric composition framing the whole arena, with the perpendicular crossing and far-end core visible together; the spawn sits at one edge and the core at the opposing end.",
       "zones": [
         {
-          "name": "Foundry intake and enemy entry bay",
-          "role": "Visible enemy entry location and wave-origin location.",
-          "where": "near end of the ordered route",
+          "name": "Foundry arena floor",
+          "role": "Mostly flat industrial tower-defense play space with open metal floor for dodging and tower placement.",
+          "where": "Entire map",
+          "size": "Approximately 120 by 120 studs"
+        },
+        {
+          "name": "Enemy spawn machinery",
+          "role": "Starting point for enemy waves before the first waypoint.",
+          "where": "One edge of the arena",
           "size": ""
         },
         {
-          "name": "Long straightaway",
-          "role": "Ordered conveyor-route segment with build pads for long firing lanes.",
-          "where": "between the intake bay and the crossing",
+          "name": "Conveyor enemy lane",
+          "role": "Single continuous enemy route from spawn to core.",
+          "where": "Across the arena through the straightaway, crossing, central bend or loop, and core approach",
+          "size": "9–12 studs wide"
+        },
+        {
+          "name": "Build-pad clusters",
+          "role": "Separated tower build areas with varied firing-risk relationships to the route.",
+          "where": "Around the straight lane, perpendicular crossing, central bend or loop, and core approach",
+          "size": "Several clusters"
+        },
+        {
+          "name": "Foundry core structure",
+          "role": "Protected objective structure containing the core-health target volume.",
+          "where": "Far opposing end of the arena",
           "size": ""
         },
         {
-          "name": "Perpendicular crossing",
-          "role": "Open route crossing surrounded by build pads with risky crossfire exposure.",
-          "where": "central arena",
-          "size": ""
-        },
-        {
-          "name": "Central bend or loop",
-          "role": "Ordered route turn with build pads for high-risk radial coverage.",
-          "where": "central arena",
-          "size": ""
-        },
-        {
-          "name": "Core zone",
-          "role": "Far-end destination for the enemy route, containing the foundry power core.",
-          "where": "far end of the frame",
-          "size": ""
-        },
-        {
-          "name": "Player spawn and main build area",
-          "role": "Player arrival beside the main tactical build pads.",
-          "where": "near side of the frame",
+          "name": "Player arrival area",
+          "role": "Player arrival point with a clear view of the lane and core.",
+          "where": "Beside the main build area",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Foundry intake and enemy entry bay",
-          "to": "Long straightaway",
-          "kind": "track"
-        },
-        {
-          "from": "Long straightaway",
-          "to": "Perpendicular crossing",
-          "kind": "track"
-        },
-        {
-          "from": "Perpendicular crossing",
-          "to": "Central bend or loop",
-          "kind": "track"
-        },
-        {
-          "from": "Central bend or loop",
-          "to": "Core zone",
+          "from": "Enemy spawn machinery",
+          "to": "Foundry core structure",
           "kind": "track"
         }
       ],
-      "terrain": "Mostly planar 120-by-120-stud dark metal arena floor with broad open dodgeable floor around every route segment, low metal platforms, conveyor segments, exposed pipes, compact furnaces, and warm orange molten-metal glow.",
+      "terrain": "Mostly flat square industrial metal floor with broad open metal space around the route; orange molten-metal channels or glow accents.",
       "props": [
         {
-          "name": "low metal platforms",
+          "name": "Low metal platforms",
           "count": -1,
-          "where": "around the arena and route"
+          "where": "Around the industrial foundry floor and route"
         },
         {
-          "name": "exposed pipes",
+          "name": "Low pipework",
           "count": -1,
-          "where": "around the arena and route"
+          "where": "Around the conveyor lane and foundry dressing"
         },
         {
-          "name": "compact furnaces",
+          "name": "Furnace housings",
           "count": -1,
-          "where": "around the arena and route"
+          "where": "Around the foundry floor without blocking sightlines"
         },
         {
-          "name": "conveyor segments",
+          "name": "Rails",
           "count": -1,
-          "where": "along the ordered enemy route"
+          "where": "Along the conveyor-like enemy route"
         },
         {
-          "name": "restrained safety rails",
+          "name": "Orange molten-metal channels or glow accents",
           "count": -1,
-          "where": "along route edges and the perimeter"
+          "where": "Across the foundry dressing"
         }
       ],
-      "boundary": "A low industrial perimeter enclosing the square arena with blocked edge strips.",
+      "boundary": "Invisible blocker volumes protect the lane, core, map perimeter, decorations, and prohibited tower locations.",
       "scale_band": "medium",
-      "theme": "Stylized low-poly industrial foundry with dark metal, pipes, furnaces, conveyor machinery, and warm orange molten-metal lighting."
+      "theme": "Stylized low-poly industrial foundry, dark metal, conveyors, furnace shapes, and warm molten-orange lighting."
     },
     "render": {
-      "first": "topdown",
-      "then": "isometric",
-      "authoritative": "topdown",
-      "why": "the ordered enemy lane must stay continuously connected from spawn to core.",
+      "first": "authored_plan",
+      "then": "topdown",
+      "authoritative": "authored_plan",
+      "why": "The continuous enemy lane must be topologically valid by construction, because a broken or ambiguously crossing route makes tower defense unplayable.",
       "set_piece": false
     },
     "route": [
-      "P6"
+      "P6",
+      "P0"
     ],
-    "notes": [
-      "Invisible placement-blocking volumes protect the route, core, perimeter, and decorative machinery and do not enter the image render.",
-      "Geometry, build zones, blockers, ordered waypoint parts, player spawn, and core are organized as separate map groups.",
-      "No forced narrow choke is included so the crossing and bend remain open for player dodging."
-    ],
+    "notes": [],
     "scene_prompt": "Create a compact, stylized 3D industrial foundry tower-defense arena on a mostly flat 120-by-120-stud floor, viewed from a fixed isometric angle. Use metal platforms, pipes, furnaces, and warm orange molten-metal lighting in original low-poly placeholder geometry. Lay an ordered conveyor-like enemy route from a spawn area to a core at the far end: include a long straightaway, a perpendicular crossing, and a central bend or loop, with open dodgeable floor around it. Arrange distinct build areas around the route with varied exposure to crossing and radial fire, while invisible placement-blocking volumes protect the path, core, arena boundaries, and decorations. Keep sightlines open with no tall geometry obscuring the player, towers, projectiles, scrap pickups, or path; place the player spawn near the main build area and group map geometry, build zones, blockers, path waypoints, spawn, and core separately."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",
   "first": "topdown",
-  "mapper_notes": []
+  "mapper_notes": [
+    "blob asked for authored_plan first; the route ['P6'] gives topdown"
+  ]
 }

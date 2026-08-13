@@ -14,64 +14,69 @@
     }
   ],
   "scene_prompt": "Create a 3D game map as a small, walkable black box room. Place lights in the top corners, with reachable light switches on the walls. The left wall contains a donation display area for game passes.",
-  "blob": "### Genre\nThis is Simulation, specifically an idle/incremental experience: its defining loop is passive point accumulation rather than exploration or a finish condition. The room remains a real built set, not a UI-only game.\n\n### Shape and preset\nUse the Simulation shape `world-shared`, interpreted here as one tiny shared walkable room rather than an outdoor world. Match the Incremental Simulator preset in its passive-progress framing, but use none of that preset’s hub, gate, or circulation options because the prompt describes only a single box room.\n\n### Config requirements\nNo Simulation configuration options are required by the described geometry. The ceiling-corner lights, their wall switches, and the donation display are concrete props, not separate canonical options. There are no invisible layout components requested; the light interaction and donation UI behavior are mechanics and must not appear in the render.\n\n### Layout components\nBuild one small, enclosed, walkable square black box room, large enough for a player to move around but compact enough that every wall is nearby. Use matte-black floor, walls, and ceiling. Mount visible light fixtures in the top corners of the room, with one reachable wall-mounted switch corresponding to each fixture; distribute the switches on the walls below or near their respective corners. Reserve the left wall as a clearly framed donation display area, arranged as a flush wall panel or bank of panels for game-pass presentation without rendering specific UI text or prices. Keep the center floor open and uncluttered for circulation between switches. The solid black walls and ceiling form the full boundary; there are no windows, exterior terrain, paths, or secondary zones. Compose the room in a cutaway isometric view that shows the left-wall display, the open floor, switches, and upper-corner fixtures at once.\n\n### Render order\nUse `isometric`: the simple single-room composition is visually authoritative, and no topology-sensitive route needs plan-first validation.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the requested walkable room and reachable wall controls. Theme: stark minimalist black-box idle room, sparse industrial lighting, deliberately empty. Use `SET` because this is a real static room whose layout does not require traversal, jump-gap, or route validation.",
+  "blob": "### 1. Genre\nThe dominant genre is `Simulation`, specifically an idle-style set: points accumulate forever and the only interaction is operating the room lights. The accumulation and multiplier mechanics do not enter the layout.\n\n### 2. Shape and preset\nUse `interior-single`, taken from outside Simulation’s usual shapes, because this is one enclosed room with no exterior or additional zones. The closest preset is none: the idle intent fits Simulation, but its listed presets do not describe a single black-box room.\n\n### 3. Config requirements\nNo Simulation config options are required. The prompt explicitly requests the black room, corner lights, wall switches, and donation display, but these are concrete room components rather than additional catalogue options.\n\n### 4. Layout requirements\nNo separate placed gameplay markers are required. Place the interactive light-switch positions directly on the reachable wall sections beneath or near their corresponding corner lights; the donation display occupies the left wall. These are author-requested interaction locations, not image-only decoration.\n\n### 5. Layout components\nBuild one small, walkable, fully enclosed rectangular black box room, large enough for an avatar to move around comfortably while reaching the walls. Mount lights in all four upper corners, casting restrained highlights across the otherwise dark ceiling and walls. Put a reachable switch on the wall associated with each corner light, at avatar hand height and clearly separated around the perimeter. Reserve the entire left wall as a clean donation display area for game passes, laid out as a readable illuminated panel or row of panels without obstructing circulation. Keep the floor empty and level, with no terrain, paths, props, windows, doors, or exterior boundary beyond the room’s opaque black walls. Compose the view from an elevated corner so the compact footprint, four corner lights, wall switches, and left-wall display are all legible.\n\n### 6. Render order\nRender `isometric` first and treat it as authoritative, because the room is a simple single-level interior with no topology that could make play unworkable.\n\n### 7. Scale, theme, and pipeline cost\nScale band: small, driven by the single walkable room. Theme: minimalist dark idle chamber, black surfaces and sparse corner lighting. Pipeline modifier: `SET`, because this is a compact idle presentation space with no traversal route or geometric progression to validate.",
   "spec": {
     "genre": "Simulation",
     "secondary": [],
-    "shape": "world-shared",
-    "preset": "Incremental Simulator",
+    "shape": "interior-single",
+    "preset": "none",
     "axes": {},
     "options": [],
+    "layout_placement": [],
     "layout": {
-      "composition": "Cutaway isometric view showing the left-wall donation display, open centre floor, wall switches, and upper-corner light fixtures at once.",
+      "composition": "Elevated corner view showing the compact rectangular footprint, all four upper-corner lights, the separated wall switches around the perimeter, and the donation display along the left wall.",
       "zones": [
         {
-          "name": "Black box room",
-          "role": "Small enclosed shared walkable idle room with open circulation between wall controls.",
-          "where": "entire frame",
+          "name": "black box room",
+          "role": "Small walkable enclosed idle room for operating the lights and viewing the donation display.",
+          "where": "entire map",
           "size": "small"
         }
       ],
       "paths": [],
-      "terrain": "Matte-black floor, walls, and ceiling; no exterior terrain or water.",
+      "terrain": "Empty, level black floor; no terrain or water.",
       "props": [
         {
-          "name": "top-corner light fixtures",
-          "count": -1,
-          "where": "top corners of the room"
+          "name": "upper-corner light",
+          "count": 4,
+          "where": "one mounted in each upper corner, casting restrained highlights across the dark ceiling and walls"
         },
         {
-          "name": "reachable wall-mounted light switches",
-          "count": -1,
-          "where": "on walls below or near their respective corner fixtures"
+          "name": "reachable light switch",
+          "count": 4,
+          "where": "on reachable wall sections beneath or near their corresponding corner lights, at avatar hand height and separated around the perimeter"
         },
         {
-          "name": "donation display panel or bank of panels",
+          "name": "donation display area for game passes",
           "count": -1,
-          "where": "left wall"
+          "where": "occupying the entire left wall as a clean illuminated panel or row of panels without obstructing circulation"
         }
       ],
-      "boundary": "Solid black walls and ceiling fully enclose the room; no windows.",
+      "boundary": "Opaque black walls and ceiling fully enclose the room; no windows, doors, exterior, or additional boundary.",
       "scale_band": "small",
-      "theme": "stark minimalist black-box idle room, sparse industrial lighting, deliberately empty"
+      "theme": "Minimalist dark idle chamber with black surfaces and sparse corner lighting"
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "the simple single-room composition is visually authoritative, and no topology-sensitive route needs plan-first validation.",
+      "why": "the simple single-level interior has no topology that could make play unworkable.",
       "set_piece": true
     },
     "route": [
       "SET"
     ],
-    "notes": [],
+    "notes": [
+      "`interior-single` is taken from outside Simulation’s usual shapes.",
+      "No Simulation catalogue options were required; the switches and donation display are retained as concrete room components rather than canonical option rows.",
+      "No separate placed gameplay markers are required."
+    ],
     "scene_prompt": "Create a 3D game map as a small, walkable black box room. Place lights in the top corners, with reachable light switches on the walls. The left wall contains a donation display area for game passes."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

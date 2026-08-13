@@ -19,7 +19,7 @@
     }
   ],
   "scene_prompt": "Create a gritty, modern 3D tactical extraction combat map: a compact large zone traversable on foot, with two connected urban city blocks and one detailed industrial yard. Arrange dense streets, building interiors, rooftops, alleys, and hidden loot locations across the urban district, leading into the industrial yard with warehouses, loading areas, and usable cover. Scatter valuable loot crates through exposed and concealed locations. Place several fixed extraction points around the map perimeter, each approached through distinct routes, with open combat sightlines and sheltered paths supporting both AI and player encounters.",
-  "blob": "### Genre\nThe dominant genre is Shooter, specifically a PvPvE tactical extraction shooter: ranged combat, AI threats, loot competition, and extraction define the game. There is no secondary genre.\n\n### Shape and preset\nUse `open-battlefield`, matching the Battle Royale preset’s broad combat-space logic: open ground, loot distribution, and enterable structures. Adapt it for extraction by omitting the contracting boundary and using several fixed perimeter extraction sites instead.\n\n### Config requirements\nVisible geometry: `building-interior` provides enterable urban buildings and industrial warehouses; `cover-los` provides concrete barriers, loading equipment, street furniture, and warehouse cover that break firing lines. `collectible-loot` is an invisible placement requirement for loot-spawn locations, while its valuable crates must be visibly rendered at those locations. `spawner-npc` is invisible, placing AI-combatant origins in defensible industrial and urban encounter areas. Extraction points are visible perimeter landmarks with clear approach routes and invisible extraction trigger volumes.\n\n### Layout components\nBuild one compact-large, foot-traversable combat zone. Two connected urban city blocks occupy the main side of the map: dense streets form the primary circulation, with side alleys, connected building interiors, accessible rooftops, and concealed loot rooms. Keep some street stretches open for long tactical sightlines, but parallel alleys, interior passages, and cover-lined sidewalks offer sheltered flanking routes.\n\nAttach one detailed industrial yard to the urban district through multiple street and service-road connections. The yard contains warehouses, loading bays, stacked cargo, fenced loading areas, and heavy cover, with open lanes between structures for contested engagements. Scatter visible valuable loot crates across exposed street corners, rooftops, hidden rooms, warehouse interiors, loading bays, and tucked-away industrial cover positions. Place AI encounter origins away from immediate entry routes but within the urban and industrial combat spaces.\n\nSeveral fixed extraction points sit around the map perimeter, each with a distinct approach: one reached through urban streets, one via alley and interior routes, and one through the industrial yard. Use perimeter walls, fences, closed building backs, and industrial barriers as the boundary. Compose the map as a readable three-part plan, with the industrial yard as a strong visual anchor and extraction landmarks visible at route endings.\n\n### Render order\nUse `topdown`: the connected streets, interior passages, sheltered flanks, and distinct routes to every extraction point must remain traversable and tactically legible before the isometric dressing is made authoritative.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by two city blocks plus one industrial yard, while remaining compact enough to cross on foot. Theme: gritty modern tactical urban-industrial realism. Use `P3` because combat and traversal cross repeatedly between exterior streets and enterable building interiors.",
+  "blob": "### Genre\nThe dominant genre is `Shooter`: a tactical PvPvE extraction shooter, defined by gun combat, AI threats, loot competition, and fixed extraction objectives.\n\n### Shape and preset\nUse `open-battlefield`, taken from the Shooter set. This is one contiguous compact-large combat zone rather than lanes: two dense urban blocks flow into an industrial yard, allowing multiple tactical approaches to loot and extraction. Match the Battle Royale preset only in its open-field, lootable-world sense; drop its closing-boundary feature, so the adapted preset remains recognisable through `collectible-loot` and `building-interior`.\n\n### Config requirements\nUse `cover-los` for concrete barriers, parked freight, crates, loading equipment, street furniture, and warehouse stacks that break long firing lines. Use `building-interior` for enterable city buildings and warehouses connected to exterior streets. Use `collectible-loot` for visible loot crates in exposed lanes and concealed interiors. Use `settlement-density` for the tightly built urban blocks with dense streets, alleys, and building fronts. Use `gate-escape` as clearly identifiable fixed extraction gates or pads around the perimeter, each visibly approached from a different route.\n\n### Layout requirements\nPlace `collectible-loot` crates throughout both city blocks and the industrial yard, concentrating high-value crates in risky exposed intersections, rooftops, loading bays, and hidden rooms; no crate count is specified. Place `spawner-npc` origins inside protected interior rooms, warehouse back areas, and industrial service corridors, keeping them off primary player entry routes. Place `gate-escape` at several fixed perimeter locations, each with a distinct final approach: one via urban streets, one through alleys and interiors, and one through industrial loading lanes; each needs its extraction trigger volume.\n\n### Layout components\nThe urban district occupies roughly two connected city blocks, with dense streets, narrow alleys, multistorey enterable buildings, rooftops, and concealed loot rooms. The industrial yard adjoins one block as a broad warehouse-and-loading zone with container stacks, loading docks, machinery, and hard cover. Main streets provide open sightlines between districts, while alleys, interiors, rooftop access, and sheltered service routes provide flanks. The outer perimeter is a believable city-and-industrial edge, with extraction gates embedded at separated boundary points. Frame the urban blocks in the foreground and centre, with the industrial yard extending to one side so all three areas read as one navigable combat space.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because every combat district, interior connection, and extraction approach must remain reachable and tactically coherent; the isometric view is dressed from that valid plan.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by two full urban blocks plus one detailed industrial yard, but remains foot-traversable without vehicles. Theme: gritty modern tactical urban-industrial realism, immersive and performance-conscious. Apply `P3` because play repeatedly crosses between streets and enterable building interiors, requiring linked exterior and interior captures.",
   "spec": {
     "genre": "Shooter",
     "secondary": [],
@@ -28,168 +28,160 @@
     "axes": {},
     "options": [
       {
-        "id": "building-interior",
-        "text": "Enterable urban buildings and industrial warehouses, with connected interiors, accessible rooftops, and concealed loot rooms.",
+        "id": "cover-los",
+        "text": "Concrete barriers, parked freight, crates, loading equipment, street furniture, and warehouse stacks break long firing lines.",
         "visible": true,
         "count": -1
       },
       {
-        "id": "cover-los",
-        "text": "Concrete barriers, loading equipment, street furniture, warehouse cover, cover-lined sidewalks, and industrial cover positions that break firing lines.",
+        "id": "building-interior",
+        "text": "Enterable city buildings and warehouses connected to exterior streets.",
         "visible": true,
         "count": -1
       },
       {
         "id": "collectible-loot",
-        "text": "Invisible loot-spawn locations across exposed street corners, rooftops, hidden rooms, warehouse interiors, loading bays, and tucked-away industrial cover positions; valuable crates are visibly rendered at those locations.",
+        "text": "Visible loot crates in exposed lanes and concealed interiors, with high-value crates at risky exposed intersections, rooftops, loading bays, and hidden rooms.",
         "visible": false,
         "count": -1
       },
       {
+        "id": "settlement-density",
+        "text": "Tightly built urban blocks with dense streets, alleys, and building fronts.",
+        "visible": true,
+        "count": -1
+      },
+      {
         "id": "spawner-npc",
-        "text": "Invisible AI-combatant origins placed away from immediate entry routes within defensible industrial and urban combat spaces.",
+        "text": "AI origins inside protected interior rooms, warehouse back areas, and industrial service corridors, off primary player entry routes.",
         "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "collectible-loot",
+        "text": "Loot crates throughout both city blocks and the industrial yard, concentrating high-value crates in risky exposed intersections, rooftops, loading bays, and hidden rooms.",
+        "count": -1,
+        "where": "Throughout both city blocks and the industrial yard; concentrate high-value crates at exposed intersections, rooftops, loading bays, and hidden rooms."
+      },
+      {
+        "id": "spawner-npc",
+        "text": "AI origins inside protected interior rooms, warehouse back areas, and industrial service corridors.",
+        "count": -1,
+        "where": "Inside protected interior rooms, warehouse back areas, and industrial service corridors; keep them off primary player entry routes."
+      }
+    ],
     "layout": {
-      "composition": "A readable three-part plan: two connected urban city blocks occupy the main side of the map, leading into an industrial yard that acts as the strong visual anchor; extraction landmarks sit at perimeter route endings.",
+      "composition": "Frame the two connected urban blocks in the foreground and centre, with the industrial yard extending to one side so all three areas read as one navigable combat space.",
       "zones": [
         {
-          "name": "Urban city block 1",
-          "role": "Dense primary combat and circulation area with streets, side alleys, connected interiors, rooftops, and concealed loot rooms.",
-          "where": "main side of the map",
-          "size": "one of two connected city blocks"
+          "name": "Urban block one",
+          "role": "Dense tactical urban combat with streets, narrow alleys, multistorey enterable buildings, rooftops, and concealed loot rooms.",
+          "where": "Foreground and centre, connected to the second urban block.",
+          "size": "One of roughly two connected city blocks."
         },
         {
-          "name": "Urban city block 2",
-          "role": "Connected urban combat area supporting long sightlines, sheltered flanks, interior passages, and rooftop routes.",
-          "where": "main side of the map, connected to urban city block 1",
-          "size": "one of two connected city blocks"
+          "name": "Urban block two",
+          "role": "Dense tactical urban combat with open street sightlines, flanking alleys, interiors, rooftop access, and sheltered service routes.",
+          "where": "Centre, connected to the first block and adjoining the industrial yard.",
+          "size": "One of roughly two connected city blocks."
         },
         {
           "name": "Industrial yard",
-          "role": "Contested industrial combat space with warehouses, loading bays, stacked cargo, fenced loading areas, heavy cover, and open engagement lanes.",
-          "where": "attached to the urban district",
-          "size": "one detailed industrial yard"
-        },
-        {
-          "name": "Urban extraction point",
-          "role": "Fixed perimeter extraction site reached through urban streets.",
-          "where": "map perimeter",
-          "size": ""
-        },
-        {
-          "name": "Alley and interior extraction point",
-          "role": "Fixed perimeter extraction site reached via alley and interior routes.",
-          "where": "map perimeter",
-          "size": ""
-        },
-        {
-          "name": "Industrial extraction point",
-          "role": "Fixed perimeter extraction site reached through the industrial yard.",
-          "where": "map perimeter",
-          "size": ""
+          "role": "Warehouse-and-loading combat zone with container stacks, loading docks, machinery, hard cover, warehouse back areas, and service corridors.",
+          "where": "Adjoining one urban block and extending to one side of the frame.",
+          "size": "Broad detailed industrial yard."
         }
       ],
       "paths": [
         {
-          "from": "Urban city block 1",
-          "to": "Urban city block 2",
+          "from": "Urban block one",
+          "to": "Urban block two",
           "kind": "road"
         },
         {
-          "from": "Urban city block 1",
-          "to": "Urban city block 2",
+          "from": "Urban blocks",
+          "to": "Industrial yard",
+          "kind": "road"
+        },
+        {
+          "from": "Urban streets",
+          "to": "Building interiors",
           "kind": "corridor"
         },
         {
-          "from": "Urban city block 1",
-          "to": "Urban city block 2",
+          "from": "Urban streets",
+          "to": "Rooftops",
+          "kind": "stair"
+        },
+        {
+          "from": "Urban blocks",
+          "to": "Industrial yard",
           "kind": "tunnel"
-        },
-        {
-          "from": "Urban city block 2",
-          "to": "Industrial yard",
-          "kind": "road"
-        },
-        {
-          "from": "Urban city block 2",
-          "to": "Industrial yard",
-          "kind": "corridor"
-        },
-        {
-          "from": "Urban city block 1",
-          "to": "Urban extraction point",
-          "kind": "road"
-        },
-        {
-          "from": "Urban city block 2",
-          "to": "Alley and interior extraction point",
-          "kind": "corridor"
-        },
-        {
-          "from": "Industrial yard",
-          "to": "Industrial extraction point",
-          "kind": "road"
         }
       ],
-      "terrain": "Compact-large foot-traversable urban-industrial ground with dense streets, side alleys, open street sightlines, cover-lined sidewalks, service roads, loading areas, and open lanes between industrial structures.",
+      "terrain": "Dense urban streets, narrow alleys, rooftops, warehouse loading ground, container stacks, loading docks, machinery, and hard cover.",
       "props": [
         {
-          "name": "valuable loot crates",
+          "name": "Concrete barriers",
           "count": -1,
-          "where": "exposed street corners, rooftops, hidden rooms, warehouse interiors, loading bays, and tucked-away industrial cover positions"
+          "where": "Across streets and combat areas to break long firing lines."
         },
         {
-          "name": "warehouses",
+          "name": "Parked freight",
           "count": -1,
-          "where": "industrial yard"
+          "where": "Urban streets and industrial loading areas."
         },
         {
-          "name": "loading bays",
+          "name": "Crates",
           "count": -1,
-          "where": "industrial yard"
+          "where": "Exposed lanes, concealed interiors, intersections, rooftops, loading bays, and hidden rooms."
         },
         {
-          "name": "stacked cargo",
+          "name": "Loading equipment",
           "count": -1,
-          "where": "industrial yard"
+          "where": "Industrial yard loading areas."
         },
         {
-          "name": "fenced loading areas",
+          "name": "Street furniture",
           "count": -1,
-          "where": "industrial yard"
+          "where": "Dense urban streets."
         },
         {
-          "name": "extraction landmarks",
+          "name": "Warehouse stacks",
           "count": -1,
-          "where": "around the map perimeter at route endings"
+          "where": "Warehouses and the industrial yard."
+        },
+        {
+          "name": "Fixed extraction gates or pads",
+          "count": -1,
+          "where": "Separated perimeter points: approached via urban streets, via alleys and interiors, and via industrial loading lanes."
         }
       ],
-      "boundary": "Perimeter walls, fences, closed building backs, and industrial barriers enclose the map perimeter.",
+      "boundary": "A believable city-and-industrial edge encloses the outer perimeter, with separated fixed extraction gates or pads embedded at boundary points.",
       "scale_band": "large",
-      "theme": "gritty modern tactical urban-industrial realism"
+      "theme": "Gritty modern tactical urban-industrial realism; immersive and performance-conscious."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "connected streets, interior passages, sheltered flanks, and distinct extraction routes must remain traversable and tactically legible.",
+      "why": "every combat district, interior connection, and extraction approach must remain reachable and tactically coherent.",
       "set_piece": false
     },
     "route": [
       "P3"
     ],
     "notes": [
-      "Extraction trigger volumes and perimeter extraction landmarks are described as layout components; no canonical Shooter extraction option ID was named."
+      "`gate-escape` was named in the blob but is not an option in the dominant Shooter genre, so its canonical option ID and associated trigger-volume placement were dropped. The described fixed extraction gates remain recorded as layout props."
     ],
     "scene_prompt": "Create a gritty, modern 3D tactical extraction combat map: a compact large zone traversable on foot, with two connected urban city blocks and one detailed industrial yard. Arrange dense streets, building interiors, rooftops, alleys, and hidden loot locations across the urban district, leading into the industrial yard with warehouses, loading areas, and usable cover. Scatter valuable loot crates through exposed and concealed locations. Place several fixed extraction points around the map perimeter, each approached through distinct routes, with open combat sightlines and sheltered paths supporting both AI and player encounters."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

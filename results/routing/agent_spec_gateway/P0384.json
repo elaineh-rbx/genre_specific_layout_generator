@@ -1,0 +1,282 @@
+{
+  "scene": "P0384",
+  "source": "Create a AAA-quality endless runner for Roblox inspired by the fast-paced gameplay of classic endless runners like Temple Run 2. The experience should capture the same adrenaline, fluid movement, exploration, and progression while using entirely original characters, environments, animations, music, sounds, UI, and level assets.\nThe game should feel polished enough to compete with top Roblox experiences.\nCore Gameplay\nCreate an endless runner where the player automatically runs forward.\nThe player can:\n • Swipe Left → Turn Left\n • Swipe Right → Turn Right\n • Swipe Up → Jump\n • Swipe Down → Slide\n • Collect coins\n • Dodge obstacles\n • Navigate branching paths\n • Achieve high scores\n • Complete missions\n • Unlock cosmetics and characters\nMovement should be smooth and highly responsive.\n\nMotion Controls\nOn supported mobile devices, add optional motion controls using the device's accelerometer and gyroscope.\nFeatures:\n • Tilt left/right to steer or subtly change lane position\n • Optional head-look camera effect\n • Motion sensitivity slider\n • Calibration screen\n • Toggle motion controls on/off\n • Automatic fallback to swipe controls if motion sensors are unavailable\n • Low-latency filtering to reduce jitter\n • Dead zones and smoothing for comfortable play\nMotion controls should enhance gameplay without replacing core swipe controls.\n\nEndless World Generation\nImplement procedural generation that creates an endless path while maintaining handcrafted quality.\nInclude diverse original environments such as:\n • Ancient jungle ruins\n • Mountain temples\n • Lava caverns\n • Ice canyons\n • Desert ruins\n • Floating islands\n • Bamboo forests\n • Waterfalls\n • Forgotten cities\n • Underground caverns\nGeneration should avoid impossible obstacle combinations and maintain fair difficulty.\n\nObstacles\nCreate a large variety of original obstacles:\n • Gaps\n • Broken bridges\n • Fallen trees\n • Rolling boulders\n • Rotating blades\n • Swinging axes\n • Spike traps\n • Crumbling floors\n • Fire traps\n • Moving platforms\n • Collapsing bridges\n • Narrow ledges\n • Climbing sections\n • Rope swings\n • Zip lines\nDifficulty should scale naturally as the run progresses.\n\nCollectibles\nImplement:\n • Coins\n • Rare gems\n • Power crystals\n • Treasure chests\n • Mystery relics\n • Keys\n • Daily collectibles\n • Seasonal collectibles\n\nPower-ups\nCreate an extensible power-up system including:\n • Coin magnet\n • Temporary shield\n • Speed burst\n • Double coins\n • Slow-motion\n • Invincibility\n • Extra life\n • Auto-collect\n • Lucky treasure boost\nEach should include:\n • Visual effects\n • Audio feedback\n • UI timers\n • Upgrade paths\n\nEnemy Chase\nCreate an original pursuing creature that keeps pressure on the player.\nFeatures:\n • Dynamic catch-up system\n • Difficulty scaling\n • Different chase phases\n • Escape mechanics\n • Cinematic introductions\n • Intelligent obstacle interaction\n\nMissions\nImplement hundreds of procedurally generated missions such as:\n • Collect coins\n • Travel distance\n • Jump count\n • Slide count\n • Near misses\n • Perfect turns\n • Consecutive runs\n • Power-up usage\n • Treasure collection\n\nProgression\nCreate long-term progression:\n • Character unlocks\n • Outfit customization\n • Cosmetic trails\n • Pets\n • Skill upgrades\n • Permanent upgrades\n • Daily rewards\n • Weekly events\n • Achievements\n • Prestige system\n\nGraphics\nCreate high-quality original visuals featuring:\n • Dynamic lighting\n • Volumetric fog\n • Weather\n • Water effects\n • Particle systems\n • Animated foliage\n • Day/night cycle\n • Cinematic camera\n • Smooth animations\n • Optimized performance across devices\n\nAudio\nCompose completely original music inspired by adventurous orchestral and tribal themes.\nInclude:\n • Ambient exploration music\n • Chase music\n • Menu music\n • Victory sounds\n • Coin collection\n • Power-ups\n • Environmental ambience\nDo not use copyrighted music.\n\nRoblox Features\nIntegrate:\n • DataStore\n • ProfileService\n • Leaderboards\n • Badges\n • Daily rewards\n • Cloud saves\n • Cross-device support\n • Mobile optimization\n • Console support\n • PC support\n\nPerformance\nOptimize for:\n • 60+ FPS on modern devices\n • Graceful quality scaling\n • Streaming Enabled compatibility\n • Efficient procedural generation\n • Object pooling\n • Minimal memory usage\n\nCode Architecture\nUse clean, modular Luau code with separate systems for:\n • Runner Controller\n • Input Manager\n • Motion Control Manager\n • Procedural Generation\n • Obstacle Manager\n • Collectible Manager\n • Mission System\n • Progression System\n • Save Manager\n • UI Framework\n • Audio Manager\n • Camera Controller\n\nQA & Polish\nDo not stop after the first playable version.\nContinue iterating by:\n • Automatically testing every gameplay mechanic\n • Verifying procedural generation never creates impossible paths\n • Stress-testing long runs\n • Testing all motion controls across supported devices\n • Optimizing performance\n • Eliminating bugs\n • Refining animations, controls, camera, and game feel\nRepeat testing and refinement until the experience is polished, performant, and feels like a premium endless runner with original content suitable for Roblox.",
+  "answers": [
+    {
+      "field": "scale",
+      "ask": "How long should one generated stretch be before the biome changes?",
+      "answer": "Use short, readable biome stretches of roughly 60–90 seconds of running before transitioning to the next environment, with a brief blended transition segment."
+    },
+    {
+      "field": "free",
+      "ask": "How often should the path fork, and do the forks rejoin or commit the player to a branch?",
+      "answer": "Present a fork about every 20–30 seconds on average, and have branches rejoin after a short alternate segment so runs remain procedurally manageable and fair."
+    }
+  ],
+  "scene_prompt": "Create a 3D endless-runner map with a forward-running path that procedurally passes through original adventure environments: ancient jungle ruins, mountain temples, lava and underground caverns, ice canyons, desert ruins, floating islands, bamboo forests, waterfalls, and forgotten cities. Build each biome as a short, readable 60–90-second stretch, joined by brief blended transition segments. Arrange a clear central route with collectible trails and varied traversable hazards including gaps, broken or collapsing bridges, fallen trees, rolling boulders, rotating blades, swinging axes, spike and fire traps, crumbling floors, moving platforms, narrow ledges, climbing sections, rope swings, and zip lines. About every 20–30 seconds, split the route into branching paths that rejoin after short alternate segments. Use dramatic terrain, animated foliage, water, weather, fog, dynamic lighting, and day-to-night atmosphere, with a pursuing original creature visible behind the runner during chase sections.",
+  "blob": "## Genre\n\nThe dominant and sole genre is Infinite Runner. Adventure is the visual register, but automatic endless forward movement and reaction-timed procedural hazards define the game.\n\n## Shape and preset\n\nUse `lane-free` for continuous steering along a route that turns, forks, and rejoins. Match the Free Runner preset and expand it with moving hazards, collectible trails, power-ups, and chase pressure explicitly requested by the author.\n\n## Config requirements\n\nUse `chunk-modular` for axis-aligned procedural segments and `obstacle-jump` for gaps, broken bridges, trees, spikes, fire traps, and crumbling floors. Use `obstacle-moving` for boulders, blades, axes, platforms, and collapsing bridges. Use `hazard-kill` for lethal obstacles and the pursuing creature. Draw `terrain-relief`, `water-body`, and `island-cluster` as dramatic mountains, canyons, waterfalls, caverns, and floating islands. Blend original jungle ruins, mountain temples, lava caverns, ice canyons, desert ruins, bamboo forests, waterfalls, forgotten cities, and underground spaces.\n\n## Layout requirements\n\nPlace `collectible-nodes` as coins, gems, crystals, chests, relics, keys, and event trails along readable safe and risk-reward lines. Place `powerup-buffs` in visible approach lanes. Place one `trigger-despawn` behind the active queue. Fork the route about every 20–30 seconds and rejoin branches after short alternates. Keep obstacle spacing speed-relative and every generated pattern clearable.\n\n## Layout components\n\nGenerate 60–90-second biome stretches linked by brief blended transitions. Each stretch needs one central traversable route, occasional short rejoining branches, terrain and architecture unique to its biome, and selected hazards from the full requested set, including narrow ledges, climbs, rope swings, and zip lines. Keep water, foliage, fog, weather, lighting, and day-to-night atmosphere compositionally readable, with the pursuer visible behind during chase segments.\n\n## Render order\n\nUse `topdown`: validate chunk connections, branches, rejoins, and hazard clearance first, then dress the plan isometrically. The plan is authoritative because an impossible generated sequence ends the run unfairly.\n\n## Scale, theme, and pipeline cost\n\nThe scale band is huge because the endless route rotates through nine substantial environments. The theme is premium original adventure spectacle. Use `P6` for valid procedural structure, `P2` for overhanging caverns and traversal structures, `P3` for outdoor-to-cavern transitions, and `CHECK` for layered open-air and water play around floating islands.",
+  "agent_artifact": "# Scene prompt\n\nCreate a 3D endless-runner map with a forward-running path that procedurally passes through original adventure environments: ancient jungle ruins, mountain temples, lava and underground caverns, ice canyons, desert ruins, floating islands, bamboo forests, waterfalls, and forgotten cities. Build each biome as a short, readable 60–90-second stretch, joined by brief blended transition segments. Arrange a clear central route with collectible trails and varied traversable hazards including gaps, broken or collapsing bridges, fallen trees, rolling boulders, rotating blades, swinging axes, spike and fire traps, crumbling floors, moving platforms, narrow ledges, climbing sections, rope swings, and zip lines. About every 20–30 seconds, split the route into branching paths that rejoin after short alternate segments. Use dramatic terrain, animated foliage, water, weather, fog, dynamic lighting, and day-to-night atmosphere, with a pursuing original creature visible behind the runner during chase sections.\n\n# Agent decision\n\n## Genre\n\nThe dominant and sole genre is Infinite Runner. Adventure is the visual register, but automatic endless forward movement and reaction-timed procedural hazards define the game.\n\n## Shape and preset\n\nUse `lane-free` for continuous steering along a route that turns, forks, and rejoins. Match the Free Runner preset and expand it with moving hazards, collectible trails, power-ups, and chase pressure explicitly requested by the author.\n\n## Config requirements\n\nUse `chunk-modular` for axis-aligned procedural segments and `obstacle-jump` for gaps, broken bridges, trees, spikes, fire traps, and crumbling floors. Use `obstacle-moving` for boulders, blades, axes, platforms, and collapsing bridges. Use `hazard-kill` for lethal obstacles and the pursuing creature. Draw `terrain-relief`, `water-body`, and `island-cluster` as dramatic mountains, canyons, waterfalls, caverns, and floating islands. Blend original jungle ruins, mountain temples, lava caverns, ice canyons, desert ruins, bamboo forests, waterfalls, forgotten cities, and underground spaces.\n\n## Layout requirements\n\nPlace `collectible-nodes` as coins, gems, crystals, chests, relics, keys, and event trails along readable safe and risk-reward lines. Place `powerup-buffs` in visible approach lanes. Place one `trigger-despawn` behind the active queue. Fork the route about every 20–30 seconds and rejoin branches after short alternates. Keep obstacle spacing speed-relative and every generated pattern clearable.\n\n## Layout components\n\nGenerate 60–90-second biome stretches linked by brief blended transitions. Each stretch needs one central traversable route, occasional short rejoining branches, terrain and architecture unique to its biome, and selected hazards from the full requested set, including narrow ledges, climbs, rope swings, and zip lines. Keep water, foliage, fog, weather, lighting, and day-to-night atmosphere compositionally readable, with the pursuer visible behind during chase segments.\n\n## Render order\n\nUse `topdown`: validate chunk connections, branches, rejoins, and hazard clearance first, then dress the plan isometrically. The plan is authoritative because an impossible generated sequence ends the run unfairly.\n\n## Scale, theme, and pipeline cost\n\nThe scale band is huge because the endless route rotates through nine substantial environments. The theme is premium original adventure spectacle. Use `P6` for valid procedural structure, `P2` for overhanging caverns and traversal structures, `P3` for outdoor-to-cavern transitions, and `CHECK` for layered open-air and water play around floating islands.\n",
+  "agent_notes": "## Genre\n\nThe dominant and sole genre is Infinite Runner. Adventure is the visual register, but automatic endless forward movement and reaction-timed procedural hazards define the game.\n\n## Shape and preset\n\nUse `lane-free` for continuous steering along a route that turns, forks, and rejoins. Match the Free Runner preset and expand it with moving hazards, collectible trails, power-ups, and chase pressure explicitly requested by the author.\n\n## Config requirements\n\nUse `chunk-modular` for axis-aligned procedural segments and `obstacle-jump` for gaps, broken bridges, trees, spikes, fire traps, and crumbling floors. Use `obstacle-moving` for boulders, blades, axes, platforms, and collapsing bridges. Use `hazard-kill` for lethal obstacles and the pursuing creature. Draw `terrain-relief`, `water-body`, and `island-cluster` as dramatic mountains, canyons, waterfalls, caverns, and floating islands. Blend original jungle ruins, mountain temples, lava caverns, ice canyons, desert ruins, bamboo forests, waterfalls, forgotten cities, and underground spaces.\n\n## Layout requirements\n\nPlace `collectible-nodes` as coins, gems, crystals, chests, relics, keys, and event trails along readable safe and risk-reward lines. Place `powerup-buffs` in visible approach lanes. Place one `trigger-despawn` behind the active queue. Fork the route about every 20–30 seconds and rejoin branches after short alternates. Keep obstacle spacing speed-relative and every generated pattern clearable.\n\n## Layout components\n\nGenerate 60–90-second biome stretches linked by brief blended transitions. Each stretch needs one central traversable route, occasional short rejoining branches, terrain and architecture unique to its biome, and selected hazards from the full requested set, including narrow ledges, climbs, rope swings, and zip lines. Keep water, foliage, fog, weather, lighting, and day-to-night atmosphere compositionally readable, with the pursuer visible behind during chase segments.\n\n## Render order\n\nUse `topdown`: validate chunk connections, branches, rejoins, and hazard clearance first, then dress the plan isometrically. The plan is authoritative because an impossible generated sequence ends the run unfairly.\n\n## Scale, theme, and pipeline cost\n\nThe scale band is huge because the endless route rotates through nine substantial environments. The theme is premium original adventure spectacle. Use `P6` for valid procedural structure, `P2` for overhanging caverns and traversal structures, `P3` for outdoor-to-cavern transitions, and `CHECK` for layered open-air and water play around floating islands.",
+  "secondary": [],
+  "spec": {
+    "genre": "Infinite Runner",
+    "secondary": [],
+    "shape": "lane-free",
+    "preset": "Free Runner",
+    "axes": {},
+    "options": [
+      {
+        "id": "chunk-modular",
+        "text": "Axis-aligned procedural segments forming the endless route.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "obstacle-jump",
+        "text": "Gaps, broken bridges, fallen trees, spikes, fire traps, crumbling floors, narrow ledges, climbs, rope swings, and zip lines along the route.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "obstacle-moving",
+        "text": "Rolling boulders, rotating blades, swinging axes, moving platforms, and collapsing bridges.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "hazard-kill",
+        "text": "Lethal obstacles and a pursuing creature during chase segments.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "terrain-relief",
+        "text": "Dramatic mountains, canyons, caverns, and terrain unique to each biome.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "water-body",
+        "text": "Waterfalls and readable water around the route.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "island-cluster",
+        "text": "Floating islands with layered open-air traversal and water play.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "Coins, gems, crystals, chests, relics, keys, and event trails along readable safe and risk-reward lines.",
+        "visible": false,
+        "count": -1
+      },
+      {
+        "id": "powerup-buffs",
+        "text": "Power-ups in visible approach lanes.",
+        "visible": false,
+        "count": -1
+      },
+      {
+        "id": "trigger-despawn",
+        "text": "A cleanup volume behind the active queue.",
+        "visible": false,
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "collectible-nodes",
+        "text": "Coins, gems, crystals, chests, relics, keys, and event trails along readable safe and risk-reward lines.",
+        "count": -1,
+        "where": "Along readable safe lines and risk-reward lines."
+      },
+      {
+        "id": "powerup-buffs",
+        "text": "Power-ups in visible approach lanes.",
+        "count": -1,
+        "where": "In visible approach lanes."
+      },
+      {
+        "id": "trigger-despawn",
+        "text": "A cleanup volume behind the active queue.",
+        "count": 1,
+        "where": "Behind the active queue."
+      }
+    ],
+    "layout": {
+      "composition": "",
+      "zones": [
+        {
+          "name": "Ancient jungle ruins",
+          "role": "A 60–90-second traversable biome stretch with its own terrain, architecture, and selected hazards.",
+          "where": "Sequentially along the central endless route.",
+          "size": "60–90 seconds"
+        },
+        {
+          "name": "Mountain temples",
+          "role": "A 60–90-second traversable biome stretch with its own terrain, architecture, and selected hazards.",
+          "where": "Sequentially along the central endless route.",
+          "size": "60–90 seconds"
+        },
+        {
+          "name": "Lava and underground caverns",
+          "role": "A 60–90-second traversable biome stretch with its own terrain, architecture, and selected hazards.",
+          "where": "Sequentially along the central endless route.",
+          "size": "60–90 seconds"
+        },
+        {
+          "name": "Ice canyons",
+          "role": "A 60–90-second traversable biome stretch with its own terrain, architecture, and selected hazards.",
+          "where": "Sequentially along the central endless route.",
+          "size": "60–90 seconds"
+        },
+        {
+          "name": "Desert ruins",
+          "role": "A 60–90-second traversable biome stretch with its own terrain, architecture, and selected hazards.",
+          "where": "Sequentially along the central endless route.",
+          "size": "60–90 seconds"
+        },
+        {
+          "name": "Floating islands",
+          "role": "A 60–90-second traversable biome stretch with layered open-air and water play.",
+          "where": "Sequentially along the central endless route.",
+          "size": "60–90 seconds"
+        },
+        {
+          "name": "Bamboo forests",
+          "role": "A 60–90-second traversable biome stretch with its own terrain, architecture, and selected hazards.",
+          "where": "Sequentially along the central endless route.",
+          "size": "60–90 seconds"
+        },
+        {
+          "name": "Waterfalls",
+          "role": "A 60–90-second traversable biome stretch with its own terrain, architecture, and selected hazards.",
+          "where": "Sequentially along the central endless route.",
+          "size": "60–90 seconds"
+        },
+        {
+          "name": "Forgotten cities",
+          "role": "A 60–90-second traversable biome stretch with its own terrain, architecture, and selected hazards.",
+          "where": "Sequentially along the central endless route.",
+          "size": "60–90 seconds"
+        }
+      ],
+      "paths": [
+        {
+          "from": "Each biome stretch",
+          "to": "Next biome stretch",
+          "kind": "track"
+        },
+        {
+          "from": "Central route",
+          "to": "Short alternate branch",
+          "kind": "track"
+        },
+        {
+          "from": "Short alternate branch",
+          "to": "Central route",
+          "kind": "track"
+        },
+        {
+          "from": "Outdoor stretches",
+          "to": "Cavern stretches",
+          "kind": "transition"
+        }
+      ],
+      "terrain": "Dramatic mountains, canyons, waterfalls, caverns, floating islands, jungle ruins, mountain temples, lava caverns, ice canyons, desert ruins, bamboo forests, forgotten cities, and underground spaces. Water, foliage, fog, weather, lighting, and day-to-night atmosphere remain compositionally readable.",
+      "props": [
+        {
+          "name": "Gaps",
+          "count": -1,
+          "where": "Along the central route and short alternate branches."
+        },
+        {
+          "name": "Broken bridges",
+          "count": -1,
+          "where": "Along the central route and short alternate branches."
+        },
+        {
+          "name": "Collapsing bridges",
+          "count": -1,
+          "where": "Along the central route and short alternate branches."
+        },
+        {
+          "name": "Fallen trees",
+          "count": -1,
+          "where": "Along the central route and short alternate branches."
+        },
+        {
+          "name": "Rolling boulders",
+          "count": -1,
+          "where": "Along the central route and short alternate branches."
+        },
+        {
+          "name": "Rotating blades",
+          "count": -1,
+          "where": "Along the central route and short alternate branches."
+        },
+        {
+          "name": "Swinging axes",
+          "count": -1,
+          "where": "Along the central route and short alternate branches."
+        },
+        {
+          "name": "Spike and fire traps",
+          "count": -1,
+          "where": "Along the central route and short alternate branches."
+        },
+        {
+          "name": "Crumbling floors",
+          "count": -1,
+          "where": "Along the central route and short alternate branches."
+        },
+        {
+          "name": "Moving platforms",
+          "count": -1,
+          "where": "Along the central route and short alternate branches."
+        },
+        {
+          "name": "Narrow ledges, climbs, rope swings, and zip lines",
+          "count": -1,
+          "where": "In selected biome stretches."
+        },
+        {
+          "name": "Pursuing original creature",
+          "count": -1,
+          "where": "Visible behind the runner during chase segments."
+        }
+      ],
+      "boundary": "An endless forward-running route through procedural chunks, with brief blended transitions between biome stretches.",
+      "scale_band": "huge",
+      "theme": "Premium original adventure spectacle"
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "An impossible generated sequence would end the run unfairly.",
+      "set_piece": false
+    },
+    "route": [
+      "P6",
+      "P2",
+      "P3",
+      "CHECK"
+    ],
+    "notes": [],
+    "scene_prompt": "Create a 3D endless-runner map with a forward-running path that procedurally passes through original adventure environments: ancient jungle ruins, mountain temples, lava and underground caverns, ice canyons, desert ruins, floating islands, bamboo forests, waterfalls, and forgotten cities. Build each biome as a short, readable 60–90-second stretch, joined by brief blended transition segments. Arrange a clear central route with collectible trails and varied traversable hazards including gaps, broken or collapsing bridges, fallen trees, rolling boulders, rotating blades, swinging axes, spike and fire traps, crumbling floors, moving platforms, narrow ledges, climbing sections, rope swings, and zip lines. About every 20–30 seconds, split the route into branching paths that rejoin after short alternate segments. Use dramatic terrain, animated foliage, water, weather, fog, dynamic lighting, and day-to-night atmosphere, with a pursuing original creature visible behind the runner during chase sections."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "1986e1975066",
+  "served_by": "subagent/genre-choice -> gateway/production/gpt-5.6-terra",
+  "schema_degraded": false,
+  "reused_uprez": true,
+  "order": "p6",
+  "first": "topdown",
+  "mapper_notes": []
+}

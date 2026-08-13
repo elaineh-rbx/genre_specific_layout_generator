@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a 3D obby map built as a small, clearly playable tower with many stacked platform sections. The tower initially has a cute, cozy appearance, with a hidden secret incorporated into the structure; when discovered, the entire tower’s visual atmosphere shifts suddenly into an unsettling horror version.",
-  "blob": "### Genre\nThe dominant genre is Obby & Platformer: the original request is a tower climb built around sequential platforming, with the backstory and atmosphere serving that course rather than creating a separate horror genre.\n\n### Shape and preset\nUse `course-tower`, a compact vertical tower whose many stacked platform sections form one clearly readable ascent. This matches the Tower Obby preset; retain its tower-ascent identity, but do not add timed obstacles, climbing apparatus, or an end reward area because none were requested.\n\n### Config requirements\nUse `path-track` as visible geometry: an ordered chain of landing platforms, short traversals, and ascent transitions continuing from the ground-level entry to the top. No additional canonical options are selected. The hidden secret is a concealed structural detail within the tower, not a visible pickup, trigger, or UI element.\n\n### Layout components\nBuild one small-footprint, many-floor tower. The lower entry zone is a welcoming cozy lobby-sized base with the first safe platform section immediately above it. Stack a continuous sequence of compact platforming sections around a central vertical void, alternating between perimeter ledges, interior bridges, and offset platforms so the climb is legible from below without becoming a huge ascent. Place the concealed secret in a discreet recessed nook or behind a false-looking architectural panel along a noncritical side branch; it must not block the main climbing route. Keep every critical landing surface broad and visually distinct, with no impossible gaps in the upward chain. Use soft rounded architecture, warm pastel materials, small decorative lights, and cute cozy dressing in the initial presentation; the same tower geometry must also support an abrupt unsettling horror dressing with darkened surfaces, harsh shadow, and corrupted versions of the decorative elements. The exterior boundary is the tower shell and enclosing walls, with open central sightlines between stacked sections. Frame the isometric view to show the base, the rising spiral/offset climb, and enough upper floors to establish the tower’s compact scale.\n\n### Render order\nUse `topdown` first and make the top-down plan authoritative, because the full stacked jump chain must remain connected and physically playable before the isometric scene is dressed.\n\n### Scale, theme, and pipeline cost\nScale is small: many floors are compressed into a clearly playable tower rather than a huge climb. Theme is cute cozy storybook tower shifting to sudden unsettling horror. Pipeline modifiers are `P2` for the stacked floors and bridges above lower sections, and `P6` because the critical platform sequence must be valid by construction.",
+  "blob": "### 1. Genre\nThe dominant genre is Obby & Platformer: player-paced climbing through a tower of discrete platform challenges.\n\n### 2. Shape and preset\nUse `course-tower`, a compact vertical tower whose many platform sections stack directly above one another. Match the Tower Obby preset for its tower form, but retain only the route geometry the prompt establishes; the preset’s timing, climbing, and end-reward features are not specified.\n\n### 3. Config requirements\nUse `path-track` as a clearly readable ascending chain of platforms, landings, and short transfers through every stacked section. Do not add named hazards, moving parts, checkpoints, or other obstacle types without an author request. The tower begins with cozy, cute dressing while incorporating subtle concealed unsettling architectural details that can support the later horror presentation.\n\n### 4. Layout requirements\nNo menu-defined placed markers are required. The hidden secret’s interaction logic and the whole-tower atmosphere change are mechanics, not layout placements. Site its concealed structural clue in a reachable intermediate section, off the most direct visual line but without requiring a separate route.\n\n### 5. Layout components\nBuild one small, clearly playable tower with many vertically stacked platform sections around a compact central footprint. Each section contains a safe landing and a short upward platform transfer, connecting continuously to the next level; keep the critical jump chain physics-legal. Place the concealed secret detail within an intermediate structural recess or behind a partially screened platform element. Use cozy pastel materials, soft decorative trim, and warm lighting in the initial dressing, with understated cracked, distorted, or shadowed motifs embedded in the same structure for the horror variant. The boundary is the tower shell and outer fall space; frame the full tower in an isometric cutaway that makes its vertical stack legible.\n\n### 6. Render order\nUse `topdown`: the platform topology must be valid and continuously climbable before the isometric tower is dressed.\n\n### 7. Scale, theme, and pipeline cost\nScale is small: many floors are compressed into a short, readable tower rather than a huge climb. Theme is cute cozy tower concealing unsettling horror. Use `P2` because floors and platforms stack above one another, and `P6` because the climb route must be valid by construction.",
   "spec": {
     "genre": "Obby & Platformer",
     "secondary": [],
@@ -24,67 +24,51 @@
     "options": [
       {
         "id": "path-track",
-        "text": "An ordered chain of broad, visually distinct landing platforms, short traversals, and ascent transitions continuing from the ground-level entry to the top, alternating around the central void.",
+        "text": "A clearly readable ascending chain of platforms, landings, and short transfers through every stacked section.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "Isometric frame shows the welcoming base in the foreground, the rising spiral/offset chain of perimeter ledges, interior bridges, and platforms around the central vertical void through the middle, and enough upper stacked floors in the background to establish the compact tower scale.",
+      "composition": "Full tower framed in an isometric cutaway so its compact vertical stack of platform sections is legible.",
       "zones": [
         {
-          "name": "lower entry zone",
-          "role": "Welcoming cozy lobby-sized base and ground-level entry, with the first safe platform section immediately above it.",
-          "where": "base of the tower",
-          "size": "lobby-sized"
-        },
-        {
-          "name": "main ascent",
-          "role": "Continuous compact platforming climb around the central vertical void.",
-          "where": "stacked through the tower from lower floors to upper floors",
-          "size": "many compressed floors"
-        },
-        {
-          "name": "concealed secret branch",
-          "role": "A noncritical side branch containing a concealed structural secret that does not block the main climbing route.",
-          "where": "along one side of the tower",
-          "size": "small recessed nook or false-looking architectural panel"
+          "name": "Tower",
+          "role": "A small, clearly playable vertical tower containing continuously connected stacked platform sections.",
+          "where": "Centre of the frame around a compact central footprint.",
+          "size": "small"
         }
       ],
       "paths": [
         {
-          "from": "lower entry zone",
-          "to": "main ascent",
+          "from": "Each stacked section",
+          "to": "The next level",
           "kind": "track"
-        },
-        {
-          "from": "main ascent",
-          "to": "concealed secret branch",
-          "kind": "bridge"
         }
       ],
-      "terrain": "Soft rounded tower architecture with warm pastel materials and small decorative lights in the initial presentation; the same geometry supports darkened surfaces, harsh shadow, and corrupted decorative elements after the atmosphere shift.",
+      "terrain": "Compact tower structure with cozy pastel materials, soft decorative trim, and warm lighting; understated cracked, distorted, or shadowed motifs are embedded in the same structure for the horror variant.",
       "props": [
         {
-          "name": "small decorative lights",
+          "name": "Safe landings and short upward platform transfers",
           "count": -1,
-          "where": "throughout the cozy tower dressing"
+          "where": "In every stacked platform section along the continuous climb chain."
         },
         {
-          "name": "concealed structural secret",
-          "count": -1,
-          "where": "in a discreet recessed nook or behind a false-looking architectural panel on the noncritical side branch"
+          "name": "Concealed structural secret detail",
+          "count": 1,
+          "where": "In a reachable intermediate structural recess or behind a partially screened platform element, off the most direct visual line without requiring a separate route."
         }
       ],
-      "boundary": "Tower shell and enclosing walls, with open central sightlines between stacked sections.",
+      "boundary": "The tower shell and outer fall space.",
       "scale_band": "small",
-      "theme": "cute cozy storybook tower shifting to sudden unsettling horror"
+      "theme": "Cute cozy tower concealing unsettling horror"
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the full stacked jump chain must remain connected and physically playable before the isometric scene is dressed.",
+      "why": "The platform topology must be valid and continuously climbable before the tower is dressed.",
       "set_piece": false
     },
     "route": [
@@ -97,7 +81,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a 3D murder mystery map set inside a dim, gothic mansion with interconnected interior rooms and corridors.",
-  "blob": "### Genre\n`Survival` is the dominant genre: this is an asymmetric murder-mystery round where one hostile player hunts the others through a confined interior. The elimination-or-capture round outcome establishes the 1 vs All format without adding its mechanics to the map.\n\n### Shape and preset\nUse `warren-looping`, a dense mansion interior whose rooms and corridors offer multiple escape routes rather than trapping players in dead ends. Match the 1 vs All preset, but omit its Escape Exit because the stated round does not end through an escape door.\n\n### Config requirements\nUse `cover-los` as visible geometry: place crawlspaces, wardrobes, curtained alcoves, and substantial furniture in selected rooms to break sightlines and provide hiding places. Use `spawn-protected` as invisible layout data: place separated role-start areas in screened mansion wings so opposing roles do not begin in direct contact. Do not render markers for those starts.\n\n### Layout components\nBuild a medium-sized, entirely interior gothic mansion. A central entrance hall and grand stair landing form the largest navigation hub near the middle. Branch interconnected corridors into a library, dining room, drawing room, kitchen/service wing, bedroom wing, and a few smaller side chambers; each major room must have at least two route choices or connect back through another corridor. Add narrow servant passages and short loops behind the principal rooms, but avoid sealed dead-end corridors. Use dark wood floors, stone walls, high ceilings, shadowed archways, heavy curtains, bookcases, wardrobes, dining tables, sideboards, and candlelit fixtures as hiding and sightline-breaking props. The exterior mansion walls fully enclose the playable space; no exterior grounds or escape route are shown. Compose the isometric view with the entrance hall and stair as the visual center, while cutaway roof treatment exposes the connected room network.\n\n### Render order\nUse `topdown`: the room loops and alternate corridors must remain traversable and free of unfair dead ends, so topology is authoritative before the gothic isometric dressing is produced.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by several connected mansion wings rather than a single hall. Theme is dim gothic murder-mystery: charcoal stone, aged mahogany, muted burgundy, sparse warm candlelight, and deep shadows. Apply `P6` because the looping pursuit layout must be valid by construction; generate a connected plan with no trapping dead ends before rendering.",
+  "blob": "### Genre\nThe dominant genre is `Survival`, specifically a murderer-versus-survivors chase scenario. The round-ending rules establish a pursuing threat and evasion, rather than a spatial puzzle or a combat arena.\n\n### Shape and preset\nUse `warren-looping`, following the 1 vs All preset. The mansion must be an interconnected interior network with no dead ends that would unfairly trap fleeing survivors; rooms and corridors loop back into one another. The preset remains recognisable.\n\n### Config requirements\nApply `cover-los` as crawlspaces, wardrobes, alcoves, and low partitions that let players break the murderer’s sightline. Apply `building-interior` for the entirely enterable mansion interior, including its rooms and corridors. The dim gothic treatment is expressed through dark wood, stone, pointed arches, aged wallpaper, candlelit sconces, and shadowed but readable circulation.\n\n### Layout requirements\nApply `spawn-protected` with two separated role-assignment start areas: one secluded murderer start and one survivor start, screened from each other and connected only through the looping mansion network. No other placed gameplay elements are specified.\n\n### Layout components\nBuild one large enclosed mansion interior. A central entrance hall acts as the visual anchor, with broad stair access and multiple doorways feeding the circulation network. Surround it with a ballroom, dining room, library, study, parlour, kitchen/service wing, and several smaller side rooms. Corridors should connect these rooms through multiple alternate routes, including paired hallways and cross-connections, so every room has at least two exits and the whole plan forms loops rather than terminal branches. Place hiding geometry naturally within rooms: tall bookcases in the library, wardrobes in bedrooms and side rooms, furniture clusters in the parlour and dining room, and recessed alcoves along corridors. The outer mansion walls form the boundary; players never go outdoors. Frame the isometric view to show the central hall and readable branching room wings, while retaining the dense gothic interior atmosphere.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because valid loop connectivity is necessary for fair pursuit and escape routes through the mansion.\n\n### Scale, theme, and pipeline cost\nScale is medium: a single substantial mansion with enough distinct rooms and alternate corridors for a full round. Theme is dim gothic murder mystery: candlelit, ornate, decayed, and suspenseful. Pipeline modifier `P6` is required because the looping topology must be valid by construction; `P3` is required because this is an enterable interior separated from the exterior.",
   "spec": {
     "genre": "Survival",
     "secondary": [],
@@ -24,157 +24,184 @@
     "options": [
       {
         "id": "cover-los",
-        "text": "Crawlspaces, wardrobes, curtained alcoves, and substantial furniture in selected mansion rooms break sightlines and provide hiding places.",
+        "text": "Crawlspaces, wardrobes, alcoves, and low partitions that let survivors break the murderer's sightline.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "building-interior",
+        "text": "The entirely enterable mansion interior, including its rooms and corridors.",
         "visible": true,
         "count": -1
       },
       {
         "id": "spawn-protected",
-        "text": "Separated role-start areas in screened mansion wings keep opposing roles from beginning in direct contact; do not render their markers.",
+        "text": "Two separated role-assignment start areas: one secluded murderer start and one survivor start, screened from each other.",
         "visible": false,
-        "count": -1
+        "count": 2
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "spawn-protected",
+        "text": "Two separated role-assignment start areas: one secluded murderer start and one survivor start, screened from each other.",
+        "count": 2,
+        "where": "Separated within the mansion and connected only through the looping mansion network."
       }
     ],
     "layout": {
-      "composition": "Cutaway-roof isometric view centered on the central entrance hall and grand stair landing, exposing the connected room network branching into surrounding mansion wings.",
+      "composition": "Isometric view frames the central entrance hall as the anchor, with readable branching room wings around it while retaining a dense gothic interior atmosphere.",
       "zones": [
         {
-          "name": "Central entrance hall and grand stair landing",
-          "role": "Largest navigation hub connecting the mansion wings.",
-          "where": "centre",
-          "size": "largest"
+          "name": "Central entrance hall",
+          "role": "Visual anchor with broad stair access and multiple doorways feeding the circulation network.",
+          "where": "Centre",
+          "size": "Broad central space"
         },
         {
-          "name": "Library",
-          "role": "Interconnected principal room with alternate routes.",
-          "where": "off the central corridors",
+          "name": "Ballroom",
+          "role": "Major mansion room connected into the looping circulation.",
+          "where": "Surrounding the central hall",
           "size": ""
         },
         {
           "name": "Dining room",
-          "role": "Interconnected principal room with alternate routes.",
-          "where": "off the central corridors",
+          "role": "Major mansion room with furniture clusters for hiding geometry.",
+          "where": "Surrounding the central hall",
           "size": ""
         },
         {
-          "name": "Drawing room",
-          "role": "Interconnected principal room with alternate routes.",
-          "where": "off the central corridors",
+          "name": "Library",
+          "role": "Major mansion room with tall bookcases for hiding and sightline breaks.",
+          "where": "Surrounding the central hall",
+          "size": ""
+        },
+        {
+          "name": "Study",
+          "role": "Major mansion room connected by alternate routes.",
+          "where": "Surrounding the central hall",
+          "size": ""
+        },
+        {
+          "name": "Parlour",
+          "role": "Major mansion room with furniture clusters for hiding geometry.",
+          "where": "Surrounding the central hall",
           "size": ""
         },
         {
           "name": "Kitchen and service wing",
-          "role": "Interconnected service-side route network.",
-          "where": "one mansion wing",
+          "role": "Service-area wing connected into the looping mansion network.",
+          "where": "One branching wing of the mansion",
           "size": ""
         },
         {
-          "name": "Bedroom wing",
-          "role": "Interconnected residential route network.",
-          "where": "another mansion wing",
+          "name": "Side rooms",
+          "role": "Several smaller rooms with wardrobes and alternate exits.",
+          "where": "Around the main rooms and corridors",
+          "size": "Several smaller rooms"
+        },
+        {
+          "name": "Murderer start area",
+          "role": "Secluded role-assignment start area screened from survivors.",
+          "where": "Separated within the mansion network",
           "size": ""
         },
         {
-          "name": "Side chambers",
-          "role": "Smaller connected rooms providing additional route choices.",
-          "where": "between and behind principal rooms",
-          "size": "a few smaller chambers"
-        },
-        {
-          "name": "Servant passages",
-          "role": "Narrow secondary routes and short loops behind principal rooms.",
-          "where": "behind the principal rooms",
-          "size": "narrow"
+          "name": "Survivor start area",
+          "role": "Role-assignment start area screened from the murderer.",
+          "where": "Separated within the mansion network",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Central entrance hall and grand stair landing",
-          "to": "Library",
+          "from": "Central entrance hall",
+          "to": "Ballroom",
           "kind": "corridor"
         },
         {
-          "from": "Central entrance hall and grand stair landing",
+          "from": "Central entrance hall",
           "to": "Dining room",
           "kind": "corridor"
         },
         {
-          "from": "Central entrance hall and grand stair landing",
-          "to": "Drawing room",
+          "from": "Central entrance hall",
+          "to": "Library",
           "kind": "corridor"
         },
         {
-          "from": "Central entrance hall and grand stair landing",
+          "from": "Central entrance hall",
+          "to": "Study",
+          "kind": "corridor"
+        },
+        {
+          "from": "Central entrance hall",
+          "to": "Parlour",
+          "kind": "corridor"
+        },
+        {
+          "from": "Central entrance hall",
           "to": "Kitchen and service wing",
           "kind": "corridor"
         },
         {
-          "from": "Central entrance hall and grand stair landing",
-          "to": "Bedroom wing",
+          "from": "Main rooms and side rooms",
+          "to": "Main rooms and side rooms",
           "kind": "corridor"
         },
         {
-          "from": "Principal rooms",
-          "to": "Servant passages",
+          "from": "Murderer start area",
+          "to": "Looping mansion network",
           "kind": "corridor"
         },
         {
-          "from": "Servant passages",
-          "to": "Principal rooms",
+          "from": "Survivor start area",
+          "to": "Looping mansion network",
           "kind": "corridor"
         }
       ],
-      "terrain": "Entirely interior mansion with dark wood floors, charcoal stone walls, high ceilings, shadowed archways, and cutaway roof treatment.",
+      "terrain": "Interior floors and circulation under dark wood, stone, aged wallpaper, pointed arches, and candlelit sconces.",
       "props": [
         {
-          "name": "heavy curtains",
+          "name": "Tall bookcases",
           "count": -1,
-          "where": "selected rooms and shadowed archways"
+          "where": "Library"
         },
         {
-          "name": "bookcases",
+          "name": "Wardrobes",
           "count": -1,
-          "where": "library and selected rooms"
+          "where": "Bedrooms and side rooms"
         },
         {
-          "name": "wardrobes",
+          "name": "Furniture clusters",
           "count": -1,
-          "where": "selected rooms"
+          "where": "Parlour and dining room"
         },
         {
-          "name": "dining tables",
+          "name": "Recessed alcoves",
           "count": -1,
-          "where": "dining room"
+          "where": "Along corridors"
         },
         {
-          "name": "sideboards",
+          "name": "Candlelit sconces",
           "count": -1,
-          "where": "principal rooms"
-        },
-        {
-          "name": "candlelit fixtures",
-          "count": -1,
-          "where": "throughout the mansion"
-        },
-        {
-          "name": "substantial furniture",
-          "count": -1,
-          "where": "selected rooms"
+          "where": "Throughout the mansion interior"
         }
       ],
-      "boundary": "Exterior mansion walls fully enclose the playable interior; no exterior grounds or escape route are shown.",
+      "boundary": "Outer mansion walls enclose the entire play space; players never go outdoors.",
       "scale_band": "medium",
-      "theme": "Dim gothic murder-mystery; charcoal stone, aged mahogany, muted burgundy, sparse warm candlelight, and deep shadows."
+      "theme": "Dim gothic murder mystery; candlelit, ornate, decayed, suspenseful."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "Room loops and alternate corridors must remain traversable and free of unfair dead ends.",
+      "why": "Valid loop connectivity is necessary for fair pursuit and escape routes through the mansion.",
       "set_piece": false
     },
     "route": [
-      "P6"
+      "P6",
+      "P3"
     ],
     "notes": [],
     "scene_prompt": "Create a 3D murder mystery map set inside a dim, gothic mansion with interconnected interior rooms and corridors."
@@ -182,7 +209,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

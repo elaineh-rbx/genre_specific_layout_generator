@@ -19,7 +19,7 @@
     }
   ],
   "scene_prompt": "Create a bright, colorful, stylized 3D obby tower with 67 compact stacked stages, built and framed floor by floor for practical play. The tower rises vertically through sequential platform sections, with checkpoints between floors and a simple completion reward at the top.",
-  "blob": "### Genre\nThe dominant genre is Obby & Platformer: the original request specifies an obby tower, with sequential stages and a top completion reward.\n\n### Shape and preset\nUse `course-tower`, a vertically stacked tower of compact, sequential platform floors. Match the Tower Obby preset: its vertical ascent and end reward fit the request, while its timing and climbing obstacle assumptions are omitted because they were not specified.\n\n### Config requirements\n`path-track` is visible geometry: each of the 67 floors contains the next readable platform sequence in the ascent. `checkpoint-respawn` is both visible and invisible: show a safe landing/checkpoint pad between floors, with its respawn marker placed after segmentation and excluded from the image. `winner-zone` is both visible and invisible: the top floor visibly holds a simple completion-reward pedestal, while its completion trigger is not rendered.\n\n### Layout components\nBuild one tall, enclosed-by-tower footprint with 67 compact stacked stages, framed and authored floor by floor rather than as one impractically distant view. Start at the bottom on a clear entry platform, then rise through a single ordered chain of brightly colored platform sections. Give every floor a distinct, compact obstacle-platform arrangement while maintaining a continuously legible upward route to the next floor. Place a flat, safe checkpoint pad between each floor so a failed player returns near their current stage rather than to the bottom. The final, 67th floor is a small summit reward zone with a simple completion pedestal. Use open vertical void around the platform chain inside the tower shell; walls or tower framing contain the silhouette without obscuring the active floor. Compose renders as close isometric slices of consecutive floors, with the current platform route, checkpoint, and upward continuation clearly visible.\n\n### Render order\nUse `topdown`: the sequential jump route must remain connected and physically practical, so topology is authoritative before the isometric dressing; `authored_plan` is reserved for mazes and racing circuits.\n\n### Scale, theme, and pipeline cost\nScale is huge in total because there are 67 stages, though each individual floor is small and compact. Theme is bright, colorful, stylized classic Roblox obby tower. Pipeline modifiers are `P6`, because the jump chain must be valid by construction, and `P2`, because the tower’s stacked floors overhang and occlude one another in a single top-down capture.",
+  "blob": "### Genre\nThe dominant genre is Obby & Platformer: a 67-stage vertical skill course whose play is discrete platform progression. There is no secondary genre.\n\n### Shape and preset\nUse `course-tower`, matching the Tower Obby preset. The tower is a compact vertical stack of sequential stages, with each playable floor framed and built as its own readable section. The preset remains recognisable through the climbing ascent, checkpoints, and top reward.\n\n### Config requirements\nUse `path-track` as the visible ordered chain of safe platforms and transitions through all 67 floors. Use `checkpoint-respawn` as bright, flat landing pads marking stage transitions. Use `winner-zone` as a simple, clearly visible completion reward platform at the summit.\n\n### Layout requirements\nPlace `checkpoint-respawn` pads at the completion landing of each of the first 66 stages, immediately before entry to the next floor, so a fall restores the player to the most recently cleared floor. Place one `winner-zone` trigger on the 67th-floor summit platform, surrounding the completion reward. No pickups, NPC emitters, or other placed gameplay objects are required.\n\n### Layout components\nBuild 67 compact stacked stages in one narrow vertical tower. Each floor is a self-contained platforming section, vertically connected in a single upward sequence by short climbs, jumps, and landing platforms; keep every transition legible from the floor below and above. The lowest floor is the entry stage, while the topmost floor is a small summit reward zone. Use brightly colored solid platforms, contrasting stage colors, simple rail-free open edges, and a minimal tower frame rather than a large enclosed building. Keep the outer boundary open to emphasize height, while the tower’s central stacked mass remains the visual anchor. Compose each render around a manageable consecutive portion of the tower rather than attempting to show all 67 floors at once.\n\n### Render order\nUse `topdown`: the ordered platform chain and physically clearable transitions must be validated before the isometric dressing is generated; `authored_plan` is not available because this is neither a maze nor a racing circuit.\n\n### Scale, theme, and pipeline cost\nScale is huge overall because the tower contains 67 stages, but each individual floor is compact. Theme: bright, colorful, stylized classic Roblox obby tower. Apply `P2` because playable floors stack directly over one another, and `P6` because the complete vertical jump route must be valid by construction.",
   "spec": {
     "genre": "Obby & Platformer",
     "secondary": [],
@@ -29,90 +29,98 @@
     "options": [
       {
         "id": "path-track",
-        "text": "Each of the 67 floors contains the next readable platform sequence in the ascent.",
+        "text": "Visible ordered chain of safe platforms and transitions through all 67 floors.",
         "visible": true,
         "count": 67
       },
       {
         "id": "checkpoint-respawn",
-        "text": "Show a safe landing/checkpoint pad between floors, with its respawn marker placed after segmentation and excluded from the image.",
+        "text": "Bright, flat landing pads marking stage transitions.",
         "visible": true,
-        "count": -1
+        "count": 66
       },
       {
         "id": "winner-zone",
-        "text": "The top floor visibly holds a simple completion-reward pedestal, while its completion trigger is not rendered.",
+        "text": "A simple, clearly visible completion reward platform at the summit.",
         "visible": true,
-        "count": -1
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "checkpoint-respawn",
+        "text": "Bright, flat landing pads marking stage transitions.",
+        "count": 66,
+        "where": "At the completion landing of each of the first 66 stages, immediately before entry to the next floor."
+      },
+      {
+        "id": "winner-zone",
+        "text": "A simple, clearly visible completion reward platform at the summit.",
+        "count": 1,
+        "where": "On the 67th-floor summit platform, surrounding the completion reward."
       }
     ],
     "layout": {
-      "composition": "Close isometric slices of consecutive floors, with the current platform route, checkpoint, and upward continuation clearly visible; floors are framed and authored one by one rather than as one distant view.",
+      "composition": "Frame each render around a manageable consecutive portion of the narrow vertical tower rather than showing all 67 floors at once; the central stacked mass is the visual anchor, with open outer edges emphasizing height.",
       "zones": [
         {
-          "name": "Entry platform",
-          "role": "Clear starting point at the bottom of the ascent.",
-          "where": "bottom floor",
-          "size": "compact"
+          "name": "Entry stage",
+          "role": "The lowest floor where the upward platform progression begins.",
+          "where": "Lowest floor of the tower.",
+          "size": "Compact."
         },
         {
           "name": "Stacked platform stages",
-          "role": "Single ordered chain of brightly colored obstacle-platform sections rising through the tower.",
-          "where": "from the bottom through the tower interior",
-          "size": "67 compact stacked stages"
-        },
-        {
-          "name": "Checkpoint pads",
-          "role": "Safe landings between floors so failed players return near their current stage.",
-          "where": "between consecutive floors",
-          "size": "flat"
+          "role": "67 self-contained platforming sections connected in one upward sequence by short climbs, jumps, and landing platforms.",
+          "where": "Vertically stacked through the narrow central tower mass.",
+          "size": "67 compact floors."
         },
         {
           "name": "Summit reward zone",
-          "role": "Completion area holding the final reward pedestal.",
-          "where": "67th floor at the top",
-          "size": "small"
+          "role": "The topmost floor containing the completion reward platform.",
+          "where": "Topmost, 67th floor.",
+          "size": "Small."
         }
       ],
       "paths": [
         {
-          "from": "Entry platform",
-          "to": "Stacked platform stages",
-          "kind": "track"
-        },
-        {
-          "from": "Stacked platform stages",
-          "to": "Checkpoint pads",
-          "kind": "track"
-        },
-        {
-          "from": "Checkpoint pads",
+          "from": "Entry stage",
           "to": "Summit reward zone",
           "kind": "track"
         }
       ],
-      "terrain": "Open vertical void around the brightly colored platform chain inside the tower shell.",
+      "terrain": "Brightly colored solid platforms with contrasting stage colors; minimal tower frame and rail-free open edges.",
       "props": [
         {
-          "name": "completion-reward pedestal",
-          "count": -1,
-          "where": "top floor"
+          "name": "compact stacked stages",
+          "count": 67,
+          "where": "One narrow vertical tower."
+        },
+        {
+          "name": "checkpoint landing pads",
+          "count": 66,
+          "where": "At the completion landing of each of the first 66 stages."
+        },
+        {
+          "name": "completion reward",
+          "count": 1,
+          "where": "On the 67th-floor summit platform."
         }
       ],
-      "boundary": "Tower walls or framing contain the silhouette without obscuring the active floor.",
+      "boundary": "Open outer boundary with rail-free open edges, emphasizing the tower's height.",
       "scale_band": "huge",
-      "theme": "bright, colorful, stylized classic Roblox obby tower"
+      "theme": "Bright, colorful, stylized classic Roblox obby tower."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the sequential jump route must remain connected and physically practical.",
+      "why": "The ordered platform chain and physically clearable transitions must be validated before isometric dressing.",
       "set_piece": false
     },
     "route": [
-      "P6",
-      "P2"
+      "P2",
+      "P6"
     ],
     "notes": [],
     "scene_prompt": "Create a bright, colorful, stylized 3D obby tower with 67 compact stacked stages, built and framed floor by floor for practical play. The tower rises vertically through sequential platform sections, with checkpoints between floors and a simple completion reward at the top."
@@ -120,7 +128,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

@@ -14,120 +14,187 @@
     }
   ],
   "scene_prompt": "Create a 3D penalty-shootout stadium map focused on one polished penalty end, dressed to suggest a full international stadium bowl. A marked grass pitch runs from the foreground penalty spot to a full-size goal at the far end, with animated netting, posts, and crossbar. Surround the goal end with packed crowd stands, fictional team banners and flags, bright floodlights beneath a clear night sky, a large stadium scoreboard, benches, and a player tunnel. Compose clear behind-the-striker and goalkeeper-facing sightlines across the penalty area, with stadium-scale establishing views framing the goal and crowd.",
-  "blob": "### Genre\nSports is dominant: this is a focused soccer penalty-shootout rather than a full match. There is no secondary genre.\n\n### Shape and preset\nUse `field-bounded`, matching the Full Stadium preset. Here it is a deliberately cropped penalty-end field rather than a complete pitch: the penalty spot and goal form the only active sporting axis. Retain the stadium dressing from that preset and add the penalty-specific goal and spot requirements described by the scene.\n\n### Config requirements\nVisible geometry: `startpoint-play` is the marked penalty spot in the near foreground; `trigger-scoring` is the full-size goal mouth, with posts, crossbar, line, and animated net; `spectator-bleachers` are the packed raked stands enclosing the goal end; `barrier-perimeter` is the stadium bowl edge behind and around the crowd; `spectator-zone` provides the benches at the sideline; and `npc-population` supplies the visible packed crowd. The scoring plane within `trigger-scoring` is invisible and placed after segmentation; do not render it.\n\n### Layout components\nBuild one medium-scale penalty-end zone. A rectangular, closely mown grass penalty area runs straight from the foreground penalty spot to the far full-size goal, with crisp white penalty markings and clear open turf between them. The goal occupies the far-center end, backed immediately by a dense lower stand and larger rising crowd bowl. Put the large scoreboard high behind or offset above the goal, readable in stadium establishing views without blocking the goal-facing sightline. Place fictional team banners and flags throughout the stands. Put benches low along one side of the penalty area and a player tunnel beneath or beside the opposite stand edge, both peripheral to the kicking lane. Bright floodlights ring the upper bowl under a clear night sky. The boundary is a continuous stadium enclosure. Frame the primary composition symmetrically along the penalty spot-to-goal axis, with unobstructed behind-the-striker and goalkeeper-facing views; wider establishing views include the goal, crowd, floodlights, and scoreboard.\n\n### Render order\nUse `isometric`: the polished nighttime stadium presentation and composed sightlines lead, while the projected top-down retains the simple straight penalty axis.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by one playable penalty end dressed with stadium-scale stands rather than a full field. Theme: polished fictional international night stadium, vivid team colors, bright floodlights, clear sky. Use `tiered` for the raked seating, which has elevation but no overhang, and `P0` otherwise; the single exterior surface remains fully representable in one top-down capture.",
+  "blob": "### Genre\nThe dominant genre is Sports: a focused soccer penalty shootout with formal goal scoring and fixed shooting positions.\n\n### Shape and preset\nUse `space-bounded`, matching the Full Stadium preset. Here it is a deliberately cropped penalty-end field rather than a full match pitch: one bounded grass penalty area, goal, and surrounding stadium bowl dressing.\n\n### Config requirements\nUse `trigger-scoring` for the full-size goal mouth, with visible posts, crossbar, and animated net defining the scored target. Use `startpoint-play` as the marked penalty spot centered in front of the goal. Use `trigger-bounds` for the marked penalty-area/pitch edge that resolves balls sent wide or over. Use `spectator-bleachers` for packed tiered stands behind and around the goal end, `barrier-perimeter` for the enclosing stadium wall and ball-containment boundary, and `spectator-zone` for benches beside the field. Use `npc-population` for the visible crowd in the stands and team personnel at the benches.\n\n### Layout requirements\nPlace one `trigger-scoring` volume precisely behind the goal line, between the posts and below the crossbar. Place one `startpoint-play` marker at the penalty spot on the field centerline. Place `trigger-bounds` along the playable penalty-end perimeter, including the goal-end and lateral out-of-play edges. Site the crowd population densely in the goal-end stands, with smaller team groups occupying the two bench areas.\n\n### Layout components\nThe primary zone is a regulation-looking grass penalty end, broad enough for a striker approach and goalkeeper movement, with crisp white penalty-box, goal-area, spot, and centerline markings. The goal sits at the far end; the penalty spot anchors the foreground. Behind the goal is a tall packed stand carrying fictional banners and flags, with a large scoreboard centered high above it. Lower side stands, benches, and a player tunnel flank the penalty area. Bright floodlights ring the visible bowl beneath a clear night sky. The stadium wall forms the outer boundary. Keep an unobstructed direct axis from penalty spot to goal for behind-the-striker and goalkeeper-facing views; use a wide establishing composition that frames the goal, crowd, lights, and scoreboard.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because the penalty spot, goal line, scoring plane, and out-of-play boundary require exact playable alignment before the stadium is dressed.\n\n### Scale, theme, and pipeline cost\nScale is medium: one playable penalty end, but dressed with stadium-scale stands and lighting. Theme: polished fictional international night stadium, vivid team colors, bright floodlit grass, packed celebratory crowd. Pipeline modifier: `tiered`, forced by the stepped spectator seating; the terrain remains a single non-overhanging surface.",
   "spec": {
     "genre": "Sports",
     "secondary": [],
-    "shape": "field-bounded",
+    "shape": "space-bounded",
     "preset": "Full Stadium",
     "axes": {},
     "options": [
       {
-        "id": "startpoint-play",
-        "text": "the marked penalty spot in the near foreground",
+        "id": "trigger-scoring",
+        "text": "The full-size goal mouth, with visible posts, crossbar, and animated net defining the scored target.",
         "visible": true,
-        "count": -1
+        "count": 1
       },
       {
-        "id": "trigger-scoring",
-        "text": "the far full-size goal mouth with posts, crossbar, line, and animated net; its scoring plane is invisible and placed after segmentation",
+        "id": "startpoint-play",
+        "text": "The marked penalty spot centered in front of the goal.",
+        "visible": true,
+        "count": 1
+      },
+      {
+        "id": "trigger-bounds",
+        "text": "The marked penalty-area and pitch edge that resolves balls sent wide or over.",
         "visible": true,
         "count": -1
       },
       {
         "id": "spectator-bleachers",
-        "text": "packed raked stands enclosing the goal end, with a dense lower stand and a larger rising crowd bowl",
+        "text": "Packed tiered stands behind and around the goal end.",
         "visible": true,
         "count": -1
       },
       {
         "id": "barrier-perimeter",
-        "text": "the continuous stadium bowl edge behind and around the crowd",
+        "text": "The enclosing stadium wall and ball-containment boundary.",
         "visible": true,
         "count": -1
       },
       {
         "id": "spectator-zone",
-        "text": "benches low along one sideline of the penalty area",
+        "text": "Benches beside the field.",
         "visible": true,
-        "count": -1
+        "count": 2
       },
       {
         "id": "npc-population",
-        "text": "the visible packed crowd throughout the stands",
+        "text": "The visible crowd in the stands and team personnel at the benches.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "trigger-scoring",
+        "text": "The scoring volume precisely behind the goal line, between the posts and below the crossbar.",
+        "count": 1,
+        "where": "Precisely behind the far-end goal line, between the posts and below the crossbar."
+      },
+      {
+        "id": "startpoint-play",
+        "text": "The penalty-spot marker.",
+        "count": 1,
+        "where": "At the penalty spot on the field centerline."
+      },
+      {
+        "id": "trigger-bounds",
+        "text": "The playable penalty-end out-of-play perimeter.",
+        "count": -1,
+        "where": "Along the goal-end and lateral out-of-play edges of the playable penalty end."
+      },
+      {
+        "id": "npc-population",
+        "text": "A dense crowd in the goal-end stands, with smaller team groups at the benches.",
+        "count": -1,
+        "where": "Densely in the goal-end stands, with smaller team groups occupying the two bench areas."
+      }
+    ],
     "layout": {
-      "composition": "Symmetrical along the straight foreground penalty-spot-to-far-center-goal axis, with unobstructed behind-the-striker and goalkeeper-facing views; wider establishing views frame the goal, crowd, floodlights, and scoreboard.",
+      "composition": "Wide establishing composition with the penalty spot in the foreground on a direct unobstructed axis to the far-end goal; the packed goal-end stand, scoreboard, floodlights, and night sky frame the background, while lower side stands, benches, and the player tunnel flank the penalty area.",
       "zones": [
         {
-          "name": "penalty-end zone",
-          "role": "The single active sporting area for penalty shootouts, running from the penalty spot to the goal.",
-          "where": "foreground penalty spot through the centre to the far goal end",
-          "size": "medium"
+          "name": "Grass penalty end",
+          "role": "The playable regulation-looking penalty area for striker approach and goalkeeper movement.",
+          "where": "Centre, running from the foreground penalty spot to the far-end goal.",
+          "size": "Medium; broad enough for a striker approach and goalkeeper movement."
+        },
+        {
+          "name": "Goal and scoring target",
+          "role": "The far-end full-size scored target.",
+          "where": "Far end of the grass penalty area.",
+          "size": "Full-size goal mouth."
+        },
+        {
+          "name": "Goal-end stand",
+          "role": "Packed spectator seating with banners, flags, and the scoreboard.",
+          "where": "Directly behind the goal.",
+          "size": "Tall stadium-scale stand."
+        },
+        {
+          "name": "Lower side stands and benches",
+          "role": "Spectator seating and team personnel areas.",
+          "where": "Flanking both sides of the penalty area.",
+          "size": "Lower side stands with two bench areas."
+        },
+        {
+          "name": "Player tunnel",
+          "role": "Stadium access dressing.",
+          "where": "Flanking the penalty area with the lower side stands.",
+          "size": ""
         }
       ],
-      "paths": [],
-      "terrain": "Rectangular closely mown grass penalty area with crisp white penalty markings and clear open turf between the spot and goal.",
+      "paths": [
+        {
+          "from": "Penalty spot",
+          "to": "Goal",
+          "kind": "open ground"
+        }
+      ],
+      "terrain": "Single non-overhanging grass surface with crisp white penalty-box, goal-area, penalty-spot, and centerline markings.",
       "props": [
         {
-          "name": "full-size goal with animated netting, posts, crossbar, and goal line",
-          "count": -1,
-          "where": "far-center end of the penalty area"
+          "name": "Full-size goal with posts, crossbar, and animated netting",
+          "count": 1,
+          "where": "Far end of the penalty area."
         },
         {
-          "name": "large scoreboard",
-          "count": -1,
-          "where": "high behind or offset above the goal"
+          "name": "Large stadium scoreboard",
+          "count": 1,
+          "where": "Centered high above the goal-end stand."
         },
         {
-          "name": "fictional team banners and flags",
+          "name": "Fictional banners and flags",
           "count": -1,
-          "where": "throughout the stands"
+          "where": "Goal-end packed stand."
         },
         {
-          "name": "benches",
+          "name": "Bright floodlights",
           "count": -1,
-          "where": "low along one side of the penalty area"
+          "where": "Ringing the visible stadium bowl beneath the clear night sky."
         },
         {
-          "name": "player tunnel",
-          "count": -1,
-          "where": "beneath or beside the opposite stand edge from the benches"
+          "name": "Benches",
+          "count": 2,
+          "where": "Beside the field in the lower side areas."
         },
         {
-          "name": "bright floodlights",
-          "count": -1,
-          "where": "ringing the upper crowd bowl"
+          "name": "Player tunnel",
+          "count": 1,
+          "where": "Flanking the penalty area."
         }
       ],
-      "boundary": "Continuous stadium enclosure, with the bowl edge behind and around the crowd.",
+      "boundary": "The enclosing stadium wall forms the outer boundary and contains balls; marked goal-end and lateral pitch edges define the playable penalty-end perimeter.",
       "scale_band": "medium",
-      "theme": "polished fictional international night stadium, vivid team colors, bright floodlights, clear sky"
+      "theme": "Polished fictional international night stadium, vivid team colors, bright floodlit grass, packed celebratory crowd."
     },
     "render": {
-      "first": "isometric",
-      "then": "topdown",
-      "authoritative": "isometric",
-      "why": "the polished nighttime stadium presentation and composed sightlines lead while the simple straight penalty axis remains clear.",
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "The penalty spot, goal line, scoring plane, and out-of-play boundary require exact playable alignment before the stadium is dressed.",
       "set_piece": false
     },
     "route": [
-      "P0",
       "tiered"
     ],
-    "notes": [],
+    "notes": [
+      "visible on 'trigger-scoring' set from goes_to=both",
+      "visible on 'startpoint-play' set from goes_to=both",
+      "visible on 'trigger-bounds' set from goes_to=both"
+    ],
     "scene_prompt": "Create a 3D penalty-shootout stadium map focused on one polished penalty end, dressed to suggest a full international stadium bowl. A marked grass pitch runs from the foreground penalty spot to a full-size goal at the far end, with animated netting, posts, and crossbar. Surround the goal end with packed crowd stands, fictional team banners and flags, bright floodlights beneath a clear night sky, a large stadium scoreboard, benches, and a player tunnel. Compose clear behind-the-striker and goalkeeper-facing sightlines across the penalty area, with stadium-scale establishing views framing the goal and crowd."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
-  "mapper_notes": []
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P0', 'tiered'] gives isometric"
+  ]
 }

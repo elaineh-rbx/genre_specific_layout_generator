@@ -3,7 +3,7 @@
   "source": "an open 3D terrain island you explore to find hidden treasure chests, where each chest is a unique, ornate, custom-modeled 3D treasure chest you can interact with to collect, with a compass or indicator that points toward the nearest chest and a counter for chests found Do not ask any clarifying questions. Make any reasonable creative decisions yourself and build the complete, playable game now.",
   "answers": [],
   "scene_prompt": "Create an open 3D terrain island for exploration, with hidden treasure chests distributed across the landscape. Each chest is a unique, ornate custom-modeled 3D treasure chest placed in a distinct discoverable location.",
-  "blob": "### Genre\nThe dominant genre is Adventure: the player explores an open island to discover and collect hidden treasure. There is no secondary genre.\n\n### Shape and preset\nUse `world-open`, an open island landscape with freedom to search beyond the main routes. Match the Scavenger Hunt preset: its open exploration and concealed finds fit the treasure-chest focus; omit its quest board because no physical board is requested.\n\n### Config requirements\nUse `collectible-nodes`: ornate treasure chests are visible prop geometry, while their collection points are invisible placed pickup volumes. Use `alcove-secret` as visible geometry: conceal some chests in small, readable discovery spaces such as a cave recess, a ruin niche, a waterfall hollow, or behind dense vegetation. Use `water-body` as visible surrounding ocean water. Use `terrain-relief` as visible rolling hills, rocky ridges, and low cliffs that make each chest location distinct.\n\n### Layout components\nBuild one medium-sized, roughly oval island with a broad sandy shoreline around its perimeter and shallow ocean extending beyond it as the natural boundary. Place an open grassy central basin as the main orientation space, with several walkable dirt trails branching toward the coast, a wooded rise, a rocky ridge, and a small ruined stone landmark. Shape the terrain into gentle elevation rather than impassable mountains: trails climb from the basin to ridge overlooks and descend to coves.\n\nDistribute hidden treasure chests across distinct discoverable locations without repeating one placement pattern: one on a beach shelf, one in a forest clearing, one within a cave alcove, one beside the ruin, one on a ridge overlook, and others tucked into similarly legible terrain pockets. Every chest is a unique, ornate custom-modeled 3D object with individual silhouette and decorative detailing. Keep all locations reachable by foot, with open sightline breaks from trees, rocks, and ridge folds rather than hard maze walls. Frame the island in an elevated three-quarter view, with the central basin and ruin readable at once and the coastline defining the playable extent.\n\n### Render order\nUse `isometric`: the island’s visual terrain composition and discoverable landmark views lead, while no strict topology would make the game unplayable if image-authored.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by one complete explorable island with multiple dispersed discovery locations. Theme: stylized adventurous treasure island, sunlit grass, warm sand, weathered stone, lush foliage, and ornate fantasy chests. Pipeline modifiers are `tiered` for non-overhanging hills and ridges, and `CHECK` because the surrounding water must remain legible without obscuring the island surface.",
+  "blob": "### Genre\nAdventure is the dominant genre: exploration is directed by finding hidden treasure rather than combat, scoring, or a settlement loop. The matched preset is Scavenger Hunt.\n\n### Shape and preset\nUse `world-open`, matching the Scavenger Hunt preset. This is one contiguous island players may explore in any order, with no chapter instances or prescribed route.\n\n### Config requirements\nUse `water-body` as the surrounding ocean, forming a clear coastline around the explorable island. No other image configuration is required: the prompt does not specify settlements, NPCs, interiors, roads, or particular landforms.\n\n### Layout requirements\nUse `collectible-nodes` for 12 treasure chests, each placed after segmentation as a unique ornate custom 3D chest. Site them in 12 clearly distinct discovery locations spread across the island: a shoreline cove, a cliff ledge, a grove, a cave-mouth recess, a ruined-looking stone nook, and other visually readable off-path landmarks. Do not add compass indicators, counters, UI, or collection logic to the rendered layout.\n\n### Layout components\nBuild a medium-sized open island with a broad central traversable terrain mass, irregular beaches, rocky shoreline edges, and ocean on all sides. Give the land a varied but continuously walkable exploration surface with open clearings, scattered rock formations, small tree clusters, shallow gullies, coastal coves, and several elevated lookout points. Each chest site should be supported by a distinct environmental pocket or landmark without requiring a forced route. Keep the island boundary as the shoreline and open sea rather than walls. Compose the frame as a readable three-quarter overview: coastline visible around most of the landmass, central terrain dominant, and distant edges fading into water.\n\n### Render order\nUse `isometric`: render the authoritative isometric island view first, then project the top-down layout from it. Exploration topology is flexible, so an image-first composition is sufficient.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by 12 distributed treasure locations that need meaningful separation without becoming a huge world. Theme: inviting stylized adventure island, lush natural terrain, weathered stone, bright coastal water, and ornate treasure discoveries. Use `CHECK` because the surrounding water is a real map feature requiring a water/play-space review; no other pipeline modifier is forced.",
   "spec": {
     "genre": "Adventure",
     "secondary": [],
@@ -12,149 +12,90 @@
     "axes": {},
     "options": [
       {
-        "id": "collectible-nodes",
-        "text": "Ornate treasure chests are visible prop geometry, while their collection points are invisible placed pickup volumes.",
-        "visible": false,
-        "count": -1
-      },
-      {
-        "id": "alcove-secret",
-        "text": "Conceal some chests in small, readable discovery spaces such as a cave recess, a ruin niche, a waterfall hollow, or behind dense vegetation.",
-        "visible": true,
-        "count": -1
-      },
-      {
         "id": "water-body",
-        "text": "Visible surrounding ocean water.",
+        "text": "The surrounding ocean forms a clear coastline around the explorable island.",
         "visible": true,
         "count": -1
       },
       {
-        "id": "terrain-relief",
-        "text": "Visible rolling hills, rocky ridges, and low cliffs that make each chest location distinct.",
-        "visible": true,
-        "count": -1
+        "id": "collectible-nodes",
+        "text": "12 unique ornate custom 3D treasure chests placed in clearly distinct discovery locations spread across the island.",
+        "visible": false,
+        "count": 12
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "collectible-nodes",
+        "text": "12 unique ornate custom 3D treasure chests.",
+        "count": 12,
+        "where": "In 12 clearly distinct discovery locations spread across the island: a shoreline cove, a cliff ledge, a grove, a cave-mouth recess, a ruined-looking stone nook, and other visually readable off-path landmarks."
       }
     ],
     "layout": {
-      "composition": "Elevated three-quarter view framing the roughly oval island, with the central basin and ruined stone landmark readable at once and the coastline defining the playable extent.",
+      "composition": "Readable three-quarter overview with coastline visible around most of the landmass, central terrain dominant, and distant edges fading into water.",
       "zones": [
         {
-          "name": "Central basin",
-          "role": "Open grassy main orientation space.",
-          "where": "centre of the island",
-          "size": "open"
-        },
-        {
-          "name": "Sandy shoreline and coves",
-          "role": "Coastal discovery ground, including a beach shelf treasure location.",
-          "where": "around the island perimeter",
+          "name": "Central traversable terrain mass",
+          "role": "Broad continuously walkable exploration surface with open clearings, scattered rock formations, small tree clusters, shallow gullies, coastal coves, and elevated lookout points.",
+          "where": "Centre of the island",
           "size": "broad"
         },
         {
-          "name": "Wooded rise",
-          "role": "Discoverable forest area with a clearing treasure location.",
-          "where": "branching from the central basin",
+          "name": "Irregular beaches and rocky shoreline edges",
+          "role": "Coastal exploration edge and shoreline boundary.",
+          "where": "Around the island",
           "size": ""
         },
         {
-          "name": "Rocky ridge",
-          "role": "Elevated discovery area with ridge overlooks and a treasure location.",
-          "where": "branching from the central basin",
+          "name": "Ocean",
+          "role": "Surrounds the explorable island.",
+          "where": "On all sides",
           "size": ""
-        },
-        {
-          "name": "Ruined stone landmark",
-          "role": "Small landmark and treasure location beside the ruin.",
-          "where": "branching from the central basin",
-          "size": "small"
-        },
-        {
-          "name": "Cave alcove",
-          "role": "Readable concealed discovery space containing a treasure location.",
-          "where": "within the island terrain",
-          "size": "small"
         }
       ],
-      "paths": [
-        {
-          "from": "Central basin",
-          "to": "Coast",
-          "kind": "trail"
-        },
-        {
-          "from": "Central basin",
-          "to": "Wooded rise",
-          "kind": "trail"
-        },
-        {
-          "from": "Central basin",
-          "to": "Rocky ridge",
-          "kind": "trail"
-        },
-        {
-          "from": "Central basin",
-          "to": "Ruined stone landmark",
-          "kind": "trail"
-        },
-        {
-          "from": "Central basin",
-          "to": "Ridge overlooks",
-          "kind": "trail"
-        },
-        {
-          "from": "Central basin",
-          "to": "Coves",
-          "kind": "trail"
-        }
-      ],
-      "terrain": "One medium-sized, roughly oval island with a broad sandy shoreline, shallow surrounding ocean, an open grassy central basin, gentle rolling hills, rocky ridges, and low cliffs. Trails climb from the basin to ridge overlooks and descend to coves.",
+      "paths": [],
+      "terrain": "Lush natural terrain with irregular beaches, rocky shoreline edges, open clearings, scattered rock formations, small tree clusters, shallow gullies, coastal coves, several elevated lookout points, weathered stone, and bright coastal water.",
       "props": [
         {
-          "name": "Unique ornate custom-modeled 3D treasure chests with individual silhouettes and decorative detailing",
-          "count": -1,
-          "where": "Across distinct discoverable terrain pockets: a beach shelf, forest clearing, cave alcove, beside the ruin, ridge overlook, and other legible locations"
+          "name": "Treasure chests",
+          "count": 12,
+          "where": "In distinct discovery locations across the island."
         },
         {
-          "name": "Trees",
+          "name": "Scattered rock formations",
           "count": -1,
-          "where": "Wooded rise and sightline breaks"
+          "where": "Across the central terrain."
         },
         {
-          "name": "Rocks",
+          "name": "Small tree clusters",
           "count": -1,
-          "where": "Across the island as sightline breaks"
-        },
-        {
-          "name": "Weathered ruined stone",
-          "count": -1,
-          "where": "Small ruined stone landmark"
+          "where": "Across the central terrain."
         }
       ],
-      "boundary": "Broad sandy shoreline around the perimeter with shallow surrounding ocean extending beyond the island as the natural boundary.",
+      "boundary": "The island shoreline and open sea form the boundary; there are no walls.",
       "scale_band": "medium",
-      "theme": "Stylized adventurous treasure island; sunlit grass, warm sand, weathered stone, lush foliage, and ornate fantasy chests."
+      "theme": "Inviting stylized adventure island, lush natural terrain, weathered stone, bright coastal water, ornate treasure discoveries."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "Visual terrain composition and discoverable landmark views lead because no strict topology would make the game unplayable if image-authored.",
+      "why": "Exploration topology is flexible, so an image-first composition is sufficient.",
       "set_piece": false
     },
     "route": [
-      "tiered",
       "CHECK"
     ],
     "notes": [
-      "The Scavenger Hunt preset is matched, but its quest board is omitted because no physical board is requested."
+      "No compass indicators, counters, UI, or collection logic are included in the rendered layout."
     ],
     "scene_prompt": "Create an open 3D terrain island for exploration, with hidden treasure chests distributed across the landscape. Each chest is a unique, ornate custom-modeled 3D treasure chest placed in a distinct discoverable location."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

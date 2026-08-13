@@ -14,134 +14,132 @@
     }
   ],
   "scene_prompt": "Create a 3D story-game map set in a focused forest at night. A main woodland clearing serves as the gathering area, with scattered natural resources and space for a campfire and a simple shelter. From the clearing, a clearly marked chase route winds through dense trees toward a city reached as a continuous transition. The route opens into city streets filled with hundreds of silent pedestrians, ending in an urban area that contrasts with the dark forest.",
-  "blob": "### Genre\nThe dominant genre is Adventure, with Survival as a secondary horror-chase influence. The story journey and directed escape own the map form; survival details only inform the opening clearing.\n\n### Shape and preset\nUse `world-corridor`, a guided forest-to-city journey rather than a free-roam wood. Match the Guided Trail preset: retain its corridor form, `path-trail`, and destination pull, but drop its `reveal-exit` because the forest opens directly into exterior city streets rather than crossing an outside-to-inside threshold.\n\n### Config requirements\n`path-trail` is visible geometry: a clearly legible, winding chase path marked through dense trees from the clearing to the city. `landmark-focal` is visible geometry: the brighter urban skyline and first street frontage are the distant destination visible through breaks in the forest. `collectible-nodes` are invisible layout placements for the scattered natural resources in the opening clearing. `npc-population` is both visible and invisible: render hundreds of silent pedestrians throughout the city streets, with their standing and walking occupancy placements applied after segmentation. `settlement-density` is visible geometry: the endpoint becomes a built-up urban street district, not isolated buildings.\n\n### Layout components\nThe opening zone is one medium woodland clearing near the foreground, large enough for gathering, a central campfire site, and one simple improvised shelter along its edge. Scatter natural resource props around its perimeter without turning the forest into a large explorable maze. A single marked route leaves the clearing and snakes through a dense, dark conifer forest; use repeated arrow markers, packed trunks, undergrowth, and occasional open sightlines to keep the intended direction unmistakable. The route continuously transitions into a contrasting city edge, then broad urban streets and building facades filled with hundreds of silent pedestrians. End the route in a tighter urban arrival area. Forest ground is uneven leaf litter and dirt, becoming paved sidewalks and streets at the transition. Dense trees and peripheral darkness form the forest boundary; city blocks frame the final area. Compose the clearing in the lower foreground, the curving route through the middle, and city lights ahead as the visual pull.\n\n### Render order\nUse `topdown`: the chase route must remain continuously connected and readable from clearing to city, since a broken route would make the directed escape unplayable.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by one focused clearing, one complete chase route, and a compact city endpoint rather than a whole open forest. Theme: nocturnal psychological horror, rain-ready woodland darkness, then uncanny populated urban streets. Use `P0`; the forest and city remain one continuous exterior surface with no forced stacked, interior, or separate-map capture pass.",
+  "blob": "### Genre\nThe dominant genre is Adventure, with Survival as a secondary genre for the storm, shelter, and hostile chase. The narrative journey owns the layout: a focused route progresses from forest gathering through the chase and into the city.\n\n### Shape and preset\nUse `route-guided`, matching the Guided Trail preset. This is one continuous, directed woodland-to-city route rather than separate chapters or a freely explorable forest. Keep the preset’s `path-trail` and `landmark-focal` logic, but replace its reveal-exit emphasis with a gradual outdoor transition from dense forest to urban streets.\n\n### Config requirements\nUse `path-trail` as a clearly readable chase path marked by repeated arrows through dense trees. Use `landmark-focal` for the distant city glow and skyline that pull the player toward the route’s end. Use `settlement-density` for a compact urban street zone rather than isolated buildings. Use `npc-population` for the silent pedestrian crowd visibly occupying the city streets.\n\n### Layout requirements\nUse `collectible-nodes` for the natural gathering resources, distributed around the main clearing and kept close enough to support the campfire-and-shelter scene without expanding the forest. Use `npc-population` as hundreds of silent pedestrians, concentrated along the city streets and sidewalks at the route terminus; leave a navigable central path through them. No other placed gameplay markers are required.\n\n### Layout components\nThe opening zone is one medium woodland clearing, large enough for scattered resource props, a campfire location, and one simple shelter site. Dense trunks, undergrowth, and darkness enclose the clearing’s edges. A single winding forest trail leaves the clearing, with frequent arrow markers on trees, signs, or ground surfaces to make the chase direction unmistakable. The route should not branch into a navigable maze. It gradually gains urban evidence—streetlights, pavement, and building silhouettes—before opening directly into a compact city-street zone. The city contains multiple street-facing building facades and hundreds of silent pedestrians, with the route ending in a visually oppressive urban pocket. The forest naturally bounds the early route; city blocks bound the end. Compose the forest clearing in the lower foreground, the winding route through the middle, and the contrasting city glow at the far end.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because the chase route must remain continuously connected, legible, and unambiguous from the clearing to the city before the night-horror dressing is added.\n\n### Scale, theme, and pipeline cost\nScale is medium: the map contains one main clearing, one focused chase route, and a compact city endpoint, despite the crowd of hundreds. Theme: eerie nighttime forest horror shifting into an uncanny, unresponsive city. Use `P0`; the forest and city remain one continuous exterior surface with no forced overhangs, interior transition, separate map, or procedural-validity requirement.",
   "spec": {
     "genre": "Adventure",
     "secondary": [
       "Survival"
     ],
-    "shape": "world-corridor",
+    "shape": "route-guided",
     "preset": "Guided Trail",
     "axes": {},
     "options": [
       {
         "id": "path-trail",
-        "text": "a clearly legible, winding chase path marked through dense trees from the clearing to the city",
+        "text": "A clearly readable chase path marked by repeated arrows through dense trees.",
         "visible": true,
         "count": -1
       },
       {
         "id": "landmark-focal",
-        "text": "the brighter urban skyline and first street frontage are the distant destination visible through breaks in the forest",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "collectible-nodes",
-        "text": "scattered natural resources in the opening clearing",
-        "visible": false,
-        "count": -1
-      },
-      {
-        "id": "npc-population",
-        "text": "hundreds of silent pedestrians throughout the city streets, with standing and walking occupancy placements applied after segmentation",
+        "text": "The distant city glow and skyline that pull the player toward the route's end.",
         "visible": true,
         "count": -1
       },
       {
         "id": "settlement-density",
-        "text": "a built-up urban street district at the endpoint, not isolated buildings",
+        "text": "A compact urban street zone rather than isolated buildings.",
         "visible": true,
+        "count": -1
+      },
+      {
+        "id": "npc-population",
+        "text": "Hundreds of silent pedestrians visibly occupying the city streets.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "Natural gathering resources distributed around the main clearing and kept close enough to support the campfire-and-shelter scene without expanding the forest.",
+        "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "npc-population",
+        "text": "Hundreds of silent pedestrians concentrated along the city streets and sidewalks at the route terminus.",
+        "count": -1,
+        "where": "Along the city streets and sidewalks at the route terminus, leaving a navigable central path through them."
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "Natural gathering resources distributed around the main clearing and kept close enough to support the campfire-and-shelter scene without expanding the forest.",
+        "count": -1,
+        "where": "Around the main clearing, close enough to support the campfire-and-shelter scene without expanding the forest."
+      }
+    ],
     "layout": {
-      "composition": "The clearing sits in the lower foreground, the curving route runs through the middle, and city lights ahead provide the visual pull.",
+      "composition": "The medium woodland clearing sits in the lower foreground, the winding forest route runs through the middle, and the contrasting city glow and skyline sit at the far end.",
       "zones": [
         {
-          "name": "Opening woodland clearing",
-          "role": "Gathering area with a central campfire site, simple improvised shelter, and scattered natural resources.",
-          "where": "Lower foreground",
+          "name": "Woodland clearing",
+          "role": "Opening gathering area with scattered natural resources, a campfire location, and a simple shelter site.",
+          "where": "Lower foreground at the route start.",
           "size": "medium"
         },
         {
-          "name": "Forest chase route",
-          "role": "A single marked escape route through dense dark conifers, kept directional with repeated arrow markers, packed trunks, undergrowth, and occasional open sightlines.",
-          "where": "Middle, leading from the clearing toward the city",
+          "name": "Winding forest chase route",
+          "role": "A single unbranched chase route through dense trees, marked with frequent arrows and gradually gaining urban evidence.",
+          "where": "Middle, connecting the clearing to the city.",
           "size": ""
         },
         {
-          "name": "City edge and urban streets",
-          "role": "The route transitions continuously into broad paved streets and building facades filled with silent pedestrians.",
-          "where": "Ahead of the forest route",
+          "name": "Compact city-street zone",
+          "role": "The oppressive urban route terminus, containing street-facing building facades and silent pedestrians.",
+          "where": "Far end of the route.",
           "size": "compact"
-        },
-        {
-          "name": "Urban arrival area",
-          "role": "The tighter final destination area at the end of the route.",
-          "where": "End of the city streets",
-          "size": "tight"
         }
       ],
       "paths": [
         {
-          "from": "Opening woodland clearing",
-          "to": "Forest chase route",
-          "kind": "track"
-        },
-        {
-          "from": "Forest chase route",
-          "to": "City edge and urban streets",
-          "kind": "open ground"
-        },
-        {
-          "from": "City edge and urban streets",
-          "to": "Urban arrival area",
-          "kind": "road"
+          "from": "Woodland clearing",
+          "to": "Compact city-street zone",
+          "kind": "trail"
         }
       ],
-      "terrain": "Uneven forest leaf litter and dirt become paved sidewalks and streets at the continuous city transition.",
+      "terrain": "A dark nighttime forest with a medium clearing enclosed by dense trunks and undergrowth; the trail gradually transitions through streetlights, pavement, and building silhouettes into city streets.",
       "props": [
         {
-          "name": "central campfire site",
+          "name": "Natural resource props",
+          "count": -1,
+          "where": "Scattered around the woodland clearing."
+        },
+        {
+          "name": "Campfire location",
           "count": 1,
-          "where": "Opening woodland clearing"
+          "where": "In the woodland clearing."
         },
         {
-          "name": "simple improvised shelter",
+          "name": "Simple shelter site",
           "count": 1,
-          "where": "Along the edge of the opening woodland clearing"
+          "where": "In the woodland clearing."
         },
         {
-          "name": "natural resource props",
+          "name": "Arrow markers",
           "count": -1,
-          "where": "Around the perimeter of the opening woodland clearing"
+          "where": "On trees, signs, or ground surfaces along the winding forest trail."
         },
         {
-          "name": "repeated arrow markers",
+          "name": "Streetlights",
           "count": -1,
-          "where": "Along the forest chase route"
+          "where": "Along the late forest route as urban evidence begins."
         },
         {
-          "name": "packed conifer trunks and undergrowth",
+          "name": "Street-facing building facades",
           "count": -1,
-          "where": "Along the forest chase route"
-        },
-        {
-          "name": "silent pedestrians",
-          "count": -1,
-          "where": "Throughout the city streets"
+          "where": "In the compact city-street zone."
         }
       ],
-      "boundary": "Dense trees and peripheral darkness form the forest boundary; city blocks frame the final area.",
+      "boundary": "Dense forest naturally bounds the early route, while city blocks bound the route end.",
       "scale_band": "medium",
-      "theme": "nocturnal psychological horror, rain-ready woodland darkness, then uncanny populated urban streets"
+      "theme": "Eerie nighttime forest horror shifting into an uncanny, unresponsive city."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the chase route must remain continuously connected and readable from clearing to city, since a broken route would make the directed escape unplayable.",
+      "why": "the chase route must remain continuously connected, legible, and unambiguous from the clearing to the city before the night-horror dressing is added",
       "set_piece": false
     },
     "route": [
@@ -153,7 +151,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

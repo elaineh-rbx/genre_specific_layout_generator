@@ -19,114 +19,106 @@
     }
   ],
   "scene_prompt": "Create a 3D volcanic wasteland map on a small, dense 100-by-100-stud area of rugged generated rock terrain. Cover the ground with patches of differently colored lava, with bridges and doors crossing or dividing parts of the terrain; place buttons throughout the landscape beside these features. Scatter crystals across the ground in every direction at roughly one-meter spacing.",
-  "blob": "### Genre\nThe dominant genre is Adventure, with Puzzle as a secondary genre: the collection objective drives exploration across the map, while distributed buttons and doors create local spatial interactions.\n\n### Shape and preset\nUse `world-open`, matching the Scavenger Hunt preset. Here it is a compact open volcanic collection ground rather than a large overworld. Retain the preset’s collection focus but omit its unrequested quest board and hidden alcoves.\n\n### Config requirements\nUse `collectible-nodes` as invisible collection markers, each aligned to a visible crystal prop across the terrain. Use `hazard-kill` as visible multicolored lava patches spread through the ground. Use `terrain-relief` as visible rugged generated-rock rises, depressions, and shelves. From the secondary Puzzle genre, use `button-solve`: visible floor buttons sit beside bridges and doors, with their interaction volumes invisible. Use `gate-solve` for the visible doors that divide terrain sections.\n\n### Layout components\nBuild one dense, contiguous 100-by-100-stud volcanic wasteland. The whole play area is rugged generated dark rock terrain, with uneven ridges and shallow basins but no stacked floors or tunnels. Different-colored lava patches cover substantial ground areas, breaking the terrain into short traversable sections. Several narrow rock-and-metal bridges cross lava separations, while doors divide selected rock passages; place a button beside each bridge or door feature. Scatter crystal props over all accessible ground at roughly one-meter spacing in every direction, including along ridges, open flats, bridge approaches, and small safe rock shelves. Keep paths as an informal branching network of bare rock between lava patches, with bridges as the main crossings. The boundary is the outer edge of the 100-by-100-stud terrain, visually terminated by steep rock drops and lava. Compose the map as a compact readable square, with the varied lava colors visibly interspersed throughout the full footprint.\n\n### Render order\nUse `topdown` first and make it authoritative, because every crystal, bridge, door, and safe rock section must remain reachable across the dense hazard field; an invalid connection would prevent completion. The isometric render is dressed from that validated plan.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the explicit 100-by-100-stud footprint and near-meter crystal density. Theme is a dense volcanic wasteland: jagged generated black rock, multicolored lava, industrial bridges, doors, buttons, and bright crystals. Use `tiered` because the rugged terrain has real relief without overhanging surfaces.",
+  "blob": "### 1. Genre\nDominant genre: Puzzle. The button-operated bridges and doors create spatial solve gates, while the crystals are the completion objective.\n\n### 2. Shape and preset\nUse `puzzle-open`, matching the Open-Air Puzzle preset. This is one compact, unenclosed volcanic puzzle landscape rather than a sequence of sealed rooms; retain the preset’s open-air gating logic while using terrain and lava instead of a plaza or garden.\n\n### 3. Config requirements\nUse `gate-solve` for rock-framed doors and bridge crossings that visibly divide terrain sections until their associated controls are used. Use `button-solve` for physical buttons beside those doors and bridges. Use `hazard-kill` for the multicolored lava patches spread over the ground. Use `terrain-relief` for the rugged generated volcanic rock, with ridges, shallow basins, and uneven traversable shelves.\n\n### 4. Layout requirements\nUse `button-solve` placement: site one button at each controlled bridge or door approach, close enough that its relationship to the feature is immediately readable and not isolated by its own lava. Use `collectible-nodes` placement: distribute crystals at roughly one-meter spacing across every reachable ground area, including side shelves and terrain behind opened doors; the exact total follows the usable surface rather than a separate fixed count. No other placed gameplay markers are required.\n\n### 5. Layout components\nBuild a small, dense 100-by-100-stud volcanic wasteland as one continuous play zone. Shape generated dark rock into low ridges, broken shelves, and shallow channels, preserving readable foot routes between lava patches. Cover the terrain with irregular patches of differently colored lava, creating dangerous separations rather than a single central lake. Use several narrow rock or constructed bridges to cross the most consequential lava channels, and place doors in rock outcrops where they divide alternate terrain sections. Put the associated buttons beside each bridge or door. Scatter crystals across the entire reachable ground plane at roughly one-meter intervals in every direction. Form the boundary with steep volcanic rock walls and impassable lava at the outer rim. Compose the plan as a dense overhead-readable network of safe rock islands, crossings, gates, and crystal fields.\n\n### 6. Render order\nRender `topdown` first and treat it as authoritative, because the reachable terrain network, lava barriers, bridges, and button-controlled gates must remain connected and legible for collection play; dress the isometric view from that validated plan.\n\n### 7. Scale, theme, and pipeline cost\nScale band: small, driven by the explicitly 100-by-100-stud footprint and intentionally dense crystal coverage. Theme: rugged volcanic wasteland with dark generated rock, vivid multicolored lava, and bright collectible crystals. Pipeline modifiers: `tiered` because the terrain has real non-overhanging elevation; `P0` otherwise, since the space remains one continuous outdoor surface.",
   "spec": {
-    "genre": "Adventure",
-    "secondary": [
-      "Puzzle"
-    ],
-    "shape": "world-open",
-    "preset": "Scavenger Hunt",
+    "genre": "Puzzle",
+    "secondary": [],
+    "shape": "puzzle-open",
+    "preset": "Open-Air Puzzle",
     "axes": {},
     "options": [
       {
-        "id": "collectible-nodes",
-        "text": "Invisible collection markers, each aligned to a visible crystal prop across the terrain.",
-        "visible": false,
+        "id": "gate-solve",
+        "text": "Rock-framed doors and bridge crossings visibly divide terrain sections until their associated controls are used.",
+        "visible": true,
         "count": -1
       },
       {
-        "id": "hazard-kill",
-        "text": "Visible multicolored lava patches spread through the ground.",
+        "id": "button-solve",
+        "text": "Physical buttons beside controlled doors and bridges.",
         "visible": true,
         "count": -1
       },
       {
         "id": "terrain-relief",
-        "text": "Visible rugged generated-rock rises, depressions, and shelves.",
+        "text": "Rugged generated volcanic rock with ridges, shallow basins, and uneven traversable shelves.",
         "visible": true,
+        "count": -1
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "Crystals distributed at roughly one-meter spacing across every reachable ground area, including side shelves and terrain behind opened doors.",
+        "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "button-solve",
+        "text": "Physical buttons beside controlled doors and bridges.",
+        "count": -1,
+        "where": "One button at each controlled bridge or door approach, close enough that its relationship to the feature is immediately readable and not isolated by its own lava."
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "Crystals distributed at roughly one-meter spacing across every reachable ground area, including side shelves and terrain behind opened doors.",
+        "count": -1,
+        "where": "Across every reachable ground area, including side shelves and terrain behind opened doors; the exact total follows the usable surface rather than a separate fixed count."
+      }
+    ],
     "layout": {
-      "composition": "A compact readable square volcanic map, with varied lava colors visibly interspersed throughout the full 100-by-100-stud footprint; rock ridges, flats, shelves, bridge approaches, bridges, and divided passages are distributed across the terrain.",
+      "composition": "A dense overhead-readable network of safe rock islands, lava crossings, rock-framed gates, and crystal fields.",
       "zones": [
         {
-          "name": "Volcanic collection ground",
-          "role": "Dense contiguous exploration and collection area divided into short traversable rock sections by lava, bridges, and doors.",
-          "where": "Entire 100-by-100-stud map footprint",
-          "size": "100 by 100 studs"
-        },
-        {
-          "name": "Safe rock shelves",
-          "role": "Small accessible collection and traversal areas between lava separations.",
-          "where": "Throughout the rugged terrain",
-          "size": "small"
+          "name": "Volcanic wasteland",
+          "role": "One continuous open-air puzzle zone for collecting crystals through button-controlled bridges and doors.",
+          "where": "Entire map",
+          "size": "100-by-100 studs"
         }
       ],
-      "paths": [
-        {
-          "from": "Accessible rock sections",
-          "to": "Accessible rock sections",
-          "kind": "open ground"
-        },
-        {
-          "from": "Bridge approaches",
-          "to": "Rock sections across lava separations",
-          "kind": "bridge"
-        },
-        {
-          "from": "Selected rock passages",
-          "to": "Divided terrain sections",
-          "kind": "corridor"
-        }
-      ],
-      "terrain": "Rugged generated dark rock terrain with uneven ridges, shallow basins, rises, depressions, shelves, and substantial differently colored lava patches; no stacked floors or tunnels.",
+      "paths": [],
+      "terrain": "Dark generated volcanic rock shaped into low ridges, broken shelves, and shallow channels, with readable foot routes between irregular patches of vividly multicolored lava.",
       "props": [
         {
-          "name": "Crystal props",
+          "name": "Narrow rock or constructed bridges",
           "count": -1,
-          "where": "Across all accessible ground at roughly one-meter spacing in every direction, including ridges, open flats, bridge approaches, and small safe rock shelves"
+          "where": "Crossing the most consequential lava channels"
         },
         {
-          "name": "Narrow rock-and-metal bridges",
+          "name": "Rock-framed doors",
           "count": -1,
-          "where": "Across lava separations"
+          "where": "In rock outcrops dividing alternate terrain sections"
         },
         {
-          "name": "Doors",
+          "name": "Bright crystals",
           "count": -1,
-          "where": "Dividing selected rock passages"
-        },
-        {
-          "name": "Floor buttons",
-          "count": -1,
-          "where": "Beside each bridge or door feature"
+          "where": "Across the entire reachable ground plane at roughly one-meter intervals"
         }
       ],
-      "boundary": "The outer edge of the 100-by-100-stud terrain, visually terminated by steep rock drops and lava.",
+      "boundary": "Steep volcanic rock walls and impassable lava at the outer rim.",
       "scale_band": "small",
-      "theme": "Dense volcanic wasteland: jagged generated black rock, multicolored lava, industrial bridges, doors, buttons, and bright crystals."
+      "theme": "Rugged volcanic wasteland with dark generated rock, vivid multicolored lava, and bright collectible crystals."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "every crystal, bridge, door, and safe rock section must remain reachable across the dense hazard field.",
+      "why": "The reachable terrain network, lava barriers, bridges, and button-controlled gates must remain connected and legible for collection play.",
       "set_piece": false
     },
     "route": [
+      "P0",
       "tiered"
     ],
     "notes": [
-      "Dropped `button-solve` and `gate-solve` from options because they are Puzzle IDs, not canonical option IDs for the dominant Adventure genre; their visible buttons and doors are retained as stated layout props."
+      "dropped option 'hazard-kill': not in Puzzle"
     ],
     "scene_prompt": "Create a 3D volcanic wasteland map on a small, dense 100-by-100-stud area of rugged generated rock terrain. Cover the ground with patches of differently colored lava, with bridges and doors crossing or dividing parts of the terrain; place buttons throughout the landscape beside these features. Scatter crystals across the ground in every direction at roughly one-meter spacing."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

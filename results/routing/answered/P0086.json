@@ -14,47 +14,39 @@
     }
   ],
   "answered": true,
+  "saw_answers": true,
   "config": {
     "scene": "P0086",
     "prompt": "You are an expert Roblox game developer, technical artist, and sound designer. Build a complete, playable, visually charming Roblox 3D platformer inspired by the original Spyro the Dragon trilogy (Insomniac, PS1). Single-player and drop-in co-op friendly. It must play and look great on ALL platforms: phone, tablet, PC, and console.\\n\\nFIRST: produce a full Game Design Document (GDD) - game pillars and vision, target audience, core loop, movement and combat design, hub-and-level world structure, collectible/progression economy, enemy and boss design, art direction, audio direction, UI/UX and cross-platform input strategy, monetization philosophy (cosmetic-only, no pay-to-win), and success metrics. THEN produce a detailed technical implementation plan - architecture, module breakdown, instance hierarchy, data flow, and milestone order. THEN autonomously implement the entire plan end to end without waiting for further input: write all scripts, build/define all visual and audio systems, wire everything up, and deliver a working, good-looking, good-sounding game.\\n\\nCORE MOVEMENT & COMBAT (the Spyro feel)\\n- Tight, responsive dragon movement: run, jump, double-jump, and a signature glide (hold to glide, descend slowly, with a dive/charge-into-glide flow). Air control that feels floaty-but-controlled.\\n- Charge: a horn-down dash that bowls over weak enemies, breaks charge-only gates/chests, and crosses gaps; can charge off ramps.\\n- Flame breath: ranged fire that torches flammable enemies and objects; some enemies must be charged not flamed, and vice versa (the classic metal-armor vs. flammable rule).\\n- Ground-pound/headbash as an unlockable; hover as an optional glide-extension unlock.\\n- Enemy variety: chargeable, flammable, shielded (must flank), and flying foes. Readable tells and knockback.\\n\\nWORLD STRUCTURE\\n- Central hub worlds that portal into themed levels (grassy realm, lava caverns, ice cliffs, spooky night world, sky/cloud realm). Return-portal home stone in each level.\\n- Levels are open-ish 3D playgrounds with branching paths, hidden alcoves, and vertical secrets rewarding glide/charge mastery.\\n- A guide companion (dragonfly-style) that follows, gives hints, and acts as a hit buffer (lose it on hit, recover it from nearby critters) - classic Spyro health model.\\n\\nCOLLECTIBLES & PROGRESSION\\n- Gems (scattered, in chests, from enemies) as the primary currency - some hidden, some behind skill gates. Sparkle + chime on pickup, magnetize toward the player at close range.\\n- Trapped dragons / captured creatures to free as the milestone collectible that gates world progress.\\n- Eggs as rare hidden-challenge rewards. Per-level completion % and a total-completion tracker. Unlock cosmetics (scale colors, glide trails, flame colors) - no pay-to-win.\\n\\nVISUAL QUALITY (bright, storybook, AAA-charming - not default Roblox)\\n- Warm, saturated, high-readability art direction: rounded stylized geometry, soft gradients, painterly skyboxes, gentle atmospheric fog for depth. Each realm gets a distinct palette and mood (sunny meadow, molten orange caverns, cool blue ice, purple haunted night).\\n- Lighting: Future lighting, Bloom + ColorCorrection + SunRays + subtle DepthOfField, per-realm color grade. Soft rim light on the dragon so it pops from backgrounds.\\n- Materials & maps: cohesive stylized PBR, clean silhouettes, strong focal lighting on portals, chests, and dragons-to-free. No flat untextured parts.\\n- VFX: flame breath as layered particles + light with heat shimmer; glide trail ribbons; gem sparkle and collect burst; charge dust and speed lines; portal swirl; enemy poof on defeat. Screen-space feedback on hit.\\n- Camera & feel: smooth follow-cam with auto-framing, gentle catch-up, glide pull-back for speed sense, subtle shake on charge impacts and landings, light hit-stop on flame kills, FOV kick on charge.\\n- Character: expressive dragon idle fidgets, flap/glide poses, charge lean, flame wind-up. Readable, cute, lively.\\n- Performance: pool particles, LOD distant geometry/VFX, streaming level loads, hold 60fps.\\n\\nSOUND DESIGN (playful, orchestral, reactive)\\n- Dragon: flappy glide whoosh, charge gallop + wind rush, flame roar with crackle, jump/land grunts, footsteps by surface. 3D positional sound.\\n- World: gem pickup chime that rises in pitch on streaks, chest-smash, portal hum/swoosh, dragon-freed fanfare, egg-found jingle. Enemy poofs and stings.\\n- Music: melodic, whimsical orchestral per realm; adaptive layers that swell near combat or secrets; boss theme; victory/complete fanfare. Diegetic UI plips.\\n- Mixing: SoundGroups for SFX/Music/UI/Ambience with ducking under fanfares. Reverb zones (caverns vs. open sky). Per-realm 3D ambient beds (birds, wind, lava bubble, spooky wind). Master + per-bus volume in settings.\\n\\nMOBILE & CROSS-PLATFORM (must play well on phone/tablet/console, not just PC)\\n- Detect input type and adapt: touch, mouse/keyboard, and gamepad all first-class. Never assume PC.\\n- Touch controls: on-screen thumbstick for movement; clear buttons for jump/glide (context-sensitive: hold jump to glide), charge, and flame; auto-face-nearest-enemy assist for flame/charge on touch.\\n- Auto-scaling UI: Scale-based UDim2 + anchor points so the HUD (gems, guide, health, level %) reflows for phone, tablet, and TV-safe zones. Large, thumb-reachable targets on mobile.\\n- Adaptive quality tiers: auto-detect device power and scale particles, dynamic lights, bloom/DOF, and draw distance down on mobile to hold 60fps (30fps floor). Manual quality toggle in settings.\\n- Camera: touch-drag look with sensible sensitivity and glide auto-align; full gamepad mapping with charge/flame aim assist.\\n- Test every system against touch and gamepad, not just PC input.\\n\\nTECH\\n- Luau, server-authoritative where it matters (collectibles, progression, co-op enemy state); client-predicted movement for responsiveness. Anti-exploit checks on gem/egg awards; no client-trusted currency.\\n- Modular: MovementController, GlideSystem, CombatSystem (charge/flame), EnemyAI, CollectibleManager, World/PortalManager, ProgressionSaveManager, VFXManager, AudioManager, CameraController, InputManager (cross-platform), UI. Clean RemoteEvents/RemoteFunctions. DataStore-backed saves with session locking.\\n- Custom animations for run/jump/glide/charge/flame; raycast ground/ledge detection; charge and glide physics tuned for game feel.\\n\\nDeliver in this order: (1) the GDD, (2) the technical implementation plan, (3) all commented scripts, the folder/instance hierarchy, and VFX/lighting/audio setup, (4) setup steps. Implement the code in order: movement core → glide & charge feel → flame/combat & enemies → collectibles & progression → hub/portal world flow → cross-platform input & UI scaling. Work autonomously through every milestone until the game looks, sounds, and plays great on every device.\n\n--- clarifications from the author ---\n- [scale] Should each realm be its own map at district size, or would you rather see the hub alone first? Each realm should be its own compact district-sized map, connected from the central hub by portals; build the hub plus the five named themed levels as a small but complete vertical slice.\n- [shape] Are the realm levels open playgrounds you can roam, or a mostly forward route with side branches? The answer changes whether the course is generated or hand-composed.? The levels are open-ish 3D playgrounds with branching paths, hidden alcoves, and vertical secrets, hand-composed rather than generated.",
     "manifest_genre": "",
     "genre": "Obby & Platformer",
-    "genre_evidence": "The prompt explicitly calls for a \"3D platformer\" with \"run, jump, double-jump,\" \"glide,\" charge traversal, and \"open-ish 3D playgrounds with branching paths, hidden alcoves, and vertical secrets rewarding glide/charge mastery.\" Collectibles and hub portals add Adventure structure, while flame/charge enemy encounters add secondary Action features.",
+    "genre_evidence": "It is explicitly a \"3D platformer\" with \"run, jump, double-jump,\" \"glide,\" charge movement, vertical secrets, branching paths, and gaps rewarding \"glide/charge mastery.\" The hub-and-themed-level structure plus collectible milestones adds Adventure, while flame/charge enemy combat adds Action, but the primary space is built around traversal and platforming.",
     "secondary": [
       "Adventure",
       "Action"
     ],
     "preset": "none",
-    "shape": "course-flat",
-    "shape_label": "Flat Course",
+    "shape": "hub-portals",
+    "shape_label": "Portal Hub",
     "options": [
-      "path-track",
       "obstacle-jump",
-      "path-shortcut",
-      "social-hub",
       "collectible-nodes",
-      "powerup-buffs",
       "teleporter-link",
       "terrain-relief"
     ],
     "dropped_options": [
-      "collectible-nodes",
-      "powerup-buffs"
+      "collectible-nodes"
     ],
-    "extras": [
-      {
-        "text": "Branching exploration routes with hidden alcoves and vertically placed secret areas.",
-        "goes_to": "image"
-      }
-    ],
-    "confidence": "low",
-    "evidence": "No shape is named outright; “open-ish 3D playgrounds with branching paths, hidden alcoves, and vertical secrets” does not require stacked platforms or an ascending terrace layout.",
+    "extras": [],
+    "confidence": "high",
+    "evidence": "\"Central hub worlds that portal into themed levels\" and \"Return-portal home stone in each level.\"",
     "route": [
       "P6",
+      "P4",
       "P0",
       "tiered"
     ],
-    "addendum": "LAYOUT FEATURES for this Obby & Platformer map. Build these as the actual structure of the space rather than as set dressing, keep them visually distinct from one another, and keep the whole layout legible in one view.\n\nSHAPE OF THE SPACE - Flat Course: A course laid out across the ground, progressing horizontally.\n\nINCLUDE:\n- Sequential Platform Track: A chain of platforms spaced to the physics limits above — the ordered route through the course.\n- Jump Obstacles: Long horizontal jumps, trampoline boosts, wrap-arounds, and stepped vertical platforms.\n- High-Risk Shortcut: Significantly tighter alternate routes that skip ahead for skilled players.\n- Start Hub & Shop: A lobby at the course entrance where players gather, buy upgrades, and choose a stage before setting off.\n- Stage Skip: Marked pads that link the stages to each other and back to the hub.\n- Terrain Relief: Natural landform shaping the ground: hills, mountains, cliffs, a valley, or a canyon.\n- Branching exploration routes with hidden alcoves and vertically placed secret areas.",
+    "addendum": "LAYOUT FEATURES for this Obby & Platformer map. Build these as the actual structure of the space rather than as set dressing, keep them visually distinct from one another, and keep the whole layout legible in one view.\n\nSHAPE OF THE SPACE - Portal Hub: A layout whose purpose is to send visitors onward to separate experiences.\n\nINCLUDE:\n- Jump Obstacles: Long horizontal jumps, trampoline boosts, wrap-arounds, and stepped vertical platforms.\n- Stage Skip: Marked pads that link the stages to each other and back to the hub.\n- Terrain Relief: Natural landform shaping the ground: hills, mountains, cliffs, a valley, or a canyon.",
     "preset_delta": {}
   },
   "upstream_skill": {

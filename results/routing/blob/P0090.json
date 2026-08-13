@@ -19,7 +19,7 @@
     }
   ],
   "scene_prompt": "Crea un mapa 3D de obby colorido sobre un enorme escritorio, visto a escala de personas miniatura. Una ruta continua atraviesa nueve zonas sin teletransportes: teclas normales gigantes, teclas que desaparecen, rebotan o se hunden, seguida por las zonas del mouse, monitor, cables, escritorio y CPU. Cada tecla es una plataforma individual lo bastante grande para caminar sobre ella y saltar hacia las teclas vecinas; integra láseres, ventiladores, teclas móviles, plataformas giratorias, cables eléctricos, barras de empuje, objetos que caen y zonas peligrosas a lo largo del recorrido. El trayecto termina en la zona de la CPU, presentada como la meta final de escape. Coloca monedas coleccionables sobre rutas, saltos y zonas de riesgo.",
-  "blob": "### 1. Género\nEl género dominante es Obby & Platformer: el recorrido consiste en saltos discretos y obstáculos físicos a ritmo propio, no en una carrera por vueltas. No hay género secundario.\n\n### 2. Forma y preset\nUsa la forma `course-flat`: las nueve zonas forman una sola cadena continua sobre la superficie del mismo escritorio gigante. El preset de referencia es Classic Obby; se conserva su ruta secuencial de plataformas, saltos y elementos móviles, pero se sustituye su énfasis en pads de control por las zonas temáticas concretas del teclado y escritorio solicitadas.\n\n### 3. Requisitos de configuración\n`path-track` es geometría visible: una secuencia legible de teclas-plataforma y plataformas de escritorio que conduce sin teletransportes desde el teclado hasta la CPU. `obstacle-jump` es visible en los saltos entre teclas gigantes y las teclas de rebote. `obstacle-timing` es visible en las teclas que desaparecen y se hunden. `obstacle-moving` es visible en teclas móviles, plataformas giratorias, ventiladores, barras de empuje y objetos que caen. `hazard-kill` es visible en láseres, cables eléctricos y zonas peligrosas. `winner-zone` combina la geometría visible de la CPU-meta con su marcador final invisible. `collectible-nodes` son las ubicaciones invisibles de recogida; sus monedas doradas correspondientes sí deben verse sobre la ruta y en líneas de salto riesgosas.\n\n### 4. Componentes de layout\nConstruye un escritorio enorme a escala de personas miniatura, organizado como nueve tramos consecutivos: teclas normales gigantes al inicio; teclas que desaparecen; teclas de rebote; teclas que se hunden; zona del mouse; zona del monitor; zona de cables; zona abierta del escritorio; y la zona final de la CPU. Cada tecla es una plataforma individual suficientemente amplia para caminar encima y saltar hacia teclas vecinas. La ruta debe serpentear de forma clara entre estos tramos, usando plataformas, cables cruzables y superficies de escritorio como conexiones. Sitúa láseres, ventiladores, cables electrificados, barras y caídas fuera de la línea segura o cruzándola con timing claro. La CPU ocupa el extremo final como gran portal/meta de escape. El borde del escritorio y las caídas entre objetos funcionan como límite peligroso. Compón el conjunto en una vista amplia de tres cuartos, con el teclado dominando el primer plano y la CPU visible como destino distante.\n\n### 5. Orden de render\nRenderiza primero `topdown`, que es la vista autoritativa, porque la cadena de saltos debe mantener una conectividad y espaciado jugables antes de vestir el escenario isométrico.\n\n### 6. Escala, tema y coste\nEscala grande, impulsada por nueve zonas continuas y por teclas individuales del tamaño de áreas caminables. Tema: obby Roblox moderno, divertido, colorido y tecnológico de escritorio gigante. Modificadores: `P6`, porque la ruta crítica de plataformas y saltos debe ser válida por construcción; no se requieren otros pases geométricos.",
+  "blob": "### Genre\nThe dominant genre is Obby & Platformer: players progress at their own pace through discrete platform jumps and hazards toward a final escape goal.\n\n### Shape and preset\nUse `course-flat`, matching the Classic Obby preset. The nine desk zones form one continuous, ground-readable route across a single oversized desktop rather than teleport-separated stages. Retain the preset’s track, checkpoints, jump obstacles, and moving obstacles; add the prompt’s timed disappearing keys and final reward area.\n\n### Config requirements\nUse `path-track` for the ordered chain of giant, individually walkable keyboard keys and desk-top platforms. Use `checkpoint-respawn` for safe flat landing pads between major desk sections. Use `obstacle-jump` for jumps between neighboring giant keys, rebound keys, and sinking-key gaps. Use `obstacle-moving` for moving keys, rotating platforms, fans, push bars, falling desk objects, and electrical cable hazards. Use `obstacle-timing` for disappearing keys. Use `hazard-kill` for lasers, exposed electricity, lethal desk-edge drops, and marked danger zones. Use `winner-zone` for the CPU escape finish area.\n\n### Layout requirements\nPlace `checkpoint-respawn` pads at the end of each major completed section: after the normal-key opening, the disappearing/rebounding/sinking-key sequence, the mouse zone, monitor zone, cable zone, and desk zone; place the final one immediately before the CPU approach. Place `collectible-nodes` as coin trails on safe jumps, with additional coins offset onto risky moving, timed, and hazard-adjacent lines. Place the `winner-zone` trigger at the CPU-zone escape endpoint, beyond the final obstacle chain.\n\n### Layout components\nBuild nine named consecutive zones on one enormous colorful desk: normal giant keys; disappearing keys; rebounding keys; sinking keys; mouse; monitor; cables; open desk surface; and CPU finish. Each keyboard key is a separate oversized platform with enough surface to walk around before jumping to adjacent keys. The route begins across normal keys, escalates through the three special-key sections, then crosses the mouse area, monitor base and screen-side ledges, tangled cable crossings, and exposed desktop obstacles before reaching the CPU. Scatter lasers, fans, moving keys, rotating platforms, electrical cables, pushing bars, falling objects, and lethal gaps along the route. The desk edge and off-route void form the boundary. Compose the full desktop diagonally in frame, with the CPU visibly anchoring the far end.\n\n### Render order\nUse `topdown`: the jump chain and continuous route must remain playable and connected, while this is not a maze or racing circuit eligible for `authored_plan`.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by nine continuous zones and the miniature-player scale against a full desk setup. Theme: bright, playful, modern Roblox obby with oversized colorful computer hardware. Pipeline modifier: `P6`, because the sequential platform route and its jump gaps must be physics-valid by construction.",
   "spec": {
     "genre": "Obby & Platformer",
     "secondary": [],
@@ -29,239 +29,225 @@
     "options": [
       {
         "id": "path-track",
-        "text": "Una secuencia legible de teclas-plataforma y plataformas de escritorio que conduce sin teletransportes desde el teclado hasta la CPU.",
+        "text": "An ordered chain of giant, individually walkable keyboard keys and desktop platforms.",
         "visible": true,
         "count": -1
+      },
+      {
+        "id": "checkpoint-respawn",
+        "text": "Safe flat landing pads between major desk sections.",
+        "visible": true,
+        "count": 7
       },
       {
         "id": "obstacle-jump",
-        "text": "Saltos entre teclas gigantes y teclas de rebote.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "obstacle-timing",
-        "text": "Teclas que desaparecen y se hunden.",
+        "text": "Jumps between neighboring giant keys, rebound keys, and sinking-key gaps.",
         "visible": true,
         "count": -1
       },
       {
         "id": "obstacle-moving",
-        "text": "Teclas móviles, plataformas giratorias, ventiladores, barras de empuje y objetos que caen.",
+        "text": "Moving keys, rotating platforms, fans, push bars, falling desk objects, and electrical cable hazards.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "obstacle-timing",
+        "text": "Timed disappearing keys.",
         "visible": true,
         "count": -1
       },
       {
         "id": "hazard-kill",
-        "text": "Láseres, cables eléctricos y zonas peligrosas, situados fuera de la línea segura o cruzándola con timing claro.",
+        "text": "Lasers, exposed electricity, lethal desk-edge drops, and marked danger zones.",
         "visible": true,
         "count": -1
       },
       {
         "id": "winner-zone",
-        "text": "La CPU-meta combina la geometría visible de la CPU con su marcador final invisible.",
+        "text": "The CPU escape finish area.",
         "visible": true,
-        "count": -1
+        "count": 1
       },
       {
         "id": "collectible-nodes",
-        "text": "Ubicaciones invisibles de recogida; sus monedas doradas correspondientes se ven sobre la ruta y en líneas de salto riesgosas.",
+        "text": "Coin trails on safe jumps, with additional coins offset onto risky moving, timed, and hazard-adjacent lines.",
         "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "checkpoint-respawn",
+        "text": "Safe flat landing pads at the end of each major completed desk section.",
+        "count": 7,
+        "where": "After the normal-key opening; after the disappearing, rebounding, and sinking-key sequence; after the mouse, monitor, cable, and desk zones; with the final pad immediately before the CPU approach."
+      },
+      {
+        "id": "winner-zone",
+        "text": "The CPU-zone escape finish trigger.",
+        "count": 1,
+        "where": "At the CPU-zone escape endpoint, beyond the final obstacle chain."
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "Coin trails on safe jumps, with additional coins offset onto risky moving, timed, and hazard-adjacent lines.",
+        "count": -1,
+        "where": "On safe jumps and offset onto risky moving, timed, and hazard-adjacent lines."
+      }
+    ],
     "layout": {
-      "composition": "Vista amplia de tres cuartos, con el teclado dominando el primer plano y la CPU visible como destino distante al extremo final.",
+      "composition": "The full oversized desktop is composed diagonally in frame, with the CPU visibly anchoring the far end.",
       "zones": [
         {
-          "name": "Teclas normales gigantes",
-          "role": "Inicio del recorrido sobre teclas-plataforma individuales.",
-          "where": "primer tramo, primer plano",
-          "size": "-1"
+          "name": "Normal giant keys",
+          "role": "Opening section of individually walkable keyboard-key platforms.",
+          "where": "Route start",
+          "size": ""
         },
         {
-          "name": "Teclas que desaparecen",
-          "role": "Tramo de plataformas temporales.",
-          "where": "después de las teclas normales gigantes",
-          "size": "-1"
+          "name": "Disappearing keys",
+          "role": "Timed disappearing-key section.",
+          "where": "After the normal giant keys",
+          "size": ""
         },
         {
-          "name": "Teclas de rebote",
-          "role": "Tramo de saltos con teclas de rebote.",
-          "where": "después de las teclas que desaparecen",
-          "size": "-1"
+          "name": "Rebounding keys",
+          "role": "Rebounding-key jump section.",
+          "where": "After the disappearing keys",
+          "size": ""
         },
         {
-          "name": "Teclas que se hunden",
-          "role": "Tramo de plataformas que se hunden.",
-          "where": "después de las teclas de rebote",
-          "size": "-1"
+          "name": "Sinking keys",
+          "role": "Sinking-key gap section.",
+          "where": "After the rebounding keys",
+          "size": ""
         },
         {
-          "name": "Zona del mouse",
-          "role": "Tramo temático del mouse conectado a la ruta.",
-          "where": "después de las teclas que se hunden",
-          "size": "-1"
+          "name": "Mouse",
+          "role": "Mouse-area crossing.",
+          "where": "After the special-key sections",
+          "size": ""
         },
         {
-          "name": "Zona del monitor",
-          "role": "Tramo temático del monitor conectado a la ruta.",
-          "where": "después de la zona del mouse",
-          "size": "-1"
+          "name": "Monitor",
+          "role": "Monitor base and screen-side ledge crossing.",
+          "where": "After the mouse zone",
+          "size": ""
         },
         {
-          "name": "Zona de cables",
-          "role": "Tramo con cables cruzables y cables eléctricos.",
-          "where": "después de la zona del monitor",
-          "size": "-1"
+          "name": "Cables",
+          "role": "Tangled cable crossings.",
+          "where": "After the monitor zone",
+          "size": ""
         },
         {
-          "name": "Zona abierta del escritorio",
-          "role": "Tramo de superficies abiertas del escritorio como conexión.",
-          "where": "después de la zona de cables",
-          "size": "-1"
+          "name": "Open desk surface",
+          "role": "Exposed desktop obstacle section.",
+          "where": "After the cable zone",
+          "size": ""
         },
         {
-          "name": "Zona final de la CPU",
-          "role": "Meta final de escape presentada como una gran CPU-portal.",
-          "where": "extremo final, destino distante",
-          "size": "-1"
+          "name": "CPU finish",
+          "role": "Final escape endpoint.",
+          "where": "Far end of the desktop after the open desk surface",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Teclas normales gigantes",
-          "to": "Teclas que desaparecen",
+          "from": "Normal giant keys",
+          "to": "Disappearing keys",
           "kind": "track"
         },
         {
-          "from": "Teclas que desaparecen",
-          "to": "Teclas de rebote",
+          "from": "Disappearing keys",
+          "to": "Rebounding keys",
           "kind": "track"
         },
         {
-          "from": "Teclas de rebote",
-          "to": "Teclas que se hunden",
+          "from": "Rebounding keys",
+          "to": "Sinking keys",
           "kind": "track"
         },
         {
-          "from": "Teclas que se hunden",
-          "to": "Zona del mouse",
+          "from": "Sinking keys",
+          "to": "Mouse",
           "kind": "track"
         },
         {
-          "from": "Zona del mouse",
-          "to": "Zona del monitor",
+          "from": "Mouse",
+          "to": "Monitor",
           "kind": "track"
         },
         {
-          "from": "Zona del monitor",
-          "to": "Zona de cables",
+          "from": "Monitor",
+          "to": "Cables",
           "kind": "track"
         },
         {
-          "from": "Zona de cables",
-          "to": "Zona abierta del escritorio",
+          "from": "Cables",
+          "to": "Open desk surface",
           "kind": "track"
         },
         {
-          "from": "Zona abierta del escritorio",
-          "to": "Zona final de la CPU",
+          "from": "Open desk surface",
+          "to": "CPU finish",
           "kind": "track"
         }
       ],
-      "terrain": "Un enorme escritorio a escala de personas miniatura; teclas gigantes individuales, plataformas de escritorio y cables cruzables forman una ruta serpenteante continua.",
+      "terrain": "One oversized desktop with giant colorful keyboard keys, mouse, monitor, cables, exposed desk surface, and CPU hardware.",
       "props": [
         {
-          "name": "teclas gigantes normales",
+          "name": "Giant keyboard keys",
           "count": -1,
-          "where": "inicio y a lo largo de la ruta"
+          "where": "Across the normal, disappearing, rebounding, and sinking-key zones."
         },
         {
-          "name": "teclas que desaparecen",
+          "name": "Lasers",
           "count": -1,
-          "where": "segundo tramo"
+          "where": "Along the route."
         },
         {
-          "name": "teclas de rebote",
+          "name": "Fans",
           "count": -1,
-          "where": "tercer tramo"
+          "where": "Along the route."
         },
         {
-          "name": "teclas que se hunden",
+          "name": "Moving keys",
           "count": -1,
-          "where": "cuarto tramo"
+          "where": "Along the route."
         },
         {
-          "name": "mouse",
+          "name": "Rotating platforms",
           "count": -1,
-          "where": "zona del mouse"
+          "where": "Along the route."
         },
         {
-          "name": "monitor",
+          "name": "Electrical cables",
           "count": -1,
-          "where": "zona del monitor"
+          "where": "Along the route and in the cable zone."
         },
         {
-          "name": "cables cruzables",
+          "name": "Pushing bars",
           "count": -1,
-          "where": "zona de cables y conexiones"
+          "where": "Along the route."
         },
         {
-          "name": "láseres",
+          "name": "Falling desk objects",
           "count": -1,
-          "where": "fuera de la línea segura o cruzando la ruta"
-        },
-        {
-          "name": "ventiladores",
-          "count": -1,
-          "where": "a lo largo del recorrido"
-        },
-        {
-          "name": "teclas móviles",
-          "count": -1,
-          "where": "a lo largo del recorrido"
-        },
-        {
-          "name": "plataformas giratorias",
-          "count": -1,
-          "where": "a lo largo del recorrido"
-        },
-        {
-          "name": "cables eléctricos",
-          "count": -1,
-          "where": "zona de cables y zonas peligrosas"
-        },
-        {
-          "name": "barras de empuje",
-          "count": -1,
-          "where": "a lo largo del recorrido"
-        },
-        {
-          "name": "objetos que caen",
-          "count": -1,
-          "where": "a lo largo del recorrido"
-        },
-        {
-          "name": "monedas doradas",
-          "count": -1,
-          "where": "sobre la ruta y en líneas de salto riesgosas"
-        },
-        {
-          "name": "CPU-portal",
-          "count": -1,
-          "where": "extremo final del escritorio"
+          "where": "Along the route."
         }
       ],
-      "boundary": "El borde del escritorio y las caídas entre objetos funcionan como límite peligroso.",
+      "boundary": "The desk edge and off-route void form the boundary.",
       "scale_band": "large",
-      "theme": "obby Roblox moderno, divertido, colorido y tecnológico de escritorio gigante"
+      "theme": "Bright, playful, modern Roblox obby with oversized colorful computer hardware."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "la cadena de saltos debe mantener conectividad y espaciado jugables antes de vestir el escenario isométrico.",
+      "why": "The jump chain and continuous route must remain playable and connected.",
       "set_piece": false
     },
     "route": [
@@ -273,7 +259,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

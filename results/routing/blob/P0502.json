@@ -19,7 +19,7 @@
     }
   ],
   "scene_prompt": "Create a 3D tower-defense map as a bright, colorful outdoor garden with a small, neat planting-plot layout and simple cozy farm props. A single winding path runs through the garden toward a central defended base area, with farm plots and open spaces arranged alongside the path for tower placement.",
-  "blob": "### Genre\nThis is Strategy, specifically a tower-defense game: the original message defines tower placement and a defended route, while the RNG determines tower acquisition rather than map geometry.\n\n### Shape and preset\nUse `lane-actor-track`, matching the Tower Defense preset. It is a single compact winding garden lane entering from one edge and terminating at a defended central base, rather than several converging lanes.\n\n### Config requirements\nUse visible `buildzone-grid` as neat, open planting-plot-like pads and clear grassy ground alongside both sides of the route for tower placement. Use `tracker-core` as the visible central defended garden base; its health-tracking component is invisible and placed after segmentation. Use invisible `spawner-npc` at the path entrance, positioned beyond the first visible bend. Use visible `choke-bottleneck` where the winding path narrows between plots, creating one readable tower-focus point. Do not add unrequested crops, water, buildings, NPCs, pickups, or extra defenses.\n\n### Layout components\nMake one small outdoor garden map. Place the enemy entry at the outer left or rear edge, then run one continuous tan dirt path in a gentle S-curve through the planting plots toward the central-right defended base. The path is broad enough to read clearly, with one narrower pinch between two plot rows near its middle. Arrange compact rectangular dark-soil farm plots, short fences, watering cans, wheelbarrows, hay bales, and simple cozy garden props around the path without obstructing placement ground. Keep open grass pads immediately beside the path as the principal tower-placement areas. Put the sturdy core base in a circular clearing near the center, with the final path segment visibly leading into it. Enclose the map softly with hedges, low fences, flower borders, and dense garden foliage rather than hard walls. Frame it as a compact, legible isometric diorama with the full route visible from entry to core.\n\n### Render order\nUse `topdown`: an unbroken, playable winding enemy route from spawn to core is required, so the plan must be validated before the isometric garden dressing is generated.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the requested first map and one short lane. Theme: bright colorful cozy farm garden, with tidy planting plots and toy-like 3D props. Use `P6` because the winding lane must be valid by construction from enemy origin to the defended base. `P0` otherwise; the flat garden surface adds no further capture cost.",
+  "blob": "### Genre\nThe dominant genre is Strategy, specifically a tower-defense game; the RNG determines tower availability but does not alter the map geometry.\n\n### Shape and preset\nUse `lane-actor-track`, matching the Tower Defense preset. This is one small, continuous winding garden lane, starting at an enemy entrance and ending at a central defended base; it must not branch or ambiguously cross itself.\n\n### Config requirements\nUse `buildzone-grid` as neat, flat farm plots and open planting beds beside the lane, reserved for tower placement. Use `tracker-core` as the central defended garden base at the lane’s endpoint. The garden path itself is the visible continuous enemy route; no additional decorative lanes should resemble viable enemy paths.\n\n### Layout requirements\nPlace one `spawner-npc` at the outer start of the winding path, screened by a simple garden entrance or hedge gap, as the single wave origin. Place one `tracker-core` volume at the central base area where the path terminates. The tower-placement ground represented by `buildzone-grid` should be segmented into readable plots along both sides of the route, with the closest plots covering its final approach.\n\n### Layout components\nBuild a small outdoor garden map. The outer edge contains the wave-entry garden gate; the path then winds inward through a compact sequence of bright grass, soil planting plots, and tower pads before reaching the central defended base. Keep the base visually distinct, slightly enlarged, and surrounded by the final bend of the path. Arrange neat rectangular farm plots and open tower spaces alongside the route, leaving clear sightlines into each curve. Add simple cozy farm props such as fences, watering cans, crates, small bushes, flower beds, and a modest shed placed off the tower plots. Use low hedges, fences, and garden borders as the map boundary without blocking placement space. Compose the map as a readable compact top-down garden spiral with the central base as the focal point.\n\n### Render order\nUse `authored_plan` first: the winding enemy lane must be valid by construction from its single spawn origin to the core, then the garden dressing is applied to that plan.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the requested first map and single lane. Theme: bright, colorful, cozy outdoor planting garden. Use `P6` because the tower-defense track must be one continuous, unambiguous playable route. No other pipeline modifier is forced.",
   "spec": {
     "genre": "Strategy",
     "secondary": [],
@@ -29,121 +29,128 @@
     "options": [
       {
         "id": "buildzone-grid",
-        "text": "Neat, open planting-plot-like pads and clear grassy ground alongside both sides of the route for tower placement.",
+        "text": "Neat, flat farm plots and open planting beds beside the lane, reserved for tower placement.",
         "visible": true,
         "count": -1
       },
       {
         "id": "tracker-core",
-        "text": "Visible central defended garden base in a circular clearing; its health-tracking component is invisible and placed after segmentation.",
+        "text": "The central defended garden base at the lane's endpoint.",
         "visible": true,
         "count": 1
       },
       {
         "id": "spawner-npc",
-        "text": "Enemy entry at the path entrance, positioned beyond the first visible bend.",
+        "text": "A single wave origin at the outer start of the winding path, screened by a simple garden entrance or hedge gap.",
         "visible": false,
-        "count": -1
-      },
-      {
-        "id": "choke-bottleneck",
-        "text": "One narrower pinch between two plot rows near the middle of the winding path, creating one readable tower-focus point.",
-        "visible": true,
         "count": 1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "tracker-core",
+        "text": "A tracker-core volume at the central defended base area where the path terminates.",
+        "count": 1,
+        "where": "At the central base area where the path terminates."
+      },
+      {
+        "id": "spawner-npc",
+        "text": "A single wave origin at the outer start of the winding path, screened by a simple garden entrance or hedge gap.",
+        "count": 1,
+        "where": "At the outer start of the winding path, screened by a simple garden entrance or hedge gap."
+      }
+    ],
     "layout": {
-      "composition": "Compact, legible isometric diorama with the full route visible from the outer left or rear entry through the garden to the central-right core.",
+      "composition": "A readable compact top-down garden spiral, with the central defended base as the focal point; the wave-entry garden gate sits at the outer edge and the path winds inward around bright grass, soil plots, and tower pads.",
       "zones": [
         {
-          "name": "Enemy entry",
-          "role": "Enemy origin at the path entrance.",
-          "where": "Outer left or rear edge, beyond the first visible bend.",
+          "name": "Wave-entry garden gate",
+          "role": "Single enemy entrance and wave origin.",
+          "where": "Outer edge",
+          "size": ""
+        },
+        {
+          "name": "Winding enemy lane",
+          "role": "The single continuous visible route from the enemy entrance to the defended base.",
+          "where": "Winding inward through the garden",
           "size": ""
         },
         {
           "name": "Tower-placement plots",
-          "role": "Open grassy tower-placement ground and planting-plot-like pads alongside the route.",
-          "where": "Both sides of the winding path.",
+          "role": "Readable farm plots and open tower spaces reserved for tower placement.",
+          "where": "Along both sides of the route, with closest plots covering the final approach",
           "size": ""
         },
         {
-          "name": "Path pinch",
-          "role": "Readable tower-focus point where the enemy route narrows.",
-          "where": "Near the middle, between two plot rows.",
-          "size": "narrower"
-        },
-        {
-          "name": "Defended core clearing",
-          "role": "Final defended garden base where the route terminates.",
-          "where": "Central-right area.",
-          "size": "circular clearing"
+          "name": "Central defended base",
+          "role": "The core endpoint of the enemy path.",
+          "where": "Centre, surrounded by the final bend of the path",
+          "size": "Slightly enlarged"
         }
       ],
       "paths": [
         {
-          "from": "Enemy entry",
-          "to": "Defended core clearing",
+          "from": "Wave-entry garden gate",
+          "to": "Central defended base",
           "kind": "track"
         }
       ],
-      "terrain": "Flat outdoor grassy garden surface with a continuous broad tan dirt path in a gentle S-curve and compact rectangular dark-soil farm plots.",
+      "terrain": "Bright grass and soil planting plots in a small outdoor garden.",
       "props": [
         {
-          "name": "short fences",
+          "name": "fences",
           "count": -1,
-          "where": "Around the planting plots and soft map edge"
+          "where": "Around the garden and as part of the low boundary"
         },
         {
           "name": "watering cans",
           "count": -1,
-          "where": "Around the planting plots"
+          "where": "In the garden"
         },
         {
-          "name": "wheelbarrows",
+          "name": "crates",
           "count": -1,
-          "where": "Around the planting plots"
+          "where": "In the garden"
         },
         {
-          "name": "hay bales",
+          "name": "small bushes",
           "count": -1,
-          "where": "Around the planting plots"
+          "where": "In the garden"
         },
         {
-          "name": "simple cozy garden props",
+          "name": "flower beds",
           "count": -1,
-          "where": "Around the path and plots without obstructing placement ground"
+          "where": "In the garden"
         },
         {
-          "name": "hedges",
-          "count": -1,
-          "where": "Softly enclosing the map"
+          "name": "modest shed",
+          "count": 1,
+          "where": "Off the tower plots"
         },
         {
-          "name": "flower borders",
+          "name": "low hedges",
           "count": -1,
-          "where": "Softly enclosing the map"
+          "where": "As the map boundary"
         },
         {
-          "name": "dense garden foliage",
+          "name": "garden borders",
           "count": -1,
-          "where": "Softly enclosing the map"
+          "where": "As the map boundary"
         }
       ],
-      "boundary": "Soft enclosure of hedges, low fences, flower borders, and dense garden foliage rather than hard walls.",
+      "boundary": "Low hedges, fences, and garden borders enclose the map without blocking placement space.",
       "scale_band": "small",
-      "theme": "Bright colorful cozy farm garden with tidy planting plots and toy-like 3D props."
+      "theme": "Bright, colorful, cozy outdoor planting garden"
     },
     "render": {
-      "first": "topdown",
-      "then": "isometric",
-      "authoritative": "topdown",
-      "why": "an unbroken playable winding enemy route from spawn to core must be validated before the isometric garden dressing is generated.",
+      "first": "authored_plan",
+      "then": "topdown",
+      "authoritative": "authored_plan",
+      "why": "the single winding enemy lane must remain a valid, unambiguous route from its spawn origin to the core.",
       "set_piece": false
     },
     "route": [
-      "P6",
-      "P0"
+      "P6"
     ],
     "notes": [],
     "scene_prompt": "Create a 3D tower-defense map as a bright, colorful outdoor garden with a small, neat planting-plot layout and simple cozy farm props. A single winding path runs through the garden toward a central defended base area, with farm plots and open spaces arranged alongside the path for tower placement."
@@ -151,10 +158,12 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",
   "first": "topdown",
-  "mapper_notes": []
+  "mapper_notes": [
+    "blob asked for authored_plan first; the route ['P6'] gives topdown"
+  ]
 }

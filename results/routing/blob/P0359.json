@@ -19,123 +19,124 @@
     }
   ],
   "scene_prompt": "Create a 3D sci-fi runner-style corridor shooter with a fixed player position near the foreground, able to shift only left and right. Two parallel lanes scroll toward the player: one lane carries approaching enemy drones, while the other carries upgrade walls that can be shot. Build the space as finite, short corridor levels with a clear endpoint beyond the advancing lanes.",
-  "blob": "### Genre\nThe dominant genre is Infinite Runner, with Shooter as a secondary genre for the forward-facing enemy targets. The automatic approach of the world and left-right lane shifting make the runner structure dominant; the Shooter contribution is limited to the sci-fi target dressing.\n\n### Shape and preset\nUse `lane-snap`, interpreted here as two broad, parallel sci-fi approach lanes directly in front of a fixed foreground firing position. The closest preset is Lane Runner, but use preset none because its coin-trail and cross-traffic bundle is not present; the requested finite corridor endpoint replaces the endless run’s horizon.\n\n### Config requirements\nUse `chunk-modular` as visible geometry: repeating corridor segments align precisely into two uninterrupted lanes, with matching seams and lane widths. Use `hazard-kill` as visible geometry: enemy drones occupy one lane as the dangerous approaching obstacle line. No invisible layout options are required.\n\n### Layout components\nBuild one short, finite, straight corridor level. Place the player firing position at the near foreground edge, centered across the two-lane width but visually outside the advancing segment stream. The left and right lanes run parallel from the far end toward this position; one is the drone lane, populated by successive enemy-drone formations, while the other is the upgrade-wall lane, populated by freestanding glowing wall panels. Both lanes must remain clearly separated by a low central divider but readable as equally selectable lateral paths. Terminate the far end with a large illuminated sci-fi bulkhead, gate, or reactor-door endpoint beyond the final segment.\n\nUse dark metallic floor panels, inset neon lane strips, wall ribs, ceiling rails, and a deep enclosed corridor boundary. Drone forms should be compact hovering machines; upgrade walls should be tall, bright modular slabs with visible energy cores. Frame the isometric composition from behind and above the firing position so both lane contents recede clearly toward the endpoint.\n\n### Render order\nUse `topdown` first, authoritative because the two continuous parallel lanes, their separator, and the finite endpoint must remain unambiguous and playable before the isometric scene is dressed.\n\n### Scale, theme, and pipeline cost\nScale is medium: a compact pair of short corridor lanes with enough repeated segments for several drone and wall encounters. Theme is neon industrial sci-fi, dark steel, cyan and magenta energy light, and hovering drones. Use `P6` because the runner lane sequence must be valid by construction; no other geometry forces an additional pipeline pass.",
+  "blob": "### Genre\nThe dominant genre is Infinite Runner, with Shooter as a secondary genre. Automatic world motion and left-right reaction movement own the route; the secondary genre only supplies the drone-combat framing.\n\n### Shape and preset\nUse `lane-free`, a continuous lateral sci-fi corridor in which the player shifts freely between the two approaching lanes rather than snapping among three. Match the Free Runner preset in its scrolling corridor logic, modified for finite short levels and a parallel shooting choice rather than jump obstacles.\n\n### Config requirements\nUse `chunk-modular` for cleanly joined, forward-scrolling corridor segments that form each short level without visible drift. Use `hazard-kill` as the threatening drone approach: un-cleared enemy drones reach the foreground and end the run. Use `trigger-finish` as a clearly visible terminal gate or bulkhead at the far end of each finite level.\n\n### Layout requirements\nPlace `spawner-npc` emitters at the distant entry edge of every enemy-drone lane segment, one emitter per active segment, so drones approach along the dedicated combat lane. Place `trigger-finish` once at the end of each short corridor level, spanning the safe forward boundary beyond the final pair of lanes. No pickups, buffs, or cleanup volumes are requested.\n\n### Layout components\nBuild each level as a compact, straight enclosed sci-fi corridor. The fixed player firing position is at the foreground centre, with lateral room to move left and right but no forward traversal. Ahead, exactly two parallel advancing lanes run side by side: one is the enemy lane, carrying staggered enemy drones from the far spawn edge toward the player; the other is the upgrade-wall lane, carrying shootable upgrade walls toward the player. Keep the lanes visually distinct through contrasting floor strips, lighting, and wall materials. End the corridor with a bright completion bulkhead or gate beyond the final lane pair. Use solid side walls and a ceiling to frame the forward view, with a dark mechanical sci-fi shell, recessed lights, and sparse structural ribs. Compose the frame looking down the two lanes from just behind the foreground player position, making the incoming choice immediately legible.\n\n### Render order\nUse `topdown`: the top-down plan is authoritative because the two-lane scrolling corridor must remain continuous and readable for a playable runner route, while it is not a carveable maze or racing circuit.\n\n### Scale, theme, and pipeline cost\nScale is small: each level is a short, finite corridor with one two-lane decision space. Theme is clean industrial sci-fi, hostile drones, glowing upgrade barriers, and dark metallic panels. Use `P6` because modular runner segments and the critical approach route must be valid by construction.",
   "spec": {
     "genre": "Infinite Runner",
     "secondary": [
       "Shooter"
     ],
-    "shape": "lane-snap",
-    "preset": "none",
+    "shape": "lane-free",
+    "preset": "Free Runner",
     "axes": {},
     "options": [
       {
         "id": "chunk-modular",
-        "text": "Repeating sci-fi corridor segments align precisely into two uninterrupted parallel lanes, with matching seams and lane widths.",
+        "text": "Cleanly joined forward-scrolling corridor segments forming each short level without visible drift.",
         "visible": true,
         "count": -1
       },
       {
         "id": "hazard-kill",
-        "text": "Enemy drones occupy one lane as the dangerous approaching obstacle line.",
+        "text": "Un-cleared enemy drones approach the foreground and end the run.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "Isometric view from behind and above the centered foreground firing position; the two parallel lanes recede toward the illuminated endpoint, with drones in one lane and glowing upgrade walls in the other.",
+      "composition": "View forward from just behind the fixed foreground-centre player position, looking down the two parallel incoming lanes so the combat-versus-upgrade choice is immediately legible. The terminal bulkhead sits beyond the final lane pair.",
       "zones": [
         {
-          "name": "Firing position",
-          "role": "Fixed player position for shooting and left-right lane shifting.",
-          "where": "Near foreground edge, centered across the two-lane width and visually outside the advancing segment stream.",
+          "name": "Player firing position",
+          "role": "Fixed firing position with room to shift freely left and right, but no forward traversal.",
+          "where": "Foreground centre",
           "size": ""
         },
         {
-          "name": "Drone lane",
-          "role": "Approaching dangerous obstacle lane populated by successive enemy-drone formations.",
-          "where": "One of the two parallel corridor lanes, running from the far end toward the firing position.",
-          "size": "Broad lane"
+          "name": "Enemy lane",
+          "role": "Carries staggered enemy drones from the far spawn edge toward the player.",
+          "where": "Ahead of the player, side by side with the upgrade-wall lane",
+          "size": ""
         },
         {
           "name": "Upgrade-wall lane",
-          "role": "Selectable lateral lane populated by freestanding glowing upgrade-wall panels that can be shot.",
-          "where": "Parallel to the drone lane, running from the far end toward the firing position.",
-          "size": "Broad lane"
+          "role": "Carries shootable upgrade walls toward the player.",
+          "where": "Ahead of the player, side by side with the enemy lane",
+          "size": ""
         },
         {
-          "name": "Endpoint bulkhead",
-          "role": "Finite corridor termination beyond the final advancing segment.",
-          "where": "Far end of the corridor.",
-          "size": "Large"
+          "name": "Terminal boundary",
+          "role": "Bright completion bulkhead or gate ending the finite short corridor level.",
+          "where": "Beyond the final pair of lanes at the far end",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Endpoint bulkhead",
-          "to": "Firing position",
-          "kind": "corridor"
+          "from": "Distant enemy-lane entry edge",
+          "to": "Player firing position",
+          "kind": "track"
         },
         {
-          "from": "Drone lane",
-          "to": "Upgrade-wall lane",
-          "kind": "open ground"
+          "from": "Distant upgrade-wall lane edge",
+          "to": "Player firing position",
+          "kind": "track"
         }
       ],
-      "terrain": "Dark metallic floor panels with inset neon lane strips; a low central divider separates the lanes.",
+      "terrain": "Contrasting floor strips distinguish the two advancing lanes, with dark metallic panels, recessed lights, and contrasting wall materials.",
       "props": [
         {
-          "name": "enemy-drone formations",
+          "name": "enemy drones",
           "count": -1,
-          "where": "Drone lane"
+          "where": "Staggered along the enemy lane, approaching from the far spawn edge."
         },
         {
-          "name": "freestanding glowing upgrade-wall panels with visible energy cores",
+          "name": "shootable upgrade walls",
           "count": -1,
-          "where": "Upgrade-wall lane"
+          "where": "Along the upgrade-wall lane, approaching the player."
         },
         {
-          "name": "low central divider",
+          "name": "bright completion bulkhead or gate",
           "count": 1,
-          "where": "Between the two lanes"
+          "where": "Beyond the final pair of lanes at the far end of the corridor."
         },
         {
-          "name": "wall ribs",
+          "name": "recessed lights",
           "count": -1,
-          "where": "Along the enclosed corridor walls"
+          "where": "In the enclosed sci-fi corridor shell."
         },
         {
-          "name": "ceiling rails",
+          "name": "structural ribs",
           "count": -1,
-          "where": "Above the corridor"
-        },
-        {
-          "name": "illuminated sci-fi bulkhead, gate, or reactor-door endpoint",
-          "count": 1,
-          "where": "Far end beyond the final segment"
+          "where": "Sparse ribs along the corridor shell."
         }
       ],
-      "boundary": "Deep enclosed corridor boundary with walls and ceiling.",
-      "scale_band": "medium",
-      "theme": "Neon industrial sci-fi; dark steel with cyan and magenta energy light and hovering drones."
+      "boundary": "Solid side walls and a ceiling enclose the compact straight corridor.",
+      "scale_band": "small",
+      "theme": "Clean industrial sci-fi with hostile drones, glowing upgrade barriers, dark mechanical metallic panels, and recessed lighting."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the two continuous parallel lanes, separator, and finite endpoint must remain unambiguous and playable.",
+      "why": "the continuous two-lane scrolling corridor must remain readable and playable.",
       "set_piece": false
     },
     "route": [
       "P6"
     ],
-    "notes": [],
+    "notes": [
+      "dropped option 'trigger-finish': not in Infinite Runner",
+      "dropped option 'spawner-npc': not in Infinite Runner",
+      "dropped placement 'spawner-npc': not in Infinite Runner",
+      "dropped placement 'trigger-finish': not in Infinite Runner"
+    ],
     "scene_prompt": "Create a 3D sci-fi runner-style corridor shooter with a fixed player position near the foreground, able to shift only left and right. Two parallel lanes scroll toward the player: one lane carries approaching enemy drones, while the other carries upgrade walls that can be shot. Build the space as finite, short corridor levels with a clear endpoint beyond the advancing lanes."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

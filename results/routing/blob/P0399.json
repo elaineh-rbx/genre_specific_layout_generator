@@ -14,119 +14,115 @@
     }
   ],
   "scene_prompt": "Create a 3D BMX game map as a sunny, stylized dirt-jump park. A compact obstacle-course section leads into a BMX run, with a clear route toward a finish line after the obby; arrange dirt ramps and jumps along the racing path.",
-  "blob": "### Genre\nDominant genre: Simulation, with Obby & Platformer secondary. The original’s speed-building loop makes this a Stat Grinder rather than a standalone BMX race; the obby supplies the preparation segment, while BMX riding supplies its physical expression.\n\n### Shape and preset\nUse `tier-ladder`, matched to the Stat Grinder preset. Here it is a compact two-part progression: an obstacle-course tier that feeds directly into a final dirt-track BMX tier. The prompt overrides the preset’s shop, training-station, and rebirth elements, which are not depicted.\n\n### Config requirements\nUse secondary-genre `obstacle-jump` as visible geometry: a short ordered run of BMX-clearable obstacle jumps and raised dirt features in the opening section. Use `path-road-vehicle` as visible geometry: a continuous, wide packed-dirt BMX route rather than disconnected platforms, carrying riders from the obby into the run. Use `trigger-finish` as both visible and invisible: a prominent finish arch or painted finish line at the route’s end, with its detection volume placed afterward and omitted from the render.\n\n### Layout components\nBuild a compact, single contiguous park. Put the obstacle-course start zone at the near end of the composition, roughly one-third of the map, with a clearly ordered sequence of low dirt mounds, narrow berms, short ramps, and jumpable barriers. It should resolve into the BMX run without a separate loading area. The remaining two-thirds is a broad, forward-leading packed-dirt race lane that curves gently through repeated dirt ramps and jumps toward the terminal finish line in the far distance. Keep recovery space and clear shoulders beside each jump, with low wooden rails or natural dirt banks defining the route without turning the park into an urban street course. Surround the playable ground with sunny grass, scattered shrubs, and a low tree line as a soft boundary. Frame the course diagonally from the start and obstacle section toward the distant finish so the full route reads immediately.\n\n### Render order\nUse `topdown`: the obstacle chain and continuous BMX route must remain connected and clearable, so the authoritative plan is established before the isometric dressing.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the prompt’s compact obstacle section and one direct BMX run. Theme: sunny, stylized dirt-jump park, warm packed earth, bright grass, playful ramps. Pipeline modifier: `P6`, forced by the ordered obstacle path and its required valid connection into the BMX route.",
+  "blob": "### 1. Genre\nThe dominant genre is Simulation, specifically a speed-progression loop: completing the obstacle section builds the speed needed for the BMX run. Racing is secondary because the earned speed is spent on a directed run to a finish line; it contributes finish-course requirements but does not own the map logic.\n\n### 2. Shape and preset\nUse `route-point-to-point`, taken from outside Simulation’s usual shape set. It is one compact, continuous sequence from the speed-building obby into the dirt BMX run and its terminal finish. The Stat Grinder preset informed the progression concept, but the shape and most preset options are replaced, so the preset is none.\n\n### 3. Config requirements\nUse `station-training` as the compact obstacle section whose jumps and challenges visibly function as speed-building stations. Use `obstacle-jump` for the short series of BMX-compatible jumps and elevated obstacles in that opening section. Use `path-road-vehicle` as a continuous packed-dirt BMX track leading from the obby exit through ramps and jumps to the finish. Use `trigger-finish` as a clearly visible finish gantry or line at the track endpoint.\n\n### 4. Layout requirements\nPlace `station-training` along one compact opening obstacle sequence, with each station embedded in the ordered jumps before the BMX track begins. Place one `trigger-finish` detection volume across the full width of the terminal straight, directly beneath the drawn finish line. No checkpoints are required for this compact course.\n\n### 5. Layout components\nCreate two sequential zones: a small starting obby pad with a tightly ordered set of dirt-and-wood jump obstacles, followed immediately by the larger BMX race run. A single packed-dirt route exits the obby, becomes a broad rideable track, and progresses forward through repeated sculpted dirt ramps and jumps toward the finish line. Keep the terrain gently rolling rather than mountainous, with grassy margins, low dirt berms defining route edges, and an otherwise open park boundary. Compose the map diagonally in frame so the viewer can read the entire progression from obstacle start, through the accelerating BMX line, to the distant finish gantry.\n\n### 6. Render order\nUse `topdown`: the obstacle-to-track handoff, continuous rideable route, and finish placement must remain valid for play before the sunny isometric dressing is generated.\n\n### 7. Scale, theme, and pipeline cost\nScale is medium, driven by a compact obby plus a readable full BMX run. Theme: sunny stylized dirt-jump park, warm packed earth, green grass, playful ramps, and clear colorful course markers. Apply `P6` because the ordered obstacle and BMX route must be continuously connected and physically usable; no other geometry forces an additional capture path.",
   "spec": {
     "genre": "Simulation",
     "secondary": [
-      "Obby & Platformer"
+      "Racing"
     ],
-    "shape": "tier-ladder",
-    "preset": "Stat Grinder",
+    "shape": "route-point-to-point",
+    "preset": "none",
     "axes": {},
     "options": [
       {
+        "id": "station-training",
+        "text": "A compact obstacle section whose jumps and challenges visibly function as speed-building stations.",
+        "visible": true,
+        "count": -1
+      },
+      {
         "id": "path-road-vehicle",
-        "text": "A continuous, wide packed-dirt BMX route rather than disconnected platforms, carrying riders from the obby into the run.",
+        "text": "A continuous packed-dirt BMX track leading from the obby exit through ramps and jumps to the finish.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "station-training",
+        "text": "Speed-building stations embedded in the ordered jumps.",
+        "count": -1,
+        "where": "Along the compact opening obstacle sequence, before the BMX track begins."
+      }
+    ],
     "layout": {
-      "composition": "Frame the compact course diagonally from the near start and obstacle section toward the distant finish, so the full forward route reads immediately.",
+      "composition": "Compose the map diagonally in frame so the entire progression reads from the obstacle start, through the accelerating BMX line, to the distant finish gantry.",
       "zones": [
         {
-          "name": "Obstacle-course start zone",
-          "role": "Opening preparation segment with an ordered sequence of BMX-clearable obstacles that feeds directly into the BMX run.",
-          "where": "Near end of the composition",
-          "size": "Roughly one-third of the map"
+          "name": "Starting obby pad",
+          "role": "A compact speed-building obstacle section with tightly ordered dirt-and-wood jump obstacles.",
+          "where": "At the start of the diagonal progression.",
+          "size": "small"
         },
         {
-          "name": "BMX run",
-          "role": "Broad forward-leading packed-dirt race lane with repeated dirt ramps and jumps leading to the terminal finish.",
-          "where": "From the obstacle-course zone through the far distance",
-          "size": "Remaining two-thirds of the map"
-        },
-        {
-          "name": "Terminal finish",
-          "role": "End of the BMX route, marked by the finish arch or painted finish line.",
-          "where": "Far distance",
-          "size": ""
+          "name": "BMX race run",
+          "role": "The larger directed BMX run from the obby exit through ramps and jumps to the terminal finish.",
+          "where": "Immediately after the starting obby pad, extending toward the distant finish gantry.",
+          "size": "larger"
         }
       ],
       "paths": [
         {
-          "from": "Obstacle-course start zone",
-          "to": "BMX run",
-          "kind": "road"
-        },
-        {
-          "from": "BMX run",
-          "to": "Terminal finish",
-          "kind": "road"
+          "from": "Starting obby pad",
+          "to": "BMX race run",
+          "kind": "track"
         }
       ],
-      "terrain": "Warm packed earth forming a continuous dirt route, low dirt mounds, narrow berms, ramps, and jumps; sunny grass with scattered shrubs and a low tree line surrounds the playable ground.",
+      "terrain": "Gently rolling terrain with warm packed earth, grassy margins, and low dirt berms defining the route edges.",
       "props": [
         {
-          "name": "low dirt mounds",
+          "name": "Dirt-and-wood jump obstacles",
           "count": -1,
-          "where": "Obstacle-course start zone"
+          "where": "In the starting obby pad."
         },
         {
-          "name": "narrow berms",
+          "name": "Sculpted dirt ramps and jumps",
           "count": -1,
-          "where": "Obstacle-course start zone"
+          "where": "Repeated along the BMX race run."
         },
         {
-          "name": "short ramps",
+          "name": "Finish gantry",
           "count": -1,
-          "where": "Obstacle-course start zone and BMX run"
+          "where": "At the endpoint of the terminal straight."
         },
         {
-          "name": "jumpable barriers",
+          "name": "Clear colorful course markers",
           "count": -1,
-          "where": "Obstacle-course start zone"
-        },
-        {
-          "name": "repeated dirt ramps and jumps",
-          "count": -1,
-          "where": "BMX run"
-        },
-        {
-          "name": "low wooden rails or natural dirt banks",
-          "count": -1,
-          "where": "Along the route edges"
+          "where": "Along the course."
         }
       ],
-      "boundary": "Sunny grass, scattered shrubs, and a low tree line form a soft boundary around the playable ground.",
-      "scale_band": "small",
-      "theme": "Sunny, stylized dirt-jump park with warm packed earth, bright grass, and playful ramps."
+      "boundary": "An otherwise open park boundary.",
+      "scale_band": "medium",
+      "theme": "Sunny stylized dirt-jump park, warm packed earth, green grass, playful ramps, and clear colorful course markers."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the obstacle chain and continuous BMX route must remain connected and clearable.",
+      "why": "The obstacle-to-track handoff, continuous rideable route, and finish placement must remain valid for play.",
       "set_piece": false
     },
     "route": [
       "P6"
     ],
     "notes": [
+      "The shape route-point-to-point is taken from outside Simulation's usual shape set.",
+      "The Stat Grinder preset informed the progression concept, but no preset is used.",
       "dropped option 'obstacle-jump': not in Simulation",
-      "dropped option 'trigger-finish': not in Simulation"
+      "dropped option 'trigger-finish': not in Simulation",
+      "dropped placement 'trigger-finish': not in Simulation"
     ],
     "scene_prompt": "Create a 3D BMX game map as a sunny, stylized dirt-jump park. A compact obstacle-course section leads into a BMX run, with a clear route toward a finish line after the obby; arrange dirt ramps and jumps along the racing path."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
-  "order": "std",
-  "first": "isometric",
+  "order": "layout",
+  "first": "authored_plan",
   "mapper_notes": [
-    "blob asked for topdown first; the route ['P0'] gives isometric"
+    "blob asked for topdown first; the route ['P6'] gives authored_plan"
   ]
 }

@@ -19,7 +19,7 @@
     }
   ],
   "scene_prompt": "Create a 3D space-flight map with an infinite small three-lane road stretching forward through open space. A small flying vehicle travels just above the road, while large asteroids appear ahead as lane-blocking obstacles, each filling one lane at a time.",
-  "blob": "### Genre\nThe dominant genre is Infinite Runner: the vehicle advances endlessly and dodges obstacles on a fixed-lane route. There is no secondary genre.\n\n### Shape and preset\nUse `lane-snap`, matching the Lane Runner preset. The preset’s fixed lateral lanes are explicitly required; retain its modular construction but replace its coin-trail and moving-traffic emphasis with the requested jumpable asteroid obstacles.\n\n### Config requirements\n`chunk-modular` is visible geometry: repeated straight road segments join precisely end-to-end to sustain the infinite route without drift. `obstacle-jump` is visible geometry: large asteroids sit ahead over the roadway, each blocking exactly one lane and leaving the other lanes readable for avoidance or clearance. No invisible layout options are required.\n\n### Layout components\nBuild one narrow, infinite-seeming three-lane road suspended through open space. The visible playable section should comprise a forward queue of aligned modular segments, with lane divisions or subtle illuminated edge markings making all three lanes immediately legible. Place the small flying vehicle just above the near foreground of the road. Ahead, distribute large irregular asteroids as single-lane blockers, never spanning more than one lane at once. Keep open space around and below the road, with no terrain, walls, or enclosing boundary. Frame the road from a slightly elevated trailing isometric view, with its three lanes converging toward a distant vanishing point amid stars and sparse space haze.\n\n### Render order\nUse `topdown` first, authoritative for the three connected lanes and valid repeated segment alignment; the isometric render is then dressed from that plan. A broken lane chain would make the endless route unplayable.\n\n### Scale, theme, and pipeline cost\nUse a medium scale: the road is physically small at three lanes wide, but its repeating forward extent needs enough visible chunk depth to sell infinity. Theme: clean arcade sci-fi spaceflight, dark starfield, luminous lane edges, chunky asteroid silhouettes. Apply `P6` because modular lane geometry and obstacle spacing must remain valid by construction.",
+  "blob": "### Genre\nThe dominant genre is `Infinite Runner`: the vehicle advances along an endless route and the player reacts by dodging or jumping obstacles. There is no secondary genre.\n\n### Shape and preset\nUse `lane-snap`, matched from the Lane Runner preset. This is a narrow, fixed three-lane space roadway in which the flying vehicle shifts cleanly between lanes while remaining just above the surface.\n\n### Config requirements\nUse `chunk-modular` for repeatable straight roadway segments whose end pivots align exactly with the next segment, maintaining an endless forward road without drift. Use `hazard-kill` for large asteroids that end the run on collision. Use `obstacle-jump` for asteroid placements designed to be jumped over or dodged through an open lane. Do not add coins, boosts, scenery, or moving traffic that the prompt did not request.\n\n### Layout requirements\nPlace `trigger-despawn` as one cleanup volume spanning the road and all three lanes a fixed distance behind the active vehicle/camera, recycling cleared chunks. Place no pickups or other markers.\n\n### Layout components\nBuild a single small three-lane road, suspended in open space and extending straight forward as a finite visible queue of seamlessly repeating modular chunks. Each lane is equal width and clearly separated by subtle luminous lane dividers; the full road is only wide enough for three readable vehicle positions. The vehicle travels immediately above the roadway rather than on a ground plane. Populate upcoming chunks with large individual asteroids, each occupying and visually blocking exactly one lane at a time, with enough visible clearance in the other lanes and enough vertical clearance to make each dodge or jump legible. Surround the route with empty starfield and distant sparse cosmic haze, with no terrain, buildings, boundary wall, or side routes. Compose the frame looking forward along the road so the three lanes converge toward the horizon and upcoming asteroids are readable at a glance.\n\n### Render order\nUse `topdown` first and treat that lane plan as authoritative, because the continuous three-lane route and each obstacle’s clearable lane relationship must remain valid before the isometric space-flight dressing is produced.\n\n### Scale, theme, and pipeline cost\nUse a medium scale: the road itself is small, but the rendered chunk queue needs enough forward distance to telegraph approaching obstacles. Theme: clean arcade sci-fi, glowing lane lines, dark open space, and oversized rocky asteroids. Apply `P6` because modular chunk connections and lane-obstacle sequences must be valid by construction for an endless runner.",
   "spec": {
     "genre": "Infinite Runner",
     "secondary": [],
@@ -29,67 +29,75 @@
     "options": [
       {
         "id": "chunk-modular",
-        "text": "Repeated straight road segments join precisely end-to-end to sustain the infinite route without drift.",
+        "text": "Repeatable straight roadway segments whose end pivots align exactly with the next segment, maintaining an endless forward road without drift.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "hazard-kill",
+        "text": "Large asteroids that end the run on collision.",
         "visible": true,
         "count": -1
       },
       {
         "id": "obstacle-jump",
-        "text": "Large asteroids sit ahead over the roadway, each blocking exactly one lane and leaving the other lanes readable for avoidance or clearance.",
+        "text": "Asteroid placements designed to be jumped over or dodged through an open lane.",
         "visible": true,
         "count": -1
+      },
+      {
+        "id": "trigger-despawn",
+        "text": "A cleanup volume spanning the road and all three lanes a fixed distance behind the active vehicle/camera, recycling cleared chunks.",
+        "visible": false,
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "trigger-despawn",
+        "text": "A cleanup volume spanning the road and all three lanes, recycling cleared chunks.",
+        "count": 1,
+        "where": "A fixed distance behind the active vehicle/camera."
       }
     ],
     "layout": {
-      "composition": "A slightly elevated trailing isometric view frames the near foreground road and small flying vehicle, with three lanes converging through aligned forward segments toward a distant vanishing point amid stars and sparse space haze.",
+      "composition": "Forward-looking frame along the road, with the three lanes converging toward the horizon and upcoming asteroids readable at a glance.",
       "zones": [
         {
-          "name": "three-lane road",
-          "role": "Fixed-lane endless travel route with a visible forward queue of aligned modular segments.",
-          "where": "From the near foreground stretching forward to the distant vanishing point.",
-          "size": "Narrow and three lanes wide, with enough visible chunk depth to sell infinity."
-        },
-        {
-          "name": "open space",
-          "role": "Surrounding void for the suspended road and asteroid obstacles.",
-          "where": "Around and below the road.",
-          "size": "Infinite-seeming"
+          "name": "Three-lane road",
+          "role": "The narrow fixed-lane endless route for the flying vehicle, built as a finite visible queue of seamlessly repeating modular chunks.",
+          "where": "Extending straight forward through the centre of the frame toward the horizon.",
+          "size": "Small road with enough forward visible distance to telegraph approaching obstacles."
         }
       ],
-      "paths": [
-        {
-          "from": "near foreground",
-          "to": "distant vanishing point",
-          "kind": "track"
-        }
-      ],
-      "terrain": "No terrain; open space around and below the suspended road, with stars and sparse space haze.",
+      "paths": [],
+      "terrain": "No terrain or ground plane; the road is suspended in empty starfield with distant sparse cosmic haze.",
       "props": [
         {
-          "name": "small flying vehicle",
+          "name": "Subtle luminous lane dividers",
+          "count": -1,
+          "where": "Separating the three equal-width lanes along the roadway."
+        },
+        {
+          "name": "Large individual asteroids",
+          "count": -1,
+          "where": "In upcoming road chunks, each visually blocking exactly one lane at a time with clearance in the other lanes and above."
+        },
+        {
+          "name": "Small flying vehicle",
           "count": 1,
-          "where": "Just above the near foreground of the road."
-        },
-        {
-          "name": "large irregular asteroids",
-          "count": -1,
-          "where": "Ahead over the roadway, each occupying one lane at a time."
-        },
-        {
-          "name": "illuminated lane edge markings",
-          "count": -1,
-          "where": "Along the three-lane road."
+          "where": "Immediately above the roadway."
         }
       ],
-      "boundary": "Open space with no walls or enclosing boundary.",
+      "boundary": "Open space with no boundary wall or side routes.",
       "scale_band": "medium",
-      "theme": "Clean arcade sci-fi spaceflight, dark starfield, luminous lane edges, chunky asteroid silhouettes."
+      "theme": "Clean arcade sci-fi, glowing lane lines, dark open space, and oversized rocky asteroids."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "A broken lane chain would make the endless route unplayable.",
+      "why": "the continuous three-lane route and each obstacle's clearable lane relationship must remain valid before space-flight dressing is produced.",
       "set_piece": false
     },
     "route": [
@@ -101,7 +109,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

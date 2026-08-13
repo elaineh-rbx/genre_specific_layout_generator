@@ -19,7 +19,7 @@
     }
   ],
   "scene_prompt": "Create a realistic, modern 3D Tower Defense game layout with a detailed central lobby: a main waiting area surrounded by match-entry elevators. Build exactly five distinct maps, each designed for up to 4 players and centered on one clearly defined, medium-length enemy lane with no branches, a visible enemy entry point, a base endpoint, tower-placement zones beside the route, and blocked terrain or structures preventing placement on the lane. The five maps are: a modern city with streets and urban obstacles; a forest with a clear route through dense natural terrain; a desert with sandy ground and environmental rock formations; an industrial area with factory structures and machinery; and a military zone with fortified buildings and defensive obstacles. Each map uses detailed realistic decoration, appropriate lighting, environmental cover, and open tower sites along the single route, with clear sightlines for combat effects and tower range visualization.",
-  "blob": "### 1. Genre\nThe dominant genre is Strategy, specifically a tower-defense game with enemy lanes, tower pads, a defended base, and wave entry origins.\n\n### 2. Shape and preset\nUse the `lane-actor-track` shape. Each combat map is a single medium-length, unbranched enemy lane running from a clearly legible entry point to one defended base endpoint, with buildable ground flanking the route. This matches the Tower Defense preset.\n\n### 3. Config requirements\nUse visible `buildzone-grid` as clearly bounded tower-placement pads and open reinforced ground beside each lane; the lane itself, obstacles, and protected scenery remain non-buildable. Use `tracker-core` as the visible base structure at each lane terminus, with its health-tracking volume invisible. Use `spawner-npc` as an invisible enemy-origin marker placed at each visible lane entrance. Use visible `cover-los` through urban barriers, trees, rocks, machinery, and fortifications that decorate the maps without obscuring the lane or tower sightlines.\n\n### 4. Layout components\nBuild one central lobby and exactly five separate match maps, each sized for up to 4 players. The lobby is a detailed realistic waiting hall with a broad central gathering floor and match-entry elevators arranged around its perimeter; elevators are prominent vertical portal-like structures, leaving the center open for circulation.\n\nEach map has one continuous medium-length lane with no branches, a distinct enemy entrance at one end, and a base/core at the other. Place tower pads in repeated clearings along both sides, separated from the route by curbs, barriers, terrain, or structures. The modern city uses streets, intersections, parked urban obstacles, and building facades. The forest route passes through dense trees, roots, boulders, and clear tower clearings. The desert has sand, wind-shaped rock formations, sparse barriers, and exposed sightlines. The industrial map uses factory shells, pipes, machinery, loading yards, and fenced pads. The military zone uses fortified buildings, concrete barriers, sandbags, checkpoints, and defensive obstacles. Keep all lane entrances, routes, pads, and bases readable from above.\n\n### 5. Render order\nUse `topdown`: the five lanes must remain continuously connected, unbranched, and playable from enemy origin to core, so topology is authoritative before the isometric dressing pass.\n\n### 6. Scale, theme, and pipeline cost\nScale is huge because the build contains a lobby plus five fully distinct match maps. Theme: realistic modern military-industrial tower defense, with environment-specific lighting and detailed grounded materials. Use `P4` because the lobby and five themed maps are separate spaces, and `P6` because every enemy lane must be valid as one continuous route from origin to core.",
+  "blob": "### Genre\nThe dominant genre is Strategy, specifically Tower Defense: enemies follow a fixed route while players build defenses beside it. There is no secondary genre.\n\n### Shape and preset\nUse `lane-actor-track`, matching the Tower Defense preset. Each of the five playable maps is organized around one unbranched, medium-length enemy lane, with a readable origin and a core at its end. The detailed lobby is a separate staging map, not a second gameplay shape.\n\n### Config requirements\nUse `buildzone-grid` as broad, clearly bounded tower-placement pads and strips beside each lane, never on it; blocked terrain, streets, walls, machinery, or fortifications define invalid ground. Use `tracker-core` for a visible defended base endpoint on every map. Use `choke-bottleneck` only as natural narrowings within the single continuous route, such as a city intersection, forest pass, desert rock gap, factory gate, or fortified checkpoint.\n\n### Layout requirements\nPlace `spawner-npc` once at the visible entry of each of the five lanes, facing directly into its route. Place `tracker-core` once at the opposite terminal endpoint of each lane, with its gameplay health volume aligned to the visible base structure. Site tower-placement regions continuously along both practical sides of each route, with enough open pads for up to four players and no overlap with the lane or environmental blockers.\n\n### Layout components\nThe separate lobby contains one central waiting plaza surrounded by match-entry elevators; arrange elevators evenly around the plaza with clear approach space. Build exactly five separate four-player maps: a modern city lane through streets, urban barriers, and building fronts; a forest lane through dense trees and natural clearings; a desert lane across sand between rock formations; an industrial lane past factory buildings, pipes, and machinery; and a military lane through fortified buildings, barricades, and defensive obstacles. In every map, place the enemy entry at one end, a single uninterrupted lane through the middle, tower ground along its flanks, and the defended base at the far end. Frame each map in an isometric overview with the full route legible from spawn to core.\n\n### Render order\nUse `authored_plan`: the enemy lane must be one valid, continuous, non-branching route from its spawn origin to the core, so generate the topology first and dress it per theme.\n\n### Scale, theme, and pipeline cost\nScale is huge because it includes a central lobby plus exactly five distinct, medium-length multiplayer maps. Theme: realistic, modern, detailed military-technical Tower Defense with setting-specific lighting. Use `P4` because the lobby and five match maps are separate maps, and `P6` because every enemy track must be valid by construction.",
   "spec": {
     "genre": "Strategy",
     "secondary": [],
@@ -29,163 +29,149 @@
     "options": [
       {
         "id": "buildzone-grid",
-        "text": "Clearly bounded tower-placement pads and open reinforced ground beside each lane; the lane itself, obstacles, and protected scenery remain non-buildable.",
+        "text": "Broad, clearly bounded tower-placement pads and strips beside each lane, never on it; blocked terrain, streets, walls, machinery, or fortifications define invalid ground.",
         "visible": true,
         "count": -1
       },
       {
         "id": "tracker-core",
-        "text": "Visible base structure at each lane terminus, with its health-tracking volume invisible.",
+        "text": "A visible defended base endpoint on every map, with its gameplay health volume aligned to the visible base structure.",
         "visible": true,
-        "count": 5
+        "count": 1
+      },
+      {
+        "id": "choke-bottleneck",
+        "text": "Natural narrowings within the single continuous route, such as a city intersection, forest pass, desert rock gap, factory gate, or fortified checkpoint.",
+        "visible": true,
+        "count": -1
       },
       {
         "id": "spawner-npc",
-        "text": "Invisible enemy-origin marker placed at each visible lane entrance.",
+        "text": "A visible enemy entry at the start of each lane, facing directly into its route.",
         "visible": false,
-        "count": 5
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "tracker-core",
+        "text": "A visible defended base endpoint with its gameplay health volume aligned to the visible base structure.",
+        "count": 1,
+        "where": "At the opposite terminal endpoint of each lane."
       },
       {
-        "id": "cover-los",
-        "text": "Urban barriers, trees, rocks, machinery, and fortifications decorate the maps without obscuring the lane or tower sightlines.",
-        "visible": true,
-        "count": -1
+        "id": "spawner-npc",
+        "text": "A visible enemy entry at the start of each lane, facing directly into its route.",
+        "count": 1,
+        "where": "At the visible entry of each of the five lanes, facing directly into its route."
       }
     ],
     "layout": {
-      "composition": "A detailed central lobby holds a broad open gathering floor at the centre, with prominent match-entry elevators around its perimeter; five separate themed match maps sit beyond the lobby entries and remain readable from above.",
+      "composition": "A detailed central lobby is a separate staging map, with a central waiting plaza surrounded evenly by match-entry elevators. Each of the five match maps is framed as an isometric overview with the full enemy route legible from its entry spawn to the defended core: enemy entry at one end, uninterrupted lane through the middle, tower ground along both flanks, and base at the far end.",
       "zones": [
         {
           "name": "Central lobby",
-          "role": "Detailed realistic waiting hall and gathering space, with match-entry elevators around its perimeter.",
-          "where": "central hub",
-          "size": "broad central floor"
+          "role": "Waiting and match staging area with entry elevators.",
+          "where": "Separate staging map.",
+          "size": "Detailed central lobby"
         },
         {
-          "name": "Modern city match map",
-          "role": "Up to 4 players defend one continuous, unbranched medium-length lane from enemy entrance to base/core through streets and intersections, with tower pads flanking the route.",
-          "where": "separate match map",
-          "size": "medium-length lane; up to 4 players"
+          "name": "Waiting plaza",
+          "role": "Central gathering and waiting area.",
+          "where": "Centre of the lobby.",
+          "size": "Central"
         },
         {
-          "name": "Forest match map",
-          "role": "Up to 4 players defend one continuous, unbranched medium-length lane through dense trees, roots, boulders, and clear tower clearings.",
-          "where": "separate match map",
-          "size": "medium-length lane; up to 4 players"
+          "name": "Match-entry elevators",
+          "role": "Entry points to matches.",
+          "where": "Evenly surrounding the central waiting plaza with clear approach space.",
+          "size": ""
         },
         {
-          "name": "Desert match map",
-          "role": "Up to 4 players defend one continuous, unbranched medium-length lane across sandy ground with wind-shaped rock formations, sparse barriers, exposed sightlines, and flanking tower pads.",
-          "where": "separate match map",
-          "size": "medium-length lane; up to 4 players"
+          "name": "Modern city map",
+          "role": "Four-player Tower Defense map with one unbranched enemy lane.",
+          "where": "Separate gameplay map.",
+          "size": "Medium-length"
         },
         {
-          "name": "Industrial match map",
-          "role": "Up to 4 players defend one continuous, unbranched medium-length lane through factory shells, pipes, machinery, loading yards, and fenced tower pads.",
-          "where": "separate match map",
-          "size": "medium-length lane; up to 4 players"
+          "name": "Forest map",
+          "role": "Four-player Tower Defense map with one unbranched enemy lane.",
+          "where": "Separate gameplay map.",
+          "size": "Medium-length"
         },
         {
-          "name": "Military match map",
-          "role": "Up to 4 players defend one continuous, unbranched medium-length lane through fortified buildings, concrete barriers, sandbags, checkpoints, defensive obstacles, and flanking tower pads.",
-          "where": "separate match map",
-          "size": "medium-length lane; up to 4 players"
+          "name": "Desert map",
+          "role": "Four-player Tower Defense map with one unbranched enemy lane.",
+          "where": "Separate gameplay map.",
+          "size": "Medium-length"
+        },
+        {
+          "name": "Industrial map",
+          "role": "Four-player Tower Defense map with one unbranched enemy lane.",
+          "where": "Separate gameplay map.",
+          "size": "Medium-length"
+        },
+        {
+          "name": "Military map",
+          "role": "Four-player Tower Defense map with one unbranched enemy lane.",
+          "where": "Separate gameplay map.",
+          "size": "Medium-length"
         }
       ],
       "paths": [
         {
-          "from": "Central lobby",
-          "to": "Modern city match map",
-          "kind": "portal"
-        },
-        {
-          "from": "Central lobby",
-          "to": "Forest match map",
-          "kind": "portal"
-        },
-        {
-          "from": "Central lobby",
-          "to": "Desert match map",
-          "kind": "portal"
-        },
-        {
-          "from": "Central lobby",
-          "to": "Industrial match map",
-          "kind": "portal"
-        },
-        {
-          "from": "Central lobby",
-          "to": "Military match map",
-          "kind": "portal"
-        },
-        {
-          "from": "Modern city enemy entrance",
-          "to": "Modern city base/core",
+          "from": "Enemy entry",
+          "to": "Defended base",
           "kind": "track"
         },
         {
-          "from": "Forest enemy entrance",
-          "to": "Forest base/core",
-          "kind": "track"
-        },
-        {
-          "from": "Desert enemy entrance",
-          "to": "Desert base/core",
-          "kind": "track"
-        },
-        {
-          "from": "Industrial enemy entrance",
-          "to": "Industrial base/core",
-          "kind": "track"
-        },
-        {
-          "from": "Military enemy entrance",
-          "to": "Military base/core",
-          "kind": "track"
+          "from": "Waiting plaza",
+          "to": "Match-entry elevators",
+          "kind": "open ground"
         }
       ],
-      "terrain": "Realistic grounded materials with environment-specific lighting: urban streets and intersections; dense forest terrain with trees, roots, boulders, and clearings; desert sand and wind-shaped rocks; industrial loading yards; and fortified military ground. Curbs, barriers, terrain, and structures separate tower ground from every lane.",
+      "terrain": "Modern city streets with urban barriers and building fronts; dense forest trees and natural clearings; desert sand between rock formations; industrial factory buildings, pipes, and machinery; fortified military buildings, barricades, and defensive obstacles. Blocked terrain, streets, walls, machinery, and fortifications prevent tower placement on invalid ground.",
       "props": [
         {
           "name": "Match-entry elevators",
           "count": -1,
-          "where": "around the central lobby perimeter"
+          "where": "Evenly around the central waiting plaza."
         },
         {
-          "name": "Parked urban obstacles and building facades",
+          "name": "Modern city streets, urban barriers, and building fronts",
           "count": -1,
-          "where": "modern city match map"
+          "where": "Modern city map."
         },
         {
-          "name": "Dense trees, roots, and boulders",
+          "name": "Dense trees and natural clearings",
           "count": -1,
-          "where": "forest match map"
+          "where": "Forest map."
         },
         {
-          "name": "Wind-shaped rock formations and sparse barriers",
+          "name": "Rock formations",
           "count": -1,
-          "where": "desert match map"
+          "where": "Desert map."
         },
         {
-          "name": "Factory shells, pipes, machinery, loading yards, and fenced pads",
+          "name": "Factory buildings, pipes, and machinery",
           "count": -1,
-          "where": "industrial match map"
+          "where": "Industrial map."
         },
         {
-          "name": "Fortified buildings, concrete barriers, sandbags, checkpoints, and defensive obstacles",
+          "name": "Fortified buildings, barricades, and defensive obstacles",
           "count": -1,
-          "where": "military match map"
+          "where": "Military map."
         }
       ],
       "boundary": "",
       "scale_band": "huge",
-      "theme": "realistic modern military-industrial tower defense, with environment-specific lighting and detailed grounded materials"
+      "theme": "Realistic, modern, detailed military-technical Tower Defense with setting-specific lighting."
     },
     "render": {
-      "first": "topdown",
-      "then": "isometric",
-      "authoritative": "topdown",
-      "why": "the five enemy lanes must remain continuously connected, unbranched, and playable from enemy origin to core.",
+      "first": "authored_plan",
+      "then": "topdown",
+      "authoritative": "authored_plan",
+      "why": "Every enemy lane must be a valid, continuous, non-branching route from its spawn origin to the core.",
       "set_piece": false
     },
     "route": [
@@ -198,10 +184,12 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",
   "first": "topdown",
-  "mapper_notes": []
+  "mapper_notes": [
+    "blob asked for authored_plan first; the route ['P6'] gives topdown"
+  ]
 }

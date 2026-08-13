@@ -19,89 +19,143 @@
     }
   ],
   "scene_prompt": "Create a 3D tag-game layout centered on a compact, medium-sized grass park field arena, roughly 150 by 150 studs, kept open and readable for about 30 players. All ten selectable map arenas connect to a shared central lobby, where a prominent map-selection spinner stands as the focal prop; each chosen map is a separate fast-paced arena space.",
-  "blob": "### Genre\n`Party & Casual` is dominant: the original describes a timed, large-player tag round. There is no secondary genre.\n\n### Shape and preset\nUse `space-staged`, matching the Minigame preset: one shared lobby dispatches players into separate round arenas. Retain the staged structure and transport, while dropping leaderboard, scoring-volume, and spectator features because they were not requested.\n\n### Config requirements\n`social-hub` is visible geometry: a central gathering lobby organized around the prominent map-selection spinner. `teleporter-link` is both visible and invisible: ten clearly identifiable arena-entry markers or gates ring the lobby, with their destination links placed after segmentation. The spinner itself is a large visible focal prop in the center of the lobby, not a UI element.\n\n### Layout components\nBuild one central lobby as the arrival and map-selection zone, with the spinner standing centrally and ten evenly spaced map-entry gates around its outer edge. It should be open enough to gather the full 30-player population without crowding the spinner or gate approaches. Each of the ten selectable maps is a separate compact, medium-sized grass-park arena, roughly 150 by 150 studs. Keep every arena mostly open, flat, and readable at a glance, with a broad uninterrupted grass field as its primary play area. Use only a simple park-like outer edge—low perimeter fencing, hedges, or tree lines—to define the arena boundary without blocking visibility into the field. Do not introduce unrequested buildings, obstacles, hazards, or scoring structures. Compose the lobby as a circular or square central node with the spinner as the visual anchor; compose each arena from a slightly elevated three-quarter view so its full field and perimeter remain legible.\n\n### Render order\nUse `isometric`: render the isometric lobby and representative grass-field arena first as authoritative, then derive the top-down plan. The arena topology is simple and does not require procedural validation.\n\n### Scale, theme, and pipeline cost\nScale is large overall because it contains one lobby plus ten separate medium arenas, although each arena remains compact. Theme: clean, bright grass park tag grounds with simple civic playground styling. Use `P4` because the ten arenas are separate maps reached from the shared lobby.",
+  "blob": "### Genre\nThe dominant genre is Party & Casual: this is a timed, round-based tag game for 30 players, with bots filling vacant slots.\n\n### Shape and preset\nUse `space-staged`: one shared lobby selects and sends players to a fully separate active arena map. This follows the Minigame shape, but the preset is none because the described build retains the lobby-and-stage separation without its leaderboard, spectator, or transport dressing.\n\n### Config requirements\nUse `social-hub` for the central lobby: an open gathering area built around the prominent map-selection spinner. Do not add unrequested clutter, stands, or arena cover; the field must remain open, clear, and readable.\n\n### Layout requirements\nUse `spawn-protected` as 30 evenly distributed round-start points in each selected arena, set well apart so players do not begin directly on top of one another. Site them around the field perimeter and inner edge zones with clear routes into the center. The central lobby needs a single shared arrival/spawn position facing the spinner, but no gameplay trigger volumes need placement from the prompt.\n\n### Layout components\nBuild one central lobby, sized as a compact social plaza, with the large map-selection spinner as its focal prop at the center. Connect this lobby logically to ten separate selectable arena maps; the maps are distinct spaces rather than adjacent field sections. Each arena is a compact medium grass-park field, roughly 150 by 150 studs, designed for about 30 players and bots. Keep each field mostly level green turf with a clean concrete or paved perimeter strip, sparse park edging only, and an obvious outer boundary that contains the match. Preserve broad uninterrupted sightlines and fast crossing routes from all sides into the open center. Frame the lobby spinner centrally and make the selected arena field read as a simple square play space rather than a detailed park landscape.\n\n### Render order\nRender `isometric` first and treat it as authoritative, because the arenas are simple open fields whose playability does not depend on image-generated route topology.\n\n### Scale, theme, and pipeline cost\nScale is huge overall because one lobby serves ten separate arena maps, although every individual arena is medium-sized. Theme: clean, bright grass-park tag grounds with a playful game-show selection lobby. Use `P4` because the central lobby and each of the ten chosen arenas are separate maps.",
   "spec": {
     "genre": "Party & Casual",
     "secondary": [],
     "shape": "space-staged",
-    "preset": "Minigame",
+    "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "social-hub",
-        "text": "A central gathering lobby organized around the prominent map-selection spinner, open enough for the full 30-player population without crowding the spinner or gate approaches.",
+        "text": "A compact central social plaza built around a prominent map-selection spinner.",
         "visible": true,
-        "count": 30
+        "count": -1
       },
       {
-        "id": "teleporter-link",
-        "text": "Ten clearly identifiable arena-entry markers or gates ring the lobby, with destination links placed after segmentation.",
-        "visible": true,
-        "count": 10
+        "id": "spawn-protected",
+        "text": "30 evenly distributed round-start points in each selected arena, kept well apart so players do not begin on top of one another.",
+        "visible": false,
+        "count": 30
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "spawn-protected",
+        "text": "30 evenly distributed round-start points in each selected arena, kept well apart so players do not begin on top of one another.",
+        "count": 30,
+        "where": "Around each arena field's perimeter and inner-edge zones, with clear routes into the open center."
       }
     ],
     "layout": {
-      "composition": "A circular or square central lobby node anchors the composition, with the large spinner at its centre and evenly spaced map-entry gates around the outer edge. Each separate arena is shown from a slightly elevated three-quarter view so its full grass field and perimeter remain legible.",
+      "composition": "Frame the compact central lobby and its map-selection spinner centrally; the selected arena reads as a simple square open grass field with a paved perimeter and clear sightlines into its center.",
       "zones": [
         {
           "name": "Central lobby",
-          "role": "Arrival and map-selection zone for the shared player population.",
-          "where": "centre",
-          "size": "Open enough for 30 players"
+          "role": "A compact social plaza where players gather and select an arena from the map-selection spinner.",
+          "where": "Central hub",
+          "size": "compact"
         },
         {
-          "name": "Ten selectable map arenas",
-          "role": "Separate fast-paced tag round arenas.",
-          "where": "Reached from the central lobby through the map-entry gates",
-          "size": "Each is compact and medium-sized, roughly 150 by 150 studs"
-        }
-      ],
-      "paths": [
+          "name": "Selectable arena map 1",
+          "role": "A separate fast-paced tag arena for about 30 players and bots.",
+          "where": "Separate selected map",
+          "size": "medium, roughly 150 by 150 studs"
+        },
         {
-          "from": "Central lobby",
-          "to": "Ten selectable map arenas",
-          "kind": "portal"
+          "name": "Selectable arena map 2",
+          "role": "A separate fast-paced tag arena for about 30 players and bots.",
+          "where": "Separate selected map",
+          "size": "medium, roughly 150 by 150 studs"
+        },
+        {
+          "name": "Selectable arena map 3",
+          "role": "A separate fast-paced tag arena for about 30 players and bots.",
+          "where": "Separate selected map",
+          "size": "medium, roughly 150 by 150 studs"
+        },
+        {
+          "name": "Selectable arena map 4",
+          "role": "A separate fast-paced tag arena for about 30 players and bots.",
+          "where": "Separate selected map",
+          "size": "medium, roughly 150 by 150 studs"
+        },
+        {
+          "name": "Selectable arena map 5",
+          "role": "A separate fast-paced tag arena for about 30 players and bots.",
+          "where": "Separate selected map",
+          "size": "medium, roughly 150 by 150 studs"
+        },
+        {
+          "name": "Selectable arena map 6",
+          "role": "A separate fast-paced tag arena for about 30 players and bots.",
+          "where": "Separate selected map",
+          "size": "medium, roughly 150 by 150 studs"
+        },
+        {
+          "name": "Selectable arena map 7",
+          "role": "A separate fast-paced tag arena for about 30 players and bots.",
+          "where": "Separate selected map",
+          "size": "medium, roughly 150 by 150 studs"
+        },
+        {
+          "name": "Selectable arena map 8",
+          "role": "A separate fast-paced tag arena for about 30 players and bots.",
+          "where": "Separate selected map",
+          "size": "medium, roughly 150 by 150 studs"
+        },
+        {
+          "name": "Selectable arena map 9",
+          "role": "A separate fast-paced tag arena for about 30 players and bots.",
+          "where": "Separate selected map",
+          "size": "medium, roughly 150 by 150 studs"
+        },
+        {
+          "name": "Selectable arena map 10",
+          "role": "A separate fast-paced tag arena for about 30 players and bots.",
+          "where": "Separate selected map",
+          "size": "medium, roughly 150 by 150 studs"
         }
       ],
-      "terrain": "Clean, bright, mostly open and flat grass-park fields with broad uninterrupted grass as the primary play area.",
+      "paths": [],
+      "terrain": "Mostly level green turf in every arena, with a clean concrete or paved perimeter strip and sparse park edging only.",
       "props": [
         {
-          "name": "Prominent map-selection spinner",
+          "name": "Map-selection spinner",
           "count": 1,
-          "where": "Centre of the central lobby"
+          "where": "At the center of the central lobby"
         },
         {
-          "name": "Arena-entry gates or markers",
-          "count": 10,
-          "where": "Evenly spaced around the lobby outer edge"
-        },
-        {
-          "name": "Low perimeter fencing, hedges, or tree lines",
+          "name": "Sparse park edging",
           "count": -1,
-          "where": "Around each grass-park arena outer edge"
+          "where": "Around arena field perimeters"
         }
       ],
-      "boundary": "Each arena has a simple park-like outer edge of low perimeter fencing, hedges, or tree lines that defines the boundary without blocking visibility into the field.",
-      "scale_band": "large",
-      "theme": "Clean, bright grass park tag grounds with simple civic playground styling."
+      "boundary": "Each arena has an obvious outer boundary containing the match.",
+      "scale_band": "huge",
+      "theme": "Clean, bright grass-park tag grounds with a playful game-show selection lobby."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "The arena topology is simple and does not require procedural validation.",
+      "why": "the simple open fields remain playable without image-generated route topology.",
       "set_piece": false
     },
     "route": [
       "P4"
     ],
-    "notes": [],
+    "notes": [
+      "The central lobby's single shared arrival/spawn position was described, but no additional canonical Party & Casual option ID was named for it.",
+      "No paths were added because the lobby and the ten selectable arenas are explicitly separate maps and no transport dressing was requested."
+    ],
     "scene_prompt": "Create a 3D tag-game layout centered on a compact, medium-sized grass park field arena, roughly 150 by 150 studs, kept open and readable for about 30 players. All ten selectable map arenas connect to a shared central lobby, where a prominent map-selection spinner stands as the focal prop; each chosen map is a separate fast-paced arena space."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

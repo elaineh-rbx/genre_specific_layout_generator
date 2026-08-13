@@ -14,88 +14,132 @@
     }
   ],
   "scene_prompt": "Create a small, playable wilderness survival arena inspired by New Zealand landscapes, sized for 12 starting players. Arrange rugged natural terrain with open ground, forested areas, rocky slopes, and water features distributed across the arena.",
-  "blob": "### Genre\nThe dominant genre is Survival: a Hunger Games-style last-player-standing round in a contained wilderness. The 12-tribute starting count establishes a compact competitive arena, but does not add visible game-rule elements.\n\n### Shape and preset\nUse `arena-contained`, matching the Disaster Survival preset’s compact, bounded survival-arena form. Retain the shape but drop that preset’s disaster threat and collapsing structures, which the prompt does not request.\n\n### Config requirements\n`terrain-relief` is visible geometry: rugged New Zealand-like slopes, rocky rises, uneven open ground, and forested grades shape the arena without stacked landforms. `water-body` is visible geometry: natural water features are distributed through the wilderness rather than treated as UI or invisible hazards. No unrequested hazard, NPC, shelter, or resource-emitter geometry is included.\n\n### Layout components\nBuild one small, playable outdoor wilderness arena sized to support 12 starting players. Place a broad central area of open, uneven ground as the main shared clearing, with several forested patches around its perimeter to break up views and provide contrasting terrain. Arrange rocky slopes and low ridges around and between these areas, keeping the relief traversable and readable rather than forming separate floors. Thread small water features through the terrain—such as a stream, pond, or shallow river edge—so water is present in multiple parts of the arena without dividing it into disconnected landmasses. Leave 12 evenly distributed starting locations around the outer portions of the arena; these are invisible placement markers and must not appear in the render. The boundary is a natural enclosing ring of dense forest, rock faces, and rising terrain rather than an artificial wall. Compose the central clearing as the visual anchor, with forest, water, and slopes visibly radiating around it.\n\n### Render order\nUse `isometric`: the arena is a compact natural landscape whose visual terrain composition leads; no exact maze, circuit, or jump-chain topology requires a plan-first render.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the 12-player capacity and close, readable wilderness encounters. Theme: rugged New Zealand wilderness, temperate forest, weathered stone, alpine-river character. Use `tiered` for the sloped terrain and `CHECK` for water as a real spatial feature; no overhanging surfaces, interiors, separate maps, or validity-by-construction route are required.",
+  "blob": "### Genre\n`Survival` is the dominant genre: a wilderness elimination round for 12 tributes, ending when one player remains.\n\n### Shape and preset\nUse `space-bounded`, a contained New Zealand wilderness arena whose natural perimeter keeps all 12 players in meaningful proximity. The closest Survival preset is Disaster Survival for its contained arena, but this is not a disaster map; retain only its bounded-arena shape and use no preset-specific bundle, so the preset is none.\n\n### Config requirements\nUse `terrain-relief` for rugged slopes, exposed rock faces, and uneven high ground across the wilderness. Use `water-body` for visible streams, pools, or small lakes distributed as natural terrain features. Do not add hazards, shelters, AI, or constructed cover that the scene does not request.\n\n### Layout requirements\nPlace 12 evenly spaced starting spawn markers around the outer portions of the arena, each with a clear route toward the central open ground and without direct adjacent-spawn sightlines. No other placed gameplay objects are specified.\n\n### Layout components\nMake one small, playable natural arena. Put an open central clearing as the primary confrontation ground, with forested areas around several sides for dense visual cover, rocky slopes and elevated ridges around the perimeter, and water features breaking up selected low areas without splitting the arena into disconnected regions. Connect all regions through broad natural clearings, forest trails, and traversable rocky passes. Use grass, dirt, stone, native-looking scrub, and dense temperate forest to evoke New Zealand wilderness. Form the boundary with steep mountain faces, thick forest, water edges, and impassable natural rock barriers rather than artificial walls. Compose the frame from an elevated three-quarter view with the central clearing readable and the surrounding terrain visibly enclosing it.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because the 12-player arena needs reliably connected routes and balanced distribution of open ground, forest, slopes, and water before the isometric dressing pass.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the stated 12 starting players and short elimination-round encounters. Theme: rugged, temperate New Zealand wilderness with cinematic natural realism. Apply `tiered` because rocky slopes and ridges create genuine elevation without overhanging surfaces.",
   "spec": {
     "genre": "Survival",
     "secondary": [],
-    "shape": "arena-contained",
+    "shape": "space-bounded",
     "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "terrain-relief",
-        "text": "Rugged New Zealand-like slopes, rocky rises, uneven open ground, and forested grades shape the arena without stacked landforms.",
+        "text": "Rugged slopes, exposed rock faces, uneven high ground, and elevated ridges across the wilderness arena.",
         "visible": true,
         "count": -1
       },
       {
         "id": "water-body",
-        "text": "Natural water features are distributed through the wilderness, including a stream, pond, or shallow river edge in multiple parts of the arena.",
+        "text": "Visible streams, pools, or small lakes distributed as natural terrain features in selected low areas.",
         "visible": true,
         "count": -1
       },
       {
         "id": "spawn-protected",
-        "text": "12 evenly distributed starting locations around the outer portions of the arena; these are invisible placement markers and must not appear in the render.",
+        "text": "12 evenly spaced starting spawn markers around the outer portions of the arena, with clear routes toward the central open ground and no direct adjacent-spawn sightlines.",
         "visible": false,
         "count": 12
       }
     ],
+    "layout_placement": [
+      {
+        "id": "spawn-protected",
+        "text": "12 evenly spaced starting spawn markers around the outer portions of the arena, with clear routes toward the central open ground and no direct adjacent-spawn sightlines.",
+        "count": 12,
+        "where": "Around the outer portions of the arena, evenly spaced, each facing a clear route toward the central open ground and screened from adjacent spawns."
+      }
+    ],
     "layout": {
-      "composition": "The broad central clearing is the visual anchor, with forest, water, rocky slopes, and low ridges visibly radiating around it toward the natural perimeter.",
+      "composition": "Elevated three-quarter view with the central clearing readable in the frame and the surrounding terrain visibly enclosing it.",
       "zones": [
         {
-          "name": "Central shared clearing",
-          "role": "Main open, uneven ground for close wilderness encounters.",
-          "where": "centre",
-          "size": "broad"
+          "name": "Central clearing",
+          "role": "Primary confrontation ground.",
+          "where": "Centre of the arena.",
+          "size": "Open central ground."
         },
         {
-          "name": "Forested perimeter patches",
-          "role": "Break up views and provide contrasting wilderness terrain.",
-          "where": "around the perimeter of the central clearing",
-          "size": "several patches"
+          "name": "Forested areas",
+          "role": "Dense visual cover around the confrontation ground.",
+          "where": "Around several sides of the central clearing.",
+          "size": ""
         },
         {
-          "name": "Outer starting area",
-          "role": "Holds evenly distributed invisible starting locations.",
-          "where": "outer portions of the arena",
+          "name": "Rocky slopes and elevated ridges",
+          "role": "Perimeter high ground and traversable rocky terrain.",
+          "where": "Around the arena perimeter.",
+          "size": ""
+        },
+        {
+          "name": "Water features",
+          "role": "Natural terrain features breaking up low areas without disconnecting the arena.",
+          "where": "Selected low areas.",
           "size": ""
         }
       ],
-      "paths": [],
-      "terrain": "Rugged, traversable New Zealand-like wilderness terrain with rocky slopes, low ridges, uneven open ground, forested grades, and small water features threaded through the arena without disconnecting landmasses.",
-      "props": [
+      "paths": [
         {
-          "name": "forested patches",
-          "count": -1,
-          "where": "around the perimeter"
+          "from": "Outer starting areas",
+          "to": "Central clearing",
+          "kind": "open ground"
         },
         {
-          "name": "rocky slopes and low ridges",
-          "count": -1,
-          "where": "around and between the clearing and forested areas"
+          "from": "Central clearing",
+          "to": "Forested areas",
+          "kind": "trail"
         },
         {
-          "name": "small water features",
-          "count": -1,
-          "where": "threaded through multiple parts of the arena"
+          "from": "Central clearing",
+          "to": "Rocky slopes and elevated ridges",
+          "kind": "open ground"
+        },
+        {
+          "from": "Forested areas",
+          "to": "Rocky slopes and elevated ridges",
+          "kind": "trail"
+        },
+        {
+          "from": "Low water areas",
+          "to": "Other arena regions",
+          "kind": "open ground"
+        },
+        {
+          "from": "Rocky slopes and elevated ridges",
+          "to": "Other arena regions",
+          "kind": "ramp"
         }
       ],
-      "boundary": "A natural enclosing ring of dense forest, rock faces, and rising terrain.",
+      "terrain": "Grass, dirt, stone, native-looking scrub, dense temperate forest, rugged slopes, exposed rock faces, elevated ridges, and visible streams, pools, or small lakes in selected low areas.",
+      "props": [
+        {
+          "name": "Dense temperate forest",
+          "count": -1,
+          "where": "Around several sides of the central clearing."
+        },
+        {
+          "name": "Native-looking scrub",
+          "count": -1,
+          "where": "Across the wilderness arena."
+        },
+        {
+          "name": "Exposed rock faces",
+          "count": -1,
+          "where": "Across rocky slopes and the perimeter ridges."
+        }
+      ],
+      "boundary": "A natural perimeter of steep mountain faces, thick forest, water edges, and impassable natural rock barriers; no artificial walls.",
       "scale_band": "small",
-      "theme": "Rugged New Zealand wilderness, temperate forest, weathered stone, alpine-river character."
+      "theme": "Rugged, temperate New Zealand wilderness with cinematic natural realism."
     },
     "render": {
-      "first": "isometric",
-      "then": "topdown",
-      "authoritative": "isometric",
-      "why": "the compact natural landscape’s visual terrain composition leads, with no exact maze, circuit, or jump-chain topology required.",
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "The 12-player arena needs reliably connected routes and balanced distribution of open ground, forest, slopes, and water before the isometric dressing pass.",
       "set_piece": false
     },
     "route": [
-      "tiered",
-      "CHECK"
+      "tiered"
     ],
     "notes": [],
     "scene_prompt": "Create a small, playable wilderness survival arena inspired by New Zealand landscapes, sized for 12 starting players. Arrange rugged natural terrain with open ground, forested areas, rocky slopes, and water features distributed across the arena."
@@ -103,10 +147,12 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
-  "mapper_notes": []
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P0', 'tiered', 'CHECK'] gives isometric"
+  ]
 }

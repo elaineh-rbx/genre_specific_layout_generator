@@ -19,129 +19,91 @@
     }
   ],
   "scene_prompt": "Create a 3D game map showing a compact 5-by-5 grid of clean sci-fi floating arena tiles suspended over an abyss. Each tile is roughly 40 player-widths across, separated by mechanical seams and built on visibly articulated infrastructure that allows tiles to rotate, slide, rise, or drop. Arrange cover pieces, control terminals, and occasional small buildings across the tiles; include some elevated fortress-like tiles and lower hazard-level sections. Emphasize the modular grid silhouette, open void between shifting sections, and clear mechanical connections beneath the platforms.",
-  "blob": "### Genre\nThe dominant genre is Shooter: squad-elimination combat makes this a Battle Royale rather than a general action arena. The scheduled tile changes replace the usual contracting boundary, but are mechanics and do not add a shrinking-circle layout feature.\n\n### Shape and preset\nUse `open-battlefield`, interpreted as a compact, openly visible field assembled from independently moving sci-fi platform tiles over a void. Match the Battle Royale preset for its distributed combat terrain, but modify it: retain its open-field logic while omitting `boundary-shrinking`, which the author explicitly replaces with tile shifts; the preset remains recognisable.\n\n### Config requirements\nVisible geometry: `cover-los` provides scattered modular barricades and cover masses on tiles, allowing sightlines to be broken between combat positions. `hazard-kill` is the abyss between tiles and the visibly lower hazardous sections reached when tiles drop. `island-cluster` is represented by the separated floating tile landmasses and their open void gaps. No invisible configuration options are required; control terminals are visible scene props rather than gameplay volumes.\n\n### Layout components\nBuild one compact square 5-by-5 grid, for 25 clean sci-fi floating tiles. Every tile is about 40 player-widths across, roughly a small combat arena, with clear mechanical seams between adjacent modules. The central and near-central tiles form the main contested ground, carrying denser cover and several control terminals. Distribute cover pieces across the remaining tiles, with occasional small buildings but no assumed enterable interiors. Raise several outer or corner tiles into fortress-like high-ground positions; place lower hazard-level tiles toward parts of the grid where dropped modules can visually read as descending toward the abyss. Leave open void gaps visible at seams, supported by articulated rails, pistons, rotating mounts, and mechanical connections beneath each platform. The abyss is the outer boundary and also shows through every shifting separation. Frame the entire 5-by-5 modular silhouette in an elevated three-quarter view, with enough underside visible to communicate the moving infrastructure.\n\n### Render order\nUse `topdown`: the tile grid and cross-tile movement relationships must remain coherent enough for combat traversal, so establish the plan before dressing it isometrically.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by 25 compact combat tiles rather than a sprawling open world. Theme: clean modular sci-fi arena, bright engineered surfaces, exposed machinery, and abyssal void. Use `tiered` for the raised fortress tiles and lower hazard sections, and `CHECK` for separated floating landmasses over open void; no tile surfaces need to overlap in the authored resting layout.",
+  "blob": "### Genre\nThe dominant genre is `Shooter`, specifically a battle-royale-style last-squad-standing match. The shrinking play pressure is expressed by the arena geometry rather than a closing boundary.\n\n### Shape and preset\nUse `arena-stacked`, taken from outside Shooter’s usual shape set, because the floating tile field has genuinely overlapping high fortress tiles and lower hazard sections above the abyss. The closest Shooter preset is Battle Royale, but the scheduled modular arena shifts replace its closing-boundary, loot, and building-interior bundle, so the preset is none.\n\n### Config requirements\nApply `cover-los`: distribute clean sci-fi barriers, crates, wall segments, and occasional small building shells across tiles to break sniper sightlines. Apply `hazard-kill`: lower sections and the void gaps between separated tiles are visibly dangerous fall or hazard space. Do not imply that the small buildings are enterable.\n\n### Layout requirements\nNo canonical placed layout markers are required by the stated scene. Control terminals are drawn props integrated into individual tile layouts; their interaction logic and shifting behavior are mechanics, not placement requirements.\n\n### Layout components\nBuild one compact square arena of exactly 25 tiles in a 5-by-5 grid. Each clean sci-fi tile is roughly 40 player-widths across, making each one a small combat arena with room for cover or an occasional small building. Mechanical seams divide every tile, with articulated rails, pistons, or support assemblies visibly connecting them beneath the platform deck. Vary tile elevation: several tiles rise as fortress-like high ground while others sit lower as hazard-level sections. Scatter cover in readable clusters rather than filling tiles uniformly, and place prominent control terminals on accessible exposed pads within selected tiles. The boundary is open abyss around and between shifting sections, with no enclosing wall. Frame the full grid centrally and legibly from an elevated three-quarter view, emphasizing its modular silhouette, gaps, and underside machinery.\n\n### Render order\nUse `topdown` first and make it authoritative, because the 5-by-5 tile topology, seams, hazards, and elevation relationships must remain readable and spatially coherent before the isometric dressing is derived.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by 25 combat-scale tiles despite the compact grid footprint. Theme is clean modular sci-fi: pale metal decks, dark mechanical seams, articulated infrastructure, and an open abyss. Use `P2`, forced by fortress tiles and shifting platforms occupying vertically overlapping layers above lower sections; a single top-down surface would hide those relationships.",
   "spec": {
     "genre": "Shooter",
     "secondary": [],
-    "shape": "open-battlefield",
-    "preset": "Battle Royale",
+    "shape": "arena-stacked",
+    "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "cover-los",
-        "text": "Scattered modular barricades and cover masses on tiles, with denser cover across the central and near-central contested tiles.",
+        "text": "Clean sci-fi barriers, crates, wall segments, and occasional small building shells distributed across tiles to break sniper sightlines.",
         "visible": true,
         "count": -1
-      },
-      {
-        "id": "island-cluster",
-        "text": "Separated floating sci-fi tile landmasses with open void gaps between shifting sections.",
-        "visible": true,
-        "count": 25
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "Elevated three-quarter view framing the entire compact square 5-by-5 modular silhouette, with open seams and enough underside visible to show the articulated moving infrastructure beneath the tiles.",
+      "composition": "The full compact 5-by-5 grid is framed centrally and legibly from an elevated three-quarter view, emphasizing the modular silhouette, open gaps, elevation changes, and underside machinery.",
       "zones": [
         {
-          "name": "5-by-5 floating tile grid",
-          "role": "Compact openly visible combat field assembled from independently moving sci-fi platform tiles.",
-          "where": "centre",
-          "size": "25 tiles; each tile about 40 player-widths across"
-        },
-        {
-          "name": "Central contested ground",
-          "role": "Main combat area carrying denser cover and several control terminals.",
-          "where": "central and near-central tiles",
-          "size": ""
-        },
-        {
-          "name": "Fortress high ground",
-          "role": "Raised fortress-like combat positions.",
-          "where": "outer and corner tiles",
-          "size": "several tiles"
-        },
-        {
-          "name": "Lower hazard sections",
-          "role": "Dropped modules that visibly descend toward the abyss.",
-          "where": "parts of the grid",
-          "size": ""
+          "name": "Floating modular arena",
+          "role": "Battle-royale-style last-squad-standing combat space made from shifting sci-fi tiles.",
+          "where": "Centre of the frame, suspended over the abyss.",
+          "size": "25 tiles in a 5-by-5 grid; each tile is roughly 40 player-widths across."
         }
       ],
       "paths": [],
-      "terrain": "Clean bright engineered sci-fi tile surfaces suspended over an abyssal void; tiered raised fortress tiles and lower dropped hazard-level sections.",
+      "terrain": "Open abyss around and between shifting sections; pale metal deck surfaces, dark mechanical seams, elevated fortress-like high-ground tiles, and lower hazard-level sections.",
       "props": [
         {
-          "name": "sci-fi floating tiles",
+          "name": "Clean sci-fi floating arena tiles",
           "count": 25,
-          "where": "compact square 5-by-5 grid"
+          "where": "Arranged as a compact 5-by-5 grid over the abyss."
         },
         {
-          "name": "control terminals",
+          "name": "Mechanical seams",
           "count": -1,
-          "where": "central and near-central tiles"
+          "where": "Dividing every tile."
         },
         {
-          "name": "modular barricades and cover masses",
+          "name": "Articulated rails, pistons, or support assemblies",
           "count": -1,
-          "where": "across the tiles, densest near the centre"
+          "where": "Visibly connecting tiles beneath the platform deck."
         },
         {
-          "name": "small buildings",
+          "name": "Cover clusters of barriers, crates, wall segments, and occasional small building shells",
           "count": -1,
-          "where": "occasional tiles"
+          "where": "Scattered in readable clusters across tiles rather than filling tiles uniformly."
         },
         {
-          "name": "articulated rails",
+          "name": "Control terminals",
           "count": -1,
-          "where": "beneath and between each platform"
-        },
-        {
-          "name": "pistons",
-          "count": -1,
-          "where": "beneath each platform"
-        },
-        {
-          "name": "rotating mounts",
-          "count": -1,
-          "where": "beneath each platform"
-        },
-        {
-          "name": "mechanical connections",
-          "count": -1,
-          "where": "beneath each platform"
+          "where": "On accessible exposed pads within selected tiles."
         }
       ],
-      "boundary": "The abyss is the outer boundary and remains visible through every shifting separation between tiles.",
-      "scale_band": "medium",
-      "theme": "Clean modular sci-fi arena; bright engineered surfaces, exposed machinery, abyssal void."
+      "boundary": "Open abyss around and between shifting sections, with no enclosing wall.",
+      "scale_band": "large",
+      "theme": "Clean modular sci-fi: pale metal decks, dark mechanical seams, articulated infrastructure, and open abyss."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the tile grid and cross-tile movement relationships must remain coherent enough for combat traversal.",
+      "why": "the 5-by-5 tile topology, seams, hazards, and elevation relationships must remain readable and spatially coherent before isometric dressing.",
       "set_piece": false
     },
     "route": [
-      "tiered",
-      "CHECK"
+      "P2"
     ],
     "notes": [
-      "Dropped `hazard-kill`: it is not a canonical option ID for the dominant Shooter genre.",
-      "`boundary-shrinking` is intentionally omitted because scheduled tile changes replace the usual contracting boundary."
+      "`arena-stacked` is taken from outside Shooter’s usual shape set.",
+      "No canonical placed layout markers are required; control terminals are drawn props and their interaction logic and shifting behavior are mechanics, not placement requirements.",
+      "dropped option 'hazard-kill': not in Shooter"
     ],
     "scene_prompt": "Create a 3D game map showing a compact 5-by-5 grid of clean sci-fi floating arena tiles suspended over an abyss. Each tile is roughly 40 player-widths across, separated by mechanical seams and built on visibly articulated infrastructure that allows tiles to rotate, slide, rise, or drop. Arrange cover pieces, control terminals, and occasional small buildings across the tiles; include some elevated fortress-like tiles and lower hazard-level sections. Emphasize the modular grid silhouette, open void between shifting sections, and clear mechanical connections beneath the platforms."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
   "mapper_notes": [
-    "blob asked for topdown first; the route ['P0', 'CHECK'] gives isometric"
+    "blob asked for topdown first; the route ['P2'] gives isometric"
   ]
 }

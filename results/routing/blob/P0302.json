@@ -19,103 +19,99 @@
     }
   ],
   "scene_prompt": "Crea un mapa 3D de una ciudad moderna, realista y sencilla, grande pero manejable, extendida a lo largo de varios bloques urbanos. Organiza calles entre edificios altos y rascacielos, con una composición densa que ofrezca fachadas, azoteas y alturas para recorrer la ciudad balanceándose libremente. El borde exterior del mapa queda delimitado por límites invisibles.",
-  "blob": "### Género\n`No Genre`: es una ciudad explorable para balanceo libre, sin combate, puntuación, misiones ni condición de victoria que requiera otro género.\n\n### Forma y preset\nNo hay una forma de género. Los ejes decididos son `enclosure: exterior`, `verticality: stacked`, por las calles bajo azoteas y numerosas superficies de cubierta a distintas alturas, y `zone-count: single`, pues toda la ciudad coexiste en un único mapa. La estructura queda `dressed`, no `must-be-valid`, y el espacio de juego es `grounded-surface`. El preset es none: Explorable Place no se conserva de forma reconocible porque no se pidió un hito ni viñetas, sino una cuadrícula urbana densa.\n\n### Requisitos de configuración\n`settlement-density` es geometría visible: varios bloques urbanos compactos de edificios altos y rascacielos forman una ciudad continua. `path-circulation` es geometría visible: calles y cruces ordenan el grano de desplazamiento entre bloques. `boundary-edge` es invisible: límites de mapa no renderizados rodean el perímetro exterior y no deben aparecer en la imagen.\n\n### Componentes de layout\nConstruir una única zona urbana grande pero manejable, extendida a lo largo de varios bloques. El centro y la mayor parte del marco contienen manzanas densas de torres modernas sencillas, con fachadas verticales, separaciones de calle y azoteas planas a alturas variadas. Las calles forman una red conectada de avenidas rectas y cruces entre los edificios; deben dejar corredores visuales y espaciales amplios para desplazarse entre fachadas, bordes de cubiertas y huecos urbanos. Las azoteas constituyen una segunda red elevada, sin interiores ni zonas subterráneas solicitadas. El terreno es plano y pavimentado, sin agua ni relieve natural. El límite invisible encierra el borde de la ciudad; no añadir muros, montañas ni barreras visibles. Componer en vista isométrica oblicua, mostrando varios bloques, la escala de los rascacielos y capas claras de calle, fachada y cubierta.\n\n### Orden de render\nUsar `isometric`: la ciudad no exige una topología proceduralmente válida para una condición de juego; la lectura visual de densidad, altura y recorridos de balanceo dirige primero la imagen.\n\n### Escala, tema y coste de pipeline\nEscala grande, impulsada por varios bloques urbanos y rascacielos, pero acotada como una sola ciudad manejable. Tema: ciudad moderna, realista, sobria y sin estilización comic-book. Modificador `P2`, porque cubiertas, calles y edificios apilan superficies unas sobre otras y una sola captura cenital ocultaría partes del espacio.",
+  "blob": "### Genre\nThe dominant genre is Action, specifically free traversal with swinging as the whole activity; there is no secondary genre. The absence of combat, missions, or scoring means the city must support continuous movement rather than objective zones.\n\n### Shape and preset\nUse `traversal-city`, matching the Parkour Traversal preset in shape only; its combat-oriented options do not apply. This is a dense modern city crossed through rooftops, façades, and streets, with vertically layered traversal surfaces rather than a conventional arena.\n\n### Config requirements\nUse `building-interior` only as a negative exclusion: buildings are exterior traversal geometry, not enterable interiors. Use `boundary-edge` from the No Genre option family as invisible map limits at the outer perimeter, visually concealed by the continuous city edge. No other image options are required.\n\n### Layout requirements\nPlace `spawn-area` once on a clear street-level arrival plaza near the city’s central blocks, oriented toward the skyline and immediate climbable façades. Site the invisible boundary continuously around the outermost blocks, beyond the usable streets and rooftops; it must stop outward travel without becoming visible geometry. No pickups, checkpoints, enemy spawners, scoring volumes, or objective triggers are needed.\n\n### Layout components\nBuild one contiguous, large but manageable modern realistic city across several dense urban blocks. A central cluster of tall towers and skyscrapers forms the main vertical swinging field, surrounded by mid-rise blocks that extend toward the map edge. Lay out straight and intersecting city streets between buildings, with sidewalks and open junctions as low-level fallback routes. Provide varied roof heights, roof ledges, façade setbacks, and tower spacing that create frequent swinging anchors and readable aerial routes. Keep structures exterior-only: façades, rooftops, street canyons, and simple service roofs are the playable geometry. The boundary is an invisible perimeter at the outside of the final ring of blocks. Compose the isometric frame around the central skyline, showing street corridors and rooftop height variation clearly.\n\n### Render order\nUse `topdown` first, authoritative because swinging traversal depends on a coherent connected street grid and sensible spacing between towers; the isometric render should dress that validated plan.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by several city blocks and a dense skyscraper core while remaining bounded and manageable. Theme: simple, realistic contemporary city, restrained materials and uncluttered streets so free swinging remains the focus. Use `P2` because rooftops and elevated building surfaces overlap streets and lower structures in plan view.",
   "spec": {
-    "genre": "No Genre",
+    "genre": "Action",
     "secondary": [],
-    "shape": "",
-    "preset": "none",
-    "axes": {
-      "enclosure": "exterior",
-      "verticality": "stacked",
-      "zone-count": "single",
-      "structure": "dressed",
-      "play-space": "grounded-surface"
-    },
-    "options": [
-      {
-        "id": "settlement-density",
-        "text": "varios bloques urbanos compactos de edificios altos y rascacielos forman una ciudad continua",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "path-circulation",
-        "text": "calles y cruces ordenan el grano de desplazamiento entre bloques",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "boundary-edge",
-        "text": "límites de mapa no renderizados rodean el perímetro exterior y no deben aparecer en la imagen",
-        "visible": false,
-        "count": -1
-      }
-    ],
+    "shape": "traversal-city",
+    "preset": "Parkour Traversal",
+    "axes": {},
+    "options": [],
+    "layout_placement": [],
     "layout": {
-      "composition": "Vista isométrica oblicua mostrando varios bloques, la escala de los rascacielos y capas claras de calle, fachada y cubierta; el centro y la mayor parte del marco contienen manzanas densas de torres modernas.",
+      "composition": "Isometric frame centered on the central skyline, clearly showing street corridors and varied rooftop heights around the dense skyscraper core.",
       "zones": [
         {
-          "name": "Zona urbana única",
-          "role": "Ciudad explorable para balanceo libre entre calles, fachadas, bordes de cubiertas y huecos urbanos.",
-          "where": "Centro y mayor parte del marco, extendida a lo largo de varios bloques.",
-          "size": "Grande pero manejable; varios bloques urbanos."
+          "name": "Central tower cluster",
+          "role": "Main vertical swinging field formed by tall towers and skyscrapers.",
+          "where": "Centre",
+          "size": ""
+        },
+        {
+          "name": "Surrounding mid-rise blocks",
+          "role": "Exterior traversal geometry extending from the skyscraper core toward the map edge.",
+          "where": "Around the central tower cluster, extending toward the perimeter",
+          "size": ""
+        },
+        {
+          "name": "Street-level arrival plaza",
+          "role": "Clear arrival and starting area with skyline and climbable façades immediately visible.",
+          "where": "Near the central blocks at street level",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "bloques urbanos",
-          "to": "bloques urbanos",
+          "from": "Street-level arrival plaza",
+          "to": "Central tower cluster",
           "kind": "road"
         },
         {
-          "from": "azoteas",
-          "to": "azoteas",
-          "kind": "open ground"
+          "from": "Central tower cluster",
+          "to": "Surrounding mid-rise blocks",
+          "kind": "road"
         }
       ],
-      "terrain": "Terreno plano y pavimentado, sin agua ni relieve natural; azoteas planas a alturas variadas forman una segunda red elevada.",
+      "terrain": "Modern urban ground with straight, intersecting streets, sidewalks, and open junctions as low-level fallback routes.",
       "props": [
         {
-          "name": "manzanas densas de torres modernas sencillas",
+          "name": "Tall towers and skyscrapers",
           "count": -1,
-          "where": "centro y mayor parte del marco"
+          "where": "Central cluster"
         },
         {
-          "name": "edificios altos y rascacielos",
+          "name": "Mid-rise blocks",
           "count": -1,
-          "where": "a lo largo de los bloques urbanos"
+          "where": "Surrounding the central cluster toward the map edge"
         },
         {
-          "name": "azoteas planas",
+          "name": "Roof ledges, façade setbacks, and simple service roofs",
           "count": -1,
-          "where": "sobre los edificios, a distintas alturas"
+          "where": "Across building façades and rooftops"
         }
       ],
-      "boundary": "Límite invisible encierra el borde de la ciudad; no añadir muros, montañas ni barreras visibles.",
+      "boundary": "An invisible perimeter beyond the usable streets and rooftops at the outside of the final ring of blocks, visually concealed by the continuous city edge.",
       "scale_band": "large",
-      "theme": "ciudad moderna, realista, sobria y sin estilización comic-book"
+      "theme": "Simple realistic contemporary city with restrained materials and uncluttered streets."
     },
     "render": {
-      "first": "isometric",
-      "then": "topdown",
-      "authoritative": "isometric",
-      "why": "la ciudad no exige una topología proceduralmente válida para una condición de juego.",
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "Swinging traversal depends on a coherent connected street grid and sensible spacing between towers.",
       "set_piece": false
     },
     "route": [
       "P2"
     ],
-    "notes": [],
+    "notes": [
+      "`building-interior` is an explicit negative exclusion and is therefore omitted.",
+      "`boundary-edge` and `spawn-area` were explicitly named from the No Genre option family for this Action scene.",
+      "dropped option 'boundary-edge': not in Action",
+      "dropped option 'spawn-area': not in Action",
+      "dropped placement 'spawn-area': not in Action"
+    ],
     "scene_prompt": "Crea un mapa 3D de una ciudad moderna, realista y sencilla, grande pero manejable, extendida a lo largo de varios bloques urbanos. Organiza calles entre edificios altos y rascacielos, con una composición densa que ofrezca fachadas, azoteas y alturas para recorrer la ciudad balanceándose libremente. El borde exterior del mapa queda delimitado por límites invisibles."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
-  "mapper_notes": []
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P2'] gives isometric"
+  ]
 }

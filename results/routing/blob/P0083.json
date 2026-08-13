@@ -19,7 +19,7 @@
     }
   ],
   "scene_prompt": "Create three separate small, flat toon-bright hide-and-seek maps that rotate between rounds: a cliff map with colour-blocked rock walls and ledges, a desert map with clearly coloured canyon or sandstone walls, and a town map with colourful building walls, alleyways, and street-facing surfaces. Each map uses bold, easy-to-read wall colours and compact hiding spaces where players can blend against vertical surfaces.",
-  "blob": "### Genre\nThe dominant genre is Party & Casual: this is a hide-and-seek round game, with compact spaces designed around concealment rather than exploration or combat.\n\n### Shape and preset\nUse `space-staged`, treating the cliff, desert, and town settings as three isolated small play maps rather than one continuous world. Preset: none. The Minigame preset supplies the correct separate-stage structure, but its lobby transport, scoring, and spectator bundle is not requested.\n\n### Config requirements\nUse `cover-los` as visible geometry: tightly spaced wall returns, short side passages, ledges, and alley corners interrupt sightlines and create compact concealment pockets without obscuring the clearly readable colour surfaces. Use `terrain-relief` as visible geometry in the cliff and desert maps: simple stepped rock ledges, canyon walls, and sandstone rises give each setting its identity while keeping routes legible. No invisible layout options are required.\n\n### Layout components\nBuild three separate, similarly small maps. The cliff map is a compact rocky plateau of colour-blocked vertical cliff faces, shallow ledges, and narrow recesses; arrange its rock walls in clusters around a mostly level central walking area. The desert map is a flat sandy basin enclosed by clearly coloured sandstone and canyon-wall segments, with short gullies, wall offsets, and isolated rock outcrops creating hiding pockets. The town map is a compact street block with colourful street-facing building walls, a few narrow alleyways, corners, and small wall-lined courtyards. Keep every map primarily ground-level and navigable, with vertical surfaces carrying bold, distinct, easy-to-match colours. Bound each map with its own natural cliff/canyon edge or continuous outer building façades. Compose each as a readable isometric diorama with walls and hiding recesses visible without becoming dense visual noise.\n\n### Render order\nUse `isometric`: visual clarity of the bold toon-bright colour-blocked walls leads, while each small map has straightforward topology that does not require a generated plan.\n\n### Scale, theme, and pipeline cost\nScale is small per map, driven by the three compact standalone arenas. Theme: flat, toon-bright colour matching, with clean graphic rock, sand, and town surfaces. Use `P4` because cliffs, desert, and town are separate maps, and `tiered` because the cliff ledges and canyon relief need their elevation captured without any overhanging layers.",
+  "blob": "### 1. Genre\nThe dominant genre is Party & Casual, specifically a hide-and-seek childhood game: rounds end when the seeker finds all hiders or the timer expires.\n\n### 2. Shape and preset\nUse `space-staged`: three isolated round stages rotate independently rather than forming one traversable world. This is adapted to contain the cliff, desert, and town maps without adding an unrequested lobby. Preset: none; the Childhood Game preset is not recognisable after replacing its single continuous play space and omitting its hub and maze.\n\n### 3. Config requirements\nUse `cover-los` as compact, readable sightline breaks: rock-wall returns and ledges on cliffs, canyon corners in the desert, and building corners, alleys, and façade recesses in town. Use `terrain-relief` only for the shallow, non-overhanging rock ledges and canyon cuts of the cliff and desert stages. Use `settlement-density` for the compact town stage, where colourful building fronts create the hiding surfaces.\n\n### 4. Layout requirements\nUse `spawn-protected` on every stage: place one screened seeker start at a map edge and distribute hider starts behind separate sightline blockers around the opposite and side portions of that map, preventing immediate visual contact at round start. No static scoring volume is needed; finding and timer resolution are gameplay logic rather than fixed map zones.\n\n### 5. Layout components\nBuild three separate small maps. The cliff map has a mostly flat ground footprint bordered by stacked colour-blocked rock walls, short ledges, and narrow recesses. The desert map uses flat sand ground enclosed by bold sandstone canyon walls, turns, and shallow alcoves. The town map is a compact street-and-alley block of colourful, street-facing building façades, wall recesses, corners, and short passages. Each stage has bold, distinct wall-colour fields large enough for clear colour matching and compact hiding pockets against vertical surfaces. Use natural rock and canyon edges as the first two map boundaries, and continuous building façades plus an outer block edge for town. Compose each as a self-contained readable arena, with hiding surfaces distributed around its perimeter and interior rather than concentrated in one corner.\n\n### 6. Render order\nUse `isometric`: render each stage’s toon-bright look first and derive a separate top-down from each authoritative isometric stage; hiding-space topology is useful but does not require procedural construction.\n\n### 7. Scale, theme, and pipeline cost\nScale is medium overall because it contains three small round maps. Theme: flat, toon-bright colour-block environments with highly legible matching walls. Pipeline modifiers: `tiered` for the non-overhanging cliff ledges and canyon cuts, and `P4` because cliffs, desert, and town are separate rotating maps.",
   "spec": {
     "genre": "Party & Casual",
     "secondary": [],
@@ -29,87 +29,97 @@
     "options": [
       {
         "id": "cover-los",
-        "text": "Tightly spaced wall returns, short side passages, ledges, and alley corners interrupt sightlines and create compact concealment pockets without obscuring the clearly readable colour surfaces.",
+        "text": "Compact, readable sightline breaks: rock-wall returns and ledges on cliffs, canyon corners in the desert, and building corners, alleys, and façade recesses in town.",
         "visible": true,
         "count": -1
       },
       {
         "id": "terrain-relief",
-        "text": "Simple stepped rock ledges, canyon walls, and sandstone rises give the cliff and desert settings their identity while keeping routes legible.",
+        "text": "Shallow, non-overhanging rock ledges and canyon cuts on the cliff and desert stages.",
         "visible": true,
         "count": -1
+      },
+      {
+        "id": "settlement-density",
+        "text": "A compact town stage of colourful building fronts that create hiding surfaces.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "spawn-protected",
+        "text": "One screened seeker start at a map edge on every stage, with hider starts distributed behind separate sightline blockers around the opposite and side portions of each map.",
+        "visible": false,
+        "count": 3
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "spawn-protected",
+        "text": "One screened seeker start at a map edge on every stage, with hider starts distributed behind separate sightline blockers around the opposite and side portions of each map.",
+        "count": 3,
+        "where": "On every stage: place the seeker start at a map edge; distribute hider starts behind separate sightline blockers around the opposite and side portions of that map."
       }
     ],
     "layout": {
-      "composition": "Three separate, similarly small readable isometric dioramas: a cliff plateau, a desert basin, and a compact town street block, each showing colourful walls and hiding recesses without dense visual noise.",
+      "composition": "Three separate self-contained readable arenas rotate independently: cliff, desert, and town. Each has hiding surfaces distributed around its perimeter and interior rather than concentrated in one corner.",
       "zones": [
         {
-          "name": "Cliff map",
-          "role": "Compact hide-and-seek map with colour-blocked vertical cliff faces, shallow ledges, narrow recesses, and clustered rock walls around a mostly level central walking area.",
-          "where": "separate isolated play map",
+          "name": "Cliff stage",
+          "role": "A hide-and-seek round map with compact hiding pockets against rock surfaces.",
+          "where": "Separate rotating stage.",
           "size": "small"
         },
         {
-          "name": "Desert map",
-          "role": "Flat sandy-basin hide-and-seek map with coloured sandstone and canyon-wall segments, short gullies, wall offsets, and isolated rock outcrops forming hiding pockets.",
-          "where": "separate isolated play map",
+          "name": "Desert stage",
+          "role": "A hide-and-seek round map with canyon-wall hiding pockets and shallow alcoves.",
+          "where": "Separate rotating stage.",
           "size": "small"
         },
         {
-          "name": "Town map",
-          "role": "Compact hide-and-seek street block with colourful street-facing building walls, narrow alleyways, corners, and small wall-lined courtyards.",
-          "where": "separate isolated play map",
+          "name": "Town stage",
+          "role": "A hide-and-seek round map with colourful façade, alley, corner, and recess hiding surfaces.",
+          "where": "Separate rotating stage.",
           "size": "small"
         }
       ],
       "paths": [],
-      "terrain": "Primarily ground-level navigable terrain: a rocky plateau with shallow stepped ledges, a flat sandy basin with sandstone rises and canyon walls, and town ground between building façades. Vertical surfaces use bold, distinct, easy-to-match colours.",
+      "terrain": "The cliff stage has a mostly flat ground footprint with shallow non-overhanging rock ledges; the desert stage has flat sand ground with shallow canyon cuts; the town stage is a compact street-and-alley block.",
       "props": [
         {
-          "name": "Colour-blocked rock walls and vertical cliff faces",
+          "name": "Colour-blocked rock walls, short ledges, and narrow recesses",
           "count": -1,
-          "where": "cliff map, clustered around the central walking area"
+          "where": "Cliff stage perimeter and interior."
         },
         {
-          "name": "Shallow rock ledges and narrow recesses",
+          "name": "Bold sandstone canyon walls, turns, and shallow alcoves",
           "count": -1,
-          "where": "cliff map"
+          "where": "Desert stage perimeter and interior."
         },
         {
-          "name": "Coloured sandstone and canyon-wall segments",
+          "name": "Colourful street-facing building façades, wall recesses, corners, and short passages",
           "count": -1,
-          "where": "desert map"
+          "where": "Town stage perimeter and interior."
         },
         {
-          "name": "Short gullies, wall offsets, and isolated rock outcrops",
+          "name": "Bold distinct wall-colour fields",
           "count": -1,
-          "where": "desert map"
-        },
-        {
-          "name": "Colourful street-facing building walls",
-          "count": -1,
-          "where": "town map"
-        },
-        {
-          "name": "Narrow alleyways, corners, and wall-lined courtyards",
-          "count": -1,
-          "where": "town map"
+          "where": "Across all three stages."
         }
       ],
-      "boundary": "Each map is bounded separately by its natural cliff or canyon edge, or by continuous outer building façades.",
-      "scale_band": "small",
-      "theme": "Flat toon-bright colour matching with clean graphic rock, sand, and town surfaces."
+      "boundary": "Natural rock edges enclose the cliff stage, canyon edges enclose the desert stage, and continuous building façades plus an outer block edge enclose the town stage.",
+      "scale_band": "medium",
+      "theme": "Flat, toon-bright colour-block environments with highly legible matching walls."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "visual clarity of bold toon-bright colour-blocked walls leads, while each small map has straightforward topology.",
+      "why": "Hiding-space topology is useful but does not require procedural construction.",
       "set_piece": false
     },
     "route": [
-      "P4",
-      "tiered"
+      "tiered",
+      "P4"
     ],
     "notes": [],
     "scene_prompt": "Create three separate small, flat toon-bright hide-and-seek maps that rotate between rounds: a cliff map with colour-blocked rock walls and ledges, a desert map with clearly coloured canyon or sandstone walls, and a town map with colourful building walls, alleyways, and street-facing surfaces. Each map uses bold, easy-to-read wall colours and compact hiding spaces where players can blend against vertical surfaces."
@@ -117,7 +127,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

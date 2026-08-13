@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Build a 3D garage-business map with up to four separate garage plots, each providing space for its own garage building and business expansion. Connect the plots with roads and sidewalks where pedestrian NPCs walk around.",
-  "blob": "### Genre\nThis is primarily Simulation: a persistent garage-business tycoon with separate player-owned expansion areas. No secondary genre is needed.\n\n### Shape and preset\nUse `plot-isolated`, matching the Sandbox preset in its per-player plot structure, but retain only the scene-supported circulation rather than the preset’s resource or bazaar features. The prompt overrides any shared-plot tycoon reading: there are up to four individually assigned garage plots.\n\n### Config requirements\nUse `path-circulation` as visible geometry: roads and sidewalks form the shared public circulation connecting the garages. Use `npc-population` as both visible and layout content: pedestrian NPCs visibly walk the sidewalks, with their ambient walking ground and placement areas retained for later layout processing. Do not add business mechanics, worker systems, currency elements, or unlock gates to the render.\n\n### Layout components\nCreate one compact shared garage-business block arranged around up to four separate, roughly equal garage plots. Place the plots as a clear two-by-two arrangement, each plot large enough for one garage building and outward business expansion space, with visible plot boundaries or setbacks distinguishing ownership without enclosing the whole map. Run a simple road loop or cross-shaped street through the center so every garage faces vehicle access; line both sides with continuous sidewalks for pedestrians. Keep a modest shared central junction between the four plots as the main spatial connector, not as a separate commercial hub. Terrain is flat paved ground with small verge strips or curb edges; the scene contains no requested water, relief, interiors, or additional districts. Pedestrian NPCs occupy the sidewalks and central junction. Frame the composition in a readable elevated three-quarter view showing all four garage plots, their road frontage, and the central connection at once. Keep the outer edge open or softly bounded by pavement falloff rather than a tall wall.\n\n### Render order\nUse `topdown`: road access and the separation of all four independently owned plots must remain valid and legible for circulation before the isometric dressing is derived.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by four complete garage plots plus their shared street network. Theme is clean, low-rise urban-industrial garage district with practical paved streets and sidewalks. Pipeline modifier: `P0`; this is one contiguous, flat exterior surface with no geometry that requires extra capture paths.",
+  "blob": "### 1. Genre\nThe dominant genre is Simulation: this is a persistent garage-business tycoon with separate player-owned build spaces. There is no secondary genre.\n\n### 2. Shape and preset\nUse `plot-isolated`, taken from the Simulation catalogue. It gives each of the up to four players a separate, equally spaced garage plot with room to expand without overlapping another player’s business. The closest preset is Sandbox because its isolated personal plots match the clarified ownership model, although the prompt overrides its resource-oriented options.\n\n### 3. Config requirements\nNo additional image config options are required beyond the isolated plots and the explicitly requested roads and sidewalks, which are rendered as the circulation between plots. Do not add shops, terrain, NPC population, interiors, or extra city districts unasked.\n\n### 4. Layout requirements\nNo placed gameplay markers are required from the supplied scene description. Pedestrian NPCs are visual inhabitants requested in the scene, but their spawning and job logic are not part of this layout.\n\n### 5. Layout components\nCreate four equal, clearly separated square garage plots in a compact arrangement, each with a buildable pad and a garage-business footprint that can visibly expand within its own boundary. Use a central road spine with short driveways branching to every plot, plus continuous sidewalks alongside the roads for pedestrian circulation. Place the four plots with generous clear separation, avoiding shared walls or overlapping build areas. Show a small number of walking pedestrian figures distributed along the sidewalks, not inside the private plots. Keep the terrain flat and urban-industrial, with asphalt roads, concrete curbs, sidewalks, plot boundary markings, and sparse street fixtures such as lamps or signs. The boundary is a clean outer curb or low industrial edge around the compact four-plot district. Compose the isometric view so all four garages and the full connecting road network are readable at once.\n\n### 6. Render order\nRender `isometric` first and treat it as authoritative, because the map is a simple persistent plot district whose roads and ownership separation can be read directly from the scene.\n\n### 7. Scale, theme, and pipeline cost\nUse a medium scale, driven by four complete garage plots and their shared circulation. Theme: clean Roblox-style light-industrial garage park. Pipeline modifier: `P0`; the flat, single-surface exterior has no overhangs, interior transitions, separate maps, or topology that must be procedurally validated.",
   "spec": {
     "genre": "Simulation",
     "secondary": [],
@@ -23,96 +23,152 @@
     "axes": {},
     "options": [
       {
+        "id": "path-road-vehicle",
+        "text": "A central asphalt road spine with short driveways branching to every garage plot.",
+        "visible": true,
+        "count": -1
+      },
+      {
         "id": "path-circulation",
-        "text": "Roads and sidewalks form the shared public circulation connecting the garages, with a simple road loop or cross-shaped street through the center and continuous sidewalks on both sides.",
+        "text": "Continuous sidewalks alongside the roads for pedestrian circulation between the plots.",
         "visible": true,
         "count": -1
       },
       {
         "id": "npc-population",
-        "text": "Pedestrian NPCs visibly walk the sidewalks and occupy the sidewalks and central junction, with their ambient walking ground and placement areas retained for later layout processing.",
+        "text": "A small number of walking pedestrian figures distributed along the sidewalks, not inside the private plots.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "npc-population",
+        "text": "A small number of walking pedestrian figures distributed along the sidewalks, not inside the private plots.",
+        "count": -1,
+        "where": ""
+      }
+    ],
     "layout": {
-      "composition": "Readable elevated three-quarter view showing all four garage plots, their road frontage, and the central connection at once.",
+      "composition": "Isometric view showing all four garages and the full connecting road network at once, with the compact plot district arranged around the central road spine.",
       "zones": [
         {
-          "name": "Shared garage-business block",
-          "role": "Compact overall district containing the separately owned garage plots and shared street network.",
-          "where": "centre of the map",
-          "size": "medium"
+          "name": "Garage plot 1",
+          "role": "A separate square player-owned garage plot with a buildable pad and garage-business footprint that can expand within its boundary.",
+          "where": "In the compact four-plot arrangement around the central road spine.",
+          "size": "Equal plot"
         },
         {
-          "name": "Up to four separate garage plots",
-          "role": "Individually assigned, roughly equal plots in a clear two-by-two arrangement; each has space for one garage building and outward business expansion.",
-          "where": "around the central junction",
-          "size": "roughly equal plots"
+          "name": "Garage plot 2",
+          "role": "A separate square player-owned garage plot with a buildable pad and garage-business footprint that can expand within its boundary.",
+          "where": "In the compact four-plot arrangement around the central road spine.",
+          "size": "Equal plot"
         },
         {
-          "name": "Shared central junction",
-          "role": "Main spatial connector between the four plots, not a separate commercial hub.",
-          "where": "centre between the plots",
-          "size": "modest"
+          "name": "Garage plot 3",
+          "role": "A separate square player-owned garage plot with a buildable pad and garage-business footprint that can expand within its boundary.",
+          "where": "In the compact four-plot arrangement around the central road spine.",
+          "size": "Equal plot"
+        },
+        {
+          "name": "Garage plot 4",
+          "role": "A separate square player-owned garage plot with a buildable pad and garage-business footprint that can expand within its boundary.",
+          "where": "In the compact four-plot arrangement around the central road spine.",
+          "size": "Equal plot"
+        },
+        {
+          "name": "Central road spine",
+          "role": "Shared vehicle circulation linking the four private garage plots through short branching driveways.",
+          "where": "Centre of the compact four-plot district.",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Garage plots",
-          "to": "Shared central junction",
+          "from": "Central road spine",
+          "to": "Garage plot 1",
           "kind": "road"
         },
         {
-          "from": "Garage plots",
-          "to": "Shared central junction",
-          "kind": "sidewalk"
+          "from": "Central road spine",
+          "to": "Garage plot 2",
+          "kind": "road"
+        },
+        {
+          "from": "Central road spine",
+          "to": "Garage plot 3",
+          "kind": "road"
+        },
+        {
+          "from": "Central road spine",
+          "to": "Garage plot 4",
+          "kind": "road"
+        },
+        {
+          "from": "Garage plot 1",
+          "to": "Garage plot 2",
+          "kind": "road"
+        },
+        {
+          "from": "Garage plot 2",
+          "to": "Garage plot 3",
+          "kind": "road"
+        },
+        {
+          "from": "Garage plot 3",
+          "to": "Garage plot 4",
+          "kind": "road"
         }
       ],
-      "terrain": "Flat paved ground with small verge strips or curb edges.",
+      "terrain": "Flat urban-industrial ground with asphalt roads, concrete curbs, continuous sidewalks, and plot boundary markings.",
       "props": [
         {
-          "name": "Garage buildings",
+          "name": "Garage-business footprints",
           "count": 4,
-          "where": "one in each separate garage plot"
+          "where": "One within each separate garage plot."
         },
         {
-          "name": "Visible plot boundaries or setbacks",
-          "count": -1,
-          "where": "between the separately owned garage plots"
+          "name": "Buildable pads",
+          "count": 4,
+          "where": "One within each separate garage plot."
         },
         {
-          "name": "Pedestrian NPCs",
+          "name": "Street fixtures such as lamps or signs",
           "count": -1,
-          "where": "sidewalks and central junction"
+          "where": "Sparsely placed along the roads and sidewalks."
+        },
+        {
+          "name": "Walking pedestrian figures",
+          "count": -1,
+          "where": "Distributed along sidewalks outside the private plots."
         }
       ],
-      "boundary": "Outer edge is open or softly bounded by pavement falloff rather than a tall wall.",
+      "boundary": "A clean outer curb or low industrial edge around the compact four-plot district.",
       "scale_band": "medium",
-      "theme": "Clean, low-rise urban-industrial garage district with practical paved streets and sidewalks."
+      "theme": "Clean Roblox-style light-industrial garage park"
     },
     "render": {
-      "first": "topdown",
-      "then": "isometric",
-      "authoritative": "topdown",
-      "why": "road access and separation of all four independently owned plots must remain valid and legible for circulation.",
+      "first": "isometric",
+      "then": "topdown",
+      "authoritative": "isometric",
+      "why": "the simple persistent plot district's roads and ownership separation can be read directly from the scene.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
-    "notes": [],
+    "notes": [
+      "placement mirrored from option 'npc-population': no siting rule given"
+    ],
     "scene_prompt": "Build a 3D garage-business map with up to four separate garage plots, each providing space for its own garage building and business expansion. Connect the plots with roads and sidewalks where pedestrian NPCs walk around."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
-  "mapper_notes": [
-    "blob asked for topdown first; the route ['P0'] gives isometric"
-  ]
+  "mapper_notes": []
 }

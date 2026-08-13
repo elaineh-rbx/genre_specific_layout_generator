@@ -14,118 +14,179 @@
     }
   ],
   "scene_prompt": "Create a 3D playground-sized candy land map for a small hide-and-seek game, with enough themed hiding spots throughout the single compact area.",
-  "blob": "### Genre\nThe dominant genre is Party & Casual: timed hide-and-seek rounds with a selected seeker make this a round-based childhood game, not merely a candy-themed hangout.\n\n### Shape and preset\nUse `space-continuous`, matching the Childhood Game preset. The prompt’s single compact playground is one shared seek-and-hide space, so do not split it into a lobby and isolated stage.\n\n### Config requirements\nUse `cover-los` as visible geometry: dense candy-land clutter creates the requested hiding spots, including oversized wrapped sweets, gumdrop shrubs, lollipop clusters, candy-cane arches, and small confectionery kiosks. Use `obstacle-maze` as visible geometry: arrange parts of the candy scenery into a compact, readable maze of short winding paths and hideable recesses. Use `social-hub` as visible geometry: leave a small open candy plaza at the map edge as the natural gathering and round-start area. Use `spawn-protected` as invisible layout markers: distribute round start points so the seeker and hiders do not begin on top of each other.\n\n### Layout components\nBuild one playground-sized, roughly square candy-land zone. Put the open candy plaza near the front edge, occupying about a fifth of the area; it connects directly into the main hiding ground. The central and rear portions form a dense but navigable candy garden: looping paths weave around giant lollipops, gumdrop bushes, striped candy-cane arches, chocolate-bar walls, frosting boulders, wrapped-candy piles, and several tiny candy kiosks that create sightline breaks and pocket-sized hiding recesses. Keep multiple routes through the clutter so the seeker can circulate rather than being trapped by dead ends. Use bright icing-like ground with alternating pastel path bands. Enclose the compact play space with a continuous whimsical candy boundary of tall wafer walls, peppermint hedges, and distant candy hills. Compose the map as a clear top-down-readable playground, with the open plaza visibly contrasting against the denser central maze.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because the hide-and-seek warren needs connected circulation and fair routes without sealed-off pockets.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the stated playground-sized area for a small game. Theme is cheerful pastel candy land: oversized sweets, frosting textures, and toy-like fantasy landscaping. Use `P6` because the maze-like hiding layout must preserve valid connected traversal; no additional modifier is forced.",
+  "blob": "### Genre\nThe dominant genre is Party & Casual, specifically timed hide-and-seek rounds with one seeker and the remaining players hiding. There is no secondary genre.\n\n### Shape and preset\nUse `space-bounded`: one compact, playground-sized candy-land play space whose complete hiding game fits within a single enclosed arena. The closest preset is Childhood Game, but use none because its maze and lobby assumptions are not requested.\n\n### Config requirements\nUse `cover-los` as dense candy-themed clutter clusters: oversized lollipops, gumdrop bushes, candy-cane arches, frosting boulders, chocolate-bar walls, and small confectionery props that break sightlines and create hiding pockets.\n\n### Layout requirements\nUse `spawn-protected` with one protected seeker start at one edge of the arena and several evenly distributed hider start points screened from it by major candy structures; place them around the outer and rear portions of the play space so no player begins in direct view of the seeker.\n\n### Layout components\nBuild a single compact candy-land playground on a mostly flat pastel ground plane. Put a central candy plaza as the readable open space, surrounded by several distinct hiding clusters: a lollipop grove, gumdrop shrub patch, candy-cane arch maze-like thickets without making a true maze, chocolate-bar wall alcoves, frosting-rock pockets, and a small gingerbread-style structure used only as exterior cover. Short winding candy paths connect all clusters and keep each hiding area reachable from the central plaza. Enclose the arena with a continuous whimsical boundary of tall candy cliffs, cookie walls, and oversized confectionery scenery, with no open escape routes. Compose it as a dense, legible square-to-rounded playground map, with central sightlines broken by the largest candy props and clear peripheral routes around them.\n\n### Render order\nRender `isometric` first and treat it as authoritative, since this is a compact social arena whose hiding variety does not require topology validation beyond the rendered plan.\n\n### Scale, theme, and pipeline cost\nScale band: small, driven by the requested playground-sized area for a small game. Theme: bright pastel candy land, playful oversized sweets, readable Roblox-scale cover. Pipeline modifier: `P0`, because the map is one single-level outdoor surface with no forced extra capture path.",
   "spec": {
     "genre": "Party & Casual",
     "secondary": [],
-    "shape": "space-continuous",
-    "preset": "Childhood Game",
+    "shape": "space-bounded",
+    "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "cover-los",
-        "text": "Dense candy-land clutter creates hiding spots, including oversized wrapped sweets, gumdrop shrubs, lollipop clusters, candy-cane arches, and small confectionery kiosks.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "obstacle-maze",
-        "text": "Arrange parts of the candy scenery into a compact, readable maze of short winding paths and hideable recesses.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "social-hub",
-        "text": "Leave a small open candy plaza at the map edge as the natural gathering and round-start area.",
+        "text": "Dense candy-themed clutter clusters of oversized lollipops, gumdrop bushes, candy-cane arches, frosting boulders, chocolate-bar walls, and small confectionery props that break sightlines and create hiding pockets.",
         "visible": true,
         "count": -1
       },
       {
         "id": "spawn-protected",
-        "text": "Distribute round start points so the seeker and hiders do not begin on top of each other.",
+        "text": "One protected seeker start at one edge of the arena and several evenly distributed hider start points screened from it by major candy structures.",
         "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "spawn-protected",
+        "text": "One protected seeker start at one edge of the arena and several evenly distributed hider start points screened from it by major candy structures.",
+        "count": -1,
+        "where": "Place the seeker start at one edge of the arena; place hider starts around the outer and rear portions of the play space, screened by major candy structures so no player begins in direct view of the seeker."
+      }
+    ],
     "layout": {
-      "composition": "A clear top-down-readable roughly square playground: the open candy plaza sits near the front edge and visibly contrasts with the dense central and rear candy maze.",
+      "composition": "A dense, legible square-to-rounded playground map with a central candy plaza as the readable open space. Distinct hiding clusters surround it, with the largest candy props breaking central sightlines and clear peripheral routes running around them.",
       "zones": [
         {
-          "name": "Open candy plaza",
-          "role": "Natural gathering and round-start area connecting directly into the hiding ground.",
-          "where": "Front edge",
-          "size": "About a fifth of the area"
+          "name": "Central candy plaza",
+          "role": "Readable open space at the centre of the hiding game.",
+          "where": "centre",
+          "size": "-1"
         },
         {
-          "name": "Candy garden hiding ground",
-          "role": "Dense but navigable hide-and-seek ground with sightline breaks, hiding recesses, and multiple circulation routes.",
-          "where": "Central and rear portions",
-          "size": ""
+          "name": "Lollipop grove",
+          "role": "Hiding cluster and sightline-breaking cover.",
+          "where": "surrounding the central plaza",
+          "size": "-1"
+        },
+        {
+          "name": "Gumdrop shrub patch",
+          "role": "Hiding cluster and sightline-breaking cover.",
+          "where": "surrounding the central plaza",
+          "size": "-1"
+        },
+        {
+          "name": "Candy-cane arch thickets",
+          "role": "Maze-like hiding cluster without forming a true maze.",
+          "where": "surrounding the central plaza",
+          "size": "-1"
+        },
+        {
+          "name": "Chocolate-bar wall alcoves",
+          "role": "Hiding pockets formed by exterior cover.",
+          "where": "surrounding the central plaza",
+          "size": "-1"
+        },
+        {
+          "name": "Frosting-rock pockets",
+          "role": "Hiding cluster and sightline-breaking cover.",
+          "where": "surrounding the central plaza",
+          "size": "-1"
+        },
+        {
+          "name": "Gingerbread-style structure",
+          "role": "Small exterior-cover structure for hiding.",
+          "where": "surrounding the central plaza",
+          "size": "small"
         }
       ],
       "paths": [
         {
-          "from": "Open candy plaza",
-          "to": "Candy garden hiding ground",
-          "kind": "open ground"
+          "from": "Central candy plaza",
+          "to": "Lollipop grove",
+          "kind": "path"
         },
         {
-          "from": "Candy garden hiding ground",
-          "to": "Candy garden hiding ground",
-          "kind": "corridor"
+          "from": "Central candy plaza",
+          "to": "Gumdrop shrub patch",
+          "kind": "path"
+        },
+        {
+          "from": "Central candy plaza",
+          "to": "Candy-cane arch thickets",
+          "kind": "path"
+        },
+        {
+          "from": "Central candy plaza",
+          "to": "Chocolate-bar wall alcoves",
+          "kind": "path"
+        },
+        {
+          "from": "Central candy plaza",
+          "to": "Frosting-rock pockets",
+          "kind": "path"
+        },
+        {
+          "from": "Central candy plaza",
+          "to": "Gingerbread-style structure",
+          "kind": "path"
         }
       ],
-      "terrain": "Bright icing-like ground with alternating pastel path bands and distant candy hills.",
+      "terrain": "Mostly flat pastel ground plane with short winding candy paths.",
       "props": [
         {
-          "name": "Giant lollipops",
+          "name": "Oversized lollipops",
           "count": -1,
-          "where": "Central and rear candy garden"
+          "where": "lollipop grove and candy clutter clusters"
         },
         {
           "name": "Gumdrop bushes",
           "count": -1,
-          "where": "Central and rear candy garden"
+          "where": "gumdrop shrub patch and candy clutter clusters"
         },
         {
-          "name": "Striped candy-cane arches",
+          "name": "Candy-cane arches",
           "count": -1,
-          "where": "Central and rear candy garden"
-        },
-        {
-          "name": "Chocolate-bar walls",
-          "count": -1,
-          "where": "Central and rear candy garden"
+          "where": "candy-cane arch thickets"
         },
         {
           "name": "Frosting boulders",
           "count": -1,
-          "where": "Central and rear candy garden"
+          "where": "frosting-rock pockets and candy clutter clusters"
         },
         {
-          "name": "Wrapped-candy piles",
+          "name": "Chocolate-bar walls",
           "count": -1,
-          "where": "Central and rear candy garden"
+          "where": "chocolate-bar wall alcoves"
         },
         {
-          "name": "Tiny candy kiosks",
+          "name": "Small confectionery props",
           "count": -1,
-          "where": "Central and rear candy garden"
+          "where": "throughout hiding clusters"
+        },
+        {
+          "name": "Gingerbread-style structure",
+          "count": 1,
+          "where": "surrounding the central candy plaza"
+        },
+        {
+          "name": "Tall candy cliffs",
+          "count": -1,
+          "where": "continuous arena boundary"
+        },
+        {
+          "name": "Cookie walls",
+          "count": -1,
+          "where": "continuous arena boundary"
+        },
+        {
+          "name": "Oversized confectionery scenery",
+          "count": -1,
+          "where": "continuous arena boundary"
         }
       ],
-      "boundary": "A continuous whimsical candy boundary of tall wafer walls, peppermint hedges, and distant candy hills.",
+      "boundary": "A continuous whimsical boundary of tall candy cliffs, cookie walls, and oversized confectionery scenery, with no open escape routes.",
       "scale_band": "small",
-      "theme": "Cheerful pastel candy land with oversized sweets, frosting textures, and toy-like fantasy landscaping."
+      "theme": "Bright pastel candy land, playful oversized sweets, readable Roblox-scale cover."
     },
     "render": {
-      "first": "topdown",
-      "then": "isometric",
-      "authoritative": "topdown",
-      "why": "the hide-and-seek warren needs connected circulation and fair routes without sealed-off pockets.",
+      "first": "isometric",
+      "then": "topdown",
+      "authoritative": "isometric",
+      "why": "The compact social arena's hiding variety does not require topology validation beyond the rendered plan.",
       "set_piece": false
     },
     "route": [
-      "P6"
+      "P0"
     ],
     "notes": [],
     "scene_prompt": "Create a 3D playground-sized candy land map for a small hide-and-seek game, with enough themed hiding spots throughout the single compact area."
@@ -133,10 +194,10 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
-  "order": "p6",
-  "first": "topdown",
+  "order": "std",
+  "first": "isometric",
   "mapper_notes": []
 }

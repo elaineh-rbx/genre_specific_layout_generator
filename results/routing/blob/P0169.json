@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a 3D ball-maze map as a single compact handheld wooden puzzle tray, with raised wooden walls forming one plainly playable labyrinth from a starting area to a visible exit.",
-  "blob": "### Genre\nPuzzle is the dominant genre: the phone-tilt control establishes a physical ball-maze whose solvable route to an exit is the game.\n\n### Shape and preset\nUse `puzzle-maze`, matching the Maze / Labyrinth preset. Keep the preset’s maze form but do not add its optional collectibles or loop-back corridors, which were not requested. This is one compact, plainly readable labyrinth carved into a handheld tray.\n\n### Config requirements\nNo additional options apply beyond the maze shape itself. All visible geometry is the wooden tray, its raised walls, the start pocket, and the visible exit opening. There are no requested invisible pickups, trigger volumes, spawn markers, or emitters; any completion detection belongs outside the rendered layout.\n\n### Layout components\nBuild one rectangular handheld wooden puzzle tray, filling the frame at a slight isometric angle. The shallow tray base is a smooth warm wood surface with a raised wooden rim. Inside, raised wooden walls form one compact labyrinth with corridors wide enough for a rolling ball and a single continuous, solvable route. Put a small recessed starting area near one end or corner, and place the clearly visible exit hole or goal recess at the far opposing end, readable as the route’s destination. Keep wall intersections clean and orthogonal, with a few deliberate turns and dead-end branches for maze character but no ambiguous crossings or inaccessible sections. The tray rim is the complete boundary; there is no surrounding world. Compose it as a self-contained tabletop object, with the start and exit both legible in the same view.\n\n### Render order\nUse `authored_plan`: the maze must be valid by construction so the ball can reach the exit, then the generated plan is dressed as a wooden puzzle tray.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the single handheld tray and one compact maze. Theme is classic tactile wooden puzzle tray: warm natural wood, simple craftsmanship, shallow recessed channels, and clear readable contrast between floor and walls. Use `P6` because the solvable maze connectivity must be procedurally authored and preserved.",
+  "blob": "### Genre\nThe dominant genre is Puzzle: progress depends on navigating a solvable labyrinth to an exit. There is no secondary genre.\n\n### Shape and preset\nUse `puzzle-maze`, matched to the Maze / Labyrinth preset. This is a single compact maze rather than an expansive environment: its topology must form one plainly playable route from the ball’s start to the exit.\n\n### Config requirements\nNo additional image configuration options are required. The raised wooden walls and visible exit are intrinsic geometry of the maze shape; do not add unrequested hazards, collectibles, clues, or decorative scenery.\n\n### Layout requirements\nNo separate placed gameplay components are required beyond the maze’s authored start and exit locations. Site the ball start in a clearly defined open pocket near one end of the labyrinth and the exit at the far end, visibly reachable through the continuous corridor network.\n\n### Layout components\nBuild one handheld-scale rectangular wooden puzzle tray. It contains a shallow, flat wooden base enclosed by a low outer rim, with raised wooden partition walls forming a compact, readable labyrinth. Reserve a small open starting pocket at one side and a distinct visible exit opening on the opposite side. The route must be continuous and solvable, with a small number of short dead-end branches but no ambiguous disconnected corridors. Keep all maze walls on one level; there are no rooms, terrain changes, water, props, exterior surroundings, or additional zones. Frame the entire tray in view from an elevated three-quarter angle so both the start-to-exit relationship and the wall pattern remain legible.\n\n### Render order\nUse `authored_plan`: a maze with a guaranteed reachable exit must be generated as valid topology before it is dressed as a wooden tray.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the single compact handheld tray. Theme: classic tactile wooden ball-maze puzzle, simple pale wood and clean craftsmanship. Use `P6` because the solvable start-to-exit maze topology must be valid by construction.",
   "spec": {
     "genre": "Puzzle",
     "secondary": [],
@@ -22,55 +22,47 @@
     "preset": "Maze / Labyrinth",
     "axes": {},
     "options": [],
+    "layout_placement": [],
     "layout": {
-      "composition": "A single rectangular handheld wooden tray fills the frame at a slight isometric angle, with the start pocket near one end or corner and the exit recess at the far opposing end, both legible in the same view.",
+      "composition": "The entire rectangular tray is framed in view from an elevated three-quarter angle, keeping the start-to-exit relationship and the full wooden wall pattern legible.",
       "zones": [
         {
           "name": "wooden puzzle tray",
-          "role": "The complete compact ball-maze play space, containing the solvable route from the start pocket to the exit.",
-          "where": "filling the frame",
-          "size": "small, handheld"
+          "role": "The single compact handheld-scale maze containing the continuous playable labyrinth.",
+          "where": "entire frame",
+          "size": "small, handheld-scale"
+        },
+        {
+          "name": "start pocket",
+          "role": "Open starting area for the ball.",
+          "where": "near one end of the labyrinth",
+          "size": "small"
+        },
+        {
+          "name": "exit opening",
+          "role": "Visible reachable end of the maze.",
+          "where": "opposite end of the labyrinth",
+          "size": "small"
         }
       ],
       "paths": [
         {
           "from": "start pocket",
-          "to": "exit hole or goal recess",
+          "to": "exit opening",
           "kind": "corridor"
         }
       ],
-      "terrain": "A shallow smooth warm-wood tray base with recessed channels, raised wooden walls, and clean orthogonal intersections; the labyrinth has a single continuous solvable route with deliberate turns and dead-end branches.",
-      "props": [
-        {
-          "name": "raised wooden rim",
-          "count": -1,
-          "where": "around the tray perimeter"
-        },
-        {
-          "name": "raised wooden maze walls",
-          "count": -1,
-          "where": "inside the tray"
-        },
-        {
-          "name": "start pocket",
-          "count": -1,
-          "where": "near one end or corner"
-        },
-        {
-          "name": "exit hole or goal recess",
-          "count": -1,
-          "where": "at the far opposing end"
-        }
-      ],
-      "boundary": "The raised wooden tray rim is the complete boundary; there is no surrounding world.",
+      "terrain": "A shallow, flat pale wooden base with all raised wooden maze walls on one level; no terrain changes or water.",
+      "props": [],
+      "boundary": "A low outer wooden rim encloses the rectangular puzzle tray.",
       "scale_band": "small",
-      "theme": "classic tactile wooden puzzle tray; warm natural wood, simple craftsmanship, shallow recessed channels, and clear contrast between floor and walls"
+      "theme": "Classic tactile wooden ball-maze puzzle, simple pale wood and clean craftsmanship."
     },
     "render": {
       "first": "authored_plan",
       "then": "topdown",
       "authoritative": "authored_plan",
-      "why": "the maze connectivity must be valid by construction so the ball can reach the exit.",
+      "why": "The maze topology must guarantee one solvable continuous route from the ball start to the reachable exit.",
       "set_piece": false
     },
     "route": [
@@ -82,7 +74,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "layout",

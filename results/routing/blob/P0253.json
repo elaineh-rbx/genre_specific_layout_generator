@@ -14,176 +14,141 @@
     }
   ],
   "scene_prompt": "Create a beautiful, compact arcade-themed game map for up to 8 players. A central lobby serves as the spawn area before matches, with a visible shop area for aura purchases. Connect the lobby to a separate arcade arena containing three quick mini-game zones: a coin-collecting race course, an obstacle-course race, and a target-hitting game area, arranged as distinct colorful arcade attractions within the arena.",
-  "blob": "### Genre\nThe dominant genre is Party & Casual: the original request is a scored, round-based sequence of mini-games with a winner. There is no secondary genre; the obstacle course and races are individual attractions within the party game, not separate game-wide genres.\n\n### Shape and preset\nUse `space-staged`, separating the pre-match lobby from the match arena as distinct maps. The Minigame preset informed this lobby-and-isolated-stage structure, but the recognizable preset is none because its transport, leaderboard, scoring-volume, and spectator bundle is not visually requested.\n\n### Config requirements\nUse `social-hub` as visible geometry: the lobby is a compact central gathering and arrival space with a clearly visible aura shop zone. No additional option is selected unasked. Lobby and match arrivals are invisible spawn placement concerns rather than image content; do not render markers, scoring regions, coins-as-currency, or interface elements.\n\n### Layout components\nBuild two compact, comfortable spaces for up to 8 players. The first is the lobby: a bright arcade foyer with a broad central spawn-and-gathering floor, aura shop counter or storefront along one side, and a clear match-entry threshold. Keep the lobby uncluttered so all eight players can circulate between the arrival floor and shop.\n\nThe separate arcade arena is a single colorful indoor arcade hall divided into exactly three distinct attraction zones. Place the coin-collecting race course on one side as a short, legible looping or out-and-back route with visible collectible coin props along its route. Put the obstacle-course race opposite it as a compact linear sequence of platforms, low barriers, ramps, and safe landing surfaces. Reserve the far end for the target-hitting area, with a firing line facing a dense target wall or target gallery; targets must read clearly from the approach. Leave a central circulation aisle connecting the arena entrance to all three zones without crossing their active routes. Use arcade cabinets, neon signs, score-style decorative boards without legible UI, glowing trim, and themed floor-color changes to distinguish zones. The lobby is bounded by its foyer walls; the arena is bounded by a cohesive arcade building shell.\n\n### Render order\nUse `topdown` first, then dress the isometric view from that plan, because the three compact attractions need clear non-overlapping circulation and a usable obstacle-course route; this does not qualify for a code-authored maze or circuit plan.\n\n### Scale, theme, and pipeline cost\nScale is small: two compact spaces serve only 8 players, while the arena still needs three readable mini-game zones. Theme is polished neon arcade, colorful attractions, glossy floors, and playful glowing signage. Pipeline modifier: `P4`, forced by the separate lobby and match-arena maps.",
+  "blob": "### Genre\nThe dominant genre is Party & Casual: the round-based point competition across several quick attractions makes this a minigame experience. No secondary genre is needed; the obstacle and target activities are contained attractions within the party-game format.\n\n### Shape and preset\nUse `space-staged`, matching the Minigame preset. The lobby must be fully separate from the active arcade arena so waiting players cannot enter or interfere with a match. Retain the preset’s staged relationship, but use a compact arcade venue rather than a generic outdoor course.\n\n### Config requirements\nUse `social-hub` for the central pre-match lobby, with a clearly visible aura shop counter along one wall and open gathering space. Use `teleporter-link` as bright arcade-style match-entry portals or doors linking the lobby to the isolated arena. Do not add unrequested seating, NPCs, water, or terrain.\n\n### Layout requirements\nUse `teleporter-link` in both places: provide one lobby-side entry portal and one arena-side return portal, each at the respective map’s edge. Use `spawn-protected` for up to 8 evenly spaced round-start markers inside the arena, positioned at the start edge of the currently active attraction and screened from immediate hazards. Use `trigger-scoring` as three distinct scoring-volume systems: one at the coin-race finish, one at the obstacle-race finish, and one around the target-hitting scoring targets.\n\n### Layout components\nThe first map is a compact, square-like lobby for up to 8 players, with a central spawn pad, generous circulation around it, the aura shop counter on a prominent side wall, and the glowing match portal opposite. The second map is a separate enclosed arcade arena, divided into exactly three colorful attractions around a shared central circulation strip: a coin-collecting race lane on one side, a short obstacle-course race with clear start and finish pads on the opposite side, and a target-hitting bay at the far end with targets facing inward. Keep the obstacle route low and readable, with broad safe margins. Enclose both spaces with arcade walls, neon trim, signs, and themed props; frame each map as a clean, legible isometric venue with the three arena zones simultaneously recognizable.\n\n### Render order\nUse `topdown`: the isolated lobby and arena maps, plus the clear boundaries and accessible circulation of all three attractions, must be valid in plan before the arcade dressing is applied.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by two separate compact maps supporting up to 8 players and exactly three attractions. Theme: polished, beautiful neon arcade with saturated colors, glowing signage, playful machines, and clean game-show geometry. Apply `P4` because the lobby and match arena are separate maps.",
   "spec": {
     "genre": "Party & Casual",
     "secondary": [],
     "shape": "space-staged",
-    "preset": "none",
+    "preset": "Minigame",
     "axes": {},
     "options": [
       {
         "id": "social-hub",
-        "text": "The lobby is a compact central gathering and arrival space with a clearly visible aura shop zone.",
+        "text": "Central pre-match lobby with open gathering space and a clearly visible aura shop counter along one wall.",
         "visible": true,
         "count": -1
+      },
+      {
+        "id": "teleporter-link",
+        "text": "Bright arcade-style match-entry portals or doors linking the lobby to the isolated arena.",
+        "visible": true,
+        "count": 2
+      },
+      {
+        "id": "spawn-protected",
+        "text": "Up to 8 evenly spaced round-start markers inside the arena, screened from immediate hazards.",
+        "visible": false,
+        "count": 8
+      },
+      {
+        "id": "trigger-scoring",
+        "text": "Three distinct scoring-volume systems: one at the coin-race finish, one at the obstacle-race finish, and one around the target-hitting scoring targets.",
+        "visible": false,
+        "count": 3
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "teleporter-link",
+        "text": "One lobby-side entry portal and one arena-side return portal.",
+        "count": 2,
+        "where": "At the respective edge of each separate map."
+      },
+      {
+        "id": "spawn-protected",
+        "text": "Up to 8 evenly spaced round-start markers screened from immediate hazards.",
+        "count": 8,
+        "where": "Inside the arena at the start edge of the currently active attraction."
+      },
+      {
+        "id": "trigger-scoring",
+        "text": "Three distinct scoring-volume systems for the coin race, obstacle race, and target-hitting game.",
+        "count": 3,
+        "where": "At the coin-race finish, obstacle-race finish, and around the target-hitting scoring targets."
       }
     ],
     "layout": {
-      "composition": "Two separate compact maps: a bright arcade foyer lobby with its broad central gathering floor and shop along one side, followed by a separate indoor arcade arena. In the arena, the coin-collecting race occupies one side, the obstacle-course race sits opposite, the target gallery is at the far end, and a central circulation aisle runs from the entrance to all three zones without crossing active routes.",
+      "composition": "Clean, legible isometric arcade venues: the compact square-like lobby centers its spawn pad, with the aura shop on a prominent side wall and the glowing match portal opposite; the enclosed arena presents three colorful attractions around a shared central circulation strip, all simultaneously recognizable.",
       "zones": [
         {
-          "name": "Lobby",
-          "role": "Pre-match spawn-and-gathering space with aura purchases and circulation for up to 8 players.",
-          "where": "separate first map",
-          "size": "compact, for up to 8 players"
+          "name": "Pre-match lobby",
+          "role": "Spawn and gathering area before matches, with aura purchases.",
+          "where": "Separate first map.",
+          "size": "Compact, square-like, for up to 8 players."
         },
         {
-          "name": "Aura shop zone",
-          "role": "Visible shop counter or storefront for aura purchases.",
-          "where": "along one side of the lobby",
+          "name": "Coin-collecting race lane",
+          "role": "Coin-collecting race attraction.",
+          "where": "One side of the arcade arena.",
           "size": ""
-        },
-        {
-          "name": "Arcade arena",
-          "role": "Separate match map containing three quick mini-game attractions.",
-          "where": "separate map beyond the lobby match-entry threshold",
-          "size": "compact"
-        },
-        {
-          "name": "Coin-collecting race course",
-          "role": "Short race route with visible collectible coin props.",
-          "where": "one side of the arcade arena",
-          "size": "short"
         },
         {
           "name": "Obstacle-course race",
-          "role": "Compact linear obstacle route with platforms, low barriers, ramps, and safe landing surfaces.",
-          "where": "opposite the coin-collecting race course",
-          "size": "compact"
+          "role": "Short obstacle-course race with clear start and finish pads.",
+          "where": "Opposite side of the arcade arena.",
+          "size": "Short, low, and readable with broad safe margins."
         },
         {
-          "name": "Target-hitting area",
-          "role": "Firing-line attraction facing a dense target wall or target gallery.",
-          "where": "far end of the arcade arena",
-          "size": ""
-        },
-        {
-          "name": "Central circulation aisle",
-          "role": "Connects the arena entrance to all three attraction zones without crossing active routes.",
-          "where": "centre of the arcade arena",
+          "name": "Target-hitting bay",
+          "role": "Target-hitting attraction.",
+          "where": "Far end of the arcade arena, with targets facing inward.",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Lobby arrival floor",
-          "to": "Aura shop zone",
-          "kind": "open ground"
-        },
-        {
-          "from": "Lobby",
+          "from": "Pre-match lobby",
           "to": "Arcade arena",
           "kind": "portal"
         },
         {
-          "from": "Arcade arena entrance",
-          "to": "Coin-collecting race course",
-          "kind": "corridor"
+          "from": "Shared central circulation strip",
+          "to": "Coin-collecting race lane",
+          "kind": "open ground"
         },
         {
-          "from": "Arcade arena entrance",
+          "from": "Shared central circulation strip",
           "to": "Obstacle-course race",
-          "kind": "corridor"
+          "kind": "open ground"
         },
         {
-          "from": "Arcade arena entrance",
-          "to": "Target-hitting area",
-          "kind": "corridor"
-        },
-        {
-          "from": "Coin-collecting race course",
-          "to": "Coin-collecting race course",
-          "kind": "track"
-        },
-        {
-          "from": "Obstacle-course race",
-          "to": "Obstacle-course race",
-          "kind": "track"
+          "from": "Shared central circulation strip",
+          "to": "Target-hitting bay",
+          "kind": "open ground"
         }
       ],
-      "terrain": "Glossy arcade floors with themed floor-color changes distinguishing the three attraction zones.",
+      "terrain": "Clean game-show geometry with low, readable obstacle-route surfaces and broad safe margins.",
       "props": [
         {
-          "name": "aura shop counter or storefront",
+          "name": "Aura shop counter",
           "count": -1,
-          "where": "along one side of the lobby"
+          "where": "Along a prominent side wall of the lobby."
         },
         {
-          "name": "collectible coin props",
+          "name": "Arcade walls with neon trim, signs, and themed props",
           "count": -1,
-          "where": "along the coin-collecting race route"
+          "where": "Enclosing both the lobby and arcade arena."
         },
         {
-          "name": "platforms",
+          "name": "Glowing match portal",
           "count": -1,
-          "where": "obstacle-course race zone"
+          "where": "Opposite the aura shop counter in the lobby."
         },
         {
-          "name": "low barriers",
+          "name": "Targets",
           "count": -1,
-          "where": "obstacle-course race zone"
-        },
-        {
-          "name": "ramps",
-          "count": -1,
-          "where": "obstacle-course race zone"
-        },
-        {
-          "name": "safe landing surfaces",
-          "count": -1,
-          "where": "obstacle-course race zone"
-        },
-        {
-          "name": "firing line",
-          "count": -1,
-          "where": "target-hitting area"
-        },
-        {
-          "name": "dense target wall or target gallery",
-          "count": -1,
-          "where": "far end target-hitting area"
-        },
-        {
-          "name": "arcade cabinets",
-          "count": -1,
-          "where": "arcade arena"
-        },
-        {
-          "name": "neon signs",
-          "count": -1,
-          "where": "lobby and arcade arena"
-        },
-        {
-          "name": "score-style decorative boards without legible UI",
-          "count": -1,
-          "where": "arcade arena"
-        },
-        {
-          "name": "glowing trim",
-          "count": -1,
-          "where": "lobby and arcade arena"
+          "where": "In the target-hitting bay at the far end of the arena, facing inward."
         }
       ],
-      "boundary": "The lobby is bounded by foyer walls; the arena is bounded by a cohesive arcade building shell.",
-      "scale_band": "small",
-      "theme": "polished neon arcade, colorful attractions, glossy floors, playful glowing signage"
+      "boundary": "The lobby and arena are fully separate enclosed spaces, each surrounded by arcade walls, neon trim, signs, and themed props.",
+      "scale_band": "medium",
+      "theme": "Polished beautiful neon arcade, saturated colors, glowing signage, playful machines, clean game-show geometry."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the three compact attractions need clear non-overlapping circulation and a usable obstacle-course route.",
+      "why": "The isolated maps, clear boundaries, and accessible circulation for all three attractions must be valid in plan before arcade dressing.",
       "set_piece": false
     },
     "route": [
@@ -195,7 +160,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

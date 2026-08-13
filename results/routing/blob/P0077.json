@@ -19,70 +19,81 @@
     }
   ],
   "scene_prompt": "Create a bright, stylised 3D tag-game map set in one small open park field that players can cross in a few seconds. Keep the park simple and focused, with clear open ground for running and a simple spectator area raised above or placed beside the field for eliminated players to watch the round.",
-  "blob": "### Genre\nThe dominant genre is Party & Casual, specifically a tag-style childhood game with a last-player-standing round structure. No secondary genre applies.\n\n### Shape and preset\nUse `space-continuous`: one compact, uninterrupted park field where all active players share the same running space. The closest preset is Childhood Game, but the preset is none because its dense hiding clutter, maze, and lobby are not requested and would conflict with the deliberately open, simple field.\n\n### Config requirements\nUse `spectator-zone` as visible geometry: a simple raised viewing platform or adjacent overlook where eliminated players can watch the active park without entering it. Do not add clutter clusters, a maze, a lobby, scoring volumes, or start-point markers; none were requested as buildable scene content.\n\n### Layout components\nMake one small open park field, sized so players can cross it in a few seconds. The central zone is broad, flat, unobstructed grass for clear running and readable tag encounters. Place the spectator zone along one edge of the field, slightly raised with a safe railing and clear sightlines across the entire play area; it should be small relative to the field and visually separate from active ground. Use a simple paved border or short path around the field edge only if needed to define the park perimeter. Terrain remains flat grass with minimal stylised landscaping: a few widely spaced trees, low shrubs, and simple park accents kept at the outer edge so they do not create hiding mazes or obstruct the running field. The boundary is a soft park edge such as low hedges, stylised fencing, or tree lines, while keeping the field visually open. Frame the isometric composition with the open grass field dominant in the center and the spectator platform clearly legible at one side.\n\n### Render order\nUse `isometric`: render the bright park view first and derive the top-down plan from it, because this is a simple continuous field and minor visual variation cannot make the tag space unplayable.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the single field that can be crossed quickly. Theme is bright, playful, stylised city-park simplicity. Use `P0`; the field and beside-the-field spectator overlook remain a single surface with no required interior, stacked geometry, separate map, volumetric play, or validity-by-construction route.",
+  "blob": "### Genre\nParty & Casual is the dominant genre: this is a last-player-standing tag round in a shared physical play space.\n\n### Shape and preset\nUse `space-bounded`, a single small, readable open park field where all tag play occurs. The closest preset is Childhood Game, but its clutter maze and lobby features contradict the requested simple open field, so the preset is none.\n\n### Config requirements\nUse `spectator-zone` as a simple raised viewing platform or side terrace overlooking the whole field, clearly outside active play. Do not add clutter, maze structures, or a separate lobby.\n\n### Layout requirements\nUse `trigger-scoring` for the active tag-contact detection across the park field, with the volume constrained to the playable ground and excluding the spectator area. Use `spawn-protected` for evenly distributed round-start markers around the field perimeter, set back from immediate contact so players begin fairly.\n\n### Layout components\nBuild one small open grassy park field, crossable in a few seconds, as the central and dominant zone. Keep the running ground broadly unobstructed and level, with only minimal stylised park dressing at the edges so sightlines remain clear. Place the spectator zone raised above one long edge or immediately beside it, with an unobstructed view across the field and a clear physical separation from active players. Enclose the play space with a low, readable park boundary such as hedges, fences, or curbs that prevents accidental departure without making the field feel enclosed. Compose the field centrally in frame, with the raised spectator platform visibly legible along one side.\n\n### Render order\nRender `isometric` first and treat it as authoritative, because this is a simple open field whose topology does not require plan-first validation.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the requested single field and short crossing time. Theme is bright, stylised, playful parkland with clean readable ground and colourful simple boundaries. Use `P0`: the field and adjacent raised spectator area remain one representable surface with no forced extra capture path.",
   "spec": {
     "genre": "Party & Casual",
     "secondary": [],
-    "shape": "space-continuous",
+    "shape": "space-bounded",
     "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "spectator-zone",
-        "text": "a simple raised viewing platform or adjacent overlook where eliminated players can watch the active park without entering it",
+        "text": "A simple raised viewing platform or side terrace overlooking the whole field, clearly outside active play.",
         "visible": true,
+        "count": -1
+      },
+      {
+        "id": "trigger-scoring",
+        "text": "Active tag-contact detection across the park field.",
+        "visible": false,
+        "count": -1
+      },
+      {
+        "id": "spawn-protected",
+        "text": "Evenly distributed round-start markers around the field perimeter, set back from immediate contact so players begin fairly.",
+        "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "trigger-scoring",
+        "text": "Active tag-contact detection across the park field.",
+        "count": -1,
+        "where": "Constrained to the playable ground, excluding the spectator area."
+      },
+      {
+        "id": "spawn-protected",
+        "text": "Evenly distributed round-start markers around the field perimeter, set back from immediate contact so players begin fairly.",
+        "count": -1,
+        "where": "Around the field perimeter, set back from immediate contact."
+      }
+    ],
     "layout": {
-      "composition": "Isometric view with the open grass field dominant in the centre and the spectator platform clearly legible along one side.",
+      "composition": "The small open grassy field is central and dominant in frame, with the raised spectator platform visibly legible along one long side.",
       "zones": [
         {
-          "name": "Open park field",
-          "role": "Active shared running space for clear, readable tag encounters.",
-          "where": "centre",
-          "size": "small; broad enough to cross in a few seconds"
+          "name": "Open grassy park field",
+          "role": "All active tag play and running occur here.",
+          "where": "Centre",
+          "size": "small"
         },
         {
-          "name": "Spectator zone",
-          "role": "Eliminated players watch the active park without entering it.",
-          "where": "along one edge of the field",
-          "size": "small relative to the field"
+          "name": "Spectator area",
+          "role": "Eliminated players watch the round from outside active play.",
+          "where": "Along one long edge or immediately beside the field",
+          "size": ""
         }
       ],
       "paths": [],
-      "terrain": "Broad, flat, unobstructed grass with minimal stylised landscaping: a few widely spaced trees, low shrubs, and simple park accents at the outer edge.",
+      "terrain": "Broadly unobstructed, level grassy park ground with minimal stylised park dressing at the edges.",
       "props": [
         {
-          "name": "widely spaced trees",
+          "name": "Minimal stylised park dressing",
           "count": -1,
-          "where": "outer edge"
-        },
-        {
-          "name": "low shrubs",
-          "count": -1,
-          "where": "outer edge"
-        },
-        {
-          "name": "simple park accents",
-          "count": -1,
-          "where": "outer edge"
-        },
-        {
-          "name": "safe railing",
-          "count": -1,
-          "where": "spectator platform"
+          "where": "At the field edges"
         }
       ],
-      "boundary": "Soft park edge of low hedges, stylised fencing, or tree lines, keeping the field visually open.",
+      "boundary": "A low, readable park boundary of hedges, fences, or curbs prevents accidental departure without making the field feel enclosed.",
       "scale_band": "small",
-      "theme": "bright, playful, stylised city-park simplicity"
+      "theme": "Bright, stylised, playful parkland with clean readable ground and colourful simple boundaries."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "this is a simple continuous field and minor visual variation cannot make the tag space unplayable.",
+      "why": "the simple open field does not require plan-first topology validation.",
       "set_piece": false
     },
     "route": [
@@ -94,7 +105,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

@@ -19,137 +19,145 @@
     }
   ],
   "scene_prompt": "Create a 3D open-world map from an ant’s scale: a single compact garden bed that feels enormous, dense with explorable zones. Build a lush stylized garden with towering plants, soil, stones, and many visible animals throughout. Place the ant colony as a distinct home area, with food scattered around the garden for collection and routes weaving between plants, rocks, and earth.",
-  "blob": "### Género\nEl género dominante es Adventure: la actividad es explorar y recolectar alimento para volver a la colonia, sin bucle de combate, economía ni construcción. \n\n### Forma y preset\nUsa la forma `world-open`, un único jardín continuo que se percibe inmenso a escala de hormiga aunque su huella real sea compacta. Coincide con el preset Exploration: se conserva su exploración libre, rutas y punto de referencia, adaptados a un jardín denso.\n\n### Requisitos de configuración\n`path-trail` es geometría visible: senderos de tierra y pasajes transitables serpentean entre tallos, piedras y montículos. `landmark-focal` es geometría visible: la entrada y el montículo de la colonia son un hito claramente reconocible para orientar el regreso. `collectible-nodes` es invisible: distribuye marcadores de alimento sobre los objetos comestibles del jardín. `npc-population` combina geometría visible e información de colocación: muchos animales visibles ocupan claros, hojas, piedras y suelo para dar vida al entorno.\n\n### Componentes de layout\nLa zona central-baja contiene la colonia, una entrada de hormiguero bajo un pequeño montículo de tierra, rodeada por una breve área despejada de salida. Desde ella parten varias rutas curvas hacia una red de zonas explorables: un bosque de plantas de tallos gruesos al fondo, un campo de hojas y flores grandes a un lado, un corredor de piedras y grietas de tierra al otro, y pequeños claros entre raíces y rocas. Reparte alimento recolectable por estas zonas, con parte cerca de la colonia y parte en los extremos más densos. El terreno es tierra estilizada con guijarros, piedras grandes como formaciones y plantas gigantes que crean una sensación de escala. Los animales se ven en distintos estratos del jardín sin bloquear las rutas principales. El límite es un borde natural compacto de vegetación espesa, raíces, piedras y plantas altas. Compón la colonia en primer plano o centro y deja que los tallos altos y caminos curvos conduzcan visualmente hacia las zonas lejanas.\n\n### Orden de render\nRenderiza primero en `isometric`; la vista isométrica es autoritativa porque la exploración no exige una topología validada por construcción.\n\n### Escala, tema y coste de pipeline\nEscala medium: un solo jardín compacto, muy denso y dividido en suficientes microzonas para sentirse enorme desde la escala de una hormiga. Tema: jardín exuberante, estilizado y colorido, con suelo terroso, rocas y vegetación monumental. Modificador `P0`: todo cabe en una superficie exterior continua sin interiores, superposiciones ni geometría de ruta que requiera validación.",
+  "blob": "### 1. Genre\n`No Genre`: this is an explorable ant-scale garden with food gathering, but it states no combat, scoring, survival pressure, progression system, or other genre-owned loop. The collection objective informs placement without importing mechanics.\n\n### 2. Shape and preset\nUse the No Genre axes rather than a shape: `enclosure` is exterior; `verticality` is single-surface; `zone-count` is single; `structure` is dressed; and `play-space` is grounded-surface. The garden is one connected outdoor bed, with giant plant stems and stones creating local variation rather than separate floors or maps. Preset: none; Explorable Place is not retained because no focal landmark or photo-vignette was requested.\n\n### 3. Config requirements\nUse `path-circulation` as narrow, readable ant trails weaving through soil between plant stalks, rocks, and food areas. Use `npc-population` for many visible garden animals distributed as living background among the vegetation; they should make the environment feel inhabited rather than form a combat encounter.\n\n### 4. Layout requirements\nUse `collectible-nodes` for food items, placed in small clusters throughout every exploration zone and along occasional side routes, with several close to the colony and more distant clusters beyond rocks and dense stems. Use `npc-population` placement for ambient animals: distribute them across the garden’s vegetation, soil clearings, and rock edges, keeping the colony approach clear. No other placed triggers, checkpoints, or spawns are required.\n\n### 5. Layout components\nBuild one compact but densely layered garden bed viewed at ant scale. Put the ant colony home area at one edge as a recognizable soil mound with several burrow entrances and a clear surrounding clearing. From it, branching dirt trails lead into a central tall-plant thicket, a rocky soil zone on one side with crevices and sheltered food, and a more open earth-and-pebble clearing on the other side with scattered food. Towering stylized leaves, stems, clumps of grass, loose soil, and oversized stones create concealment and route choices without enclosing the map. Use dense plants, root-like edges, and a low raised-bed rim as the natural boundary. Compose the colony in the foreground or lower frame, with paths visibly radiating into the dense garden beyond.\n\n### 6. Render order\nRender `isometric` first and treat it as authoritative, because the garden’s routes are exploratory and flexible; an invalid exact topology would not make the experience unplayable.\n\n### 7. Scale, theme, and pipeline cost\nScale band: medium, driven by a single physically compact garden bed that must feel enormous to an ant through dense zones and oversized vegetation. Theme: lush stylized garden floor, warm soil, giant greenery, pebbles, and lively small-animal ambience. Pipeline modifier: `P0`; this is one exterior, grounded surface with no forced overhangs, interior transition, separate map, or validity-critical route.",
   "spec": {
-    "genre": "Adventure",
+    "genre": "No Genre",
     "secondary": [],
-    "shape": "world-open",
-    "preset": "Exploration",
-    "axes": {},
+    "shape": "",
+    "preset": "none",
+    "axes": {
+      "enclosure": "exterior",
+      "verticality": "single-surface",
+      "zone-count": "single",
+      "structure": "dressed",
+      "play-space": "grounded-surface"
+    },
     "options": [
       {
-        "id": "path-trail",
-        "text": "Senderos de tierra y pasajes transitables serpentean entre tallos, piedras y montículos.",
+        "id": "path-circulation",
+        "text": "Narrow, readable ant trails weaving through soil between plant stalks, rocks, and food areas.",
         "visible": true,
         "count": -1
       },
       {
-        "id": "landmark-focal",
-        "text": "La entrada y el montículo de la colonia son un hito claramente reconocible para orientar el regreso.",
+        "id": "npc-population",
+        "text": "Many visible garden animals distributed as living background among the vegetation, making the environment feel inhabited rather than forming a combat encounter.",
         "visible": true,
         "count": -1
       },
       {
         "id": "collectible-nodes",
-        "text": "Marcadores de alimento distribuidos sobre los objetos comestibles del jardín, parte cerca de la colonia y parte en los extremos más densos.",
+        "text": "Food items for collection, placed in small clusters throughout every exploration zone and along occasional side routes.",
         "visible": false,
-        "count": -1
-      },
-      {
-        "id": "npc-population",
-        "text": "Muchos animales visibles ocupan claros, hojas, piedras y suelo en distintos estratos del jardín sin bloquear las rutas principales.",
-        "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "npc-population",
+        "text": "Ambient garden animals distributed as living background.",
+        "count": -1,
+        "where": "Across the garden's vegetation, soil clearings, and rock edges, keeping the colony approach clear."
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "Food items in small clusters throughout every exploration zone and along occasional side routes, with several close to the colony and more distant clusters beyond rocks and dense stems.",
+        "count": -1,
+        "where": "Throughout every exploration zone and along occasional side routes; several close to the colony, with more distant clusters beyond rocks and dense stems."
+      }
+    ],
     "layout": {
-      "composition": "La colonia se sitúa en primer plano o centro; los tallos altos y los caminos curvos conducen visualmente hacia las zonas lejanas del jardín.",
+      "composition": "The ant colony sits in the foreground or lower frame, with branching dirt trails visibly radiating into the dense garden beyond.",
       "zones": [
         {
-          "name": "Colonia",
-          "role": "Área de hogar y salida, con una entrada de hormiguero bajo un pequeño montículo de tierra.",
-          "where": "zona central-baja, en primer plano o centro",
-          "size": "breve área despejada de salida"
-        },
-        {
-          "name": "Bosque de plantas",
-          "role": "Zona explorable densa entre plantas de tallos gruesos.",
-          "where": "al fondo",
+          "name": "Ant colony home area",
+          "role": "Recognizable home area with several burrow entrances and a clear surrounding clearing.",
+          "where": "One edge of the garden bed; foreground or lower frame.",
           "size": ""
         },
         {
-          "name": "Campo de hojas y flores",
-          "role": "Zona explorable entre hojas y flores grandes.",
-          "where": "a un lado de la colonia",
+          "name": "Central tall-plant thicket",
+          "role": "Dense exploration area entered from branching dirt trails.",
+          "where": "Centre, beyond the colony.",
           "size": ""
         },
         {
-          "name": "Corredor de piedras y grietas",
-          "role": "Zona explorable que atraviesa piedras y grietas de tierra.",
-          "where": "al otro lado de la colonia",
+          "name": "Rocky soil zone",
+          "role": "Exploration area with crevices and sheltered food.",
+          "where": "One side of the garden bed.",
           "size": ""
         },
         {
-          "name": "Pequeños claros",
-          "role": "Microzonas explorables y ocupadas por animales entre raíces y rocas.",
-          "where": "entre raíces y rocas del jardín",
-          "size": "pequeños"
+          "name": "Open earth-and-pebble clearing",
+          "role": "More open exploration area with scattered food.",
+          "where": "Other side of the garden bed.",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Colonia",
-          "to": "Bosque de plantas",
+          "from": "Ant colony home area",
+          "to": "Central tall-plant thicket",
           "kind": "track"
         },
         {
-          "from": "Colonia",
-          "to": "Campo de hojas y flores",
+          "from": "Ant colony home area",
+          "to": "Rocky soil zone",
           "kind": "track"
         },
         {
-          "from": "Colonia",
-          "to": "Corredor de piedras y grietas",
-          "kind": "track"
-        },
-        {
-          "from": "Colonia",
-          "to": "Pequeños claros",
+          "from": "Ant colony home area",
+          "to": "Open earth-and-pebble clearing",
           "kind": "track"
         }
       ],
-      "terrain": "Tierra estilizada con guijarros, piedras grandes como formaciones y plantas gigantes que crean sensación de escala de hormiga.",
+      "terrain": "Warm loose soil, earth, pebbles, oversized stones, dense plants, giant plant stems, towering stylized leaves, clumps of grass, and root-like edges.",
       "props": [
         {
-          "name": "entrada de hormiguero",
-          "count": -1,
-          "where": "bajo el pequeño montículo de tierra de la colonia"
+          "name": "Soil mound",
+          "count": 1,
+          "where": "Ant colony home area at one edge of the garden bed."
         },
         {
-          "name": "montículo de tierra",
+          "name": "Burrow entrances",
           "count": -1,
-          "where": "colonia central-baja"
+          "where": "In the colony soil mound."
         },
         {
-          "name": "tallos gruesos",
+          "name": "Towering stylized leaves and stems",
           "count": -1,
-          "where": "bosque de plantas al fondo"
+          "where": "Throughout the central tall-plant thicket and garden bed."
         },
         {
-          "name": "hojas y flores grandes",
+          "name": "Clumps of grass",
           "count": -1,
-          "where": "campo lateral"
+          "where": "Throughout the garden bed."
         },
         {
-          "name": "piedras y grietas de tierra",
+          "name": "Oversized stones",
           "count": -1,
-          "where": "corredor lateral"
+          "where": "Rocky soil zone and throughout the garden."
         },
         {
-          "name": "animales visibles",
+          "name": "Pebbles",
           "count": -1,
-          "where": "claros, hojas, piedras y suelo del jardín"
+          "where": "Open earth-and-pebble clearing."
+        },
+        {
+          "name": "Low raised-bed rim",
+          "count": 1,
+          "where": "Around the garden bed."
         }
       ],
-      "boundary": "Borde natural compacto de vegetación espesa, raíces, piedras y plantas altas.",
+      "boundary": "Dense plants, root-like edges, and a low raised-bed rim form the natural boundary without enclosing the map.",
       "scale_band": "medium",
-      "theme": "Jardín exuberante, estilizado y colorido, con suelo terroso, rocas y vegetación monumental."
+      "theme": "Lush stylized garden floor, warm soil, giant greenery, pebbles, and lively small-animal ambience."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "la exploración no exige una topología validada por construcción.",
+      "why": "the garden’s routes are exploratory and flexible, so an invalid exact topology would not make the experience unplayable.",
       "set_piece": false
     },
     "route": [
@@ -161,7 +169,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

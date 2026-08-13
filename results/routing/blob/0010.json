@@ -3,90 +3,110 @@
   "source": "A classic combat fight arena map. It should include: - A large flat central fighting platform - Raised side platforms at different heights for vertical combat - Low walls and cover obstacles scattered around for tactical positioning - A boundary wall around the perimeter to keep fighters in - Some pillars or columns for visual interest and cover - Stairs or ramps connecting the different platform levels The map should feel like an arena built for fighting game combat. Make it look sturdy and game-ready with a mix of materials. Configurable attributes: - ArenaSize (controls overall scale of the arena) - PlatformHeight (height of the raised side platforms) - WallHeight (height of the perimeter boundary walls) - PrimaryColor (main color of the arena floor and structures) - AccentColor (color for pillars, accents, and details)",
   "answers": [],
   "scene_prompt": "Create a 3D combat fighting arena with a large flat central fighting platform, raised side platforms at different heights along the edges, and stairs or ramps connecting all levels. Scatter low walls, cover obstacles, and several pillars or columns across the arena for tactical positioning. Enclose the perimeter with sturdy boundary walls, using a durable mixed-material construction with a main structural color and contrasting accent-colored pillars and details.",
-  "blob": "### Genre\nThe dominant genre is Action: this is a purpose-built melee fighting arena rather than a shooter map, with a shared central clash space and tactical cover.\n\n### Shape and preset\nUse `arena-tiered`, with the central floor as the main fighting plane and raised edge platforms creating controlled vertical engagements. The closest preset is Platform Fighter because it shares the terraced arena form and cover emphasis; omit its ring-out edges because the requested perimeter wall contains the arena.\n\n### Config requirements\nUse `cover-los` for the scattered low walls, cover obstacles, and pillars that break combat sightlines and give fighters tactical repositioning points. The raised platforms, ramps, perimeter wall, mixed materials, and contrasting structural accents are explicit scene geometry rather than additional config options.\n\n### Layout requirements\nNo additional placed layout markers are required. The prompt specifies no pickups, NPC emitters, respawn locations, or scoring volumes.\n\n### Layout components\nBuild one large, enclosed arena zone. Place a broad flat central fighting platform in the middle as the dominant combat space. Arrange raised side platforms of differing heights along the arena edges, with stairs or ramps connecting every level back to the central floor and to adjacent raised sections. Scatter low walls and compact cover obstacles across the floor without blocking the principal circulation routes. Add several sturdy pillars or columns as both visual anchors and cover, distributed between the central floor and the side approaches. Enclose the full footprint with tall, sturdy boundary walls. Use durable mixed-material construction throughout: a consistent primary color for floors, walls, and platforms, with contrasting accent-colored pillars, trims, and structural details. Frame the whole arena clearly from an elevated three-quarter view, keeping the central platform legible and the surrounding tiered platforms visible.\n\n### Render order\nUse `isometric`: the arena’s visual hierarchy, materials, and readable central fighting space lead, while its simple connected ramps and stairs can be projected into a plan afterward.\n\n### Scale, theme, and pipeline cost\nScale band: medium, driven by one large combat arena with a central platform, perimeter circulation, and multiple side platforms. Theme: sturdy game-ready mixed-material combat arena with bold primary-color structure and contrasting accents. Use `tiered` because the raised side platforms create real stepped elevation without overhanging surfaces.",
+  "blob": "### Genre\nDominant genre: `Action`, specifically a classic Fighting arena with direct melee-oriented clashes rather than ranged firing lanes.\n\n### Shape and preset\nUse `arena-tiered`, taken from the Action catalogue. It is a single enclosed combat floor with a broad central level and raised combat ledges around its edges, all connected by stairs and ramps without any overhanging floors. Match the Fighting preset in its combat focus and cover treatment, while overriding its usual flat `space-bounded` shape for the prompt’s explicit elevation.\n\n### Config requirements\nUse `cover-los`: scattered low walls, sturdy cover blocks, and several contrasting columns break sightlines and create tactical repositioning points. Use `spawn-protected`: screened, setback starting areas prevent fighters appearing directly in an opponent’s line of attack.\n\n### Layout requirements\nPlace `spawn-protected` at two or more balanced starting positions on opposing sides of the central platform, each shielded by a side platform, wall return, or pillar while retaining equally direct access to the center. No pickups, NPC emitters, or scoring volumes are requested.\n\n### Layout components\nMake the central flat fighting platform the dominant, largest zone. Place raised side platforms of different heights along the arena edges, with broad stairs or ramps connecting each side level to the central floor and to one another. Distribute low walls, cover obstacles, and several pillars across the central and side areas without obstructing the primary fighting routes. A continuous sturdy boundary wall encloses the entire perimeter and keeps combat inside the arena. Use durable mixed construction materials, with a main structural color on floors and walls and a contrasting accent color on pillars and details. Compose the scene symmetrically around the central platform, with clear readable routes between elevations.\n\n### Render order\nRender `isometric` first and treat it as authoritative; the tiered combat composition and material read lead, while the top-down plan can be projected from the finished arena.\n\n### Scale, theme, and pipeline cost\nScale band: medium, driven by one large central combat space plus perimeter side platforms. Theme: sturdy game-ready fighting arena, mixed industrial-stone materials, strong primary-color structure with contrasting accents. Pipeline modifier: `tiered`, because the raised edge platforms create real non-overhanging elevation that must be captured.",
   "spec": {
     "genre": "Action",
     "secondary": [],
     "shape": "arena-tiered",
-    "preset": "Platform Fighter",
+    "preset": "Fighting",
     "axes": {},
     "options": [
       {
         "id": "cover-los",
-        "text": "Scattered low walls, compact cover obstacles, and several sturdy pillars or columns break combat sightlines and provide tactical repositioning points.",
+        "text": "Scattered low walls, sturdy cover blocks, and several contrasting columns break sightlines and create tactical repositioning points.",
         "visible": true,
         "count": -1
+      },
+      {
+        "id": "spawn-protected",
+        "text": "Screened, setback starting areas prevent fighters appearing directly in an opponent’s line of attack.",
+        "visible": true,
+        "count": 2
       }
     ],
-    "layout_placement": [],
+    "layout_placement": [
+      {
+        "id": "spawn-protected",
+        "text": "Balanced starting positions on opposing sides of the central platform, each shielded by a side platform, wall return, or pillar while retaining equally direct access to the center.",
+        "count": 2,
+        "where": "On opposing sides of the central platform, shielded by a side platform, wall return, or pillar, with equally direct access to the center."
+      }
+    ],
     "layout": {
-      "composition": "Elevated three-quarter view framing the whole arena clearly, with the broad central fighting platform legible in the middle and surrounding tiered side platforms visible along the edges.",
+      "composition": "Symmetrical composition around the dominant central platform, with raised edge platforms framing the sides and clear readable routes between elevations.",
       "zones": [
         {
           "name": "Central fighting platform",
-          "role": "Main shared melee clash space.",
-          "where": "Middle of the enclosed arena.",
-          "size": "Broad and flat; dominant combat space."
+          "role": "The dominant flat combat floor for direct melee-oriented clashes.",
+          "where": "Centre",
+          "size": "Largest zone"
         },
         {
           "name": "Raised side platforms",
-          "role": "Controlled vertical fighting engagements and perimeter circulation.",
-          "where": "Along the arena edges around the central floor.",
-          "size": "Multiple platforms at differing heights."
+          "role": "Elevated combat ledges providing tactical repositioning around the main fighting floor.",
+          "where": "Along the arena edges",
+          "size": "Perimeter side platforms"
+        },
+        {
+          "name": "Starting areas",
+          "role": "Screened, balanced fighter starting positions with direct access to the centre.",
+          "where": "Opposing sides of the central platform",
+          "size": ""
         }
       ],
       "paths": [
         {
           "from": "Central fighting platform",
           "to": "Raised side platforms",
-          "kind": "ramp"
+          "kind": "stair"
         },
         {
           "from": "Central fighting platform",
+          "to": "Raised side platforms",
+          "kind": "ramp"
+        },
+        {
+          "from": "Raised side platforms",
           "to": "Raised side platforms",
           "kind": "stair"
         },
         {
           "from": "Raised side platforms",
-          "to": "Adjacent raised sections",
+          "to": "Raised side platforms",
           "kind": "ramp"
-        },
-        {
-          "from": "Raised side platforms",
-          "to": "Adjacent raised sections",
-          "kind": "stair"
         }
       ],
-      "terrain": "Broad flat central floor with real stepped elevation at the side platforms; durable mixed-material construction with a consistent primary color and contrasting structural accents.",
+      "terrain": "Broad central level with raised side platforms at different heights; no overhanging floors.",
       "props": [
         {
-          "name": "Low walls and compact cover obstacles",
+          "name": "Low walls",
           "count": -1,
-          "where": "Scattered across the central floor without blocking principal circulation routes."
+          "where": "Across the central and side areas without obstructing primary fighting routes."
         },
         {
-          "name": "Sturdy pillars or columns",
+          "name": "Cover obstacles",
           "count": -1,
-          "where": "Distributed between the central floor and the side approaches."
+          "where": "Across the central and side areas without obstructing primary fighting routes."
         },
         {
-          "name": "Contrasting accent-colored pillars, trims, and structural details",
+          "name": "Contrasting pillars and columns",
           "count": -1,
-          "where": "Throughout the arena structure."
+          "where": "Distributed across the central and side areas."
         }
       ],
-      "boundary": "Tall, sturdy perimeter walls enclose the full arena footprint.",
+      "boundary": "A continuous sturdy boundary wall encloses the entire perimeter and keeps combat inside the arena.",
       "scale_band": "medium",
-      "theme": "Sturdy game-ready mixed-material combat arena with bold primary-color structure and contrasting accents."
+      "theme": "Sturdy game-ready fighting arena, mixed industrial-stone materials, strong primary-color structure with contrasting accents."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "The visual hierarchy, materials, and readable central fighting space lead while the simple connected ramps and stairs can be projected into a plan afterward.",
+      "why": "The tiered combat composition and material read lead.",
       "set_piece": false
     },
     "route": [
+      "P0",
       "tiered"
     ],
     "notes": [],
@@ -95,9 +115,9 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "010a8a15fa34",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
-  "reused_uprez": false,
+  "reused_uprez": true,
   "order": "std",
   "first": "isometric",
   "mapper_notes": []

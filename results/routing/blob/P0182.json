@@ -19,133 +19,150 @@
     }
   ],
   "scene_prompt": "Crea un mapa 3D de Escape Room de terror ambientado en el interior cerrado de un hospital abandonado. Diseña un ala hospitalaria de una sola planta con cinco cuartos conectados por pasillos amplios y suficientes espacios para explorar, sin exteriores ni pisos adicionales. Distribuye tres llaves como objetos recogibles dentro de distintas habitaciones y coloca una puerta final de salida al extremo del ala, cerrando el recorrido.",
-  "blob": "### 1. Género\nEl género dominante es Puzzle, específicamente un Escape Room de terror: el progreso depende de encontrar llaves y abrir una salida, no de combate ni persecución.\n\n### 2. Forma y preset\nUsa la forma `puzzle-rooms`, un conjunto sellado de salas interiores conectadas por circulación hospitalaria. El preset correspondiente es Escape Room; coincide con la secuencia de exploración, objetos clave y una salida bloqueada dentro de un edificio cerrado.\n\n### 3. Requisitos de configuración\n`gate-solve` es geometría visible: una gran puerta final cerrada remata el extremo del ala y constituye el bloqueo físico de salida. `collectible-nodes` es invisible para la imagen como lógica de recogida, pero se colocan tres llaves visibles como utilería en habitaciones distintas. `gate-progression` es geometría visible: la puerta final permanece como barrera hasta completar la búsqueda. No se añaden otros elementos no solicitados.\n\n### 4. Componentes de layout\nConstruye un ala hospitalaria abandonada interior, cerrada y de una sola planta, de escala media: cinco cuartos explorables enlazados por pasillos amplios. Sitúa un vestíbulo o tramo inicial en un extremo del ala; desde allí, un pasillo principal longitudinal distribuye las cinco habitaciones, con puertas abiertas o parcialmente abiertas y pequeños recodos que eviten una lectura completamente recta. Cada cuarto debe tener proporciones suficientes para buscar con comodidad: una habitación de pacientes, una consulta, un almacén, una sala de tratamiento y una oficina o sala de personal, todas deterioradas y diferenciables por su mobiliario médico abandonado. Coloca exactamente tres llaves en tres habitaciones separadas, sobre superficies legibles como una camilla, un escritorio o un carro médico. La puerta final de salida queda al extremo opuesto del pasillo principal, visible como meta lejana pero inaccesible durante la exploración. El límite es una envolvente hospitalaria hermética: muros, techo, puertas y ventanas cegadas, sin exterior ni plantas superiores. Compón la vista con el corredor como espina dorsal y la salida como punto de fuga.\n\n### 5. Orden de render\nRenderiza primero `topdown`, que es autoritativo, porque la conectividad interior entre las cinco salas, los pasillos y la puerta final debe ser legible y no dejar rutas accidentalmente aisladas.\n\n### 6. Escala, tema y coste de pipeline\nEscala media, impulsada por un ala de cinco cuartos con pasillos amplios y espacio de exploración, sin extenderse a un hospital multinivel. Tema: horror hospitalario abandonado, clínico deteriorado, iluminación tenue y atmósfera opresiva. El modificador es P0: es un único interior de una planta, sin superficies superpuestas, transición exterior-interior ni topología que requiera generación válida por construcción.",
+  "blob": "### 1. Genre\nDominant genre: Puzzle, specifically an escape-room game driven by collecting keys to unlock the exit.\n\n### 2. Shape and preset\nUse `rooms-sequence`, a sealed, single-floor abandoned hospital ward wing whose five rooms are explored through connecting corridors toward one final exit. This follows the Escape Room preset: retain its chamber sequence and key-item premise, while omitting unrequested buttons, clue walls, and chained intermediate gates.\n\n### 3. Config requirements\nUse `gate-solve` for a visibly locked final exit door at the far end of the ward; it is the only route out and visually communicates that all three keys are required. No exterior, additional floors, NPCs, water, or other environmental features are requested.\n\n### 4. Layout requirements\nUse `collectible-nodes` for exactly three key pickup markers, with one key placed in each of three distinct rooms away from the entrance and final door. Site them on readable furniture, counters, or bedside tables within those rooms so the keys are discoverable through exploration rather than hidden in corridor traffic.\n\n### 5. Layout components\nBuild one enclosed hospital wing of medium scale, entirely indoors and on one level. Place an entry-side corridor junction, five abandoned patient or treatment rooms distributed along broad connecting corridors, and enough clear floor area in each room to explore. Arrange the room network as a readable progressing ward: the entrance begins at one end, corridors connect all five rooms, and the locked final exit door closes the opposite end of the wing. Put the three keys in three separate rooms, leaving the other two rooms as atmospheric exploration spaces. Use worn hospital flooring, stained walls, dim fixtures, abandoned beds, gurneys, cabinets, and scattered medical clutter. The boundary is continuous interior walls, ceiling, and locked exterior-facing exit door; there are no outdoor views or additional stories. Compose the frame as a clear plan of the long ward, with corridors visibly linking every room and the exit legible at the far end.\n\n### 6. Render order\nUse `topdown` first and treat it as authoritative, because every room, corridor connection, key room, and the sole exit must form a valid explorable interior before the isometric horror dressing is applied.\n\n### 7. Scale, theme, and pipeline cost\nScale band: medium, driven by a five-room ward wing with broad corridors and exploration space rather than a tiny compact puzzle box. Theme: dim abandoned-hospital horror, decayed clinical surfaces and unsettling medical clutter. Pipeline modifier: `P0`; this is one enclosed, single-level surface with no overhangs, exterior transition, separate maps, or volumetric play.",
   "spec": {
     "genre": "Puzzle",
     "secondary": [],
-    "shape": "puzzle-rooms",
+    "shape": "rooms-sequence",
     "preset": "Escape Room",
     "axes": {},
     "options": [
       {
         "id": "gate-solve",
-        "text": "Una gran puerta final cerrada remata el extremo del ala y constituye el bloqueo físico de salida.",
+        "text": "A visibly locked final exit door at the far end of the ward, the only route out, communicating that all three keys are required.",
         "visible": true,
         "count": 1
       },
       {
         "id": "collectible-nodes",
-        "text": "La lógica de recogida queda fuera de la imagen; tres llaves visibles se colocan como utilería en habitaciones distintas.",
+        "text": "Exactly three key pickup markers, one in each of three distinct rooms away from the entrance and final door.",
         "visible": false,
         "count": 3
-      },
+      }
+    ],
+    "layout_placement": [
       {
-        "id": "gate-progression",
-        "text": "La puerta final permanece como barrera hasta completar la búsqueda de las llaves.",
-        "visible": true,
-        "count": 1
+        "id": "collectible-nodes",
+        "text": "Exactly three key pickup markers, one in each of three distinct rooms away from the entrance and final door.",
+        "count": 3,
+        "where": "Place one key on readable furniture, counters, or bedside tables within each of three distinct rooms, away from the entrance and final door, rather than in corridor traffic."
       }
     ],
     "layout": {
-      "composition": "El corredor principal funciona como espina dorsal longitudinal y la puerta final de salida queda como punto de fuga lejano en el extremo opuesto; el vestíbulo inicial ocupa un extremo y las habitaciones se distribuyen a ambos lados del pasillo.",
+      "composition": "A clear plan of the long ward, with the entry-side corridor junction at one end, broad corridors visibly linking every room through the middle, and the locked exit legible at the far end.",
       "zones": [
         {
-          "name": "Vestíbulo o tramo inicial",
-          "role": "Punto de inicio de la exploración del ala hospitalaria.",
-          "where": "Un extremo del ala",
+          "name": "Entry-side corridor junction",
+          "role": "Entrance into the hospital ward and beginning of the progressing route.",
+          "where": "One end of the wing.",
           "size": ""
         },
         {
-          "name": "Habitación de pacientes",
-          "role": "Cuarto explorable para buscar objetos clave.",
-          "where": "Junto al pasillo principal",
-          "size": "Suficiente para buscar con comodidad"
+          "name": "Room 1",
+          "role": "Abandoned patient or treatment room for exploration.",
+          "where": "Along the connecting corridors near the entrance side.",
+          "size": ""
         },
         {
-          "name": "Consulta",
-          "role": "Cuarto explorable para buscar objetos clave.",
-          "where": "Junto al pasillo principal",
-          "size": "Suficiente para buscar con comodidad"
+          "name": "Room 2",
+          "role": "Abandoned patient or treatment room for exploration.",
+          "where": "Along the connecting corridors.",
+          "size": ""
         },
         {
-          "name": "Almacén",
-          "role": "Cuarto explorable para buscar objetos clave.",
-          "where": "Junto al pasillo principal",
-          "size": "Suficiente para buscar con comodidad"
+          "name": "Room 3",
+          "role": "Abandoned patient or treatment room containing one key pickup.",
+          "where": "Along the connecting corridors away from the entrance and final door.",
+          "size": ""
         },
         {
-          "name": "Sala de tratamiento",
-          "role": "Cuarto explorable para buscar objetos clave.",
-          "where": "Junto al pasillo principal",
-          "size": "Suficiente para buscar con comodidad"
+          "name": "Room 4",
+          "role": "Abandoned patient or treatment room containing one key pickup.",
+          "where": "Along the connecting corridors away from the entrance and final door.",
+          "size": ""
         },
         {
-          "name": "Oficina o sala de personal",
-          "role": "Cuarto explorable para buscar objetos clave.",
-          "where": "Junto al pasillo principal",
-          "size": "Suficiente para buscar con comodidad"
+          "name": "Room 5",
+          "role": "Abandoned patient or treatment room containing one key pickup.",
+          "where": "Along the connecting corridors away from the entrance and final door.",
+          "size": ""
         },
         {
-          "name": "Puerta final de salida",
-          "role": "Meta bloqueada e inaccesible durante la exploración.",
-          "where": "Extremo opuesto del pasillo principal",
+          "name": "Final exit",
+          "role": "The locked final exit door; the sole route out after collecting all three keys.",
+          "where": "Opposite end of the wing from the entrance.",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Vestíbulo o tramo inicial",
-          "to": "Habitación de pacientes",
+          "from": "Entry-side corridor junction",
+          "to": "Room 1",
           "kind": "corridor"
         },
         {
-          "from": "Vestíbulo o tramo inicial",
-          "to": "Consulta",
+          "from": "Room 1",
+          "to": "Room 2",
           "kind": "corridor"
         },
         {
-          "from": "Vestíbulo o tramo inicial",
-          "to": "Almacén",
+          "from": "Room 2",
+          "to": "Room 3",
           "kind": "corridor"
         },
         {
-          "from": "Vestíbulo o tramo inicial",
-          "to": "Sala de tratamiento",
+          "from": "Room 3",
+          "to": "Room 4",
           "kind": "corridor"
         },
         {
-          "from": "Vestíbulo o tramo inicial",
-          "to": "Oficina o sala de personal",
+          "from": "Room 4",
+          "to": "Room 5",
           "kind": "corridor"
         },
         {
-          "from": "Vestíbulo o tramo inicial",
-          "to": "Puerta final de salida",
+          "from": "Room 5",
+          "to": "Final exit",
           "kind": "corridor"
         }
       ],
-      "terrain": "Interior hospitalario abandonado, clínico deteriorado, de una sola planta.",
+      "terrain": "Worn hospital flooring and clear interior floor space throughout the broad corridors and rooms.",
       "props": [
         {
-          "name": "Llaves",
-          "count": 3,
-          "where": "En tres habitaciones separadas, sobre una camilla, un escritorio o un carro médico"
+          "name": "Dim fixtures",
+          "count": -1,
+          "where": "Throughout the hospital wing."
         },
         {
-          "name": "Mobiliario médico abandonado",
+          "name": "Abandoned beds",
           "count": -1,
-          "where": "En las cinco habitaciones diferenciables"
+          "where": "In the patient or treatment rooms."
+        },
+        {
+          "name": "Gurneys",
+          "count": -1,
+          "where": "In the hospital wing."
+        },
+        {
+          "name": "Cabinets",
+          "count": -1,
+          "where": "In the patient or treatment rooms."
+        },
+        {
+          "name": "Scattered medical clutter",
+          "count": -1,
+          "where": "Throughout the hospital wing."
         }
       ],
-      "boundary": "Envolvente hospitalaria hermética de muros, techo, puertas y ventanas cegadas; sin exterior ni plantas superiores.",
+      "boundary": "Continuous interior walls and ceiling enclose the wing; a locked exterior-facing exit door closes the far end. There are no outdoor views or additional stories.",
       "scale_band": "medium",
-      "theme": "Horror hospitalario abandonado, iluminación tenue y atmósfera opresiva."
+      "theme": "Dim abandoned-hospital horror, decayed clinical surfaces and unsettling medical clutter."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "la conectividad interior entre las cinco salas, los pasillos y la puerta final debe ser legible y no dejar rutas accidentalmente aisladas.",
+      "why": "Every room, corridor connection, key room, and sole exit must form a valid explorable interior before horror dressing is applied.",
       "set_piece": false
     },
     "route": [
@@ -157,12 +174,12 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
   "mapper_notes": [
-    "blob asked for topdown first; the route ['P0', 'P3'] gives isometric"
+    "blob asked for topdown first; the route ['P0'] gives isometric"
   ]
 }

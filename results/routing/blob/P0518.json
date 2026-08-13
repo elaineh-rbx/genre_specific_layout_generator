@@ -19,7 +19,7 @@
     }
   ],
   "scene_prompt": "Create a small, colorful cartoon-style 3D obby tower with 5 stacked levels forming a vertical climbing course.",
-  "blob": "### Genre\nThe dominant genre is Obby & Platformer: this is a simple climbable tower with a discrete movement challenge. There is no secondary genre.\n\n### Shape and preset\nUse `course-tower`, a compact five-level vertical ascent where each level is a successive segment of the climbing route. Match the Tower Obby preset: the requested tower form remains recognisable, while its specific obstacle types are not prescribed.\n\n### Config requirements\nUse visible `path-track`: a clearly ordered chain of climbable platforms rises through all five levels. Use visible `obstacle-jump` for the simple gaps and stepped platforms that make each level a climbing challenge. Do not add timed, moving, lethal, collectible, shop, or reward features that were not requested.\n\n### Layout components\nBuild one small freestanding tower, vertically stacked into exactly 5 levels. The ground-level entry is a broad, safe start platform; levels two through five are compact colorful cartoon obstacle sections arranged around the tower core, each with a short sequence of suspended platforms, ledges, and upward steps leading to the next floor. Keep the route visually legible from below and avoid unrelated side rooms. Use bright saturated cartoon materials and chunky, rounded or blocky construction. The tower boundary is its outer walls and open-sided platform edges; the surrounding ground is minimal and only supports the base. Frame the full tower in a three-quarter isometric view, with the ascent visibly progressing from bottom to top.\n\n### Render order\nUse `topdown`: the platform chain must remain a valid continuous climbing route through all five stacked levels before the isometric view dresses it.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the requested 5 levels. Theme is colorful cartoon obby tower. Use `P6` because the critical jump path must be valid by construction, and `P2` because the five stacked floors overhang and occlude one another in a single top-down capture.",
+  "blob": "### Genre\nThe dominant genre is Obby & Platformer: this is a simple climb-at-your-own-pace tower course.\n\n### Shape and preset\nUse `course-tower`, matching the Tower Obby preset. It is a compact vertical ascent of five stacked course levels; retain the preset’s vertical tower identity but omit its unrequested timed obstacles, climbing props, and reward area.\n\n### Config requirements\nUse `path-track` as a clearly readable, sequential chain of jump platforms rising through all five levels. Use `obstacle-jump` for simple colorful cartoon jump challenges between safe platforms. No other image configuration is requested.\n\n### Layout requirements\nPlace `checkpoint-respawn` as four safe enclosed landing pads: one at the completion of each of the first four levels, immediately before the next upward section. This lets a fall return the player to their most recently completed level rather than the tower base.\n\n### Layout components\nBuild one small vertical tower composed of exactly five stacked levels. The ground level is the entry and first jumping section; each successive level is directly above it and advances the climb through an ordered chain of broad, brightly colored platforms, short gaps, and stepped upward jumps. Keep every critical jump within physics-legal platform spacing. Each level should have a visually distinct cartoon color treatment while remaining structurally part of one tower. Use open sides around the platform stack so falling is legible, with a simple tower frame or perimeter supports defining the boundary. Compose the isometric view to show the full five-level ascent and the visible route from base to top.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because the continuous jump chain must remain physically connected and clearable before the tower is dressed in isometric cartoon detail.\n\n### Scale, theme, and pipeline cost\nScale band: small, driven by the stated five levels and simple course scope. Theme: colorful, playful cartoon obby tower. Pipeline modifiers: `P6`, because the vertical platform route must be valid by construction; `P2`, because the five stacked levels overhang one another in plan view.",
   "spec": {
     "genre": "Obby & Platformer",
     "secondary": [],
@@ -29,90 +29,109 @@
     "options": [
       {
         "id": "path-track",
-        "text": "A clearly ordered chain of climbable platforms rises through all five levels.",
+        "text": "A clearly readable, sequential chain of jump platforms rising through all five levels.",
         "visible": true,
-        "count": 5
+        "count": -1
       },
       {
         "id": "obstacle-jump",
-        "text": "Simple gaps and stepped platforms make each level a climbing challenge.",
+        "text": "Simple colorful cartoon jump challenges between safe platforms.",
         "visible": true,
-        "count": 5
+        "count": -1
+      },
+      {
+        "id": "checkpoint-respawn",
+        "text": "Four safe enclosed landing pads, returning a fallen player to their most recently completed level rather than the tower base.",
+        "visible": true,
+        "count": 4
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "checkpoint-respawn",
+        "text": "Four safe enclosed landing pads.",
+        "count": 4,
+        "where": "At the completion of each of the first four levels, immediately before the next upward section."
       }
     ],
     "layout": {
-      "composition": "Full freestanding tower framed in a three-quarter isometric view, with the ascent visibly progressing from the broad ground-level entry at the bottom to the fifth level at the top.",
+      "composition": "Isometric view showing the full five-level ascent, with the visible route from the base to the top through the open-sided platform stack.",
       "zones": [
         {
-          "name": "Ground-level entry",
-          "role": "Broad, safe start platform for the climbing route.",
-          "where": "base of the tower",
-          "size": "broad"
+          "name": "Ground level",
+          "role": "Entry and first jumping section.",
+          "where": "Base of the tower.",
+          "size": ""
         },
         {
-          "name": "Level 2 obstacle section",
-          "role": "Compact climbing sequence of suspended platforms, ledges, and upward steps.",
-          "where": "above the ground-level entry around the tower core",
-          "size": "compact"
+          "name": "Level 2",
+          "role": "Second section of the ordered climbing route.",
+          "where": "Directly above the ground level.",
+          "size": ""
         },
         {
-          "name": "Level 3 obstacle section",
-          "role": "Compact climbing sequence of suspended platforms, ledges, and upward steps.",
-          "where": "middle-lower tower around the tower core",
-          "size": "compact"
+          "name": "Level 3",
+          "role": "Third section of the ordered climbing route.",
+          "where": "Directly above Level 2.",
+          "size": ""
         },
         {
-          "name": "Level 4 obstacle section",
-          "role": "Compact climbing sequence of suspended platforms, ledges, and upward steps.",
-          "where": "middle-upper tower around the tower core",
-          "size": "compact"
+          "name": "Level 4",
+          "role": "Fourth section of the ordered climbing route.",
+          "where": "Directly above Level 3.",
+          "size": ""
         },
         {
-          "name": "Level 5 obstacle section",
-          "role": "Final compact climbing sequence leading upward through the tower.",
-          "where": "top of the tower around the tower core",
-          "size": "compact"
+          "name": "Level 5",
+          "role": "Final section at the top of the climb.",
+          "where": "Directly above Level 4.",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Ground-level entry",
-          "to": "Level 2 obstacle section",
+          "from": "Ground level",
+          "to": "Level 2",
           "kind": "track"
         },
         {
-          "from": "Level 2 obstacle section",
-          "to": "Level 3 obstacle section",
+          "from": "Level 2",
+          "to": "Level 3",
           "kind": "track"
         },
         {
-          "from": "Level 3 obstacle section",
-          "to": "Level 4 obstacle section",
+          "from": "Level 3",
+          "to": "Level 4",
           "kind": "track"
         },
         {
-          "from": "Level 4 obstacle section",
-          "to": "Level 5 obstacle section",
+          "from": "Level 4",
+          "to": "Level 5",
           "kind": "track"
         }
       ],
-      "terrain": "Minimal surrounding ground supporting the tower base.",
+      "terrain": "",
       "props": [
         {
-          "name": "suspended platforms, ledges, and upward steps",
+          "name": "Broad, brightly colored platforms",
           "count": -1,
-          "where": "levels two through five around the tower core"
+          "where": "Across the ordered route through all five stacked levels."
+        },
+        {
+          "name": "Simple tower frame or perimeter supports",
+          "count": -1,
+          "where": "Around the open-sided platform stack."
         }
       ],
-      "boundary": "The tower's outer walls and open-sided platform edges enclose the play space.",
+      "boundary": "Open sides around the platform stack, with a simple tower frame or perimeter supports defining the boundary.",
       "scale_band": "small",
-      "theme": "bright saturated colorful cartoon obby tower with chunky rounded or blocky construction"
+      "theme": "colorful, playful cartoon obby tower"
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the platform chain must remain a valid continuous climbing route through all five stacked levels.",
+      "why": "the continuous jump chain must remain physically connected and clearable before the tower is dressed in isometric cartoon detail",
       "set_piece": false
     },
     "route": [
@@ -125,7 +144,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

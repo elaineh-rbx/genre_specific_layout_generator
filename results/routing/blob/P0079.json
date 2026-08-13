@@ -19,118 +19,150 @@
     }
   ],
   "scene_prompt": "Create a compact indoor hide-and-seek map set entirely inside a small house for up to 8 players. Lay out clear connected rooms with distinct hiding spots throughout the house interior.",
-  "blob": "### Genre\nThe dominant genre is Party & Casual, specifically a hide-and-seek childhood game for up to 8 players. Its compact shared interior is built for social rounds rather than an objective course.\n\n### Shape and preset\nUse `space-continuous`: the whole small-house interior is one connected play space, not a lobby plus separate stage. Match the Childhood Game preset in its continuous, cluttered hide-and-seek character, but retain only the hiding geometry actually requested; do not add an unrequested lobby or maze.\n\n### Config requirements\nUse `cover-los` as visible geometry: dense, room-appropriate clutter creates hiding spots and breaks long sightlines, including furniture, wardrobes, curtains, storage boxes, and kitchen cabinetry. No invisible layout options are required.\n\n### Layout components\nBuild a compact single-floor house interior sized for up to 8 players. Place a central living room as the main junction, with clear doorways leading to a kitchen/dining room on one side, a short hall to two small bedrooms, and a bathroom or utility room at the hall end. Each room must have a distinct hiding character: sofa and curtain cover in the living room; table, chairs, and cabinets in the kitchen; beds, wardrobes, and toy or storage clutter in bedrooms; and a shower curtain, laundry basket, or cabinet in the bathroom. Keep every room visibly reachable through ordinary door openings and avoid confusing dead-end micro-corridors. Use interior walls, ceilings, doors, windows, and the exterior house shell as the complete boundary; there is no outdoor yard. Compose the isometric view with the roof removed or cut away so the connected room plan and major hiding furniture remain legible at once.\n\n### Render order\nUse `isometric`: the compact domestic look and readable room dressing lead, while the top-down plan is projected from the authoritative isometric image.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the small house and maximum of 8 players. Theme: classic cozy suburban hide-and-seek house, warmly lit and densely furnished. Use `P0`; this is one indoor, single-surface space with no overlapping floors, exterior-to-interior crossing, separate maps, or topology that must be procedurally validated.",
+  "blob": "### Genre\nThe dominant genre is Party & Casual: the stated hide-and-seek round activity owns the layout.\n\n### Shape and preset\nUse `space-bounded`, the Continuous Play Space shape, as a compact house interior in which all players share the same active map. Match the Childhood Game preset in intent, but retain only its hiding-space requirement; the prompt does not call for a lobby or a maze.\n\n### Config requirements\nApply `cover-los` as dense, legible hiding clutter within rooms: closets, furniture, boxes, and similar large props that break sightlines without obscuring room connections. Do not add unrequested exterior space, water, NPCs, or a separate staging area.\n\n### Layout requirements\nPlace `spawn-protected` as up to eight evenly distributed round-start markers, located around the house perimeter and separated by room walls or furnishing so no participant begins with an unfair immediate sightline. The scene needs no other placed gameplay elements.\n\n### Layout components\nBuild one compact, fully enclosed small-house interior for up to 8 players. Use a central hall as the circulation core, with several clearly connected domestic rooms branching from it, such as a living room, kitchen, bedroom, bathroom, and a small storage or utility room. Keep every room visibly distinct and connected by normal interior doorways; avoid dead-end maze corridors. Distribute hiding props throughout: wardrobes and beds in bedrooms, sofas and cabinets in the living room, counters and a pantry-like recess in the kitchen, and shelving or stacked boxes in storage. Maintain readable pathways around furnishings so seekers can search every room. The boundary is the exterior house walls, with no outdoor yard or exterior transition. Frame the full floor plan in a clean three-quarter isometric view that shows room divisions, doors, and hiding cover.\n\n### Render order\nUse `isometric`: the compact domestic atmosphere and readable hiding props lead, while the top-down plan can be projected from the authoritative isometric render.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the single compact house and eight-player maximum. Theme: classic cozy domestic hide-and-seek house, clear rooms and oversized readable hiding furniture. Use `P0`; this is one enclosed but single-surface interior with no stacked floors, exterior transition, or topology that must be procedurally validated.",
   "spec": {
     "genre": "Party & Casual",
     "secondary": [],
-    "shape": "space-continuous",
+    "shape": "space-bounded",
     "preset": "Childhood Game",
     "axes": {},
     "options": [
       {
         "id": "cover-los",
-        "text": "Dense, room-appropriate clutter creates hiding spots and breaks long sightlines, including furniture, wardrobes, curtains, storage boxes, and kitchen cabinetry.",
+        "text": "Dense, legible hiding clutter within rooms: closets, furniture, boxes, and similar large props that break sightlines without obscuring room connections.",
         "visible": true,
         "count": -1
+      },
+      {
+        "id": "spawn-protected",
+        "text": "Up to eight evenly distributed round-start markers around the house perimeter, separated by room walls or furnishing so no participant begins with an unfair immediate sightline.",
+        "visible": false,
+        "count": 8
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "spawn-protected",
+        "text": "Up to eight evenly distributed round-start markers.",
+        "count": 8,
+        "where": "Around the house perimeter, separated by room walls or furnishing so no participant begins with an unfair immediate sightline."
       }
     ],
     "layout": {
-      "composition": "Cutaway isometric view with the roof removed or cut away, keeping the central living-room junction, connected room plan, and major hiding furniture legible at once.",
+      "composition": "Clean three-quarter isometric view framing the full floor plan, with room divisions, normal interior doors, and hiding cover clearly visible.",
       "zones": [
         {
-          "name": "Central living room",
-          "role": "Main junction with sofa and curtain cover for hiding.",
+          "name": "Central hall",
+          "role": "Circulation core connecting the domestic rooms.",
           "where": "centre",
-          "size": "-1"
+          "size": ""
         },
         {
-          "name": "Kitchen/dining room",
-          "role": "Side room with a table, chairs, and cabinets for hiding.",
-          "where": "on one side of the living room",
-          "size": "-1"
+          "name": "Living room",
+          "role": "Searchable domestic room with sofas and cabinets as hiding cover.",
+          "where": "branching from the central hall",
+          "size": ""
         },
         {
-          "name": "Bedrooms",
-          "role": "Two small bedrooms with beds, wardrobes, and toy or storage clutter.",
-          "where": "off the short hall",
-          "size": "two small bedrooms"
+          "name": "Kitchen",
+          "role": "Searchable domestic room with counters and a pantry-like recess as hiding cover.",
+          "where": "branching from the central hall",
+          "size": ""
         },
         {
-          "name": "Bathroom or utility room",
-          "role": "Hall-end hiding room with a shower curtain, laundry basket, or cabinet.",
-          "where": "at the end of the short hall",
-          "size": "-1"
+          "name": "Bedroom",
+          "role": "Searchable domestic room with wardrobes and beds as hiding cover.",
+          "where": "branching from the central hall",
+          "size": ""
+        },
+        {
+          "name": "Bathroom",
+          "role": "Distinct connected domestic room.",
+          "where": "branching from the central hall",
+          "size": ""
+        },
+        {
+          "name": "Storage or utility room",
+          "role": "Searchable room with shelving and stacked boxes as hiding cover.",
+          "where": "branching from the central hall",
+          "size": "small"
         }
       ],
       "paths": [
         {
-          "from": "Central living room",
-          "to": "Kitchen/dining room",
+          "from": "Central hall",
+          "to": "Living room",
           "kind": "corridor"
         },
         {
-          "from": "Central living room",
-          "to": "Bedrooms",
+          "from": "Central hall",
+          "to": "Kitchen",
           "kind": "corridor"
         },
         {
-          "from": "Bedrooms",
-          "to": "Bathroom or utility room",
+          "from": "Central hall",
+          "to": "Bedroom",
+          "kind": "corridor"
+        },
+        {
+          "from": "Central hall",
+          "to": "Bathroom",
+          "kind": "corridor"
+        },
+        {
+          "from": "Central hall",
+          "to": "Storage or utility room",
           "kind": "corridor"
         }
       ],
-      "terrain": "Single-floor indoor domestic flooring within a compact house interior.",
+      "terrain": "Fully enclosed domestic interior floor with readable pathways around furnishings.",
       "props": [
         {
-          "name": "Furniture, wardrobes, curtains, storage boxes, and kitchen cabinetry",
+          "name": "Wardrobes and beds",
           "count": -1,
-          "where": "throughout the house interior"
+          "where": "bedroom"
         },
         {
-          "name": "Sofa and curtain cover",
+          "name": "Sofas and cabinets",
           "count": -1,
-          "where": "central living room"
+          "where": "living room"
         },
         {
-          "name": "Table, chairs, and cabinets",
+          "name": "Counters and a pantry-like recess",
           "count": -1,
-          "where": "kitchen/dining room"
+          "where": "kitchen"
         },
         {
-          "name": "Beds, wardrobes, and toy or storage clutter",
+          "name": "Shelving and stacked boxes",
           "count": -1,
-          "where": "bedrooms"
-        },
-        {
-          "name": "Shower curtain, laundry basket, or cabinet",
-          "count": -1,
-          "where": "bathroom or utility room"
+          "where": "storage or utility room"
         }
       ],
-      "boundary": "Interior walls, ceilings, doors, windows, and the exterior house shell completely enclose the play space; there is no outdoor yard.",
+      "boundary": "Exterior house walls; no outdoor yard or exterior transition.",
       "scale_band": "small",
-      "theme": "Classic cozy suburban hide-and-seek house, warmly lit and densely furnished."
+      "theme": "Classic cozy domestic hide-and-seek house, with clear rooms and oversized readable hiding furniture."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "the compact domestic look and readable room dressing lead.",
+      "why": "the compact domestic atmosphere and readable hiding props lead, while the top-down plan can be projected from the authoritative isometric render.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
     "notes": [
-      "Capacity: up to 8 players.",
-      "No invisible layout options are required."
+      "The Childhood Game preset is matched only in intent; only its hiding-space requirement is retained, with no lobby or maze.",
+      "No unrequested exterior space, water, NPCs, separate staging area, or other placed gameplay elements were included.",
+      "visible on 'spawn-protected' set from goes_to=layout"
     ],
     "scene_prompt": "Create a compact indoor hide-and-seek map set entirely inside a small house for up to 8 players. Lay out clear connected rooms with distinct hiding spots throughout the house interior."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

@@ -8,28 +8,28 @@
   },
   "questions": [
     {
-      "field": "shape",
-      "ask": "Should the race take place on a closed circuit with laps, or on a point-to-point track from a start line to a finish line?"
+      "field": "theme",
+      "ask": "What visual setting should the race track use (for example, modern city streets, a desert circuit, forest roads, or a futuristic neon course)?"
     },
     {
-      "field": "theme",
-      "ask": "What visual setting should the racetrack use, such as a city, desert, forest, snowy mountains, or a futuristic circuit?"
+      "field": "shape",
+      "ask": "Should the race take place on a closed loop circuit or a point-to-point track with a finish line?"
     }
   ],
   "answers": [
     {
-      "field": "shape",
-      "ask": "Should the race take place on a closed circuit with laps, or on a point-to-point track from a start line to a finish line?",
-      "answer": "Use a closed circuit with laps, which is the standard simple format for racing against computer opponents."
+      "field": "theme",
+      "ask": "What visual setting should the race track use (for example, modern city streets, a desert circuit, forest roads, or a futuristic neon course)?",
+      "answer": "Use a simple modern city street setting, with clean roads, barriers, and a straightforward arcade racing look."
     },
     {
-      "field": "theme",
-      "ask": "What visual setting should the racetrack use, such as a city, desert, forest, snowy mountains, or a futuristic circuit?",
-      "answer": "Use a simple modern city racetrack setting."
+      "field": "shape",
+      "ask": "Should the race take place on a closed loop circuit or a point-to-point track with a finish line?",
+      "answer": "Use a small closed-loop circuit so the player and computer opponent can race multiple laps."
     }
   ],
-  "scene_prompt": "Create a 3D racing game map with a closed circuit track for lap races against computer opponents, set in a simple modern city environment. The road forms a continuous loop with a clear start/finish line, bordered by urban streetscape and city buildings.",
-  "blob": "### Genre\nThe dominant genre is Racing: a lap-based vehicle race against computer opponents. No secondary genre is needed.\n\n### Shape and preset\nUse `route-circuit`, matching the Circuit Racing preset. This is a single, clearly legible closed road loop through a compact modern-city streetscape, with its start and finish at the same location.\n\n### Config requirements\nUse visible `barrier-guardrail` along the circuit edges to keep vehicles on the route, and visible `lane-corridor` through painted road edges and lane markings that clarify the racing line. Use `spawn-grid` as visible, evenly spaced grid slots across the road at the start straight; its exact start placements are also invisible layout markers. Use `trigger-lap` as invisible detection regions at the start/finish and on unambiguous intermediate parts of the loop. Use `trigger-finish` as an invisible finish detection zone paired with the visible start/finish stripe. These choices retain the recognizable Circuit Racing preset.\n\n### Layout components\nBuild one medium-sized city circuit occupying a compact block district. The main zone is a broad asphalt road loop, with a long start/finish straight in the foreground, a wide first corner, city-block straights, and several clearly separated turns that return cleanly to the start straight without crossing or overlapping. Place the visible start/finish stripe and the multi-lane starting grid across the foreground straight. Put lap and finish detection markers in the layout only, not the render. Line both sides of the route with continuous guardrails, curb strips, painted lane boundaries, and occasional direction signage. Outside the barriers, arrange sidewalks, streetlights, sparse trees, parking edges, and modern low- to mid-rise city buildings as non-driveable streetscape dressing. Keep buildings set back so the whole loop remains readable from above. The boundary is the guardrailed circuit and surrounding city-block perimeter. Compose the view to show the full continuous loop, especially the start straight and its return connection.\n\n### Render order\nUse `authored_plan`: this is a racing circuit, so the closed, continuous route must be valid by construction before the city dressing is applied.\n\n### Scale, theme, and pipeline cost\nUse a medium scale, driven by one complete vehicle circuit and its surrounding city blocks. Theme: clean, simple modern urban racetrack with asphalt, concrete, glass-fronted buildings, and restrained street furniture. Pipeline modifier: `P6`, because the circuit loop, grid, and route continuity must be valid by construction.",
+  "scene_prompt": "Create a 3D racing map set on a small closed-loop circuit through simple modern city streets. Clean paved roads form the loop, bordered by racing barriers, with a straightforward arcade racing composition.",
+  "blob": "### Genre\nThe dominant genre is Racing: a lap-based race against one computer opponent.\n\n### Shape and preset\nUse `route-circuit`, a compact, closed, drivable loop through modern city streets. Match the Circuit Racing preset; its circuit form, starting grid, lap sensing, and physical barriers remain appropriate.\n\n### Config requirements\nUse `barrier-guardrail` as clean continuous racing barriers along both road edges and around corners. Use `startpoint-line` as a visible start/finish stripe on one straight, `spawn-grid` as two side-by-side launch slots, and `trigger-finish` as the visible finish-line gate/stripe at that same location.\n\n### Layout requirements\nPlace `startpoint-line` and one two-slot `spawn-grid` on the widest straight, with the player and computer opponent aligned side by side facing the first corner. Place one `trigger-finish` across that same start/finish line. Place `trigger-lap` at the start/finish line, spanning the full road width so each completed loop is registered. No recovery checkpoints are required for this short, barrier-contained circuit.\n\n### Layout components\nBuild one small city-block circuit: a clean paved asphalt road forming a legible closed loop with broad turns and a clear start/finish straight. Low racing barriers continuously define the drivable course and prevent shortcutting through the city blocks. Surround the loop with simple modern urban frontage, sidewalks, sparse street furniture, and restrained building facades as non-enterable scenery. Keep the boundary visually enclosed by the street barriers and city-edge facades. Compose the circuit as a readable compact loop in plan view, with the start straight prominent in the foreground.\n\n### Render order\nUse `authored_plan`: the closed circuit must be valid by construction, continuously connected, and unambiguously followable before the city dressing is applied.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by a compact multi-lap circuit for two racers. Theme is clean modern city streets with a straightforward arcade-racing register. Use `P6` because the circuit route must be generated as a valid closed track.",
   "spec": {
     "genre": "Racing",
     "secondary": [],
@@ -39,132 +39,137 @@
     "options": [
       {
         "id": "barrier-guardrail",
-        "text": "Continuous guardrails line both sides of the circuit edges to keep vehicles on the route.",
+        "text": "Clean continuous racing barriers along both road edges and around corners.",
         "visible": true,
         "count": -1
       },
       {
-        "id": "lane-corridor",
-        "text": "Painted road edges and lane markings clarify the racing line through the circuit.",
+        "id": "startpoint-line",
+        "text": "A visible start/finish stripe on one straight.",
         "visible": true,
         "count": -1
       },
       {
         "id": "spawn-grid",
-        "text": "Evenly spaced multi-lane grid slots span the road at the foreground start straight; their exact start placements are layout markers.",
+        "text": "Two side-by-side launch slots for the player and computer opponent.",
         "visible": true,
-        "count": -1
-      },
-      {
-        "id": "trigger-lap",
-        "text": "Detection regions sit at the start/finish and on unambiguous intermediate parts of the loop.",
-        "visible": false,
-        "count": -1
+        "count": 1
       },
       {
         "id": "trigger-finish",
-        "text": "An invisible finish detection zone is paired with the visible start/finish stripe.",
+        "text": "A visible finish-line gate or stripe at the start/finish location.",
+        "visible": true,
+        "count": 1
+      },
+      {
+        "id": "trigger-lap",
+        "text": "A lap-sensing region spanning the full road width at the start/finish line so each completed loop is registered.",
         "visible": false,
-        "count": -1
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "startpoint-line",
+        "text": "The visible start/finish stripe.",
+        "count": -1,
+        "where": "On the widest straight, with racers facing the first corner."
+      },
+      {
+        "id": "spawn-grid",
+        "text": "Two side-by-side launch slots for the player and computer opponent.",
+        "count": 1,
+        "where": "On the widest start/finish straight, aligned side by side facing the first corner."
+      },
+      {
+        "id": "trigger-finish",
+        "text": "The finish-line gate or stripe.",
+        "count": 1,
+        "where": "Across the same start/finish line on the widest straight."
+      },
+      {
+        "id": "trigger-lap",
+        "text": "The lap-sensing region that registers each completed loop.",
+        "count": 1,
+        "where": "At the start/finish line, spanning the full road width."
       }
     ],
     "layout": {
-      "composition": "Full continuous circuit loop viewed from above, with the long start/finish straight and its return connection especially clear; the foreground holds the start straight, stripe, and starting grid, while city-block streetscape dressing surrounds the loop.",
+      "composition": "A readable compact loop in plan view, with the start straight prominent in the foreground.",
       "zones": [
         {
-          "name": "City circuit road loop",
-          "role": "Lap-based vehicle racing route against computer opponents, with a start/finish location shared by the closed loop.",
-          "where": "Occupying a compact block district, with the start/finish straight in the foreground.",
-          "size": "medium"
+          "name": "Start/finish straight",
+          "role": "Launch and finish location for the two racers, with lap registration.",
+          "where": "Foreground on the widest straight.",
+          "size": ""
         },
         {
-          "name": "Surrounding city-block streetscape",
-          "role": "Non-driveable urban dressing outside the circuit barriers.",
-          "where": "Outside the route around the compact circuit loop.",
-          "size": ""
+          "name": "City-block circuit",
+          "role": "A compact closed drivable loop with broad turns for multi-lap racing.",
+          "where": "Around the foreground start straight.",
+          "size": "small"
         }
       ],
       "paths": [
         {
           "from": "Start/finish straight",
-          "to": "Start/finish straight",
+          "to": "City-block circuit",
           "kind": "track"
         }
       ],
-      "terrain": "Broad asphalt road loop with curb strips, painted lane boundaries, sidewalks, parking edges, concrete, and urban city-block ground.",
+      "terrain": "Clean paved asphalt roads forming a legible closed loop through modern city streets.",
       "props": [
         {
-          "name": "continuous guardrails",
+          "name": "Simple modern urban frontage",
           "count": -1,
-          "where": "Both sides of the route"
+          "where": "Surrounding the loop."
         },
         {
-          "name": "curb strips",
+          "name": "Sidewalks",
           "count": -1,
-          "where": "Along the circuit edges"
+          "where": "Along the modern city street frontage."
         },
         {
-          "name": "painted lane boundaries",
+          "name": "Sparse street furniture",
           "count": -1,
-          "where": "Through the road loop"
+          "where": "Around the circuit."
         },
         {
-          "name": "direction signage",
+          "name": "Restrained non-enterable building facades",
           "count": -1,
-          "where": "Occasionally along the route"
-        },
-        {
-          "name": "sidewalks",
-          "count": -1,
-          "where": "Outside the barriers"
-        },
-        {
-          "name": "streetlights",
-          "count": -1,
-          "where": "Outside the barriers"
-        },
-        {
-          "name": "sparse trees",
-          "count": -1,
-          "where": "Outside the barriers"
-        },
-        {
-          "name": "parking edges",
-          "count": -1,
-          "where": "Outside the barriers"
-        },
-        {
-          "name": "modern low- to mid-rise city buildings",
-          "count": -1,
-          "where": "Set back outside the barriers around the loop"
+          "where": "Surrounding the circuit as scenery and at the city edge."
         }
       ],
-      "boundary": "The guardrailed circuit and surrounding city-block perimeter.",
-      "scale_band": "medium",
-      "theme": "Clean, simple modern urban racetrack with asphalt, concrete, glass-fronted buildings, and restrained street furniture."
+      "boundary": "Visually enclosed by continuous street barriers and city-edge facades.",
+      "scale_band": "small",
+      "theme": "Clean modern city streets, straightforward arcade racing."
     },
     "render": {
       "first": "authored_plan",
       "then": "topdown",
       "authoritative": "authored_plan",
-      "why": "The closed continuous circuit route must be valid by construction before city dressing is applied.",
+      "why": "the closed circuit must be continuously connected and unambiguously followable before city dressing is applied.",
       "set_piece": false
     },
     "route": [
       "P6"
     ],
-    "notes": [],
-    "scene_prompt": "Create a 3D racing game map with a closed circuit track for lap races against computer opponents, set in a simple modern city environment. The road forms a continuous loop with a clear start/finish line, bordered by urban streetscape and city buildings."
+    "notes": [
+      "No recovery checkpoints are required for this short, barrier-contained circuit.",
+      "visible on 'spawn-grid' set from goes_to=both",
+      "visible on 'trigger-finish' set from goes_to=both"
+    ],
+    "scene_prompt": "Create a 3D racing map set on a small closed-loop circuit through simple modern city streets. Clean paved roads form the loop, bordered by racing barriers, with a straightforward arcade racing composition."
   },
-  "iso_prompt": "Create a 3D racing game map with a closed circuit track for lap races against computer opponents, set in a simple modern city environment. The road forms a continuous loop with a clear start/finish line, bordered by urban streetscape and city buildings.\n\nLAYOUT FEATURES for this Racing map. Build these as the actual structure of the space rather than as set dressing, keep them visually distinct from one another, and keep the whole layout legible in one view.\n\nSHAPE OF THE SPACE - Lap Circuit: A closed loop run a set number of times.\n\nINCLUDE:\n- Physical Guardrail: Walls and rails that actually block the racer, as opposed to painted lane markings that only indicate.\n- Lateral Corridor: Dividers explicitly marking the allowed corridor of movement — lane ropes in a pool, chalk lines on a track, painted edges on a circuit.\n- Multi-Lane Starting Grid: A wide launch front of evenly spaced slots - blocks in a pool, lanes on a track, grid spots on a circuit - laid out side by side.\n- Terminal Finish: The built finish at the exact end of the course - a touch-pad wall, a finish line across the track, or a finish gate.\n\nThe reference image is a true overhead top-down view of this scene and it is the GROUND TRUTH for the layout. Rebuild the SAME scene as a polished isometric three-quarter aerial view. Keep the racing loop EXACTLY as it is - the same closed circuit, the same corners in the same places, the same straights, the same road width and the same start and finish positions. Do NOT add, remove, move, narrow or close any part of the track. The loop stays the only road in the image: no extra road, spur, shortcut or second track. Keep the SAME materials, surface colours, textures, props and lighting as the reference. CAMERA: this is the one thing that changes. The reference looks straight down; tilt to a true three-quarter aerial view of about 45 degrees and rotate it, so the scene reads as a 3D diorama rather than a flat plan. Side faces MUST now be visible - tree trunks under their canopies, the walls of buildings, the face of any tunnel mouth, the thickness of the ground - and the far side of the scene sits higher in the frame than the near side. Keep the angle steep enough that the whole loop stays visible end to end rather than hidden behind scenery. No characters, labels, UI, borders or watermark.",
-  "td_prompt": "Build a clean straight-overhead TOP-DOWN (nadir) low-poly Roblox 3D scene, richly themed from this description:\nCreate a 3D racing game map with a closed circuit track for lap races against computer opponents, set in a simple modern city environment. The road forms a continuous loop with a clear start/finish line, bordered by urban streetscape and city buildings.\n\nLAYOUT FEATURES for this Racing map. Build these as the actual structure of the space rather than as set dressing, keep them visually distinct from one another, and keep the whole layout legible in one view.\n\nSHAPE OF THE SPACE - Lap Circuit: A closed loop run a set number of times.\n\nINCLUDE:\n- Physical Guardrail: Walls and rails that actually block the racer, as opposed to painted lane markings that only indicate.\n- Lateral Corridor: Dividers explicitly marking the allowed corridor of movement — lane ropes in a pool, chalk lines on a track, painted edges on a circuit.\n- Multi-Lane Starting Grid: A wide launch front of evenly spaced slots - blocks in a pool, lanes on a track, grid spots on a circuit - laid out side by side.\n- Terminal Finish: The built finish at the exact end of the course - a touch-pad wall, a finish line across the track, or a finish gate.\nThe reference image is the AUTHORED TRACK PLAN for this scene, seen from directly overhead, and it is the GROUND TRUTH for the layout. The light band is the drivable road surface and it forms ONE continuous closed loop; the dark field around it is everything that is not road; the GREEN line across the band marks WHERE the start/finish sits - build a real start/finish there in this scene's own style, a painted or checkered line across the full road width, rather than copying a coloured stripe. Reproduce that route EXACTLY - the same loop, the same corners in the same places and the same directions, the same straights, the same road width throughout, and the markings where they are. The loop must stay continuous with no break, no dead end and no fork. That loop is the ONLY drivable surface anywhere in the image, and it has no stub, spur or dead end of surface attached to it, however short. Everything the description asks for is realised ON it: a boost pad, arrow chevron, speed strip, jump ramp, chicane or obstacle is painted or built flush INTO the loop's own surface where the loop runs, never as a separate slab, apron, platform or approach laid on the ground beside it. A tunnel exists only where the loop itself passes through a hill and comes out the other side - do NOT build a tunnel mouth, cave entrance, gate or arch that the track does not run through. A bridge is a stretch of the loop crossing water. Do NOT lay any extra road, spur, shortcut, slip road, pit lane, service track, parallel carriageway or second track, and leave the ground on either side of the loop free of drivable surface entirely. Do NOT copy the grey and dark colours of the reference - it encodes the route only. Take the materials, surface colours, textures, lighting and mood entirely from the scene description above, and dress the surroundings with its named props and scenery. Barriers, kerbs, stands, trees, buildings and scenery sit BESIDE the road and never on it: the full width of the track stays clear and drivable end to end. CAMERA: straight down at 90 degrees, a true nadir view, with ZERO perspective and ZERO isometric tilt. Show ONLY the tops of things - the road surface, tree canopies, roofs - and NO side faces of any kind: no building walls, no tree trunks, no cliff or rock faces, no visible tunnel arch, no vertical surface anywhere. Objects at the edges of the image are seen from directly above exactly as those in the middle are, with no lean or splay. No labels, UI, borders or watermark.",
-  "addendum": "LAYOUT FEATURES for this Racing map. Build these as the actual structure of the space rather than as set dressing, keep them visually distinct from one another, and keep the whole layout legible in one view.\n\nSHAPE OF THE SPACE - Lap Circuit: A closed loop run a set number of times.\n\nINCLUDE:\n- Physical Guardrail: Walls and rails that actually block the racer, as opposed to painted lane markings that only indicate.\n- Lateral Corridor: Dividers explicitly marking the allowed corridor of movement — lane ropes in a pool, chalk lines on a track, painted edges on a circuit.\n- Multi-Lane Starting Grid: A wide launch front of evenly spaced slots - blocks in a pool, lanes on a track, grid spots on a circuit - laid out side by side.\n- Terminal Finish: The built finish at the exact end of the course - a touch-pad wall, a finish line across the track, or a finish gate.",
+  "iso_prompt": "Create a 3D racing map set on a small closed-loop circuit through simple modern city streets. Clean paved roads form the loop, bordered by racing barriers, with a straightforward arcade racing composition.\n\nLAYOUT FEATURES for this Racing map. Build these as the actual structure of the space rather than as set dressing, keep them visually distinct from one another, and keep the whole layout legible in one view.\n\nSHAPE OF THE SPACE - Lap Circuit: A closed loop run a set number of times.\n\nINCLUDE:\n- Physical Guardrail: Walls and rails that actually block the racer, as opposed to painted lane markings that only indicate.\n- Start Line: The marked start position - a painted line or a lane slot on the track.\n- Multi-Lane Starting Grid: A wide launch front of evenly spaced slots - blocks in a pool, lanes on a track, grid spots on a circuit - laid out side by side.\n- Terminal Finish: The built finish at the exact end of the course - a touch-pad wall, a finish line across the track, or a finish gate.\n\nThe reference image is a true overhead top-down view of this scene and it is the GROUND TRUTH for the layout. Rebuild the SAME scene as a polished isometric three-quarter aerial view. Keep the racing loop EXACTLY as it is - the same closed circuit, the same corners in the same places, the same straights, the same road width and the same start and finish positions. Do NOT add, remove, move, narrow or close any part of the track. The loop stays the only road in the image: no extra road, spur, shortcut or second track. Keep the SAME materials, surface colours, textures, props and lighting as the reference. CAMERA: this is the one thing that changes. The reference looks straight down; tilt to a true three-quarter aerial view of about 45 degrees and rotate it, so the scene reads as a 3D diorama rather than a flat plan. Side faces MUST now be visible - tree trunks under their canopies, the walls of buildings, the face of any tunnel mouth, the thickness of the ground - and the far side of the scene sits higher in the frame than the near side. Keep the angle steep enough that the whole loop stays visible end to end rather than hidden behind scenery. No characters, labels, UI, borders or watermark.",
+  "td_prompt": "Build a clean straight-overhead TOP-DOWN (nadir) low-poly Roblox 3D scene, richly themed from this description:\nCreate a 3D racing map set on a small closed-loop circuit through simple modern city streets. Clean paved roads form the loop, bordered by racing barriers, with a straightforward arcade racing composition.\n\nLAYOUT FEATURES for this Racing map. Build these as the actual structure of the space rather than as set dressing, keep them visually distinct from one another, and keep the whole layout legible in one view.\n\nSHAPE OF THE SPACE - Lap Circuit: A closed loop run a set number of times.\n\nINCLUDE:\n- Physical Guardrail: Walls and rails that actually block the racer, as opposed to painted lane markings that only indicate.\n- Start Line: The marked start position - a painted line or a lane slot on the track.\n- Multi-Lane Starting Grid: A wide launch front of evenly spaced slots - blocks in a pool, lanes on a track, grid spots on a circuit - laid out side by side.\n- Terminal Finish: The built finish at the exact end of the course - a touch-pad wall, a finish line across the track, or a finish gate.\nThe reference image is the AUTHORED TRACK PLAN for this scene, seen from directly overhead, and it is the GROUND TRUTH for the layout. The light band is the drivable road surface and it forms ONE continuous closed loop; the dark field around it is everything that is not road; the GREEN line across the band marks WHERE the start/finish sits - build a real start/finish there in this scene's own style, a painted or checkered line across the full road width, rather than copying a coloured stripe. Reproduce that route EXACTLY - the same loop, the same corners in the same places and the same directions, the same straights, the same road width throughout, and the markings where they are. The loop must stay continuous with no break, no dead end and no fork. That loop is the ONLY drivable surface anywhere in the image, and it has no stub, spur or dead end of surface attached to it, however short. Everything the description asks for is realised ON it: a boost pad, arrow chevron, speed strip, jump ramp, chicane or obstacle is painted or built flush INTO the loop's own surface where the loop runs, never as a separate slab, apron, platform or approach laid on the ground beside it. A tunnel exists only where the loop itself passes through a hill and comes out the other side - do NOT build a tunnel mouth, cave entrance, gate or arch that the track does not run through. A bridge is a stretch of the loop crossing water. Do NOT lay any extra road, spur, shortcut, slip road, pit lane, service track, parallel carriageway or second track, and leave the ground on either side of the loop free of drivable surface entirely. Do NOT copy the grey and dark colours of the reference - it encodes the route only. Take the materials, surface colours, textures, lighting and mood entirely from the scene description above, and dress the surroundings with its named props and scenery. Barriers, kerbs, stands, trees, buildings and scenery sit BESIDE the road and never on it: the full width of the track stays clear and drivable end to end. CAMERA: straight down at 90 degrees, a true nadir view, with ZERO perspective and ZERO isometric tilt. Show ONLY the tops of things - the road surface, tree canopies, roofs - and NO side faces of any kind: no building walls, no tree trunks, no cliff or rock faces, no visible tunnel arch, no vertical surface anywhere. Objects at the edges of the image are seen from directly above exactly as those in the middle are, with no lean or splay. No labels, UI, borders or watermark.",
+  "addendum": "LAYOUT FEATURES for this Racing map. Build these as the actual structure of the space rather than as set dressing, keep them visually distinct from one another, and keep the whole layout legible in one view.\n\nSHAPE OF THE SPACE - Lap Circuit: A closed loop run a set number of times.\n\nINCLUDE:\n- Physical Guardrail: Walls and rails that actually block the racer, as opposed to painted lane markings that only indicate.\n- Start Line: The marked start position - a painted line or a lane slot on the track.\n- Multi-Lane Starting Grid: A wide launch front of evenly spaced slots - blocks in a pool, lanes on a track, grid spots on a circuit - laid out side by side.\n- Terminal Finish: The built finish at the exact end of the course - a touch-pad wall, a finish line across the track, or a finish gate.",
   "order": "layout",
+  "mapper_notes": [],
   "stage": "done",
   "status": "ok",
   "error": "",
   "pipeline_version": "",
   "served_by": "",
-  "seconds": 28.2,
-  "mapper_notes": []
+  "seconds": 37.4
 }

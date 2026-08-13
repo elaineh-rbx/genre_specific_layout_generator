@@ -9,111 +9,319 @@
     }
   ],
   "scene_prompt": "Create a complete Roblox-style low-poly Aura Tower: a sealed vertical tower of 20 stacked floors. Each floor is a compact 40x40-stud enclosed stone chamber with four walls, a ceiling, and one exit door leading upward. Every chamber has a dark mystical aura theme with purple lighting, glowing particles, dark fog, and a giant floating hand-shaped aura centered in the room. Arrange physical hazards across the stone floor, including lava sections, spike traps, and removable platforms; make the hand larger on every fifth floor. Keep the tower fully enclosed, with sparse checkpoint areas at selected floors.",
-  "blob": "### Género\nEl género dominante es Action: combate físico de avance por salas contra una amenaza central. No se añade género secundario; la torre no es un obby, ya que el progreso lo domina el combate en cámaras cerradas.\n\n### Forma y preset\nUsa la forma `arena-chain`: una cadena vertical de 20 cámaras de combate, con una salida ascendente entre cada una. El preset de referencia es Hack & Slash; conserva su sucesión de arenas y el cierre de combate, pero omite emisores y cobertura destruible porque no están descritos.\n\n### Requisitos de configuración\n`arena-lockin` es geometría visible: cada cámara tiene una única puerta de salida ascendente, cerrada como parte del recinto hasta que se libera la sala. `hazard-kill` es geometría visible: secciones de lava y trampas de pinchos repartidas por el suelo de piedra. Las plataformas removibles también son geometría visible, como plataformas suspendidas o secciones discontinuas del suelo. Las áreas de checkpoint son invisibles: coloca pocos marcadores de reaparición sobre pequeñas plataformas seguras seleccionadas, sin representarlos en la imagen.\n\n### Componentes de layout\nConstruye una torre completamente cerrada de 20 pisos apilados. Cada piso es una cámara compacta de aproximadamente 40x40 studs, con suelo de piedra, cuatro paredes completas y techo; no debe haber vistas abiertas al exterior. En el centro de cada sala deja una zona libre para una mano gigante flotante de aura, visible como la pieza focal. Las manos de los pisos 5, 10, 15 y 20 son perceptiblemente más grandes que las demás. Distribuye lava, pinchos y plataformas removibles alrededor del perímetro y en líneas que obliguen a circular, sin bloquear completamente el área central ni la ruta hacia la puerta. Sitúa la puerta de cada piso en una pared y alinéala con el acceso vertical al siguiente nivel; el piso 20 termina en una cámara final sin otra planta encima. La composición debe mostrar la torre como corte isométrico o volumen vertical, dejando legibles varias cámaras apiladas, sus techos y sus puertas.\n\n### Orden de render\nUsa `topdown`: primero un plano superior que mantenga la alineación válida de las 20 puertas, accesos verticales y zonas transitables; después se viste la torre en isométrico. Una conexión vertical mal alineada haría imposible progresar entre cámaras.\n\n### Escala, tema y coste de pipeline\nEscala grande por los 20 pisos, aunque cada sala es compacta de 40x40 studs. Tema: Roblox low-poly, piedra oscura mística, luz púrpura, partículas brillantes y niebla oscura. Aplica `P2` porque los 20 suelos y techos se apilan unos sobre otros y se ocluyen en una sola captura superior.",
+  "blob": "### 1. Genre\nThe dominant genre is Action, with Obby & Platformer as a secondary genre for the chamber-floor hazards and sparse recovery points. Combat owns the sequential progression: each room is cleared by defeating its central aura.\n\n### 2. Shape and preset\nUse `rooms-sequence`, taken from Action’s Hack & Slash preset family but adapted into a vertical chain of sealed combat chambers rather than horizontal corridors. Preset: none; the shape remains recognisable, but its usual wave-emitter and breakable-cover bundle does not describe this tower.\n\n### 3. Config requirements\nUse `arena-lockin`: each chamber’s single upward exit door is visibly shut during its encounter. Use `hazard-kill` for lethal lava strips and spike-trap fields across the stone floor. From the secondary genre, use `obstacle-timing` for platforms that visibly retract on a three-second cycle. Use `checkpoint-respawn` for rare, clearly marked safe stone pads.\n\n### 4. Layout requirements\nPlace `checkpoint-respawn` pads at the starts of floors 6, 11, and 16, each enclosed by clear safe floor free of lava, spikes, and retracting platforms; a failed player returns to the beginning of their current five-floor segment. The aura hands are drawn central set pieces rather than emitters, so no `spawner-npc` placement is needed. The tower needs no other placed pickups, volumes, or markers.\n\n### 5. Layout components\nBuild 20 enclosed, vertically stacked stone chambers, each approximately 40x40 studs. Every floor has exactly four solid walls, a ceiling, and one locked-looking exit door connected by a compact enclosed stairwell to the chamber above. Center one floating giant hand-shaped aura in every room; make the hands on floors 5, 10, 15, and 20 visibly larger than the preceding groups. Distribute lava channels, spike clusters, and retracting stone platforms around each floor while retaining a navigable combat ring around the central hand and a route to the exit door. Keep all rooms dark and mystical: purple light sources, glowing particles, dark fog, and low-poly stone floors and walls. The boundary is the tower shell itself. Compose the view as a cutaway or stacked vertical tower that clearly reads as twenty floors.\n\n### 6. Render order\nUse `topdown` first and treat it as authoritative, because the ordered door-and-stair connections and safe routes through each hazard-filled chamber must remain playable before the isometric dressing is produced.\n\n### 7. Scale, theme, and pipeline cost\nScale band: large, driven by 20 complete 40x40-stud chambers stacked into one tall tower. Theme: dark low-poly Roblox mystical aura dungeon, purple neon glow, black fog, stone, lava, and occult particles. Pipeline modifier: `P2`, because the twenty walkable floors directly overhang one another and cannot be fully represented by a single top-down surface.",
   "spec": {
     "genre": "Action",
-    "secondary": [],
-    "shape": "arena-chain",
-    "preset": "Hack & Slash",
+    "secondary": [
+      "Obby & Platformer"
+    ],
+    "shape": "rooms-sequence",
+    "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "arena-lockin",
-        "text": "Cada cámara tiene una única puerta de salida ascendente, cerrada como parte del recinto hasta que se libera la sala.",
+        "text": "Each chamber’s single upward exit door is visibly shut during its encounter.",
         "visible": true,
         "count": 20
       },
       {
         "id": "hazard-kill",
-        "text": "Secciones de lava y trampas de pinchos repartidas por el suelo de piedra.",
+        "text": "Lethal lava strips and spike-trap fields across the stone floor.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "Corte isométrico o volumen vertical de una torre cerrada, con varias cámaras apiladas legibles, sus techos y sus puertas visibles; cada sala centra la mano de aura flotante y mantiene los peligros alrededor del perímetro.",
+      "composition": "A cutaway or stacked vertical tower view clearly reading as twenty floors, with the enclosed chambers visibly stacked from bottom to top.",
       "zones": [
         {
-          "name": "Torre Aura sellada",
-          "role": "Cadena vertical de 20 cámaras de combate cerradas, conectadas por salidas ascendentes.",
-          "where": "volumen vertical completo",
-          "size": "20 pisos apilados; cada cámara mide aproximadamente 40x40 studs"
+          "name": "Floor 1",
+          "role": "Sealed combat chamber with a central floating giant hand-shaped aura, hazards, a navigable combat ring, and a route to the locked upward exit.",
+          "where": "Bottom of the stacked tower.",
+          "size": "Approximately 40x40 studs."
         },
         {
-          "name": "Cámara final",
-          "role": "Última cámara de combate, sin otra planta encima.",
-          "where": "piso 20, cima de la torre",
-          "size": "aproximadamente 40x40 studs"
+          "name": "Floor 2",
+          "role": "Sealed combat chamber with a central floating giant hand-shaped aura, hazards, a navigable combat ring, and a route to the locked upward exit.",
+          "where": "Above floor 1.",
+          "size": "Approximately 40x40 studs."
         },
         {
-          "name": "Área central de cada cámara",
-          "role": "Espacio libre alrededor de la pieza focal, una mano gigante flotante de aura.",
-          "where": "centro de cada uno de los 20 pisos",
-          "size": ""
+          "name": "Floor 3",
+          "role": "Sealed combat chamber with a central floating giant hand-shaped aura, hazards, a navigable combat ring, and a route to the locked upward exit.",
+          "where": "Above floor 2.",
+          "size": "Approximately 40x40 studs."
         },
         {
-          "name": "Plataformas seguras seleccionadas",
-          "role": "Áreas de checkpoint con marcadores de reaparición invisibles.",
-          "where": "pisos seleccionados de la torre",
-          "size": "pocas"
+          "name": "Floor 4",
+          "role": "Sealed combat chamber with a central floating giant hand-shaped aura, hazards, a navigable combat ring, and a route to the locked upward exit.",
+          "where": "Above floor 3.",
+          "size": "Approximately 40x40 studs."
+        },
+        {
+          "name": "Floor 5",
+          "role": "Sealed combat chamber with a visibly larger central floating giant hand-shaped aura, hazards, a navigable combat ring, and a route to the locked upward exit.",
+          "where": "Above floor 4.",
+          "size": "Approximately 40x40 studs."
+        },
+        {
+          "name": "Floor 6",
+          "role": "Sealed combat chamber with a central floating giant hand-shaped aura, hazards, a navigable combat ring, a safe checkpoint pad at the floor start, and a route to the locked upward exit.",
+          "where": "Above floor 5.",
+          "size": "Approximately 40x40 studs."
+        },
+        {
+          "name": "Floor 7",
+          "role": "Sealed combat chamber with a central floating giant hand-shaped aura, hazards, a navigable combat ring, and a route to the locked upward exit.",
+          "where": "Above floor 6.",
+          "size": "Approximately 40x40 studs."
+        },
+        {
+          "name": "Floor 8",
+          "role": "Sealed combat chamber with a central floating giant hand-shaped aura, hazards, a navigable combat ring, and a route to the locked upward exit.",
+          "where": "Above floor 7.",
+          "size": "Approximately 40x40 studs."
+        },
+        {
+          "name": "Floor 9",
+          "role": "Sealed combat chamber with a central floating giant hand-shaped aura, hazards, a navigable combat ring, and a route to the locked upward exit.",
+          "where": "Above floor 8.",
+          "size": "Approximately 40x40 studs."
+        },
+        {
+          "name": "Floor 10",
+          "role": "Sealed combat chamber with a visibly larger central floating giant hand-shaped aura, hazards, a navigable combat ring, and a route to the locked upward exit.",
+          "where": "Above floor 9.",
+          "size": "Approximately 40x40 studs."
+        },
+        {
+          "name": "Floor 11",
+          "role": "Sealed combat chamber with a central floating giant hand-shaped aura, hazards, a navigable combat ring, a safe checkpoint pad at the floor start, and a route to the locked upward exit.",
+          "where": "Above floor 10.",
+          "size": "Approximately 40x40 studs."
+        },
+        {
+          "name": "Floor 12",
+          "role": "Sealed combat chamber with a central floating giant hand-shaped aura, hazards, a navigable combat ring, and a route to the locked upward exit.",
+          "where": "Above floor 11.",
+          "size": "Approximately 40x40 studs."
+        },
+        {
+          "name": "Floor 13",
+          "role": "Sealed combat chamber with a central floating giant hand-shaped aura, hazards, a navigable combat ring, and a route to the locked upward exit.",
+          "where": "Above floor 12.",
+          "size": "Approximately 40x40 studs."
+        },
+        {
+          "name": "Floor 14",
+          "role": "Sealed combat chamber with a central floating giant hand-shaped aura, hazards, a navigable combat ring, and a route to the locked upward exit.",
+          "where": "Above floor 13.",
+          "size": "Approximately 40x40 studs."
+        },
+        {
+          "name": "Floor 15",
+          "role": "Sealed combat chamber with a visibly larger central floating giant hand-shaped aura, hazards, a navigable combat ring, and a route to the locked upward exit.",
+          "where": "Above floor 14.",
+          "size": "Approximately 40x40 studs."
+        },
+        {
+          "name": "Floor 16",
+          "role": "Sealed combat chamber with a central floating giant hand-shaped aura, hazards, a navigable combat ring, a safe checkpoint pad at the floor start, and a route to the locked upward exit.",
+          "where": "Above floor 15.",
+          "size": "Approximately 40x40 studs."
+        },
+        {
+          "name": "Floor 17",
+          "role": "Sealed combat chamber with a central floating giant hand-shaped aura, hazards, a navigable combat ring, and a route to the locked upward exit.",
+          "where": "Above floor 16.",
+          "size": "Approximately 40x40 studs."
+        },
+        {
+          "name": "Floor 18",
+          "role": "Sealed combat chamber with a central floating giant hand-shaped aura, hazards, a navigable combat ring, and a route to the locked upward exit.",
+          "where": "Above floor 17.",
+          "size": "Approximately 40x40 studs."
+        },
+        {
+          "name": "Floor 19",
+          "role": "Sealed combat chamber with a central floating giant hand-shaped aura, hazards, a navigable combat ring, and a route to the locked upward exit.",
+          "where": "Above floor 18.",
+          "size": "Approximately 40x40 studs."
+        },
+        {
+          "name": "Floor 20",
+          "role": "Sealed combat chamber with a visibly larger central floating giant hand-shaped aura, hazards, a navigable combat ring, and the topmost locked-looking exit door.",
+          "where": "Top of the stacked tower, above floor 19.",
+          "size": "Approximately 40x40 studs."
         }
       ],
       "paths": [
         {
-          "from": "cada cámara",
-          "to": "cámara del piso siguiente",
+          "from": "Floor 1",
+          "to": "Floor 2",
+          "kind": "stair"
+        },
+        {
+          "from": "Floor 2",
+          "to": "Floor 3",
+          "kind": "stair"
+        },
+        {
+          "from": "Floor 3",
+          "to": "Floor 4",
+          "kind": "stair"
+        },
+        {
+          "from": "Floor 4",
+          "to": "Floor 5",
+          "kind": "stair"
+        },
+        {
+          "from": "Floor 5",
+          "to": "Floor 6",
+          "kind": "stair"
+        },
+        {
+          "from": "Floor 6",
+          "to": "Floor 7",
+          "kind": "stair"
+        },
+        {
+          "from": "Floor 7",
+          "to": "Floor 8",
+          "kind": "stair"
+        },
+        {
+          "from": "Floor 8",
+          "to": "Floor 9",
+          "kind": "stair"
+        },
+        {
+          "from": "Floor 9",
+          "to": "Floor 10",
+          "kind": "stair"
+        },
+        {
+          "from": "Floor 10",
+          "to": "Floor 11",
+          "kind": "stair"
+        },
+        {
+          "from": "Floor 11",
+          "to": "Floor 12",
+          "kind": "stair"
+        },
+        {
+          "from": "Floor 12",
+          "to": "Floor 13",
+          "kind": "stair"
+        },
+        {
+          "from": "Floor 13",
+          "to": "Floor 14",
+          "kind": "stair"
+        },
+        {
+          "from": "Floor 14",
+          "to": "Floor 15",
+          "kind": "stair"
+        },
+        {
+          "from": "Floor 15",
+          "to": "Floor 16",
+          "kind": "stair"
+        },
+        {
+          "from": "Floor 16",
+          "to": "Floor 17",
+          "kind": "stair"
+        },
+        {
+          "from": "Floor 17",
+          "to": "Floor 18",
+          "kind": "stair"
+        },
+        {
+          "from": "Floor 18",
+          "to": "Floor 19",
+          "kind": "stair"
+        },
+        {
+          "from": "Floor 19",
+          "to": "Floor 20",
           "kind": "stair"
         }
       ],
-      "terrain": "Suelo de piedra oscura con secciones de lava, trampas de pinchos y plataformas removibles suspendidas o discontinuidades del suelo alrededor del perímetro y en líneas de circulación.",
+      "terrain": "Low-poly stone floors and walls with lava channels, spike clusters, retracting stone platforms, purple light sources, glowing particles, and dark fog.",
       "props": [
         {
-          "name": "manos gigantes flotantes de aura",
+          "name": "Floating giant hand-shaped auras",
           "count": 20,
-          "where": "centro de cada cámara"
+          "where": "Centered in every chamber."
         },
         {
-          "name": "manos de aura perceptiblemente más grandes",
+          "name": "Visibly larger floating giant hand-shaped auras",
           "count": 4,
-          "where": "pisos 5, 10, 15 y 20"
+          "where": "Centered on floors 5, 10, 15, and 20."
         },
         {
-          "name": "secciones de lava",
-          "count": -1,
-          "where": "perímetro y líneas de circulación de las cámaras"
+          "name": "Locked-looking upward exit doors",
+          "count": 20,
+          "where": "One in every chamber, connecting to the compact enclosed stairwell above."
         },
         {
-          "name": "trampas de pinchos",
+          "name": "Lava channels",
           "count": -1,
-          "where": "perímetro y líneas de circulación de las cámaras"
+          "where": "Distributed across every chamber floor while leaving a navigable combat ring and exit route."
         },
         {
-          "name": "plataformas removibles",
+          "name": "Spike clusters",
           "count": -1,
-          "where": "alrededor del perímetro y en líneas que obligan a circular"
+          "where": "Distributed across every chamber floor while leaving a navigable combat ring and exit route."
+        },
+        {
+          "name": "Retracting stone platforms",
+          "count": -1,
+          "where": "Distributed around each chamber floor."
+        },
+        {
+          "name": "Purple light sources",
+          "count": -1,
+          "where": "Throughout all chambers."
+        },
+        {
+          "name": "Glowing particles",
+          "count": -1,
+          "where": "Throughout all chambers."
         }
       ],
-      "boundary": "Torre completamente cerrada: cada piso tiene cuatro paredes completas y techo, sin vistas abiertas al exterior.",
+      "boundary": "The fully enclosed tower shell itself: every floor has exactly four solid walls and a ceiling.",
       "scale_band": "large",
-      "theme": "Roblox low-poly, piedra oscura mística, luz púrpura, partículas brillantes y niebla oscura"
+      "theme": "Dark low-poly Roblox mystical aura dungeon, purple neon glow, black fog, stone, lava, and occult particles."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "una conexión vertical mal alineada haría imposible progresar entre cámaras",
+      "why": "the ordered door-and-stair connections and safe routes through each hazard-filled chamber must remain playable before isometric dressing is produced.",
       "set_piece": false
     },
     "route": [
       "P2"
     ],
-    "notes": [],
+    "notes": [
+      "dropped option 'obstacle-timing': not in Action",
+      "dropped option 'checkpoint-respawn': not in Action",
+      "dropped placement 'checkpoint-respawn': not in Action"
+    ],
     "scene_prompt": "Create a complete Roblox-style low-poly Aura Tower: a sealed vertical tower of 20 stacked floors. Each floor is a compact 40x40-stud enclosed stone chamber with four walls, a ceiling, and one exit door leading upward. Every chamber has a dark mystical aura theme with purple lighting, glowing particles, dark fog, and a giant floating hand-shaped aura centered in the room. Arrange physical hazards across the stone floor, including lava sections, spike traps, and removable platforms; make the hand larger on every fifth floor. Keep the tower fully enclosed, with sparse checkpoint areas at selected floors."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

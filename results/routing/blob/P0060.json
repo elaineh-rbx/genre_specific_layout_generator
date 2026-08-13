@@ -19,65 +19,114 @@
     }
   ],
   "scene_prompt": "Create a small 3D stone colosseum arena sized for four fighters, with an open central combat floor enclosed by tiered stone seating and surrounding arena walls.",
-  "blob": "### Genre\nThe dominant genre is Action: the original request is for a four-fighter arena with player-held powers, not pickups or another objective mode.\n\n### Shape and preset\nUse `arena-tiered`, matching the Platform Fighter preset in its tiered arena enclosure, although the prompt specifically calls for a stone colosseum rather than floating platforms. The tiered seating is the meaningful elevation around a single open combat floor.\n\n### Config requirements\nUse `spectator-zone` as visible geometry: tiered stone seating wraps the fighting floor as a ringside gallery. Do not add `powerup-buffs`; the powers are available from the start and create no pickups or arena geometry.\n\n### Layout components\nBuild one small circular-to-oval stone colosseum sized for four simultaneous fighters. The central zone is a clear, flat, open combat floor occupying most of the arena, with no cover, props, or pickups. Around it, form a continuous band of stepped stone seating rising outward in several shallow tiers. A taller circular stone perimeter wall encloses the seating and defines the arena boundary, leaving the top open to the sky. Use worn pale-gray stone slabs on the floor, darker block stone for the stands and walls, and minimal architectural detailing such as evenly spaced arch recesses in the outer wall. Compose the arena centrally and symmetrically, with the open floor clearly legible at the center and the concentric seating and walls framing it.\n\n### Render order\nUse `isometric`: the compact colosseum is a simple, visually led arena whose topology does not require a generated plan.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the stated four-fighter capacity and compact single combat floor. Theme: simple open-air stone colosseum, restrained classical arena architecture. Use `P0`; the stepped seating is tiered relief without overhangs, and the arena remains one exterior surface.",
+  "blob": "### 1. Genre\nThe dominant genre is `Action`: the original request is a four-fighter arena combat game, while player abilities are mechanics and do not alter the layout.\n\n### 2. Shape and preset\nUse `arena-tiered`, matching the Sword Fighting preset’s terraced combat form, though no pickups are included because abilities are available from the start. This is a small stone colosseum with a level central fighting floor and stepped spectator structure around it.\n\n### 3. Config requirements\nUse `spectator-zone` as tiered stone seating ringing the combat floor, integrated with the enclosing colosseum walls. No other image options are required: do not add power-up pickups, hazards, cover, or extra chokepoints not requested.\n\n### 4. Layout requirements\nPlace `spawn-protected` for four fighters: four evenly spaced start markers at the cardinal edges of the central floor, each set into shallow screened entry recesses behind the initial combat line so opponents do not begin in direct attack range. No pickups, NPC emitters, or scoring volumes are required.\n\n### 5. Layout components\nBuild one compact circular or oval stone colosseum. The central zone is a broad, flat, unobstructed combat floor sized for four simultaneous fighters. Around it, a continuous low stone boundary wall separates the floor from raised concentric seating tiers. Four short radial entry recesses align to north, south, east, and west and contain the fighter starts, opening directly onto the floor without creating side routes. Terrain is level stone paving throughout; props are limited to weathered masonry, shallow steps, arches, and the tiered benches. The outer arena wall fully encloses the play space, with open sky above. Compose the arena symmetrically, with the floor dominant at frame center and seating visibly stepping upward around it.\n\n### 6. Render order\nUse `isometric` first and treat it as authoritative, because this is a simple symmetrical arena whose playability does not depend on generated route topology.\n\n### 7. Scale, theme, and pipeline cost\nScale band: small, driven by the stated four-fighter capacity. Theme: simple weathered stone colosseum, clean readable combat floor, ancient arena masonry. Pipeline modifiers: `tiered`, forced by the raised seating surrounding the single-level floor; no overhanging surfaces are needed.",
   "spec": {
     "genre": "Action",
     "secondary": [],
     "shape": "arena-tiered",
-    "preset": "Platform Fighter",
+    "preset": "Sword Fighting",
     "axes": {},
     "options": [
       {
         "id": "spectator-zone",
-        "text": "Tiered stone seating wraps the fighting floor as a ringside gallery.",
+        "text": "Tiered stone seating ringing the combat floor, integrated with the enclosing colosseum walls.",
         "visible": true,
         "count": -1
+      },
+      {
+        "id": "spawn-protected",
+        "text": "Four evenly spaced start markers at the cardinal edges of the central floor, each set into shallow screened entry recesses behind the initial combat line so opponents do not begin in direct attack range.",
+        "visible": true,
+        "count": 4
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "spawn-protected",
+        "text": "Four evenly spaced start markers at the cardinal edges of the central floor, each set into shallow screened entry recesses behind the initial combat line.",
+        "count": 4,
+        "where": "At the north, south, east, and west edges of the central combat floor, inside shallow screened radial entry recesses."
       }
     ],
     "layout": {
-      "composition": "The arena is composed centrally and symmetrically: the clear open combat floor is legible at the centre, with concentric stepped seating and the perimeter wall framing it.",
+      "composition": "Symmetrical arena composition with the broad central combat floor dominant at frame center and tiered seating visibly stepping upward around it.",
       "zones": [
         {
           "name": "Central combat floor",
-          "role": "Clear, flat, open fighting space for four simultaneous fighters.",
-          "where": "centre",
-          "size": "occupying most of the arena"
+          "role": "Broad, flat, unobstructed fighting space for four simultaneous fighters.",
+          "where": "Centre of the colosseum.",
+          "size": "Broad"
         },
         {
-          "name": "Ringside gallery",
-          "role": "Continuous band of stepped stone seating surrounding the combat floor.",
-          "where": "around the central floor",
-          "size": "several shallow tiers"
+          "name": "Tiered spectator seating",
+          "role": "Continuous raised concentric stone seating around the combat floor.",
+          "where": "Ringing the central floor.",
+          "size": ""
         },
         {
-          "name": "Perimeter wall",
-          "role": "Encloses the seating and defines the arena boundary while remaining open to the sky.",
-          "where": "outer edge of the arena",
-          "size": "taller than the seating"
+          "name": "Radial entry recesses",
+          "role": "Screened fighter start locations opening directly onto the combat floor.",
+          "where": "North, south, east, and west edges of the central floor.",
+          "size": "Four short recesses"
         }
       ],
-      "paths": [],
-      "terrain": "Worn pale-gray stone slabs cover the flat floor; darker block stone forms the stepped stands and walls.",
+      "paths": [
+        {
+          "from": "North radial entry recess",
+          "to": "Central combat floor",
+          "kind": "corridor"
+        },
+        {
+          "from": "South radial entry recess",
+          "to": "Central combat floor",
+          "kind": "corridor"
+        },
+        {
+          "from": "East radial entry recess",
+          "to": "Central combat floor",
+          "kind": "corridor"
+        },
+        {
+          "from": "West radial entry recess",
+          "to": "Central combat floor",
+          "kind": "corridor"
+        }
+      ],
+      "terrain": "Level stone paving throughout.",
       "props": [
         {
-          "name": "Evenly spaced arch recesses",
+          "name": "Weathered masonry",
           "count": -1,
-          "where": "outer perimeter wall"
+          "where": "Throughout the colosseum."
+        },
+        {
+          "name": "Shallow steps",
+          "count": -1,
+          "where": "Around the raised seating tiers."
+        },
+        {
+          "name": "Arches",
+          "count": -1,
+          "where": "In the colosseum structure."
+        },
+        {
+          "name": "Tiered benches",
+          "count": -1,
+          "where": "Concentricly around the central combat floor."
         }
       ],
-      "boundary": "A taller circular stone perimeter wall encloses the seating, with the top open to the sky.",
+      "boundary": "A continuous low stone boundary wall separates the floor from the raised seating tiers, and the outer arena wall fully encloses the play space with open sky above.",
       "scale_band": "small",
-      "theme": "Simple open-air stone colosseum, restrained classical arena architecture."
+      "theme": "Simple weathered stone colosseum, clean readable combat floor, ancient arena masonry."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "The compact colosseum is a simple, visually led arena whose topology does not require a generated plan.",
+      "why": "This simple symmetrical arena's playability does not depend on generated route topology.",
       "set_piece": false
     },
     "route": [
-      "P0",
       "tiered"
     ],
     "notes": [],
@@ -86,7 +135,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

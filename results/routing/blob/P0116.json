@@ -19,7 +19,7 @@
     }
   ],
   "scene_prompt": "Create one small PvP sniper arena with a modern military shooter look, inspired by a compact suburban test-town layout: two opposing houses at either end, a central street and open sightlines between them, with low cover and accessible interiors framing the battlefield. Exclude the 2D home screen from the 3D map layout.",
-  "blob": "### Genre\nThe dominant genre is Shooter: a PvP, snipers-only combat game organized around long sightlines and opposing firing positions. There is no secondary genre. The 2D home screen is UI and is excluded from the layout.\n\n### Shape and preset\nUse `lane-network`, matched from the Team Deathmatch preset. This is a compact two-ended suburban firing arena rather than a broad arena: the central street is the primary lane and the houses anchor opposing ends. Retain the preset’s lane logic but omit its unrequested choke point.\n\n### Config requirements\n`spawn-teambase` is visible geometry plus invisible spawn placement: two balanced, screened team start areas at opposite houses, protected from immediate direct sniper sightlines. `cover-los` is visible geometry: low barriers, parked vehicles, fences, and street objects break the otherwise long central views. `building-interior` is visible geometry: the two opposing houses have accessible rooms and windows overlooking the street. No other options are selected.\n\n### Layout components\nBuild one small, rectangular Nuketown-style suburban test-town arena. Place one two-storey opposing house at each short end, facing inward across a central straight street; each house occupies roughly a quarter of the map depth and has a front yard, accessible ground floor, upper firing windows, and rear-side spawn shelter. The street and its sidewalks form the broad central combat lane, with open end-to-end sniper sightlines interrupted by sparse low cover: parked cars, waist-high concrete barriers, short fences, and utility objects. Add narrow side-yard circulation routes along both map edges, connecting each house frontage to its rear while remaining partly screened from the main street. Use paved road, sidewalks, clipped lawns, driveways, and compact suburban house lots. Enclose the outer edges with perimeter walls, rear fences, and blocked suburban facades; do not add extra buildings. Frame the isometric composition symmetrically down the street, with both houses legible as opposing anchors and the cover pattern readable between them.\n\n### Render order\nUse `topdown`: valid opposing spawns, usable side routes, and controlled sniper sightlines are necessary for fair PvP play, so the plan must be established before the isometric dressing.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the single compact arena and two-house layout. Theme is modern military shooter, sunlit suburban test town, Call of Duty-like tactical realism. Pipeline modifier: `P3`, forced by the accessible house interiors linked to the outdoor battlefield.",
+  "blob": "### 1. Genre\nThe dominant genre is Shooter: a compact PvP sniper map organized around long firing sightlines and protected opposing starts.\n\n### 2. Shape and preset\nUse `lane-network`, matching the Team Deathmatch preset: the central street is the primary firing lane, while the two houses provide opposing endpoints and interior flank routes. Retain the preset’s overall confrontation layout but omit a dedicated `choke-bottleneck`, since the prompt calls for open sniper sightlines rather than a forced close-quarters pinch.\n\n### 3. Config requirements\nUse `spawn-teambase` for two opposing house-based start areas, each shielded from immediate cross-map sniper fire. Use `cover-los` as sparse waist-high barriers, parked suburban debris, and low roadside objects that interrupt the otherwise open central sightline. Use `building-interior` for accessible interiors in both endpoint houses, with windows and doors framing the battlefield.\n\n### 4. Layout requirements\nPlace `spawn-teambase` twice: one protected spawn group inside or directly behind each opposing house, screened from the central street and facing into its own side approach. No additional placed gameplay components are required by the prompt.\n\n### 5. Layout components\nBuild one small, compact suburban test-town arena. Put one two-storey house at each far end of the map, facing one another across a straight central street. Each house is a combat endpoint with accessible ground and upper floors, street-facing windows, and side or rear exits. The open central street is the dominant long-range sniper lane. Add shallow side yards and narrow exterior routes beside the houses so players can shift angle without creating a dense maze. Keep low cover deliberately sparse along the street and yards, preserving long views while allowing brief retreat and repositioning. Enclose the playable arena with suburban perimeter walls, blocked roads, and distant test-town facades rather than open wilderness. Frame the composition symmetrically down the street, with both houses clearly readable as opposing anchors.\n\n### 6. Render order\nUse `topdown`: the top-down plan is authoritative so the central sniper sightline, protected starts, and every interior/exterior route remain playable and legible before the isometric military dressing is generated.\n\n### 7. Scale, theme, and pipeline cost\nScale is small, driven by the requested single compact Nuketown-style arena. Theme: modern military shooter, stylized suburban test town, Call of Duty-inspired. Use `P3` because play crosses between the outdoor street and enterable house interiors.",
   "spec": {
     "genre": "Shooter",
     "secondary": [],
@@ -29,133 +29,122 @@
     "options": [
       {
         "id": "spawn-teambase",
-        "text": "Two balanced, screened team start areas at opposite houses, protected from immediate direct sniper sightlines.",
+        "text": "Two opposing house-based start areas, each shielded from immediate cross-map sniper fire.",
         "visible": true,
         "count": 2
       },
       {
         "id": "cover-los",
-        "text": "Low barriers, parked vehicles, fences, and street objects break the otherwise long central views.",
+        "text": "Sparse waist-high barriers, parked suburban debris, and low roadside objects that interrupt the otherwise open central sightline.",
         "visible": true,
         "count": -1
       },
       {
         "id": "building-interior",
-        "text": "The two opposing houses have accessible rooms and windows overlooking the street.",
+        "text": "Accessible interiors in both endpoint houses, with windows and doors framing the battlefield.",
         "visible": true,
         "count": 2
       }
     ],
+    "layout_placement": [
+      {
+        "id": "spawn-teambase",
+        "text": "Protected spawn group inside or directly behind each opposing house, screened from the central street and facing into its own side approach.",
+        "count": 2,
+        "where": "One inside or directly behind each opposing house, screened from the central street and facing into its own side approach."
+      }
+    ],
     "layout": {
-      "composition": "Symmetrical isometric composition framed down the central street, with both opposing houses legible as anchors at either end and the sparse cover pattern readable between them.",
+      "composition": "Symmetrical framing down the straight central street, with both two-storey houses clearly readable as opposing anchors at the far ends.",
       "zones": [
         {
-          "name": "North opposing house lot",
-          "role": "One team’s two-storey house, accessible interior, upper firing windows, front yard, and rear-side spawn shelter.",
-          "where": "one short end of the rectangular arena, facing inward across the street",
-          "size": "roughly a quarter of the map depth"
+          "name": "Opposing house endpoints",
+          "role": "Combat endpoints with protected starts, accessible ground and upper floors, street-facing windows, and side or rear exits.",
+          "where": "At each far end of the map, facing one another across the central street.",
+          "size": "-1"
         },
         {
-          "name": "Central street lane",
-          "role": "Primary broad combat lane with open end-to-end sniper sightlines and sparse low cover.",
-          "where": "centre, between the two houses",
-          "size": "rough central half of the map depth"
+          "name": "Central street",
+          "role": "Dominant open long-range sniper lane between the opposing houses.",
+          "where": "Centre, running straight between both houses.",
+          "size": "-1"
         },
         {
-          "name": "South opposing house lot",
-          "role": "The opposing team’s two-storey house, accessible interior, upper firing windows, front yard, and rear-side spawn shelter.",
-          "where": "opposite short end of the rectangular arena, facing inward across the street",
-          "size": "roughly a quarter of the map depth"
-        },
-        {
-          "name": "West side-yard route",
-          "role": "Narrow screened circulation connecting house frontage to rear.",
-          "where": "along one map edge",
-          "size": "narrow"
-        },
-        {
-          "name": "East side-yard route",
-          "role": "Narrow screened circulation connecting house frontage to rear.",
-          "where": "along the opposite map edge",
-          "size": "narrow"
+          "name": "Side yards and exterior routes",
+          "role": "Shallow flanking routes for shifting angle without creating a dense maze.",
+          "where": "Beside the houses.",
+          "size": "shallow and narrow"
         }
       ],
       "paths": [
         {
-          "from": "North opposing house frontage",
-          "to": "South opposing house frontage",
-          "kind": "road"
-        },
-        {
-          "from": "North opposing house frontage",
-          "to": "North opposing house rear",
+          "from": "Opposing house endpoints",
+          "to": "Central street",
           "kind": "open ground"
         },
         {
-          "from": "South opposing house frontage",
-          "to": "South opposing house rear",
+          "from": "Opposing house endpoints",
+          "to": "Side yards and exterior routes",
           "kind": "open ground"
         },
         {
-          "from": "North opposing house frontage",
-          "to": "North opposing house rear",
-          "kind": "corridor"
-        },
-        {
-          "from": "South opposing house frontage",
-          "to": "South opposing house rear",
-          "kind": "corridor"
+          "from": "House ground floors",
+          "to": "House upper floors",
+          "kind": "stair"
         }
       ],
-      "terrain": "Paved road, sidewalks, clipped lawns, driveways, and compact suburban house lots.",
+      "terrain": "Suburban street and yards with deliberately sparse low cover along the street and yards.",
       "props": [
         {
-          "name": "two-storey opposing houses",
+          "name": "Two-storey house",
           "count": 2,
-          "where": "at the two short ends of the arena"
+          "where": "At opposing far ends of the map, facing each other across the street."
         },
         {
-          "name": "parked cars",
+          "name": "Sparse waist-high barriers",
           "count": -1,
-          "where": "along the central street"
+          "where": "Along the central street and side yards."
         },
         {
-          "name": "waist-high concrete barriers",
+          "name": "Parked suburban debris",
           "count": -1,
-          "where": "interrupting the central street sightline"
+          "where": "Along the central street and side yards."
         },
         {
-          "name": "short fences",
+          "name": "Low roadside objects",
           "count": -1,
-          "where": "street edges and side-yard routes"
+          "where": "Along the central street and side yards."
         },
         {
-          "name": "utility objects",
+          "name": "Distant test-town facades",
           "count": -1,
-          "where": "along the central street"
+          "where": "Beyond the playable arena perimeter."
         }
       ],
-      "boundary": "Outer edges enclosed by perimeter walls, rear fences, and blocked suburban facades.",
+      "boundary": "Suburban perimeter walls, blocked roads, and distant test-town facades enclose the playable arena rather than open wilderness.",
       "scale_band": "small",
-      "theme": "modern military shooter, sunlit suburban test town, Call of Duty-like tactical realism"
+      "theme": "Modern military shooter, stylized suburban test town, Call of Duty-inspired."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "valid opposing spawns, usable side routes, and controlled sniper sightlines are necessary for fair PvP play.",
+      "why": "The central sniper sightline, protected starts, and every interior/exterior route must remain playable and legible.",
       "set_piece": false
     },
     "route": [
       "P3"
     ],
-    "notes": [],
+    "notes": [
+      "The dedicated `choke-bottleneck` is intentionally omitted because the scene requires open sniper sightlines rather than a forced close-quarters pinch.",
+      "visible on 'spawn-teambase' set from goes_to=both"
+    ],
     "scene_prompt": "Create one small PvP sniper arena with a modern military shooter look, inspired by a compact suburban test-town layout: two opposing houses at either end, a central street and open sightlines between them, with low cover and accessible interiors framing the battlefield. Exclude the 2D home screen from the 3D map layout."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

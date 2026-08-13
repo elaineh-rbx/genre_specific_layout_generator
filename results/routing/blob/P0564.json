@@ -19,137 +19,111 @@
     }
   ],
   "scene_prompt": "Create a small, realistic and oppressive rainforest survival map centered on one clearing, surrounded by nearby dense jungle areas to explore. Thick foliage, wet ground, rain, fog, and tangled vegetation enclose the clearing, with natural routes leading into the surrounding rainforest and a dangerous wild atmosphere.",
-  "blob": "### Genre\nThe dominant genre is Survival, identified from the hunger, environmental exposure, and wildlife survival loop. There is no secondary genre.\n\n### Shape and preset\nUse `arena-contained`: a compact, bounded rainforest clearing with explorable jungle immediately around it, rather than a multi-map biome world. The closest preset is Resource Survival, but the prompt overrides its `world-biomes` shape because this is one small contiguous map; preset is none.\n\n### Config requirements\nUse visible `cover-los` for dense trunks, buttress roots, vines, and foliage that repeatedly break sightlines through the jungle. Use invisible `collectible-nodes` for survival-resource placements distributed beyond the central clearing; these markers do not appear in the render. Do not add bases, constructed shelters, water, or terrain relief unasked.\n\n### Layout components\nThe central zone is one modest muddy clearing, occupying roughly the middle third of the map and functioning as the readable open landmark amid otherwise oppressive vegetation. It is ringed closely by several small rainforest exploration pockets: a darker fern-and-root thicket to one side, a vine-choked understory route opposite it, and two additional damp foliage corridors branching from the clearing. Natural narrow footpaths, formed by trampled wet soil and exposed roots, lead from the clearing into each pocket and loop back rather than becoming long straight corridors. Resource-node markers sit within these outer pockets and just off the paths, not in the center.\n\nGround is wet mud, leaf litter, mossy roots, and shallow puddles, with no required river or lake. Dense layered canopy, tangled vines, broad-leaf plants, fallen branches, and close-packed tree trunks form the map boundary and conceal its hard edge. Frame the clearing as the legible center, with paths disappearing into dark, foggy foliage at the perimeter.\n\n### Render order\nUse `isometric`: render the oppressive visual composition first, then derive the top-down plan, because an invalid route topology would not make this compact exploration space unplayable.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by one central clearing and only nearby rainforest pockets. Theme is realistic, oppressive tropical rainforest: rain, fog, saturated wet earth, and dense dark-green vegetation. Pipeline modifier: `P0`, since the build is one contiguous exterior ground surface with no overlapping floors, interior transition, separate maps, or geometry requiring validation.",
+  "blob": "### Genre\n`Survival` is dominant: players endure hunger, a hostile rainforest environment, and dangerous wildlife without a killer or PvP focus.\n\n### Shape and preset\nUse `world-open`, taken from outside Survival’s usual shape set, as one compact contiguous rainforest map freely explored from a central clearing. The closest preset is Resource Survival, but use `none` because its `world-biomes` distance-gradient structure and build-ground emphasis do not fit this small clearing-centred map.\n\n### Config requirements\nNo image-config options are required beyond the described rainforest geometry. Do not add water, terrain relief, buildings, or constructed shelters unasked; the oppressive feel comes from dense vegetation, rain, fog, wet ground, and enclosing jungle.\n\n### Layout requirements\nPlace `collectible-nodes` as survival-resource locations: distribute small clusters of edible plants, fallen wood, and useful natural materials along the nearby exploration routes and at jungle-edge pockets, with none concentrated in the central clearing. Place `spawner-npc` at several concealed wildlife origins in the dense outer vegetation, kept off the main paths and outside the clearing so animal danger approaches from the rainforest rather than appearing in the safe central space.\n\n### Layout components\nThe main zone is one small, roughly circular muddy clearing at the map centre, open enough to read as a temporary refuge. A dense ring of rainforest surrounds it, widening into several nearby exploration pockets rather than distinct regions. Natural narrow trails branch from the clearing into these pockets, then loop back or end at resource-rich vegetation clusters. Terrain is wet leaf litter, exposed roots, mossy soil, low ferns, tangled vines, broad-leaf plants, fallen logs, and thick canopy; persistent rain and low fog reduce long sightlines. The boundary is a continuous wall of impassable-looking jungle, thorny undergrowth, and closely packed trees. Compose the clearing as the visual centre, with each trail visibly disappearing into darker foliage.\n\n### Render order\nUse `isometric`: the compact rainforest atmosphere and clearing-first composition are authoritative, while no exact topology must be validated before rendering.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by one central clearing and only nearby jungle areas. Theme is realistic, oppressive tropical rainforest: soaked, fogbound, dim, and threatening. Use `P0`; this is one contiguous ground surface with no forced structural, interior-transition, or overhanging-layer capture cost.",
   "spec": {
     "genre": "Survival",
     "secondary": [],
-    "shape": "arena-contained",
+    "shape": "world-open",
     "preset": "none",
     "axes": {},
     "options": [
       {
-        "id": "cover-los",
-        "text": "Dense trunks, buttress roots, vines, and foliage repeatedly break sightlines through the jungle.",
-        "visible": true,
+        "id": "collectible-nodes",
+        "text": "Survival-resource locations: small clusters of edible plants, fallen wood, and useful natural materials.",
+        "visible": false,
         "count": -1
       },
       {
-        "id": "collectible-nodes",
-        "text": "Survival-resource placements distributed beyond the central clearing, within outer pockets and just off the paths; these markers do not appear in the render.",
+        "id": "spawner-npc",
+        "text": "Several concealed wildlife origins in the dense outer vegetation.",
         "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "collectible-nodes",
+        "text": "Survival-resource locations: small clusters of edible plants, fallen wood, and useful natural materials.",
+        "count": -1,
+        "where": "Along nearby exploration routes and at jungle-edge pockets, with none concentrated in the central clearing."
+      },
+      {
+        "id": "spawner-npc",
+        "text": "Several concealed wildlife origins in the dense outer vegetation.",
+        "count": -1,
+        "where": "Off the main paths and outside the central clearing, concealed in dense outer vegetation."
+      }
+    ],
     "layout": {
-      "composition": "The modest muddy clearing forms the legible centre in the middle third of the frame, while narrow paths radiate into closely ringed, dark foggy jungle pockets around the perimeter. Dense vegetation closes the foreground, sides, and background, with paths disappearing into foliage.",
+      "composition": "The small muddy clearing is the visual centre, surrounded by a dense dark ring of rainforest; each narrow trail visibly disappears outward into darker foliage.",
       "zones": [
         {
-          "name": "Central muddy clearing",
-          "role": "Readable open landmark and central exploration space.",
-          "where": "Middle third of the map",
-          "size": "Modest; roughly the middle third of the map"
+          "name": "Central clearing",
+          "role": "A temporary refuge and the central point from which the nearby rainforest is explored.",
+          "where": "Map centre",
+          "size": "Small, roughly circular"
         },
         {
-          "name": "Fern-and-root thicket",
-          "role": "Dark rainforest exploration pocket.",
-          "where": "One side of the central clearing",
-          "size": "Small"
-        },
-        {
-          "name": "Vine-choked understory route",
-          "role": "Rainforest exploration pocket opposite the fern-and-root thicket.",
-          "where": "Opposite side of the central clearing",
-          "size": "Small"
-        },
-        {
-          "name": "Damp foliage corridor one",
-          "role": "Branching rainforest exploration pocket containing resource-node marker placements off the paths.",
-          "where": "Branching from the central clearing",
-          "size": "Small"
-        },
-        {
-          "name": "Damp foliage corridor two",
-          "role": "Branching rainforest exploration pocket containing resource-node marker placements off the paths.",
-          "where": "Branching from the central clearing",
-          "size": "Small"
+          "name": "Surrounding rainforest pockets",
+          "role": "Nearby dense jungle exploration areas containing resource-rich vegetation.",
+          "where": "Around the central clearing",
+          "size": "Several nearby pockets"
         }
       ],
       "paths": [
         {
-          "from": "Central muddy clearing",
-          "to": "Fern-and-root thicket",
-          "kind": "open ground"
+          "from": "Central clearing",
+          "to": "Surrounding rainforest pockets",
+          "kind": "trail"
         },
         {
-          "from": "Central muddy clearing",
-          "to": "Vine-choked understory route",
-          "kind": "open ground"
-        },
-        {
-          "from": "Central muddy clearing",
-          "to": "Damp foliage corridor one",
-          "kind": "open ground"
-        },
-        {
-          "from": "Central muddy clearing",
-          "to": "Damp foliage corridor two",
-          "kind": "open ground"
+          "from": "Surrounding rainforest pockets",
+          "to": "Central clearing",
+          "kind": "trail"
         }
       ],
-      "terrain": "Wet mud, leaf litter, mossy roots, and shallow puddles under dense layered rainforest canopy; no required river or lake.",
+      "terrain": "Wet leaf litter, exposed roots, mossy soil, low ferns, tangled vines, broad-leaf plants, fallen logs, and thick canopy; persistent rain and low fog reduce long sightlines.",
       "props": [
         {
-          "name": "Dense tree trunks",
+          "name": "Dense vegetation",
           "count": -1,
-          "where": "Close-packed throughout the jungle perimeter and outer exploration pockets"
+          "where": "Surrounding the clearing and throughout the nearby jungle pockets"
         },
         {
-          "name": "Buttress roots",
+          "name": "Fallen logs",
           "count": -1,
-          "where": "Around trunks and along the narrow footpaths"
+          "where": "Across the wet rainforest ground"
         },
         {
-          "name": "Tangled vines",
+          "name": "Thorny undergrowth and closely packed trees",
           "count": -1,
-          "where": "Across the understory and perimeter foliage"
-        },
-        {
-          "name": "Broad-leaf plants",
-          "count": -1,
-          "where": "Throughout the rainforest pockets and around the clearing"
-        },
-        {
-          "name": "Fallen branches",
-          "count": -1,
-          "where": "Across wet ground and outer paths"
-        },
-        {
-          "name": "Shallow puddles",
-          "count": -1,
-          "where": "Across the muddy clearing and wet jungle ground"
+          "where": "At the continuous outer jungle boundary"
         }
       ],
-      "boundary": "Dense layered canopy, tangled vines, broad-leaf plants, fallen branches, and close-packed tree trunks conceal the hard map edge.",
+      "boundary": "A continuous wall of impassable-looking jungle, thorny undergrowth, and closely packed trees.",
       "scale_band": "small",
-      "theme": "Realistic oppressive tropical rainforest: rain, fog, saturated wet earth, dense dark-green vegetation."
+      "theme": "Realistic, oppressive tropical rainforest; soaked, fogbound, dim, and threatening."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "an invalid route topology would not make this compact exploration space unplayable.",
+      "why": "No exact topology must be validated before rendering.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
-    "notes": [],
+    "notes": [
+      "The shape `world-open` is taken from outside Survival’s usual shape set.",
+      "Counts for the small resource clusters and several wildlife origins were not stated numerically."
+    ],
     "scene_prompt": "Create a small, realistic and oppressive rainforest survival map centered on one clearing, surrounded by nearby dense jungle areas to explore. Thick foliage, wet ground, rain, fog, and tangled vegetation enclose the clearing, with natural routes leading into the surrounding rainforest and a dangerous wild atmosphere."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

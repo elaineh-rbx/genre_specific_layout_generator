@@ -3,7 +3,7 @@
   "source": "A medieval fantasy tower defense game map, medium-sized (roughly 200x200 studs), with the following elements:\n\n1. ground: Grassy terrain base covering the entire map area, green grass color, flat with slight rolling hills texture.\n2. path: A winding dirt path that snakes from one corner of the map (the enemy spawn) across to the opposite corner where the castle sits. The path should be clearly visible brown/dirt colored, wide enough for enemies to walk along.\n3. spawn_portal: A dark stone archway or portal entrance at the start of the path, marking where enemies appear. Medieval style with dark stone blocks.\n4. castle_base: A medieval fortress at the end of the path — stone walls, battlements, and a gate facing the path. This is the base players must defend.\n5. tower_platforms: Multiple flat circular or square stone platforms placed alongside the path at strategic positions. These are tower placement zones — visually distinct from the ground with a slightly different color or glowing edge marker.\n6. trees: Several medieval-style trees scattered around the map edges and between the path curves for decoration.\n7. rocks: Various sized rocks and boulders placed as natural decoration around the map.\n8. decorations: Small medieval decorations like barrels, crates, bushes, and broken stone ruins near the castle and along the map edges.\n\nAttributes to expose:\n- PathColor (color of the dirt path)\n- GrassColor (color of the ground terrain)\n- TowerPlatformColor (color of the tower placement zones)\n- CastleSize (scale of the castle base)\n- PathWidth (width of the winding path)\n- DecorationCount (number of decorative elements)\n\nThe path should be the central visual feature, clearly standing out from the grass. Tower platforms should be obviously placed for tower building. The castle should be an impressive landmark at the path's end.",
   "answers": [],
   "scene_prompt": "Create a medium-sized medieval fantasy tower-defense map, roughly 200x200 studs, on a flat grassy terrain base with slight rolling hills. A wide, clearly visible brown dirt path is the central feature, winding diagonally from a dark stone portal archway in one corner to an imposing stone fortress in the opposite corner. The castle has walls, battlements, and a gate facing the approaching path. Place multiple distinct flat circular or square stone tower platforms beside strategic path curves, visibly contrasting with the grass through a different stone color or subtle glowing edge. Scatter medieval-style trees, rocks, and boulders around the outer edges and between path bends, with barrels, crates, bushes, and broken stone ruins concentrated near the castle and along map borders. Keep open sightlines around the path and make the castle the dominant background landmark.",
-  "blob": "### Genre\nThe dominant genre is Strategy, specifically a tower-defense map: enemy waves follow one fixed route from an origin to a defended base.\n\n### Shape and preset\nUse `lane-actor-track`, matching the Tower Defense preset. Here it is a single winding medieval dirt lane crossing a roughly 200x200-stud grassy square diagonally from the portal corner to the fortress corner. The prompt fully supports this preset’s route, placement ground, enemy origin, and terminal base.\n\n### Config requirements\n`buildzone-grid` is visible geometry: multiple clearly distinct, flat circular or square stone tower platforms sit beside the route at its bends and strategic approaches, contrasting with grass through alternate stone color or a subtle glowing rim. `tracker-core` is both visible and invisible: the imposing stone castle at the path terminus is visible, while its defended-base tracking region is placed later and is not rendered. `spawner-npc` is layout-only and invisible: place the enemy-wave origin at the dark stone portal archway in the starting corner; render the archway but not its emitter marker. `terrain-relief` is visible geometry: retain only slight rolling grassy hills, never obstructing the path or tower plots.\n\n### Layout components\nBuild one medium, approximately 200x200-stud exterior map. A broad brown dirt path is the central visual and traversal spine, entering at one corner through a dark-block medieval portal arch, winding diagonally in several readable bends, and arriving at the opposite corner’s fortress gate. Keep the castle dominant in the far background, with stone walls, battlements, and its gate directly facing the final path approach. Arrange the tower platforms on the outside and inside of path curves with open views over the lane; leave clear grass between platforms and route. Grassy terrain covers the whole base, with gentle low relief only. Scatter several medieval trees, rocks, and boulders around perimeter ground and between path bends without blocking sightlines. Concentrate barrels, crates, bushes, and broken stone ruins near the castle and along map borders. The boundary is a soft natural edge of trees, rocks, and terrain dressing rather than a tall enclosing wall. Compose the diagonal route as the strongest line through frame, portal foreground to castle background.\n\n### Render order\nUse `authored_plan`: the enemy track must be one valid continuous route from portal to castle, so generate its topology first and dress it afterward.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by the stated roughly 200x200-stud footprint. Theme is bright medieval fantasy: green grass, brown dirt, dark portal stone, pale fortress masonry. Apply `P6` because the tower-defense lane must be valid by construction. Apply `tiered` for the slight non-overhanging hills. No other pipeline modifier is forced.",
+  "blob": "### 1. Genre\nThe dominant genre is Strategy, specifically a tower-defense map: enemies follow one fixed lane from a spawn point to the defended core.\n\n### 2. Shape and preset\nUse `lane-actor-track`, matched from the Tower Defense preset. It is a single continuous winding dirt lane crossing the map diagonally from the portal in one corner to the fortress in the opposite corner; the lane must have no ambiguous branches or self-crossings.\n\n### 3. Config requirements\nUse `buildzone-grid` as multiple visibly distinct circular or square stone tower platforms beside strategic path bends, contrasting with the green grass through alternate stone color or subtle glowing edges. Use `tracker-core` as the imposing medieval stone castle, with battlements, walls, and its gate directly facing the arriving path. Use `terrain-relief` for a grassy base with only slight rolling-hill texture; retain broad, open sightlines around the path.\n\n### 4. Layout requirements\nUse `spawner-npc`: place one enemy-wave origin at the dark stone portal archway in the starting corner, oriented directly onto the first path segment. Use `tracker-core`: site one defended core at the castle gate in the diagonally opposite corner, aligned with the lane's terminal approach. No other placed gameplay markers are required.\n\n### 5. Layout components\nThe entire roughly 200x200-stud map is a flat-to-gently rolling grassy field. A wide brown dirt path is the central visual element, winding diagonally corner to corner with clear space on both sides for tower platforms. The spawn zone is a dark-block medieval portal arch at the path start. The end zone is a dominant stone fortress with walls, battlements, and a path-facing gate. Place multiple flat circular or square stone tower platforms along outer and inner sides of major curves, leaving each clearly readable from the lane. Scatter medieval trees, rocks, and boulders around map edges and between bends without obstructing the route. Concentrate barrels, crates, bushes, and broken stone ruins near the castle and along the border. The boundary is the square grass-map edge, visually softened by peripheral trees and rocks. Compose the castle as the far-corner landmark and the winding path as the leading line through the frame.\n\n### 6. Render order\nUse `topdown` first and make it authoritative, because the enemy lane must remain one continuous, playable route from portal to castle before the isometric dressing is generated.\n\n### 7. Scale, theme, and pipeline cost\nScale is medium, driven by the stated roughly 200x200-stud footprint. Theme: bright medieval fantasy, grassy battlefield, dark stone portal, and fortified castle. Pipeline modifiers are `P6`, because the fixed enemy track must be valid by construction, and `tiered`, because the requested rolling hills require elevation capture without overhangs.",
   "spec": {
     "genre": "Strategy",
     "secondary": [],
@@ -13,111 +13,114 @@
     "options": [
       {
         "id": "buildzone-grid",
-        "text": "Multiple clearly distinct, flat circular or square stone tower platforms beside route bends and strategic approaches, contrasting with the grass through alternate stone color or a subtle glowing rim.",
+        "text": "Multiple visibly distinct circular or square stone tower platforms beside strategic path bends, contrasting with the green grass through alternate stone color or subtle glowing edges.",
         "visible": true,
         "count": -1
       },
       {
         "id": "tracker-core",
-        "text": "The imposing stone castle at the path terminus, with walls, battlements, and a gate directly facing the final path approach; its defended-base tracking region is placed later and not rendered.",
+        "text": "The imposing medieval stone castle, with battlements, walls, and its gate directly facing the arriving path.",
         "visible": true,
-        "count": 1
-      },
-      {
-        "id": "spawner-npc",
-        "text": "The enemy-wave origin at the dark stone portal archway in the starting corner; render the archway but not its emitter marker.",
-        "visible": false,
         "count": 1
       },
       {
         "id": "terrain-relief",
-        "text": "Slight rolling grassy hills only, never obstructing the path or tower plots.",
+        "text": "A grassy base with only slight rolling-hill texture, retaining broad open sightlines around the path.",
         "visible": true,
         "count": -1
+      },
+      {
+        "id": "spawner-npc",
+        "text": "One enemy-wave origin at the dark stone portal archway in the starting corner, oriented directly onto the first path segment.",
+        "visible": false,
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "tracker-core",
+        "text": "One defended core at the castle gate in the diagonally opposite corner, aligned with the lane's terminal approach.",
+        "count": 1,
+        "where": "At the castle gate in the diagonally opposite corner, aligned with the lane's terminal approach."
+      },
+      {
+        "id": "spawner-npc",
+        "text": "One enemy-wave origin at the dark stone portal archway in the starting corner, oriented directly onto the first path segment.",
+        "count": 1,
+        "where": "At the dark stone portal archway in the starting corner, oriented directly onto the first path segment."
       }
     ],
     "layout": {
-      "composition": "The diagonal dirt route is the strongest line through frame, running from the portal in the foreground corner to the castle dominating the far-background opposite corner.",
+      "composition": "The winding dirt path leads diagonally through the frame from the portal in one corner to the castle as the far-corner background landmark.",
       "zones": [
         {
-          "name": "Portal corner",
-          "role": "Enemy-wave entry through the dark stone medieval portal archway.",
-          "where": "Foreground corner",
+          "name": "Spawn zone",
+          "role": "Enemy waves enter the fixed lane.",
+          "where": "Starting corner",
           "size": ""
         },
         {
-          "name": "Winding lane",
-          "role": "The fixed enemy route and central traversal spine, winding through several readable bends.",
-          "where": "Diagonally across the map from portal corner to fortress corner",
-          "size": "Broad"
+          "name": "Winding lane field",
+          "role": "The continuous enemy route and tower-platform field.",
+          "where": "Diagonally across the map between the two corners",
+          "size": "roughly 200x200 studs"
         },
         {
-          "name": "Tower platform ground",
-          "role": "Open placement ground with tower platforms on the outside and inside of path curves, maintaining views over the lane.",
-          "where": "Beside bends and strategic approaches along the lane",
-          "size": ""
-        },
-        {
-          "name": "Fortress corner",
-          "role": "Defended terminal base at the fortress gate.",
-          "where": "Far-background opposite corner",
+          "name": "Fortress end zone",
+          "role": "The defended core receives enemies at the lane terminus.",
+          "where": "Diagonally opposite corner",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Portal corner",
-          "to": "Fortress corner",
+          "from": "Spawn zone",
+          "to": "Fortress end zone",
           "kind": "track"
         }
       ],
-      "terrain": "Grassy terrain across the full base with gentle low rolling relief; a broad brown dirt lane crosses it diagonally.",
+      "terrain": "Flat-to-gently rolling grassy field with slight rolling hills, a wide brown dirt lane, and open sightlines around the route.",
       "props": [
         {
           "name": "Medieval trees",
           "count": -1,
-          "where": "Around perimeter ground and between path bends"
+          "where": "Around map edges and between path bends without obstructing the route."
         },
         {
-          "name": "Rocks",
+          "name": "Rocks and boulders",
           "count": -1,
-          "where": "Around perimeter ground and between path bends"
-        },
-        {
-          "name": "Boulders",
-          "count": -1,
-          "where": "Around perimeter ground and between path bends"
+          "where": "Around map edges and between path bends without obstructing the route."
         },
         {
           "name": "Barrels",
           "count": -1,
-          "where": "Near the castle and along map borders"
+          "where": "Near the castle and along map borders."
         },
         {
           "name": "Crates",
           "count": -1,
-          "where": "Near the castle and along map borders"
+          "where": "Near the castle and along map borders."
         },
         {
           "name": "Bushes",
           "count": -1,
-          "where": "Near the castle and along map borders"
+          "where": "Near the castle and along map borders."
         },
         {
           "name": "Broken stone ruins",
           "count": -1,
-          "where": "Near the castle and along map borders"
+          "where": "Near the castle and along map borders."
         }
       ],
-      "boundary": "A soft natural edge of trees, rocks, and terrain dressing rather than a tall enclosing wall.",
+      "boundary": "The square grass-map edge, visually softened by peripheral trees and rocks.",
       "scale_band": "medium",
-      "theme": "Bright medieval fantasy: green grass, brown dirt, dark portal stone, pale fortress masonry."
+      "theme": "Bright medieval fantasy grassy battlefield with a dark stone portal and fortified castle."
     },
     "render": {
-      "first": "authored_plan",
-      "then": "topdown",
-      "authoritative": "authored_plan",
-      "why": "The enemy track must be one valid continuous route from portal to castle.",
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "the enemy lane must remain one continuous, playable route from portal to castle before isometric dressing is generated.",
       "set_piece": false
     },
     "route": [
@@ -130,12 +133,10 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",
   "first": "topdown",
-  "mapper_notes": [
-    "blob asked for authored_plan first; the route ['P6', 'P0', 'tiered'] gives topdown"
-  ]
+  "mapper_notes": []
 }

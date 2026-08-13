@@ -14,116 +14,146 @@
     }
   ],
   "scene_prompt": "Create a 3D horror escape-room map inside a small, dark, spooky locked house at night. The front lobby contains the player spawn point and a locked exit door at the front of the house. Four or five rooms include the lobby, a kitchen, and a back bedroom area, linked by mostly linear, narrow hallways that can trap players; a wooden plank blocks the kitchen doorway. Hide a keycard in one of the back bedrooms. Place a spooky bear-like monster within the house.",
-  "blob": "### Genre\nThe dominant genre is Survival, specifically an escape-from-pursuit horror scenario. The pursuing monster and lethal threat make Survival own the layout rather than Puzzle, while the keycard and exit remain spatial objectives only.\n\n### Shape and preset\nUse `warren-looping`, matched to the Escape preset. The prompt overrides the preset’s usual looping safety: build mostly linear narrow halls and intentional dead ends so the house can trap players, while retaining a connected critical route through the house.\n\n### Config requirements\nUse `gate-escape` as both visible geometry and invisible layout: the visible locked exit door occupies the front lobby façade, with its invisible exit trigger placed at the threshold. Use `spawner-npc` as invisible layout for the bear monster’s starting/origin point; the bear itself is a visible character prop. Use `collectible-nodes` as invisible layout for the keycard pickup placement in a back bedroom. Do not add unrequested hiding lockers, shelter interiors, or ambient population.\n\n### Layout components\nBuild a small enclosed house with four or five rooms: a front lobby, kitchen, back-bedroom area, and remaining small rooms joined by mostly linear, narrow hallways. Put the lobby at the front, with the player arrival point inside and the locked exit door on the front wall. Lead a constricted central hallway from the lobby toward the kitchen; block the kitchen doorway with one wooden plank barrier. Continue the route deeper into the house to the back-bedroom area, placing the keycard in one back bedroom. Site the spooky bear-like monster in the interior circulation, away from the arrival point. Use dark wood floors, worn walls, and sparse dim night lighting. The exterior boundary is the locked house shell: opaque perimeter walls, doors, and a roof. Frame the isometric view to show the front lobby, central hall, kitchen blockage, and receding bedroom wing.\n\n### Render order\nUse `topdown` first and make it authoritative, because the narrow pursuit route must remain connected and navigable while its deliberate dead ends remain readable; the isometric view is dressed from that plan.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the specified four-or-five-room house. Theme is claustrophobic nighttime haunted-house horror. Apply `P6`: validate the critical lobby-to-kitchen-to-back-bedroom route by construction, while preserving intentional trapping dead ends. No other pipeline modifier is forced.",
+  "blob": "### 1. Genre\nThe dominant genre is Survival, specifically a mascot-horror escape scenario: a hostile bear-like monster pressures players through a locked house toward an escape door. Puzzle is secondary only through the keycard and breakable kitchen blockage.\n\n### 2. Shape and preset\nUse `interior-single`: one small enclosed house is the complete map, with no exterior play area. Match the Mascot Horror preset, retaining its indoor escape-and-pursuit character while omitting unrequested hiding alcoves and adding the requested key-item objective.\n\n### 3. Config requirements\nUse `gate-escape` as a visibly locked front exit door in the lobby-facing front wall. No other image configuration is required: the plank, rooms, keycard hiding place, and monster are concrete scene elements described below rather than extra generic options.\n\n### 4. Layout requirements\nUse `gate-escape` in both forms: place one escape trigger volume immediately inside and across the locked front exit door in the front lobby. Use `collectible-nodes`: place exactly one keycard pickup in one back bedroom, concealed behind or beside bedroom furniture rather than in the central hall. Use `spawner-npc`: site one spooky bear monster origin in the rear bedroom/hall zone, far from the lobby spawn, with direct access to the narrow hall network. Place one player arrival marker in the front lobby, oriented toward the house interior.\n\n### 5. Layout components\nBuild a small, dark locked house of four or five rooms: a front lobby at the near/front edge; a kitchen off the central route; a back bedroom area containing one or two bedrooms; and, if needed to reach five rooms, a small utility or side room. Connect them with mostly linear, narrow interior hallways and only minimal alternate circulation, allowing dead-end branches and trapping pressure. Put the locked exit door in the front wall of the lobby, beside the spawn area but facing outward. Block the kitchen doorway with exactly one wooden plank asset. Keep the keycard in a rear bedroom and the bear-like monster in the back half of the house. Use worn timber floors, peeling wallpaper, sparse furniture, boarded details, and dim night-time lighting. Fully enclose the house with exterior walls; frame the whole floor plan clearly from above, with the lobby foreground and bedrooms at the far rear.\n\n### 6. Render order\nUse `topdown`: render a top-down plan first and treat it as authoritative, because the narrow linear hall network must keep a valid, reachable path between the spawn lobby, rear keycard room, kitchen, and exit.\n\n### 7. Scale, theme, and pipeline cost\nScale is small, driven by the stated four-or-five-room house. Theme is dark night-time mascot horror: decayed domestic interiors, oppressive hallways, and a spooky toy-bear threat. Use `P0`; this is one enclosed, single-level interior with no stacked surfaces or outside-to-inside traversal.",
   "spec": {
     "genre": "Survival",
-    "secondary": [],
-    "shape": "warren-looping",
-    "preset": "Escape",
+    "secondary": [
+      "Puzzle"
+    ],
+    "shape": "interior-single",
+    "preset": "Mascot Horror",
     "axes": {},
     "options": [
       {
         "id": "gate-escape",
-        "text": "The visible locked exit door occupies the front lobby façade, with its invisible exit trigger placed at the threshold.",
+        "text": "A visibly locked front exit door in the lobby-facing front wall.",
         "visible": true,
-        "count": -1
-      },
-      {
-        "id": "spawner-npc",
-        "text": "The bear monster's starting/origin point in the interior circulation, away from the arrival point.",
-        "visible": false,
-        "count": -1
+        "count": 1
       },
       {
         "id": "collectible-nodes",
-        "text": "The keycard pickup placement in one back bedroom.",
+        "text": "One keycard pickup concealed behind or beside bedroom furniture in a back bedroom.",
+        "visible": false,
+        "count": 1
+      },
+      {
+        "id": "spawner-npc",
+        "text": "One spooky bear-like monster origin in the rear bedroom/hall zone, far from the lobby spawn, with direct access to the narrow hall network.",
         "visible": false,
         "count": 1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "gate-escape",
+        "text": "One escape trigger volume immediately inside and across the locked front exit door.",
+        "count": 1,
+        "where": "Immediately inside and across the locked front exit door in the front lobby."
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "One keycard pickup concealed behind or beside bedroom furniture.",
+        "count": 1,
+        "where": "In one back bedroom, rather than in the central hall."
+      },
+      {
+        "id": "spawner-npc",
+        "text": "One spooky bear monster origin.",
+        "count": 1,
+        "where": "In the rear bedroom/hall zone, far from the lobby spawn, with direct access to the narrow hall network."
+      }
+    ],
     "layout": {
-      "composition": "Frame the isometric view to show the front lobby, central hall, kitchen blockage, and receding bedroom wing.",
+      "composition": "Clearly framed from above: the front lobby occupies the foreground near edge, the narrow mostly linear hall network runs through the centre, the kitchen sits off the central route, and the bedroom area is at the far rear.",
       "zones": [
         {
           "name": "Front lobby",
-          "role": "Player arrival area with the locked exit door.",
-          "where": "front of the house",
+          "role": "Player arrival area beside the locked outward-facing exit door.",
+          "where": "Near/front edge of the house; foreground.",
           "size": ""
         },
         {
-          "name": "Central hallway",
-          "role": "Constricted interior circulation leading from the lobby toward the kitchen and deeper rooms.",
-          "where": "centre",
-          "size": "narrow"
+          "name": "Central hall network",
+          "role": "Mostly linear, narrow interior circulation with minimal alternate routes, dead-end branches, and trapping pressure.",
+          "where": "Centre of the house, linking lobby, kitchen, and rear bedrooms.",
+          "size": ""
         },
         {
           "name": "Kitchen",
-          "role": "Route room with its doorway blocked by a wooden plank barrier.",
-          "where": "beyond the central hallway",
+          "role": "A room off the central route, its doorway blocked by a wooden plank.",
+          "where": "Off the central hall route.",
           "size": ""
         },
         {
-          "name": "Back-bedroom area",
-          "role": "Deep house area containing a back bedroom with the hidden keycard.",
-          "where": "back of the house",
+          "name": "Back bedroom area",
+          "role": "One or two rear bedrooms; one conceals the keycard and the back half houses the bear-like monster origin.",
+          "where": "Far rear of the house.",
           "size": ""
-        },
-        {
-          "name": "Remaining small rooms",
-          "role": "Additional rooms and intentional dead ends that can trap players.",
-          "where": "off the narrow hallways",
-          "size": "small"
         }
       ],
       "paths": [
         {
           "from": "Front lobby",
+          "to": "Central hall network",
+          "kind": "corridor"
+        },
+        {
+          "from": "Central hall network",
           "to": "Kitchen",
           "kind": "corridor"
         },
         {
-          "from": "Kitchen",
-          "to": "Back-bedroom area",
+          "from": "Central hall network",
+          "to": "Back bedroom area",
           "kind": "corridor"
         }
       ],
-      "terrain": "Dark wood floors and worn walls inside the house.",
+      "terrain": "Worn timber floors throughout the enclosed house.",
       "props": [
         {
-          "name": "Wooden plank barrier",
+          "name": "wooden plank blocking the kitchen doorway",
           "count": 1,
-          "where": "blocking the kitchen doorway"
+          "where": "Across the kitchen doorway."
         },
         {
-          "name": "Spooky bear-like monster",
-          "count": 1,
-          "where": "interior circulation away from the player arrival point"
+          "name": "sparse furniture",
+          "count": -1,
+          "where": "Throughout the house, including bedroom furniture near the concealed keycard."
+        },
+        {
+          "name": "boarded details",
+          "count": -1,
+          "where": "Throughout the dark house interior."
         }
       ],
-      "boundary": "The locked house shell: opaque perimeter walls, doors, and a roof.",
+      "boundary": "Fully enclosed by exterior walls; no exterior play area.",
       "scale_band": "small",
-      "theme": "Claustrophobic nighttime haunted-house horror with sparse dim night lighting."
+      "theme": "Dark night-time mascot horror; decayed domestic interiors, peeling wallpaper, oppressive hallways, dim lighting, and a spooky toy-bear threat."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the narrow pursuit route must remain connected and navigable while deliberate dead ends remain readable",
+      "why": "the narrow linear hall network must preserve a reachable path between the spawn lobby, rear keycard room, kitchen, and exit.",
       "set_piece": false
     },
     "route": [
-      "P6"
+      "P0"
     ],
-    "notes": [],
+    "notes": [
+      "The blob requires one player arrival marker in the front lobby, oriented toward the house interior, but does not name a matching canonical Survival option ID for it."
+    ],
     "scene_prompt": "Create a 3D horror escape-room map inside a small, dark, spooky locked house at night. The front lobby contains the player spawn point and a locked exit door at the front of the house. Four or five rooms include the lobby, a kitchen, and a back bedroom area, linked by mostly linear, narrow hallways that can trap players; a wooden plank blocks the kitchen doorway. Hide a keycard in one of the back bedrooms. Place a spooky bear-like monster within the house."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
-  "order": "p6",
-  "first": "topdown",
-  "mapper_notes": []
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P0'] gives isometric"
+  ]
 }

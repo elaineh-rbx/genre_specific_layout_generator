@@ -18,6 +18,7 @@ DOCS = ROOT / "docs"
 #: written in, so that the references they make to each other resolve here too.
 BUILD_DOC = DOCS / "LayoutGen - Build.md"           # the layout rules, Part II
 PIPELINE_DOC = DOCS / "LayoutGen - Pipeline.md"     # the companion, not read yet
+SHAPE_MIGRATION = DOCS / "shape-migration.json"     # old shape id -> its catalogue row
 SUBGENRE_DOC = DOCS / "subgenre-catalogue.html"     # the 44 sub-genres, for Hard Needs
 
 SITE = ROOT / "site"                                # the built viewer pages

@@ -14,72 +14,76 @@
     }
   ],
   "scene_prompt": "Crie um mapa de jogo de tiro 3D em uma arena aberta, pequena e compacta, com chão branco plano e uma mureta azul extremamente alta fechando todo o perímetro. O avatar do jogador ocupa a área central: um personagem careca, alto e largo, estilo strongman, com cerca de 2,20 metros de altura, usando uniforme bege do exército com “Forças Armadas” escrito nas costas e portando uma pistola. Soldados inimigos de altura equilibrada surgem em hordas ao redor da arena e avançam pelo espaço aberto; alguns carregam pistolas, metralhadoras, shotguns ou granadas. Mantenha todos os inimigos dentro do alcance de pistola, sem grandes áreas para recuo ou estruturas adicionais.",
-  "blob": "### Gênero\nO gênero dominante é Shooter, especificamente sobrevivência PvE em ondas contínuas. Não há gênero secundário: a progressão e os impactos de combate pertencem à mecânica, não ao mapa.\n\n### Forma e preset\nUse a forma `open-battlefield`, reinterpretada como uma arena de combate aberta, muito compacta e sem rotas de flanqueamento. O preset é none: PvE Shooter fornece emissores inimigos, mas seu modelo de rede de corredores e estruturas internas contradiz o campo vazio explicitamente solicitado.\n\n### Requisitos de configuração\nUse `spawner-npc` como elemento invisível de layout: origens de surgimento distribuídas ao redor do perímetro interno, para que as hordas entrem de múltiplas direções sem aparecer fora da arena. Não adicionar cobertura, edifícios, pickups, bases ou outros elementos não pedidos.\n\n### Componentes de layout\nConstruir uma única arena quadrada ou levemente retangular, pequena o bastante para manter toda a área dentro do alcance de uma pistola. O piso é uma superfície branca, plana e inteiramente desobstruída. O centro é uma zona aberta de jogador, com espaço para o avatar alto, largo, careca e estilo strongman, de cerca de 2,20 metros, usando uniforme militar bege com “Forças Armadas” nas costas e uma pistola. Ao redor dele, deixar faixas abertas de aproximação para soldados inimigos de estatura proporcional, visualmente variados entre pistolas, metralhadoras, shotguns e granadas. Circundar todos os lados por uma mureta azul extremamente alta, contínua e sem portas, que forma o limite físico e visual da arena. Não há terreno elevado, água, vias, construções nem espaço amplo para recuar. Composição isométrica levemente elevada, mostrando claramente o piso branco, o avatar central, os inimigos circundantes e a altura dominante das paredes azuis.\n\n### Ordem de renderização\nUse `isometric`: a topologia é uma única arena fechada e simples, sem uma rota crítica que possa se tornar injogável se desenhada livremente.\n\n### Escala, tema e custo de pipeline\nEscala pequena, determinada pelo combate sempre em alcance de pistola e pela ausência de área de retirada. Tema: arena militar minimalista, branca e azul, com estética 3D de combate direto. Modificador `P0`: uma única superfície plana, sem interiores, sobreposições, mapas separados ou geometria que exija validação procedimental.",
+  "blob": "### Genre\nThe dominant genre is Shooter, specifically continuous PvE horde survival. Enemy waves and weapon combat define the game; the avatar presentation and impact reactions do not alter the map genre.\n\n### Shape and preset\nUse `space-bounded`: a compact, single-level open combat arena whose entire play area remains within pistol range. This shape is taken from outside Shooter’s usual shortlist because the requested arena has no lanes, breach rooms, or battlefield districts. Preset: none; PvE Shooter would imply lanes, a choke point, and a breachable building, all absent here.\n\n### Config requirements\nNo image-config options apply beyond the described arena geometry. Do not add cover, buildings, elevation, loot, or decorative obstacles: the requested fight happens in an unobstructed open floor.\n\n### Layout requirements\nUse `spawner-npc` for continuous enemy-wave origins. Site multiple hidden spawn markers evenly around the inside edge of the enclosing blue wall, facing inward and separated around the perimeter so hordes can enter from all directions without appearing at the player’s central position. The exact count is not stated; distribute them symmetrically enough to avoid a single dominant approach.\n\n### Layout components\nBuild one small, square or near-square white flat-floor arena. A continuous, extremely tall blue retaining wall encloses all four sides and is the hard boundary; there are no exits, large fallback zones, structures, or terrain changes. Keep the central area clear for the player avatar: a bald, broad strongman-like soldier approximately 2.20 metres tall, in a beige army uniform with “Forças Armadas” on the back, holding a pistol. Surrounding open floor is reserved for mixed enemy soldiers carrying pistols, machine guns, shotguns, or grenades. Compose the frame from an elevated isometric view, with the central avatar readable and the high blue perimeter visibly enclosing the compact arena.\n\n### Render order\nUse `isometric`: the simple open arena has no topology whose failure would make play impossible, so the rendered combat presentation can lead.\n\n### Scale, theme, and pipeline cost\nScale band: small, driven by the requirement that every enemy stays within pistol and automatic-aim range. Theme: stark minimalist military arena, white floor, saturated blue walls, beige-uniformed soldiers. Pipeline modifier: `P0`; this is one flat, enclosed surface with no overhangs, interior transition, separate maps, or validity-by-construction route.",
   "spec": {
     "genre": "Shooter",
     "secondary": [],
-    "shape": "open-battlefield",
+    "shape": "space-bounded",
     "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "spawner-npc",
-        "text": "origens de surgimento distribuídas ao redor do perímetro interno, para que as hordas entrem de múltiplas direções sem aparecer fora da arena",
+        "text": "Continuous enemy-wave origins: multiple hidden spawn markers around the inside edge of the enclosing blue wall, facing inward.",
         "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "spawner-npc",
+        "text": "Continuous enemy-wave origins: multiple hidden spawn markers around the inside edge of the enclosing blue wall, facing inward.",
+        "count": -1,
+        "where": "Evenly around the inside edge of the enclosing blue wall, separated around the perimeter and facing inward so hordes enter from all directions without appearing at the player's central position."
+      }
+    ],
     "layout": {
-      "composition": "Composição isométrica levemente elevada, mostrando claramente o piso branco, o avatar central, os inimigos circundantes e a altura dominante das paredes azuis.",
+      "composition": "Elevated isometric view of the compact square or near-square arena, with the central avatar readable on the clear white floor and the extremely tall blue perimeter wall visibly enclosing the frame on all four sides.",
       "zones": [
         {
-          "name": "zona aberta central",
-          "role": "Área do jogador, com espaço para o avatar e combate direto.",
-          "where": "centro da arena",
-          "size": ""
-        },
-        {
-          "name": "faixas abertas de aproximação",
-          "role": "Espaço aberto por onde soldados inimigos avançam em direção ao centro.",
-          "where": "ao redor da zona central",
-          "size": ""
+          "name": "Open combat arena",
+          "role": "A clear central combat floor for the player avatar and surrounding enemy waves.",
+          "where": "Inside the blue perimeter wall.",
+          "size": "Small and compact; the entire play area remains within pistol range."
         }
       ],
       "paths": [],
-      "terrain": "Piso branco, plano e inteiramente desobstruído; sem terreno elevado nem água.",
+      "terrain": "Flat white floor with no terrain changes.",
       "props": [
         {
-          "name": "avatar alto, largo, careca, estilo strongman, com uniforme militar bege e pistola",
-          "count": -1,
-          "where": "centro da arena"
+          "name": "Central player avatar: bald, broad strongman-like soldier approximately 2.20 metres tall, wearing a beige army uniform with “Forças Armadas” on the back and holding a pistol",
+          "count": 1,
+          "where": "Central area of the arena."
         },
         {
-          "name": "soldados inimigos com pistolas, metralhadoras, shotguns ou granadas",
+          "name": "Mixed enemy soldiers carrying pistols, machine guns, shotguns, or grenades",
           "count": -1,
-          "where": "circundando o avatar e avançando pelas faixas abertas"
+          "where": "On the surrounding open floor around the central player avatar."
         }
       ],
-      "boundary": "Mureta azul extremamente alta, contínua e sem portas, circundando todos os lados e formando o limite físico e visual da arena.",
+      "boundary": "A continuous, extremely tall blue retaining wall encloses all four sides as the hard boundary; there are no exits.",
       "scale_band": "small",
-      "theme": "arena militar minimalista, branca e azul, com estética 3D de combate direto"
+      "theme": "Stark minimalist military arena, white floor, saturated blue walls, beige-uniformed soldiers."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "a topologia é uma única arena fechada e simples, sem uma rota crítica que possa se tornar injogável se desenhada livremente.",
+      "why": "The simple open arena has no topology whose failure would make play impossible.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
-    "notes": [],
+    "notes": [
+      "The shape `space-bounded` is taken from outside Shooter's usual shortlist, as specified by the blob."
+    ],
     "scene_prompt": "Crie um mapa de jogo de tiro 3D em uma arena aberta, pequena e compacta, com chão branco plano e uma mureta azul extremamente alta fechando todo o perímetro. O avatar do jogador ocupa a área central: um personagem careca, alto e largo, estilo strongman, com cerca de 2,20 metros de altura, usando uniforme bege do exército com “Forças Armadas” escrito nas costas e portando uma pistola. Soldados inimigos de altura equilibrada surgem em hordas ao redor da arena e avançam pelo espaço aberto; alguns carregam pistolas, metralhadoras, shotguns ou granadas. Mantenha todos os inimigos dentro do alcance de pistola, sem grandes áreas para recuo ou estruturas adicionais."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

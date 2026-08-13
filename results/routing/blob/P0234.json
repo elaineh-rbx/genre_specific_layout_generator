@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a 3D game map of a bright, approachable cartoon suburban town with pre-built houses already standing on claimable residential lots.",
-  "blob": "### Genre\nThis is Roleplay & Avatar Sim, specifically a social life-simulation town rather than a task-based role simulation.\n\n### Shape and preset\nUse `settlement-claimable`: a bright suburban town whose finished homes stand on individually claimable residential lots. This directly matches the Life preset; no buildable empty-plot grid is needed.\n\n### Config requirements\nUse visible `building-interior` for the pre-built homes players enter, with exterior doors and legible interior access. Use visible `path-road-vehicle` for broad, flat suburban streets that can accommodate vehicle turns. Use visible `district-zoned` to separate the quiet residential lots from a small commercial or civic strip. These are the Life preset requirements; do not add unrequested shops, landmarks, NPCs, or population.\n\n### Layout components\nBuild one medium-sized, contiguous suburban town. Place the residential district across most of the map, organized as orderly blocks of claimable lots with completed detached cartoon houses, short driveways, lawns, sidewalks, and street frontage. Each house is a finished selectable residence rather than an empty construction parcel. Run a connected grid of wide, flat roads between the housing blocks, with sidewalks and gentle corners suitable for cars. Place a modest commercial/civic strip at one edge of town, clearly distinct from the quieter homes but connected by the same road network. Keep terrain level and grounded, with no water, major relief, or separate zones. Bound the town naturally with distant tree lines, low hills only as background dressing, or a soft suburban edge rather than hard arena walls. Compose the isometric view from above a street corner so several claimable homes, their lots, and the road network are immediately legible.\n\n### Render order\nUse `topdown`: the street grid, lot boundaries, and circulation must remain coherent and usable before the isometric town dressing is generated.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by multiple residential blocks plus a distinct civic/commercial edge. Theme is bright, approachable cartoon suburb in the Brookhaven visual register. Use `P3` because players cross from outdoor streets into house interiors. No other modifier is forced.",
+  "blob": "### Genre\nThe dominant genre is Roleplay & Avatar Sim: this is an open-ended social town modeled on Brookhaven, with residents claiming finished homes rather than building them.\n\n### Shape and preset\nUse `settlement-claimable`, matching the Life preset. It is a compact suburban town of pre-built, individually claimable houses, not an empty-grid construction map. The preset remains recognisable; retain its housing model while applying the requested bright cartoon suburb theme.\n\n### Config requirements\nUse `building-interior` for the pre-built homes players enter after claiming them. Use `path-road-vehicle` for broad, flat, grid-aligned suburban streets that connect the lots and allow cars to turn. Use `district-zoned` to separate the quiet residential blocks from a small commercial strip, as in the Life preset.\n\n### Layout requirements\nNo additional placed layout-only components are required by the prompt. `building-interior` is drawn as accessible houses; no interior transition markers need be specified beyond their building entrances.\n\n### Layout components\nBuild one contiguous suburban town. Place a quiet residential district across most of the map, organized as regular blocks of pre-built detached homes, each on its own clearly readable claimable lot with a driveway and small yard. Place a smaller commercial district at one edge or along the town’s main street, visibly distinct from the housing blocks but connected directly by roads. Use a network of wide, flat streets with intersections, sidewalks, curbs, and driveways; roads are the primary links between all lots and the commercial area. Keep the terrain level and grassy, with scattered street trees and simple neighborhood landscaping. The boundary should read as the outer edge of a contained suburb, softened by trees and distant low-detail scenery rather than abrupt walls. Compose the isometric view to show several claimable homes, street intersections, and the commercial edge at once.\n\n### Render order\nUse `isometric`: the approachable cartoon-town look is authoritative, and the street grid is straightforward enough to project into a top-down plan afterward.\n\n### Scale, theme, and pipeline cost\nUse a medium scale, driven by multiple residential blocks plus a distinct commercial strip. Theme: bright, cheerful, approachable cartoon suburb in the Brookhaven visual register. Pipeline modifier: `P3`, forced by players crossing from outdoor streets into enterable pre-built houses.",
   "spec": {
     "genre": "Roleplay & Avatar Sim",
     "secondary": [],
@@ -24,73 +24,79 @@
     "options": [
       {
         "id": "building-interior",
-        "text": "Pre-built homes players enter, with exterior doors and legible interior access.",
+        "text": "Pre-built claimable homes that players enter after claiming them.",
         "visible": true,
         "count": -1
       },
       {
         "id": "path-road-vehicle",
-        "text": "Broad, flat suburban streets that can accommodate vehicle turns.",
+        "text": "Broad, flat, grid-aligned suburban streets connecting the lots and allowing cars to turn.",
         "visible": true,
         "count": -1
       },
       {
         "id": "district-zoned",
-        "text": "Separate the quiet residential lots from a small commercial or civic strip.",
+        "text": "Quiet residential blocks separated from a small commercial strip.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "Isometric view from above a street corner, with several claimable homes, their lots, and the connected road network immediately legible.",
+      "composition": "Isometric view showing several claimable homes, street intersections, and the commercial edge at once.",
       "zones": [
         {
           "name": "Residential district",
-          "role": "Orderly blocks of individually claimable lots containing completed detached cartoon houses, short driveways, lawns, sidewalks, and street frontage.",
-          "where": "Across most of the map.",
-          "size": "Most of the medium-sized town."
+          "role": "Regular blocks of pre-built detached homes on individually claimable lots with driveways and small yards.",
+          "where": "Across most of the map",
+          "size": "Most of the town"
         },
         {
-          "name": "Commercial/civic strip",
-          "role": "A modest edge strip, clearly distinct from the quieter homes and connected to them by the same road network.",
-          "where": "One edge of town.",
-          "size": "Modest."
+          "name": "Commercial district",
+          "role": "A visibly distinct small commercial strip connected directly to the housing blocks by roads.",
+          "where": "At one edge or along the town's main street",
+          "size": "Smaller than the residential district"
         }
       ],
       "paths": [
         {
           "from": "Residential district",
-          "to": "Commercial/civic strip",
+          "to": "Commercial district",
+          "kind": "road"
+        },
+        {
+          "from": "Claimable lots",
+          "to": "Street network",
           "kind": "road"
         }
       ],
-      "terrain": "Level, grounded suburban terrain with no water or major relief; low hills appear only as background dressing.",
+      "terrain": "Level grassy terrain with sidewalks, curbs, driveways, scattered street trees, and simple neighborhood landscaping.",
       "props": [
         {
-          "name": "Completed detached cartoon houses",
+          "name": "Pre-built detached claimable homes",
           "count": -1,
-          "where": "On orderly blocks of claimable residential lots across most of the map."
+          "where": "On regular residential blocks, each on its own clearly readable lot"
         },
         {
-          "name": "Short driveways, lawns, sidewalks, and street frontage",
+          "name": "Street trees",
           "count": -1,
-          "where": "Around the residential lots and along the roads."
+          "where": "Scattered throughout the suburban town"
         },
         {
-          "name": "Distant tree lines and low background hills",
+          "name": "Distant low-detail scenery",
           "count": -1,
-          "where": "Around the soft suburban edge."
+          "where": "Beyond the outer edge of the suburb"
         }
       ],
-      "boundary": "A natural soft suburban edge with distant tree lines and low hills as background dressing, rather than hard arena walls.",
+      "boundary": "The outer edge of a contained suburb, softened by trees and distant low-detail scenery rather than abrupt walls.",
       "scale_band": "medium",
-      "theme": "Bright, approachable cartoon suburb in the Brookhaven visual register."
+      "theme": "Bright, cheerful, approachable cartoon suburb in the Brookhaven visual register."
     },
     "render": {
-      "first": "topdown",
-      "then": "isometric",
-      "authoritative": "topdown",
-      "why": "the street grid, lot boundaries, and circulation must remain coherent and usable before the isometric town dressing is generated.",
+      "first": "isometric",
+      "then": "topdown",
+      "authoritative": "isometric",
+      "why": "The approachable cartoon-town look is authoritative, and the straightforward street grid can be projected into a top-down plan afterward.",
       "set_piece": false
     },
     "route": [
@@ -102,12 +108,10 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
-  "mapper_notes": [
-    "blob asked for topdown first; the route ['P3'] gives isometric"
-  ]
+  "mapper_notes": []
 }

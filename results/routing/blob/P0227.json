@@ -19,7 +19,7 @@
     }
   ],
   "scene_prompt": "Create a bright, cartoony neighbourhood for a simple house-building and dress-up game. Lay out 8 separate empty house plots around a shared town area, with shops positioned as accessible destinations for furniture, decorations, and clothing.",
-  "blob": "### Genre\nThis is primarily Roleplay & Avatar Sim, specifically a player-led home-building social town; the construction and shopping loop identifies the genre without adding those mechanics to the map.\n\n### Shape and preset\nUse `settlement-buildable`, matching the Home Builder preset. The prompt explicitly requires every player to receive an empty plot rather than a claimable finished home. Retain the preset’s central gathering character, but the compact eight-plot neighbourhood overrides any implication of a large town grid.\n\n### Config requirements\nApply visible `path-road-vehicle`: a simple, wide cartoony street loop should give each plot and shop frontage. Apply visible `building-interior`: the shops are accessible interior destinations, with entrances facing the shared town area. Apply visible `social-hub`: a small central plaza anchors the shops and connects the residential streets. Do not add unrequested NPCs, water, terrain, or extra settlement density.\n\n### Layout components\nBuild one compact neighbourhood zone around a central town plaza. Arrange exactly 8 equal, separate empty house plots around the perimeter in two short residential rows or a loose ring, each with a clear roadside entrance and enough blank buildable ground for one house. Place the shared plaza at the centre, roughly one quarter of the overall footprint, with a bright paved square and a compact cluster of distinct furniture/decor, clothing, and general shop façades along its edges. Each shop has a visible front entrance leading into a small interior retail room. A broad looping street connects all eight plots to the plaza, with short driveways or footpaths branching to each plot; pedestrian paving links shop doors around the square. Keep terrain flat, grassy, and open, with low curbs, stylized trees, flowerbeds, simple fences, and colourful street props as decoration. Use a soft boundary of hedges, trees, and low rolling backdrop scenery rather than a hard wall. Frame the full neighbourhood as a readable compact town from an elevated three-quarter view, with the plaza central and all eight plots visibly countable.\n\n### Render order\nUse `isometric`: the compact, legible cartoony town composition is the priority, and no topology is game-critical enough to require a plan-first pass.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the explicitly requested 8 plots and one shared shopping centre. Theme: bright, simple, cartoony suburban neighbourhood with cheerful saturated colours. Pipeline modifiers: `P3`, forced by the player crossing from the outdoor plaza and streets into shop interiors.",
+  "blob": "### Genre\nThe dominant genre is Roleplay & Avatar Sim: the original request is a personal house-building and dress-up loop. There is no secondary genre.\n\n### Shape and preset\nUse `settlement-buildable`, matching the Home Builder preset. This is a compact shared neighbourhood organized around empty, uniform personal lots rather than claimable finished homes. Keep the preset’s buildable-plot logic, but use pedestrian circulation rather than vehicle roads because the scene does not request cars or wide streets.\n\n### Config requirements\nApply `social-hub` as the shared town center where players gather between visiting plots and shops. Apply `path-street` as bright pedestrian paths linking every lot to the town center and shop frontage. Apply `district-zoned` by keeping the eight residential plots around the town area while grouping the furniture, decoration, and clothing shops together as a small commercial strip. Do not add `building-interior`: the scene asks for accessible shop destinations, but does not state that players enter their interiors.\n\n### Layout requirements\nNo additional placed gameplay markers are required. The eight empty plots and shop buildings are drawn map geometry rather than post-segmentation placements.\n\n### Layout components\nMake one small, open, bright cartoony neighbourhood. Place a shared town square at the center, sized as the main social gathering area. Arrange exactly 8 separate, equally sized empty house plots around it, each with a clear frontage and enough open buildable ground for one player house. Put a compact commercial strip on one side of the square with distinct furniture, decoration, and clothing shop facades. Use broad, simple pedestrian streets or paved walkways radiating from the square and looping past all eight plots, so every plot and shop has direct access. Keep terrain flat and clean, with lawns, rounded trees, flower beds, colorful signs, benches, and small decorative planters. Define the neighbourhood edge with hedges, trees, and a soft cartoony perimeter rather than hard walls. Frame the central square and shop row as the visual focal point, with the eight lots clearly legible around them.\n\n### Render order\nUse `isometric`: the compact town’s visual charm and readable central composition lead, and no topology is mechanically invalid if rendered look-first.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the stated capacity of 8 house plots and one shared commercial center. Theme: bright, simple, playful cartoony suburb. Pipeline modifier: `P3`, forced by the `settlement-buildable` housing model, which requires linked exterior plot capture and future house interiors.",
   "spec": {
     "genre": "Roleplay & Avatar Sim",
     "secondary": [],
@@ -28,110 +28,116 @@
     "axes": {},
     "options": [
       {
-        "id": "path-road-vehicle",
-        "text": "A simple, wide cartoony street loop gives each plot and shop frontage.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "building-interior",
-        "text": "The shops are accessible interior destinations, with entrances facing the shared town area; each leads into a small interior retail room.",
-        "visible": true,
-        "count": -1
-      },
-      {
         "id": "social-hub",
-        "text": "A small central plaza anchors the shops and connects the residential streets.",
+        "text": "Shared town center where players gather between visiting plots and shops.",
         "visible": true,
         "count": 1
+      },
+      {
+        "id": "path-street",
+        "text": "Bright pedestrian paths linking every lot to the town center and shop frontage.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "district-zoned",
+        "text": "Keep the eight residential plots around the town area while grouping the furniture, decoration, and clothing shops together as a small commercial strip.",
+        "visible": true,
+        "count": 8
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "Elevated three-quarter view framing the full readable compact town, with the bright central plaza in the middle and all eight perimeter plots visibly countable.",
+      "composition": "The central town square and compact shop row are the visual focal point, with eight clearly legible empty lots arranged around them.",
       "zones": [
         {
-          "name": "Central town plaza",
-          "role": "Shared gathering and shopping area, with shop entrances facing the square.",
-          "where": "centre",
-          "size": "roughly one quarter of the overall footprint"
+          "name": "Shared town square",
+          "role": "Main social gathering area between the residential plots and shops.",
+          "where": "center",
+          "size": "main social gathering area"
         },
         {
-          "name": "Empty house plots",
-          "role": "Separate buildable ground for one house per player, each with a clear roadside entrance.",
-          "where": "around the perimeter in two short residential rows or a loose ring",
-          "size": "8 equal separate plots"
+          "name": "Residential plots",
+          "role": "Separate equally sized empty personal house plots, each with clear frontage and open buildable ground for one player house.",
+          "where": "around the town square",
+          "size": "8 equally sized plots"
         },
         {
-          "name": "Shop interiors",
-          "role": "Small interior retail rooms entered from the plaza-facing furniture/decor, clothing, and general shop façades.",
-          "where": "along the edges of the central plaza",
-          "size": "small"
+          "name": "Commercial strip",
+          "role": "Accessible furniture, decoration, and clothing shop destinations.",
+          "where": "one side of the town square",
+          "size": "compact"
         }
       ],
       "paths": [
         {
-          "from": "Central town plaza",
-          "to": "Empty house plots",
-          "kind": "road"
+          "from": "Shared town square",
+          "to": "Residential plots",
+          "kind": "broad pedestrian streets or paved walkways radiating from the square"
         },
         {
-          "from": "Looping street",
-          "to": "each empty house plot",
-          "kind": "road"
+          "from": "Shared town square",
+          "to": "Commercial strip",
+          "kind": "pedestrian street"
         },
         {
-          "from": "Looping street",
-          "to": "each empty house plot",
-          "kind": "corridor"
-        },
-        {
-          "from": "Central town plaza",
-          "to": "shop entrances",
-          "kind": "corridor"
+          "from": "Residential plots",
+          "to": "Residential plots",
+          "kind": "looping pedestrian walkway"
         }
       ],
-      "terrain": "Flat, grassy, and open ground with low curbs; soft low rolling backdrop scenery surrounds the neighbourhood.",
+      "terrain": "Flat, clean terrain with lawns.",
       "props": [
         {
-          "name": "Furniture, decor, clothing, and general shop façades",
+          "name": "Furniture shop facade",
           "count": -1,
-          "where": "along the edges of the central plaza"
+          "where": "commercial strip"
         },
         {
-          "name": "Stylized trees",
+          "name": "Decoration shop facade",
           "count": -1,
-          "where": "around the neighbourhood"
+          "where": "commercial strip"
         },
         {
-          "name": "Flowerbeds",
+          "name": "Clothing shop facade",
           "count": -1,
-          "where": "around the plaza and streets"
+          "where": "commercial strip"
         },
         {
-          "name": "Simple fences",
+          "name": "Rounded trees",
           "count": -1,
-          "where": "around plots and neighbourhood edges"
+          "where": "throughout the neighbourhood and perimeter"
         },
         {
-          "name": "Colourful street props",
+          "name": "Flower beds",
           "count": -1,
-          "where": "along the streets and plaza"
+          "where": "along paths and around the square"
         },
         {
-          "name": "Hedges",
+          "name": "Colorful signs",
           "count": -1,
-          "where": "soft outer boundary"
+          "where": "town square and shop frontage"
+        },
+        {
+          "name": "Benches",
+          "count": -1,
+          "where": "town square and pedestrian paths"
+        },
+        {
+          "name": "Decorative planters",
+          "count": -1,
+          "where": "town square and shop frontage"
         }
       ],
-      "boundary": "Soft boundary of hedges, trees, and low rolling backdrop scenery rather than a hard wall.",
+      "boundary": "Hedges, trees, and a soft cartoony perimeter rather than hard walls define the neighbourhood edge.",
       "scale_band": "small",
-      "theme": "Bright, simple, cartoony suburban neighbourhood with cheerful saturated colours."
+      "theme": "bright, simple, playful cartoony suburb"
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "the compact, legible cartoony town composition is the priority, and no topology is game-critical enough to require a plan-first pass.",
+      "why": "the compact town's visual charm and readable central composition lead, and no topology is mechanically invalid if rendered look-first.",
       "set_piece": false
     },
     "route": [
@@ -143,7 +149,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

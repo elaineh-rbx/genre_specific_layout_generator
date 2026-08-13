@@ -19,7 +19,7 @@
     }
   ],
   "scene_prompt": "Create a 3D third-person co-op shooter test arena set in one compact ruined futuristic city block, sized for squads of up to four players. The arena is an open central fighting space rather than strict lanes, crossed by broken roads and surrounded or framed by damaged buildings. Arrange abandoned vehicles, concrete barriers, and wreckage throughout as navigable obstacles, with several designated enemy spawn points around the block and clear paths through the cover. Use flickering lights, fog, or atmospheric particles to reinforce the ruined-city setting while preserving open sightlines and room for combat.",
-  "blob": "### Genre\nThe dominant genre is Shooter, specifically a cooperative PvE wave-defense prototype. The infected-wave mechanics establish the genre; no secondary genre is needed.\n\n### Shape and preset\nUse `open-battlefield`: one compact city block organized around a shared central clash space rather than formal firing lanes. The closest preset is PvE Shooter, but the prompt overrides its `lane-network` shape and does not request enterable buildings or a deliberate chokepoint, so the preset is none.\n\n### Config requirements\nUse visible `cover-los`: abandoned vehicles, waist-high concrete barriers, wreckage, and broken road fragments are distributed across the block to interrupt long sightlines without sealing off movement. Use invisible `spawner-npc`: several enemy origin points sit around the outer block, screened by ruined structures and connected by clear navigable approaches into the central fight. Do not render the spawn markers themselves.\n\n### Layout components\nBuild one small, compact ruined futuristic city block sized for squads of up to 4 players. A broad open central fighting zone occupies most of the frame. Broken roads cross it in two or three interrupted runs, creating readable circulation through cover rather than strict lanes. Damaged buildings surround and frame the block at its edges, with collapsed façades and open street-facing gaps; they are visual boundaries and cover, not requested enterable interiors. Scatter abandoned vehicles, concrete barriers, and wreckage in loose clusters across the central space, leaving multiple wide routes for players and pursuing enemies to pass around every obstacle.\n\nPlace several enemy approach zones around the perimeter, behind or between damaged buildings, each with a continuous ground route into the center. Keep the outer city-block edge visually enclosed by building shells, rubble, and road cutoffs while retaining open combat sightlines across the middle. Use cracked asphalt, concrete, debris, sparse flickering street or façade lights, and low fog or atmospheric particles. Compose the arena as a readable third-person battle bowl: central open ground in front, layered cover in the midground, and ruined building silhouettes framing the background.\n\n### Render order\nUse `topdown` first and make it authoritative, because all enemy approach routes around cover must remain connected and navigable; an invalid obstacle arrangement would compromise the wave-combat arena.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the single compact block and four-player squad limit. Theme: polished sci-fi urban collapse, foggy and industrial, with restrained neon flicker. Pipeline modifier: `P0`; this is one exterior ground surface with no forced overhangs, interior transitions, separate maps, or volumetric traversal.",
+  "blob": "### Genre\nDominant genre: `Shooter`, specifically a cooperative PvE wave-survival shooter. The enemy-wave and combat loop establish this genre; no secondary genre is needed.\n\n### Shape and preset\nUse `open-battlefield`, taken from Shooter’s usual shape set. It is one compact city block with a broad central combat ground and dispersed perimeter pressure, not a strict lane network. The closest preset is PvE Shooter, but the prompt overrides its `lane-network` shape and most of its corridor-oriented options, so the preset is none.\n\n### Config requirements\nUse `cover-los` for navigable, waist-high concrete barriers, abandoned vehicles, rubble piles, and damaged street furniture that interrupt sightlines without sealing the arena into lanes. Do not add enterable interiors: damaged buildings frame the block and create obstacle edges, but are not requested as playable rooms.\n\n### Layout requirements\nUse `spawner-npc` for several Crawler spawn markers distributed around the outer edges of the city block, behind building corners, wreckage, or broken-road approaches. Each spawn must feed into at least two clear ground-level routes toward the central fighting space, preventing a single blocked route or a spawn directly in the squad’s immediate combat pocket. No other placed gameplay elements are required by the scene.\n\n### Layout components\nBuild one compact ruined futuristic city block sized for squads of up to four players. The main zone is a large open central intersection or plaza used for sustained fighting. Broken roads enter from multiple sides and connect this center to perimeter approaches. Damaged building shells surround or frame the block, leaving broad street openings rather than forming enclosed lanes. Scatter abandoned vehicles, concrete barriers, and wreckage in loose cover clusters across the roads and central space, with readable walkable gaps around every cluster. Keep long but interrupted sightlines across the arena. The boundary is formed by collapsed facades, blocked streets, and distant ruined building edges. Add flickering street or building lights, light fog, and restrained atmospheric particles without obscuring combat readability. Compose the block as a clear central arena encircled by hostile approach routes.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because the enemy approach routes and paths around cover must remain continuously navigable for reliable AI pursuit.\n\n### Scale, theme, and pipeline cost\nScale band: small, driven by the single compact block and four-player squad target. Theme: polished ruined futuristic city, abandoned and atmospheric but combat-readable. Pipeline modifier: `P0`; this is one contiguous, ground-level exterior surface with no forced overhangs, interiors, separate maps, or volumetric traversal.",
   "spec": {
     "genre": "Shooter",
     "secondary": [],
@@ -29,87 +29,85 @@
     "options": [
       {
         "id": "cover-los",
-        "text": "Abandoned vehicles, waist-high concrete barriers, wreckage, and broken road fragments distributed across the block to interrupt long sightlines without sealing off movement.",
+        "text": "Navigable, waist-high concrete barriers, abandoned vehicles, rubble piles, and damaged street furniture that interrupt sightlines without sealing the arena into lanes.",
         "visible": true,
         "count": -1
       },
       {
         "id": "spawner-npc",
-        "text": "Several enemy origin points around the outer block, screened by ruined structures and connected by clear navigable approaches into the central fight; do not render the spawn markers themselves.",
+        "text": "Several Crawler spawn markers distributed around the outer edges of the city block, behind building corners, wreckage, or broken-road approaches.",
         "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "spawner-npc",
+        "text": "Several Crawler spawn markers distributed around the outer edges of the city block, behind building corners, wreckage, or broken-road approaches.",
+        "count": -1,
+        "where": "Around the outer edges of the city block, behind building corners, wreckage, or broken-road approaches; each spawn feeds into at least two clear ground-level routes toward the central fighting space and is not in the squad's immediate combat pocket."
+      }
+    ],
     "layout": {
-      "composition": "Readable third-person battle bowl: central open ground in the foreground, layered cover in the midground, and ruined building silhouettes framing the background.",
+      "composition": "A clear central arena occupies the center of the block, encircled by hostile approach routes. Broken roads enter from multiple sides, while damaged building shells frame the perimeter. Loose cover clusters sit across the roads and central space with long but interrupted sightlines.",
       "zones": [
         {
-          "name": "Central fighting zone",
-          "role": "Broad open shared clash space for squads of up to 4 players, with multiple wide routes around cover for players and pursuing enemies.",
-          "where": "centre, occupying most of the frame",
-          "size": "broad; most of the compact block"
+          "name": "Central intersection or plaza",
+          "role": "Large open central fighting space for sustained combat.",
+          "where": "Center of the city block.",
+          "size": "large"
         },
         {
-          "name": "Perimeter enemy approach zones",
-          "role": "Enemy origins behind or between damaged buildings, each feeding by continuous ground route into the central fight.",
-          "where": "around the outer block",
-          "size": "several"
+          "name": "Perimeter approaches",
+          "role": "Hostile enemy approach routes feeding toward the central fighting space.",
+          "where": "Around the outer edges of the city block.",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Perimeter enemy approach zones",
-          "to": "Central fighting zone",
-          "kind": "open ground"
-        },
-        {
-          "from": "Central fighting zone",
-          "to": "Central fighting zone",
+          "from": "Perimeter approaches",
+          "to": "Central intersection or plaza",
           "kind": "road"
         }
       ],
-      "terrain": "One exterior ground surface of cracked asphalt, concrete, debris, broken roads crossing in two or three interrupted runs, low fog, and atmospheric particles.",
+      "terrain": "One compact, ground-level exterior city block with broken roads, light fog, and restrained atmospheric particles.",
       "props": [
         {
-          "name": "Damaged building shells with collapsed façades and open street-facing gaps",
+          "name": "Damaged building shells",
           "count": -1,
-          "where": "surrounding and framing the block at its edges"
+          "where": "Surrounding or framing the block with broad street openings."
         },
         {
           "name": "Abandoned vehicles",
           "count": -1,
-          "where": "loose clusters across the central space"
+          "where": "Loose cover clusters across the roads and central space."
         },
         {
-          "name": "Waist-high concrete barriers",
+          "name": "Concrete barriers",
           "count": -1,
-          "where": "loose clusters across the central space"
+          "where": "Loose cover clusters across the roads and central space."
         },
         {
           "name": "Wreckage",
           "count": -1,
-          "where": "loose clusters across the central space"
+          "where": "Loose cover clusters across the roads and central space."
         },
         {
-          "name": "Broken road runs (two or three interrupted runs)",
+          "name": "Flickering street or building lights",
           "count": -1,
-          "where": "crossing the central fighting zone"
-        },
-        {
-          "name": "Sparse flickering street or façade lights",
-          "count": -1,
-          "where": "across the ruined block"
+          "where": "Across the ruined city block."
         }
       ],
-      "boundary": "Outer city-block edge visually enclosed by building shells, rubble, and road cutoffs while retaining open combat sightlines across the middle.",
+      "boundary": "Collapsed facades, blocked streets, and distant ruined building edges.",
       "scale_band": "small",
-      "theme": "Polished sci-fi urban collapse, foggy industrial atmosphere, restrained neon flicker."
+      "theme": "Polished ruined futuristic city, abandoned and atmospheric but combat-readable."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "all enemy approach routes around cover must remain connected and navigable.",
+      "why": "Enemy approach routes and paths around cover must remain continuously navigable for reliable AI pursuit.",
       "set_piece": false
     },
     "route": [
@@ -121,7 +119,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

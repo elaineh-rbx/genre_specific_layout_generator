@@ -19,107 +19,112 @@
     }
   ],
   "scene_prompt": "Create a bright, cartoony pig roleplay map set on a small farm holding beside a compact forest edge. Arrange farm areas with collectible items and berry patches across open ground, crop areas, and around simple farm structures, with more berries and forage spread along paths into the forest. Include a fixed home area containing a small shed as the player house, positioned separately from the main farm and forest wandering zones.",
-  "blob": "### Genre\nThe dominant genre is Roleplay & Avatar Sim: an open-ended pig roleplay space for freely wandering. There is no secondary genre; berry currency and purchasing are mechanics and do not alter the map.\n\n### Shape and preset\nUse `wilderness-open`, adapted as a compact farm holding and forest-edge habitat rather than a large untamed wilderness. The closest preset is Animal Sim, but use none because its den, social hub, and landmark bundle is not present; the prompt instead specifies a fixed shed home area.\n\n### Config requirements\nNo menu options are selected beyond the shape. The farm buildings, berry patches, forest paths, and shed are all visible geometry rather than gameplay markers. Do not render collection triggers, currency, shop interfaces, or purchase logic.\n\n### Layout components\nMake one small, contiguous outdoor holding. Put the main farm across the broad central and left side: open grassy grazing ground, several orderly crop patches, and a handful of simple cartoony farm structures. Scatter visible berry bushes and other forage props throughout the open ground, crop edges, and around the structures. Along the rear and right edge, transition into a compact, denser forest zone with tree clusters, undergrowth, winding dirt paths, and more berry bushes tucked beside those paths.\n\nSet a separate fixed home clearing near one outer edge, visibly apart from both the active farm centre and forest wandering zone but connected by a short dirt path. Place one small shed there as the pig player's house, with a clear yard around it. Keep all terrain gently level grass and soil, with no water, cliffs, or stacked structures. The boundary is soft and natural: dense forest, hedgerows, and farm-edge fencing taper into an implied limit. Frame the isometric view to show the farm centre, the forest edge, and the shed clearing together, with paths making their relationship immediately readable.\n\n### Render order\nUse `isometric`: the scene is a simple freely explorable place whose topology does not need plan-first validation.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the requested small holding and compact forest edge. Theme is bright, playful, cartoony farm-and-forest roleplay. Use `P0`; this is one exterior ground surface with no forced interior, overhang, separate-map, volumetric, or validity pass.",
+  "blob": "### 1. Genre\nThe dominant genre is Roleplay & Avatar Sim: players freely inhabit a pig character, wander socially, collect forage, and acquire a simple home. There is no secondary genre.\n\n### 2. Shape and preset\nUse `world-open`, taken from outside Roleplay & Avatar Sim’s usual shape shortlist. This is one small contiguous exterior holding: farm, forest edge, and home area coexist on the same walkable surface and can be visited in any order. The closest preset is Animal Sim, but the changed shape and absence of its den, landmark, and social-hub bundle make the preset `none`.\n\n### 3. Config requirements\nNo additional image-config option is required. The requested berry patches, farm structures, forest, and shed are concrete scene components rather than unasked-for genre infrastructure.\n\n### 4. Layout requirements\nUse `collectible-nodes`: distribute forage pickup markers across the farm’s crop ground and berry patches, then in small clusters along the woodland paths and beneath forest-edge shrubs. Keep the densest, safest pickup clusters near the farm and home-area approach, with scattered finds deeper in the compact forest. No other placed gameplay volumes are required.\n\n### 5. Layout components\nCreate three connected zones. The main farm occupies the broad central and left portion of the holding, with open grass, several crop patches, berry bushes, simple fences, and a few small farm structures. A compact forest edge fills the rear/right side, beginning as a clear treeline and becoming a short wandering grove with shrubs, fallen logs, and additional berry and forage patches. Set the fixed home area apart at the front or side edge of the farm: a small cleared yard containing one small shed as the player house, visually separated by fencing or a hedgerow but reached without a loading transition.\n\nUse dirt footpaths from the home yard to the farm, then branching narrower paths from the crop ground into the forest. Keep all zones on gentle, open ground with no hazardous barriers. The outer boundary is a soft natural limit of hedges, dense trees, and distant farm fencing. Compose the farm as the readable central overview, with the shed visible from its approach and the forest forming a colorful backdrop rather than an expansive wilderness.\n\n### 6. Render order\nRender `isometric` first and treat it as authoritative, because this is a small atmospheric wander space with no topology whose failure would make play impossible.\n\n### 7. Scale, theme, and pipeline cost\nScale is small, driven by the requested compact holding and forest edge. Theme: bright, playful cartoony farm fantasy for pig roleplay. Use `P0`: it is one exterior, single-surface map with no overhangs, interior transition, separate maps, or validity-critical route.",
   "spec": {
     "genre": "Roleplay & Avatar Sim",
     "secondary": [],
-    "shape": "wilderness-open",
+    "shape": "world-open",
     "preset": "none",
     "axes": {},
     "options": [],
+    "layout_placement": [],
     "layout": {
-      "composition": "Isometric view frames the central and left-side farm, the rear and right forest edge, and the separate outer-edge shed clearing together, with dirt paths making their relationship readable.",
+      "composition": "The farm is the readable central overview across the broad central and left holding. The home shed is visible from its approach at the front or side farm edge, while the compact forest fills the rear/right as a colorful backdrop.",
       "zones": [
         {
           "name": "Main farm",
-          "role": "Open grassy grazing ground with crop patches, farm structures, berry bushes, and forage props.",
-          "where": "broad central and left side",
-          "size": "broad"
+          "role": "Open grass farm area with crop patches, berry bushes, simple fences, and small farm structures.",
+          "where": "Broad central and left portion of the holding.",
+          "size": "Broad"
         },
         {
-          "name": "Forest edge",
-          "role": "Wandering zone with tree clusters, undergrowth, winding dirt paths, berry bushes, and forage.",
-          "where": "rear and right edge",
-          "size": "compact and denser"
+          "name": "Compact forest edge",
+          "role": "A clear treeline becoming a short wandering grove with shrubs, fallen logs, and additional berry and forage patches.",
+          "where": "Rear/right side.",
+          "size": "Compact"
         },
         {
-          "name": "Home clearing",
-          "role": "Fixed pig player home area with a shed and clear yard.",
-          "where": "near one outer edge, apart from the farm centre and forest wandering zone",
-          "size": "separate"
+          "name": "Home area",
+          "role": "A fixed cleared yard containing the player house shed, separated visually from the farm but accessible without a loading transition.",
+          "where": "Front or side edge of the farm.",
+          "size": "Small"
         }
       ],
       "paths": [
         {
-          "from": "Main farm",
-          "to": "Forest edge",
-          "kind": "dirt path"
+          "from": "Home area",
+          "to": "Main farm",
+          "kind": "path"
         },
         {
-          "from": "Home clearing",
-          "to": "Main farm",
-          "kind": "dirt path"
+          "from": "Main farm",
+          "to": "Compact forest edge",
+          "kind": "path"
         }
       ],
-      "terrain": "Gently level grass and soil with open grazing ground, crop edges, and no water, cliffs, or stacked structures.",
+      "terrain": "Gentle, open grass ground with crop ground and berry patches; no hazardous barriers.",
       "props": [
         {
           "name": "crop patches",
           "count": -1,
-          "where": "main farm"
+          "where": "Across the main farm."
         },
         {
-          "name": "simple cartoony farm structures",
+          "name": "berry bushes and berry patches",
           "count": -1,
-          "where": "main farm"
+          "where": "Across the farm and along paths into the forest."
         },
         {
-          "name": "berry bushes",
+          "name": "simple fences",
           "count": -1,
-          "where": "open ground, crop edges, around structures, and beside forest paths"
+          "where": "Around farm areas and separating the home area."
         },
         {
-          "name": "forage props",
+          "name": "small farm structures",
           "count": -1,
-          "where": "open ground and along paths into the forest"
+          "where": "In the main farm."
         },
         {
-          "name": "tree clusters",
+          "name": "shrubs",
           "count": -1,
-          "where": "forest edge"
+          "where": "In the compact forest edge."
         },
         {
-          "name": "undergrowth",
+          "name": "fallen logs",
           "count": -1,
-          "where": "forest edge"
+          "where": "In the compact forest edge."
         },
         {
           "name": "small shed",
           "count": 1,
-          "where": "home clearing"
+          "where": "In the cleared home yard."
         }
       ],
-      "boundary": "Soft natural boundary of dense forest, hedgerows, and farm-edge fencing tapering into an implied limit.",
+      "boundary": "A soft natural limit of hedges, dense trees, and distant farm fencing.",
       "scale_band": "small",
-      "theme": "bright, playful, cartoony farm-and-forest roleplay"
+      "theme": "Bright, playful cartoony farm fantasy for pig roleplay."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "the freely explorable place does not require plan-first topology validation.",
+      "why": "This is a small atmospheric wander space with no topology whose failure would make play impossible.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
-    "notes": [],
+    "notes": [
+      "`world-open` is taken from outside Roleplay & Avatar Sim’s usual shape shortlist.",
+      "dropped option 'collectible-nodes': not in Roleplay & Avatar Sim",
+      "dropped placement 'collectible-nodes': not in Roleplay & Avatar Sim"
+    ],
     "scene_prompt": "Create a bright, cartoony pig roleplay map set on a small farm holding beside a compact forest edge. Arrange farm areas with collectible items and berry patches across open ground, crop areas, and around simple farm structures, with more berries and forage spread along paths into the forest. Include a fixed home area containing a small shed as the player house, positioned separately from the main farm and forest wandering zones."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

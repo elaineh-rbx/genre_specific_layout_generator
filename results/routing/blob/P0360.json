@@ -3,7 +3,7 @@
   "source": "a 3d racing game where you race against the computer. dont ask for input just build the game",
   "answers": [],
   "scene_prompt": "Create a 3D racing game map with a race track suitable for a computer-controlled opponent.",
-  "blob": "### Genre\nThe dominant genre is Racing: the original request names a 3D race against a computer-controlled opponent. No secondary genre is needed.\n\n### Shape and preset\nUse `route-circuit`, matching the Circuit Racing preset. Build one closed, continuously readable circuit rather than a point-to-point course; the computer opponent requires an unambiguous loop. The prompt does not specify the preset’s extra barriers, grid, or lap markers, so do not add them.\n\n### Config requirements\nUse `startpoint-line` as visible geometry with an invisible race-start marker, placing a single clear starting line on the circuit. Use `trigger-finish` as visible geometry with an invisible finish-detection zone, co-located with that line to close each lap. These are the only explicitly necessary route components; do not introduce scenery, pickups, spectators, hazards, or buildings unasked.\n\n### Layout components\nCreate a medium-scale single outdoor circuit. The route is a broad paved loop with a readable start/finish straight in the foreground, followed by a sequence of distinct curves that return cleanly to the same straight without ambiguous crossings or disconnected segments. Keep the road continuous and consistently wide enough for two racing vehicles to run side by side, with a modestly wider start/finish area. Surround the circuit with simple flat infield and runoff ground, leaving the outer boundary open and visually quiet so the road silhouette remains dominant. There are no named terrain features, water features, buildings, props, or stated counts to add. Compose the whole loop in a high three-quarter view, with its complete connected route visible at once and the start/finish straight immediately legible.\n\n### Render order\nUse `authored_plan`: a racing circuit must be generated as a valid closed route before either plan or isometric dressing, because a broken or ambiguous loop would make the race unplayable.\n\n### Scale, theme, and pipeline cost\nScale band: medium, driven by a full closed circuit designed for two competitors. Theme: clean, minimal 3D motorsport circuit. Pipeline modifier: `P6`, forced by the circuit’s required connected and closed topology.",
+  "blob": "### 1. Genre\nThe dominant genre is Racing: the player races a computer-controlled opponent on a designated track.\n\n### 2. Shape and preset\nUse `route-circuit`, following the Circuit Racing preset. The map is one closed, continuously connected race circuit that supports repeated laps rather than a point-to-point route.\n\n### 3. Config requirements\nUse `spawn-grid` as a compact side-by-side launch front at the circuit start. Use `barrier-guardrail` as continuous physical rails along hazardous outer turns and track edges. Use `path-turnaround` through clean, readable curved turns that return the route toward its next circuit segment.\n\n### 4. Layout requirements\nPlace `trigger-lap` once across the start/finish straight, registering each completed crossing after the circuit has been traversed. Place `spawn-grid` with two evenly spaced slots at the beginning of the main straight, one for the player and one for the computer opponent.\n\n### 5. Layout components\nBuild one medium-sized closed paved circuit, with a broad start/finish straight at the front of the composition and a two-slot starting grid immediately behind its line. The route should flow through several clearly legible bends and return cleanly to the straight without ambiguous crossings, branches, or disconnected road pieces. Use a consistent asphalt track surface with painted edge markings, grass or compacted ground surrounding it, and guardrails on outside corners and other run-off edges. Keep the infield simple and non-obstructive. The boundary is defined by the continuous track edge, guardrails, and surrounding run-off terrain. Compose the full loop clearly in a high three-quarter view so its continuous circuit topology is readable at a glance.\n\n### 6. Render order\nUse `authored_plan`: the circuit must be generated as a valid closed route before it is dressed, because a broken or ambiguous loop would make the race unplayable.\n\n### 7. Scale, theme, and pipeline cost\nUse a medium scale driven by one complete two-racer circuit. Theme: clean arcade-style 3D motorsport circuit with readable asphalt, painted markings, grass run-off, and safety rails. Apply `P6` because the closed racing route must be valid by construction.",
   "spec": {
     "genre": "Racing",
     "secondary": [],
@@ -12,52 +12,100 @@
     "axes": {},
     "options": [
       {
-        "id": "startpoint-line",
-        "text": "A single clear starting line on the circuit, with an invisible race-start marker.",
+        "id": "spawn-grid",
+        "text": "a compact side-by-side launch front with two evenly spaced slots, one for the player and one for the computer opponent",
         "visible": true,
-        "count": 1
+        "count": 2
       },
       {
-        "id": "trigger-finish",
-        "text": "Visible finish geometry with an invisible finish-detection zone co-located with the starting line to close each lap.",
+        "id": "barrier-guardrail",
+        "text": "continuous physical rails along hazardous outer turns, track edges, outside corners, and other run-off edges",
         "visible": true,
         "count": -1
+      },
+      {
+        "id": "path-turnaround",
+        "text": "clean, readable curved turns that return the route toward its next circuit segment",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "trigger-lap",
+        "text": "a lap trigger registering each completed crossing after the circuit has been traversed",
+        "visible": false,
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "spawn-grid",
+        "text": "a compact side-by-side launch front with two evenly spaced slots, one for the player and one for the computer opponent",
+        "count": 2,
+        "where": "at the beginning of the main straight, immediately behind the start/finish line"
+      },
+      {
+        "id": "trigger-lap",
+        "text": "a lap trigger registering each completed crossing after the circuit has been traversed",
+        "count": 1,
+        "where": "across the start/finish straight"
       }
     ],
     "layout": {
-      "composition": "High three-quarter view showing the complete connected loop at once, with the start/finish straight immediately legible in the foreground.",
+      "composition": "The full closed loop is clearly composed in a high three-quarter view, with the broad start/finish straight at the front of the composition and the continuous circuit topology readable at a glance.",
       "zones": [
         {
-          "name": "closed circuit",
-          "role": "A broad paved loop for two racing vehicles, with a readable start/finish straight followed by distinct curves that return cleanly to the same straight.",
-          "where": "whole map, with the start/finish straight in the foreground",
-          "size": "medium-scale"
+          "name": "Start/finish straight",
+          "role": "Broad circuit straight containing the start/finish line and the two-slot starting grid.",
+          "where": "front of the composition",
+          "size": "broad"
         },
         {
-          "name": "infield and runoff",
-          "role": "Simple flat ground surrounding the circuit.",
-          "where": "inside and around the paved loop",
+          "name": "Closed paved circuit",
+          "role": "One continuously connected route for repeated laps, flowing through several clearly legible bends and returning cleanly to the straight.",
+          "where": "around the composition",
+          "size": "medium-sized"
+        },
+        {
+          "name": "Infield",
+          "role": "Simple, non-obstructive interior of the circuit loop.",
+          "where": "centre of the circuit",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "start/finish straight",
-          "to": "start/finish straight",
+          "from": "Start/finish straight",
+          "to": "Closed paved circuit",
+          "kind": "track"
+        },
+        {
+          "from": "Closed paved circuit",
+          "to": "Start/finish straight",
           "kind": "track"
         }
       ],
-      "terrain": "Simple flat infield and runoff ground around the broad paved circuit.",
-      "props": [],
-      "boundary": "Open outer boundary, visually quiet so the road silhouette remains dominant.",
+      "terrain": "A consistent asphalt track surface with painted edge markings, surrounded by grass or compacted ground run-off terrain.",
+      "props": [
+        {
+          "name": "guardrails",
+          "count": -1,
+          "where": "outside corners and other run-off edges"
+        },
+        {
+          "name": "painted edge markings",
+          "count": -1,
+          "where": "along the asphalt track surface"
+        }
+      ],
+      "boundary": "The continuous track edge, guardrails, and surrounding run-off terrain define the boundary.",
       "scale_band": "medium",
-      "theme": "clean, minimal 3D motorsport circuit"
+      "theme": "clean arcade-style 3D motorsport circuit with readable asphalt, painted markings, grass run-off, and safety rails"
     },
     "render": {
       "first": "authored_plan",
       "then": "topdown",
       "authoritative": "authored_plan",
-      "why": "A broken or ambiguous closed loop would make the race unplayable.",
+      "why": "the circuit must be generated as a valid closed route before it is dressed, because a broken or ambiguous loop would make the race unplayable.",
       "set_piece": false
     },
     "route": [
@@ -69,7 +117,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "layout",

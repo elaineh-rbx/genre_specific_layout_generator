@@ -14,144 +14,116 @@
     }
   ],
   "scene_prompt": "Create a 3D game map with a bright, colorful park as the chase ground, with simple paths, trees, and open areas for ducks and geese to run around. Include a separate lobby area with a visible obby course.",
-  "blob": "### Genre\nThe dominant genre is Survival, specifically an asymmetric chase game; Obby & Platformer is secondary for the lobby course. The chase ground owns the overall map form.\n\n### Shape and preset\nUse Survival shape `warren-looping`, expressed here as an open park whose paths form several connected loops rather than enclosed corridors. Match the 1 vs All preset, but omit its escape exit because the stated round resolution is not spatially tied to an exit.\n\n### Config requirements\nUse visible `cover-los`: tree groves, shrubs, and small park structures interrupt long sightlines without closing off the park. Use invisible `spawn-protected`: separated, screened role-start areas at opposite sides of the chase ground. For the secondary lobby obby, use visible `path-track` as the ordered platform route and `obstacle-jump` as its jumps and elevation changes. Do not add pickups, shops, or reward displays.\n\n### Layout components\nThe main, roughly three-quarters of the map is a bright colorful park chase zone: broad grass clearings in the center and along the edges, clusters of simple leafy trees, low shrubs, benches, and small decorative park shelters. Pale paved walking paths make two or three clearly connected loops through these open areas, with multiple crossings and no dead-end run pockets. A low fence, dense hedge line, and tree belt form the outer boundary.\n\nPlace a separate but adjacent lobby zone at the park entrance, reached through a wide gateway rather than as a separate map. It has an open arrival plaza and a clearly visible compact obby course along one side: a sequential chain of colorful raised platforms, short gaps, simple ramps, and stepped blocks, all readable from the plaza. Keep the lobby visually distinct and safely outside the active park circulation.\n\nFrame the isometric view with the lobby in the near foreground and the looping park spreading behind it, so both the obby silhouette and the open chase clearings remain legible.\n\n### Render order\nUse `topdown`: the connected park loops and the obby jump sequence must be topologically valid and readable for play before the isometric dressing is produced.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by one substantial chase park plus an attached lobby and course. Theme is bright, cheerful, low-detail colorful park. Use `P6` because both the loop connectivity and the obby’s jump path must be valid by construction. No other pipeline modifier is forced.",
+  "blob": "### Genre\nThe dominant genre is `Survival`, specifically an asymmetric tag-and-evade round where geese pursue ducks until the timer expires. `Obby & Platformer` is secondary, contributing only the optional lobby obstacle course.\n\n### Shape and preset\nUse `space-staged`: the active park round and the waiting lobby must be fully separate spaces. This shape comes from outside Survival’s usual set because the explicit lobby-plus-match separation is more important than a single chase-arena shape. Preset: none; the 1 vs All preset’s looping warren and escape exit conflict with an open park survival round.\n\n### Config requirements\nUse `path-track` for a clearly visible, compact obby route in the lobby, made of ordered jumping platforms. Use `checkpoint-respawn` for conspicuous flat safe pads on that course; their drawn pads must read as part of the obstacle route. Do not draw an escape gate: survival is determined by the round timer, not by reaching an exit.\n\n### Layout requirements\nPlace `spawn-protected` role-assignment points: one screened goose start at one edge of the park and several duck start points spread across the opposite side and open central ground, avoiding immediate tagging sightlines. Place `checkpoint-respawn` markers at the obby start and after each substantial elevated section, returning failed lobby players to the last safe pad. The timer and tag conversion are mechanics and require no drawn layout element.\n\n### Layout components\nThe primary zone is a medium-sized bright park chase ground: a broad grassy central clearing, several simple looping paved paths, scattered clusters of trees, and open running lanes between them. Trees should break up movement choices without turning the park into a maze. Enclose the active park with a soft natural edge of dense shrubs, trees, and low fencing. The separate lobby is a cheerful arrival plaza with a clearly readable obby beside or beyond its gathering area: a short ascending chain of colorful platforms, jumps, and safe pads, visually visible from the lobby rather than hidden away. Keep the lobby and park as distinct, non-overlapping map spaces.\n\n### Render order\nUse `topdown` first and make it authoritative, because the obby’s ordered jump chain must remain physically connected and clearable before the isometric dressing is generated.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by a full chase park plus a separate lobby and obby. Theme: bright, colorful, friendly cartoon park. Pipeline modifiers are `P4` because lobby and match are separate maps, and `P6` because the obby’s critical platform route must be valid by construction.",
   "spec": {
     "genre": "Survival",
     "secondary": [
       "Obby & Platformer"
     ],
-    "shape": "warren-looping",
-    "preset": "1 vs All",
+    "shape": "space-staged",
+    "preset": "none",
     "axes": {},
     "options": [
       {
-        "id": "cover-los",
-        "text": "tree groves, shrubs, and small park structures interrupt long sightlines without closing off the park",
-        "visible": true,
-        "count": -1
-      },
-      {
         "id": "spawn-protected",
-        "text": "separated, screened role-start areas at opposite sides of the chase ground",
+        "text": "Role-assignment points: one screened goose start at one edge of the park and several duck start points across the opposite side and open central ground, avoiding immediate tagging sightlines.",
         "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "spawn-protected",
+        "text": "Role-assignment points: one screened goose start and several duck start points that avoid immediate tagging sightlines.",
+        "count": -1,
+        "where": "Place the goose start at one edge of the park; spread duck starts across the opposite side and open central ground."
+      }
+    ],
     "layout": {
-      "composition": "The adjacent lobby sits in the near foreground, with its compact obby silhouette readable along one side; the looping park spreads behind it so the open chase clearings remain legible.",
+      "composition": "Keep the bright chase park and cheerful arrival lobby as distinct, non-overlapping map spaces; place the readable colorful obby beside or beyond the lobby gathering area so it remains visible from the lobby.",
       "zones": [
         {
-          "name": "Park chase zone",
-          "role": "Asymmetric chase ground with connected looping paths and no dead-end run pockets.",
-          "where": "Main map area behind the lobby, occupying roughly three-quarters of the map.",
-          "size": "roughly three-quarters of the map"
+          "name": "Park chase ground",
+          "role": "Active asymmetric tag-and-evade round where geese pursue ducks until the timer expires.",
+          "where": "Separate active map space.",
+          "size": "medium-sized"
         },
         {
-          "name": "Lobby zone",
-          "role": "Separate but adjacent arrival area, safely outside active park circulation.",
-          "where": "At the park entrance in the near foreground, reached through a wide gateway.",
+          "name": "Arrival lobby",
+          "role": "Waiting and gathering area outside the active round.",
+          "where": "Separate from the park.",
           "size": ""
         },
         {
-          "name": "Arrival plaza",
-          "role": "Open lobby arrival space.",
-          "where": "Within the lobby zone.",
-          "size": ""
-        },
-        {
-          "name": "Lobby obby course",
-          "role": "A sequential platform route with jumps and elevation changes, readable from the plaza.",
-          "where": "Along one side of the lobby plaza.",
-          "size": "compact"
+          "name": "Lobby obby",
+          "role": "Optional obstacle course for waiting players.",
+          "where": "Beside or beyond the lobby gathering area, visibly readable from the lobby.",
+          "size": "short"
         }
       ],
       "paths": [
         {
-          "from": "Lobby zone",
-          "to": "Park chase zone",
-          "kind": "gateway"
-        },
-        {
-          "from": "Park chase clearings",
-          "to": "Park chase clearings",
+          "from": "Park chase ground",
+          "to": "Park chase ground",
           "kind": "path"
         },
         {
-          "from": "Lobby obby course",
-          "to": "Lobby obby course",
+          "from": "Arrival lobby",
+          "to": "Lobby obby",
           "kind": "track"
         }
       ],
-      "terrain": "Bright grass clearings in the centre and along the edges, with pale paved walking paths forming two or three clearly connected loops through open park areas.",
+      "terrain": "Broad grassy central clearing with several simple looping paved paths, scattered tree clusters, and open running lanes between them. The lobby obby is a short ascending chain of colorful platforms, jumps, and safe pads.",
       "props": [
         {
-          "name": "simple leafy tree clusters",
+          "name": "scattered clusters of trees",
           "count": -1,
-          "where": "Across the park chase zone"
+          "where": "Across the park, breaking up movement choices without making a maze."
         },
         {
-          "name": "low shrubs",
+          "name": "colorful jumping platforms",
           "count": -1,
-          "where": "Across the park chase zone"
+          "where": "Along the visible lobby obby route."
         },
         {
-          "name": "benches",
+          "name": "safe pads",
           "count": -1,
-          "where": "Across the park chase zone"
-        },
-        {
-          "name": "small decorative park shelters",
-          "count": -1,
-          "where": "Across the park chase zone"
-        },
-        {
-          "name": "colorful raised platforms",
-          "count": -1,
-          "where": "Lobby obby course"
-        },
-        {
-          "name": "short gaps",
-          "count": -1,
-          "where": "Lobby obby course"
-        },
-        {
-          "name": "simple ramps",
-          "count": -1,
-          "where": "Lobby obby course"
-        },
-        {
-          "name": "stepped blocks",
-          "count": -1,
-          "where": "Lobby obby course"
+          "where": "Along the lobby obby route."
         }
       ],
-      "boundary": "A low fence, dense hedge line, and tree belt form the outer boundary.",
+      "boundary": "The active park is enclosed by a soft natural edge of dense shrubs, trees, and low fencing.",
       "scale_band": "medium",
-      "theme": "bright, cheerful, low-detail colorful park"
+      "theme": "bright, colorful, friendly cartoon park"
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the connected park loops and obby jump sequence must be topologically valid and readable for play before isometric dressing.",
+      "why": "the obby's ordered jump chain must remain physically connected and clearable before isometric dressing.",
       "set_piece": false
     },
     "route": [
+      "P4",
       "P6"
     ],
     "notes": [
-      "`path-track` and `obstacle-jump` were named for the secondary Obby & Platformer lobby course, but are not canonical option IDs for dominant genre Survival and were dropped from options.",
-      "The 1 vs All preset was matched with its escape exit omitted as directed."
+      "`space-staged` is used from outside Survival’s usual shape set because the lobby and active match must be fully separate spaces.",
+      "No escape gate is included: survival is determined by the round timer rather than reaching an exit.",
+      "dropped option 'path-track': not in Survival",
+      "dropped option 'checkpoint-respawn': not in Survival",
+      "dropped placement 'checkpoint-respawn': not in Survival"
     ],
     "scene_prompt": "Create a 3D game map with a bright, colorful park as the chase ground, with simple paths, trees, and open areas for ducks and geese to run around. Include a separate lobby area with a visible obby course."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
-  "order": "p6",
-  "first": "topdown",
-  "mapper_notes": []
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P4'] gives isometric"
+  ]
 }

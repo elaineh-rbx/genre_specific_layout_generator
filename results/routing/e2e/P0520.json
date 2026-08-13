@@ -9,18 +9,27 @@
   "questions": [
     {
       "field": "theme",
-      "ask": "What visual theme should the obby tower use—for example bright colorful blocks, neon cyber, fantasy ruins, or an industrial tower?"
+      "ask": "What visual theme should the obby tower use (for example: bright colorful toy blocks, neon cyberpunk, fantasy ruins, or industrial)?"
+    },
+    {
+      "field": "goal",
+      "ask": "Should players climb one continuous tower to a finish at the top, or should the tower include checkpoints and separate themed floors?"
     }
   ],
   "answers": [
     {
       "field": "theme",
-      "ask": "What visual theme should the obby tower use—for example bright colorful blocks, neon cyber, fantasy ruins, or an industrial tower?",
-      "answer": "Use a bright, colorful block-style obby tower theme, keeping it simple and immediately readable for gameplay."
+      "ask": "What visual theme should the obby tower use (for example: bright colorful toy blocks, neon cyberpunk, fantasy ruins, or industrial)?",
+      "answer": "Use a bright, colorful toy-block obby style so it is clear and immediately playable."
+    },
+    {
+      "field": "goal",
+      "ask": "Should players climb one continuous tower to a finish at the top, or should the tower include checkpoints and separate themed floors?",
+      "answer": "Make one continuous tower with checkpoints along the climb and a finish at the top."
     }
   ],
-  "scene_prompt": "Create a 3D obby map built as a bright, colorful block-style tower — a simple, immediately readable vertical course rising through stacked platform sections.",
-  "blob": "### Genre\nThe dominant genre is Obby & Platformer: the original request explicitly asks for an obby tower parkour game.\n\n### Shape and preset\nUse `course-tower`, a vertical spiral/ascent course made from stacked platform sections. This matches the Tower Obby preset; retain its tower form but use the prompt’s simple bright block course rather than adding unrequested timed or climbing-specific elements.\n\n### Config requirements\nUse `path-track` as visible geometry: an ordered chain of colorful block platforms wrapping upward through the tower. Add `checkpoint-respawn` as both visible geometry and invisible respawn placement: safe, flat landing pads at major vertical intervals. Use `obstacle-jump` as visible geometry: clear gaps, stepped platforms, and wrap-around jumps between sections. Do not add hazards, moving obstacles, pickups, or an end reward area without author direction.\n\n### Layout components\nBuild one tall, compact tower composed of stacked open platform sections. Begin with a broad square start pad at the bottom, then lead into a single continuous ascending route that circles the tower’s central open shaft. Each section should use large, bright, contrasting block platforms with readable edges and straightforward jump-to-jump progression. Place flat checkpoint pads between major groups of jumps. Terrain is absent; the tower uses clean block construction over a minimal open backdrop. Keep the outer boundary visually defined by the tower footprint and the surrounding fall space, with no decorative buildings or dense props. Frame the complete vertical tower in an isometric view, showing the lower start, the ascending spiral, and the upper course together.\n\n### Render order\nUse `topdown` first, authoritative, because the vertical jump chain must remain continuously connected and physically playable before the isometric dressing is derived.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by a complete vertical tower with several stacked course sections rather than a single platform cluster. Theme: bright, colorful, simple block-style obby. Pipeline modifiers are `P6`, because the critical platform route must be valid by construction, and `P2`, because stacked tower sections overhang and occlude lower sections in a single top-down capture.",
+  "scene_prompt": "Create a 3D obby map built as one continuous bright, colorful toy-block tower: a vertical course rising through stacked platform sections, with checkpoints along the climb and a finish at the top.",
+  "blob": "### Genre\nThe dominant genre is Obby & Platformer: the author explicitly requests a playable tower obby with a continuous climb and a top finish.\n\n### Shape and preset\nUse `course-tower`, a single vertical tower whose ordered platform route rises through stacked sections to the summit. Match the Tower Obby preset: its tower form, sequential climb, and summit reward remain recognisable; omit its unrequested timed and climb-specific obstacle assumptions.\n\n### Config requirements\nUse `path-track` as a clearly legible, continuous sequence of colorful toy-block platforms climbing from the base through the tower. Use `checkpoint-respawn` as bright, flat safe landing pads integrated between climb sections. Use `winner-zone` as a distinct celebratory finish platform at the tower’s top.\n\n### Layout requirements\nPlace `checkpoint-respawn` markers at safe enclosed landing pads between major vertical sections, spaced regularly along the continuous ascent; the exact count is not specified. Place one `winner-zone` completion volume on the summit finish platform. No pickups, emitters, or other placed gameplay objects are requested.\n\n### Layout components\nBuild one compact vertical course zone: a bright, colorful toy-block tower rising from a broad starting pad at the bottom to a visible finish platform at the top. The path is one uninterrupted upward chain of discrete, physics-legal jumping platforms, with each stacked section visibly feeding into the next rather than branching into separate routes. Checkpoint pads provide broad, calm resets between denser climbing stretches. Use saturated primary-color blocks, simple geometric platforms, chunky rails or decorative block framing where helpful, and open air around the ascent so the route is readable. The boundary is the tower footprint and its surrounding fall space; falling off the platform chain drops players out of the active route. Frame the full tower in an elevated isometric view, with the base and summit both readable and the upward path visibly spiralling or zig-zagging through the structure.\n\n### Render order\nUse `topdown`: the platform chain must remain connected and every critical jump must be physically legal, so a plan is authoritative before the isometric dressing.\n\n### Scale, theme, and pipeline cost\nUse a medium scale, driven by one complete tower with multiple stacked climb sections rather than a sprawling world. Theme: bright, colorful toy-block obby, clean and immediately readable. Apply `P6` because the jump route must be valid by construction, and `P2` because stacked tower platforms and sections vertically overhang one another.",
   "spec": {
     "genre": "Obby & Platformer",
     "secondary": [],
@@ -30,63 +39,71 @@
     "options": [
       {
         "id": "path-track",
-        "text": "An ordered chain of colorful block platforms wrapping upward through the tower.",
+        "text": "A clearly legible, continuous sequence of colorful toy-block platforms climbing from the base through the tower.",
         "visible": true,
         "count": -1
       },
       {
         "id": "checkpoint-respawn",
-        "text": "Safe, flat landing pads at major vertical intervals, with invisible respawn placement.",
+        "text": "Bright, flat safe landing pads integrated between climb sections.",
         "visible": true,
         "count": -1
       },
       {
-        "id": "obstacle-jump",
-        "text": "Clear gaps, stepped platforms, and wrap-around jumps between sections.",
+        "id": "winner-zone",
+        "text": "A distinct celebratory finish platform at the tower’s top.",
         "visible": true,
-        "count": -1
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "checkpoint-respawn",
+        "text": "Checkpoint markers at safe enclosed landing pads between major vertical sections.",
+        "count": -1,
+        "where": "Between major vertical sections, spaced regularly along the continuous ascent."
+      },
+      {
+        "id": "winner-zone",
+        "text": "One completion volume on the summit finish platform.",
+        "count": 1,
+        "where": "On the summit finish platform."
       }
     ],
     "layout": {
-      "composition": "Complete vertical tower framed in isometric view, showing the broad lower start pad, the ascending spiral around the central open shaft, and the upper course together.",
+      "composition": "Elevated isometric view framing the full tower, with both the base and summit readable and the upward path visibly spiralling or zig-zagging through the structure.",
       "zones": [
         {
-          "name": "Start pad",
-          "role": "Beginning of the course.",
-          "where": "bottom of the tower",
-          "size": "broad square"
-        },
-        {
-          "name": "Ascending spiral route",
-          "role": "Continuous jump-to-jump parkour progression.",
-          "where": "circling upward through the tower's central open shaft",
-          "size": "tall, compact"
-        },
-        {
-          "name": "Checkpoint pads",
-          "role": "Safe landings and respawn points between major groups of jumps.",
-          "where": "between major vertical intervals",
-          "size": "flat"
+          "name": "Vertical course zone",
+          "role": "One compact vertical toy-block course rising from the broad starting pad through stacked climb sections to the summit finish platform.",
+          "where": "From the bottom starting pad to the top of the tower.",
+          "size": "Medium; one complete tower with multiple stacked climb sections."
         }
       ],
       "paths": [
         {
-          "from": "Start pad",
-          "to": "Ascending spiral route",
+          "from": "Broad starting pad",
+          "to": "Summit finish platform",
           "kind": "track"
         }
       ],
-      "terrain": "No terrain; clean bright block construction over a minimal open backdrop.",
-      "props": [],
-      "boundary": "The tower footprint and surrounding fall space visually define the outer boundary.",
+      "terrain": "Open air around the ascent, with saturated primary-color toy blocks and simple geometric platforms.",
+      "props": [
+        {
+          "name": "Chunky rails or decorative block framing",
+          "count": -1,
+          "where": "Around tower climb sections where helpful."
+        }
+      ],
+      "boundary": "The tower footprint and its surrounding fall space; falling off the platform chain drops players out of the active route.",
       "scale_band": "medium",
-      "theme": "bright, colorful, simple block-style obby"
+      "theme": "Bright, colorful toy-block obby; clean and immediately readable."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the vertical jump chain must remain continuously connected and physically playable before isometric dressing is derived.",
+      "why": "The platform chain must remain connected and every critical jump must be physically legal.",
       "set_piece": false
     },
     "route": [
@@ -94,17 +111,17 @@
       "P2"
     ],
     "notes": [],
-    "scene_prompt": "Create a 3D obby map built as a bright, colorful block-style tower — a simple, immediately readable vertical course rising through stacked platform sections."
+    "scene_prompt": "Create a 3D obby map built as one continuous bright, colorful toy-block tower: a vertical course rising through stacked platform sections, with checkpoints along the climb and a finish at the top."
   },
-  "iso_prompt": "Build this scene from the attached top-down plan: Create a 3D obby map built as a bright, colorful block-style tower — a simple, immediately readable vertical course rising through stacked platform sections.\n\nLAYOUT FEATURES for this Obby & Platformer map. Build these as the actual structure of the space rather than as set dressing, keep them visually distinct from one another, and keep the whole layout legible in one view.\n\nSHAPE OF THE SPACE - Tower / Spiral Ascent: A course wrapping or stacking so platforms sit directly above each other.\n\nINCLUDE:\n- Sequential Platform Track: A chain of platforms spaced to the physics limits above — the ordered route through the course.\n- Safe Landing Pad: Flat enclosed pads set at intervals along the course, wide enough to stand on safely.\n- Jump Obstacles: Long horizontal jumps, trampoline boosts, wrap-arounds, and stepped vertical platforms. Polished square Roblox-like 3D environment concept, isometric three-quarter view, no captions or watermark.",
-  "td_prompt": "Generate directly from this text prompt only, with no reference image: Create a 3D obby map built as a bright, colorful block-style tower — a simple, immediately readable vertical course rising through stacked platform sections.\n\nLAYOUT FEATURES for this Obby & Platformer map. Build these as the actual structure of the space rather than as set dressing, keep them visually distinct from one another, and keep the whole layout legible in one view.\n\nSHAPE OF THE SPACE - Tower / Spiral Ascent: A course wrapping or stacking so platforms sit directly above each other.\n\nINCLUDE:\n- Sequential Platform Track: A chain of platforms spaced to the physics limits above — the ordered route through the course.\n- Safe Landing Pad: Flat enclosed pads set at intervals along the course, wide enough to stand on safely.\n- Jump Obstacles: Long horizontal jumps, trampoline boosts, wrap-arounds, and stepped vertical platforms. Draw this as a TRUE overhead nadir plan of the layout. Camera straight down (90 degrees), ZERO perspective and ZERO isometric tilt. Show only the tops of things - no side faces, no walls in elevation, no vertical surfaces of any kind. Flat game-minimap / floor-plan style with clean flat colour zones and strong contrast between walkable surface and blocked surface, so the connectivity of the layout is unmistakable. Square output, no captions or watermark.",
-  "addendum": "LAYOUT FEATURES for this Obby & Platformer map. Build these as the actual structure of the space rather than as set dressing, keep them visually distinct from one another, and keep the whole layout legible in one view.\n\nSHAPE OF THE SPACE - Tower / Spiral Ascent: A course wrapping or stacking so platforms sit directly above each other.\n\nINCLUDE:\n- Sequential Platform Track: A chain of platforms spaced to the physics limits above — the ordered route through the course.\n- Safe Landing Pad: Flat enclosed pads set at intervals along the course, wide enough to stand on safely.\n- Jump Obstacles: Long horizontal jumps, trampoline boosts, wrap-arounds, and stepped vertical platforms.",
+  "iso_prompt": "Build this scene from the attached top-down plan: Create a 3D obby map built as one continuous bright, colorful toy-block tower: a vertical course rising through stacked platform sections, with checkpoints along the climb and a finish at the top.\n\nLAYOUT FEATURES for this Obby & Platformer map. Build these as the actual structure of the space rather than as set dressing, keep them visually distinct from one another, and keep the whole layout legible in one view.\n\nSHAPE OF THE SPACE - Tower / Spiral Ascent: A course wrapping or stacking so platforms sit directly above each other.\n\nINCLUDE:\n- Sequential Platform Track: A chain of platforms spaced to the physics limits above — the ordered route through the course.\n- Safe Landing Pad: Flat enclosed pads set at intervals along the course, wide enough to stand on safely.\n- End Reward Area: A distinct reward area at the end of the course holding the payoff items. Polished square Roblox-like 3D environment concept, isometric three-quarter view, no captions or watermark.",
+  "td_prompt": "Generate directly from this text prompt only, with no reference image: Create a 3D obby map built as one continuous bright, colorful toy-block tower: a vertical course rising through stacked platform sections, with checkpoints along the climb and a finish at the top.\n\nLAYOUT FEATURES for this Obby & Platformer map. Build these as the actual structure of the space rather than as set dressing, keep them visually distinct from one another, and keep the whole layout legible in one view.\n\nSHAPE OF THE SPACE - Tower / Spiral Ascent: A course wrapping or stacking so platforms sit directly above each other.\n\nINCLUDE:\n- Sequential Platform Track: A chain of platforms spaced to the physics limits above — the ordered route through the course.\n- Safe Landing Pad: Flat enclosed pads set at intervals along the course, wide enough to stand on safely.\n- End Reward Area: A distinct reward area at the end of the course holding the payoff items. Draw this as a TRUE overhead nadir plan of the layout. Camera straight down (90 degrees), ZERO perspective and ZERO isometric tilt. Show only the tops of things - no side faces, no walls in elevation, no vertical surfaces of any kind. Flat game-minimap / floor-plan style with clean flat colour zones and strong contrast between walkable surface and blocked surface, so the connectivity of the layout is unmistakable. Square output, no captions or watermark.",
+  "addendum": "LAYOUT FEATURES for this Obby & Platformer map. Build these as the actual structure of the space rather than as set dressing, keep them visually distinct from one another, and keep the whole layout legible in one view.\n\nSHAPE OF THE SPACE - Tower / Spiral Ascent: A course wrapping or stacking so platforms sit directly above each other.\n\nINCLUDE:\n- Sequential Platform Track: A chain of platforms spaced to the physics limits above — the ordered route through the course.\n- Safe Landing Pad: Flat enclosed pads set at intervals along the course, wide enough to stand on safely.\n- End Reward Area: A distinct reward area at the end of the course holding the payoff items.",
   "order": "p6",
+  "mapper_notes": [],
   "stage": "done",
   "status": "ok",
   "error": "",
   "pipeline_version": "",
   "served_by": "",
-  "seconds": 19.9,
-  "mapper_notes": []
+  "seconds": 28.5
 }

@@ -129,6 +129,10 @@ and a key in the handoff. Two rules keep this from tangling:
 2. **Concerns do not read each other's skills.** They return blocks to this
    skill, which is the only place that sees all of them.
 
-Concerns known to be missing, from `docs/LayoutGen - Pipeline.md` Part V:
-**goal / win-or-loop condition**, which is a required spatial field with no
-current home. Route it here when it gets one.
+**Goal / win-or-loop condition is deliberately not a concern here, and you must
+not ask about it.** A win condition is gameplay, not layout — identical maps
+carry different ones — so nothing downstream can use the answer.
+
+Its one layout-bearing part, **the place the run ends**, belongs to
+`genre-choice`: it is inferred from the genre and emitted as a shape or an
+option, never asked. See that skill's step 4.

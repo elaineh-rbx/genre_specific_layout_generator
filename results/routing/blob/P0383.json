@@ -14,105 +14,112 @@
     }
   ],
   "scene_prompt": "Create a 3D endless-runner map set on a normal city street: a long straight road extending into the distance, with oncoming cars traveling toward the player along the roadway. Frame the street with simple urban roadside surroundings.",
-  "blob": "### Genre\nDominant genre: Infinite Runner. The author specifies automatic, endless forward running with reactive jumps over oncoming cars; this is not a finite race or a self-paced obby.\n\n### Shape and preset\nUse `lane-free`, a straight urban roadway with free lateral dodging across its drivable width rather than implied fixed lanes. Match the Chase Runner preset: its moving threats and horizon masking fit an endless city street. Add jump geometry because the player must clear cars, not only evade them.\n\n### Config requirements\nVisible geometry: `chunk-modular` makes repeated straight city-street segments join exactly end-to-end; `hazard-kill` is represented by the oncoming cars as run-ending roadway hazards; `obstacle-jump` gives each car a readable roofline and clearance profile for jumping; `obstacle-moving` makes traffic approach along the road; `barrier-horizon` uses distant haze and the vanishing street perspective to conceal the segment boundary. Invisible geometry: none requested.\n\n### Layout components\nBuild one long, straight, broad asphalt road as the central play corridor, extending toward a strong central vanishing point. Compose representative modular blocks: each contains continuous road surface, lane paint, curbs, sidewalks, sparse streetlights, simple low-rise storefront or apartment facades, occasional trees, and roadside parking or utility props. Keep the roadway clear enough for lateral dodging while spacing approaching cars in readable sequences across the road width. The boundary is urban frontage and curb edges rather than a hard enclosing wall; distant fog terminates the visible street. Frame from a low forward-facing isometric angle so the near road, approaching traffic, and receding city blocks all read clearly.\n\n### Render order\nUse `topdown`: the straight, connected chunk corridor and traffic-clearance route must remain valid for continuous running, so topology leads before the isometric dressing.\n\n### Scale, theme, and pipeline cost\nScale band: huge, driven by the implied endless repetition of modular street blocks, while rendering only a representative stretch. Theme: ordinary contemporary city street, clean readable Roblox-style urban props. Pipeline modifier: `P6`, because modular chunk alignment and obstacle spacing must be valid by construction for the endless route.",
+  "blob": "### Genre\nThe dominant genre is `Infinite Runner`: automatic forward movement on an endless road, with jumping over approaching cars as the recurring reaction challenge. There is no secondary genre.\n\n### Shape and preset\nUse `lane-free`, a continuous straight city roadway with free lateral movement rather than fixed lane snapping. This matches the Free Runner preset, retaining its modular road and jump-focused structure while adding oncoming traffic explicitly requested by the scene.\n\n### Config requirements\nUse `chunk-modular` for straight, repeatable road segments whose end pivots align exactly with the next segment, making the visible street extend seamlessly. Use `obstacle-jump` for clear jumpable car-height obstacles in the travel path. Use `obstacle-moving` for oncoming cars advancing toward the player along the roadway. Use `hazard-kill` for collisions with those cars as run-ending hazards.\n\n### Layout requirements\nPlace `trigger-despawn` as one cleanup volume spanning the full road width, fixed behind the player-facing camera position after each cleared street chunk, so passed cars and roadside chunks leave the active layout cleanly. No pickups, boosts, or other placed gameplay elements are required.\n\n### Layout components\nBuild one long, straight modular urban street zone, with a broad asphalt road as the central play corridor and simple sidewalks on both sides. Repeated roadway chunks connect end-to-end without turns, gaps, or lateral seams. Each visible chunk contains sparse roadside city dressing—low-rise building facades, streetlights, utility poles, curb edges, and occasional parked-set dressing beyond the active road—kept outside the running corridor. Oncoming cars occupy readable forward positions and travel toward the player; leave enough open road around each car for a jump and lateral avoidance. The boundary is implied by sidewalks, facades, and distant urban dressing rather than a hard enclosing wall. Compose the frame from a low forward-facing perspective, with the road’s vanishing point centered and the next cars clearly silhouetted ahead.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because the endless road chunks, traffic lanes, and clearable jump path must remain continuous and playable before the isometric street dressing is derived.\n\n### Scale, theme, and pipeline cost\nUse a medium scale: render a readable run of repeating street chunks rather than attempting to depict literal infinity. Theme: ordinary contemporary city street, clean and simple urban roadside dressing. Apply `P6` because the modular endless route and obstacle spacing must remain valid by construction.",
   "spec": {
     "genre": "Infinite Runner",
     "secondary": [],
     "shape": "lane-free",
-    "preset": "Chase Runner",
+    "preset": "Free Runner",
     "axes": {},
     "options": [
       {
         "id": "chunk-modular",
-        "text": "Repeated straight city-street segments join exactly end-to-end.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "hazard-kill",
-        "text": "Oncoming cars are run-ending roadway hazards.",
+        "text": "Straight, repeatable road segments whose end pivots align exactly with the next segment, making the visible street extend seamlessly.",
         "visible": true,
         "count": -1
       },
       {
         "id": "obstacle-jump",
-        "text": "Each car has a readable roofline and clearance profile for jumping.",
+        "text": "Clear jumpable car-height obstacles in the travel path.",
         "visible": true,
         "count": -1
       },
       {
         "id": "obstacle-moving",
-        "text": "Traffic approaches along the road.",
+        "text": "Oncoming cars advancing toward the player along the roadway.",
         "visible": true,
         "count": -1
       },
       {
-        "id": "barrier-horizon",
-        "text": "Distant haze and the vanishing street perspective conceal the segment boundary.",
+        "id": "hazard-kill",
+        "text": "Collisions with the oncoming cars as run-ending hazards.",
         "visible": true,
         "count": -1
+      },
+      {
+        "id": "trigger-despawn",
+        "text": "One cleanup volume spanning the full road width, fixed behind the player-facing camera position after each cleared street chunk, so passed cars and roadside chunks leave the active layout cleanly.",
+        "visible": false,
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "trigger-despawn",
+        "text": "One cleanup volume spanning the full road width, fixed behind the player-facing camera position after each cleared street chunk, so passed cars and roadside chunks leave the active layout cleanly.",
+        "count": 1,
+        "where": "Behind the player-facing camera position after each cleared street chunk, spanning the full road width."
       }
     ],
     "layout": {
-      "composition": "Low forward-facing isometric angle: the near road and approaching traffic fill the foreground, with the broad straight roadway receding through city blocks toward a strong central vanishing point.",
+      "composition": "Low forward-facing perspective along the central road corridor, with the road’s vanishing point centered and the next oncoming cars clearly silhouetted ahead; sidewalks and sparse urban dressing frame both sides.",
       "zones": [
         {
-          "name": "Central play corridor",
-          "role": "Automatic endless forward-running route with free lateral dodging and reactive jumps over approaching cars.",
-          "where": "Centre, extending from the foreground toward the distant vanishing point.",
-          "size": "One long, broad road; implied endless repetition."
-        },
-        {
-          "name": "Urban roadside blocks",
-          "role": "Frame the roadway with representative modular city-street surroundings.",
-          "where": "Along both sides of the central road.",
-          "size": "Representative modular blocks."
+          "name": "Modular urban street",
+          "role": "Endless running corridor with oncoming cars, jumpable obstacles, and lateral avoidance space.",
+          "where": "Centre, extending straight into the distance.",
+          "size": "Medium; a readable run of repeating street chunks."
         }
       ],
       "paths": [
         {
-          "from": "Foreground road",
-          "to": "Distant vanishing point",
+          "from": "Street chunk",
+          "to": "Next street chunk",
           "kind": "road"
         }
       ],
-      "terrain": "Continuous broad asphalt road with lane paint, curbs, and sidewalks; distant fog terminates the visible street.",
+      "terrain": "Broad asphalt road with simple sidewalks, curb edges, and roadside city dressing.",
       "props": [
         {
-          "name": "Oncoming cars",
+          "name": "Low-rise building facades",
           "count": -1,
-          "where": "Approaching in readable sequences across the road width."
+          "where": "Sparse roadside dressing outside the active road corridor."
         },
         {
           "name": "Streetlights",
           "count": -1,
-          "where": "Along the sidewalks."
+          "where": "Along the sidewalks outside the running corridor."
         },
         {
-          "name": "Low-rise storefront or apartment facades",
+          "name": "Utility poles",
           "count": -1,
-          "where": "Framing both sides of the road."
+          "where": "Along the sidewalks outside the running corridor."
         },
         {
-          "name": "Trees",
+          "name": "Curb edges",
           "count": -1,
-          "where": "Occasionally along the roadside."
+          "where": "At both sides of the asphalt road."
         },
         {
-          "name": "Roadside parking or utility props",
+          "name": "Parked-set dressing",
           "count": -1,
-          "where": "Along the urban frontage."
+          "where": "Occasionally beyond the active road."
+        },
+        {
+          "name": "Oncoming cars",
+          "count": -1,
+          "where": "Readable forward positions on the roadway, with open road around each for jumping and lateral avoidance."
         }
       ],
-      "boundary": "Urban frontage and curb edges rather than a hard enclosing wall; distant fog terminates the visible street.",
-      "scale_band": "huge",
-      "theme": "Ordinary contemporary city street with clean, readable Roblox-style urban props."
+      "boundary": "Implied by sidewalks, building facades, and distant urban dressing rather than a hard enclosing wall.",
+      "scale_band": "medium",
+      "theme": "Ordinary contemporary city street, clean and simple urban roadside dressing."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "The straight connected chunk corridor and traffic-clearance route must remain valid for continuous running.",
+      "why": "the endless road chunks, traffic lanes, and clearable jump path must remain continuous and playable before the street dressing is derived.",
       "set_piece": false
     },
     "route": [
@@ -124,7 +131,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

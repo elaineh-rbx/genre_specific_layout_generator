@@ -14,209 +14,174 @@
     }
   ],
   "scene_prompt": "Create a realistic 3D wheelie-riding game with ten separate selectable maps: a compact city spanning a few connected urban blocks with streets, intersections, and riding spots; a highway; an industrial area; country roads; dirt tracks; a skatepark; parking lots; mountain roads; a beach boardwalk; and forest trails. Build each map around its intended surface and riding environment, with paved, dirt, trail, or boardwalk routes and open areas suitable for bike stunts. Include varied realistic motorcycles, e-bikes, mountain bikes, BMX bikes, road bikes, and dirt jump bikes, with customizable visible components such as plastics, number plates, wheels, handlebars, seats, tires, and rider helmets and riding gear. Use detailed terrain and dynamic environmental presentation including day or night lighting, weather, rain-wet reflective surfaces, dust and dirt on off-road maps, and ground surfaces that can show tire marks and scrape marks.",
-  "blob": "### Genre\nThe dominant genre is Simulation, with Racing as a secondary genre for optional timed or competitive riding modes. The wheelie-focused free riding and realistic vehicle handling make Simulation own the map shape; racing contributes no route geometry because no specific race course is requested.\n\n### Shape and preset\nUse `world-shared` for each selectable riding environment: each is a coherent free-roam surface rather than a fixed circuit. Preset: none. The Vehicle Sim preset shares the free-roam vehicle premise, but its extraction field and hauling-route bundle does not describe this game; the author’s explicit ten separate maps overrides any single-world implication.\n\n### Config requirements\nUse visible `path-road-vehicle` for paved streets, highway lanes, country roads, mountain roads, industrial yards, and broad stunt circulation; use visible `path-circulation` for dirt tracks, forest trails, skatepark flow, parking-lot riding areas, and the boardwalk. Use visible `terrain-relief` for mountain-road grades, dirt-track berms, and forest-trail contours. Use visible `water-body` for the beach coastline beside the boardwalk. No invisible gameplay markers are required by the scene prompt. Bike types and their customizable visible shells are render props, not layout options.\n\n### Layout components\nBuild ten distinct, separately selected maps: a compact city of a few connected urban blocks with linked streets, intersections, alleys, curb-height riding spots, and open stunt pockets; a long highway with shoulders and pull-off areas; an industrial district of wide service lanes, loading yards, and warehouse exteriors; open country roads; a dirt-track map with packed-earth loops and stunt clearings; a skatepark with bowls, ramps, rails, and flat decks; expansive parking lots with painted bays and low curbs; graded mountain roads with overlooks; a beach boardwalk beside water; and forest trails under dense trees with dirt clearings.\n\nSurface materials must distinguish asphalt, wet reflective pavement, concrete, packed dirt, trail soil, wood planks, and sand, all able to show tire and scrape marks. Place realistic motorcycles, e-bikes, mountain bikes, BMX bikes, road bikes, and dirt-jump bikes as the rideable visual asset family, with visible plastics, number plates, wheels, handlebars, seats, tires, helmets, and riding gear. Keep each map bounded naturally by terrain, vegetation, barriers, coastline, or urban edges. Frame each as a readable isometric environment with its principal riding route crossing the composition and stunt areas visible off it.\n\n### Render order\nUse `isometric`: the maps are free-roam riding spaces, so an invalid formal course would not make the game unplayable; the environmental look and surface detail lead.\n\n### Scale, theme, and pipeline cost\nScale is huge in aggregate because there are ten separate environments, although the city itself remains a compact few-block map. Theme: photorealistic modern bike culture, weathered urban and outdoor riding terrain, day/night and rain-ready presentation. Use `P4` because the ten maps are separate spaces, `tiered` for mountain and off-road relief without overhangs, and `CHECK` for the beach water feature.",
+  "blob": "### Genre\nThe dominant genre is Simulation, specifically a vehicle-operation/free-ride experience; Racing is secondary for time trials and competitive wheelie challenges. Simulation owns the multi-map riding-world structure.\n\n### Shape and preset\nUse `world-chaptered`, taken from outside Simulation’s usual shape set, because the ten riding environments are explicitly separate selectable maps rather than one contiguous world. Preset: none; no Simulation preset represents this mixed set of focused, separately loaded riding environments.\n\n### Config requirements\nUse `path-road-vehicle` for the paved, vehicle-width riding corridors of the city, highway, industrial district, country roads, mountain roads, parking lots, and boardwalk. Use `terrain-relief` for the mountain-road elevation and the natural contouring of dirt and forest routes. Use `water-body` along the beach boardwalk as the visible coastal edge. Keep the varied asphalt, dirt, trail, and timber-boardwalk surface treatments readable, including wet reflective pavement, dust-prone off-road ground, and tire- and scrape-mark-capable surfaces.\n\n### Layout requirements\nUse `checkpoint-respawn`: place ten baseline recovery markers, one at the primary riding start area of each separate map, with additional markers only at major route transitions within the highway, mountain-road, dirt-track, and forest-trail maps. Each marker returns a crashed rider to a safe, level surface facing the intended riding direction.\n\n### Layout components\nBuild ten separate maps: a compact city of a few connected urban blocks, linked streets and intersections, and open riding spots; a long highway corridor; an industrial yard of broad paved service lanes and loading-space stunt areas; branching country roads; a dirt-track circuit and open jump terrain; a contained skatepark; an open parking-lot stunt ground; climbing mountain roads; a linear beach boardwalk beside the coast; and winding forest trails. Each map has an obvious bike start zone, a main route appropriate to its surface, and one or more open stunt areas. The city is framed as the densest map; the highway and country roads stretch laterally; mountain, dirt, and forest maps use natural relief. Boundaries are map-specific: urban walls and building edges, guardrails on roads, terrain banks on trails, and the coastal edge at the boardwalk. Render bikes and riders as representative parked or active visual dressing only, with customizable-looking plastics, plates, wheels, handlebars, seats, tires, helmets, and gear.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because each map’s drivable route, intersections, safe recovery surfaces, and stunt clearings must remain coherent for riding before the realistic isometric dressing is applied.\n\n### Scale, theme, and pipeline cost\nScale is huge overall because it contains ten distinct maps, although the city itself remains a compact few-block district. Theme: photorealistic modern wheelie-riding environments, detailed road and off-road materials, dynamic day/night and weather presentation. Pipeline modifiers are `P4` because the ten maps are separate spaces, `tiered` because mountain and natural trail relief has no overhang, and `CHECK` because the coastal water edge must be represented without obscuring adjacent boardwalk geometry.",
   "spec": {
     "genre": "Simulation",
     "secondary": [
       "Racing"
     ],
-    "shape": "world-shared",
+    "shape": "world-chaptered",
     "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "path-road-vehicle",
-        "text": "Paved streets, highway lanes, country roads, mountain roads, industrial yards, and broad stunt circulation.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "path-circulation",
-        "text": "Dirt tracks, forest trails, skatepark flow, parking-lot riding areas, and the boardwalk.",
+        "text": "Paved, vehicle-width riding corridors across the city, highway, industrial district, country roads, mountain roads, parking lots, and boardwalk.",
         "visible": true,
         "count": -1
       },
       {
         "id": "terrain-relief",
-        "text": "Mountain-road grades, dirt-track berms, and forest-trail contours.",
+        "text": "Mountain-road elevation and natural contouring for the dirt and forest routes, with no overhangs.",
         "visible": true,
         "count": -1
       },
       {
         "id": "water-body",
-        "text": "Beach coastline beside the boardwalk.",
+        "text": "A visible coastal water edge running alongside the beach boardwalk.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "Each separately selected map is framed as a readable isometric environment, with its principal riding route crossing the composition and stunt areas visibly offset from it.",
+      "composition": "A top-down overview of ten separately selectable maps: the compact city is the densest few-block district; highway and country-road maps stretch laterally; mountain, dirt, and forest maps emphasize natural relief; the boardwalk follows the visible coastal edge.",
       "zones": [
         {
           "name": "Compact city",
-          "role": "Urban free-roam riding with linked streets, intersections, alleys, curb-height riding spots, and open stunt pockets.",
-          "where": "Separate selectable map",
-          "size": "Compact; a few connected urban blocks"
+          "role": "A few connected urban blocks with streets, intersections, riding spots, an obvious bike start zone, a main paved route, and open stunt areas.",
+          "where": "Separate selectable map; the densest map.",
+          "size": "Compact few-block district"
         },
         {
-          "name": "Highway",
-          "role": "Long free-roam highway riding with shoulders and pull-off areas.",
-          "where": "Separate selectable map",
+          "name": "Highway corridor",
+          "role": "A long paved riding corridor with a bike start zone, main route, and open stunt areas.",
+          "where": "Separate selectable map; stretches laterally.",
           "size": "Long"
         },
         {
-          "name": "Industrial district",
-          "role": "Riding through wide service lanes, loading yards, and warehouse exteriors.",
-          "where": "Separate selectable map",
-          "size": ""
+          "name": "Industrial yard",
+          "role": "Broad paved service lanes and loading-space stunt areas, with a bike start zone and main paved route.",
+          "where": "Separate selectable map.",
+          "size": "-1"
         },
         {
           "name": "Country roads",
-          "role": "Open-road riding environment.",
-          "where": "Separate selectable map",
-          "size": "Open"
+          "role": "Branching country-road riding routes with a bike start zone and open stunt areas.",
+          "where": "Separate selectable map; stretches laterally.",
+          "size": "-1"
         },
         {
-          "name": "Dirt-track map",
-          "role": "Off-road riding through packed-earth loops and stunt clearings.",
-          "where": "Separate selectable map",
-          "size": ""
+          "name": "Dirt-track circuit",
+          "role": "A dirt-track circuit and open jump terrain with a bike start zone, main dirt route, and stunt areas.",
+          "where": "Separate selectable map.",
+          "size": "-1"
         },
         {
-          "name": "Skatepark",
-          "role": "Stunt riding among bowls, ramps, rails, and flat decks.",
-          "where": "Separate selectable map",
-          "size": ""
+          "name": "Contained skatepark",
+          "role": "A contained skatepark with a bike start zone, stunt-oriented riding area, and main route.",
+          "where": "Separate selectable map.",
+          "size": "-1"
         },
         {
-          "name": "Parking lots",
-          "role": "Riding and stunt space among painted bays and low curbs.",
-          "where": "Separate selectable map",
-          "size": "Expansive"
+          "name": "Parking-lot stunt ground",
+          "role": "An open parking-lot riding and stunt ground with a bike start zone and paved main route.",
+          "where": "Separate selectable map.",
+          "size": "-1"
         },
         {
           "name": "Mountain roads",
-          "role": "Graded road riding with overlooks.",
-          "where": "Separate selectable map",
-          "size": ""
+          "role": "Climbing mountain-road routes with a bike start zone, main route, open stunt areas, and natural elevation.",
+          "where": "Separate selectable map.",
+          "size": "-1"
         },
         {
           "name": "Beach boardwalk",
-          "role": "Boardwalk riding beside the coastline.",
-          "where": "Separate selectable map",
-          "size": ""
+          "role": "A linear timber-boardwalk route beside the coast, with a bike start zone and open stunt areas.",
+          "where": "Separate selectable map; alongside the coastal edge.",
+          "size": "-1"
         },
         {
           "name": "Forest trails",
-          "role": "Trail riding under dense trees with dirt clearings.",
-          "where": "Separate selectable map",
-          "size": ""
+          "role": "Winding forest-trail routes with a bike start zone, main trail route, open stunt areas, and natural relief.",
+          "where": "Separate selectable map.",
+          "size": "-1"
         }
       ],
       "paths": [
         {
-          "from": "Compact city streets",
-          "to": "urban intersections, alleys, and stunt pockets",
+          "from": "Compact city",
+          "to": "Compact city",
           "kind": "road"
         },
         {
-          "from": "Highway route",
-          "to": "shoulders and pull-off areas",
+          "from": "Highway corridor",
+          "to": "Highway corridor",
           "kind": "road"
         },
         {
-          "from": "Industrial service lanes",
-          "to": "loading yards",
+          "from": "Industrial yard",
+          "to": "Industrial yard",
           "kind": "road"
         },
         {
           "from": "Country roads",
-          "to": "open country riding areas",
+          "to": "Country roads",
           "kind": "road"
         },
         {
-          "from": "Packed-earth loops",
-          "to": "dirt-track stunt clearings",
+          "from": "Dirt-track circuit",
+          "to": "Dirt-track circuit",
           "kind": "track"
         },
         {
-          "from": "Skatepark flow",
-          "to": "bowls, ramps, rails, and flat decks",
+          "from": "Contained skatepark",
+          "to": "Contained skatepark",
           "kind": "open ground"
         },
         {
-          "from": "Parking-lot riding areas",
-          "to": "painted bays and low curbs",
-          "kind": "open ground"
+          "from": "Parking-lot stunt ground",
+          "to": "Parking-lot stunt ground",
+          "kind": "road"
         },
         {
           "from": "Mountain roads",
-          "to": "overlooks",
+          "to": "Mountain roads",
           "kind": "road"
         },
         {
           "from": "Beach boardwalk",
-          "to": "coastline",
+          "to": "Beach boardwalk",
           "kind": "road"
         },
         {
           "from": "Forest trails",
-          "to": "dirt clearings",
-          "kind": "trail"
+          "to": "Forest trails",
+          "kind": "open ground"
         }
       ],
-      "terrain": "Asphalt, wet reflective pavement, concrete, packed dirt, trail soil, wood planks, and sand, all able to show tire and scrape marks; mountain grades, dirt berms, forest contours, and a beach coastline.",
+      "terrain": "Varied asphalt, dirt, trail, and timber-boardwalk surfaces remain readable. Include wet reflective pavement, dust-prone off-road ground, tire- and scrape-mark-capable surfaces, mountain and natural trail relief, and the coastal water edge.",
       "props": [
         {
-          "name": "Realistic motorcycles",
+          "name": "Representative parked or active bikes and riders, including motorcycles, e-bikes, mountain bikes, BMX bikes, road bikes, and dirt jump bikes",
           "count": -1,
-          "where": "Across the selectable riding environments"
+          "where": "Visual dressing across the separate riding environments."
         },
         {
-          "name": "E-bikes",
+          "name": "Customizable-looking plastics, number plates, wheels, handlebars, seats, tires, helmets, and riding gear",
           "count": -1,
-          "where": "Across the selectable riding environments"
-        },
-        {
-          "name": "Mountain bikes",
-          "count": -1,
-          "where": "Across the selectable riding environments"
-        },
-        {
-          "name": "BMX bikes",
-          "count": -1,
-          "where": "Across the selectable riding environments"
-        },
-        {
-          "name": "Road bikes",
-          "count": -1,
-          "where": "Across the selectable riding environments"
-        },
-        {
-          "name": "Dirt-jump bikes",
-          "count": -1,
-          "where": "Across the selectable riding environments"
-        },
-        {
-          "name": "Customizable visible bike shells: plastics, number plates, wheels, handlebars, seats, and tires",
-          "count": -1,
-          "where": "Rideable visual asset family"
-        },
-        {
-          "name": "Helmets and riding gear",
-          "count": -1,
-          "where": "Riders"
+          "where": "On the representative bikes and riders."
         }
       ],
-      "boundary": "Each map is bounded naturally by terrain, vegetation, barriers, coastline, or urban edges.",
+      "boundary": "Map-specific boundaries: urban walls and building edges in the city, guardrails on roads, terrain banks on trails, and the coastal edge at the boardwalk.",
       "scale_band": "huge",
-      "theme": "Photorealistic modern bike culture; weathered urban and outdoor riding terrain; day/night and rain-ready presentation."
+      "theme": "Photorealistic modern wheelie-riding environments with detailed road and off-road materials, dynamic day/night lighting, weather, rain-wet reflections, dust, and dirt."
     },
     "render": {
-      "first": "isometric",
-      "then": "topdown",
-      "authoritative": "isometric",
-      "why": "The maps are free-roam riding spaces, so an invalid formal course would not make the game unplayable.",
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "Each map’s drivable route, intersections, safe recovery surfaces, and stunt clearings must remain coherent for riding before realistic isometric dressing is applied.",
       "set_piece": false
     },
     "route": [
@@ -224,16 +189,23 @@
       "tiered",
       "CHECK"
     ],
-    "notes": [],
+    "notes": [
+      "`world-chaptered` is taken from outside Simulation’s usual shape set because the ten riding environments are separate selectable maps.",
+      "`checkpoint-respawn` is retained from the blob as a layout-only recovery-marker requirement.",
+      "dropped option 'checkpoint-respawn': not in Simulation",
+      "dropped placement 'checkpoint-respawn': not in Simulation"
+    ],
     "scene_prompt": "Create a realistic 3D wheelie-riding game with ten separate selectable maps: a compact city spanning a few connected urban blocks with streets, intersections, and riding spots; a highway; an industrial area; country roads; dirt tracks; a skatepark; parking lots; mountain roads; a beach boardwalk; and forest trails. Build each map around its intended surface and riding environment, with paved, dirt, trail, or boardwalk routes and open areas suitable for bike stunts. Include varied realistic motorcycles, e-bikes, mountain bikes, BMX bikes, road bikes, and dirt jump bikes, with customizable visible components such as plastics, number plates, wheels, handlebars, seats, tires, and rider helmets and riding gear. Use detailed terrain and dynamic environmental presentation including day or night lighting, weather, rain-wet reflective surfaces, dust and dirt on off-road maps, and ground surfaces that can show tire marks and scrape marks."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
-  "mapper_notes": []
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P4', 'P0', 'tiered', 'CHECK'] gives isometric"
+  ]
 }

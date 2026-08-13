@@ -14,150 +14,135 @@
     }
   ],
   "scene_prompt": "Create a 3D destruction sandbox map set in a modern city. Lay out streets between dense blocks of skyscrapers, office buildings, shops, and ordinary urban infrastructure, with a broad city skyline extending into the background.",
-  "blob": "### Genre\nThe dominant genre is Simulation: a freeform destruction sandbox rather than a scored combat game. No secondary genre is needed.\n\n### Shape and preset\nUse `world-shared`, matching the Physics Sim preset. This is one continuous modern city rather than isolated player plots: its shared streets and blocks are the subject of the build.\n\n### Config requirements\nUse `physics-rig` as visible geometry: skyscraper façades, office structures, shopfronts, street fixtures, and selected larger assemblies should read as distinct breakable urban constructions rather than a single static backdrop. Use `path-circulation` as visible geometry: a connected network of broad streets, intersections, sidewalks, and service alleys runs between the blocks. Use `settlement-density` as visible geometry: the ground is densely built as a modern downtown, with closely packed skyscrapers, mid-rise offices, and shops.\n\n### Layout components\nBuild a large contiguous city on a mostly flat street grid. Place a broad central intersection and several long avenues through the middle, with narrower cross streets forming dense rectangular blocks. The foreground and center hold the primary playable downtown: tall skyscrapers alternate with office towers, compact shop rows, glazed entrances, loading bays, streetlights, traffic signals, signs, curbs, planters, parked urban props, and utility details. Put a few wider plazas or open intersections between major towers so the dense blocks have readable breaks. Continue the blocks outward with progressively simplified high-rise silhouettes, forming a broad city skyline in the background rather than a hard wall of buildings. Keep the city open at its outer edges, fading into distant skyline massing; use the farthest buildings as the visual boundary. Compose the view diagonally across the street grid, with the central avenues leading from the foreground toward the distant skyline and the tallest towers framing the middle distance.\n\n### Render order\nUse `isometric`: render the isometric city first as authoritative, then derive the top-down plan, because this single-surface sandbox does not require a topology that could become unplayable if image-authored.\n\n### Scale, theme, and pipeline cost\nScale is huge, driven by the dense multi-block downtown and skyline extending into the distance. Theme: contemporary urban destruction sandbox, ordinary metropolitan infrastructure, glass-and-concrete commercial core. Use `P0`; the city is a single continuous exterior surface with no required interior transitions, stacked traversal, separate maps, or validity-by-construction route.",
+  "blob": "### 1. Genre\nThe dominant genre is Simulation, specifically a destruction-focused Physics Sim sandbox: players operate in a city built for physical breakage rather than pursuing scores or targets.\n\n### 2. Shape and preset\nUse `world-open`, a shared contiguous city map whose streets allow free movement among dense urban blocks. Match the Physics Sim preset: its open-world structure and physical contraptions remain recognisable, while the scene replaces ramps and ragdoll props with destructible urban architecture.\n\n### 3. Config requirements\nUse `physics-rig` for skyscrapers, office blocks, storefronts, street furniture, and infrastructure constructed as visibly breakable multi-part assemblies. Use `path-circulation` for the broad connected street network between blocks. Use `settlement-density` for a dense modern downtown of closely spaced high-rises, offices, shops, and ordinary city infrastructure.\n\n### 4. Layout requirements\nNo additional placed gameplay markers are required. The sandbox has no stated score targets, pickups, task stations, spawns, or scripted hazard origins; the physical destruction geometry is the playable content.\n\n### 5. Layout components\nBuild a large central downtown as the active destruction zone, with several dense blocks of varied-height skyscrapers separated by wide intersecting streets. Place office towers as the largest masses, with lower shops and service buildings lining street level beneath them. Include ordinary urban infrastructure throughout: sidewalks, intersections, traffic lights, utility poles, signs, parked street-side props, and small plaza or loading areas that create readable gaps between building clusters. Continue the city skyline into the background with lower-detail distant towers, preserving the impression of a broad metropolis while concentrating fully destructible detail in the central playable blocks. Keep the boundary visually absorbed by the outer skyline and distant city mass rather than a hard wall. Compose the view around a street-grid foreground and a dense tower cluster at the center, with the skyline receding behind it.\n\n### 6. Render order\nUse `isometric`: the city’s visual density, skyline silhouette, and destruction-ready building variety lead, while its non-linear sandbox streets do not require a topology-valid plan first.\n\n### 7. Scale, theme, and pipeline cost\nScale is huge, driven by the requested big city and broad skyline. Theme: modern urban downtown, dense glass-and-concrete skyscrapers, offices, retail frontage, and everyday street infrastructure. Use `P0`; the city is one ground-level contiguous surface with no required overhangs, interior transitions, separate maps, or topology that must be generated by construction.",
   "spec": {
     "genre": "Simulation",
     "secondary": [],
-    "shape": "world-shared",
+    "shape": "world-open",
     "preset": "Physics Sim",
     "axes": {},
     "options": [
       {
         "id": "physics-rig",
-        "text": "Skyscraper façades, office structures, shopfronts, street fixtures, and selected larger assemblies read as distinct breakable urban constructions rather than a single static backdrop.",
+        "text": "Skyscrapers, office blocks, storefronts, street furniture, and infrastructure constructed as visibly breakable multi-part assemblies.",
         "visible": true,
         "count": -1
       },
       {
         "id": "path-circulation",
-        "text": "A connected network of broad streets, intersections, sidewalks, and service alleys runs between the blocks.",
+        "text": "Broad connected street network between blocks.",
         "visible": true,
         "count": -1
       },
       {
         "id": "settlement-density",
-        "text": "The ground is densely built as a modern downtown, with closely packed skyscrapers, mid-rise offices, and shops.",
+        "text": "A dense modern downtown of closely spaced high-rises, offices, shops, and ordinary city infrastructure.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "View diagonally across the street grid, with central avenues leading from the foreground through the middle distance toward the distant skyline; the tallest towers frame the middle distance.",
+      "composition": "A street-grid foreground leads to a dense tower cluster at the center, with the city skyline receding behind it.",
       "zones": [
         {
-          "name": "Primary playable downtown",
-          "role": "Dense foreground and central play area of skyscrapers, office towers, compact shop rows, and urban infrastructure.",
-          "where": "foreground and centre",
-          "size": "large contiguous multi-block area"
+          "name": "Central downtown",
+          "role": "Active destruction zone containing dense urban blocks and fully destructible building detail.",
+          "where": "center",
+          "size": "large"
         },
         {
-          "name": "Central intersection and avenues",
-          "role": "Broad street junction and major routes creating readable breaks between dense blocks.",
-          "where": "centre through the middle",
-          "size": "broad central intersection with several long avenues"
+          "name": "Street-grid foreground",
+          "role": "Connected streets, intersections, sidewalks, and street-level urban infrastructure between the central blocks.",
+          "where": "foreground",
+          "size": "broad"
         },
         {
-          "name": "Plazas and open intersections",
-          "role": "Wider open breaks between major towers.",
-          "where": "between major towers",
-          "size": "a few wider plazas or open intersections"
-        },
-        {
-          "name": "Outer skyline",
-          "role": "Progressively simplified high-rise silhouettes extending the city into the distance and forming the visual boundary.",
-          "where": "background and outer edges",
-          "size": "broad skyline extending into the distance"
+          "name": "Distant skyline",
+          "role": "Lower-detail distant towers extending the metropolis beyond the active destruction blocks.",
+          "where": "background",
+          "size": "broad"
         }
       ],
       "paths": [
         {
-          "from": "foreground downtown",
-          "to": "distant skyline",
+          "from": "Street-grid foreground",
+          "to": "Central downtown",
           "kind": "road"
         },
         {
-          "from": "central intersection",
-          "to": "dense rectangular blocks",
+          "from": "Central downtown",
+          "to": "Distant skyline",
           "kind": "road"
-        },
-        {
-          "from": "major avenues",
-          "to": "adjacent blocks",
-          "kind": "sidewalk"
-        },
-        {
-          "from": "city blocks",
-          "to": "service areas",
-          "kind": "alley"
         }
       ],
-      "terrain": "Mostly flat street grid with paved streets, sidewalks, curbs, plazas, and dense urban blocks.",
+      "terrain": "Ground-level modern urban city surface with wide intersecting streets, sidewalks, intersections, small plazas, and loading areas.",
       "props": [
         {
-          "name": "skyscrapers",
+          "name": "Dense blocks of varied-height skyscrapers",
           "count": -1,
-          "where": "foreground, centre, and background skyline"
+          "where": "central downtown"
         },
         {
-          "name": "office towers",
+          "name": "Office towers",
           "count": -1,
-          "where": "primary playable downtown"
+          "where": "central downtown"
         },
         {
-          "name": "compact shop rows",
+          "name": "Lower shops and service buildings",
           "count": -1,
-          "where": "primary playable downtown"
+          "where": "street level beneath office towers"
         },
         {
-          "name": "glazed entrances",
+          "name": "Sidewalks",
           "count": -1,
-          "where": "downtown blocks"
+          "where": "throughout the street network"
         },
         {
-          "name": "loading bays",
+          "name": "Intersections",
           "count": -1,
-          "where": "downtown blocks and service alleys"
+          "where": "between dense urban blocks"
         },
         {
-          "name": "streetlights",
+          "name": "Traffic lights",
           "count": -1,
-          "where": "streets and intersections"
+          "where": "at intersections"
         },
         {
-          "name": "traffic signals",
+          "name": "Utility poles",
           "count": -1,
-          "where": "central intersection and streets"
+          "where": "throughout the city streets"
         },
         {
-          "name": "signs",
+          "name": "Signs",
           "count": -1,
-          "where": "streets and shop rows"
+          "where": "throughout the city streets"
         },
         {
-          "name": "planters",
+          "name": "Parked street-side props",
           "count": -1,
-          "where": "sidewalks and plazas"
+          "where": "along streets"
         },
         {
-          "name": "parked urban props",
+          "name": "Small plazas or loading areas",
           "count": -1,
-          "where": "streets and downtown blocks"
+          "where": "between building clusters"
         },
         {
-          "name": "utility details",
+          "name": "Lower-detail distant towers",
           "count": -1,
-          "where": "throughout the city"
+          "where": "background skyline"
         }
       ],
-      "boundary": "Open outer edges fading into distant skyline massing; the farthest buildings form the visual boundary.",
+      "boundary": "The boundary is visually absorbed by the outer skyline and distant city mass rather than a hard wall.",
       "scale_band": "huge",
-      "theme": "Contemporary urban destruction sandbox with ordinary metropolitan infrastructure and a glass-and-concrete commercial core."
+      "theme": "Modern urban downtown, dense glass-and-concrete skyscrapers, offices, retail frontage, and everyday street infrastructure."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "this single-surface sandbox does not require topology that could become unplayable if image-authored.",
+      "why": "Visual density, skyline silhouette, and destruction-ready building variety lead, while non-linear sandbox streets do not require a topology-valid plan first.",
       "set_piece": false
     },
     "route": [
@@ -169,7 +154,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

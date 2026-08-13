@@ -19,7 +19,7 @@
     }
   ],
   "scene_prompt": "Create a 3D mini-concert performance map with a selectable avatar performing a single song on one of 3 stages combined with any of 3 environments. The default is a compact modern concert club: a small raised stage at the front, a small ambient crowd facing the performer, dramatic colored lighting, and a dark indoor venue arranged for clear recording angles. Each stage and environment pairing should form a distinct performance backdrop while preserving an open view of the performer and audience.",
-  "blob": "### Genre\nThe dominant genre is Entertainment (Showcase & Hub), specifically a performance-focused concert creation space rather than a competitive music game. The author’s recording and sharing loop does not add layout mechanics. \n\n### Shape and preset\nUse `venue-stage`, matched to the Performance Venue preset. This is a compact indoor performance room whose essential geometry is a performer-facing stage and a crowd oriented toward it. The prompt overrides any assumption of a large arena: keep the venue intimate and designed for clear capture angles.\n\n### Config requirements\nUse `npc-population` as visible geometry: a small ambient crowd occupies the floor area in front of the stage, all facing the performer. No invisible layout options are required. The three selectable stages and three selectable environment treatments are alternate visible set modules, with every stage able to sit within every environment treatment; they are not nine simultaneous spaces.\n\n### Layout components\nBuild one compact dark indoor concert-club envelope. Place a small raised stage across the front short wall, broad enough for a single avatar performer and backed by a configurable stage backdrop. Leave a clear open performance apron in front of it. Fill the central floor with a small standing crowd facing forward, while retaining open side and rear sightlines for recording the avatar, stage, and audience together. Provide three interchangeable stage modules and three interchangeable environment-dressing modules, supporting all nine stage/environment pairings while preserving the same performer-to-audience orientation and unobstructed recording views. Use dramatic colored concert lighting focused on the stage, with controlled darker perimeter walls and ceiling to frame the lit performer. Keep circulation around both sides of the audience and along the rear wall for alternate capture positions. The boundary is the enclosed club room; no exterior area is needed. Compose the main view from behind or beside the crowd toward the raised, illuminated stage, with the performer as the focal point.\n\n### Render order\nUse `isometric`: the authoritative first render is the isometric venue image, then derive the top-down view from it, because no traversal topology or generated route must be validated.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by a one-performer stage and a small crowd rather than an arena audience. Theme is a compact modern concert club, dark interior, saturated dramatic lighting, and modular music-video backdrops. Use `P0`; the room is a single enclosed surface with no outside-to-inside crossing, overlapping floors, separate maps, or topology that must be valid by construction.",
+  "blob": "### 1. Genre\nThe dominant genre is Entertainment (Showcase & Hub): the activity is creating and recording short concerts rather than winning through combat, scoring, or traversal.\n\n### 2. Shape and preset\nUse `venue-stage`, matched from the Performance Venue preset. This is a compact indoor concert room: a raised performance stage anchors one end, while all audience sightlines face it. Retain the preset’s venue orientation but omit its unrequested gathering area, bleachers, and curated arrival reveal.\n\n### 3. Config requirements\nUse `npc-population` for a small ambient crowd visibly facing the performer from the audience floor. The performance area should remain open and legible for recording, with dramatic colored concert lighting, a dark club interior, and unobstructed views between stage and crowd.\n\n### 4. Layout requirements\nUse `npc-population` in layout as one small clustered audience population, placed directly in front of the stage and oriented toward its center; keep the central recording sightline and the stage apron clear. No other placed triggers, pickups, portals, or gameplay volumes are required.\n\n### 5. Layout components\nBuild one compact modern concert club. The front zone is a small raised stage with a centered performer position, lighting truss or fixtures above and beside it, and a clean apron for close recording angles. The middle zone is an open standing audience floor occupied by the small crowd, facing forward. Rear and side margins provide camera-friendly angles without blocking the performer or audience. Use three visually distinct stage treatments and three environment/backdrop treatments, designed as interchangeable dressing on this same venue footprint so every pairing remains readable as a concert set rather than requiring separate maps. Enclose the map with dark interior walls, ceiling rigging, and controlled colored lighting; no exterior is shown. Compose the frame with the stage at the far side, performer as the focal point, and the crowd between camera-side space and the stage.\n\n### 6. Render order\nUse `isometric`: the visual identity, lighting, stage dressing, and recording composition lead, while the simple venue plan can be projected afterward.\n\n### 7. Scale, theme, and pipeline cost\nScale is small, driven by a single compact stage, one audience floor, and a small crowd. Theme: dark contemporary concert club, saturated dramatic lighting, polished music-video backdrop. Use `P0`; the venue is one enclosed, single-level performance space with no required outside-to-inside transition, stacked walkable surfaces, or separate maps.",
   "spec": {
     "genre": "Entertainment (Showcase & Hub)",
     "secondary": [],
@@ -29,83 +29,74 @@
     "options": [
       {
         "id": "npc-population",
-        "text": "A small ambient crowd occupies the central floor area in front of the stage, all facing the performer.",
+        "text": "A small ambient crowd visibly facing the performer from the audience floor.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "npc-population",
+        "text": "One small clustered audience population.",
+        "count": 1,
+        "where": "Directly in front of the stage, oriented toward its center; keep the central recording sightline and stage apron clear."
+      }
+    ],
     "layout": {
-      "composition": "Main view is from behind or beside the crowd toward the raised illuminated stage, with the performer as the focal point; open side and rear sightlines keep the avatar, stage, and audience visible together.",
+      "composition": "The stage sits at the far side of the frame with the performer as the focal point; the crowd occupies the audience floor between camera-side space and the stage. Rear and side margins provide clear camera-friendly recording angles.",
       "zones": [
         {
-          "name": "Raised stage",
-          "role": "Single-avatar performance area backed by a configurable stage backdrop.",
-          "where": "Across the front short wall.",
-          "size": "Small, broad enough for one performer."
-        },
-        {
-          "name": "Performance apron",
-          "role": "Clear open space directly in front of the stage.",
-          "where": "Front-centre, between stage and crowd.",
-          "size": ""
+          "name": "Front stage",
+          "role": "A small raised performance stage with a centered performer position and a clean apron for close recording angles.",
+          "where": "Front end of the venue",
+          "size": "small"
         },
         {
           "name": "Audience floor",
-          "role": "Standing ambient crowd faces forward toward the performer.",
-          "where": "Central floor in front of the performance apron.",
-          "size": "Small."
+          "role": "Open standing audience area occupied by the small crowd facing forward toward the performer.",
+          "where": "Middle of the venue, directly in front of the stage",
+          "size": "small"
         },
         {
-          "name": "Side and rear circulation",
-          "role": "Alternate recording and capture positions around the audience.",
-          "where": "Both sides of the audience and along the rear wall.",
+          "name": "Rear and side camera margins",
+          "role": "Open margins for camera-friendly recording angles without blocking the performer or audience.",
+          "where": "Rear and sides of the audience floor",
           "size": ""
         }
       ],
-      "paths": [
-        {
-          "from": "rear circulation",
-          "to": "side circulation",
-          "kind": "open ground"
-        },
-        {
-          "from": "side circulation",
-          "to": "performance apron",
-          "kind": "open ground"
-        }
-      ],
-      "terrain": "Single enclosed indoor surface with a dark club floor, darker perimeter walls and ceiling, and dramatic saturated colored concert lighting focused on the stage.",
+      "paths": [],
+      "terrain": "Single-level indoor venue floor under controlled saturated colored concert lighting.",
       "props": [
         {
-          "name": "interchangeable stage modules",
-          "count": 3,
-          "where": "On the raised front stage."
-        },
-        {
-          "name": "interchangeable environment-dressing modules",
-          "count": 3,
-          "where": "Within the concert-club envelope around the stage and performance view."
-        },
-        {
-          "name": "configurable stage backdrop",
+          "name": "Lighting truss or fixtures",
           "count": -1,
-          "where": "Behind the raised stage."
+          "where": "Above and beside the raised stage"
         },
         {
-          "name": "small standing crowd",
+          "name": "Visually distinct stage treatments",
+          "count": 3,
+          "where": "Interchangeable dressing on the same stage footprint"
+        },
+        {
+          "name": "Environment and backdrop treatments",
+          "count": 3,
+          "where": "Interchangeable dressing around the same venue footprint"
+        },
+        {
+          "name": "Ceiling rigging",
           "count": -1,
-          "where": "Central floor, facing the stage."
+          "where": "Across the enclosed club interior"
         }
       ],
-      "boundary": "Enclosed compact indoor concert-club room; no exterior area.",
+      "boundary": "Dark interior walls and ceiling enclose the compact concert club; no exterior is shown.",
       "scale_band": "small",
-      "theme": "Compact modern concert club, dark interior, saturated dramatic lighting, modular music-video backdrops."
+      "theme": "Dark contemporary concert club, saturated dramatic lighting, polished music-video backdrop"
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "no traversal topology or generated route must be validated.",
+      "why": "visual identity, lighting, stage dressing, and recording composition lead while the simple venue plan can be projected afterward",
       "set_piece": false
     },
     "route": [
@@ -117,7 +108,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

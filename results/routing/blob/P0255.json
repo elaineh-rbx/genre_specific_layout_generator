@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a 3D game map with a soft rustic lobby and a separate small hotel round area. The lobby has dim lamps and elegant sit-down seating arranged as a relaxed waiting space. The hotel shares the same rustic aesthetic and is one connected, shared interior: a handful of rooms linked by hallways, compact enough for players to sweep through within three minutes, with open circulation between rooms so the group can observe one another without isolation.",
-  "blob": "### Genre\nThe dominant genre is Party & Casual: timed rounds in which a group gathers, moves through a shared round space, and returns to a lobby. The round rules establish the genre but do not add layout geometry.\n\n### Shape and preset\nUse `space-staged`, matching the Minigame preset. The prompt explicitly separates a waiting lobby from a distinct hotel round map; retain the preset shape but omit its unrequested scoring, spectator, and display features.\n\n### Config requirements\nUse `social-hub` as visible geometry: the lobby is an open, relaxed gathering area with seating concentrated around its warm light. No other configuration options are required. The round transition, voting, player labels, and results display are mechanics or UI, not visible layout components.\n\n### Layout components\nBuild two separate interior zones. The lobby is a compact rustic waiting room, sized for the full group to stand and sit together, with dim table lamps, warm wood finishes, soft upholstered fancy chairs and sofas, and clear open floor circulation. The hotel round area is a separate small, connected rustic hotel interior: a central hall or foyer feeds a handful of distinct rooms through connected hallways. Keep every room visually open to the circulation network through broad doorways or glazed openings where appropriate, so players can circulate, see others passing, and are not isolated in dead-end spaces. Use warm wood flooring, muted wallpaper or plaster walls, rugs, lamps, side tables, and hotel-style doors; do not add exterior grounds. Enclose both zones fully as interiors. Frame the lobby as an inviting, centered social room, while the hotel composition should show the central hall and branching connected rooms in one readable compact plan.\n\n### Render order\nUse `topdown` first, authoritative, because the hotel’s room-to-hallway connectivity must remain readable and allow the shared group to sweep the whole area without accidental isolation.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the handful of hotel rooms intended to be swept within a three-minute round. Theme: soft rustic, warmly lit boutique hotel. Use `P4` because the lobby and hotel round area are separate maps, and `P0` otherwise; no stacked surfaces, exterior-to-interior transition, or validity-by-construction geometry is required.",
+  "blob": "### 1. Genre\nThe dominant genre is Party & Casual: a timed social deduction round is played between waits in a shared lobby.\n\n### 2. Shape and preset\nUse `space-staged`, matching the Minigame preset: the waiting lobby and the active hotel round space are isolated maps so waiting players cannot enter or observe the round area. The prompt keeps the preset’s staged separation but does not call for its leaderboard, spectator area, or scoring geometry.\n\n### 3. Config requirements\nUse `social-hub` for the soft rustic waiting lobby, with dim lamps and elegant sit-down seating organized as a relaxed gathering space before and after rounds.\n\n### 4. Layout requirements\nUse `spawn-protected` as round-start points: provide up to 10 evenly distributed arrival markers across the hotel’s rooms and hall intersections, separated enough that no group begins clustered together or gains an immediate observational advantage. No scoring, voting, or result-display volumes are placed; those are UI and round logic rather than map geometry.\n\n### 5. Layout components\nBuild two separate enclosed interior zones. The lobby is a compact, warmly lit rustic lounge with a central open gathering floor, dim wall and table lamps, and clusters of ornate upholstered seats around its perimeter; size its circulation and seating for up to 10 players. The round zone is a small rustic hotel interior, also enclosed, with a handful of distinct guest rooms and short connected hallways arranged as one freely circulating shared space. Each room should have clear door openings into the hall network, with alternate connections where practical so players can sweep the entire hotel and keep sight of one another within a three-minute round rather than becoming isolated. Use wooden floors, muted wallpaper or plaster walls, warm low lamps, doors, and restrained hotel furnishings. Frame the lobby as a calm broad foreground space and the hotel as a readable compact floor plan with rooms visibly branching from hallways.\n\n### 6. Render order\nUse `topdown` first, authoritative, because the hotel’s room-and-hall topology must remain openly connected and sweepable during active rounds before the isometric dressing is derived.\n\n### 7. Scale, theme, and pipeline cost\nScale is medium: one comfortable lobby plus a deliberately small hotel with only a handful of rooms. Theme is soft rustic hospitality, warm wood, dim amber lamps, and refined lounge seating. Use `P4` because the lobby and round hotel are separate maps; no other modifier is forced.",
   "spec": {
     "genre": "Party & Casual",
     "secondary": [],
@@ -24,89 +24,100 @@
     "options": [
       {
         "id": "social-hub",
-        "text": "The lobby is an open, relaxed gathering area with seating concentrated around its warm light.",
+        "text": "Soft rustic waiting lobby with dim lamps and elegant sit-down seating organized as a relaxed gathering space before and after rounds.",
         "visible": true,
         "count": -1
+      },
+      {
+        "id": "spawn-protected",
+        "text": "Up to 10 evenly distributed round-start arrival markers across the hotel's rooms and hall intersections, separated so no group begins clustered together or gains an immediate observational advantage.",
+        "visible": false,
+        "count": 10
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "spawn-protected",
+        "text": "Up to 10 evenly distributed round-start arrival markers across the hotel's rooms and hall intersections, separated so no group begins clustered together or gains an immediate observational advantage.",
+        "count": 10,
+        "where": "Across the hotel's rooms and hall intersections, separated enough that no group begins clustered together."
       }
     ],
     "layout": {
-      "composition": "The inviting lobby is framed as a centered social room. The separate hotel map is a compact readable plan with a central hall or foyer and branching connected rooms visible around it.",
+      "composition": "Frame the lobby as a calm broad foreground space and the hotel as a readable compact floor plan with rooms visibly branching from hallways.",
       "zones": [
         {
-          "name": "Rustic waiting lobby",
-          "role": "A relaxed waiting and gathering space where the full group stands and sits together before and between rounds.",
-          "where": "separate lobby map",
-          "size": "compact"
+          "name": "Waiting lobby",
+          "role": "Relaxed gathering space before and after rounds.",
+          "where": "Foreground",
+          "size": "Compact; circulation and seating sized for up to 10 players."
         },
         {
-          "name": "Rustic hotel round area",
-          "role": "The shared timed-round space, with a central hall feeding distinct rooms through connected hallways so players can circulate and observe one another without isolation.",
-          "where": "separate hotel round map",
-          "size": "small"
+          "name": "Hotel round zone",
+          "role": "Timed social deduction round space with freely circulating rooms and halls.",
+          "where": "Separate isolated map",
+          "size": "Small, with only a handful of rooms."
         }
       ],
       "paths": [
         {
-          "from": "Central hotel hall or foyer",
-          "to": "Distinct hotel rooms",
+          "from": "Guest rooms",
+          "to": "Hall network",
+          "kind": "corridor"
+        },
+        {
+          "from": "Guest rooms",
+          "to": "Alternate room connections",
           "kind": "corridor"
         }
       ],
-      "terrain": "Warm wood flooring throughout, with rugs inside the rustic hotel interior.",
+      "terrain": "Enclosed interiors with wooden floors, muted wallpaper or plaster walls, warm low lamps, doors, and restrained hotel furnishings.",
       "props": [
         {
-          "name": "dim table lamps",
+          "name": "Dim wall and table lamps",
           "count": -1,
-          "where": "lobby"
+          "where": "Lobby and hotel interior."
         },
         {
-          "name": "soft upholstered fancy chairs and sofas",
+          "name": "Ornate upholstered seats",
           "count": -1,
-          "where": "lobby seating around warm light"
+          "where": "Around the perimeter of the lobby."
         },
         {
-          "name": "rugs",
+          "name": "Restrained hotel furnishings",
           "count": -1,
-          "where": "hotel interior"
+          "where": "Guest rooms and hallways."
         },
         {
-          "name": "lamps",
+          "name": "Doors",
           "count": -1,
-          "where": "hotel interior"
-        },
-        {
-          "name": "side tables",
-          "count": -1,
-          "where": "hotel interior"
-        },
-        {
-          "name": "hotel-style doors",
-          "count": -1,
-          "where": "hotel rooms and connected hallways"
+          "where": "Clear openings between each guest room and the hall network."
         }
       ],
-      "boundary": "Both separate zones are fully enclosed interiors; no exterior grounds.",
-      "scale_band": "small",
-      "theme": "soft rustic, warmly lit boutique hotel"
+      "boundary": "Two separate enclosed interior maps: the waiting lobby and the isolated hotel round space.",
+      "scale_band": "medium",
+      "theme": "Soft rustic hospitality, warm wood, dim amber lamps, and refined lounge seating."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the hotel room-to-hallway connectivity must remain readable so the shared group can sweep the whole area without accidental isolation",
+      "why": "the hotel's room-and-hall topology must remain openly connected and sweepable during active rounds.",
       "set_piece": false
     },
     "route": [
-      "P4",
-      "P0"
+      "P4"
     ],
-    "notes": [],
+    "notes": [
+      "The Minigame preset is named, but its leaderboard, spectator area, and scoring geometry are explicitly omitted.",
+      "No scoring, voting, or result-display volumes are placed because they are UI and round logic rather than map geometry."
+    ],
     "scene_prompt": "Create a 3D game map with a soft rustic lobby and a separate small hotel round area. The lobby has dim lamps and elegant sit-down seating arranged as a relaxed waiting space. The hotel shares the same rustic aesthetic and is one connected, shared interior: a handful of rooms linked by hallways, compact enough for players to sweep through within three minutes, with open circulation between rooms so the group can observe one another without isolation."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

@@ -14,89 +14,163 @@
     }
   ],
   "scene_prompt": "Create a 3D first-person sci-fi combat map inspired by a futuristic space-military arena. Build one medium-sized enclosed arena with open routes for running, scattered solid cover objects to hide behind, and positions for a fixed set of hostile alien enemies. Use generated mesh assets for the arena architecture, cover, and alien characters; compose the space for a first-person camera with clear sightlines and combat lanes.",
-  "blob": "### Genre\nThe dominant genre is Shooter: a first-person PvE combat map with a fixed set of hostile alien opponents to clear. It is not an endless-wave arena or a campaign.\n\n### Shape and preset\nUse `lane-network`, arranging the sci-fi arena as several connected combat lanes rather than one undifferentiated room. The nearest preset is PvE Shooter, but the preset is `none` because this focused fixed-enemy arena does not call for wave origins or a breachable exterior structure.\n\n### Config requirements\nUse `cover-los` as visible geometry: scattered solid sci-fi barricades, crates, angled bulkheads, and waist-high consoles break firing lines while leaving readable routes for running and shooting. No invisible emitter, pickup, or trigger-volume options are required; alien encounter locations are fixed scene placements rather than visible spawning hardware.\n\n### Layout components\nBuild one medium-sized enclosed futuristic military arena. Place a broad central engagement floor in the middle, with two to three connected side lanes looping around it so the player can reposition rather than be trapped in a single firing corridor. Make the central floor the largest zone, flanked by narrower perimeter passages and a few recessed cover pockets. Use generated mesh architecture: metallic floor panels, armored walls, sci-fi door frames, illuminated conduits, raised consoles, crates, and modular barriers. Distribute solid cover throughout every lane, alternating low cover for crouched concealment and taller bulkheads that fully sever sightlines. Position a fixed set of alien enemy characters at separated defensive pockets, across the central floor, and near lane turns; leave clear approach and retreat space around each position. Enclose the arena with opaque industrial walls and ceiling structure, with no exterior route. Compose for first-person readability: strong lane silhouettes, visible cover ahead, and clear long-to-short sightline changes.\n\n### Render order\nUse `topdown`: the connected lanes, circulation loops, cover spacing, and enemy-facing pockets must form a playable combat topology before the first-person sci-fi dressing is applied.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by one complete arena with room for multiple running routes and combat positions. Theme: Halo-like futuristic space-military installation, clean armored mesh architecture, cool metallic lighting, alien-tech accents. Use `P0`; the arena is one enclosed, single-surface combat space with no overlapping floors, outside-to-inside transition, or procedural-validity requirement.",
+  "blob": "### 1. Genre\nThe dominant genre is Shooter: this is a first-person combat map with hostile ranged aliens and a fixed combat encounter.\n\n### 2. Shape and preset\nUse `lane-network`, matched from the Team Deathmatch preset’s readable combat-lane structure, but without opposing team bases or competitive objectives. The arena is one enclosed sci-fi military space whose parallel routes converge into combat sightlines; this prompt deliberately uses a PvE encounter rather than the preset’s team match.\n\n### 3. Config requirements\nUse `cover-los` as scattered waist-high and full-height sci-fi crates, barricades, structural pylons, and angular machinery that let players break alien firing lines. Use `choke-bottleneck` for narrow door-like transitions between the arena’s open route sections. No universal options are requested.\n\n### 4. Layout requirements\nUse `spawner-npc` for a fixed set of alien enemy start markers, placed behind cover or at the far ends of the combat lanes so enemies enter the player’s view with readable attack directions; do not use recurring wave emitters. Place one player arrival marker in a sheltered edge alcove with immediate access to more than one route.\n\n### 5. Layout components\nBuild one medium enclosed arena: a central open combat floor, two side lanes running along the left and right walls, and a rear cross-route that reconnects them. The central floor is broad enough for running and has staggered cover clusters rather than a clear firing corridor. Put taller alien-tech pillars and raised machinery near lane junctions, with lower crates and barricades between them. Narrow armored doorways connect each side lane to the central floor and rear cross-route, creating controlled flashpoints without dead ends. The boundary is a continuous futuristic space-military shell of metal walls, illuminated panels, ceiling trusses, and sealed exterior-facing bulkheads. Use generated mesh assets throughout for architecture, cover, and alien characters. Compose the first-person view around clear lane reads, cover-to-cover movement, and distant enemy silhouettes.\n\n### 6. Render order\nUse `topdown` first and treat it as authoritative, because the connected combat lanes, cover spacing, and enemy sightlines must remain playable rather than being improvised from an isometric view.\n\n### 7. Scale, theme, and pipeline cost\nScale is medium, driven by one complete enclosed arena with room to run, flank, and fight a fixed enemy set. Theme: clean but battle-worn sci-fi military interior, alien-tech accents, cool industrial lighting. Pipeline modifier: `P0`; this is one continuous single-level arena with no forced stacked geometry, interior/exterior transition, or topology that must be procedurally carved.",
   "spec": {
     "genre": "Shooter",
     "secondary": [],
     "shape": "lane-network",
-    "preset": "none",
+    "preset": "Team Deathmatch",
     "axes": {},
     "options": [
       {
         "id": "cover-los",
-        "text": "Scattered solid sci-fi barricades, crates, angled bulkheads, waist-high consoles, and modular barriers break firing lines while leaving readable routes for running and shooting; low cover alternates with taller bulkheads that fully sever sightlines.",
+        "text": "Scattered waist-high and full-height sci-fi crates, barricades, structural pylons, and angular machinery that let players break alien firing lines.",
         "visible": true,
+        "count": -1
+      },
+      {
+        "id": "choke-bottleneck",
+        "text": "Narrow door-like transitions between the arena’s open route sections.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "spawner-npc",
+        "text": "A fixed set of alien enemy start markers, placed behind cover or at the far ends of the combat lanes so enemies enter the player’s view with readable attack directions; not recurring wave emitters.",
+        "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "spawner-npc",
+        "text": "A fixed set of alien enemy start markers; not recurring wave emitters.",
+        "count": -1,
+        "where": "Behind cover or at the far ends of the combat lanes, so enemies enter the player’s view with readable attack directions."
+      }
+    ],
     "layout": {
-      "composition": "A broad central engagement floor occupies the middle as the largest zone, flanked by narrower perimeter side lanes looping around it and recessed cover pockets. The first-person view reads strong lane silhouettes, visible cover ahead, and changing long-to-short sightlines.",
+      "composition": "First-person view focused on clear lane reads and cover-to-cover movement, with staggered cover on the central floor, side lanes along the left and right walls, and distant enemy silhouettes down combat sightlines.",
       "zones": [
         {
-          "name": "Central engagement floor",
-          "role": "Largest combat zone with separated alien defensive pockets and clear approach and retreat space.",
-          "where": "middle",
-          "size": "broad; largest zone"
+          "name": "Central open combat floor",
+          "role": "Broad running and combat area with staggered cover clusters instead of a clear firing corridor.",
+          "where": "Centre",
+          "size": "Broad"
         },
         {
-          "name": "Perimeter side lanes",
-          "role": "Connected combat lanes for repositioning around the central floor rather than remaining in one firing corridor.",
-          "where": "flanking the central floor",
-          "size": "narrower"
+          "name": "Left side lane",
+          "role": "Parallel combat route running along the left wall.",
+          "where": "Left side",
+          "size": ""
         },
         {
-          "name": "Recessed cover pockets",
-          "role": "Defensive pockets holding fixed alien enemy positions and cover.",
-          "where": "across the central floor and near lane turns",
+          "name": "Right side lane",
+          "role": "Parallel combat route running along the right wall.",
+          "where": "Right side",
+          "size": ""
+        },
+        {
+          "name": "Rear cross-route",
+          "role": "Reconnects the two side lanes.",
+          "where": "Rear",
+          "size": ""
+        },
+        {
+          "name": "Sheltered edge alcove",
+          "role": "Player arrival location with immediate access to more than one route.",
+          "where": "Sheltered edge",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Central engagement floor",
-          "to": "Perimeter side lanes",
+          "from": "Left side lane",
+          "to": "Central open combat floor",
           "kind": "corridor"
         },
         {
-          "from": "Perimeter side lanes",
-          "to": "Central engagement floor",
+          "from": "Right side lane",
+          "to": "Central open combat floor",
+          "kind": "corridor"
+        },
+        {
+          "from": "Left side lane",
+          "to": "Rear cross-route",
+          "kind": "corridor"
+        },
+        {
+          "from": "Right side lane",
+          "to": "Rear cross-route",
           "kind": "corridor"
         }
       ],
-      "terrain": "Single-surface metallic floor panels with armored walls, illuminated conduits, sci-fi door frames, raised consoles, crates, and modular barriers.",
+      "terrain": "Single-level enclosed arena floor with open running routes; taller alien-tech pillars and raised machinery at lane junctions, with lower crates and barricades between them.",
       "props": [
         {
-          "name": "Solid sci-fi barricades, crates, angled bulkheads, waist-high consoles, and modular barriers",
+          "name": "Sci-fi crates",
           "count": -1,
-          "where": "throughout every lane and in recessed cover pockets"
+          "where": "Scattered as staggered cover clusters across the central floor and routes."
         },
         {
-          "name": "Fixed hostile alien enemy characters",
+          "name": "Barricades",
           "count": -1,
-          "where": "separated defensive pockets, across the central floor, and near lane turns"
+          "where": "Between taller cover elements and along combat routes."
+        },
+        {
+          "name": "Structural pylons",
+          "count": -1,
+          "where": "Near lane junctions."
+        },
+        {
+          "name": "Alien-tech pillars",
+          "count": -1,
+          "where": "Near lane junctions."
+        },
+        {
+          "name": "Raised machinery",
+          "count": -1,
+          "where": "Near lane junctions."
+        },
+        {
+          "name": "Armored doorways",
+          "count": -1,
+          "where": "Connecting each side lane to the central floor and rear cross-route."
+        },
+        {
+          "name": "Alien characters",
+          "count": -1,
+          "where": "At fixed enemy start markers behind cover or at the far ends of combat lanes."
+        },
+        {
+          "name": "Metal walls, illuminated panels, ceiling trusses, and sealed exterior-facing bulkheads",
+          "count": -1,
+          "where": "Continuous outer shell of the arena."
         }
       ],
-      "boundary": "Opaque industrial walls and ceiling structure enclose the arena; there is no exterior route.",
+      "boundary": "A continuous futuristic space-military shell of metal walls, illuminated panels, ceiling trusses, and sealed exterior-facing bulkheads.",
       "scale_band": "medium",
-      "theme": "Halo-like futuristic space-military installation; clean armored mesh architecture, cool metallic lighting, alien-tech accents."
+      "theme": "Clean but battle-worn sci-fi military interior with alien-tech accents, cool industrial lighting, and generated mesh assets throughout."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "connected lanes, circulation loops, cover spacing, and enemy-facing pockets must form a playable combat topology before dressing.",
+      "why": "connected combat lanes, cover spacing, and enemy sightlines must remain playable.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
-    "notes": [],
+    "notes": [
+      "The one player arrival marker is retained in the sheltered edge alcove zone because no canonical Shooter option ID was named for it."
+    ],
     "scene_prompt": "Create a 3D first-person sci-fi combat map inspired by a futuristic space-military arena. Build one medium-sized enclosed arena with open routes for running, scattered solid cover objects to hide behind, and positions for a fixed set of hostile alien enemies. Use generated mesh assets for the arena architecture, cover, and alien characters; compose the space for a first-person camera with clear sightlines and combat lanes."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

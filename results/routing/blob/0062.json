@@ -3,94 +3,101 @@
   "source": "A small zombie survival map layout featuring a central abandoned building, scattered crates for cover, a perimeter fence, and a spooky dark atmosphere. Expose attributes for 'BuildingSize', 'CrateCount', and 'FenceHeight' so they can be adjusted later.",
   "answers": [],
   "scene_prompt": "Create a small zombie survival map with a central abandoned building, scattered crates arranged as cover around it, and a perimeter fence enclosing the play area. Use a spooky, dark atmosphere; keep the building size, crate count, and fence height adjustable.",
-  "blob": "### Genre\nDominant genre: Survival, specifically a zombie horde-defense space. The hostile-survival intent comes from the original request; the layout remains focused on the physical arena.\n\n### Shape and preset\nUse `arena-contained`, matching the Horde Defense preset. This is a compact fenced survival yard centered on one abandoned building, rather than a looping escape warren or a biome world. Retain the preset’s defensive-cover and hostile-entry character, but omit collapsing structures because none were requested.\n\n### Config requirements\n`cover-los` is visible geometry: scatter crates in small, uneven cover clusters around the central building, leaving readable movement lanes between them. `spawner-npc` is invisible layout: place zombie-entry markers just inside or beyond selected perimeter-fence segments, aimed toward the central yard; do not render markers or emitters. The perimeter fence is visible boundary geometry, not an additional gameplay feature.\n\n### Layout components\nMake one small, roughly square exterior survival yard. Put the abandoned building at the center as the dominant, adjustable-size landmark; render it as a boarded, worn exterior shell with broken windows and a clear footprint, without assuming enterable rooms. Arrange the adjustable crate count in scattered clusters around all sides of the building, with some near corners and some in the open yard, so they break sightlines without sealing routes. A continuous adjustable-height perimeter fence encloses the entire playable area, with several visually distinct zombie approach segments along it. Use compact dark earth, dead grass, worn concrete patches, and sparse debris as ground treatment. Keep the outer boundary closed by the fence and compose the scene from an elevated three-quarter view, with the building centered and crate cover clearly legible around it.\n\n### Render order\nUse `isometric`: render the atmospheric three-quarter survival yard first, then derive the top-down plan from that authoritative image. No exact maze, circuit, or mandatory escape topology needs construction validation.\n\n### Scale, theme, and pipeline cost\nScale band: small, driven by the single building, compact cover yard, and one perimeter enclosure. Theme: dark abandoned zombie-survival yard, spooky and decayed. Pipeline modifier: `P0`; the map is one exterior ground surface with no forced overhangs, interiors, separate maps, or volumetric traversal. Keep `BuildingSize`, `CrateCount`, and `FenceHeight` as adjustable geometry parameters.",
+  "blob": "### Genre\nThe dominant genre is Survival, specifically a Horde Defense scene: players endure zombie pressure within a contained combat space.\n\n### Shape and preset\nUse `space-bounded`, matching the Horde Defense preset. It is a compact fenced arena with one central structure and clear circulation around it.\n\n### Config requirements\nUse `cover-los` as scattered crate clusters around the building, creating short sightline breaks and defensive positions. Do not imply an enterable building interior; the abandoned building is the central exterior landmark and cover mass.\n\n### Layout requirements\nUse `spawner-npc` for several zombie entry origins distributed just inside the perimeter fence, aimed toward the open routes around the central building. Keep origins separated so attacks can arrive from multiple directions without spawning directly beside the player.\n\n### Layout components\nPlace one abandoned building at the center, sized through the adjustable `BuildingSize` attribute. Surround it with a broad, walkable loop of dark worn ground. Arrange scattered wooden crates as cover in loose clusters around the building; their total remains controlled by the adjustable `CrateCount` attribute, with enough open gaps to preserve movement between clusters. Enclose the whole small arena with a continuous perimeter fence, whose vertical extent is controlled by the adjustable `FenceHeight` attribute. The fence forms the hard outer boundary, while zombie origins sit along its inner edge. Frame the map as a compact square or slightly rectangular arena, centered on the abandoned building, with the fence clearly legible around all sides.\n\n### Render order\nRender `isometric` first and treat it as authoritative; this compact arena has simple, readable topology and does not require plan-first validation.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by a single enclosed survival arena. Theme: spooky dark abandoned compound, muted decayed materials, ominous night atmosphere. Pipeline modifier: `P0`, since the map is one flat bounded surface with no forced interior transition, stacked geometry, or topology-generation requirement.",
   "spec": {
     "genre": "Survival",
     "secondary": [],
-    "shape": "arena-contained",
+    "shape": "space-bounded",
     "preset": "Horde Defense",
     "axes": {},
     "options": [
       {
         "id": "cover-los",
-        "text": "Scatter crates in small, uneven cover clusters around the central building, leaving readable movement lanes between them.",
+        "text": "Scattered wooden crate clusters around the central abandoned building, creating short sightline breaks and defensive positions.",
         "visible": true,
         "count": -1
       },
       {
         "id": "spawner-npc",
-        "text": "Place zombie-entry markers just inside or beyond selected perimeter-fence segments, aimed toward the central yard; do not render markers or emitters.",
+        "text": "Several zombie entry origins distributed just inside the perimeter fence, aimed toward the open routes around the central building.",
         "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "spawner-npc",
+        "text": "Several zombie entry origins distributed just inside the perimeter fence, aimed toward the open routes around the central building.",
+        "count": -1,
+        "where": "Along the inner edge of the perimeter fence, separated from one another and not directly beside the player."
+      }
+    ],
     "layout": {
-      "composition": "Elevated three-quarter view of a compact square survival yard, with the abandoned building centered and scattered crate cover clearly legible around all sides within the enclosing fence.",
+      "composition": "A compact square or slightly rectangular arena centered on the abandoned building, with the broad dark ground loop around it and the perimeter fence clearly legible on all sides.",
       "zones": [
         {
-          "name": "Survival yard",
-          "role": "Compact exterior horde-defense arena around the central landmark.",
-          "where": "entire playable area",
-          "size": "small"
-        },
-        {
           "name": "Central abandoned building",
-          "role": "Dominant landmark and cover anchor.",
-          "where": "centre",
-          "size": "adjustable"
+          "role": "Central exterior landmark and cover mass; it is not enterable.",
+          "where": "Center",
+          "size": "Sized through the adjustable BuildingSize attribute."
         },
         {
-          "name": "Crate cover clusters",
-          "role": "Break sightlines while preserving readable movement lanes.",
-          "where": "around all sides of the central building, including near corners and open yard",
-          "size": "adjustable"
+          "name": "Walkable defensive loop",
+          "role": "Open circulation and defensive movement around the central building.",
+          "where": "Surrounding the central building",
+          "size": "Broad"
+        },
+        {
+          "name": "Perimeter entry edge",
+          "role": "Zombie attacks enter from multiple directions toward the open routes around the building.",
+          "where": "Just inside the perimeter fence",
+          "size": ""
         }
       ],
-      "paths": [],
-      "terrain": "Compact dark earth, dead grass, worn concrete patches, and sparse debris.",
+      "paths": [
+        {
+          "from": "Walkable defensive loop",
+          "to": "Central abandoned building",
+          "kind": "open ground"
+        }
+      ],
+      "terrain": "Dark worn ground forming a broad walkable loop around the building.",
       "props": [
         {
-          "name": "abandoned building",
+          "name": "Abandoned building",
           "count": 1,
-          "where": "centre of the yard"
+          "where": "Center of the arena; its size is controlled by the adjustable BuildingSize attribute."
         },
         {
-          "name": "crate cover clusters",
+          "name": "Wooden crate cover clusters",
           "count": -1,
-          "where": "scattered around all sides of the building"
-        },
-        {
-          "name": "perimeter fence",
-          "count": -1,
-          "where": "continuous around the entire playable area"
-        },
-        {
-          "name": "zombie approach segments",
-          "count": -1,
-          "where": "along the perimeter fence"
+          "where": "Loosely scattered around the central building, with open gaps preserved between clusters; total controlled by the adjustable CrateCount attribute."
         }
       ],
-      "boundary": "A continuous adjustable-height perimeter fence closes the entire playable area.",
+      "boundary": "A continuous perimeter fence forms the hard outer boundary around the whole small arena; its vertical extent is controlled by the adjustable FenceHeight attribute.",
       "scale_band": "small",
-      "theme": "Dark abandoned zombie-survival yard, spooky and decayed."
+      "theme": "Spooky dark abandoned compound, muted decayed materials, ominous night atmosphere."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "No exact maze, circuit, or mandatory escape topology needs construction validation.",
+      "why": "The compact arena has simple, readable topology and does not require plan-first validation.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
-    "notes": [],
+    "notes": [
+      "No numeric crate count or zombie-origin count was stated; both use -1.",
+      "BuildingSize, CrateCount, and FenceHeight are adjustable attributes rather than stated numeric values."
+    ],
     "scene_prompt": "Create a small zombie survival map with a central abandoned building, scattered crates arranged as cover around it, and a perimeter fence enclosing the play area. Use a spooky, dark atmosphere; keep the building size, crate count, and fence height adjustable."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

@@ -19,113 +19,132 @@
     }
   ],
   "scene_prompt": "Create a compact 3D scary forest map a few hundred studs across, with dense woodland, hiding spots throughout, and items scattered across the forest.",
-  "blob": "### Genre\nThe dominant genre is Survival: one AI-controlled monster hunts players through a scary forest, while players hide and collect items to defeat it. The monster and player health values are mechanics and do not alter the layout.\n\n### Shape and preset\nUse `warren-looping`, interpreted as a compact woodland of interlinked clearings and looping trails with no trapping dead ends. The nearest preset is none: 1 vs All contributes the chase-and-hide structure, but its role-spawn and escape assumptions do not fit a cooperative hunt against one AI monster.\n\n### Config requirements\nUse `cover-los` as visible geometry: dense tree trunks, boulder clusters, fallen logs, brush thickets, and small hollowed hiding pockets repeatedly break sightlines. Use `spawner-npc` as invisible layout data: one monster origin placed in a central or slightly offset forest clearing with navigable approaches. Use `collectible-nodes` as invisible layout data: the scattered combat-item placements distributed across risky outer clearings, trail junctions, and partially concealed forest pockets.\n\n### Layout components\nBuild a compact 3D forest a few hundred studs across. Place a broad central clearing as the main orientation space, surrounded by four to six smaller clearings connected by branching dirt trails that always loop back through another route. Make the outer clearings denser and more obscured, with the most concealed item locations behind log piles, rock outcrops, brush, and ruined-looking forest debris. Keep every hiding pocket open to at least two trail directions so players cannot be cornered by the monster. Terrain is mostly uneven leaf-littered soil with shallow rises, roots, stones, and dense woodland; avoid major elevation changes or water. Use an impassable perimeter of tightly packed trees, dark undergrowth, and rock to enclose the play space. Frame the map as an overhead-readable forest network, with the central clearing visually distinct and trail loops legible beneath the canopy.\n\n### Render order\nUse `topdown`: the looping trail network and multiple escape routes must remain connected and traversable, since a sealed forest pocket would make hiding play unfair; this is not a carveable maze.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by a few-hundred-stud compact forest with several interconnected hiding areas. Theme: dark, ominous 3D woodland horror, foggy and claustrophobic under dense canopy. Apply `P6` because the chase-space topology must be valid, with no dead-end traps in the playable trail network.",
+  "blob": "### Genre\n`Survival` is dominant: one AI monster hunts players in a frightening hide-and-seek forest, and the round is resolved by defeating it with found items. No secondary genre is needed.\n\n### Shape and preset\nUse `space-bounded`, a compact exterior forest arena whose outer woodland edge contains the entire hunt. The nearest preset is none: this shares the contained scale of Horde Defense but does not call for its collapsing structures or a wave-defense arrangement.\n\n### Config requirements\nUse `cover-los` as dense, irregular hiding cover: tree trunks, thick brush, fallen logs, rock clusters, and small shadowed clearings that interrupt the monster’s sightlines. Do not add unrequested buildings, water, terrain relief, or settlement elements.\n\n### Layout requirements\nUse `spawner-npc` for exactly one AI-monster origin, positioned at a central or slightly offset deep-forest clearing rather than beside the player arrival edge. Use `collectible-nodes` for combat items distributed across distinct forest subareas, with some exposed in clearings and others sheltered behind cover, so players must traverse the full map rather than collect everything at one spot.\n\n### Layout components\nThe map is a compact 3D forest a few hundred studs across. Establish a small safer arrival clearing near one edge, a central monster clearing, and several loosely connected woodland pockets around them for hiding and item search. Wide but winding dirt paths and natural gaps in the trees connect these pockets without becoming a formal corridor; off-path brush and fallen logs create alternate short routes. Terrain remains mostly level forest floor with subtle undulations only. Populate the woodland densely with mature trees, undergrowth, ferns, boulders, fallen trunks, and scattered item locations. Use a thick tree line, dark rock outcrops, and impassable dense undergrowth as the natural boundary. Frame the composition from an elevated three-quarter view that clearly reads the arrival clearing, central hunting ground, and surrounding concealment rings.\n\n### Render order\nRender `isometric` first and treat it as authoritative, because the forest’s atmosphere and readable cover distribution matter more than a topology that must be procedurally validated.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by the stated few-hundred-stud compact forest and its need for multiple separated hiding pockets. Theme is dark, ominous woodland horror with heavy shadows and claustrophobic vegetation. Use `P0`: this is one contiguous, ground-level exterior surface with no forced multi-level, indoor, volumetric, or validity-by-construction capture path.",
   "spec": {
     "genre": "Survival",
     "secondary": [],
-    "shape": "warren-looping",
+    "shape": "space-bounded",
     "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "cover-los",
-        "text": "Dense tree trunks, boulder clusters, fallen logs, brush thickets, and small hollowed hiding pockets repeatedly break sightlines.",
+        "text": "Dense, irregular hiding cover: tree trunks, thick brush, fallen logs, rock clusters, and small shadowed clearings that interrupt the monster's sightlines.",
         "visible": true,
         "count": -1
       },
       {
         "id": "spawner-npc",
-        "text": "One monster origin placed in a central or slightly offset forest clearing with navigable approaches.",
+        "text": "One AI-monster origin in a central or slightly offset deep-forest clearing, away from the player arrival edge.",
         "visible": false,
         "count": 1
       },
       {
         "id": "collectible-nodes",
-        "text": "Scattered combat-item placements distributed across risky outer clearings, trail junctions, and partially concealed forest pockets.",
+        "text": "Combat items distributed across distinct forest subareas, with some exposed in clearings and others sheltered behind cover.",
         "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "spawner-npc",
+        "text": "One AI-monster origin in a central or slightly offset deep-forest clearing, away from the player arrival edge.",
+        "count": 1,
+        "where": "At the central or slightly offset deep-forest clearing, not beside the player arrival edge."
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "Combat items distributed across distinct forest subareas, with some exposed in clearings and others sheltered behind cover.",
+        "count": -1,
+        "where": "Across distinct forest subareas: some in exposed clearings and others behind hiding cover, requiring traversal of the full map."
+      }
+    ],
     "layout": {
-      "composition": "An overhead-readable forest network beneath dense canopy, with a visually distinct broad central clearing surrounded by obscured outer clearings and legible looping dirt trails.",
+      "composition": "Elevated three-quarter view clearly reading the small safer arrival clearing near one edge, the central hunting ground, and surrounding concealment rings of woodland pockets.",
       "zones": [
         {
-          "name": "Central clearing",
-          "role": "Main orientation space and monster-origin clearing.",
-          "where": "centre or slightly offset centre",
-          "size": "broad"
+          "name": "Arrival clearing",
+          "role": "Small safer player arrival area.",
+          "where": "Near one edge of the forest.",
+          "size": "small"
         },
         {
-          "name": "Outer clearings",
-          "role": "Riskier, denser, more obscured hiding and combat-item areas; every hiding pocket remains open to at least two trail directions.",
-          "where": "surrounding the central clearing",
-          "size": "four to six smaller clearings"
-        },
-        {
-          "name": "Concealed forest pockets",
-          "role": "Hiding areas and the most concealed item locations behind natural and ruined debris.",
-          "where": "outer clearings and trail edges",
+          "name": "Monster clearing",
+          "role": "Central hunting ground and AI-monster origin.",
+          "where": "Centre or slightly offset in the deep forest.",
           "size": ""
+        },
+        {
+          "name": "Woodland pockets",
+          "role": "Loosely connected hiding and item-search subareas.",
+          "where": "Around the arrival and monster clearings.",
+          "size": "several"
         }
       ],
       "paths": [
         {
-          "from": "Central clearing",
-          "to": "Outer clearings",
-          "kind": "branching dirt trails"
+          "from": "Arrival clearing",
+          "to": "Monster clearing",
+          "kind": "open ground"
         },
         {
-          "from": "Outer clearings",
-          "to": "Other outer clearings",
-          "kind": "looping dirt trails"
+          "from": "Arrival clearing",
+          "to": "Woodland pockets",
+          "kind": "road"
+        },
+        {
+          "from": "Monster clearing",
+          "to": "Woodland pockets",
+          "kind": "road"
+        },
+        {
+          "from": "Woodland pockets",
+          "to": "Woodland pockets",
+          "kind": "open ground"
         }
       ],
-      "terrain": "Mostly uneven leaf-littered soil with shallow rises, roots, stones, and dense woodland; no major elevation changes or water.",
+      "terrain": "Mostly level forest floor with subtle undulations only; wide but winding dirt paths and natural gaps in trees, with off-path brush and fallen logs forming alternate short routes.",
       "props": [
         {
-          "name": "Dense tree trunks",
+          "name": "Mature trees",
           "count": -1,
-          "where": "throughout the woodland and tightly packed at the perimeter"
+          "where": "Densely throughout the woodland."
         },
         {
-          "name": "Boulder clusters",
+          "name": "Undergrowth and ferns",
           "count": -1,
-          "where": "clearings and trail edges"
+          "where": "Densely throughout the woodland and off paths."
         },
         {
-          "name": "Fallen logs",
+          "name": "Boulders and dark rock outcrops",
           "count": -1,
-          "where": "hiding pockets and outer clearings"
+          "where": "Throughout the forest, with rock outcrops along the boundary."
         },
         {
-          "name": "Brush thickets",
+          "name": "Fallen trunks",
           "count": -1,
-          "where": "throughout the forest and around concealed pockets"
+          "where": "Throughout the woodland and along off-path alternate routes."
         },
         {
-          "name": "Rock outcrops",
+          "name": "Scattered item locations",
           "count": -1,
-          "where": "outer clearings and concealed item locations"
-        },
-        {
-          "name": "Ruined-looking forest debris",
-          "count": -1,
-          "where": "around the most concealed outer item locations"
+          "where": "Across clearings and sheltered cover in distinct forest subareas."
         }
       ],
-      "boundary": "An impassable perimeter of tightly packed trees, dark undergrowth, and rock encloses the play space.",
+      "boundary": "A thick tree line, dark rock outcrops, and impassable dense undergrowth naturally contain the entire hunt.",
       "scale_band": "medium",
-      "theme": "dark, ominous 3D woodland horror; foggy and claustrophobic under dense canopy"
+      "theme": "Dark, ominous woodland horror with heavy shadows and claustrophobic vegetation."
     },
     "render": {
-      "first": "topdown",
-      "then": "isometric",
-      "authoritative": "topdown",
-      "why": "the looping trail network and multiple escape routes must remain connected and traversable.",
+      "first": "isometric",
+      "then": "topdown",
+      "authoritative": "isometric",
+      "why": "Forest atmosphere and readable cover distribution matter more than topology requiring procedural validation.",
       "set_piece": false
     },
     "route": [
-      "P6"
+      "P0"
     ],
     "notes": [],
     "scene_prompt": "Create a compact 3D scary forest map a few hundred studs across, with dense woodland, hiding spots throughout, and items scattered across the forest."
@@ -133,10 +152,10 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
-  "order": "p6",
-  "first": "topdown",
+  "order": "std",
+  "first": "isometric",
   "mapper_notes": []
 }

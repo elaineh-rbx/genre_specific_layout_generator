@@ -19,90 +19,85 @@
     }
   ],
   "scene_prompt": "Create a 3D backrooms horror map: a small, plainly playable interior maze of empty, unsettling rooms and corridors that loops back on itself after a few minutes of exploration. The space has no exit route and no visible inhabitants.",
-  "blob": "### Genre\nThe dominant genre is Survival: the stated objective is to endure in an endless, looping horror maze rather than reach an exit. There is no secondary genre.\n\n### Shape and preset\nUse `warren-looping`, a compact interior backrooms warren whose corridors deliberately return to earlier rooms and have no escape route. The closest preset is none: 1 vs All assumes a pursuing threat and an escape exit, while Escape also requires an exit; both contradict the empty, purely environmental horror.\n\n### Config requirements\nNo Survival options apply. Do not add `gate-escape`, `spawner-npc`, `hazard-kill`, `cover-los`, or `building-interior`: the prompt specifies no exit, no entity, no damaging threat, no intentional hiding spaces, and an entirely interior setting rather than an outside-to-inside transition. There are no invisible layout markers to place.\n\n### Layout components\nBuild one small, plainly playable enclosed floor level: a connected maze of empty, repetitive yellowed rooms, narrow right-angled corridors, occasional wider junction rooms, and a few subtly distinctive dead-end-looking alcoves that reconnect through side passages. The loop should take roughly a few minutes to explore before returning players to familiar spaces. Keep all rooms uninhabited and free of furniture, pickups, doors, signage, exits, or visible destination landmarks. Use stained yellow-beige carpet, low suspended fluorescent ceiling panels, faded wallpaper, and slightly irregular room proportions to create unease without adding hazards. Enclose the entire play space with continuous interior walls and ceiling; no exterior, windows, or visible world boundary. Compose the render as an oblique isometric cutaway that clearly shows the repeating corridor network while retaining the oppressive low ceiling.\n\n### Render order\nUse `authored_plan`: the maze must be valid by construction so every corridor is connected into a navigable loop and no accidental escape route or sealed-off topology appears.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the requested single floor that loops after only a few minutes. Theme is liminal backrooms horror: empty fluorescent office interiors, sickly yellow light, repetition, and quiet disorientation. Apply `P6` because the looping maze topology must be generated and validated before it is dressed.",
+  "blob": "### 1. Genre\nThe dominant genre is Survival, specifically liminal horror: the player endures an unsettling environment indefinitely rather than escaping or defeating a threat.\n\n### 2. Shape and preset\nUse `interior-endless`, matching the Liminal Horror preset. The preset remains recognisable through its endless enclosed architecture, but drop its hostile-emitter and collectible assumptions: this is an empty-space horror map with no entity, exit, or pickups.\n\n### 3. Config requirements\nNo additional config options apply. The prompt requests only empty rooms and corridors; do not add `spawner-npc`, `npc-population`, `collectible-nodes`, hiding props, or an escape gate.\n\n### 4. Layout requirements\nNo placed gameplay markers are needed. There are no enemy origins, checkpoints, collectibles, escape triggers, or objective volumes. The layout must instead preserve a navigable looping circulation pattern with no terminal exit route.\n\n### 5. Layout components\nBuild one small enclosed Backrooms floor, sized for a plainly playable few minutes of exploration before its circulation loops back. Arrange a repeating but not perfectly uniform network of yellowed rooms, narrow corridors, offset corners, and occasional wider junction chambers. Every branch should reconnect into the wider network rather than ending at an exit; use several local loops and subtly repeated room proportions to create disorientation without making the map impassable. Keep the floor flat, with stained carpet, low tiled ceilings, fluorescent light fixtures, blank patterned wallpaper, and bare walls. There are no inhabitants, furniture clusters, exterior views, windows, doors leading outdoors, landmarks, or visible exit signage. The entire boundary is an opaque interior shell. Compose the plan as a compact maze-like interior with readable corridor connections and repeated visual rhythms, while the isometric view emphasizes the low ceiling and oppressive enclosed scale.\n\n### 6. Render order\nUse `topdown`: the top-down plan is rendered first and is authoritative because the required looping corridor topology must remain connected and must not accidentally create an exit or isolated dead-end-only section.\n\n### 7. Scale, theme, and pipeline cost\nScale is small, driven by the requested few-minute exploration loop rather than a large multi-floor complex. Theme: sterile, fluorescent, yellow-beige liminal horror; empty, monotonous, subtly decayed office-like interiors. Pipeline modifier: `P0`, because this is one enclosed, flat, single-surface interior with no stacked floors, outside transition, volumetric traversal, or separate maps.",
   "spec": {
     "genre": "Survival",
     "secondary": [],
-    "shape": "warren-looping",
-    "preset": "none",
+    "shape": "interior-endless",
+    "preset": "Liminal Horror",
     "axes": {},
     "options": [],
+    "layout_placement": [],
     "layout": {
-      "composition": "Oblique isometric cutaway clearly showing the repeating corridor network while retaining the oppressive low ceiling.",
+      "composition": "A compact maze-like enclosed floor with readable corridor connections and repeated visual rhythms; the top-down plan shows looping rooms, narrow corridors, offset corners, and occasional wider junction chambers, while the isometric view emphasizes the low ceiling and oppressive enclosed scale.",
       "zones": [
         {
-          "name": "Connected looping maze floor",
-          "role": "A plainly playable enclosed maze that returns players to familiar spaces after a few minutes of exploration.",
-          "where": "entire interior play space",
+          "name": "Backrooms floor",
+          "role": "A small enclosed space for a few minutes of exploration whose circulation loops back on itself without an exit.",
+          "where": "entire map",
           "size": "small"
         },
         {
-          "name": "Repetitive rooms and narrow corridors",
-          "role": "Empty exploration spaces forming the connected maze.",
-          "where": "throughout the floor",
-          "size": "slightly irregular room proportions"
+          "name": "Yellowed rooms and narrow corridors",
+          "role": "Repeating but not perfectly uniform exploration spaces with offset corners and subtly repeated room proportions.",
+          "where": "throughout the interior",
+          "size": ""
         },
         {
-          "name": "Wider junction rooms",
-          "role": "Occasional corridor intersections within the loop.",
-          "where": "throughout the maze",
-          "size": "wider"
-        },
-        {
-          "name": "Dead-end-looking alcoves",
-          "role": "Subtly distinctive alcoves that reconnect through side passages.",
-          "where": "off the corridors",
-          "size": "a few"
+          "name": "Wider junction chambers",
+          "role": "Occasional connection spaces linking branches back into the wider network.",
+          "where": "at corridor intersections",
+          "size": "occasional wider chambers"
         }
       ],
       "paths": [
         {
-          "from": "repetitive rooms",
-          "to": "narrow right-angled corridors",
+          "from": "Yellowed rooms and narrow corridors",
+          "to": "Wider junction chambers",
           "kind": "corridor"
         },
         {
-          "from": "narrow right-angled corridors",
-          "to": "wider junction rooms",
+          "from": "Wider junction chambers",
+          "to": "Yellowed rooms and narrow corridors",
           "kind": "corridor"
         },
         {
-          "from": "dead-end-looking alcoves",
-          "to": "side passages",
-          "kind": "corridor"
-        },
-        {
-          "from": "side passages",
-          "to": "earlier rooms",
+          "from": "Yellowed rooms and narrow corridors",
+          "to": "Yellowed rooms and narrow corridors",
           "kind": "corridor"
         }
       ],
-      "terrain": "Stained yellow-beige carpet beneath low suspended fluorescent ceiling panels; faded wallpaper and sickly yellow fluorescent light throughout.",
+      "terrain": "Flat stained carpet floor beneath low tiled ceilings.",
       "props": [
         {
-          "name": "low suspended fluorescent ceiling panels",
+          "name": "fluorescent light fixtures",
           "count": -1,
-          "where": "across the ceiling throughout the maze"
+          "where": "low tiled ceilings throughout"
         },
         {
-          "name": "faded wallpaper",
+          "name": "blank patterned wallpaper",
           "count": -1,
-          "where": "continuous interior walls throughout the maze"
+          "where": "walls throughout"
+        },
+        {
+          "name": "bare walls",
+          "count": -1,
+          "where": "throughout the interior"
         }
       ],
-      "boundary": "Continuous interior walls and ceiling enclose the entire play space; no exterior, windows, visible world boundary, doors, signage, exits, or escape route.",
+      "boundary": "An opaque interior shell encloses the entire map; there are no exterior views, windows, doors leading outdoors, visible exit signage, or terminal exit route.",
       "scale_band": "small",
-      "theme": "Liminal backrooms horror; empty fluorescent office interiors, sickly yellow light, repetition, and quiet disorientation."
+      "theme": "Sterile fluorescent yellow-beige liminal horror; empty, monotonous, subtly decayed office-like interiors."
     },
     "render": {
-      "first": "authored_plan",
-      "then": "topdown",
-      "authoritative": "authored_plan",
-      "why": "the maze must be valid by construction so every corridor forms a navigable loop with no accidental escape route or sealed-off topology.",
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "the looping corridor topology must remain connected without accidentally creating an exit or isolated dead-end-only section.",
       "set_piece": false
     },
     "route": [
-      "P6"
+      "P0"
     ],
     "notes": [],
     "scene_prompt": "Create a 3D backrooms horror map: a small, plainly playable interior maze of empty, unsettling rooms and corridors that loops back on itself after a few minutes of exploration. The space has no exit route and no visible inhabitants."
@@ -110,12 +105,10 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",
   "first": "topdown",
-  "mapper_notes": [
-    "blob asked for authored_plan first; the route ['P6'] gives topdown"
-  ]
+  "mapper_notes": []
 }

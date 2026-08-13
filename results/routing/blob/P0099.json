@@ -19,7 +19,7 @@
     }
   ],
   "scene_prompt": "Create a 3D Roblox obby map in a classic bright block style: a small, plainly playable flat course progressing forward along the ground through 10 sequential stages. Each stage contains one short colorful platform obstacle sequence and a checkpoint, with modest platform elevation where needed. Arrange clearly visible lava hazard parts beneath or between obstacles, while keeping a clear forward route from the starting area through the final stage.",
-  "blob": "### Genre\nThe dominant genre is Obby & Platformer: the original request specifies a multi-stage obstacle course with checkpoints and reset-on-lava failure. No secondary genre applies.\n\n### Shape and preset\nUse `course-flat`, a forward-progressing ground-level course with only modest raised platforms within individual obstacles. This follows the Classic Obby preset: retain its flat sequential course logic, but drop its unrequested moving obstacles.\n\n### Config requirements\nUse visible `path-track` as the clearly readable ordered chain of colorful platforms from start through all ten stages. Use `checkpoint-respawn` as ten visible safe checkpoint pads, one after each short stage sequence; their respawn markers are invisible layout elements. Use visible `hazard-kill` for bright lava parts beneath gaps and between obstacle platforms. Use visible `obstacle-jump` for the short jumps and modest elevation changes in each stage.\n\n### Layout components\nBuild a small rectangular course progressing left-to-right or foreground-to-background in frame. Place a clear start pad at one end, followed by 10 sequential, compact stages of roughly equal footprint. Each stage contains one brief, distinct colorful block-platform sequence, then a broad flat checkpoint pad before the next sequence. Keep platform heights modest and every critical jump physically legal. Bright red-orange lava fills the floor beneath the platform chains and appears in gaps where it is immediately legible as a hazard, while the intended forward route remains unbroken. Finish with a simple final landing pad after stage 10. Keep the boundary minimal: open sky around the course, with lava and the platform extent defining the playable limits. Compose the full linear progression in a clean isometric view, with start and finish visibly separated along the main axis.\n\n### Render order\nUse `topdown`: the ten-stage jump chain must remain continuously connected and playable before the isometric dressing is derived.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by exactly 10 short stages. Theme is classic bright Roblox blocks: saturated primary-color platforms, simple geometric forms, and highly visible glowing lava. Pipeline modifier: `P6`, because the critical sequential platform route and jump spacing must be valid by construction.",
+  "blob": "### Genre\nThe dominant genre is Obby & Platformer: player-directed movement through a staged obstacle course with fall recovery. No secondary genre applies.\n\n### Shape and preset\nUse `course-flat`, matching the Classic Obby preset: a forward-running ground-level course rather than a climbing tower. Keep the preset’s sequential track, checkpoints, and jump obstacles, drop unrequested moving obstacles, and add the explicitly requested lava hazards.\n\n### Config requirements\nUse `path-track` as a clearly readable chain of short, colorful platform sequences from start to finish. Use `checkpoint-respawn` as bright, flat safe pads at every stage. Use `hazard-kill` for unmistakable glowing lava parts beneath gaps and between unsafe platforms. Use `obstacle-jump` for the modestly raised jumps, gaps, and stepped block arrangements in each stage.\n\n### Layout requirements\nPlace `checkpoint-respawn` ten times, once on the safe completion pad of each of the ten stages, immediately after that stage’s obstacle sequence and before the next begins. These pads are both visible course elements and respawn markers. No other placed layout components are required.\n\n### Layout components\nBuild a small, single continuous course with a start pad at the near end, ten sequential equal-scale stages extending forward across a flat ground plane, and a final completion pad beyond stage ten. Each stage contains one short obstacle sequence of brightly colored rectangular Roblox blocks, with only modest elevation changes. Connect stages solely through the ordered platform route; maintain a clear, unambiguous forward path and physics-legal jumps. Put visible orange-red lava beneath every gap and in the spaces surrounding the unsafe platforms, while retaining safe checkpoint pads after each sequence. Keep the outer boundary minimal and open, with lava and the course footprint defining the playable corridor. Compose the map as a long horizontal progression, readable at a glance from an elevated three-quarter view.\n\n### Render order\nUse `topdown` first and make it authoritative, because the connected jump chain and ten-stage order must be playable and cannot tolerate broken or ambiguous platform links.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by exactly ten short stages. Theme is classic bright Roblox block obby: saturated primary-colored platforms and clearly legible lava. Apply `P6` because the sequential platform route and jump spacing must be valid by construction.",
   "spec": {
     "genre": "Obby & Platformer",
     "secondary": [],
@@ -29,189 +29,98 @@
     "options": [
       {
         "id": "path-track",
-        "text": "clearly readable ordered chain of colorful platforms from start through all ten stages",
+        "text": "A clearly readable chain of short, colorful platform sequences from start to finish.",
         "visible": true,
-        "count": 10
+        "count": -1
       },
       {
         "id": "checkpoint-respawn",
-        "text": "ten visible safe checkpoint pads, one after each short stage sequence; their respawn markers are invisible layout elements",
+        "text": "Bright, flat safe pads at every stage, serving as visible course elements and respawn markers.",
         "visible": true,
         "count": 10
       },
       {
         "id": "hazard-kill",
-        "text": "bright red-orange lava parts beneath gaps and between obstacle platforms",
+        "text": "Unmistakable glowing orange-red lava parts beneath every gap and between unsafe platforms.",
         "visible": true,
         "count": -1
       },
       {
         "id": "obstacle-jump",
-        "text": "short jumps and modest elevation changes in each stage",
+        "text": "Modestly raised jumps, gaps, and stepped block arrangements in each stage.",
         "visible": true,
-        "count": 10
+        "count": -1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "checkpoint-respawn",
+        "text": "Bright, flat safe completion pads that also act as respawn markers.",
+        "count": 10,
+        "where": "Once immediately after each stage's obstacle sequence and before the next stage begins."
       }
     ],
     "layout": {
-      "composition": "Clean isometric view of the full linear course, progressing left-to-right or foreground-to-background along one main axis, with the start pad at one end and the final landing pad visibly separated at the other.",
+      "composition": "An elevated three-quarter view of a long horizontal progression: the start pad at the near end, ten equal-scale stages extending forward across the flat ground plane, and the final completion pad beyond stage ten.",
       "zones": [
         {
           "name": "Start pad",
-          "role": "Starting area for the forward route.",
-          "where": "one end of the course",
+          "role": "Starting area for the course.",
+          "where": "Near end of the course.",
           "size": ""
         },
         {
-          "name": "Stage 1",
-          "role": "Brief colorful block-platform obstacle sequence followed by a broad flat checkpoint pad.",
-          "where": "after the start pad along the main axis",
-          "size": "roughly equal footprint"
+          "name": "Ten sequential stages",
+          "role": "Each stage contains one short colorful platform obstacle sequence followed by a safe checkpoint pad.",
+          "where": "Extending forward from the start pad across the flat ground plane.",
+          "size": "Ten equal-scale short stages."
         },
         {
-          "name": "Stage 2",
-          "role": "Brief colorful block-platform obstacle sequence followed by a broad flat checkpoint pad.",
-          "where": "after stage 1 along the main axis",
-          "size": "roughly equal footprint"
-        },
-        {
-          "name": "Stage 3",
-          "role": "Brief colorful block-platform obstacle sequence followed by a broad flat checkpoint pad.",
-          "where": "after stage 2 along the main axis",
-          "size": "roughly equal footprint"
-        },
-        {
-          "name": "Stage 4",
-          "role": "Brief colorful block-platform obstacle sequence followed by a broad flat checkpoint pad.",
-          "where": "after stage 3 along the main axis",
-          "size": "roughly equal footprint"
-        },
-        {
-          "name": "Stage 5",
-          "role": "Brief colorful block-platform obstacle sequence followed by a broad flat checkpoint pad.",
-          "where": "after stage 4 along the main axis",
-          "size": "roughly equal footprint"
-        },
-        {
-          "name": "Stage 6",
-          "role": "Brief colorful block-platform obstacle sequence followed by a broad flat checkpoint pad.",
-          "where": "after stage 5 along the main axis",
-          "size": "roughly equal footprint"
-        },
-        {
-          "name": "Stage 7",
-          "role": "Brief colorful block-platform obstacle sequence followed by a broad flat checkpoint pad.",
-          "where": "after stage 6 along the main axis",
-          "size": "roughly equal footprint"
-        },
-        {
-          "name": "Stage 8",
-          "role": "Brief colorful block-platform obstacle sequence followed by a broad flat checkpoint pad.",
-          "where": "after stage 7 along the main axis",
-          "size": "roughly equal footprint"
-        },
-        {
-          "name": "Stage 9",
-          "role": "Brief colorful block-platform obstacle sequence followed by a broad flat checkpoint pad.",
-          "where": "after stage 8 along the main axis",
-          "size": "roughly equal footprint"
-        },
-        {
-          "name": "Stage 10",
-          "role": "Brief colorful block-platform obstacle sequence followed by a broad flat checkpoint pad.",
-          "where": "after stage 9 along the main axis",
-          "size": "roughly equal footprint"
-        },
-        {
-          "name": "Final landing pad",
-          "role": "Simple finish landing after the tenth stage.",
-          "where": "far end of the course",
+          "name": "Final completion pad",
+          "role": "Course completion area after the final stage.",
+          "where": "Beyond stage ten at the far end.",
           "size": ""
         }
       ],
       "paths": [
         {
           "from": "Start pad",
-          "to": "Stage 1",
+          "to": "Ten sequential stages",
           "kind": "track"
         },
         {
-          "from": "Stage 1",
-          "to": "Stage 2",
-          "kind": "track"
-        },
-        {
-          "from": "Stage 2",
-          "to": "Stage 3",
-          "kind": "track"
-        },
-        {
-          "from": "Stage 3",
-          "to": "Stage 4",
-          "kind": "track"
-        },
-        {
-          "from": "Stage 4",
-          "to": "Stage 5",
-          "kind": "track"
-        },
-        {
-          "from": "Stage 5",
-          "to": "Stage 6",
-          "kind": "track"
-        },
-        {
-          "from": "Stage 6",
-          "to": "Stage 7",
-          "kind": "track"
-        },
-        {
-          "from": "Stage 7",
-          "to": "Stage 8",
-          "kind": "track"
-        },
-        {
-          "from": "Stage 8",
-          "to": "Stage 9",
-          "kind": "track"
-        },
-        {
-          "from": "Stage 9",
-          "to": "Stage 10",
-          "kind": "track"
-        },
-        {
-          "from": "Stage 10",
-          "to": "Final landing pad",
+          "from": "Ten sequential stages",
+          "to": "Final completion pad",
           "kind": "track"
         }
       ],
-      "terrain": "Bright red-orange glowing lava fills the floor beneath platform chains and gaps; saturated primary-color block platforms rise only modestly above it.",
+      "terrain": "Flat ground plane with visible orange-red lava beneath every gap and surrounding unsafe platforms.",
       "props": [
         {
-          "name": "colorful block-platform sequence",
-          "count": 10,
-          "where": "one in each sequential stage"
+          "name": "Brightly colored rectangular Roblox blocks",
+          "count": -1,
+          "where": "In one short obstacle sequence within each stage."
         },
         {
-          "name": "safe checkpoint pad",
-          "count": 10,
-          "where": "after each short stage sequence"
+          "name": "Glowing orange-red lava parts",
+          "count": -1,
+          "where": "Beneath gaps and in spaces surrounding unsafe platforms."
         },
         {
-          "name": "final landing pad",
-          "count": 1,
-          "where": "after stage 10"
+          "name": "Safe checkpoint pads",
+          "count": 10,
+          "where": "After each stage's obstacle sequence."
         }
       ],
-      "boundary": "Open sky around the course; lava and the platform extent define the playable limits.",
+      "boundary": "Minimal and open; lava and the course footprint define the playable corridor.",
       "scale_band": "small",
-      "theme": "Classic bright Roblox blocks, saturated primary colors, simple geometric forms, highly visible glowing lava."
+      "theme": "Classic bright Roblox block obby with saturated primary-colored platforms and clearly legible lava."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the ten-stage jump chain must remain continuously connected and playable before the isometric dressing is derived.",
+      "why": "the connected jump chain and ten-stage order must remain playable without broken or ambiguous platform links.",
       "set_piece": false
     },
     "route": [
@@ -223,7 +132,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

@@ -19,185 +19,200 @@
     }
   ],
   "scene_prompt": "Create a polished semi-realistic Roblox 3D survival map set in a genuinely seamless, large Antarctic open world. A sheltered starting area supports an individually owned, expandable base: it begins as a tiny emergency shelter and can grow into connected insulated rooms with foundations, walls, roofs, storage, generators, heaters, solar panels, wind turbines, garages, greenhouses, workshops, laboratories, and lookout towers. Surround the base with nearby snowy terrain and common salvage areas, then extend outward through ice fields, glaciers, frozen lakes, mountain ranges, caves, ice tunnels, abandoned research stations, crashed aircraft, and shipwrecks. Place increasingly remote hidden facilities and scientific-expedition remnants across the continuous landscape, with the furthest regions requiring vehicle travel; include routes suited to snowmobiles and snowcats, cargo-sled access, and late-game helicopter landing areas. Show driftwood, scrap, stone, fuel caches, food supplies, hides, electronics, and rare scientific equipment distributed farther from shelter. Include penguin and seal areas along coasts and frozen water, offshore orcas, and birds overhead. The landscape is exposed and harsh, with blizzards, whiteouts, high winds, deep snow, sunset light, night darkness, and auroras contrasting with the warm, cozy illuminated base.",
-  "blob": "### Genre\nThe dominant genre is Survival, specifically long-form resource-and-base survival; no secondary genre is needed. The original progression loop establishes exploration, gathering, escalating environmental danger, and personal shelter construction rather than an RPG town or a pure building sandbox.\n\n### Shape and preset\nUse `world-biomes`, matching the Resource Survival preset. Override that preset shape’s usual separate-map implication: all Antarctic regions coexist as one genuinely seamless continuous snowy surface, not separate maps. Its biome gradient runs from a sheltered start basin through increasingly remote and severe terrain.\n\n### Config requirements\nVisible geometry: `buildzone-plot` is the individually owned sheltered base ground, initially holding a tiny emergency shelter and leaving broad adjoining space for expansion; `collectible-nodes` provides representative driftwood, scrap, stone, ice, fuel, food, hides, electronics, and rare scientific-equipment cache sites; `terrain-relief` forms glaciers, mountain ranges, ridges, and snowbound valleys; `water-body` forms frozen lakes, coastal ice, and offshore sea; `building-interior` applies to the expandable shelter and abandoned stations; `npc-population` visibly populates coastlines and ice with penguins, seals, offshore orcas, and overhead birds. Invisible placement data: actual `collectible-nodes` resource spawn locations and `npc-population` wildlife placement regions are placed after segmentation, not rendered.\n\n### Layout components\nPlace the warm base basin slightly forward of center, sheltered by low glacier walls but open toward the exploration frontier. Begin it with one tiny lit emergency hut; reserve a generous, flat personal build pad beside it for connected insulated rooms, foundations, walls, roofs, storage, generators, heaters, solar panels, wind turbines, garages, greenhouses, workshops, laboratories, and a lookout tower. Nearby snowfields and driftwood/salvage patches hold common materials. Packed-snow vehicle routes radiate outward, wide enough for snowmobiles, snowcats, and cargo sleds, crossing ice fields and frozen lakes toward glaciers, caves, ice tunnels, abandoned research stations, crashed aircraft, and shipwrecks. Put hidden facilities and expedition remnants at the far perimeter, with rare caches concentrated there and clear helicopter landing flats for late-game access.\n\nUse mountainous terrain as the distant boundary, broken by coastlines and sea ice rather than artificial walls. Arrange penguin and seal colonies along the coast and frozen water; place orcas offshore. Frame the illuminated cozy base against vast exposed blue-white snow, dark storm fronts, sunset, night, and aurora sky.\n\n### Render order\nUse `topdown`: the continuous road and expedition network must preserve practical vehicle access from base to every remote region before the isometric dressing is composed.\n\n### Scale, theme, and pipeline cost\nScale is huge, driven by vehicle-required outer regions and the long continuous exploration gradient. Theme is semi-realistic Roblox Antarctic survival: harsh, windswept, icy wilderness contrasted with warm practical base lighting. Apply `tiered` for glaciers and mountains, `P3` for enterable shelters and research stations, and `CHECK` for water and offshore/coastal space. Do not apply `P4`; the world is explicitly one seamless map.",
+  "blob": "### Genre\n`Survival` is dominant: exploration, resource gathering, escalating environmental exposure, and individually owned shelter construction define the loop. The Resource Survival preset is the closest match.\n\n### Shape and preset\nUse `world-open`, taken from outside Survival’s usual shortlist, because the author explicitly requires one genuinely seamless Antarctic surface rather than the preset’s separate biome maps. Keep the Resource Survival preset’s base-building and resource-distribution intent while overriding its shape.\n\n### Config requirements\nUse `buildzone-plot` for individually owned shelter ground in the sheltered starting area, with space to expand from an emergency hut into a connected Antarctic base. Use `path-road-vehicle` for packed-snow and ice routes wide enough for snowmobiles, snowcats, and cargo sleds. Use `water-body` for frozen lakes, coastal ice, and offshore sea. Use `terrain-relief` for glaciers, mountain ranges, ice fields, and carved valleys. Use `npc-population` for penguin and seal colonies, offshore orcas, and birds. Use `collectible-nodes` for visible salvage and material sites distributed by distance from the base.\n\n### Layout requirements\nPlace `collectible-nodes` in dense common-material salvage patches near the shelter, with fuel, electronics, hides, food, and rare scientific equipment increasingly remote at wrecks, hidden facilities, and expedition remnants. Site `npc-population` along coasts, frozen water, and cliff or ice-field habitats, with orcas offshore. Place one `spawn-area` at the warm sheltered base entrance, oriented toward the nearby exploration ground and away from exposed storm terrain.\n\n### Layout components\nThe central zone is a sheltered base basin, initially occupied by a tiny illuminated emergency shelter and a broad individually owned expansion footprint. It connects by snow roads to nearby driftwood, scrap, stone, and ice salvage fields. Outer zones progress through glaciers, frozen lakes, mountain passes, caves, ice tunnels, abandoned research stations, crashed aircraft, shipwrecks, and remote hidden facilities. Vehicle routes extend continuously to distant snowmobile and snowcat destinations; late-game helicopter landing pads sit at the furthest isolated expeditions. Caves, tunnels, and stations provide enclosed subspaces within the otherwise open landscape. The boundary is natural: impassable mountain walls, ocean ice, and distant storm-blurred horizons. Compose the warm base as the visual anchor against cold blue-white terrain, sunset, night, blizzards, and auroras.\n\n### Render order\nUse `topdown` first and as authoritative, because the continuous vehicle-scale road network and progression outward from the base must remain connected across the seamless world.\n\n### Scale, theme, and pipeline cost\nScale is huge, driven by vehicle-required outer regions and helicopter-access destinations. Theme: semi-realistic Roblox Antarctic survival, cozy amber base light against severe icy wilderness. Apply `tiered` for mountain and glacier relief, `P2` for ice tunnels and caves beneath traversable surface terrain, and `P3` for linked exterior and interior cave, tunnel, and research-station maps.",
   "spec": {
     "genre": "Survival",
     "secondary": [],
-    "shape": "world-biomes",
+    "shape": "world-open",
     "preset": "Resource Survival",
     "axes": {},
     "options": [
       {
         "id": "buildzone-plot",
-        "text": "Individually owned sheltered base ground in the warm start basin, initially holding a tiny emergency shelter with broad adjoining expansion space for connected insulated rooms, foundations, walls, roofs, storage, generators, heaters, solar panels, wind turbines, garages, greenhouses, workshops, laboratories, and a lookout tower.",
-        "visible": true,
-        "count": 1
-      },
-      {
-        "id": "collectible-nodes",
-        "text": "Representative driftwood, scrap, stone, ice, fuel, food, hides, electronics, and rare scientific-equipment cache sites, with common materials near the base and rare caches concentrated at the far perimeter; actual resource spawn locations are placed after segmentation.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "terrain-relief",
-        "text": "Glaciers, mountain ranges, ridges, snowbound valleys, ice fields, caves, and ice tunnels form an increasingly remote and severe terrain gradient.",
+        "text": "Individually owned shelter ground in the sheltered starting area, with room to expand from an emergency hut into a connected Antarctic base.",
         "visible": true,
         "count": -1
       },
       {
         "id": "water-body",
-        "text": "Frozen lakes, coastal ice, and offshore sea break the mountainous Antarctic terrain along the coastline.",
+        "text": "Frozen lakes, coastal ice, and offshore sea.",
         "visible": true,
         "count": -1
       },
       {
-        "id": "building-interior",
-        "text": "The expandable emergency shelter and abandoned research stations can be entered.",
+        "id": "terrain-relief",
+        "text": "Glaciers, mountain ranges, ice fields, and carved valleys.",
         "visible": true,
         "count": -1
       },
       {
         "id": "npc-population",
-        "text": "Penguin and seal colonies populate the coastlines and frozen water, with offshore orcas and birds overhead; actual wildlife placement regions are placed after segmentation.",
+        "text": "Penguin and seal colonies, offshore orcas, and birds.",
         "visible": true,
+        "count": -1
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "Visible salvage and material sites distributed by distance from the base.",
+        "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "npc-population",
+        "text": "Penguin and seal colonies, offshore orcas, and birds.",
+        "count": -1,
+        "where": "Along coasts, frozen water, and cliff or ice-field habitats, with orcas offshore."
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "Dense common-material salvage patches near the shelter, with fuel, electronics, hides, food, and rare scientific equipment increasingly remote at wrecks, hidden facilities, and expedition remnants.",
+        "count": -1,
+        "where": "Dense common-material salvage patches near the shelter; increasingly remote at wrecks, hidden facilities, and expedition remnants."
+      }
+    ],
     "layout": {
-      "composition": "The warm illuminated base basin sits slightly forward of centre, framed against vast exposed blue-white snow. Low glacier walls shelter it while opening it toward the distant exploration frontier, mountain ranges, dark storm fronts, sunset, night darkness, and aurora sky.",
+      "composition": "The warm illuminated sheltered base basin is the visual anchor against cold blue-white Antarctic terrain; distant glaciers, mountains, frozen water, storm-blurred horizons, sunset, night, blizzards, and auroras surround it.",
       "zones": [
         {
-          "name": "Warm base basin",
-          "role": "Sheltered starting and individually owned base-building area.",
-          "where": "Slightly forward of centre, open toward the exploration frontier.",
-          "size": "Generous flat personal build pad."
+          "name": "Sheltered base basin",
+          "role": "Starting area with a tiny illuminated emergency shelter and broad individually owned expansion ground for a connected Antarctic base.",
+          "where": "Central zone",
+          "size": "Broad expansion footprint"
         },
         {
-          "name": "Nearby snowfields and salvage patches",
-          "role": "Common-material gathering ground around the starting shelter.",
-          "where": "Around the base basin.",
+          "name": "Nearby salvage fields",
+          "role": "Common driftwood, scrap, stone, and ice salvage ground.",
+          "where": "Connected to the base basin by snow roads",
           "size": ""
         },
         {
-          "name": "Ice fields and frozen lakes",
-          "role": "Vehicle-accessible exploration terrain connecting the base to remote regions.",
-          "where": "Radiating outward from the base.",
+          "name": "Outer Antarctic regions",
+          "role": "Progression outward through glaciers, frozen lakes, mountain passes, caves, ice tunnels, abandoned research stations, crashed aircraft, shipwrecks, and remote hidden facilities.",
+          "where": "Beyond the nearby salvage fields across the seamless world",
           "size": ""
         },
         {
-          "name": "Glaciers, caves, and ice tunnels",
-          "role": "Increasingly severe exploration terrain.",
-          "where": "Beyond the ice fields and lakes.",
+          "name": "Furthest isolated expeditions",
+          "role": "Late-game destinations with helicopter landing pads.",
+          "where": "At the furthest remote regions",
           "size": ""
         },
         {
-          "name": "Abandoned research stations, crashed aircraft, and shipwrecks",
-          "role": "Expedition-remnant destinations.",
-          "where": "Remote regions along the expedition network.",
-          "size": ""
-        },
-        {
-          "name": "Far perimeter facilities",
-          "role": "Hidden facilities, scientific-expedition remnants, rare caches, and late-game helicopter access.",
-          "where": "Far perimeter.",
-          "size": ""
-        },
-        {
-          "name": "Coastline and offshore ice",
-          "role": "Wildlife habitat for penguins, seals, orcas, and birds.",
-          "where": "Along the mountainous boundary and frozen water.",
+          "name": "Enclosed subspaces",
+          "role": "Caves, ice tunnels, and research stations within the otherwise open landscape.",
+          "where": "Throughout the outer landscape",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Warm base basin",
-          "to": "Ice fields and frozen lakes",
+          "from": "Sheltered base basin",
+          "to": "Nearby salvage fields",
           "kind": "road"
         },
         {
-          "from": "Ice fields and frozen lakes",
-          "to": "Glaciers, caves, and ice tunnels",
+          "from": "Sheltered base basin",
+          "to": "Outer Antarctic regions",
           "kind": "road"
         },
         {
-          "from": "Glaciers, caves, and ice tunnels",
-          "to": "Abandoned research stations, crashed aircraft, and shipwrecks",
-          "kind": "road"
-        },
-        {
-          "from": "Abandoned research stations, crashed aircraft, and shipwrecks",
-          "to": "Far perimeter facilities",
+          "from": "Outer Antarctic regions",
+          "to": "Furthest isolated expeditions",
           "kind": "road"
         }
       ],
-      "terrain": "A seamless continuous Antarctic snowy surface progressing from a sheltered basin through ice fields, frozen lakes, glaciers, ridges, snowbound valleys, coastlines, sea ice, and distant mountain ranges.",
+      "terrain": "Snowy Antarctic terrain with ice fields, glaciers, frozen lakes, coastal ice, offshore sea, mountain ranges, carved valleys, caves, and ice tunnels.",
       "props": [
         {
-          "name": "tiny lit emergency hut",
-          "count": 1,
-          "where": "Warm base basin"
+          "name": "Tiny illuminated emergency shelter",
+          "count": -1,
+          "where": "Sheltered base basin"
         },
         {
-          "name": "driftwood and salvage patches",
+          "name": "Driftwood salvage",
           "count": -1,
-          "where": "Nearby snowfields around the base"
+          "where": "Nearby salvage fields"
         },
         {
-          "name": "abandoned research stations",
+          "name": "Scrap salvage",
           "count": -1,
-          "where": "Remote regions"
+          "where": "Nearby salvage fields"
         },
         {
-          "name": "crashed aircraft",
+          "name": "Stone salvage",
           "count": -1,
-          "where": "Remote regions"
+          "where": "Nearby salvage fields"
         },
         {
-          "name": "shipwrecks",
+          "name": "Ice salvage",
           "count": -1,
-          "where": "Remote regions"
+          "where": "Nearby salvage fields"
         },
         {
-          "name": "hidden facilities and scientific-expedition remnants",
+          "name": "Abandoned research stations",
           "count": -1,
-          "where": "Far perimeter"
+          "where": "Outer Antarctic regions"
         },
         {
-          "name": "helicopter landing flats",
+          "name": "Crashed aircraft",
           "count": -1,
-          "where": "Far perimeter"
+          "where": "Outer Antarctic regions"
+        },
+        {
+          "name": "Shipwrecks",
+          "count": -1,
+          "where": "Outer Antarctic regions"
+        },
+        {
+          "name": "Hidden facilities",
+          "count": -1,
+          "where": "Remote outer regions"
+        },
+        {
+          "name": "Scientific-expedition remnants",
+          "count": -1,
+          "where": "Remote outer regions"
+        },
+        {
+          "name": "Helicopter landing pads",
+          "count": -1,
+          "where": "Furthest isolated expeditions"
         }
       ],
-      "boundary": "Distant mountainous terrain, broken by coastlines and sea ice rather than artificial walls.",
+      "boundary": "Natural boundary of impassable mountain walls, ocean ice, and distant storm-blurred horizons.",
       "scale_band": "huge",
-      "theme": "Semi-realistic Roblox Antarctic survival; harsh windswept icy wilderness contrasted with warm practical base lighting."
+      "theme": "Semi-realistic Roblox Antarctic survival; cozy amber base light against severe icy wilderness."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the continuous road and expedition network must preserve practical vehicle access from base to every remote region.",
+      "why": "the continuous vehicle-scale road network and outward progression from the base must remain connected across the seamless world.",
       "set_piece": false
     },
     "route": [
+      "P2",
       "P3",
-      "tiered",
-      "CHECK"
+      "tiered"
     ],
-    "notes": [],
+    "notes": [
+      "`world-open` was selected from outside Survival’s usual shortlist, as specified.",
+      "`spawn-area` was named in the blob but is not an option available to the dominant Survival genre, so it was dropped.",
+      "dropped option 'path-road-vehicle': not in Survival"
+    ],
     "scene_prompt": "Create a polished semi-realistic Roblox 3D survival map set in a genuinely seamless, large Antarctic open world. A sheltered starting area supports an individually owned, expandable base: it begins as a tiny emergency shelter and can grow into connected insulated rooms with foundations, walls, roofs, storage, generators, heaters, solar panels, wind turbines, garages, greenhouses, workshops, laboratories, and lookout towers. Surround the base with nearby snowy terrain and common salvage areas, then extend outward through ice fields, glaciers, frozen lakes, mountain ranges, caves, ice tunnels, abandoned research stations, crashed aircraft, and shipwrecks. Place increasingly remote hidden facilities and scientific-expedition remnants across the continuous landscape, with the furthest regions requiring vehicle travel; include routes suited to snowmobiles and snowcats, cargo-sled access, and late-game helicopter landing areas. Show driftwood, scrap, stone, fuel caches, food supplies, hides, electronics, and rare scientific equipment distributed farther from shelter. Include penguin and seal areas along coasts and frozen water, offshore orcas, and birds overhead. The landscape is exposed and harsh, with blizzards, whiteouts, high winds, deep snow, sunset light, night darkness, and auroras contrasting with the warm, cozy illuminated base."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
   "mapper_notes": [
-    "blob asked for topdown first; the route ['P4', 'P0', 'tiered', 'CHECK', 'P3'] gives isometric"
+    "blob asked for topdown first; the route ['CHECK', 'P0', 'tiered'] gives isometric"
   ]
 }

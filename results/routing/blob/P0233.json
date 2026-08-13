@@ -14,116 +14,143 @@
     }
   ],
   "scene_prompt": "Create a 3D game map set entirely inside one small barbershop, with a compact customer area and a barber chair/workstation as the central cutting space. Include a simple queue area for NPC customers waiting their turn, arranged clearly around the focused interior.",
-  "blob": "### Genre\nSimulation is the dominant genre: this is a repeatable barber service task loop with NPC customers. No secondary genre is needed.\n\n### Shape and preset\nUse `world-shared` as a single shared work space, interpreted here as one compact interior rather than an outdoor persistent world. The nearest preset is Role Sim, but the focused one-shop brief drops its road network and broad circulation, so the preset is none.\n\n### Config requirements\nUse `trigger-task` for the central barber chair and cutting workstation; the chair, mirror, counter, and tool area are visible geometry, while the service interaction position is invisible layout. Use `npc-population` for the waiting customer queue; the NPCs and their seats or standing positions are visible, while their queue positions are invisible layout. Use `building-interior`, visible geometry, because play occurs entirely inside the barbershop.\n\n### Layout components\nBuild one small barbershop interior. Put the barber chair and workstation at the center as the dominant cutting zone, with a mirror and compact work counter facing it. Place a compact customer waiting zone along one side or rear wall, with a clearly ordered queue leading toward the chair; leave a short unobstructed aisle from the queue to the workstation. Keep the entrance at the front edge and orient the interior so the cutting chair is immediately legible on entry. Use a simple shop floor, close interior walls, and a storefront/front door boundary; do not add an exterior street. Compose the frame as a tight isometric cutaway that shows the chair, queue, and front entrance together.\n\n### Render order\nUse `isometric`: the small interior’s visual readability matters, while an invalid queue arrangement would not make the game unplayable.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the author’s request for one focused barbershop. Theme: bright, playful, exaggerated comedy salon. Pipeline modifier: `P3`, forced by play occurring inside the enclosed shop.",
+  "blob": "### Genre\nThe dominant genre is Simulation, specifically a compact Role Sim: the player repeatedly performs barber tasks for queued NPC customers. The scoring and humorous failures establish the game type but do not add layout geometry.\n\n### Shape and preset\nUse `interior-single`, taken from outside Simulation’s usual shape set, because the complete map is one small enclosed barbershop with no exterior. The closest preset is Role Sim, but the preset is `none`: its open world, circulation, and vehicle-road assumptions do not survive the focused indoor brief.\n\n### Config requirements\nUse `trigger-task` for the central barber chair and cutting workstation, visibly equipped for a haircut interaction. Use `npc-population` for waiting customers and the customer in the chair; the shop should visibly support a short, orderly queue.\n\n### Layout requirements\nPlace one `trigger-task` interaction marker at the barber’s working side of the single central chair, reachable without crossing the waiting line. Place `npc-population` markers for one active customer seated in the chair and several queue positions along the waiting area wall, all facing toward the workstation and leaving a clear aisle. No other placed gameplay elements are required.\n\n### Layout components\nThe entire build is one small enclosed barbershop. Put the barber chair and mirror-backed workstation at the visual center, with cutting tools and a counter defining the work zone. Run a compact customer queue along one side wall using three waiting seats; keep an open aisle from the entrance-side customer area to the chair. Add modest barbershop dressing such as wall mirrors, haircut posters, shelves, a reception counter, and a small product display. The boundary is solid interior walls with a front entrance, but no exterior street or outdoor zone. Frame the room from a slightly elevated corner so the chair, queue, and circulation remain legible together.\n\n### Render order\nRender `isometric` first and treat it as authoritative, because this is a simple single-room composition with no topology that must be procedurally validated.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the single focused shop and compact queue. Theme is playful, bright, comedic neighborhood barbershop. Use `P0`: one enclosed surface with no stacked floors, exterior transition, or validity-constrained route.",
   "spec": {
     "genre": "Simulation",
     "secondary": [],
-    "shape": "world-shared",
+    "shape": "interior-single",
     "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "trigger-task",
-        "text": "Central barber chair and cutting workstation; the chair, mirror, compact work counter, and tool area are visible, with the service interaction position placed invisibly.",
+        "text": "The central barber chair and cutting workstation, visibly equipped for a haircut interaction.",
         "visible": true,
-        "count": -1
+        "count": 1
       },
       {
         "id": "npc-population",
-        "text": "Waiting customer queue in the compact customer area; NPC customers and their seats or standing positions are visible, while queue positions are invisible layout.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "building-interior",
-        "text": "The full play space occurs entirely inside one enclosed small barbershop.",
+        "text": "Waiting customers and the customer in the chair, supported by a short, orderly queue.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "trigger-task",
+        "text": "One interaction marker at the barber's working side of the single central chair.",
+        "count": 1,
+        "where": "At the barber's working side of the single central chair, reachable without crossing the waiting line."
+      },
+      {
+        "id": "npc-population",
+        "text": "One active customer seated in the chair and several queue positions for waiting customers.",
+        "count": -1,
+        "where": "The active customer is seated in the chair; queue positions run along the waiting-area wall, facing the workstation and leaving a clear aisle."
+      }
+    ],
     "layout": {
-      "composition": "Tight isometric cutaway showing the central cutting chair and workstation, the side or rear waiting queue, and the front entrance together; the cutting chair is immediately legible on entry.",
+      "composition": "Frame the room from a slightly elevated corner so the central chair, side-wall queue, and open circulation aisle remain legible together.",
       "zones": [
         {
-          "name": "Central cutting zone",
-          "role": "Repeatable barber service task loop at the chair and cutting workstation.",
-          "where": "centre",
-          "size": "compact"
+          "name": "Work zone",
+          "role": "Haircut interaction at the barber chair and mirror-backed workstation.",
+          "where": "Visual center",
+          "size": ""
         },
         {
-          "name": "Customer waiting zone",
-          "role": "NPC customers wait in a clearly ordered queue leading toward the barber chair.",
-          "where": "along one side or rear wall",
-          "size": "compact"
+          "name": "Waiting area",
+          "role": "Short orderly customer queue.",
+          "where": "Along one side wall",
+          "size": "Compact"
         },
         {
-          "name": "Entrance",
-          "role": "Front entry into the focused shop interior.",
-          "where": "front edge",
+          "name": "Entrance-side customer area",
+          "role": "Customer access area feeding the open aisle to the chair.",
+          "where": "Entrance side of the room",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Customer waiting zone",
-          "to": "Central cutting zone",
+          "from": "Entrance-side customer area",
+          "to": "Work zone",
           "kind": "open ground"
         }
       ],
-      "terrain": "Simple shop floor inside the enclosed barbershop.",
+      "terrain": "",
       "props": [
         {
           "name": "Barber chair",
-          "count": -1,
-          "where": "centre cutting zone"
+          "count": 1,
+          "where": "Visual center"
         },
         {
-          "name": "Cutting workstation",
-          "count": -1,
-          "where": "centre cutting zone"
+          "name": "Mirror-backed workstation",
+          "count": 1,
+          "where": "At the central barber chair"
         },
         {
-          "name": "Mirror",
+          "name": "Cutting tools and counter",
           "count": -1,
-          "where": "facing the barber chair"
+          "where": "Defining the work zone"
         },
         {
-          "name": "Compact work counter",
-          "count": -1,
-          "where": "facing the barber chair"
+          "name": "Waiting seats",
+          "count": 3,
+          "where": "Along one side wall in the queue area"
         },
         {
-          "name": "Tool area",
+          "name": "Wall mirrors",
           "count": -1,
-          "where": "at the cutting workstation"
+          "where": "Interior walls"
         },
         {
-          "name": "Customer seats or standing positions",
+          "name": "Haircut posters",
           "count": -1,
-          "where": "customer waiting zone"
+          "where": "Interior walls"
+        },
+        {
+          "name": "Shelves",
+          "count": -1,
+          "where": "Inside the barbershop"
+        },
+        {
+          "name": "Reception counter",
+          "count": 1,
+          "where": "Inside the barbershop"
+        },
+        {
+          "name": "Product display",
+          "count": 1,
+          "where": "Inside the barbershop"
         }
       ],
-      "boundary": "Close interior walls with a storefront/front door boundary; no exterior street.",
+      "boundary": "Solid interior walls with a front entrance; no exterior street or outdoor zone.",
       "scale_band": "small",
-      "theme": "Bright, playful, exaggerated comedy salon"
+      "theme": "Playful, bright, comedic neighborhood barbershop"
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "The small interior's visual readability matters, while an invalid queue arrangement would not make the game unplayable.",
+      "why": "a simple single-room composition has no topology that must be procedurally validated",
       "set_piece": false
     },
     "route": [
-      "P3"
+      "P0"
     ],
-    "notes": [],
+    "notes": [
+      "The `interior-single` shape is taken from outside Simulation's usual shape set.",
+      "The preset is `none`; the closest Role Sim preset's open-world, circulation, and vehicle-road assumptions do not fit the focused indoor brief.",
+      "The NPC population count is -1 because the blob states one active customer and several queue positions without giving a total."
+    ],
     "scene_prompt": "Create a 3D game map set entirely inside one small barbershop, with a compact customer area and a barber chair/workstation as the central cutting space. Include a simple queue area for NPC customers waiting their turn, arranged clearly around the focused interior."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

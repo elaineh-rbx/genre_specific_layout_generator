@@ -24,119 +24,149 @@
     }
   ],
   "scene_prompt": "Create a 3D survival map set in a decades-abandoned, overgrown city spanning a few connected blocks. Empty streets and sidewalks run between weathered urban buildings, with vegetation reclaiming pavement, courtyards, and building edges; include accessible-looking alleys and sheltered spaces within the block network for a cat-sized viewpoint.",
-  "blob": "### Genre\nThe dominant genre is Survival: an open-ended urban survival space rather than a goal-to-exit scenario.\n\n### Shape and preset\nUse `arena-contained`, treating the few connected city blocks as one bounded, continuous survival district. Preset: none; the contained shape fits the focused city extent, but no Survival preset’s option bundle matches this abandoned-city scene.\n\n### Config requirements\nUse `settlement-density` as visible geometry: a dense but decayed urban fabric of weathered buildings, sidewalks, courtyards, and block edges. Use `cover-los` as visible geometry: narrow alleys, recessed doorways, overgrown courtyards, and low sheltered recesses break long street views and provide cat-scale concealment. No invisible layout options are required.\n\n### Layout components\nBuild a medium-sized network of a few connected city blocks, with a central intersection and streets branching into adjacent blocks. Streets and cracked sidewalks form the main circulation loop; narrow accessible-looking alleys cut between buildings, and short side paths lead into sheltered courtyards and recessed building edges without becoming visually sealed dead ends. Buildings tightly frame the streets, with blank weathered façades, boarded openings, damaged awnings, and ground-level recesses scaled to feel navigable from a cat-sized viewpoint. Vegetation heavily reclaims the pavement: grass through cracks, vines climbing façades, shrubs along curbs, and trees or dense weeds filling courtyards. Enclose the outer perimeter with impassable collapsed structures, overgrown fences, rubble, and the implied continuation of unsafe city beyond the playable blocks. Compose the district as a readable street grid with a central open junction, denser shadowed alleys at the sides, and layered greenery softening the hard urban geometry.\n\n### Render order\nUse `isometric`: render the isometric city view first as authoritative, then derive the top-down plan, since the scene needs a strong atmospheric spatial composition rather than topology that must be valid by construction.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by a few connected city blocks rather than a full downtown. Theme: decades-abandoned, overgrown urban decay, quiet and low-to-the-ground. Pipeline modifier: `P0`; the district is one contiguous exterior surface with no forced stacked layers, interiors, separate maps, or volumetric traversal.",
+  "blob": "### Genre\n`Survival` is dominant: the player endures hunger and thirst while evading stray dogs and other predators, with no final escape objective.\n\n### Shape and preset\nUse `world-open`, taken from outside Survival’s usual shape set, for a single contiguous network of freely explored city blocks. The Resource Survival preset is not retained (`none`): this is a compact urban map rather than a distant-scaling biome world, and it has no player base ground.\n\n### Config requirements\nUse `settlement-density` for a dense but decayed urban block grid of weathered buildings, sidewalks, courtyards, and narrow streets. Use `cover-los` as cat-scale concealment: overgrown alley recesses, broken walls, under-stair voids, shrub-choked courtyards, and sheltered gaps along building edges that interrupt predator sightlines.\n\n### Layout requirements\nUse `collectible-nodes` for food and water sources, distributed in protected side spaces rather than exposed central streets: place them in alley ends, courtyard corners, sheltered loading areas, and beside overgrown drainage or pavement breaks across the connected blocks. Use `spawner-npc` for predator origins, sited in obscured dead-end alleys, shadowed building thresholds, and block-edge service lanes so hostile animals enter from readable cover rather than appearing on the main travel routes.\n\n### Layout components\nBuild a few connected city blocks around a central intersecting street network. Each block contains weathered urban buildings enclosing small courtyards or service spaces; the buildings remain exterior-facing, with accessible-looking alleys and sheltered niches at ground level. Empty streets and sidewalks provide the main circulation loop, with narrower alleys creating alternate cat-sized routes between streets and courtyard edges. Vegetation reclaims cracked pavement, curb lines, vacant courtyards, façade bases, and building-edge gaps. Keep the boundary as collapsed streets, dense overgrowth, and impassable building masses at the outer block edges. Compose the frame to show the connected street grid clearly, with the tight green alleys and sheltered pockets visibly branching from it.\n\n### Render order\nUse `topdown` first and make it authoritative, because the connected street-and-alley topology must provide continuous, readable escape and circulation routes through the blocks.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by a few focused connected city blocks rather than a full downtown. Theme: decades-abandoned urban decay, cracked concrete, weathered façades, and heavy vegetation reclaiming the streets. Use `P0`; the map is one contiguous ground-level exterior surface with no forced overhangs, interior transition, separate maps, or volumetric traversal.",
   "spec": {
     "genre": "Survival",
     "secondary": [],
-    "shape": "arena-contained",
+    "shape": "world-open",
     "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "settlement-density",
-        "text": "a dense but decayed urban fabric of weathered buildings, sidewalks, courtyards, and block edges",
+        "text": "A dense but decayed urban block grid of weathered buildings, sidewalks, courtyards, and narrow streets.",
         "visible": true,
         "count": -1
       },
       {
         "id": "cover-los",
-        "text": "narrow alleys, recessed doorways, overgrown courtyards, and low sheltered recesses break long street views and provide cat-scale concealment",
+        "text": "Cat-scale concealment: overgrown alley recesses, broken walls, under-stair voids, shrub-choked courtyards, and sheltered gaps along building edges that interrupt predator sightlines.",
         "visible": true,
+        "count": -1
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "Food and water sources distributed in protected side spaces rather than exposed central streets.",
+        "visible": false,
+        "count": -1
+      },
+      {
+        "id": "spawner-npc",
+        "text": "Predator origins in readable cover rather than on the main travel routes.",
+        "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "collectible-nodes",
+        "text": "Food and water sources distributed in protected side spaces rather than exposed central streets.",
+        "count": -1,
+        "where": "In alley ends, courtyard corners, sheltered loading areas, and beside overgrown drainage or pavement breaks across the connected blocks."
+      },
+      {
+        "id": "spawner-npc",
+        "text": "Predator origins.",
+        "count": -1,
+        "where": "In obscured dead-end alleys, shadowed building thresholds, and block-edge service lanes so hostile animals enter from readable cover rather than appearing on the main travel routes."
+      }
+    ],
     "layout": {
-      "composition": "A readable street grid fills the district, with a central open junction, streets branching into adjacent blocks, denser shadowed alleys at the sides, and layered greenery softening the hard urban geometry.",
+      "composition": "Show the connected street grid clearly, with tight green alleys and sheltered pockets visibly branching from it.",
       "zones": [
         {
-          "name": "Central intersection",
-          "role": "Open junction connecting the surrounding city blocks.",
+          "name": "central intersecting street network",
+          "role": "Main circulation loop through the connected city blocks.",
           "where": "centre",
           "size": ""
         },
         {
-          "name": "Connected city blocks",
-          "role": "The bounded continuous survival district of weathered buildings, streets, sidewalks, and courtyards.",
-          "where": "around the central intersection",
-          "size": "a few connected blocks"
+          "name": "connected city blocks",
+          "role": "Weathered urban buildings enclose small courtyards or service spaces.",
+          "where": "around the central street network",
+          "size": "a few focused blocks"
         },
         {
-          "name": "Shadowed alleys",
-          "role": "Accessible-looking cat-scale concealment routes between buildings.",
-          "where": "sides of the district",
+          "name": "alleys and sheltered niches",
+          "role": "Alternate cat-sized routes and concealment at ground level.",
+          "where": "between streets and along courtyard edges",
           "size": ""
         },
         {
-          "name": "Sheltered courtyards and recessed building edges",
-          "role": "Short side-path destinations and sheltered spaces without visually sealed dead ends.",
-          "where": "within the blocks",
+          "name": "outer block edges",
+          "role": "Map boundary.",
+          "where": "outer edges",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Central intersection",
-          "to": "Connected city blocks",
-          "kind": "road"
+          "from": "central intersecting street network",
+          "to": "connected city blocks",
+          "kind": "street"
         },
         {
-          "from": "Connected city blocks",
-          "to": "Connected city blocks",
-          "kind": "corridor"
+          "from": "streets",
+          "to": "courtyard edges",
+          "kind": "alley"
         },
         {
-          "from": "Connected city blocks",
-          "to": "Shadowed alleys",
-          "kind": "corridor"
-        },
-        {
-          "from": "Shadowed alleys",
-          "to": "Sheltered courtyards and recessed building edges",
-          "kind": "path"
+          "from": "streets",
+          "to": "courtyard edges",
+          "kind": "sidewalk"
         }
       ],
-      "terrain": "Cracked pavement and sidewalks heavily reclaimed by grass through cracks, vines climbing façades, shrubs along curbs, and trees or dense weeds filling courtyards.",
+      "terrain": "Cracked pavement and curb lines reclaimed by vegetation across vacant courtyards, façade bases, and building-edge gaps.",
       "props": [
         {
-          "name": "Weathered urban buildings",
+          "name": "weathered urban buildings",
           "count": -1,
-          "where": "tightly framing the streets"
+          "where": "Within each connected city block"
         },
         {
-          "name": "Boarded openings, damaged awnings, and ground-level recesses",
+          "name": "vegetation",
           "count": -1,
-          "where": "building façades and street edges"
+          "where": "Reclaiming pavement, courtyards, curb lines, façade bases, and building-edge gaps"
         },
         {
-          "name": "Collapsed structures, overgrown fences, and rubble",
+          "name": "broken walls",
           "count": -1,
-          "where": "outer perimeter"
+          "where": "Along concealment spaces"
+        },
+        {
+          "name": "under-stair voids",
+          "count": -1,
+          "where": "At building edges"
         }
       ],
-      "boundary": "The outer perimeter is enclosed by impassable collapsed structures, overgrown fences, rubble, and the implied continuation of unsafe city beyond the playable blocks.",
+      "boundary": "Collapsed streets, dense overgrowth, and impassable building masses at the outer block edges.",
       "scale_band": "medium",
-      "theme": "decades-abandoned, overgrown urban decay; quiet and low-to-the-ground"
+      "theme": "Decades-abandoned urban decay, cracked concrete, weathered façades, and heavy vegetation reclaiming the streets."
     },
     "render": {
-      "first": "isometric",
-      "then": "topdown",
-      "authoritative": "isometric",
-      "why": "the scene needs a strong atmospheric spatial composition rather than topology that must be valid by construction",
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "the connected street-and-alley topology must provide continuous, readable escape and circulation routes through the blocks.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
-    "notes": [],
+    "notes": [
+      "`world-open` is taken from outside Survival’s usual shape set."
+    ],
     "scene_prompt": "Create a 3D survival map set in a decades-abandoned, overgrown city spanning a few connected blocks. Empty streets and sidewalks run between weathered urban buildings, with vegetation reclaiming pavement, courtyards, and building edges; include accessible-looking alleys and sheltered spaces within the block network for a cat-sized viewpoint."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
-  "mapper_notes": []
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P0'] gives isometric"
+  ]
 }

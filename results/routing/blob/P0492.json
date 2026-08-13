@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a 3D tower defense battlefield viewed from an elevated first-person hillside vantage, overlooking a compact fantasy valley. A single short, winding rocky dirt lane with a few gentle bends crosses between rolling green hills, starting in the background and leading toward the player base in the foreground. Leave clear build spaces along both sides of the path for distinct sturdy fantasy towers: wooden archer posts, stone cannon turrets, and crystal-topped mage spires. Scatter pine trees across the hillsides, with goblin-like enemy figures marching along the lane. Use a low-poly, hand-painted stylized look with warm saturated colors, golden-hour lighting, and soft shadows.",
-  "blob": "### Genre\nThe dominant genre is Strategy, specifically a tower-defense battlefield: enemy waves follow one lane toward a defendable base while players place towers beside it.\n\n### Shape and preset\nUse `lane-actor-track`, matching the Tower Defense preset. Here it is a single compact winding dirt lane through a valley, readable at a glance from the elevated hillside viewpoint. The preset remains recognisable; retain its lane, tower ground, base, and enemy-entry logic, but do not add a pinch point because the requested bends are gentle rather than constricted.\n\n### Config requirements\n`buildzone-grid` is visible geometry: clear, flat build pads or subtly defined tower plots line both sides of the dirt lane without obstructing it. `tracker-core` is both: the foreground player base is visible as a compact fortified fantasy core, with its health-tracking volume placed invisibly. `spawner-npc` is layout-only: an invisible wave-origin marker sits at the background head of the lane; goblin figures visibly emerge and march from that end. `terrain-relief` is visible geometry: rolling grassy hills form the enclosing valley slopes.\n\n### Layout components\nMake one small-to-medium contiguous valley. The lane begins in the distant background between hills, takes a few broad gentle bends across the middle ground, and terminates at the player base in the foreground. Keep generous buildable shoulders along each side, alternating enough open ground for wooden archer posts, squat stone cannon turrets, and taller crystal-topped mage spires, each with a clearly distinct silhouette. Place the base slightly below the elevated viewer-side hill so the whole approach remains legible. Terrain is green rolling grass, exposed rock, and a rocky packed-dirt path. Scatter pine trees across the hillsides, avoiding the tower plots and lane edges. Include a small visible procession of exaggerated goblin-like enemies on the path, with large heads, small bodies, and earthy green-brown coloring. Hills close the lateral boundaries; the path origin and base end define the two longitudinal ends. Compose from an elevated first-person hillside overlook, with the lane receding from foreground base to background origin.\n\n### Render order\nUse `authored_plan`: the enemy lane must be generated as one continuous valid route from wave origin to core before the image dressing is applied.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by a compact valley and short lane that remains visible in one overview. Theme is warm saturated low-poly fantasy, with chunky hand-painted surfaces, golden-hour light, and soft shadows. Use `P6` because the tower-defense lane must be valid by construction, and `tiered` because the rolling valley relief needs elevation captured without overhangs.",
+  "blob": "### Genre\nThe dominant genre is Strategy: enemy waves follow a fixed route toward a defendable base while players place towers alongside it.\n\n### Shape and preset\nUse `lane-actor-track`, matching the Tower Defense preset. It is one compact, unbroken winding dirt lane through a valley, entering from the background and ending at the player base in the foreground; the requested single lane overrides any multi-route interpretation.\n\n### Config requirements\nUse `buildzone-grid` as clear, flat tower pads and buildable shoulders on both sides of the lane, sized around distinct wooden archer posts, stone cannon turrets, and crystal-topped mage spires. Use `tracker-core` as the visible fortified player base at the lane terminus. Use `terrain-relief` for rolling green valley hills and rocky slopes around the route.\n\n### Layout requirements\nPlace `spawner-npc` once at the lane entrance in the far background, screened by the first gentle bend so goblin waves enter from a readable origin. Place `tracker-core` once in the foreground at the route endpoint, with its health/core volume centered within the base and approached by only the final lane segment.\n\n### Layout components\nBuild one compact valley zone, broad enough to show the entire short route from the elevated hillside viewpoint. The rocky dirt lane begins at a background goblin approach, makes a few gentle, non-self-crossing bends between rolling hills, and descends toward the foreground base. Flat build shoulders and pads line both sides without obstructing lane readability. Scatter pine trees across the hillsides, keeping the route and tower silhouettes visible. The boundary is formed by enclosing green ridges and rocky valley walls. Compose the scene from an elevated, first-person hill overlook looking down the path toward the base, with background-to-foreground wave direction clearly legible.\n\n### Render order\nUse `authored_plan`: the tower-defense lane must be a single continuous valid enemy route from wave origin to core, so generate its topology before dressing the fantasy valley.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the requested short valley path visible at a glance. Theme is warm, saturated low-poly fantasy with chunky hand-painted materials, stylized goblins, golden-hour light, and soft shadows. Pipeline modifiers are `P6`, because the enemy lane must be valid by construction, and `tiered`, because the rolling hills create elevation without overhanging surfaces.",
   "spec": {
     "genre": "Strategy",
     "secondary": [],
@@ -24,107 +24,92 @@
     "options": [
       {
         "id": "buildzone-grid",
-        "text": "clear, flat build pads or subtly defined tower plots line both sides of the dirt lane without obstructing it",
+        "text": "Clear, flat tower pads and buildable shoulders on both sides of the lane, sized around wooden archer posts, stone cannon turrets, and crystal-topped mage spires.",
         "visible": true,
         "count": -1
       },
       {
         "id": "tracker-core",
-        "text": "the foreground player base is visible as a compact fortified fantasy core, with its health-tracking volume placed invisibly",
+        "text": "The visible fortified player base at the lane terminus, with its health/core volume centered within the base.",
+        "visible": true,
+        "count": 1
+      },
+      {
+        "id": "terrain-relief",
+        "text": "Rolling green valley hills and rocky slopes around the route.",
         "visible": true,
         "count": -1
       },
       {
         "id": "spawner-npc",
-        "text": "an invisible wave-origin marker sits at the background head of the lane; goblin figures visibly emerge and march from that end",
+        "text": "Goblin wave origin at the lane entrance in the far background, screened by the first gentle bend.",
         "visible": false,
-        "count": -1
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "tracker-core",
+        "text": "The health/core volume centered within the fortified player base.",
+        "count": 1,
+        "where": "In the foreground player base at the route endpoint, approached only by the final lane segment."
       },
       {
-        "id": "terrain-relief",
-        "text": "rolling grassy hills form the enclosing valley slopes",
-        "visible": true,
-        "count": -1
+        "id": "spawner-npc",
+        "text": "Goblin wave origin at the lane entrance in the far background, screened by the first gentle bend.",
+        "count": 1,
+        "where": "At the lane entrance in the far background, behind the first gentle bend."
       }
     ],
     "layout": {
-      "composition": "Elevated first-person hillside overlook, with the foreground player base below the viewer-side hill and the lane receding through the middle ground to the background origin between hills.",
+      "composition": "Elevated first-person hillside overlook looking down the winding path from the background goblin approach toward the foreground fortified base, with the full short route legible at a glance.",
       "zones": [
         {
-          "name": "Player base",
-          "role": "Defendable compact fortified fantasy core at the lane terminus.",
-          "where": "foreground",
+          "name": "Compact fantasy valley",
+          "role": "A single tower-defense valley containing the wave lane, tower build pads, goblin approach, and player base.",
+          "where": "Spanning background to foreground beneath the elevated hillside viewpoint.",
           "size": "compact"
-        },
-        {
-          "name": "Winding enemy lane",
-          "role": "One continuous route for enemy waves from the origin to the core.",
-          "where": "background through middle ground to foreground",
-          "size": "short"
-        },
-        {
-          "name": "Tower build shoulders",
-          "role": "Clear buildable ground for wooden archer posts, squat stone cannon turrets, and taller crystal-topped mage spires.",
-          "where": "both sides of the lane",
-          "size": "generous"
-        },
-        {
-          "name": "Wave origin",
-          "role": "Invisible enemy wave-entry marker where goblins emerge and begin marching.",
-          "where": "distant background between hills",
-          "size": ""
-        },
-        {
-          "name": "Valley hillsides",
-          "role": "Enclosing rolling valley slopes with scattered pine trees.",
-          "where": "left and right lateral boundaries",
-          "size": "small-to-medium contiguous valley"
         }
       ],
       "paths": [
         {
-          "from": "Wave origin",
-          "to": "Player base",
+          "from": "Background goblin approach",
+          "to": "Foreground player base",
           "kind": "track"
         }
       ],
-      "terrain": "Green rolling grass, exposed rock, rocky packed dirt, and rolling grassy hills forming the valley relief.",
+      "terrain": "A rocky dirt lane winds through rolling green valley hills and rocky slopes, with pine trees scattered across the hillsides while preserving route and tower silhouettes.",
       "props": [
         {
-          "name": "wooden archer posts",
+          "name": "Wooden archer posts",
           "count": -1,
-          "where": "alternating along open tower ground beside both sides of the lane"
+          "where": "On clear flat build pads and shoulders beside both sides of the lane."
         },
         {
-          "name": "squat stone cannon turrets",
+          "name": "Stone cannon turrets",
           "count": -1,
-          "where": "alternating along open tower ground beside both sides of the lane"
+          "where": "On clear flat build pads and shoulders beside both sides of the lane."
         },
         {
-          "name": "taller crystal-topped mage spires",
+          "name": "Crystal-topped mage spires",
           "count": -1,
-          "where": "alternating along open tower ground beside both sides of the lane"
+          "where": "On clear flat build pads and shoulders beside both sides of the lane."
         },
         {
-          "name": "pine trees",
+          "name": "Pine trees",
           "count": -1,
-          "where": "across the hillsides, avoiding tower plots and lane edges"
-        },
-        {
-          "name": "goblin-like enemy figures",
-          "count": -1,
-          "where": "marching along the lane from the background origin"
+          "where": "Scattered across the hillsides, kept clear of route readability and tower silhouettes."
         }
       ],
-      "boundary": "Hills close the lateral boundaries; the path origin and player base define the longitudinal ends.",
-      "scale_band": "medium",
-      "theme": "Warm saturated low-poly fantasy, chunky hand-painted surfaces, golden-hour light, and soft shadows."
+      "boundary": "Enclosing green ridges and rocky valley walls.",
+      "scale_band": "small",
+      "theme": "Warm, saturated low-poly fantasy with chunky hand-painted materials, stylized goblins, golden-hour light, and soft shadows."
     },
     "render": {
       "first": "authored_plan",
       "then": "topdown",
       "authoritative": "authored_plan",
-      "why": "the enemy lane must be one continuous valid route from wave origin to core before dressing.",
+      "why": "The enemy lane must be a single continuous valid route from wave origin to core.",
       "set_piece": false
     },
     "route": [
@@ -137,7 +122,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

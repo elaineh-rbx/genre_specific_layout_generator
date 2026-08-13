@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a 3D game map showing a small sandstone pyramid in a desert, Egyptian-style setting, built as a short playable climb. A clear upward route runs from the sandy base to the pyramid summit across stepped stone tiers, with spikes, bombs, and other hazardous obstacles placed along the ascent.",
-  "blob": "### Genre\nThe dominant genre is Obby & Platformer: this is a short, sequential climb whose challenge is avoiding lethal obstacles on the ascent, not a race circuit or an endless runner.\n\n### Shape and preset\nUse `course-terraced`, a compact staircase-like pyramid route rising in clear sandstone tiers from desert ground to a visible summit. The closest preset is Precision Platformer, but retain only the explicitly requested hazards and ascent route, so the preset is `none`.\n\n### Config requirements\n`path-track` is visible geometry: a single, readable upward chain of broad stepped stone platforms from the pyramid base to the summit. `hazard-kill` is visible geometry: spikes, bombs, and other clearly dangerous obstacle forms interrupting selected tiers and landing areas. No unrequested checkpoints, pickups, moving mechanisms, or hub should be added.\n\n### Layout components\nBuild one small pyramid centered in a sandy desert clearing. The base occupies most of the lower frame and leads immediately into a plainly readable ascending route that zigzags gently across successive stepped tiers rather than hiding behind the pyramid. Each tier is a usable sandstone landing surface, with enough open safe footing between hazards to make the short sprint legible. Put rows or clusters of stone spikes on some route segments, place bombs as distinct hazards beside or within others, and vary the remaining hazards with simple lethal stone obstructions while preserving one continuous climb line. The final upper tier is a small flat sandstone summit. Surround the pyramid with open sand, sparse weathered Egyptian-style stone fragments, and distant low dunes only; do not add buildings or a settlement. The boundary is an open desert visual edge. Compose the map in a clean three-quarter isometric view, with the base foregrounded and the summit visible at the top of the frame so the entire climb reads at once.\n\n### Render order\nUse `topdown`: the upward route and hazard spacing must remain physically traversable, and an invalid jump chain would make the course unplayable.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the requested short, plainly playable sprint rather than a several-minute ascent. Theme: sunlit sandstone pyramid, warm desert sand, restrained Egyptian-style ruins. Pipeline modifiers are `P6` because the critical platform route must be valid by construction, and `tiered` because the climb is real elevation without overhanging surfaces.",
+  "blob": "### Genre\nThe dominant genre is Obby & Platformer: a short, player-controlled climb with lethal obstacles. The climbing acceleration is mechanics, not layout.\n\n### Shape and preset\nUse `course-terraced`, matching the Precision Platformer preset’s ascending terrain form, but the preset is otherwise none because the scene specifies a compact pyramid ascent rather than its broader obstacle mix. The route climbs successive sandstone tiers from base to summit without any overhanging platforms.\n\n### Config requirements\nUse `path-track` as one clear, continuous upward sequence across the pyramid’s stepped faces. Use `hazard-kill` for visible spikes, bombs, and other contact-lethal obstacle forms distributed along that ascent. Do not add checkpoints: failure restarts the climb as stated.\n\n### Layout requirements\nNothing additional must be placed after segmentation. The lethal obstacles are rendered as part of the route geometry; no respawn pads, pickups, or emitters are requested.\n\n### Layout components\nBuild one small sandstone pyramid rising from a sandy desert base, sized as a plainly playable short sprint rather than a several-minute tower. The base forms the start zone and the summit is the destination zone. A single readable stepped-stone route ascends the pyramid face tier by tier, with enough broad landing and running surface to make the route legible. Space spikes, bombs, and other hazards along the ascending tiers as discrete avoidance challenges while retaining a continuous climbable line. Surround the pyramid with open sand and sparse Egyptian-style desert dressing; the pyramid itself is the boundary and focal structure. Compose the frame with the base low in the foreground and the summit visibly above it, so the full upward progression reads at a glance.\n\n### Render order\nUse `topdown` first, authoritative, because the connected climb and clearable obstacle sequence must be validated before the isometric desert dressing is produced.\n\n### Scale, theme, and pipeline cost\nScale band: small, driven by the requested short sprint. Theme: sunlit sandstone pyramid, arid Egyptian-style desert. Pipeline modifiers are `P6`, because the climb route and hazard spacing must remain playable by construction, and `tiered`, because the pyramid is stepped relief with no overhangs.",
   "spec": {
     "genre": "Obby & Platformer",
     "secondary": [],
@@ -24,89 +24,79 @@
     "options": [
       {
         "id": "path-track",
-        "text": "a single, readable upward chain of broad stepped stone platforms from the pyramid base to the summit",
+        "text": "One clear, continuous upward sequence across the pyramid's stepped faces, climbing from base to summit tier by tier.",
         "visible": true,
-        "count": 1
+        "count": -1
       },
       {
         "id": "hazard-kill",
-        "text": "spikes, bombs, and other clearly dangerous obstacle forms interrupting selected tiers and landing areas",
+        "text": "Visible spikes, bombs, and other contact-lethal obstacle forms distributed along the ascent as discrete avoidance challenges.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "Clean three-quarter isometric view, with the pyramid base occupying most of the lower foreground and the visible sandstone summit at the top of the frame so the entire zigzagging climb reads at once.",
+      "composition": "The sandy base and start zone sit low in the foreground, with the stepped sandstone pyramid rising through the frame and its summit visibly above, so the full upward progression reads at a glance.",
       "zones": [
         {
-          "name": "Pyramid base",
-          "role": "Starting ground leading immediately into the climb.",
-          "where": "lower foreground, centred",
-          "size": "occupies most of the lower frame"
+          "name": "Base",
+          "role": "Start zone for the short playable climb.",
+          "where": "Low foreground at the sandy desert base of the pyramid.",
+          "size": "small"
         },
         {
-          "name": "Ascending stepped route",
-          "role": "Short playable climb across usable sandstone landing tiers with safe footing between lethal hazards.",
-          "where": "zigzagging from the base across successive pyramid tiers",
-          "size": "compact"
+          "name": "Ascending pyramid route",
+          "role": "A single readable stepped-stone climb with broad landing and running surfaces, hazards, and a continuous climbable line.",
+          "where": "Up the pyramid face from base to summit.",
+          "size": "small"
         },
         {
-          "name": "Sandstone summit",
-          "role": "Final upper landing area at the end of the climb.",
-          "where": "top of the pyramid, top of frame",
-          "size": "small and flat"
-        },
-        {
-          "name": "Desert clearing",
-          "role": "Open surrounding ground framing the pyramid.",
-          "where": "around the pyramid",
-          "size": "open"
+          "name": "Summit",
+          "role": "Destination zone at the end of the climb.",
+          "where": "Top of the pyramid.",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Pyramid base",
-          "to": "Sandstone summit",
+          "from": "Base",
+          "to": "Summit",
           "kind": "track"
         }
       ],
-      "terrain": "Warm desert sand surrounds a staircase-like sandstone pyramid; sparse weathered Egyptian-style stone fragments and distant low dunes only.",
+      "terrain": "A small stepped sandstone pyramid rises from a sandy desert base, surrounded by open sand and sparse Egyptian-style desert dressing.",
       "props": [
         {
-          "name": "stone spikes",
+          "name": "spikes",
           "count": -1,
-          "where": "on some route segments"
+          "where": "Along the ascending sandstone tiers."
         },
         {
           "name": "bombs",
           "count": -1,
-          "where": "beside or within some route segments"
+          "where": "Along the ascending sandstone tiers."
         },
         {
-          "name": "simple lethal stone obstructions",
+          "name": "other hazardous obstacles",
           "count": -1,
-          "where": "along the ascent"
+          "where": "Along the ascending sandstone tiers."
         },
         {
-          "name": "weathered Egyptian-style stone fragments",
+          "name": "sparse Egyptian-style desert dressing",
           "count": -1,
-          "where": "sparsely around the pyramid"
-        },
-        {
-          "name": "low dunes",
-          "count": -1,
-          "where": "distant background"
+          "where": "In the open sand surrounding the pyramid."
         }
       ],
-      "boundary": "Open desert visual edge.",
+      "boundary": "The pyramid itself is the boundary and focal structure, surrounded by open sand.",
       "scale_band": "small",
-      "theme": "Sunlit sandstone pyramid, warm desert sand, restrained Egyptian-style ruins."
+      "theme": "Sunlit sandstone pyramid, arid Egyptian-style desert"
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the upward route and hazard spacing must remain physically traversable, and an invalid jump chain would make the course unplayable.",
+      "why": "the connected climb and clearable obstacle sequence must be validated before the isometric desert dressing is produced",
       "set_piece": false
     },
     "route": [
@@ -119,7 +109,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

@@ -6,13 +6,14 @@
 
 **Shape — pick one.**
 
-| ID | Shape | What it is | Pipeline |
-| :---- | :---- | :---- | :---- |
-| `plot-isolated` | **BuildZone (Isolated Per-Player Plots)** | Massive, independent, equally spaced plots for building out a factory or base without ever overlapping a neighbour. | |
-| `plot-shared` | **BuildZone (Shared Team Plot)** | One right-sized plot shared by a team, with buttons and upgrades spread across the single structure benefiting everyone jointly. | |
-| `world-shared` | **Zone (Shared Persistent World)** | No personal plot at all — one common world everybody operates in together. | |
-| `world-underground` | **Zone (Surface and Underground Layers)** | A multi-level mine or facility descending beneath the surface map. | `P2 + P3` |
-| `tier-ladder` | **Zone (Tiered Training Grounds)** | A run of training areas of rising tier laid out in a readable line or spiral, each walled off from the next until a stat crosses a threshold, so the number going up is visible as ground gained. | |
+**Typical shapes.** `plot-isolated` · `plot-shared` · `world-open` *(default)* · `world-underground` · `tier-ladder` · `vehicle-deck`
+
+This genre words these its own way:
+
+| ID | Shape | What it is |
+| :---- | :---- | :---- |
+| `world-open` | **Zone (Shared Persistent World)** | No personal plot at all — one common world everybody operates in together. |
+
 
 **Options** — combine freely on top of the chosen shape.
 
@@ -37,11 +38,13 @@
 | **Tycoon** | [2 Player Secret Hideout Tycoon](https://www.roblox.com/games/136258770/2-Player-Secret-Hideout-Tycoon) (Roblox) | `plot-shared` | `gate-progression`, `social-hub`, `path-circulation` |
 | **Stat Grinder** | Roblox "+1 speed", strength and speed-run simulators | `tier-ladder` | `station-training`, `gate-progression`, `trigger-rebirth`, `social-hub` |
 | **Sandbox** | Minecraft; Build a Boat for Treasure (Roblox) | `plot-isolated` | `collectible-nodes`, `social-hub` |
-| **Vehicle Sim** | [Mega Miners](https://www.roblox.com/games/17541179/Mega-Miners) (Roblox); Euro Truck Simulator | `world-shared` | `path-road-vehicle`, `resource-shared` |
-| **Incremental Simulator** | Roblox "simulator" games | `world-shared` | `social-hub`, `gate-progression`, `path-circulation` |
-| **Physics Sim** | Roblox cart-ride and ragdoll games | `world-shared` | `physics-rig`, `hazard-kill`, `path-circulation` |
-| **Role Sim** | Emergency Response: Liberty County (Roblox) | `world-shared` | `trigger-task`, `path-circulation`, `path-road-vehicle` |
+| **Vehicle Sim** | [Mega Miners](https://www.roblox.com/games/17541179/Mega-Miners) (Roblox); Euro Truck Simulator | `world-open` | `path-road-vehicle`, `resource-shared` |
+| **Incremental Simulator** | Roblox "simulator" games | `world-open` | `social-hub`, `gate-progression`, `path-circulation` |
+| **Physics Sim** | Roblox cart-ride and ragdoll games | `world-open` | `physics-rig`, `hazard-kill`, `path-circulation` |
+| **Role Sim** | Emergency Response: Liberty County (Roblox) | `world-open` | `trigger-task`, `path-circulation`, `path-road-vehicle` |
 | **Mining & Extraction** | [Ultimate Mining Tycoon](https://www.roblox.com/games/18680867089/Ultimate-Mining-Tycoon) (Roblox) | `world-underground` | `resource-shared`, `collectible-nodes`, `path-road-vehicle` |
+| **Aircraft Operation** | Flight and rescue sims; Roblox helicopter and airline places | `volume-open-air` | `trigger-task`, `social-hub`, `gate-progression` |
+| **Vessel Operation** | Roblox cruise-ship, train and boat places | `vehicle-deck` | `social-hub`, `trigger-task`, `path-circulation` |
 
 **Genre notes**
 
@@ -50,17 +53,17 @@
 * **The isolated plot is not universal, despite being the genre's mental default.** Role Sim and Vehicle Sim have no plot at all; co-op tycoons share one; the extraction hybrid pairs a personal plot with a shared field. Check which before laying out a grid.
 * **The shared resource field is not a plot.** In the extraction hybrid it's common ground the whole server mines and hauls from. Building it as somebody's plot breaks the loop.
 * **Role sims are often cooperative.** A shared farm several players work together is more typical than per-player isolation — pilot, doctor, trucker, and medieval farmer sims all tend this way.
-* **The "+1 speed" family lives here, and it did not used to live anywhere.** Walk or click to raise a stat, break through a barrier the stat unlocks, spend the winnings, rebirth for a multiplier — the number going up *is* the game. It is a large, well-known Roblox family, and in a 620-prompt evaluation its members scattered across four genres and five presets, because each instance looks locally like whatever it borrowed: a parkour course reads as Obby, a keyboard-escape puzzle reads as Puzzle, a racing lane reads as Racing. **What they share is the layout, not the activity** — tiers in a line, a wall between each pair, a training station you stand on, and a rebirth pad at the end. That is `tier-ladder` plus **Stat Grinder**, and it is P0.
+* **The "+1 speed" family lives here, and it is the one most often filed wrong.** Walk or click to raise a stat, break through a barrier the stat unlocks, spend the winnings, rebirth for a multiplier — the number going up *is* the game. It is a large, well-known Roblox family whose members scatter across four genres and five presets, because each instance looks locally like whatever it borrowed: a parkour course reads as Obby, a keyboard-escape puzzle reads as Puzzle, a racing lane reads as Racing. **What they share is the layout, not the activity** — tiers in a line, a wall between each pair, a training station you stand on, and a rebirth pad at the end. That is `tier-ladder` plus **Stat Grinder**, and it is P0.
 * **`tier-ladder` is not an obby, even when you jump on it.** An obby's difficulty is in the geometry and the route has to be physics-legal, which is why Obby & Platformer routes P6 whatever shape it takes. Here the barrier is a number, the geometry is just ground, and nothing has to be validated — so a "+1 speed" game that also has a parkour section is Simulation first, and it stays P0. Naming Obby second is right; letting it lead is what imported a P6 these games never needed.
 * **`gate-progression` covers both kinds of wall.** A tycoon's gate opens when you pay; a stat ladder's opens when you are fast enough. Same geometry, same ID, different sentence — bend the wording, do not add a row.
-* **Roblox's own subgenres here are Idle, Incremental Simulator, Physics Sim, Sandbox, Tycoon, and Vehicle Sim** — the widest subgenre list of any genre, which matches how much this label covers. Five are presets above. ***Idle* is a `SET`, not a P5.** Roblox defines it as games with little to no player input, and the old rule read that as no layout job — but an idle game still has a space you watch, and most Roblox ones are a tycoon you happen to leave running. Build the set; see *Pipeline costs* in Build.md. Only route P5 when there is genuinely no room, just a screen of numbers.
-* **Physics Sim needed an option that did not exist.** Ramps, ragdoll props, and breakable assemblies are the entire point of that subgenre, so `physics-rig` was added. It reuses `Destructible`, which Part I §4 already governs through the debris rule.
+* **Roblox's own subgenres here are Idle, Incremental Simulator, Physics Sim, Sandbox, Tycoon, and Vehicle Sim** — the widest subgenre list of any genre, which matches how much this label covers. Five are presets above. ***Idle* is a `SET`, not a P5.** Roblox defines it as games with little to no player input, which is easy to read as no layout job — but an idle game still has a space you watch, and most Roblox ones are a tycoon you happen to leave running. Build the set; see *Reading the Pipeline column* in Build.md. Only route P5 when there is genuinely no room, just a screen of numbers.
+* **Physics Sim is `physics-rig`.** Ramps, ragdoll props and breakable assemblies are the entire point of that subgenre. It reuses `Destructible`, which Part I §4 already governs through the debris rule.
 
 ## Universal Options
 
 Six features that belong to **no genre in particular because they belong to all of them**. Every genre inherits this table on top of its own.
 
-They exist because the alternative is worse. Each was measured against 620 real prompts and requested in eleven to fifteen different genres, so filing them per-genre would restate the same row seventy-eight times — and leaving them out is what produced the largest hole in the system, with *who is in the world* having no home anywhere.
+They exist because the alternative is worse. Each is wanted across nearly every genre, so filing them per-genre would restate the same row dozens of times, and leaving them out strands common requests — *who is in the world* would have no home anywhere.
 
 | ID | Option | What it is | Core | Goes to | Pipeline |
 | :---- | :---- | :---- | :--: | :---- | :---- |
@@ -71,13 +74,13 @@ They exist because the alternative is worse. Each was measured against 620 real 
 | `terrain-relief` | **Zone (Terrain Relief)** | Natural landform shaping the ground: hills, mountains, cliffs, a valley, or a canyon. | | `image` | `P0 + tiered` |
 | `island-cluster` | **Zone (Island Cluster)** | Several separate landmasses with water or open air between them, crossed by bridge, boat, or flight. | | `image` | `CHECK` |
 
-**None of these is `Core`, and that is deliberate.** They must never appear in the tune menu, which shows `Core` options only, and no preset includes one. A universal option is a **landing place for a request the user actually made** — reached from the open question in step 5 when a free-text ask matches it — never a default and never a suggestion. Measured against 620 prompts, each of the six would fire on 6–15% of them, so a run that applies one unasked is wrong far more often than it is right.
+**None of these is `Core`, and that is deliberate.** They must never appear in the tune menu, which shows `Core` options only, and no preset includes one. A universal option is a **landing place for a request the user actually made** — reached from the open question in step 5 when a free-text ask matches it — never a default and never a suggestion. Most builds want none of them, so a run that applies one unasked is wrong far more often than right.
 
 **A genre's own wording wins.** Four genres already define `building-interior` in their own terms — Shooter's is a breachable structure, Survival's is a shelter to hide in. Those rows are the definition for those genres; the universal row is the fallback for the other eleven. Dedupe by ID exactly as with any shared ID.
 
 **Bend the wording to the prompt.** These are written generically because they are genre-neutral, which makes the instruction to rewrite them *more* important than usual, not less. `water-body` for a pirate game is "open sea between the islands, deep enough to sail"; for a park it is "a duck pond at the centre of the green." Ship the prompt's water, not the word "water."
 
-**Two pipeline notes.** `terrain-relief` is `P0 + tiered` for hills and cliffs, but **caves, overhangs, and tunnels push it to `P2`** — say so when the prompt asks for them. `water-body` and `island-cluster` are `CHECK` because swimming and flight are volumetric: usually fine as a play-height envelope over a representable surface, and only a real problem when the volume self-occludes (layered floating islands, 3D cave networks). See *Layout Attributes* in Build.md for the underlying axis.
+**Two pipeline notes.** `terrain-relief` is `P0 + tiered` for hills and cliffs, but **caves, overhangs, and tunnels push it to `P2`** — say so when the prompt asks for them. `water-body` and `island-cluster` are `CHECK` because swimming and flight are volumetric: usually fine as a play-height envelope over a representable surface, and only a real problem when the volume self-occludes (layered floating islands, 3D cave networks). See *The Five Routing Axes* in Build.md for the axis behind it.
 
 **`npc-population` is not `spawner-npc`.** `spawner-npc` is where hostiles enter a fight — an emitter, wired to combat. `npc-population` is who lives here. A market crowd, a quest giver, and a herd of deer are not spawners, and filing them as one produces enemy waves in a town square.
 

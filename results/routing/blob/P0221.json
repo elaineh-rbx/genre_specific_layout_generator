@@ -19,7 +19,7 @@
     }
   ],
   "scene_prompt": "Create a bright, cartoon-style 3D suburban map focused on one small residential street. Several prebuilt houses sit on individual lots along the street, with simple open space between homes and a casual neighborhood composition.",
-  "blob": "### Genre\nThe dominant genre is Roleplay & Avatar Sim: this is a casual Brookhaven-like social neighborhood with houses players move into, rather than a construction game. There is no secondary genre.\n\n### Shape and preset\nUse `settlement-claimable`, matching the Life preset. The preset remains recognisable through finished claimable homes, a street network, and enterable houses; omit its Zoned Districts option because the requested build is only one residential street, not a town with commercial districts.\n\n### Config requirements\nUse visible `path-road-vehicle` for the single broad, flat suburban street running past the house lots. Use visible `building-interior` for the prebuilt homes players move into; each house has a readable front entrance and a simple accessible interior. No invisible configuration elements are requested.\n\n### Layout components\nBuild one small residential neighborhood zone: a bright cartoon suburban street, with several separate prebuilt houses on individual lots arranged along both sides rather than as a dense town grid. Keep generous simple grass or paved open space between homes, with short driveways or front paths connecting each entrance to the street. The street is the sole circulation spine, running cleanly through the center of the composition and ending naturally at the map edges or soft landscaped boundaries. Use level ground, small lawns, sidewalks, curb lines, and sparse cheerful neighborhood dressing; do not add commercial districts, empty build plots, or extra town areas. Frame the scene in a clear three-quarter isometric view with the road as the leading line and house fronts visibly facing it.\n\n### Render order\nUse `isometric`: the small, straightforward street has no topology whose failure would make the layout unplayable, so the stylized neighborhood look should lead.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the request for one residential street with several houses rather than a whole town. Theme is bright, casual, cartoon contemporary suburbia. Apply `P3` because players cross from the exterior street into house interiors; no other geometry requires an added pipeline pass.",
+  "blob": "### 1. Genre\nThe dominant genre is Roleplay & Avatar Sim: players move into prebuilt homes in a casual Brookhaven-like social town.\n\n### 2. Shape and preset\nUse `settlement-claimable`, matching the Life preset. This is a compact version of that preset: finished houses are individually claimable rather than empty buildable lots, and the scene is limited to one residential street rather than a full town.\n\n### 3. Config requirements\nApply `path-road-vehicle` as the broad, flat residential street running through the neighborhood and allowing simple vehicle circulation. Apply `building-interior` because the prebuilt homes are places players move into and enter. Do not add commercial districts, a town square, or unrequested population.\n\n### 4. Layout requirements\nNo additional placed layout markers are required by the prompt. The claim status and move-in logic are mechanics, not rendered or placed layout geometry.\n\n### 5. Layout components\nBuild one small suburban residential zone centered on a single straight or gently curving street. Place several finished cartoon houses on separate, evenly spaced individual lots along both sides, each with a small front yard and open gaps between neighboring homes. Give each house a short driveway or walk connecting its entrance to the street. Keep the terrain flat, grassy, and uncluttered, with simple sidewalks or verges defining the road edge. The boundary is a soft neighborhood edge of grass and sparse decorative trees rather than a hard wall. Compose the map as a readable, compact street-level neighborhood with the road as the central visual spine and house façades clearly visible.\n\n### 6. Render order\nUse `isometric`; the scene is a simple, readable neighborhood composition with no topology whose invalidity would make it unplayable.\n\n### 7. Scale, theme, and pipeline cost\nScale band: small, driven by one residential street with several houses rather than a whole town. Theme: bright, cheerful cartoon suburbia with a casual Brookhaven-like feel. Pipeline modifiers: `P3`, forced by enterable houses and the outside-to-inside transition.",
   "spec": {
     "genre": "Roleplay & Avatar Sim",
     "secondary": [],
@@ -29,61 +29,62 @@
     "options": [
       {
         "id": "path-road-vehicle",
-        "text": "single broad, flat suburban street running past the house lots",
+        "text": "A broad, flat residential street running through the neighborhood for simple vehicle circulation.",
         "visible": true,
-        "count": 1
+        "count": -1
       },
       {
         "id": "building-interior",
-        "text": "prebuilt homes players move into, each with a readable front entrance and a simple accessible interior",
+        "text": "Prebuilt homes that players move into and enter.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "Clear three-quarter isometric view with the road as the leading line running cleanly through the centre; house fronts on both sides visibly face the street.",
+      "composition": "A readable, compact street-level neighborhood with the road as the central visual spine and house façades clearly visible along both sides.",
       "zones": [
         {
-          "name": "Small residential neighborhood",
-          "role": "A casual neighborhood of prebuilt homes players move into.",
-          "where": "Along both sides of the central street",
+          "name": "suburban residential zone",
+          "role": "A small neighborhood of individually claimable prebuilt homes.",
+          "where": "Centered on one straight or gently curving residential street.",
           "size": "small"
         }
       ],
       "paths": [
         {
-          "from": "Residential house lots",
-          "to": "Central suburban street",
-          "kind": "driveway"
+          "from": "neighborhood edge",
+          "to": "neighborhood edge",
+          "kind": "road"
         },
         {
-          "from": "Residential house lots",
-          "to": "Central suburban street",
-          "kind": "path"
+          "from": "each house entrance",
+          "to": "residential street",
+          "kind": "road"
         }
       ],
-      "terrain": "Level ground with small lawns, sidewalks, curb lines, and generous simple grass or paved open space between homes.",
+      "terrain": "Flat, grassy, uncluttered terrain with simple sidewalks or verges defining the road edge.",
       "props": [
         {
-          "name": "Separate prebuilt houses on individual lots",
+          "name": "finished cartoon houses on separate evenly spaced individual lots",
           "count": -1,
-          "where": "Along both sides of the street"
+          "where": "Along both sides of the residential street, with small front yards and open gaps between neighboring homes."
         },
         {
-          "name": "Sparse cheerful neighborhood dressing",
+          "name": "sparse decorative trees",
           "count": -1,
-          "where": "Throughout the residential street"
+          "where": "At the soft grassy neighborhood edge."
         }
       ],
-      "boundary": "The street ends naturally at the map edges or soft landscaped boundaries.",
+      "boundary": "A soft neighborhood edge of grass and sparse decorative trees rather than a hard wall.",
       "scale_band": "small",
-      "theme": "bright, casual, cartoon contemporary suburbia"
+      "theme": "Bright, cheerful cartoon suburbia with a casual Brookhaven-like feel."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "The small straightforward street has no topology whose failure would make the layout unplayable.",
+      "why": "The neighborhood is a simple readable composition with no topology whose invalidity would make it unplayable.",
       "set_piece": false
     },
     "route": [
@@ -95,7 +96,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

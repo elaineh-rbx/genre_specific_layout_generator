@@ -1,0 +1,290 @@
+{
+  "scene": "P0090",
+  "source": "Crea un juego completo de Roblox en 3D inspirado en la idea de \"Escapa de Teclado\", pero con mapas, mecánicas y modelos originales. No hagas un juego 2D. Debe ser una experiencia totalmente 3D con gráficos modernos y optimizada para PC y celular.\n\nConcepto:\nLos jugadores son personas miniatura atrapadas sobre un enorme escritorio. Deben escapar atravesando un teclado gigante mientras evitan obstáculos y peligros. El teclado debe sentirse enorme, con teclas gigantes que funcionan como plataformas.\n\nCaracterísticas:\n\n- Mapa completamente 3D.\n- Un teclado gigante como escenario principal.\n- Varias zonas:\n - Teclas normales.\n - Teclas que desaparecen.\n - Teclas que rebotan.\n - Teclas que se hunden.\n - Zona del mouse.\n - Zona del monitor.\n - Zona de cables.\n - Zona del escritorio.\n - Zona de la CPU.\n- Checkpoints automáticos.\n- Sistema de guardado de progreso.\n- Cronómetro para terminar el recorrido.\n- Tabla de mejores tiempos (Leaderboard).\n- Efectos de sonido al pisar teclas.\n- Partículas en algunas zonas.\n- Animaciones suaves.\n- Música de fondo.\n- Interfaz moderna.\n\nObstáculos:\n\n- Láseres.\n- Ventiladores.\n- Teclas móviles.\n- Plataformas giratorias.\n- Cables eléctricos.\n- Barras que empujan.\n- Objetos que caen del escritorio.\n- Zonas que eliminan al jugador.\n\nExtras:\n\n- Monedas coleccionables.\n- Tienda de efectos cosméticos.\n- Mascotas opcionales.\n- Logros.\n- Recompensas diarias.\n- Sistema de niveles por experiencia.\n- Botón para reiniciar desde el último checkpoint.\n\nEl estilo debe ser divertido, colorido y parecido a un obby moderno de Roblox, pero con identidad propia. Usa buenas prácticas, organiza correctamente el Explorer, separa Scripts, LocalScripts y ModuleScripts cuando sea necesario y evita código desordenado. El juego debe funcionar tanto en computadora como en dispositivos móviles.",
+  "answers": [
+    {
+      "field": "scale",
+      "ask": "How big is one key relative to the player - a single platform, or a whole area you walk around on?",
+      "answer": "Cada tecla debe ser una plataforma gigante individual, lo bastante grande para que un jugador miniatura se mueva sobre ella y salte entre teclas."
+    },
+    {
+      "field": "shape",
+      "ask": "Are the nine zones one continuous route across the desk, or separate stages you teleport between?",
+      "answer": "Las nueve zonas forman una ruta continua sobre el mismo escritorio, sin teletransportes entre etapas."
+    },
+    {
+      "field": "goal",
+      "ask": "Does the run end at the CPU, or somewhere else on the desk?",
+      "answer": "El recorrido termina en la zona de la CPU, que funciona como la meta final de escape."
+    }
+  ],
+  "scene_prompt": "Crea un mapa 3D de obby colorido sobre un enorme escritorio, visto a escala de personas miniatura. Una ruta continua atraviesa nueve zonas sin teletransportes: teclas normales gigantes, teclas que desaparecen, rebotan o se hunden, seguida por las zonas del mouse, monitor, cables, escritorio y CPU. Cada tecla es una plataforma individual lo bastante grande para caminar sobre ella y saltar hacia las teclas vecinas; integra láseres, ventiladores, teclas móviles, plataformas giratorias, cables eléctricos, barras de empuje, objetos que caen y zonas peligrosas a lo largo del recorrido. El trayecto termina en la zona de la CPU, presentada como la meta final de escape. Coloca monedas coleccionables sobre rutas, saltos y zonas de riesgo.",
+  "blob": "## Genre\nThe dominant and only genre is Obby & Platformer because the player traverses a self-paced 3D obstacle course with discrete jumps.\n\n## Shape and preset\nUse `course-flat` for one continuous horizontal route across the same giant desk. Match the Classic Obby preset, extending it with the explicitly requested timed hazards, dangerous surfaces, collectibles, and finish.\n\n## Config requirements\nApply `path-track` across exactly nine ordered zones. Apply `obstacle-jump` to giant key-to-key gaps and bouncing keys, `obstacle-timing` to disappearing and sinking keys, and `obstacle-moving` to moving keys, rotating platforms, fans, push bars, and falling desk objects. Apply `hazard-kill` to lasers, electrical cables, and elimination zones. Draw the pads for `checkpoint-respawn` and draw `winner-zone` as the final CPU escape area.\n\n## Layout requirements\nPlace `checkpoint-respawn` at safe transitions between major zone groups, never on a moving or sinking surface. Place `collectible-nodes` as coins along the main route, jump arcs, and optional risk lines throughout all nine zones. Place the functional `winner-zone` once in the CPU area after the final hazard.\n\n## Layout components\nBuild one enormous desk at miniature-player scale and one uninterrupted route through nine zones in this order: normal keys; disappearing, bouncing, and sinking keys; mouse; monitor; cables; open desk; CPU. Each keyboard key is an individually walkable giant platform. Connect later desk objects with readable jumps, ramps, or narrow traversable surfaces, never teleporters. Distribute lasers, fans, moving keys, rotating platforms, electrical cables, push bars, falling objects, and lethal floor patches without obscuring the critical path. Make the CPU the prominent terminal escape landmark. Bound the course at desk edges and compose it so the complete progression reads left to right.\n\n## Render order\nUse `topdown`: the nine-zone order, legal gaps, hazard clearances, and checkpoint reachability must be valid before visual dressing.\n\n## Scale, theme, and pipeline cost\nScale is large, driven by nine zones across a giant desk. The theme is colourful modern Roblox obby with oversized electronics. Use `P6` because the continuous course must be valid by construction.",
+  "agent_artifact": "# Scene prompt\nCrea un mapa 3D de obby colorido sobre un enorme escritorio, visto a escala de personas miniatura. Una ruta continua atraviesa nueve zonas sin teletransportes: teclas normales gigantes, teclas que desaparecen, rebotan o se hunden, seguida por las zonas del mouse, monitor, cables, escritorio y CPU. Cada tecla es una plataforma individual lo bastante grande para caminar sobre ella y saltar hacia las teclas vecinas; integra láseres, ventiladores, teclas móviles, plataformas giratorias, cables eléctricos, barras de empuje, objetos que caen y zonas peligrosas a lo largo del recorrido. El trayecto termina en la zona de la CPU, presentada como la meta final de escape. Coloca monedas coleccionables sobre rutas, saltos y zonas de riesgo.\n\n# Agent decision\n## Genre\nThe dominant and only genre is Obby & Platformer because the player traverses a self-paced 3D obstacle course with discrete jumps.\n\n## Shape and preset\nUse `course-flat` for one continuous horizontal route across the same giant desk. Match the Classic Obby preset, extending it with the explicitly requested timed hazards, dangerous surfaces, collectibles, and finish.\n\n## Config requirements\nApply `path-track` across exactly nine ordered zones. Apply `obstacle-jump` to giant key-to-key gaps and bouncing keys, `obstacle-timing` to disappearing and sinking keys, and `obstacle-moving` to moving keys, rotating platforms, fans, push bars, and falling desk objects. Apply `hazard-kill` to lasers, electrical cables, and elimination zones. Draw the pads for `checkpoint-respawn` and draw `winner-zone` as the final CPU escape area.\n\n## Layout requirements\nPlace `checkpoint-respawn` at safe transitions between major zone groups, never on a moving or sinking surface. Place `collectible-nodes` as coins along the main route, jump arcs, and optional risk lines throughout all nine zones. Place the functional `winner-zone` once in the CPU area after the final hazard.\n\n## Layout components\nBuild one enormous desk at miniature-player scale and one uninterrupted route through nine zones in this order: normal keys; disappearing, bouncing, and sinking keys; mouse; monitor; cables; open desk; CPU. Each keyboard key is an individually walkable giant platform. Connect later desk objects with readable jumps, ramps, or narrow traversable surfaces, never teleporters. Distribute lasers, fans, moving keys, rotating platforms, electrical cables, push bars, falling objects, and lethal floor patches without obscuring the critical path. Make the CPU the prominent terminal escape landmark. Bound the course at desk edges and compose it so the complete progression reads left to right.\n\n## Render order\nUse `topdown`: the nine-zone order, legal gaps, hazard clearances, and checkpoint reachability must be valid before visual dressing.\n\n## Scale, theme, and pipeline cost\nScale is large, driven by nine zones across a giant desk. The theme is colourful modern Roblox obby with oversized electronics. Use `P6` because the continuous course must be valid by construction.\n",
+  "agent_notes": "## Genre\nThe dominant and only genre is Obby & Platformer because the player traverses a self-paced 3D obstacle course with discrete jumps.\n\n## Shape and preset\nUse `course-flat` for one continuous horizontal route across the same giant desk. Match the Classic Obby preset, extending it with the explicitly requested timed hazards, dangerous surfaces, collectibles, and finish.\n\n## Config requirements\nApply `path-track` across exactly nine ordered zones. Apply `obstacle-jump` to giant key-to-key gaps and bouncing keys, `obstacle-timing` to disappearing and sinking keys, and `obstacle-moving` to moving keys, rotating platforms, fans, push bars, and falling desk objects. Apply `hazard-kill` to lasers, electrical cables, and elimination zones. Draw the pads for `checkpoint-respawn` and draw `winner-zone` as the final CPU escape area.\n\n## Layout requirements\nPlace `checkpoint-respawn` at safe transitions between major zone groups, never on a moving or sinking surface. Place `collectible-nodes` as coins along the main route, jump arcs, and optional risk lines throughout all nine zones. Place the functional `winner-zone` once in the CPU area after the final hazard.\n\n## Layout components\nBuild one enormous desk at miniature-player scale and one uninterrupted route through nine zones in this order: normal keys; disappearing, bouncing, and sinking keys; mouse; monitor; cables; open desk; CPU. Each keyboard key is an individually walkable giant platform. Connect later desk objects with readable jumps, ramps, or narrow traversable surfaces, never teleporters. Distribute lasers, fans, moving keys, rotating platforms, electrical cables, push bars, falling objects, and lethal floor patches without obscuring the critical path. Make the CPU the prominent terminal escape landmark. Bound the course at desk edges and compose it so the complete progression reads left to right.\n\n## Render order\nUse `topdown`: the nine-zone order, legal gaps, hazard clearances, and checkpoint reachability must be valid before visual dressing.\n\n## Scale, theme, and pipeline cost\nScale is large, driven by nine zones across a giant desk. The theme is colourful modern Roblox obby with oversized electronics. Use `P6` because the continuous course must be valid by construction.",
+  "secondary": [],
+  "spec": {
+    "genre": "Obby & Platformer",
+    "secondary": [],
+    "shape": "course-flat",
+    "preset": "Classic Obby",
+    "axes": {},
+    "options": [
+      {
+        "id": "path-track",
+        "text": "One uninterrupted self-paced route through exactly nine ordered zones across the giant desk, with no teleporters.",
+        "visible": true,
+        "count": 9
+      },
+      {
+        "id": "checkpoint-respawn",
+        "text": "Safe checkpoint pads at transitions between major zone groups, never on moving or sinking surfaces.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "obstacle-jump",
+        "text": "Giant key-to-key gaps and bouncing keys requiring discrete jumps.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "obstacle-moving",
+        "text": "Moving keys, rotating platforms, fans, push bars, and falling desk objects along the route.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "obstacle-timing",
+        "text": "Disappearing and sinking keys that require timed movement.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "hazard-kill",
+        "text": "Lasers, electrical cables, and lethal floor patches that eliminate players.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "Coins placed along the main route, jump arcs, and optional risk lines throughout all nine zones.",
+        "visible": false,
+        "count": -1
+      },
+      {
+        "id": "winner-zone",
+        "text": "The final CPU escape area after the last hazard.",
+        "visible": true,
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "checkpoint-respawn",
+        "text": "Safe checkpoint pads at transitions between major zone groups, never on moving or sinking surfaces.",
+        "count": -1,
+        "where": "At safe transitions between major zone groups; never on a moving or sinking surface."
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "Coins along the main route, jump arcs, and optional risk lines throughout all nine zones.",
+        "count": -1,
+        "where": "Along the main route, jump arcs, and optional risk lines throughout all nine zones."
+      },
+      {
+        "id": "winner-zone",
+        "text": "The functional final CPU escape area.",
+        "count": 1,
+        "where": "In the CPU area after the final hazard."
+      }
+    ],
+    "layout": {
+      "composition": "The complete desk-top progression reads left to right, beginning with keyboard keys on the left and ending at the prominent CPU escape landmark on the right.",
+      "zones": [
+        {
+          "name": "Normal keys",
+          "role": "Opening giant keyboard-key platforms, each individually walkable.",
+          "where": "Leftmost start of the desk route.",
+          "size": ""
+        },
+        {
+          "name": "Disappearing keys",
+          "role": "Timed key-platform section with disappearing surfaces.",
+          "where": "After the normal keys.",
+          "size": ""
+        },
+        {
+          "name": "Bouncing keys",
+          "role": "Key-platform section using bouncing keys and jump gaps.",
+          "where": "After the disappearing keys.",
+          "size": ""
+        },
+        {
+          "name": "Sinking keys",
+          "role": "Timed key-platform section with sinking surfaces.",
+          "where": "After the bouncing keys.",
+          "size": ""
+        },
+        {
+          "name": "Mouse",
+          "role": "Traversable mouse-zone desk object section.",
+          "where": "After the keyboard-key sections.",
+          "size": ""
+        },
+        {
+          "name": "Monitor",
+          "role": "Traversable monitor-zone desk object section.",
+          "where": "After the mouse.",
+          "size": ""
+        },
+        {
+          "name": "Cables",
+          "role": "Cable-zone traversal with electrical cable hazards.",
+          "where": "After the monitor.",
+          "size": ""
+        },
+        {
+          "name": "Open desk",
+          "role": "Open desk traversal section with desk hazards and objects.",
+          "where": "After the cables.",
+          "size": ""
+        },
+        {
+          "name": "CPU",
+          "role": "Terminal escape area and final winner zone after the final hazard.",
+          "where": "Rightmost end of the route.",
+          "size": ""
+        }
+      ],
+      "paths": [
+        {
+          "from": "Normal keys",
+          "to": "Disappearing keys",
+          "kind": "jump"
+        },
+        {
+          "from": "Disappearing keys",
+          "to": "Bouncing keys",
+          "kind": "jump"
+        },
+        {
+          "from": "Bouncing keys",
+          "to": "Sinking keys",
+          "kind": "jump"
+        },
+        {
+          "from": "Sinking keys",
+          "to": "Mouse",
+          "kind": "ramp"
+        },
+        {
+          "from": "Mouse",
+          "to": "Monitor",
+          "kind": "narrow traversable surface"
+        },
+        {
+          "from": "Monitor",
+          "to": "Cables",
+          "kind": "narrow traversable surface"
+        },
+        {
+          "from": "Cables",
+          "to": "Open desk",
+          "kind": "narrow traversable surface"
+        },
+        {
+          "from": "Open desk",
+          "to": "CPU",
+          "kind": "ramp"
+        }
+      ],
+      "terrain": "One enormous desk surface at miniature-player scale, with oversized electronics, giant individually walkable keyboard keys, electrical cables, and lethal floor patches.",
+      "props": [
+        {
+          "name": "Enormous desk",
+          "count": 1,
+          "where": "The full course spans its surface."
+        },
+        {
+          "name": "Giant keyboard keys",
+          "count": -1,
+          "where": "The opening keyboard zones."
+        },
+        {
+          "name": "Mouse",
+          "count": -1,
+          "where": "Mouse zone."
+        },
+        {
+          "name": "Monitor",
+          "count": -1,
+          "where": "Monitor zone."
+        },
+        {
+          "name": "Electrical cables",
+          "count": -1,
+          "where": "Cable zone and route hazards."
+        },
+        {
+          "name": "CPU",
+          "count": -1,
+          "where": "Terminal right-side escape area."
+        },
+        {
+          "name": "Lasers",
+          "count": -1,
+          "where": "Distributed along the route."
+        },
+        {
+          "name": "Fans",
+          "count": -1,
+          "where": "Distributed along the route."
+        },
+        {
+          "name": "Rotating platforms",
+          "count": -1,
+          "where": "Distributed along the route."
+        },
+        {
+          "name": "Push bars",
+          "count": -1,
+          "where": "Distributed along the route."
+        },
+        {
+          "name": "Falling desk objects",
+          "count": -1,
+          "where": "Distributed along the route."
+        }
+      ],
+      "boundary": "The course is bounded at the desk edges.",
+      "scale_band": "large",
+      "theme": "Colourful modern Roblox obby with oversized electronics."
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "the nine-zone order, legal gaps, hazard clearances, and checkpoint reachability must be valid before visual dressing.",
+      "set_piece": false
+    },
+    "route": [
+      "P6"
+    ],
+    "notes": [
+      "The blob states exactly nine zones but lists seven grouped labels; the stated disappearing, bouncing, and sinking key types are transcribed as three consecutive key subzones to preserve the specified nine-zone order.",
+      "No teleporters are used."
+    ],
+    "scene_prompt": "Crea un mapa 3D de obby colorido sobre un enorme escritorio, visto a escala de personas miniatura. Una ruta continua atraviesa nueve zonas sin teletransportes: teclas normales gigantes, teclas que desaparecen, rebotan o se hunden, seguida por las zonas del mouse, monitor, cables, escritorio y CPU. Cada tecla es una plataforma individual lo bastante grande para caminar sobre ella y saltar hacia las teclas vecinas; integra láseres, ventiladores, teclas móviles, plataformas giratorias, cables eléctricos, barras de empuje, objetos que caen y zonas peligrosas a lo largo del recorrido. El trayecto termina en la zona de la CPU, presentada como la meta final de escape. Coloca monedas coleccionables sobre rutas, saltos y zonas de riesgo."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "1986e1975066",
+  "served_by": "subagent/genre-choice -> gateway/production/gpt-5.6-terra",
+  "schema_degraded": false,
+  "reused_uprez": true,
+  "order": "p6",
+  "first": "topdown",
+  "mapper_notes": []
+}

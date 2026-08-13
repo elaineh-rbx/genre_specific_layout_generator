@@ -3,126 +3,112 @@
   "source": "Create a neon futuristic parkour map spread across a 2048x2048 studs area. The map should include: - A large lava floor covering the entire 2048x2048 base at Y=0, glowing red-orange neon material, that kills players who fall on it. - A start platform at one corner where players begin, bright cyan neon. - 10 floating platforms of varying sizes and heights arranged in a zigzag path across the map, each a different neon color (magenta, purple, blue, green, yellow, orange, pink, white, teal, lime). - 2 ramps connecting some platforms, neon gradient style. - 2 obstacle walls that players must jump around, dark neon with glowing edges. - 4 checkpoint platforms placed at intervals along the path, golden neon with a glowing ring or marker. - A finish platform at the far corner, bright green neon with a celebration feel. The platforms should be spaced so that jumps are challenging but possible (gaps of 10-20 studs). Heights should gradually increase then vary. Make all parts Anchored and CanCollide true. Expose these editable attributes: - platformColor (the base color for all platforms, default bright cyan) - lavaColor (color of the lava floor, default red-orange) - jumpDifficulty (controls the gap between platforms: easy=8 studs, medium=15 studs, hard=25 studs, default medium) - platformSize (base size of platforms in studs, default 12) - neonIntensity (controls brightness of neon parts, default 1) The overall style should be vibrant, glowing, futuristic neon. Use Neon material for all glowing parts.",
   "answers": [],
   "scene_prompt": "Create a vibrant futuristic neon parkour map spread across a 2048x2048-stud square. A glowing red-orange lava floor covers the entire base at Y=0. Place a bright cyan start platform at one corner and a bright green finish platform with a celebratory glow at the far opposite corner. Between them, arrange 10 floating platforms of varying sizes and gradually rising then varied heights in a zigzag route across the map, colored magenta, purple, blue, green, yellow, orange, pink, white, teal, and lime; keep challenging but feasible 10–20-stud gaps. Add two neon-gradient ramps linking sections of the route, two dark neon obstacle walls with glowing edges that require players to go around them, and four golden neon checkpoint platforms with glowing rings or markers spaced at intervals along the path. Use a consistently glowing neon visual treatment throughout.",
-  "blob": "### Genre\nThe dominant genre is Obby & Platformer: the authored fall hazard, sequential jumping route, checkpoints, and finish establish a skill-based parkour course.\n\n### Shape and preset\nUse `course-terraced`, matching the Precision Platformer preset: this is a broad zigzag ascent of discrete floating platforms rather than a flat difficulty chart or a vertical tower. Retain the explicitly requested sequential track and checkpoints, which the preset does not supply.\n\n### Config requirements\nUse `path-track` as a visible zigzag chain of floating neon platforms across the lava. Use `checkpoint-respawn` for four golden neon landing platforms with glowing rings. Use `hazard-kill` for the continuous glowing red-orange lava floor. Use `obstacle-jump` for the two neon-gradient ramps and two dark obstacle walls with luminous edges that force route adjustments. Use `winner-zone` for the bright green celebratory finish platform.\n\n### Layout requirements\nPlace `checkpoint-respawn` at four safe, enclosed landing pads spaced at meaningful intervals along the ten-platform route, approximately after each quarter of the traversal; each is also visibly rendered as a gold platform and ring. Place one `winner-zone` on the far-corner green finish platform, beyond the final jump, as the course completion area. No pickups, buffs, or other placed gameplay objects are requested.\n\n### Layout components\nBuild one 2048×2048-stud square parkour field. A red-orange neon lava floor fills the entire base at Y=0. Set the cyan start platform at one corner and the green, celebratory finish platform at the diagonally opposite corner. Between them, create exactly 10 floating platforms of varying footprint and elevation, arranged as a wide zigzag route; their colors are, in route order, magenta, purple, blue, green, yellow, orange, pink, white, teal, and lime. Heights should generally rise through the early route and become varied toward the finish. Keep every critical jump gap challenging but feasible at 10–20 studs. Insert exactly two neon-gradient ramps between selected platform sections and exactly two dark neon walls with glowing edges that require players to jump around them. Keep the boundary open above the lava, with no enclosing buildings or terrain. Compose the full diagonal route clearly in frame, showing start, rising midcourse, and distant finish.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because the full jump chain and its 10–20-stud gaps must remain connected and playable before the neon isometric dressing is produced.\n\n### Scale, theme, and pipeline cost\nScale is huge, driven by the 2048×2048-stud field and its corner-to-corner course. Theme: vibrant glowing futuristic neon, with cyan, gold, and multicolored platforms contrasting against red-orange lava. Apply `tiered` for the changing platform elevations and `P6` because physics-legal jump connectivity is essential; the floating route must be validated rather than inferred from appearance alone.",
+  "blob": "### 1. Genre\nThe dominant genre is Obby & Platformer: the player progresses by making discrete, individually paced parkour jumps, with falls punished and recovery at checkpoints.\n\n### 2. Shape and preset\nUse `course-flat`, a broad horizontal zigzag course spanning the square lava field rather than a tower or terraced hillside. Match the Classic Obby preset: its sequential route and recovery pads remain recognisable, while the prompt replaces generic repeated obstacles with the specified ramps and detour walls.\n\n### 3. Config requirements\nUse `path-track` for the ordered chain of floating neon platforms from cyan start to green finish, with feasible 10–20-stud jumps. Use `checkpoint-respawn` for four golden neon checkpoint pads with glowing rings. Use `hazard-kill` for the full-base red-orange lava floor at Y=0. Use `obstacle-jump` for two neon-gradient ramps and two dark neon, edge-lit walls that force a jump-around detour.\n\n### 4. Layout requirements\nPlace `checkpoint-respawn` at four safe intervals along the critical zigzag route, each on its own golden platform after a completed route segment and before the next difficult jump sequence; respawning returns the player to the latest pad. No other non-rendered layout markers are required.\n\n### 5. Layout components\nThe single course occupies a 2048x2048-stud square. A continuous glowing red-orange lava plane covers the entire base at Y=0. Put the bright cyan start platform at one corner and the bright green celebratory finish platform at the diagonally opposite corner. Between them, place exactly 10 floating platforms of varied sizes in a clear zigzag: in route order use magenta, purple, blue, green, yellow, orange, pink, white, teal, and lime. Their heights rise gradually through the early route, then vary toward the finish; keep every critical gap within 10–20 studs. Insert exactly two gradient-neon ramps between route sections and exactly two dark neon obstacle walls with glowing edges, arranged so players must route around them. Place the four gold checkpoint platforms at readable quarter-route intervals. The lava field is the enclosing hazard boundary; leave the upper space open. Compose the view diagonally from start toward finish so the entire zigzag progression is legible.\n\n### 6. Render order\nUse `topdown` first and treat it as authoritative, because the connected jump route and all critical gaps must remain physically playable; the isometric render is dressed from that validated plan.\n\n### 7. Scale, theme, and pipeline cost\nScale is huge, driven by the stated 2048x2048-stud footprint. Theme: vibrant red-orange, cyan, and multicolour futuristic neon parkour, with glowing materials and high contrast against the lava. Apply `P6` because the sequential platform path and jump gaps must be valid by construction.",
   "spec": {
     "genre": "Obby & Platformer",
     "secondary": [],
-    "shape": "course-terraced",
-    "preset": "Precision Platformer",
+    "shape": "course-flat",
+    "preset": "Classic Obby",
     "axes": {},
     "options": [
       {
         "id": "path-track",
-        "text": "A visible zigzag chain of 10 floating neon platforms crossing the lava from the cyan start to the green finish.",
+        "text": "Ordered chain of floating neon platforms from the cyan start to the green finish, with feasible 10–20-stud jumps.",
         "visible": true,
         "count": 10
       },
       {
         "id": "checkpoint-respawn",
-        "text": "Four golden neon safe landing platforms with glowing rings, spaced at meaningful intervals along the route.",
+        "text": "Four golden neon checkpoint pads with glowing rings.",
         "visible": true,
         "count": 4
       },
       {
         "id": "hazard-kill",
-        "text": "A continuous glowing red-orange neon lava floor filling the entire base at Y=0.",
+        "text": "Full-base red-orange lava floor at Y=0.",
         "visible": true,
-        "count": 1
+        "count": -1
       },
       {
         "id": "obstacle-jump",
-        "text": "Two neon-gradient ramps and two dark obstacle walls with luminous edges that force route adjustments.",
+        "text": "Two neon-gradient ramps and two dark neon, edge-lit walls that force a jump-around detour.",
         "visible": true,
         "count": 4
-      },
-      {
-        "id": "winner-zone",
-        "text": "One bright green celebratory finish platform beyond the final jump.",
-        "visible": true,
-        "count": 1
       }
     ],
     "layout_placement": [
       {
         "id": "checkpoint-respawn",
-        "text": "Four golden neon safe landing platforms with glowing rings.",
+        "text": "Four golden neon checkpoint pads with glowing rings; respawning returns the player to the latest pad.",
         "count": 4,
-        "where": "At meaningful intervals along the 10-platform route, approximately after each quarter of the traversal."
-      },
-      {
-        "id": "winner-zone",
-        "text": "A bright green celebratory finish platform as the course completion area.",
-        "count": 1,
-        "where": "On the far-corner green finish platform, beyond the final jump."
+        "where": "At safe quarter-route intervals along the critical zigzag route, each on its own golden platform after a completed route segment and before the next difficult jump sequence."
       }
     ],
     "layout": {
-      "composition": "Show the full diagonal route clearly in frame: the cyan start at one corner, the rising zigzag midcourse across the lava, and the distant green finish at the diagonally opposite corner.",
+      "composition": "Diagonal view from the cyan start corner toward the green finish corner, with the entire zigzag progression legible across the square lava field.",
       "zones": [
         {
-          "name": "Cyan start platform",
-          "role": "Course start.",
+          "name": "Start platform",
+          "role": "Bright cyan beginning of the course.",
           "where": "One corner of the square field.",
           "size": ""
         },
         {
-          "name": "Zigzag floating platform route",
-          "role": "Sequential jumping route across the lava.",
-          "where": "Diagonally between the start and finish corners.",
-          "size": "10 floating platforms"
-        },
-        {
-          "name": "Green finish platform",
-          "role": "Celebratory course completion area.",
-          "where": "Diagonally opposite the cyan start platform.",
+          "name": "Zigzag route",
+          "role": "The ordered floating-platform parkour progression, including ramps, detour walls, and checkpoint platforms.",
+          "where": "Across the map between the two opposite corners.",
           "size": ""
         },
         {
-          "name": "Lava base",
-          "role": "Continuous fall hazard beneath the course.",
-          "where": "Fills the entire field base at Y=0.",
-          "size": "2048×2048 studs"
+          "name": "Finish platform",
+          "role": "Bright green celebratory course finish.",
+          "where": "Diagonally opposite the start corner.",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Cyan start platform",
-          "to": "Green finish platform",
+          "from": "Start platform",
+          "to": "Finish platform",
           "kind": "track"
         }
       ],
-      "terrain": "A red-orange neon lava floor fills the entire 2048×2048-stud base at Y=0; floating platform heights generally rise through the early route and become varied toward the finish.",
+      "terrain": "A continuous glowing red-orange lava plane covers the entire 2048x2048-stud base at Y=0; the upper space is open.",
       "props": [
+        {
+          "name": "Floating platforms in magenta, purple, blue, green, yellow, orange, pink, white, teal, and lime",
+          "count": 10,
+          "where": "In clear zigzag route order between the start and finish, rising gradually through the early route and then varying toward the finish."
+        },
         {
           "name": "Neon-gradient ramps",
           "count": 2,
-          "where": "Between selected platform sections of the zigzag route."
+          "where": "Between route sections."
         },
         {
           "name": "Dark neon obstacle walls with glowing edges",
           "count": 2,
-          "where": "Along the route, requiring players to jump around them."
+          "where": "Along the route, arranged to require players to route around them."
         },
         {
           "name": "Golden neon checkpoint platforms with glowing rings",
           "count": 4,
-          "where": "At meaningful intervals along the route, approximately after each quarter of the traversal."
+          "where": "At readable quarter-route intervals along the path."
         }
       ],
-      "boundary": "Open above the lava, with no enclosing buildings or terrain.",
+      "boundary": "The lava field is the enclosing hazard boundary.",
       "scale_band": "huge",
-      "theme": "Vibrant glowing futuristic neon; cyan, gold, and multicolored platforms contrast against red-orange lava."
+      "theme": "Vibrant red-orange, cyan, and multicolour futuristic neon parkour with glowing materials and high contrast against lava."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the full jump chain and its 10–20-stud gaps must remain connected and playable before the neon isometric dressing is produced",
+      "why": "the connected jump route and all critical gaps must remain physically playable.",
       "set_piece": false
     },
     "route": [
-      "P6",
-      "tiered"
+      "P6"
     ],
     "notes": [],
     "scene_prompt": "Create a vibrant futuristic neon parkour map spread across a 2048x2048-stud square. A glowing red-orange lava floor covers the entire base at Y=0. Place a bright cyan start platform at one corner and a bright green finish platform with a celebratory glow at the far opposite corner. Between them, arrange 10 floating platforms of varying sizes and gradually rising then varied heights in a zigzag route across the map, colored magenta, purple, blue, green, yellow, orange, pink, white, teal, and lime; keep challenging but feasible 10–20-stud gaps. Add two neon-gradient ramps linking sections of the route, two dark neon obstacle walls with glowing edges that require players to go around them, and four golden neon checkpoint platforms with glowing rings or markers spaced at intervals along the path. Use a consistently glowing neon visual treatment throughout."
@@ -130,9 +116,9 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "010a8a15fa34",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
-  "reused_uprez": false,
+  "reused_uprez": true,
   "order": "p6",
   "first": "topdown",
   "mapper_notes": []

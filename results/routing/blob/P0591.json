@@ -19,7 +19,7 @@
     }
   ],
   "scene_prompt": "Create a compact lane-defence field as a single playable arena, with all lanes visible at once. Use a grassy, colorful cartoon garden battlefield layout rather than an open world or free-for-all arena.",
-  "blob": "### Genre\nDominant genre: Strategy, specifically a compact tower-defense-style lane-defense game. The original request explicitly rejects an open world and free-for-all arena in favor of a lane-defense field.\n\n### Shape and preset\nUse `lane-actor-track`, matched from the Tower Defense preset. Here it is a single compact garden battlefield containing several clearly readable parallel defense lanes, all visible together rather than a long sprawling route. The preset remains recognizable.\n\n### Config requirements\nUse visible `buildzone-grid` as neat grassy deployment strips and small paved planting pads flanking the lanes. Use `tracker-core` as a prominent protected garden-base structure at the shared end of the field. Use invisible `spawner-npc` markers at the opposite lane entries; only their decorative gate or hedge-opening origins are visible. Use visible `choke-bottleneck` at one or two narrowed hedge-lined lane sections where the garden paths constrict. These are the Tower Defense preset requirements, adapted to the cartoon garden setting.\n\n### Layout components\nThe arena is a compact rectangular lawn field viewed in one glance. Place the shared core/base along the near short edge, centered and visually distinct, with multiple parallel lanes extending away from it toward the far edge. Each lane is a broad, clean garden path with colored edging, separated by low hedges, flowerbeds, and narrow strips of grass. At the far end, give each lane a matching hedge gate or whimsical garden arch as its visible entry origin. Put the build pads in orderly rows beside and between the paths, leaving clear uninterrupted lane surfaces. Narrow selected paths with hedge pinch points but retain an obvious continuous route from each far entry to the core. Enclose the field with a low hedge wall, flower borders, and rounded cartoon trees at the corners; there is no exterior world beyond it. Keep terrain flat, with saturated grass, flowers, shrubs, stepping stones, and small garden ornaments as dressing. Frame the whole rectangular field in a high three-quarter isometric view so every lane, entry, and core is simultaneously legible.\n\n### Render order\nUse `authored_plan`: the lane routes must be valid continuous paths from their entry origins to the shared core, so the blueprint is generated first and the garden dressing follows.\n\n### Scale, theme, and pipeline cost\nScale band: small, driven by the requirement that the full single arena and all lanes remain visible at once. Theme: bright grassy cartoon garden battlefield, playful and colorful. Pipeline modifier: `P6`, forced by the connected, gameplay-critical lane topology that must be valid by construction.",
+  "blob": "### 1. Genre\nThe dominant genre is Strategy: this is a compact tower-defense lane field, not an open-world map or free-for-all arena.\n\n### 2. Shape and preset\nUse `lane-actor-track`, a compact garden battlefield with all enemy lanes readable together from a single overview. Match the Tower Defense preset, retaining its lane-and-core logic while omitting a choke point because the prompt only calls for a clearly visible compact field.\n\n### 3. Config requirements\nUse `buildzone-grid` as neat, flat planting strips or pads flanking the grassy lanes for defensive plants. Use `tracker-core` as the defended capybara-side home base at the terminal end of the lanes, visibly distinct from the garden ground.\n\n### 4. Layout requirements\nUse `tracker-core` in both forms: place one core marker at the shared end of all lanes, integrated with the capybara base. Use `spawner-npc` for one enemy-wave origin at the far end of each visible lane; these origins face directly toward the core and are separated enough to keep lane entry readable. The exact lane count is not stated, so do not invent one.\n\n### 5. Layout components\nBuild one compact rectangular grassy garden arena. Arrange parallel, clearly separated straight lanes across the field from plant-side enemy entry edges toward the capybara core at the opposite end. Put buildable planting pads in orderly rows along both sides of every lane, leaving the lane surfaces unobstructed. The core zone is a small, cheerful capybara-themed garden base spanning the receiving ends of the lanes; the opposing edge holds matching enemy-entry borders. Use bright turf, flower beds, low hedges, dirt-path lane surfaces, colorful shrubs, and simple cartoon garden trim. Enclose the play field with a low decorative hedge or fence boundary. Compose it in a near-top-down three-quarter view so every lane, planting strip, entry edge, and core are visible at once.\n\n### 6. Render order\nUse `topdown` first and treat that plan as authoritative, because lane connectivity and the shared route from every spawn edge to the defended core must remain playable and unambiguous.\n\n### 7. Scale, theme, and pipeline cost\nScale is small, driven by the single compact arena and simultaneous visibility of all lanes. Theme: bright, colorful cartoon garden battlefield with playful capybara character. Use `P6` because each enemy lane must be a valid, continuous route from its wave origin to the core.",
   "spec": {
     "genre": "Strategy",
     "secondary": [],
@@ -29,135 +29,121 @@
     "options": [
       {
         "id": "buildzone-grid",
-        "text": "Neat grassy deployment strips and small paved planting pads flanking the lanes, in orderly rows beside and between the paths.",
+        "text": "Neat, flat planting strips or pads flanking the grassy lanes for defensive plants.",
         "visible": true,
         "count": -1
       },
       {
         "id": "tracker-core",
-        "text": "A prominent protected garden-base structure at the shared near end of the field, centered and visually distinct.",
+        "text": "The defended capybara-side home base at the terminal end of the lanes, visibly distinct from the garden ground.",
         "visible": true,
-        "count": -1
+        "count": 1
       },
       {
         "id": "spawner-npc",
-        "text": "Invisible markers at the opposite lane entries; matching hedge gates or whimsical garden arches are their visible entry origins.",
+        "text": "Enemy-wave origins at the far end of each visible lane, facing directly toward the core and separated enough to keep lane entry readable.",
         "visible": false,
-        "count": -1
-      },
-      {
-        "id": "choke-bottleneck",
-        "text": "One or two narrowed hedge-lined lane sections where the garden paths constrict.",
-        "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "tracker-core",
+        "text": "One core marker integrated with the capybara base at the shared end of all lanes.",
+        "count": 1,
+        "where": "At the shared receiving end of all lanes, integrated with the capybara base."
+      },
+      {
+        "id": "spawner-npc",
+        "text": "One enemy-wave origin at the far end of each visible lane, facing directly toward the core.",
+        "count": -1,
+        "where": "At the far end of each visible lane, separated enough to keep lane entry readable."
+      }
+    ],
     "layout": {
-      "composition": "High three-quarter isometric view framing the whole compact rectangular field in one glance: the shared core is centered on the near short edge, parallel lanes extend through the middle toward matching far-edge entry gates, and the enclosing hedge wall, flower borders, and corner trees frame the perimeter.",
+      "composition": "Near-top-down three-quarter overview showing every parallel lane, planting strip, enemy entry edge, and capybara core at once.",
       "zones": [
         {
-          "name": "shared garden core",
-          "role": "Protected garden-base structure receiving all lane routes.",
-          "where": "centered along the near short edge",
-          "size": "prominent"
+          "name": "Grassy garden arena",
+          "role": "The single compact rectangular tower-defense field containing all visible lanes.",
+          "where": "Centre of the map",
+          "size": "compact"
         },
         {
-          "name": "parallel defense lanes",
-          "role": "Continuous garden-path routes from far entry origins to the shared core.",
-          "where": "across the rectangular field, extending from the far edge toward the near edge",
-          "size": "broad, compact"
-        },
-        {
-          "name": "deployment strips and planting pads",
-          "role": "Orderly tower-deployment ground beside and between the lanes.",
-          "where": "flanking, beside, and between paths",
-          "size": "small"
-        },
-        {
-          "name": "far entry origins",
-          "role": "Visible hedge-gate or whimsical garden-arch origins for each lane.",
-          "where": "far edge of the field",
+          "name": "Planting strips and pads",
+          "role": "Buildable defensive-plant areas flanking each lane.",
+          "where": "Along both sides of every lane",
           "size": ""
         },
         {
-          "name": "hedge pinch points",
-          "role": "Narrowed lane sections while preserving continuous routes.",
-          "where": "selected paths",
-          "size": "one or two"
+          "name": "Capybara core zone",
+          "role": "Cheerful defended garden home base receiving all lanes.",
+          "where": "At the shared terminal end of the lanes",
+          "size": "small"
         },
         {
-          "name": "field perimeter",
-          "role": "Encloses the single arena with garden dressing.",
-          "where": "around the rectangular field",
+          "name": "Enemy-entry borders",
+          "role": "Lane entry edges and origins for incoming enemy waves.",
+          "where": "At the opposing end of the field from the core",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "far entry origins",
-          "to": "shared garden core",
+          "from": "Enemy-entry borders",
+          "to": "Capybara core zone",
           "kind": "track"
         }
       ],
-      "terrain": "Flat saturated grass with broad clean garden paths, colored edging, low hedges, flowerbeds, narrow grass strips, flowers, shrubs, and stepping stones.",
+      "terrain": "Bright turf with dirt-path lane surfaces, flower beds, low hedges, colorful shrubs, and simple cartoon garden trim.",
       "props": [
         {
-          "name": "low hedges",
+          "name": "Flower beds",
           "count": -1,
-          "where": "between lanes, at pinch points, and along the field perimeter"
+          "where": "Around the garden battlefield"
         },
         {
-          "name": "flowerbeds and flower borders",
+          "name": "Low hedges",
           "count": -1,
-          "where": "between lanes and around the perimeter"
+          "where": "Around and within the garden field"
         },
         {
-          "name": "matching hedge gates or whimsical garden arches",
+          "name": "Colorful shrubs",
           "count": -1,
-          "where": "at each far-end lane entry"
+          "where": "Across the garden battlefield"
         },
         {
-          "name": "rounded cartoon trees",
+          "name": "Simple cartoon garden trim",
           "count": -1,
-          "where": "at the corners"
-        },
-        {
-          "name": "stepping stones",
-          "count": -1,
-          "where": "garden dressing across the field"
-        },
-        {
-          "name": "small garden ornaments",
-          "count": -1,
-          "where": "garden dressing across the field"
+          "where": "Throughout the arena"
         }
       ],
-      "boundary": "Low hedge wall with flower borders and rounded cartoon trees at the corners; there is no exterior world beyond it.",
+      "boundary": "A low decorative hedge or fence encloses the play field.",
       "scale_band": "small",
-      "theme": "Bright grassy cartoon garden battlefield, playful and colorful."
+      "theme": "Bright, colorful cartoon garden battlefield with playful capybara character."
     },
     "render": {
-      "first": "authored_plan",
-      "then": "topdown",
-      "authoritative": "authored_plan",
-      "why": "the lanes must remain valid continuous paths from their entry origins to the shared core.",
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "Lane connectivity and the shared route from every spawn edge to the defended core must remain playable and unambiguous.",
       "set_piece": false
     },
     "route": [
       "P6"
     ],
-    "notes": [],
+    "notes": [
+      "The exact lane count is not stated; lane-related counts remain -1."
+    ],
     "scene_prompt": "Create a compact lane-defence field as a single playable arena, with all lanes visible at once. Use a grassy, colorful cartoon garden battlefield layout rather than an open world or free-for-all arena."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",
   "first": "topdown",
-  "mapper_notes": [
-    "blob asked for authored_plan first; the route ['P6'] gives topdown"
-  ]
+  "mapper_notes": []
 }

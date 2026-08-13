@@ -14,112 +14,112 @@
     }
   ],
   "scene_prompt": "Create a 3D obby map in a futuristic abstract sci-fi setting: a compact vertical tower of clean floating platform sections suspended in a dark void, with routes visibly crossing above and below one another. Arrange glowing doors and floor buttons along the climb, with open gaps and clear sightlines between stacked sections so translucent, distinctly glowing ghostly player echoes can be seen retracing paths throughout the tower. Design the tower as an extendable sequence of procedurally generated stages.",
-  "blob": "### Genre\nThe dominant genre is Obby & Platformer: the original describes a death-and-retry movement course whose critical route consists of discrete jumps. There is no secondary genre.\n\n### Shape and preset\nUse `course-tower`, a compact vertical climb of stacked floating platform bays whose routes can be read across open air above and below the player. The matched preset is Tower Obby. The prompt confirms its tower shape, but only retains the platform-track and jump geometry rather than assuming the preset’s timed obstacles, ladders, or reward area.\n\n### Config requirements\n`path-track` is visible geometry: an ordered ascending chain of clean floating platforms through each tower stage. `obstacle-jump` is visible geometry: open, readable gaps between platform landings. `npc-population` is visible character geometry: translucent, distinctly glowing ghostly player-echo figures distributed on visible route segments; their replay/path behavior is invisible layout data and must not enter the render. Glowing doors and floor buttons are visible sci-fi props, not additional gameplay-option picks.\n\n### Layout components\nBuild one compact tower stage as a vertically stacked sequence of floating platform sections, with a lower entry bay, several mid-height crossing bays, and a high exit connection into the next generated stage. Keep broad void gaps and open side faces between tiers, so the player can see ghostly silhouettes moving on routes overhead and below. Arrange the main platform chain to rise around the tower’s center while short side platforms create visible crossings without blocking sightlines. Place glowing floor buttons on selected landings and glowing door frames at transitions between sections. Terrain is absent: all surfaces are clean modular sci-fi slabs suspended in a dark void. The boundary is the surrounding void, with the tower’s playable route visually isolated in frame. Compose the isometric view to show the full height of the current tower segment and its crossing paths.\n\n### Render order\nUse `topdown`: render a plan first and dress it isometrically afterward, because every stacked stage’s jump chain must remain connected and physically traversable; this is not `authored_plan`, which is reserved for mazes and racing circuits.\n\n### Scale, theme, and pipeline cost\nScale is medium per compact tower stage, with a repeatable vertical connection for an extendable stage sequence. Theme: minimalist futuristic abstract sci-fi, neon-glowing controls, translucent spectral echoes, and dark void contrast. Pipeline modifiers are `P2` because stacked platform surfaces overlap in plan view, and `P6` because the tower’s critical jump route must be valid by construction.",
+  "blob": "### 1. Genre\nThe dominant genre is Obby & Platformer, with Puzzle as a secondary genre: traversal is a physics-legal vertical jump course, while buttons and doors create timing and route dependencies.\n\n### 2. Shape and preset\nUse `course-tower`, matching the Tower Obby preset. The compact tower stacks the climb vertically so earlier-run echoes remain visible on platforms above and below the current route. Retain the preset’s vertical ascent but replace its timing and climb emphasis with the prompt’s branching platform, door, and button interactions.\n\n### 3. Config requirements\nUse `path-track` for a continuous chain of clean floating platforms forming each generated vertical stage. Use `obstacle-jump` for open, readable gaps between platforms. Use `button-solve` for glowing floor buttons embedded on landings and `gate-solve` for illuminated doors that visibly block or open onward platform routes. The ghostly replay figures are translucent glowing player silhouettes traversing the same drawn paths.\n\n### 4. Layout requirements\nUse `checkpoint-respawn`, with one safe enclosed respawn pad at the start of each generated stage and after each major vertical section. `button-solve` needs one placed interaction trigger per glowing floor button, directly beneath or centered on its button. `gate-solve` needs a progression volume at each glowing door, spanning the route immediately beyond its threshold. No pickups, enemy spawners, or combat volumes are needed.\n\n### 5. Layout components\nBuild a compact vertical tower suspended in a dark void. Each stage is a stacked cluster of narrow clean sci-fi platforms, broad safe landings, open jump gaps, and alternate crossing routes. The primary platform chain ascends through the center, while side routes loop across it at different heights so echoes can be seen retracing paths overhead and underneath. Put glowing floor buttons on side landings, with corresponding glowing doors on the next upward route. Keep the tower open-sided, with no exterior walls; the void is the boundary and provides uninterrupted sightlines. Frame it as a clear vertical cutaway, showing several stacked sections at once and emphasizing the overlapping routes.\n\n### 6. Render order\nUse `topdown` first, authoritative because each procedurally extendable stage needs a valid connected jump chain and button-door route before it is dressed into an isometric tower view.\n\n### 7. Scale, theme, and pipeline cost\nUse a medium initial build scale: each stage is compact, but the modular tower can extend indefinitely. Theme: clean abstract futuristic sci-fi, dark void, luminous cyan or violet doors, buttons, platform edges, and translucent echo figures. Apply `P2` because routes and platforms visibly stack above one another, and `P6` because the critical jump path and generated stage connections must be valid by construction.",
   "spec": {
     "genre": "Obby & Platformer",
-    "secondary": [],
+    "secondary": [
+      "Puzzle"
+    ],
     "shape": "course-tower",
     "preset": "Tower Obby",
     "axes": {},
     "options": [
       {
         "id": "path-track",
-        "text": "an ordered ascending chain of clean floating platforms through each tower stage",
+        "text": "A continuous chain of clean floating platforms forming each generated vertical stage.",
         "visible": true,
         "count": -1
       },
       {
         "id": "obstacle-jump",
-        "text": "open, readable gaps between platform landings",
+        "text": "Open, readable gaps between platforms.",
         "visible": true,
         "count": -1
       },
       {
-        "id": "npc-population",
-        "text": "translucent, distinctly glowing ghostly player-echo figures distributed on visible route segments",
+        "id": "checkpoint-respawn",
+        "text": "One safe enclosed respawn pad at the start of each generated stage and after each major vertical section.",
         "visible": true,
-        "count": -1
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "checkpoint-respawn",
+        "text": "One safe enclosed respawn pad at the start of each generated stage and after each major vertical section.",
+        "count": 1,
+        "where": "At the start of each generated stage and after each major vertical section."
       }
     ],
     "layout": {
-      "composition": "Isometric view showing the full height of the current compact tower segment, with crossing paths visible through open air above and below the player.",
+      "composition": "A clear vertical cutaway of the open-sided tower, showing several stacked sections at once. The primary platform chain ascends through the center, while side routes loop across it at different heights above and below the current route.",
       "zones": [
         {
-          "name": "lower entry bay",
-          "role": "Entry section of the vertically stacked platform sequence.",
-          "where": "lower tower",
+          "name": "Primary central climb",
+          "role": "The continuous ascending platform chain through the tower.",
+          "where": "Center",
+          "size": "Compact vertical ascent"
+        },
+        {
+          "name": "Side landing routes",
+          "role": "Alternate crossing routes holding glowing floor buttons and linking to doors on the next upward route.",
+          "where": "Across the central climb at different heights",
           "size": ""
         },
         {
-          "name": "mid-height crossing bays",
-          "role": "Floating platform sections where short side platforms create visible crossings without blocking sightlines.",
-          "where": "middle of the tower",
-          "size": "several"
-        },
-        {
-          "name": "high exit connection",
-          "role": "Connection from the current tower segment into the next generated stage.",
-          "where": "top of the tower",
-          "size": ""
+          "name": "Generated stages",
+          "role": "Procedurally extendable stacked clusters of platform challenges.",
+          "where": "Vertically through the tower",
+          "size": "Compact"
         }
       ],
       "paths": [
         {
-          "from": "lower entry bay",
-          "to": "mid-height crossing bays",
+          "from": "Primary central climb",
+          "to": "Generated stages",
           "kind": "track"
         },
         {
-          "from": "mid-height crossing bays",
-          "to": "high exit connection",
-          "kind": "track"
-        },
-        {
-          "from": "high exit connection",
-          "to": "next generated stage",
+          "from": "Side landing routes",
+          "to": "Next upward route",
           "kind": "track"
         }
       ],
-      "terrain": "Terrain is absent; clean modular sci-fi slabs are suspended in a dark void, with broad void gaps and open side faces between tiers.",
+      "terrain": "Clean narrow futuristic floating platforms and broad safe landings suspended in a dark void, with open jump gaps.",
       "props": [
         {
-          "name": "glowing floor buttons",
+          "name": "Translucent glowing ghostly player echoes",
           "count": -1,
-          "where": "selected landings"
-        },
-        {
-          "name": "glowing door frames",
-          "count": -1,
-          "where": "transitions between sections"
-        },
-        {
-          "name": "translucent glowing ghostly player-echo figures",
-          "count": -1,
-          "where": "visible route segments throughout the tower"
+          "where": "Retracing the drawn platform paths throughout the tower, including overhead and underneath routes."
         }
       ],
-      "boundary": "The surrounding dark void; the tower's playable route is visually isolated in frame.",
+      "boundary": "The dark void is the boundary; the tower is open-sided with no exterior walls and uninterrupted sightlines.",
       "scale_band": "medium",
-      "theme": "minimalist futuristic abstract sci-fi, neon-glowing controls, translucent spectral echoes, dark void contrast"
+      "theme": "Clean abstract futuristic sci-fi, dark void, luminous cyan or violet platform edges, doors, buttons, and echo figures."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "every stacked stage's jump chain must remain connected and physically traversable",
+      "why": "Each procedurally extendable stage needs a valid connected jump chain and button-door route before it is dressed into an isometric tower view.",
       "set_piece": false
     },
     "route": [
       "P2",
       "P6"
     ],
-    "notes": [],
+    "notes": [
+      "The prescribed progression volume for each gate-solve door is not included in layout_placement because gate-solve is an image-only option.",
+      "dropped option 'button-solve': not in Obby & Platformer",
+      "dropped option 'gate-solve': not in Obby & Platformer",
+      "dropped placement 'button-solve': not in Obby & Platformer"
+    ],
     "scene_prompt": "Create a 3D obby map in a futuristic abstract sci-fi setting: a compact vertical tower of clean floating platform sections suspended in a dark void, with routes visibly crossing above and below one another. Arrange glowing doors and floor buttons along the climb, with open gaps and clear sightlines between stacked sections so translucent, distinctly glowing ghostly player echoes can be seen retracing paths throughout the tower. Design the tower as an extendable sequence of procedurally generated stages."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

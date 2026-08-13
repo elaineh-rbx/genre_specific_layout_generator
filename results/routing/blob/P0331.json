@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a 3D game map showing a cosy suburban town with a pre-built set of claimable houses whose interiors can be decorated. Arrange many stores around the town’s central shopping area, with seasonal Christmas, Halloween, Easter, and St. Patrick’s Day decorations focused on store displays and pet-themed areas rather than changing the permanent buildings.",
-  "blob": "### Genre\nThe dominant genre is Roleplay & Avatar Sim, specifically a pet-care social town where players claim and personalize homes. The pet adoption and trading intent supports the Pet Care reading; the pet count and trading rules do not alter the map geometry.\n\n### Shape and preset\nUse `settlement-claimable`: one suburban town containing a pre-built, claimable housing set whose house interiors are decorated by residents. This matches the Pet Care preset, retaining its claimable homes, central social core, and pedestrian circulation.\n\n### Config requirements\nVisible geometry: `building-interior` provides enterable pre-built houses with decoratable interior rooms; `social-hub` is the central shopping and meeting area; `path-street` is a pedestrian-friendly network of suburban streets and sidewalks. `settlement-density` applies as a cohesive town of residences and many stores rather than isolated buildings. Seasonal Christmas, Halloween, Easter, and St. Patrick’s Day dressing appears only in store displays and pet-themed storefront areas, not in the permanent suburban architecture. No invisible layout options are required.\n\n### Layout components\nBuild one map. Place a broad central shopping square at the town center, with many storefronts arranged around its perimeter and inward-facing seasonal display windows, pet-themed signage, and small decorated forecourts. Surround this core with several residential blocks of pre-built claimable houses, spaced along quieter looping suburban streets; each house has an accessible interior suitable for player decoration. Connect homes, stores, and the central square with continuous sidewalks, short streets, crossings, and planted verges. Keep the terrain mostly flat and lawn-based, with street trees, hedges, mailboxes, benches, and small neighborhood gardens as supporting props. The town boundary is a soft suburban edge of hedges, trees, and distant residential greenery rather than a hard wall. Compose the central retail core as the visual anchor, with residential streets radiating outward in a readable town plan.\n\n### Render order\nUse `isometric`: the town’s atmosphere, storefront decoration, and cosy suburban presentation lead, while its simple connected street plan can be projected to top-down afterward.\n\n### Scale, theme, and pipeline cost\nUse a large scale driven by the central district, many stores, and multiple claimable homes within the single map. Theme: cosy suburban pet town, warm permanent architecture, with restrained seasonal retail accents. Pipeline modifier: `P3`, forced by players crossing from exterior streets into house interiors.",
+  "blob": "### Genre\nThe dominant genre is Roleplay & Avatar Sim: pet adoption, trading, house claiming, and interior decoration support the Pet Care style rather than a task-loop simulation. There is one map.\n\n### Shape and preset\nUse `settlement-claimable`, a suburban town of finished houses that players claim and personalize internally. Match the Pet Care preset: its claimable homes, central social activity, and pedestrian circulation fit the stated town without changing the permanent architecture for each holiday.\n\n### Config requirements\nUse `building-interior` for the pre-built claimable homes whose interiors can be decorated. Use `social-hub` as the central shopping and pet-focused gathering area. Use `path-street` for pedestrian-friendly streets and walkways connecting homes to the stores. Use `settlement-density` for a built-up suburban town with many stores concentrated around the central shopping district.\n\n### Layout requirements\nNo additional placed layout markers are required by the prompt. The house-claim and decoration systems are gameplay logic rather than rendered or segmented placement requirements.\n\n### Layout components\nBuild one contiguous cosy suburban map. Place a central shopping district as the town’s largest, most active zone, with many storefronts around a shared pedestrian plaza and pet-adoption/trading-oriented displays. Arrange a surrounding residential ring of pre-built, claimable houses, each with a readable entrance and a contained interior footprint for decoration. Connect the homes, plaza, and stores with calm sidewalks, short streets, planted verges, and small neighbourhood junctions. Keep permanent buildings warm, tidy, and suburban rather than holiday-specific. Add seasonal Christmas, Halloween, Easter, and St. Patrick’s Day dressing only at store windows, plaza displays, pet-themed kiosks, banners, and decorative corners. Enclose the outer town edge with landscaping, trees, hedges, and gentle roadside limits rather than an abrupt wall. Frame the shopping core near the image centre, with residential streets radiating outward.\n\n### Render order\nRender `isometric` first and treat it as authoritative: this is a visually led social town whose topology is straightforward and does not require procedural validation.\n\n### Scale, theme, and pipeline cost\nUse a large scale, driven by the central store concentration and surrounding claimable-home neighbourhood. Theme: cosy, welcoming suburban pet town with restrained seasonal retail decorations. Use `P3` because players cross from the outdoor town into decorated house interiors; no other geometry forces an additional pipeline pass.",
   "spec": {
     "genre": "Roleplay & Avatar Sim",
     "secondary": [],
@@ -24,124 +24,90 @@
     "options": [
       {
         "id": "building-interior",
-        "text": "Enterable pre-built claimable houses with decoratable interior rooms.",
+        "text": "Pre-built claimable homes with interiors that players can decorate.",
         "visible": true,
         "count": -1
       },
       {
         "id": "social-hub",
-        "text": "The central shopping and meeting area in a broad town-centre square.",
+        "text": "A central shopping and pet-focused gathering area.",
         "visible": true,
         "count": -1
       },
       {
         "id": "path-street",
-        "text": "A pedestrian-friendly network of continuous suburban streets, sidewalks, crossings, and planted verges linking homes, stores, and the central square.",
+        "text": "Pedestrian-friendly streets and walkways connecting homes to the stores.",
         "visible": true,
         "count": -1
       },
       {
         "id": "settlement-density",
-        "text": "A cohesive suburban town of residences and many stores rather than isolated buildings.",
+        "text": "A built-up suburban town with many stores concentrated around the central shopping district.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "The central retail core is the visual anchor at the town centre, with residential streets and blocks radiating outward in a readable town plan.",
+      "composition": "Frame the central shopping core near the image centre, with residential streets and the surrounding claimable-home neighbourhood radiating outward.",
       "zones": [
         {
-          "name": "Central shopping square",
-          "role": "Central shopping and meeting area with storefronts, seasonal displays, pet-themed signage, and decorated forecourts.",
-          "where": "town center",
-          "size": "broad"
+          "name": "Central shopping district",
+          "role": "The town's largest and most active zone, with storefronts around a shared pedestrian plaza and pet-adoption and trading displays.",
+          "where": "Image centre",
+          "size": "Largest zone"
         },
         {
-          "name": "Residential blocks",
-          "role": "Pre-built claimable houses with accessible, decoratable interiors.",
-          "where": "surrounding the central core along quieter looping suburban streets",
-          "size": "several blocks"
+          "name": "Residential ring",
+          "role": "Pre-built claimable houses with readable entrances and contained interior footprints for decoration.",
+          "where": "Surrounding the central shopping district",
+          "size": "Surrounding neighbourhood"
         }
       ],
       "paths": [
         {
-          "from": "Residential blocks",
-          "to": "Central shopping square",
-          "kind": "street"
+          "from": "Residential ring",
+          "to": "Central shopping district",
+          "kind": "road"
         },
         {
-          "from": "Residential blocks",
-          "to": "Central shopping square",
-          "kind": "corridor"
-        },
-        {
-          "from": "Homes",
-          "to": "Stores",
-          "kind": "street"
-        },
-        {
-          "from": "Homes",
-          "to": "Stores",
+          "from": "Claimable homes",
+          "to": "Stores and shared pedestrian plaza",
           "kind": "open ground"
         }
       ],
-      "terrain": "Mostly flat, lawn-based terrain with planted verges.",
+      "terrain": "Cosy suburban ground with planted verges, calm sidewalks, short streets, small neighbourhood junctions, and gentle roadside landscaping.",
       "props": [
         {
           "name": "Storefronts",
           "count": -1,
-          "where": "around the perimeter of the central shopping square"
+          "where": "Around the central shopping district and shared pedestrian plaza"
         },
         {
-          "name": "Inward-facing seasonal display windows",
+          "name": "Pet-adoption and trading-oriented displays",
           "count": -1,
-          "where": "central shopping square storefronts"
+          "where": "Central shopping district"
         },
         {
-          "name": "Pet-themed signage",
+          "name": "Christmas, Halloween, Easter, and St. Patrick's Day dressing",
           "count": -1,
-          "where": "storefront areas"
+          "where": "Store windows, plaza displays, pet-themed kiosks, banners, and decorative corners"
         },
         {
-          "name": "Small decorated forecourts",
+          "name": "Trees and hedges",
           "count": -1,
-          "where": "storefront areas"
-        },
-        {
-          "name": "Street trees",
-          "count": -1,
-          "where": "along streets and sidewalks"
-        },
-        {
-          "name": "Hedges",
-          "count": -1,
-          "where": "throughout the town and at the suburban edge"
-        },
-        {
-          "name": "Mailboxes",
-          "count": -1,
-          "where": "residential streets"
-        },
-        {
-          "name": "Benches",
-          "count": -1,
-          "where": "throughout the town"
-        },
-        {
-          "name": "Small neighborhood gardens",
-          "count": -1,
-          "where": "residential areas"
+          "where": "Outer town edge"
         }
       ],
-      "boundary": "A soft suburban edge of hedges, trees, and distant residential greenery rather than a hard wall.",
+      "boundary": "The outer town edge is enclosed by landscaping, trees, hedges, and gentle roadside limits rather than an abrupt wall.",
       "scale_band": "large",
-      "theme": "Cosy suburban pet town, warm permanent architecture, restrained seasonal retail accents."
+      "theme": "Cosy, welcoming suburban pet town with restrained seasonal retail decorations."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "the town’s atmosphere, storefront decoration, and cosy suburban presentation lead while its simple connected street plan can be projected afterward.",
+      "why": "This is a visually led social town whose straightforward topology does not require procedural validation.",
       "set_piece": false
     },
     "route": [
@@ -153,7 +119,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

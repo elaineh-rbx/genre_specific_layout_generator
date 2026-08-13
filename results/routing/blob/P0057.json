@@ -19,95 +19,103 @@
     }
   ],
   "scene_prompt": "Create a 3D boxing PvP map as a full fight-night arena inside an enclosed hall. A raised boxing ring sits at the center, built with a platform, ropes, and four corner posts; its floor uses cloth or wood material. Surround the ring with spectator stands and audience seating, with bright arena lighting overhead. Size the space for a small, clear one-on-one match with a maximum of two players.",
-  "blob": "### Genre\nThe dominant genre is Action: a one-on-one PvP boxing match centered on physical close-quarters combat. There is no secondary genre. The specified two-player limit keeps the space intimate rather than expanding it into a tournament complex.\n\n### Shape and preset\nUse `arena-flat`, matching the Fighting preset. The fight occurs on one level within a central raised ring; the surrounding seating is presentation architecture, not a second combat level. The prompt preserves the preset’s close-combat arena identity but replaces its generic pillars and chokepoints with the explicitly requested boxing ring and audience enclosure.\n\n### Config requirements\nUse `spectator-zone` as visible geometry: continuous spectator stands and audience seating surround the ring, raised enough to overlook it. No other Action options are selected: the prompt requests neither cover, hazards, protected spawn treatment, pickups, NPCs, nor combat emitters.\n\n### Layout components\nThe main and dominant zone is a compact square boxing ring at the exact center of the enclosed hall, sized for a clear one-on-one bout. Build it as a raised platform with a cloth or wood floor, taut ropes on all four sides, and exactly four corner posts. Leave a narrow ringside apron around it before the seating begins. A single spectator zone wraps the ring on all sides in close, stadium-style tiers, with rows of audience seats facing inward. Bright overhead arena lights form a concentrated lighting rig above the ring, making the canvas the visual focal point. The hall is enclosed by high walls and a ceiling, with no exterior terrain, water, side rooms, or separate routes implied. Keep circulation limited to the perimeter between the ring and stands; it is not a gameplay lane. Compose the isometric view symmetrically, looking diagonally across the ring so two corners, ropes, raised platform, encircling stands, and overhead lighting all read at once.\n\n### Render order\nUse `isometric`: the simple, symmetrical ring-and-stands arrangement is visually led and has no route topology whose failure would make the match unplayable.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the maximum of two players and one central bout space. Theme is a bright, polished full fight-night arena: enclosed, dramatic, and professionally lit. Use `P0`; the stands are tiered but do not create overhanging play surfaces, while the entire playable match space remains one representable surface.",
+  "blob": "### 1. Genre\nThe dominant genre is Action: this is a one-on-one PvP boxing match. There is no secondary genre.\n\n### 2. Shape and preset\nUse `space-bounded`, the Action flat-arena shape: one enclosed fight-night hall centered on a clean, raised boxing ring rather than a multi-room venue. Match the Fighting preset in its ring-focused competitive intent, but retain only the explicitly requested arena elements.\n\n### 3. Config requirements\nUse `spectator-zone` as tiered ringside stands and audience seating surrounding the ring. Do not add unrequested combat cover, hazards, or other fighting geometry.\n\n### 4. Layout requirements\nUse `spawn-protected` for two player start markers: place one at each pair of opposite ring corners, set back from immediate contact and with equal approach to the ring centre. No other placed gameplay elements are required.\n\n### 5. Layout components\nThe single central zone is a compact enclosed indoor arena sized for a maximum two-player match. A raised square boxing ring occupies the centre, with one platform, taut ropes on all four sides, and exactly four corner posts; use a cloth or wood ring floor. Arrange spectator seating and stepped stands as a continuous perimeter around the ring, leaving a narrow ringside circulation band between the apron and front row. Bright overhead arena lights focus on the ring, with the surrounding hall slightly darker to preserve the fight-night emphasis. The outer hall walls enclose the entire venue; there is no exterior play area. Compose the frame symmetrically, with the ring dominant at centre and seating clearly readable on every side.\n\n### 6. Render order\nRender `isometric` first and treat it as authoritative, because the small symmetrical arena has no topology whose failure would make the match unplayable.\n\n### 7. Scale, theme, and pipeline cost\nUse a small scale band, driven by the stated two-player maximum and one-ring match. Theme: bright professional fight-night boxing arena, enclosed stadium hall, focused overhead lighting. Use `tiered` for the stepped spectator stands; no overhanging play surfaces are required.",
   "spec": {
     "genre": "Action",
     "secondary": [],
-    "shape": "arena-flat",
+    "shape": "space-bounded",
     "preset": "Fighting",
     "axes": {},
     "options": [
       {
         "id": "spectator-zone",
-        "text": "Continuous spectator stands and audience seating surround the ring, raised enough to overlook it.",
+        "text": "Tiered ringside stands and audience seating surrounding the boxing ring.",
         "visible": true,
-        "count": 1
+        "count": -1
+      },
+      {
+        "id": "spawn-protected",
+        "text": "Two player start markers at opposite ring corners, set back from immediate contact with equal approach to the ring centre.",
+        "visible": true,
+        "count": 2
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "spawn-protected",
+        "text": "Two player start markers at opposite ring corners, set back from immediate contact with equal approach to the ring centre.",
+        "count": 2,
+        "where": "One at each pair of opposite ring corners, set back from immediate contact and equally spaced from the ring centre."
       }
     ],
     "layout": {
-      "composition": "Symmetrical isometric view looking diagonally across the central ring, with two corners, ropes, raised platform, encircling stands, and the overhead lighting rig all visible at once.",
+      "composition": "Symmetrical isometric frame with the raised boxing ring dominant at centre and spectator seating clearly readable on every side; bright overhead light focuses on the ring while the surrounding hall remains slightly darker.",
       "zones": [
         {
-          "name": "Boxing ring",
-          "role": "Compact central one-on-one PvP bout space.",
-          "where": "exact center of the enclosed hall",
-          "size": "small"
-        },
-        {
-          "name": "Ringside apron",
-          "role": "Narrow perimeter around the ring before seating begins; limited circulation only, not a gameplay lane.",
-          "where": "immediately around the boxing ring",
-          "size": "narrow"
-        },
-        {
-          "name": "Spectator stands",
-          "role": "Audience seating facing inward around the fight.",
-          "where": "wrapping the ring on all sides",
-          "size": "close stadium-style tiers"
+          "name": "Central indoor boxing arena",
+          "role": "Compact enclosed one-on-one PvP fight space centred on the boxing ring, with ringside seating and circulation.",
+          "where": "Centre of the enclosed hall.",
+          "size": "Small; sized for a maximum two-player match."
         }
       ],
-      "paths": [
-        {
-          "from": "Ringside apron",
-          "to": "Spectator stands",
-          "kind": "corridor"
-        }
-      ],
-      "terrain": "No exterior terrain or water; raised cloth or wood ring floor within an enclosed hall.",
+      "paths": [],
+      "terrain": "A raised square boxing ring with a cloth or wood ring floor.",
       "props": [
         {
+          "name": "raised square boxing ring",
+          "count": 1,
+          "where": "Centre of the arena."
+        },
+        {
+          "name": "ring platform",
+          "count": 1,
+          "where": "Under the central boxing ring."
+        },
+        {
           "name": "taut ring ropes",
-          "count": -1,
-          "where": "on all four sides of the central raised boxing ring"
+          "count": 4,
+          "where": "One along each side of the boxing ring."
         },
         {
           "name": "corner posts",
           "count": 4,
-          "where": "at the corners of the boxing ring"
+          "where": "At the four corners of the boxing ring."
         },
         {
-          "name": "bright overhead arena lighting rig",
+          "name": "spectator seating and stepped ringside stands",
           "count": -1,
-          "where": "above the central ring"
+          "where": "Continuous perimeter around the ring, beyond the narrow ringside circulation band."
         },
         {
-          "name": "audience seats",
+          "name": "bright overhead arena lights",
           "count": -1,
-          "where": "in the encircling spectator stands"
+          "where": "Overhead, focused on the boxing ring."
         }
       ],
-      "boundary": "High enclosed hall walls and a ceiling.",
+      "boundary": "Outer hall walls enclose the entire indoor venue; there is no exterior play area.",
       "scale_band": "small",
-      "theme": "Bright, polished full fight-night arena; enclosed, dramatic, professionally lit."
+      "theme": "Bright professional fight-night boxing arena in an enclosed stadium hall with focused overhead lighting."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "The simple symmetrical ring-and-stands arrangement is visually led and has no route topology whose failure would make the match unplayable.",
+      "why": "the small symmetrical arena has no topology whose failure would make the match unplayable.",
       "set_piece": false
     },
     "route": [
       "P0",
       "tiered"
     ],
-    "notes": [],
+    "notes": [
+      "visible on 'spawn-protected' set from goes_to=both"
+    ],
     "scene_prompt": "Create a 3D boxing PvP map as a full fight-night arena inside an enclosed hall. A raised boxing ring sits at the center, built with a platform, ropes, and four corner posts; its floor uses cloth or wood material. Surround the ring with spectator stands and audience seating, with bright arena lighting overhead. Size the space for a small, clear one-on-one match with a maximum of two players."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

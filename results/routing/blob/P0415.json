@@ -19,148 +19,143 @@
     }
   ],
   "scene_prompt": "Create a small, clean modern hospital on a single playable floor. Arrange a central reception and monitoring area with security camera screens, connected by corridors to a handful of patient examination or treatment rooms containing patients, including subtly unsettling anomalous-looking patients. Include a medicine storage room or wall of shelves stocked with many medicines, with a clear treatment area nearby.",
-  "blob": "### Genre\nThe dominant genre is Simulation: the original request is a hospital role-sim built around examining patients and delivering treatment. There is no secondary genre; the anomaly premise changes the patient presentation, not the building type.\n\n### Shape and preset\nUse `world-shared`, matched to the Role Sim preset. Here it is one shared, single-floor hospital rather than an outdoor persistent world. Retain the preset’s task and circulation intent, but drop vehicle roads because the entire playable space is an indoor hospital.\n\n### Config requirements\nUse visible `path-circulation` as clean, well-lit corridors connecting reception, rooms, medicine storage, and treatment space. Use `building-interior` as visible geometry: the whole play space is the enterable hospital interior. Use `npc-population` both visibly and as placed population: ordinary patients occupy examination rooms and waiting positions, while a few subtly wrong-looking patients make the anomaly premise readable without changing the clean hospital architecture. Use `trigger-task` both visibly and invisibly: examination desks, treatment beds, and medicine shelving are visible stations; their interaction volumes are placed afterward and do not appear in the image.\n\n### Layout components\nMake a small, compact one-floor plan. Put a central reception and monitoring hub near the front-middle, with a reception counter, waiting seats, and a wall of security-camera screens facing staff. Branch short, legible corridors from this hub to a handful of patient examination and treatment rooms on either side; each room has a bed, basic medical equipment, and a patient. Keep a clear dedicated treatment room close to the medicine store. Place the medicine storage room adjacent to treatment, with a long wall of densely stocked shelves containing many medicines. The monitoring hub must retain direct sight and easy walking access to every corridor branch. Enclose the map in clean modern hospital walls, doors, and ceiling-lit corridors; there is no exterior terrain. Compose it as a readable compact floor plan, with the central screen wall as the visual anchor and patient-room doors around it.\n\n### Render order\nUse `isometric`: the small hospital’s circulation is simple and visually driven, so an isometric interior render can authoritatively establish the clean clinical atmosphere before deriving the top-down plan.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by one playable floor and only a handful of rooms. Theme is clean modern clinical hospital, brightly lit and orderly, with restrained unsettling patient anomalies. Use `P3` because play occurs within an enterable interior and requires the linked interior capture path.",
+  "blob": "### Genre\nThe dominant genre is `Simulation`, specifically a hospital role-sim task loop: staff inspect patients through cameras, distinguish anomalous cases, and administer treatment. No secondary genre is needed.\n\n### Shape and preset\nUse `interior-single`, taken from outside Simulation’s usual shapes: this is one compact, enclosed hospital floor rather than a shared outdoor operational world. The closest preset is Role Sim, overridden to remove its road network and replace the outdoor world with a single interior while retaining its task-and-circulation logic.\n\n### Config requirements\nUse `trigger-task` for the reception monitoring console and the treatment stations, visibly arranged as work areas staff use to inspect and treat patients. Use `npc-population` for normal patients and subtly disturbing anomalous patients occupying reception seating and examination rooms; the hospital remains clean and professional despite their unsettling behavior.\n\n### Layout requirements\nPlace `trigger-task` at one central bank of security-camera screens in reception and one treatment interaction point in each examination/treatment room. Place `npc-population` as a small patient group in reception, plus one patient per active examination room; anomalous patients should be distributed among otherwise ordinary patients so their status must be determined from the camera views rather than their room location.\n\n### Layout components\nThe map is a small single-floor hospital. A central reception and monitoring zone forms the hub, with a front desk, waiting seats, and a prominent wall or desk bank of security-camera screens facing the staff position. Short, clean corridors branch from this hub to a handful of enclosed patient examination and treatment rooms. Each room has a bed, medical equipment, and clear visibility for a patient. Put the dedicated treatment area adjacent to the medicine storage so staff can move directly from stocked supplies to a patient room. The storage room, or an open storage wall beside treatment, has dense shelves holding many clearly varied medicine containers. Use white walls, glass partitions, pale floors, bright clinical lighting, and restrained medical signage. The boundary is entirely enclosed interior walls. Frame the hub centrally in an isometric cutaway, with corridors and rooms visibly radiating around it.\n\n### Render order\nUse `isometric`: the clean modern hospital look and readable camera-monitoring hub are authoritative, while the simple corridor topology can be projected afterward.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by one playable floor and only a handful of rooms. Theme: clean, modern clinical hospital with quiet uncanny tension created by anomalous patients. Use `P0`; this is one enclosed, single-level interior with no overhangs, outside-to-inside transition, separate maps, or topology requiring procedural validation.",
   "spec": {
     "genre": "Simulation",
     "secondary": [],
-    "shape": "world-shared",
+    "shape": "interior-single",
     "preset": "Role Sim",
     "axes": {},
     "options": [
       {
-        "id": "path-circulation",
-        "text": "Clean, well-lit corridors connecting reception, rooms, medicine storage, and treatment space.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "building-interior",
-        "text": "The whole playable space is the enterable hospital interior.",
+        "id": "trigger-task",
+        "text": "Reception monitoring console and treatment stations visibly arranged as work areas staff use to inspect and treat patients.",
         "visible": true,
         "count": -1
       },
       {
         "id": "npc-population",
-        "text": "Ordinary patients occupy examination rooms and waiting positions, while a few subtly wrong-looking patients make the anomaly premise readable without changing the clean hospital architecture.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "trigger-task",
-        "text": "Examination desks, treatment beds, and medicine shelving are visible stations; their interaction volumes are placed afterward and do not appear in the image.",
+        "text": "Normal patients and subtly disturbing anomalous patients occupying reception seating and examination rooms, while the hospital remains clean and professional.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "trigger-task",
+        "text": "One central bank of security-camera screens in reception and one treatment interaction point in each examination/treatment room.",
+        "count": -1,
+        "where": "At the central security-camera screen bank in reception, and at one point in each examination/treatment room."
+      },
+      {
+        "id": "npc-population",
+        "text": "A small patient group in reception, plus one patient per active examination room; anomalous patients are distributed among ordinary patients so their status must be determined from camera views rather than room location.",
+        "count": -1,
+        "where": "In reception seating and in each active examination room, with anomalous patients mixed among ordinary patients."
+      }
+    ],
     "layout": {
-      "composition": "A readable compact floor plan with a central reception and monitoring hub near the front-middle; its screen wall is the visual anchor, with patient-room doors and short corridor branches arranged around it.",
+      "composition": "Central reception and monitoring hub framed centrally in an isometric cutaway, with short corridors and enclosed rooms visibly radiating around it.",
       "zones": [
         {
-          "name": "Reception and monitoring hub",
-          "role": "Central staff reception, patient waiting, and security monitoring.",
-          "where": "Front-middle and centre of the floor plan.",
-          "size": "Central compact hub."
+          "name": "Central reception and monitoring zone",
+          "role": "Staff monitor security cameras, receive patients, and use the front desk and waiting seating.",
+          "where": "Centre",
+          "size": "Central hub"
         },
         {
           "name": "Patient examination and treatment rooms",
-          "role": "Patients are examined and treated in rooms containing beds and basic medical equipment.",
-          "where": "On either side of the central hub along short corridor branches.",
-          "size": "A handful of rooms."
+          "role": "Patients are inspected and treated beside beds and medical equipment.",
+          "where": "Around the central hub at the ends of branching corridors",
+          "size": "A handful of enclosed rooms"
         },
         {
-          "name": "Dedicated treatment room",
-          "role": "Clear treatment space close to medicine storage.",
-          "where": "Adjacent to the medicine storage room.",
+          "name": "Dedicated treatment area",
+          "role": "Staff administer treatment and move directly from supplies to patient rooms.",
+          "where": "Adjacent to medicine storage",
           "size": ""
         },
         {
-          "name": "Medicine storage room",
-          "role": "Medicine storage with densely stocked shelving.",
-          "where": "Adjacent to the dedicated treatment room.",
+          "name": "Medicine storage",
+          "role": "Dense shelves hold many clearly varied medicine containers.",
+          "where": "Adjacent to the dedicated treatment area",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Reception and monitoring hub",
+          "from": "Central reception and monitoring zone",
           "to": "Patient examination and treatment rooms",
           "kind": "corridor"
         },
         {
-          "from": "Reception and monitoring hub",
-          "to": "Medicine storage room",
-          "kind": "corridor"
-        },
-        {
-          "from": "Medicine storage room",
-          "to": "Dedicated treatment room",
-          "kind": "corridor"
+          "from": "Medicine storage",
+          "to": "Dedicated treatment area",
+          "kind": "open ground"
         }
       ],
-      "terrain": "No exterior terrain; a single-floor indoor hospital plan.",
+      "terrain": "Pale floors beneath white walls and glass partitions.",
       "props": [
         {
-          "name": "Reception counter",
+          "name": "front desk",
           "count": -1,
-          "where": "Central reception and monitoring hub."
+          "where": "Central reception and monitoring zone"
         },
         {
-          "name": "Waiting seats",
+          "name": "waiting seats",
           "count": -1,
-          "where": "Central reception and monitoring hub."
+          "where": "Reception"
         },
         {
-          "name": "Security-camera screens",
+          "name": "security-camera screen bank",
           "count": -1,
-          "where": "A wall facing staff in the central reception and monitoring hub."
+          "where": "Prominent wall or desk facing the staff position in reception"
         },
         {
-          "name": "Patient beds",
+          "name": "patient beds",
           "count": -1,
-          "where": "Patient examination and treatment rooms."
+          "where": "Examination and treatment rooms"
         },
         {
-          "name": "Basic medical equipment",
+          "name": "medical equipment",
           "count": -1,
-          "where": "Patient examination and treatment rooms."
+          "where": "Examination and treatment rooms"
         },
         {
-          "name": "Patients",
+          "name": "dense medicine shelves with varied medicine containers",
           "count": -1,
-          "where": "Examination rooms and waiting positions."
+          "where": "Medicine storage room or open storage wall beside treatment"
         },
         {
-          "name": "Densely stocked medicine shelves",
+          "name": "restrained medical signage",
           "count": -1,
-          "where": "Along a long wall in the medicine storage room."
-        },
-        {
-          "name": "Medicines",
-          "count": -1,
-          "where": "On shelves in the medicine storage room."
+          "where": "Throughout the hospital"
         }
       ],
-      "boundary": "Clean modern hospital walls, doors, and ceiling-lit corridors enclose the map.",
+      "boundary": "Entirely enclosed interior walls.",
       "scale_band": "small",
-      "theme": "Clean modern clinical hospital, brightly lit and orderly, with restrained unsettling patient anomalies."
+      "theme": "Clean modern clinical hospital with quiet uncanny tension from anomalous patients."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "The circulation is simple and visually driven, so the isometric interior establishes the clinical atmosphere before deriving the plan.",
+      "why": "The clean modern hospital look and readable camera-monitoring hub are authoritative, while the simple corridor topology can be projected afterward.",
       "set_piece": false
     },
     "route": [
-      "P3"
+      "P0"
     ],
-    "notes": [],
+    "notes": [
+      "Shape `interior-single` is taken from outside Simulation's usual shape set.",
+      "The Role Sim preset is overridden to remove its road network and outdoor world while retaining task-and-circulation logic."
+    ],
     "scene_prompt": "Create a small, clean modern hospital on a single playable floor. Arrange a central reception and monitoring area with security camera screens, connected by corridors to a handful of patient examination or treatment rooms containing patients, including subtly unsettling anomalous-looking patients. Include a medicine storage room or wall of shelves stocked with many medicines, with a clear treatment area nearby."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

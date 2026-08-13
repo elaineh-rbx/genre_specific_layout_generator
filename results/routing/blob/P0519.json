@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a compact 10-stage 3D obby tower, a vertical course of short, distinct obstacle sections, with a candy-coloured stylized look, bright platforms, and simple playful obstacles.",
-  "blob": "### Genre\nThe dominant genre is Obby & Platformer: the original request explicitly names an obby tower. There is no secondary genre.\n\n### Shape and preset\nUse `course-tower`, a compact vertical ascent in which all 10 stages stack upward as short, visually distinct obstacle sections. Match the Tower Obby preset for its tower-first organization, but retain only geometry the prompt supports; the candy styling does not require its timing or climbing options.\n\n### Config requirements\nUse `path-track` as visible geometry: an unbroken ascending chain of bright platforms, landings, and obstacle transitions through the 10 stages. No invisible options are requested. Keep the individual obstacles simple and playful, without inventing checkpoints, pickups, lethal surfaces, moving parts, or a reward area.\n\n### Layout components\nBuild one compact tower with 10 vertically ordered stages, each occupying a clear band or floor-height segment of the ascent and each reading as a short distinct obstacle section. Start at a broad, safe ground-level entry platform; then lead the route upward through colorful platform clusters, small gaps, stepped rises, and playful geometric obstacles, ending at a small top landing. Maintain a continuous, physics-legal critical path between every stage. Use bright candy-coloured platforms in contrasting pink, cyan, yellow, purple, and lime, with simple stylized Roblox block forms. The tower boundary is open air around the outside, with the course contained by its narrow vertical footprint rather than enclosing walls. Compose the isometric view to show the entire rising silhouette and enough exposed route segments to make the upward progression legible.\n\n### Render order\nUse `topdown`: the vertical course requires a valid, connected jump sequence, so the route topology must be planned before the isometric dressing, though it is not a carveable maze or racing circuit.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the compact footprint and exactly 10 short stages. Theme is candy-coloured, bright, stylized Roblox obby. Pipeline modifiers are `P6`, because the sequential jump route must be physics-valid by construction, and `P2`, because stacked tower stages occupy surfaces above one another and occlude lower sections in a single top-down capture.",
+  "blob": "### 1. Genre\nThe dominant genre is Obby & Platformer: a vertical, player-paced obstacle course.\n\n### 2. Shape and preset\nUse `course-tower`, matching the Tower Obby preset. It is a compact vertical tower in which all 10 short obstacle stages stack upward around a readable ascent.\n\n### 3. Config requirements\nUse `path-track` as the visible ordered chain of bright platforms linking every stage. Use `obstacle-jump` for simple playful gaps, stepped platforms, and short precision jumps. Do not add unrequested timed, climbing, lethal, moving, shop, or reward features.\n\n### 4. Layout requirements\nPlace `checkpoint-respawn` markers on safe enclosed landing pads at the end of each of the 10 stages, so a fall returns the player to the last completed section rather than the tower base. No other placed gameplay components are required by the prompt.\n\n### 5. Layout components\nBuild one compact tower zone containing exactly 10 vertically stacked obstacle sections. Start with a broad ground-level arrival pad, then wind the course upward through ten clearly differentiated short sections: alternating bright floating blocks, small stepped climbs, side-to-side jumps, wraparound ledges, and simple narrow crossings. Each stage ends on a visibly wider, flat safe platform before the next ascent begins. Keep the critical route continuously legible, with platforms directly or diagonally above the prior section rather than scattered outward. The tower boundary is open air around the exterior, with the lower ground and tower footprint acting as the fall area. Use candy-coloured stylized Roblox materials: saturated pink, cyan, yellow, purple, and lime platforms with simple playful geometric props. Compose the isometric frame to show the full base-to-top climb and the layered platform route.\n\n### 6. Render order\nUse `topdown` first, with the top-down course plan authoritative, because every jump chain must remain connected and physics-legal before the tower is dressed isometrically.\n\n### 7. Scale, theme, and pipeline cost\nScale is small: one compact tower with 10 short stages. Theme: candy-coloured, bright, stylized Roblox obstacle tower. Use `P2` because platforms stack directly above lower sections, and `P6` because the critical platform route requires valid jump connectivity by construction.",
   "spec": {
     "genre": "Obby & Platformer",
     "secondary": [],
@@ -24,90 +24,80 @@
     "options": [
       {
         "id": "path-track",
-        "text": "An unbroken ascending chain of bright platforms, landings, and obstacle transitions through the 10 stages.",
+        "text": "Visible ordered chain of bright platforms linking every stage.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "obstacle-jump",
+        "text": "Simple playful gaps, stepped platforms, and short precision jumps.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "checkpoint-respawn",
+        "text": "Markers on safe enclosed landing pads at the end of each stage, returning a fallen player to the last completed section rather than the tower base.",
         "visible": true,
         "count": 10
       }
     ],
+    "layout_placement": [
+      {
+        "id": "checkpoint-respawn",
+        "text": "Markers on safe enclosed landing pads at the end of each of the 10 stages.",
+        "count": 10,
+        "where": "At the end of each stage, on its visibly wider, flat safe platform before the next ascent begins."
+      }
+    ],
     "layout": {
-      "composition": "Isometric view showing the entire rising tower silhouette and enough exposed route segments to make the upward progression legible.",
+      "composition": "Isometric frame showing the full base-to-top climb and layered platform route, from the broad ground-level arrival pad upward through the compact tower.",
       "zones": [
         {
-          "name": "Ground-level entry platform",
-          "role": "Broad, safe starting platform for the ascent.",
-          "where": "ground level at the base of the tower",
-          "size": "broad"
-        },
-        {
-          "name": "Vertical tower ascent",
-          "role": "Ten vertically ordered short, distinct obstacle sections forming a continuous physics-legal critical path.",
-          "where": "stacked upward through the compact tower footprint",
-          "size": "compact; 10 stages"
-        },
-        {
-          "name": "Top landing",
-          "role": "Small final landing at the end of the ascent.",
-          "where": "top of the tower",
+          "name": "Compact tower",
+          "role": "One compact tower zone containing exactly 10 vertically stacked short obstacle sections, winding upward around a readable ascent.",
+          "where": "From the ground-level base upward through the tower.",
           "size": "small"
         }
       ],
       "paths": [
         {
-          "from": "Ground-level entry platform",
-          "to": "Vertical tower ascent",
-          "kind": "track"
-        },
-        {
-          "from": "Vertical tower ascent",
-          "to": "Top landing",
+          "from": "Broad ground-level arrival pad",
+          "to": "Top of the compact tower",
           "kind": "track"
         }
       ],
-      "terrain": "Open air around a narrow vertical tower footprint; bright candy-coloured platforms in contrasting pink, cyan, yellow, purple, and lime.",
+      "terrain": "Open air around the tower exterior, with lower ground and the tower footprint acting as the fall area.",
       "props": [
         {
-          "name": "colorful platform clusters",
+          "name": "Simple playful geometric props",
           "count": -1,
-          "where": "throughout the ascending stages"
-        },
-        {
-          "name": "small gaps",
-          "count": -1,
-          "where": "between platform transitions in the ascent"
-        },
-        {
-          "name": "stepped rises",
-          "count": -1,
-          "where": "throughout the ascending stages"
-        },
-        {
-          "name": "playful geometric obstacles",
-          "count": -1,
-          "where": "throughout the ascending stages"
+          "where": "Among the candy-coloured platform sections."
         }
       ],
-      "boundary": "Open air around the outside; the course is contained by its narrow vertical footprint rather than enclosing walls.",
+      "boundary": "Open air around the exterior; lower ground and the tower footprint form the fall area.",
       "scale_band": "small",
-      "theme": "candy-coloured, bright, stylized Roblox obby"
+      "theme": "Candy-coloured, bright, stylized Roblox obstacle tower with saturated pink, cyan, yellow, purple, and lime platforms."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the vertical course requires a valid, connected jump sequence, so route topology must be planned before isometric dressing.",
+      "why": "Every jump chain must remain connected and physics-legal before the tower is dressed isometrically.",
       "set_piece": false
     },
     "route": [
-      "P6",
-      "P2"
+      "P2",
+      "P6"
     ],
-    "notes": [],
+    "notes": [
+      "visible on 'checkpoint-respawn' set from goes_to=both"
+    ],
     "scene_prompt": "Create a compact 10-stage 3D obby tower, a vertical course of short, distinct obstacle sections, with a candy-coloured stylized look, bright platforms, and simple playful obstacles."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

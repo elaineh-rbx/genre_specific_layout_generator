@@ -19,137 +19,118 @@
     }
   ],
   "scene_prompt": "Create a 3D survival escape map on a small, uninhabited jungle island dominated by a volcano. A short, tense route under a minute long leads from the volcano across jungle terrain to a coastal rescue boat waiting at the shore.",
-  "blob": "### Genre\nThe dominant genre is Survival: players flee a lethal volcanic eruption to a single escape point before the round ends.\n\n### Shape and preset\nUse `arena-contained`, treating the small jungle island as one bounded survival arena with the volcano at one end and the rescue shore at the other. The closest preset is Escape, but its looping warren and shelter interiors contradict the explicitly uninhabited open island, so the preset is none.\n\n### Config requirements\nUse `hazard-kill` as visible geometry: lava channels, scorched ground, and unstable volcanic edges radiate downslope from the volcano and make the direct route tense. Use `gate-escape` as both visible and invisible: the rescue boat is visibly moored at the coastal endpoint, while its boarding/escape trigger is placed invisibly at the dock or boat access point. Use `terrain-relief` as visible geometry for the volcano’s steep upper slopes, lower ridges, and descending jungle ground. Use `water-body` as visible geometry for the surrounding coastal sea; it forms the island edge rather than a traversable feature.\n\n### Layout components\nPlace the volcano as the dominant rear/up-island landmark, occupying roughly the inland third of the small island. A short, continuous descending evacuation route starts on its lower flank, crosses a central band of dense uninhabited jungle, then opens onto a modest shore landing in the front/coastal third. Keep the run compact enough to complete in under a minute. Shape the route through clear earthen trails, rock outcrops, fallen logs, and lava-cut channels, with safer traversable ground always visually legible. Put the rescue boat just offshore at a small natural beach or simple wooden jetty, connected by a short boarding ramp. There are no buildings, shelters, settlements, or inhabitants. The ocean fully encloses the island, while steep cliffs and hazardous lava margins discourage leaving the intended route. Compose the volcano high in the background with the route descending diagonally toward the visible boat.\n\n### Render order\nUse `isometric`: the island is a compact, legible single-surface escape scene, and no maze, circuit, or precision-generated topology requires an authored plan.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the required under-one-minute evacuation run. Theme is stylized tropical volcanic disaster: lush jungle, black volcanic rock, glowing lava, ash, and a stormy coastal evacuation mood. Apply `tiered` for the volcano and descending terrain relief, and `CHECK` for the visible surrounding water volume.",
+  "blob": "### Genre\n`Survival` is dominant: players flee a lethal eruption to reach evacuation before the round ends.\n\n### Shape and preset\nUse `route-guided`, taken from outside Survival’s usual shapes, as one short, directed evacuation path crosses the island from the volcano to the shore. Preset: none; the Escape preset’s looping interior and shelter-focused options contradict the uninhabited jungle route.\n\n### Config requirements\nUse `hazard-kill` for the erupting volcano and hazardous volcanic ground threatening the route. Use `gate-escape` for the coastal rescue boat as the visible evacuation endpoint. Use `terrain-relief` for the volcano’s rising slopes, rocky descent, and jungle-covered lower ground. Use `water-body` for the surrounding coastal sea at the boat landing.\n\n### Layout requirements\nPlace one `gate-escape` evacuation trigger at the rescue boat’s boarding point on the final shoreline. It must cover the sole terminal approach from the jungle path. No hostile origins, pickups, or respawn markers are required by the prompt.\n\n### Layout components\nThe small island has three sequential zones: a volcano departure zone at the high inland end, a dense jungle descent occupying most of the island, and a narrow coastal evacuation cove at the opposite edge. A single clear, under-one-minute footpath descends continuously from volcanic rock through jungle terrain to the shore; avoid branches that obscure the rescue direction. The volcano is the dominant central-to-rear landmark, with steep but traversable terraced slopes, dark lava-scarred rock, ash, and dense tropical foliage lower down. The cove contains one rescue boat waiting just off the beach, with a simple boarding pier or ramp. The ocean encloses the island’s coastline; rocky cliffs and dense jungle form the lateral route boundary. Compose the frame with the volcano high and inland and the bright coastal boat visibly downstream as the route’s destination.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because the continuous evacuation route must remain visibly connected and traversable from volcano to boat.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the required sub-minute run across one island. Theme: tense stylized tropical volcanic disaster, dark ash and lava against saturated jungle and blue coastal water. Pipeline modifiers: `tiered` for the volcano’s non-overhanging relief; `CHECK` because the surrounding sea is a real water feature. No other geometry forces an additional pass.",
   "spec": {
     "genre": "Survival",
     "secondary": [],
-    "shape": "arena-contained",
+    "shape": "route-guided",
     "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "hazard-kill",
-        "text": "Lava channels, scorched ground, and unstable volcanic edges radiate downslope from the volcano and make the direct route tense.",
+        "text": "The erupting volcano and hazardous volcanic ground threatening the route.",
         "visible": true,
         "count": -1
       },
       {
         "id": "gate-escape",
-        "text": "The rescue boat is visibly moored at the coastal endpoint, with an invisible boarding and escape trigger at the dock or boat access point.",
+        "text": "The coastal rescue boat as the visible evacuation endpoint.",
         "visible": true,
-        "count": -1
+        "count": 1
       },
       {
         "id": "terrain-relief",
-        "text": "The volcano’s steep upper slopes, lower ridges, and descending jungle ground shape the evacuation route.",
+        "text": "The volcano’s rising slopes, rocky descent, and jungle-covered lower ground.",
         "visible": true,
         "count": -1
       },
       {
         "id": "water-body",
-        "text": "The surrounding coastal sea visibly encloses the island and forms its edge rather than a traversable feature.",
+        "text": "The surrounding coastal sea at the boat landing.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "gate-escape",
+        "text": "Evacuation trigger at the rescue boat’s boarding point.",
+        "count": 1,
+        "where": "On the final shoreline, covering the sole terminal approach from the jungle path."
+      }
+    ],
     "layout": {
-      "composition": "The volcano sits high in the rear background, with the evacuation route descending diagonally through the island toward the visible rescue boat at the front coastal shore.",
+      "composition": "The volcano sits high and inland in the central-to-rear frame, while the bright coastal rescue boat remains visibly downstream at the shore as the route’s destination.",
       "zones": [
         {
-          "name": "Volcano",
-          "role": "Lethal eruption origin and start area for the evacuation route.",
-          "where": "rear/up-island",
-          "size": "roughly the inland third of the small island"
-        },
-        {
-          "name": "Central jungle band",
-          "role": "Dense uninhabited jungle crossed by the descending evacuation route.",
-          "where": "centre",
+          "name": "Volcano departure zone",
+          "role": "High inland starting zone where players flee the lethal eruption.",
+          "where": "High inland end of the island, central-to-rear.",
           "size": ""
         },
         {
-          "name": "Rescue shore",
-          "role": "Coastal escape endpoint with boat access.",
-          "where": "front/coastal third",
-          "size": "modest"
+          "name": "Dense jungle descent",
+          "role": "The continuous evacuation route descends through jungle terrain.",
+          "where": "Between the volcano and coast, occupying most of the island.",
+          "size": "Most of the island"
+        },
+        {
+          "name": "Coastal evacuation cove",
+          "role": "Final shoreline evacuation area with the rescue boat boarding point.",
+          "where": "Opposite coastal edge of the island.",
+          "size": "Narrow"
         }
       ],
       "paths": [
         {
-          "from": "Volcano lower flank",
-          "to": "Central jungle band",
-          "kind": "trail"
-        },
-        {
-          "from": "Central jungle band",
-          "to": "Rescue shore",
-          "kind": "trail"
-        },
-        {
-          "from": "Rescue shore",
-          "to": "Rescue boat",
-          "kind": "ramp"
+          "from": "Volcano departure zone",
+          "to": "Coastal evacuation cove",
+          "kind": "footpath"
         }
       ],
-      "terrain": "Steep volcanic upper slopes descend through lower ridges and dense jungle over earthen trails, black volcanic rock, rock outcrops, fallen logs, lava-cut channels, scorched ground, hazardous lava margins, steep cliffs, and a surrounding coastal sea.",
+      "terrain": "Steep but traversable terraced volcano slopes with dark lava-scarred rock and ash, descending into dense tropical jungle; surrounding coastal sea.",
       "props": [
         {
-          "name": "volcano",
-          "count": -1,
-          "where": "rear/up-island"
+          "name": "Rescue boat",
+          "count": 1,
+          "where": "Waiting just off the beach in the coastal evacuation cove."
         },
         {
-          "name": "rock outcrops",
-          "count": -1,
-          "where": "along the evacuation route"
-        },
-        {
-          "name": "fallen logs",
-          "count": -1,
-          "where": "along the evacuation route"
-        },
-        {
-          "name": "rescue boat",
-          "count": -1,
-          "where": "just offshore at the rescue shore"
-        },
-        {
-          "name": "wooden jetty",
-          "count": -1,
-          "where": "at the rescue shore"
-        },
-        {
-          "name": "boarding ramp",
-          "count": -1,
-          "where": "between the shore or jetty and the rescue boat"
+          "name": "Simple boarding pier or ramp",
+          "count": 1,
+          "where": "At the rescue boat boarding point on the final shoreline."
         }
       ],
-      "boundary": "The ocean fully encloses the island; steep cliffs and hazardous lava margins discourage leaving the intended route.",
+      "boundary": "The ocean encloses the island coastline; rocky cliffs and dense jungle form the lateral route boundary.",
       "scale_band": "small",
-      "theme": "Stylized tropical volcanic disaster: lush jungle, black volcanic rock, glowing lava, ash, and a stormy coastal evacuation mood."
+      "theme": "Tense stylized tropical volcanic disaster, with dark ash and lava against saturated jungle and blue coastal water."
     },
     "render": {
-      "first": "isometric",
-      "then": "topdown",
-      "authoritative": "isometric",
-      "why": "the compact single-surface escape scene has no maze, circuit, or precision-generated topology requiring an authored plan.",
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "the continuous evacuation route must remain visibly connected and traversable from volcano to boat.",
       "set_piece": false
     },
     "route": [
-      "P0",
       "tiered",
       "CHECK"
     ],
-    "notes": [],
+    "notes": [
+      "`route-guided` was explicitly taken from outside Survival’s usual shape set."
+    ],
     "scene_prompt": "Create a 3D survival escape map on a small, uninhabited jungle island dominated by a volcano. A short, tense route under a minute long leads from the volcano across jungle terrain to a coastal rescue boat waiting at the shore."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
-  "mapper_notes": []
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P0', 'tiered', 'CHECK'] gives isometric"
+  ]
 }

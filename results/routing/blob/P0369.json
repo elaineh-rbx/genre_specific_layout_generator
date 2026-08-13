@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Build a small stylized kart racing circuit with Puma logos placed throughout the map and on trackside racing boards.",
-  "blob": "### Genre\nThe dominant genre is Racing: the original request specifies kart racing and a three-lap race. The layout must not depict lap mechanics, but the circuit form is owned by Racing.\n\n### Shape and preset\nUse `route-circuit`, matching the Circuit Racing preset. This is a compact closed kart loop rather than a realistic road circuit; retain the preset’s continuous legible circuit and use the prompt’s stylized branding-focused treatment.\n\n### Config requirements\nUse `spawn-grid` as visible, evenly spaced kart slots across a broad starting straight, with associated invisible start placements. Use `trigger-lap` as invisible detection regions at the start/finish and necessary course checkpoints. Use `barrier-guardrail` as visible low, colorful guardrails enclosing turns and preventing karts leaving the route. Puma logo boards are visible trackside props, not a separate gameplay option.\n\n### Layout components\nBuild one small, closed stylized kart circuit occupying most of the frame. Place a wide start/finish straight along the front edge, with a compact multi-slot starting grid and a checkered line. Route the paved track through a sequence of readable broad bends and tight kart-scale turns, returning cleanly to that straight without ambiguous crossings. Run low guardrails around both outer edges and inner islands of the track. Distribute Puma logos throughout the map: on repeated trackside racing boards, start-line signage, guardrail panels, and selected decorative course structures. Keep the infield simple with colorful grass or paved islands, sparse stylized shrubs, and a few logo-bearing decorative markers so the branding reads consistently without blocking sightlines. The boundary is the continuous guardrail and a shallow landscaped perimeter beyond it. Compose the circuit as a clear three-quarter isometric overview with the entire loop visible and the branded boards readable around turns.\n\n### Render order\nUse `authored_plan`: a circuit must be valid by construction, with one continuous closed, non-self-crossing route suitable for kart laps; dress the generated plan with stylized terrain, barriers, and Puma branding afterward.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the explicitly small kart circuit. Theme is bright, playful stylized kart racing with prominent Puma-branded racing signage. Use `P6` because the closed circuit route must be structurally valid by construction.",
+  "blob": "### Genre\nThe dominant genre is Racing: player-controlled kart competition on a closed circuit. The stated three-lap format confirms circuit racing, but its lap-count rule does not alter the drawn geography.\n\n### Shape and preset\nUse `route-circuit`, matched to the Circuit Racing preset. This is one small, stylized closed kart loop whose route remains legible as a continuous circuit; no alternate map or disconnected course is needed.\n\n### Config requirements\nUse `spawn-grid` as a broad, painted starting grid with evenly spaced kart slots on the main straight. Use `lane-corridor` for clear painted track edges and lane guidance through turns. Use `barrier-guardrail` as continuous low guardrails and tire barriers around the outside of hazardous bends. Puma branding is a scene-specific prop treatment: Puma logos repeat on track surfaces, trackside banners, and racing advertising boards.\n\n### Layout requirements\nPlace `spawn-grid` once on the longest straight immediately before the start/finish line, with all kart slots facing the first corner. Place `trigger-lap` as one full-width detection line at the start/finish line; it records each crossing for the stated three-lap race and prevents shortcutting by requiring the connected circuit route.\n\n### Layout components\nBuild one compact closed asphalt kart circuit, roughly oval in overall footprint but shaped with a short start straight, several readable left and right corners, and a tight final turn returning to the grid. The central infield is a small stylized landscaped island, while the outer verge provides space for repeating Puma-branded racing boards. Paint Puma logos at selected trackside and infield-facing locations without obscuring driving lines. Low guardrails and stacked tire barriers form the continuous outer boundary; keep the infield inaccessible except as visual dressing. Frame the complete loop in a high three-quarter isometric view, with the grid and branded boards prominent in the foreground and the full return connection visible.\n\n### Render order\nUse `authored_plan`: the circuit must be generated as one valid closed, non-self-crossing route before the image model dresses it, because a broken loop would make the race unplayable.\n\n### Scale, theme, and pipeline cost\nScale band: small, driven by the requested compact stylized kart circuit. Theme: bright, polished stylized kart racing with bold Puma motorsport branding. Pipeline modifier: `P6`, forced by the closed circuit’s required valid-by-construction topology.",
   "spec": {
     "genre": "Racing",
     "secondary": [],
@@ -24,100 +24,104 @@
     "options": [
       {
         "id": "spawn-grid",
-        "text": "Evenly spaced kart slots across a broad starting straight, with associated invisible start placements.",
+        "text": "A broad, painted starting grid with evenly spaced kart slots on the main straight.",
+        "visible": true,
+        "count": 1
+      },
+      {
+        "id": "lane-corridor",
+        "text": "Clear painted track edges and lane guidance through turns.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "barrier-guardrail",
+        "text": "Continuous low guardrails and tire barriers around the outside of hazardous bends.",
         "visible": true,
         "count": -1
       },
       {
         "id": "trigger-lap",
-        "text": "Invisible detection regions at the start/finish and necessary course checkpoints.",
+        "text": "One full-width detection line at the start/finish line, recording each crossing for the stated three-lap race and preventing shortcutting by requiring the connected circuit route.",
         "visible": false,
-        "count": 3
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "spawn-grid",
+        "text": "A broad, painted starting grid with evenly spaced kart slots.",
+        "count": 1,
+        "where": "On the longest straight immediately before the start/finish line, with all kart slots facing the first corner."
       },
       {
-        "id": "barrier-guardrail",
-        "text": "Low, colorful guardrails enclosing turns and preventing karts leaving the route.",
-        "visible": true,
-        "count": -1
+        "id": "trigger-lap",
+        "text": "A full-width detection line recording each crossing for the three-lap race.",
+        "count": 1,
+        "where": "At the start/finish line."
       }
     ],
     "layout": {
-      "composition": "Clear three-quarter isometric overview with the entire compact loop visible; the wide start/finish straight runs along the front edge, while branded boards remain readable around the bends and turns.",
+      "composition": "High three-quarter isometric view framing the complete loop, with the grid and Puma-branded boards prominent in the foreground and the full return connection visible.",
       "zones": [
         {
-          "name": "start/finish straight",
-          "role": "Broad launch straight with a compact multi-slot starting grid and checkered line.",
-          "where": "front edge",
-          "size": "wide"
+          "name": "Closed kart circuit",
+          "role": "A continuous, non-self-crossing racing loop with a short start straight, readable left and right corners, and a tight final turn returning to the grid.",
+          "where": "Around the full oval-like footprint.",
+          "size": "Compact"
         },
         {
-          "name": "closed kart circuit",
-          "role": "A continuous paved route through readable broad bends and tight kart-scale turns returning cleanly to the start/finish straight.",
-          "where": "occupying most of the frame",
-          "size": "small"
+          "name": "Central infield",
+          "role": "An inaccessible stylized landscaped island used as visual dressing.",
+          "where": "Centre of the circuit.",
+          "size": "Small"
         },
         {
-          "name": "infield islands",
-          "role": "Simple colorful grass or paved islands with sparse stylized shrubs and logo-bearing decorative markers.",
-          "where": "inside the track loop",
-          "size": "compact"
-        },
-        {
-          "name": "landscaped perimeter",
-          "role": "Shallow perimeter beyond the continuous guardrail.",
-          "where": "outside the circuit",
-          "size": "shallow"
+          "name": "Outer verge",
+          "role": "Trackside space for repeating Puma-branded racing boards.",
+          "where": "Outside the circuit.",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "start/finish straight",
-          "to": "closed kart circuit",
+          "from": "Starting grid",
+          "to": "First corner",
           "kind": "track"
         },
         {
-          "from": "closed kart circuit",
-          "to": "start/finish straight",
+          "from": "Final turn",
+          "to": "Starting grid",
           "kind": "track"
         }
       ],
-      "terrain": "Stylized paved track with colorful grass or paved infield islands and a shallow landscaped perimeter.",
+      "terrain": "Compact asphalt circuit with a small stylized landscaped infield island and outer verges.",
       "props": [
         {
-          "name": "Puma logo racing boards",
+          "name": "Puma logos",
           "count": -1,
-          "where": "repeated trackside around the map and turns"
+          "where": "Selected trackside and infield-facing locations, plus track surfaces, without obscuring driving lines."
         },
         {
-          "name": "Puma start-line signage",
+          "name": "Puma-branded racing boards and trackside banners",
           "count": -1,
-          "where": "start/finish straight"
+          "where": "Along the outer verge."
         },
         {
-          "name": "Puma logo guardrail panels",
+          "name": "Stacked tire barriers",
           "count": -1,
-          "where": "along guardrails"
-        },
-        {
-          "name": "logo-bearing decorative markers",
-          "count": -1,
-          "where": "infield and selected decorative course structures"
-        },
-        {
-          "name": "sparse stylized shrubs",
-          "count": -1,
-          "where": "simple infield islands"
+          "where": "Around the outside of hazardous bends."
         }
       ],
-      "boundary": "Continuous low guardrail around the outer edges and inner islands of the track, with a shallow landscaped perimeter beyond it.",
+      "boundary": "Continuous low guardrails and stacked tire barriers form the outer boundary; the central infield is inaccessible.",
       "scale_band": "small",
-      "theme": "Bright, playful stylized kart racing with prominent Puma-branded racing signage."
+      "theme": "Bright, polished stylized kart racing with bold Puma motorsport branding."
     },
     "render": {
       "first": "authored_plan",
       "then": "topdown",
       "authoritative": "authored_plan",
-      "why": "the closed circuit route must be structurally valid by construction.",
+      "why": "A broken closed loop would make the race unplayable.",
       "set_piece": false
     },
     "route": [
@@ -129,7 +133,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "layout",

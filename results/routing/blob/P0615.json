@@ -19,122 +19,122 @@
     }
   ],
   "scene_prompt": "Create a 3D open-world car game map set in a present-day modern urban city spanning a few connected city blocks. Lay out a navigable street grid bordered by city buildings, with roads and intersections supporting traffic; populate sidewalks with AI pedestrians and streets with AI cars. The focused city area is designed for free-roam driving.",
-  "blob": "### Genre\nSimulation is dominant: this is a pure free-roam driving experience with AI traffic, not a race or role-task loop.\n\n### Shape and preset\nUse `world-shared`, matching the Vehicle Sim preset. It is one persistent, connected city surface shared by drivers, rather than isolated plots or a race circuit.\n\n### Config requirements\nApply visible `path-road-vehicle`: a connected, vehicle-width urban street grid with intersections and turn space. Apply `settlement-density` as visible geometry: continuous present-day city buildings enclosing several blocks. Apply `npc-population` in both forms: visible AI pedestrians on sidewalks and AI cars on streets, with invisible population/traffic placement markers distributed along sidewalks, curb lanes, and intersections. Do not add resource fields, jobs, race markers, or other gameplay structures.\n\n### Layout components\nBuild a focused district of a few connected city blocks, with a central multi-way intersection and a clear street grid extending to surrounding blocks. Roads form the primary circulation network, wide enough for two-way traffic and turns at each intersection; sidewalks run continuously along both sides. City-building frontage lines the block edges, with storefront-like ground floors and taller mixed urban facades behind them, but no required enterable interiors. Place AI pedestrians in small sidewalk flows near corners and entrances, and AI cars traveling through lanes and waiting at junctions. Use paved asphalt streets, concrete sidewalks, curb edges, crosswalks, lane markings, traffic lights, streetlights, signs, parked cars, and sparse roadside planters as props. The boundary is the outer ring of building facades and terminating streets, visually implying a larger city beyond. Compose the map as a readable overhead district with the central intersection as the anchor and connected roads visibly radiating through every block.\n\n### Render order\nUse `topdown`: the connected road grid and intersections must remain navigable for free-roam driving before the isometric city dressing is derived.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by the requested few connected city blocks. Theme is present-day modern urban city: clean asphalt, contemporary mid-rise architecture, active traffic, and pedestrian sidewalks. Pipeline modifier: `P0`, because this is one flat, exterior shared surface with no required overhangs, interiors, separate maps, or volumetric traversal.",
+  "blob": "### Genre\nThe dominant genre is `Simulation`, specifically a free-roam Vehicle Sim: driving through a shared city is the activity, with no race route, finish condition, or job loop.\n\n### Shape and preset\nUse `world-open`, a single contiguous present-day city map where drivers can choose streets freely across a few connected blocks. Match the Vehicle Sim preset, retaining its road-led shared-world character but dropping `resource-shared`, which the prompt does not request.\n\n### Config requirements\nUse `path-road-vehicle` for a connected, vehicle-width urban street grid with intersections that support traffic flow and turning. Use `settlement-density` for dense city-block building frontage enclosing the roads. Use `npc-population` for AI pedestrians on sidewalks and AI vehicles circulating on streets.\n\n### Layout requirements\nPlace `npc-population` along the complete street network: pedestrian AI occupies continuous sidewalks, corners, and crossings on every block, while AI car traffic uses roadway lanes and intersection approaches throughout the city. No stated quantity is required; distribute both populations densely enough to make the focused city feel active without blocking vehicle travel.\n\n### Layout components\nBuild a few connected city blocks around a readable orthogonal street grid. Each block is lined by present-day urban buildings facing sidewalks; intersections divide the blocks and provide multiple navigable driving choices. Roads are broad, flat asphalt with lane organization, curbs, crosswalks, and turning space, while sidewalks run continuously along building edges. The central intersections and longer through-streets form the main free-roam circulation, with side streets offering alternate routes. Keep all buildings as exterior city frontage rather than enterable interiors. The playable boundary is the outer ring of city buildings and street-end barriers at the edge of the focused district. Frame the map as a compact, coherent city district, with streets and building roofs legible from above and strong street-level urban depth in isometric view.\n\n### Render order\nUse `topdown`: road connectivity and usable intersections must be valid for free-roam driving and AI traffic, then the authoritative plan can be dressed into the isometric city.\n\n### Scale, theme, and pipeline cost\nUse a medium scale driven by a few connected, playable city blocks rather than a sprawling region. Theme: present-day modern urban city, clean asphalt roads, contemporary commercial and residential facades, active pedestrian traffic. Pipeline modifier: `P0`; this is one connected, flat outdoor street surface with no interior transition, overhang, separate map, or volumetric play space.",
   "spec": {
     "genre": "Simulation",
     "secondary": [],
-    "shape": "world-shared",
+    "shape": "world-open",
     "preset": "Vehicle Sim",
     "axes": {},
     "options": [
       {
         "id": "path-road-vehicle",
-        "text": "A connected, vehicle-width urban street grid with intersections and turn space, wide enough for two-way traffic and turns at each intersection.",
+        "text": "A connected, vehicle-width urban street grid with intersections that support traffic flow and turning.",
         "visible": true,
         "count": -1
       },
       {
         "id": "settlement-density",
-        "text": "Continuous present-day city buildings enclosing several blocks, with storefront-like ground floors and taller mixed urban facades behind them.",
+        "text": "Dense city-block building frontage enclosing the roads.",
         "visible": true,
         "count": -1
       },
       {
         "id": "npc-population",
-        "text": "AI pedestrians in small sidewalk flows near corners and entrances, plus AI cars traveling through street lanes and waiting at junctions.",
+        "text": "AI pedestrians on sidewalks and AI vehicles circulating on streets.",
         "visible": true,
-        "count": -1
-      },
-      {
-        "id": "npc-population",
-        "text": "Invisible population and traffic placement markers distributed along sidewalks, curb lanes, and intersections.",
-        "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "npc-population",
+        "text": "Pedestrian AI occupies continuous sidewalks, corners, and crossings on every block, while AI car traffic uses roadway lanes and intersection approaches throughout the city.",
+        "count": -1,
+        "where": "Along the complete street network: on continuous sidewalks, corners, and crossings on every block for pedestrians; in roadway lanes and intersection approaches throughout the city for AI cars."
+      }
+    ],
     "layout": {
-      "composition": "Readable overhead district centred on a central multi-way intersection, with connected roads visibly radiating through every surrounding block.",
+      "composition": "A compact coherent city district viewed with streets and building roofs legible from above, while the isometric view has strong street-level urban depth. Central intersections and longer through-streets read as the main circulation, with side streets branching as alternate routes.",
       "zones": [
         {
-          "name": "Central multi-way intersection",
-          "role": "Primary driving anchor where traffic travels through lanes and waits at junctions.",
-          "where": "centre",
+          "name": "Connected city blocks",
+          "role": "Free-roam driving district lined with present-day urban buildings facing sidewalks.",
+          "where": "Across the focused city district around the orthogonal street grid.",
+          "size": "A few connected playable blocks."
+        },
+        {
+          "name": "Central intersections and through-streets",
+          "role": "Main free-roam circulation and multiple navigable driving choices.",
+          "where": "Centre of the district and extending through the connected blocks.",
           "size": ""
         },
         {
-          "name": "Connected city blocks",
-          "role": "Focused free-roam driving district lined by city-building frontage.",
-          "where": "surrounding the central intersection",
-          "size": "a few connected city blocks"
-        },
-        {
-          "name": "Sidewalk network",
-          "role": "Continuous pedestrian space for AI sidewalk flows near corners and entrances.",
-          "where": "along both sides of all streets",
+          "name": "Side streets",
+          "role": "Alternate driving routes between blocks.",
+          "where": "Off the central intersections and longer through-streets.",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Central multi-way intersection",
+          "from": "Central intersections and through-streets",
           "to": "Connected city blocks",
           "kind": "road"
         },
         {
-          "from": "Connected city blocks",
-          "to": "Central multi-way intersection",
+          "from": "Central intersections and through-streets",
+          "to": "Side streets",
+          "kind": "road"
+        },
+        {
+          "from": "Side streets",
+          "to": "Connected city blocks",
           "kind": "road"
         }
       ],
-      "terrain": "Flat exterior urban surface with paved asphalt streets, concrete sidewalks, curb edges, crosswalks, and lane markings.",
+      "terrain": "One connected, flat outdoor street surface with broad clean asphalt roads, lane organization, curbs, crosswalks, turning space, and continuous sidewalks along building edges.",
       "props": [
         {
-          "name": "traffic lights",
+          "name": "Present-day urban buildings with contemporary commercial and residential facades",
           "count": -1,
-          "where": "at intersections"
+          "where": "Lining every city block, facing the sidewalks; exterior frontage only."
         },
         {
-          "name": "streetlights",
+          "name": "Street-end barriers",
           "count": -1,
-          "where": "along streets and sidewalks"
+          "where": "At the edge of the focused district."
         },
         {
-          "name": "signs",
+          "name": "Crosswalks",
           "count": -1,
-          "where": "along streets and intersections"
-        },
-        {
-          "name": "parked cars",
-          "count": -1,
-          "where": "along streets"
-        },
-        {
-          "name": "sparse roadside planters",
-          "count": -1,
-          "where": "along roadsides and sidewalks"
+          "where": "At intersections."
         }
       ],
-      "boundary": "Outer ring of building facades and terminating streets, visually implying a larger city beyond.",
+      "boundary": "The outer ring of city buildings and street-end barriers at the edge of the focused district.",
       "scale_band": "medium",
-      "theme": "Present-day modern urban city; clean asphalt, contemporary mid-rise architecture, active traffic, and pedestrian sidewalks."
+      "theme": "Present-day modern urban city, clean asphalt roads, contemporary commercial and residential facades, active pedestrian traffic."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the connected road grid and intersections must remain navigable for free-roam driving.",
+      "why": "road connectivity and usable intersections must be valid for free-roam driving and AI traffic.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
-    "notes": [],
+    "notes": [
+      "The Vehicle Sim preset is retained, but its resource-shared option is intentionally omitted because the blob explicitly drops it.",
+      "All option counts are unstated and therefore recorded as -1."
+    ],
     "scene_prompt": "Create a 3D open-world car game map set in a present-day modern urban city spanning a few connected city blocks. Lay out a navigable street grid bordered by city buildings, with roads and intersections supporting traffic; populate sidewalks with AI pedestrians and streets with AI cars. The focused city area is designed for free-roam driving."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

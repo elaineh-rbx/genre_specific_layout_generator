@@ -14,100 +14,131 @@
     }
   ],
   "scene_prompt": "Create a 3D third-person collectathon map in a stylized, colourful Roblox-style open world, kept small and readable as a vertical slice. Ground-level paths and raised platforms form a simple exploration route, with coins or gems scattered across the level; include 10 collectibles and a distinct goal area. Leave open space around the playable terrain with a fall-off edge.",
-  "blob": "### Genre\nThe dominant genre is Adventure: exploration and collecting lead to a distant goal, rather than a discrete obstacle-course sequence. No secondary genre is needed.\n\n### Shape and preset\nUse `world-open`, matching the Scavenger Hunt preset. Keep its open, findable-world logic, but do not add its unrequested quest board or secret alcoves. The small vertical-slice world is a compact open exploration space rather than a set of chapters or a guided corridor.\n\n### Config requirements\nUse `path-trail` as visible geometry: a simple, readable chain of ground paths and broad raised platforms gives the world a clear exploration grain. Use `collectible-nodes` as invisible layout placement: distribute exactly 10 coin-or-gem pickup points across the accessible route; these pickup markers must not enter the image render. Use `landmark-focal` as visible geometry for the distinct goal area, making it a clearly recognizable destination from the main ground path.\n\n### Layout components\nBuild one small contiguous outdoor world. Put a broad, mostly flat central ground zone in the foreground as the arrival and exploration base. Lead paths outward through several low, stepped raised-platform clusters, arranged as accessible branches around the central terrain rather than a strict linear course. Reserve ten spaced pickup locations across the ground route and elevated branches, with each location on safely reachable terrain or platform. Place the goal area on a prominent raised rear-side platform, visible across the map and visually distinct from ordinary terrain. Use simple colourful grass, dirt or stone ground planes and blocky platform forms; keep all elevation as stepped terraces with no bridges, ceilings, or overhangs. Leave generous open void around the playable land so the outer fall-off edge is obvious. Frame the map in a three-quarter isometric view, with the central ground, elevated route, and goal all legible together.\n\n### Render order\nUse `isometric`: the compact, readable stylized look leads, and the simple non-critical exploration plan can be projected from that authoritative image.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the explicitly small vertical slice and exactly 10 collectible placements. Theme is stylized, colourful, simple Roblox platforming terrain. Use `tiered` because the raised stepped platforms require elevation capture without overlapping surfaces; otherwise use `P0` because there are no interiors, separate maps, volumetric routes, or topology that must be procedurally validated.",
+  "blob": "### 1. Genre\nThe dominant genre is Adventure: collection-led exploration in a small open world. Obby & Platformer is a secondary influence only through the jumping traversal; Adventure owns the map shape and route.\n\n### 2. Shape and preset\nUse `world-open`, a compact contiguous outdoor map whose ground paths and elevated platforms can be explored in flexible order. This follows the Scavenger Hunt preset in shape and collectible focus, while omitting its unrequested quest board and hidden-alcove dressing.\n\n### 3. Config requirements\nUse `path-trail` as clear ground-level paths that branch lightly between the platforming features and the goal. Use `hazard-kill` for the visible open fall-off perimeter beyond the playable terrain, expressed as a drop rather than a fenced edge.\n\n### 4. Layout requirements\nPlace `collectible-nodes`: exactly 10 coins or gems, distributed across ground paths and reachable raised platforms, with several rewarding short optional jumps rather than one isolated cluster. Place one `checkpoint-respawn` on the central safe starting ground; it is the return point for any player falling beyond the world edge.\n\n### 5. Layout components\nBuild a small central start clearing on low, solid ground, with several colourful ground paths radiating into a compact exploration loop. Put simple raised platforms on the outer and upper portions of this loop, using short readable jumps and ramps or stepped access where needed. Spread exactly 10 collectible coins or gems throughout the route: some immediately visible from the paths, others on the raised platforms. Set a distinct, visually prominent goal area at the far side or highest accessible edge of the map, reached after crossing the collection space. Keep open air around the playable land and use a clear fall-off boundary with no enclosing walls. Frame the whole vertical slice in an isometric three-quarter view, with the start, platform route, and goal all legible at once.\n\n### 6. Render order\nUse `topdown` first, then dress the authoritative plan isometrically, because the ground-to-platform connections and all collectible locations must remain reachable and coherent for play.\n\n### 7. Scale, theme, and pipeline cost\nScale is small, driven by the stated 10 collectibles and vertical-slice scope. Theme is a stylized, colourful, simple Roblox platforming world with highly readable shapes. Use `P2` because raised traversable platforms sit above and occlude portions of the ground route beneath them.",
   "spec": {
     "genre": "Adventure",
-    "secondary": [],
+    "secondary": [
+      "Obby & Platformer"
+    ],
     "shape": "world-open",
     "preset": "Scavenger Hunt",
     "axes": {},
     "options": [
       {
         "id": "path-trail",
-        "text": "A simple, readable chain of ground paths and broad raised platforms gives the world a clear exploration grain.",
+        "text": "Clear ground-level paths that branch lightly between the platforming features and the goal.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "hazard-kill",
+        "text": "A visible open fall-off perimeter beyond the playable terrain, expressed as a drop rather than a fenced edge.",
         "visible": true,
         "count": -1
       },
       {
         "id": "collectible-nodes",
-        "text": "Distribute exactly 10 coin-or-gem pickup points across the accessible route; these pickup markers must not enter the image render.",
+        "text": "Exactly 10 coins or gems distributed across ground paths and reachable raised platforms, with several rewarding short optional jumps rather than one isolated cluster.",
         "visible": false,
         "count": 10
       },
       {
-        "id": "landmark-focal",
-        "text": "The distinct goal area is a clearly recognizable destination from the main ground path.",
-        "visible": true,
-        "count": -1
+        "id": "checkpoint-respawn",
+        "text": "One checkpoint on the central safe starting ground; it is the return point for any player falling beyond the world edge.",
+        "visible": false,
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "collectible-nodes",
+        "text": "Exactly 10 coins or gems distributed across ground paths and reachable raised platforms, with several rewarding short optional jumps rather than one isolated cluster.",
+        "count": 10,
+        "where": "Across ground paths and reachable raised platforms throughout the route."
+      },
+      {
+        "id": "checkpoint-respawn",
+        "text": "One checkpoint on the central safe starting ground; it is the return point for any player falling beyond the world edge.",
+        "count": 1,
+        "where": "On the central safe starting ground."
       }
     ],
     "layout": {
-      "composition": "Three-quarter isometric frame with the broad central ground zone in the foreground, low stepped raised-platform branches around it, and the prominent raised goal platform at the rear side, all legible together.",
+      "composition": "Isometric three-quarter view framing the whole vertical slice, with the central start clearing, radiating platform route, and far-side or highest goal all legible at once.",
       "zones": [
         {
-          "name": "Central ground zone",
-          "role": "Arrival and exploration base.",
-          "where": "foreground centre",
-          "size": "broad, mostly flat"
+          "name": "Central start clearing",
+          "role": "Safe starting ground and return point.",
+          "where": "Centre",
+          "size": "small"
         },
         {
-          "name": "Raised-platform branches",
-          "role": "Accessible exploration branches and elevated pickup terrain.",
-          "where": "around the central terrain",
-          "size": "several low, stepped clusters"
+          "name": "Compact exploration loop",
+          "role": "Ground paths and raised platforms form the collection route, including short optional jumps.",
+          "where": "Radiating outward from the central clearing",
+          "size": "compact"
         },
         {
           "name": "Goal area",
-          "role": "Distinct destination visible from the main ground path.",
-          "where": "prominent raised rear-side platform",
+          "role": "Distinct visually prominent destination reached after crossing the collection space.",
+          "where": "Far side or highest accessible edge of the map",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Central ground zone",
-          "to": "Raised-platform branches",
-          "kind": "ground path"
+          "from": "Central start clearing",
+          "to": "Compact exploration loop",
+          "kind": "open ground"
         },
         {
-          "from": "Raised-platform branches",
+          "from": "Compact exploration loop",
           "to": "Goal area",
-          "kind": "ramp"
+          "kind": "path"
         }
       ],
-      "terrain": "Simple colourful grass, dirt, or stone ground planes with blocky stepped terrace platforms; no bridges, ceilings, or overhangs.",
+      "terrain": "Low, solid ground with colourful ground paths, raised platforms on the outer and upper portions of the loop, open air around the playable land, and a clear fall-off drop at the perimeter.",
       "props": [
         {
-          "name": "coin-or-gem pickup locations",
-          "count": 10,
-          "where": "across the ground route and elevated branches on safely reachable terrain or platforms"
+          "name": "Simple raised platforms",
+          "count": -1,
+          "where": "Outer and upper portions of the compact exploration loop."
+        },
+        {
+          "name": "Ramps or stepped access",
+          "count": -1,
+          "where": "Where needed to reach raised platforms."
         }
       ],
-      "boundary": "Generous open void surrounds the playable land, making the outer fall-off edge obvious.",
+      "boundary": "Open fall-off boundary beyond the playable terrain, with no enclosing walls.",
       "scale_band": "small",
-      "theme": "Stylized, colourful, simple Roblox platforming terrain."
+      "theme": "Stylized, colourful, simple Roblox platforming world with highly readable shapes."
     },
     "render": {
-      "first": "isometric",
-      "then": "topdown",
-      "authoritative": "isometric",
-      "why": "the simple non-critical exploration plan can be projected from the compact, readable stylized look.",
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "because the ground-to-platform connections and all collectible locations must remain reachable and coherent for play.",
       "set_piece": false
     },
     "route": [
-      "P0",
-      "tiered"
+      "P2"
     ],
-    "notes": [],
+    "notes": [
+      "The Scavenger Hunt preset is named as the shape and collectible-focus reference, while its unrequested quest board and hidden-alcove dressing are omitted.",
+      "Raised traversable platforms require P2 because they sit above and occlude portions of the ground route beneath them."
+    ],
     "scene_prompt": "Create a 3D third-person collectathon map in a stylized, colourful Roblox-style open world, kept small and readable as a vertical slice. Ground-level paths and raised platforms form a simple exploration route, with coins or gems scattered across the level; include 10 collectibles and a distinct goal area. Leave open space around the playable terrain with a fall-off edge."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
-  "mapper_notes": []
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P0'] gives isometric"
+  ]
 }

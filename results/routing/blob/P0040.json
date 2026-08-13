@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a naturalistic, stormy 3D migration map for a duck traveling from New Zealand toward Canada in several staged flight legs. Each compact ocean segment shows rough seas below and threatening storm fronts ahead, with open sky and distant horizon framing the route.",
-  "blob": "### Genre\nThe dominant genre is Adventure: the migration is a directed journey with a clear destination, rather than a free-flight showcase. There is no secondary genre.\n\n### Shape and preset\nUse `world-chaptered`, treating each staged flight leg as a separate compact ocean map on the route from New Zealand toward Canada. This draws from the Story preset for its chaptered progression, but retain only the staged-map structure; the prompt does not call for chapter gates, drops, or interior reveal exits.\n\n### Config requirements\n`path-trail` is visible geometry: each leg has a readable aerial migration corridor, expressed through the alignment of cloud breaks, storm fronts, and sea below rather than a ground road. `hazard-kill` is visible geometry: threatening storm bands and rough-water exposure define dangerous portions of each flight segment. `water-body` is visible geometry: a continuous rough ocean lies beneath every flight leg. No invisible markers, pickups, or emitters are requested.\n\n### Layout components\nBuild several compact, separate ocean-flight zones, ordered as migration legs from New Zealand toward Canada. Each zone is mostly open sky, with the player’s departure side behind them, a distant horizon ahead, and a broad navigable route threading toward or around a dark storm front. Use layered cloud banks, rain curtains, wind-torn wave fields, and occasional calmer sky openings to make the forward path legible. The ocean is an unbroken, choppy surface far below, with no islands or settlements specified. Each segment ends at a clear atmospheric transition point leading into the next leg; the outer boundary is open sky and horizon, visually constrained by storm mass and fading weather rather than walls. Frame the isometric composition diagonally along the flight direction, with the duck-scale route receding toward the next storm.\n\n### Render order\nUse `topdown`: the staged aerial corridors and their storm-safe openings must remain coherent and traversable before the stormy isometric dressing is derived.\n\n### Scale, theme, and pipeline cost\nScale is medium: several small staged legs, not one ocean-spanning map. Theme is naturalistic, threatening maritime weather: slate seas, heavy clouds, rain, and distant cold horizons. Use `P4` because the legs are separate maps, and `CHECK` because the flight route is volumetric over the ocean surface.",
+  "blob": "### Genre\nThe dominant genre is Adventure: the duck undertakes a directed migration journey through hostile weather. There is no secondary genre.\n\n### Shape and preset\nUse `world-chaptered`, matched from the Adventure Story preset. Each staged flight leg is a genuinely separate compact map segment rather than one ocean stretched to continental scale. Retain the preset’s chapter structure but do not add its unrequested gates or one-way drops.\n\n### Config requirements\nUse `water-body` for the rough, dark ocean occupying the lower half of every flight segment, with wind-torn wave patterns and whitecaps below the route. No other image configuration option is required; the storm fronts, open sky, and distant horizons are core scene dressing rather than extra gameplay geometry.\n\n### Layout requirements\nUse `checkpoint-respawn`: place one arrival/respawn marker at the beginning of each staged flight leg, positioned in the open-sky entry area before the first severe storm band. These allow a failed flight over the sea to restart at that leg rather than at New Zealand. No other placed gameplay elements are required.\n\n### Layout components\nBuild several separate, compact ocean-flight zones progressing geographically from New Zealand toward Canada. Each zone is an open-air corridor with a clear forward flight line from a calmer entry horizon toward a threatening storm front, then onward to the next leg. Rough sea fills the ground plane far below, with no islands, roads, buildings, or land-based props. Storm clouds, rain curtains, and darker wave fields concentrate ahead of the duck’s intended direction of travel, leaving the entry side visually legible. Each segment is bounded by its horizon and storm-wall backdrop rather than physical walls. Compose each map with broad open sky, a low ocean horizon, and an unmistakable forward direction; show the entry area in the foreground and the next weather challenge beyond it.\n\n### Render order\nUse `topdown`: the staged flight corridors and their entry-to-exit continuity must be readable and valid for play before the naturalistic isometric dressing is derived.\n\n### Scale, theme, and pipeline cost\nScale is medium: the overall migration spans several maps, but each individual flight leg is deliberately compact for the initial playable experience. Theme is naturalistic storm migration, with slate seas, heavy cloud banks, rain, wind, and a cold distant horizon. Pipeline modifiers are `P4`, because the flight legs are separate maps, and `CHECK`, because the duck moves through open air above the ocean; the flight volume remains visually legible without self-occluding layers.",
   "spec": {
     "genre": "Adventure",
     "secondary": [],
@@ -23,80 +23,87 @@
     "axes": {},
     "options": [
       {
-        "id": "path-trail",
-        "text": "Each leg has a readable aerial migration corridor, expressed through the alignment of cloud breaks, storm fronts, and sea below rather than a ground road.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "hazard-kill",
-        "text": "Threatening storm bands and rough-water exposure define dangerous portions of each flight segment.",
-        "visible": true,
-        "count": -1
-      },
-      {
         "id": "water-body",
-        "text": "A continuous rough ocean lies beneath every flight leg.",
+        "text": "Rough, dark ocean occupying the lower half of every flight segment, with wind-torn wave patterns and whitecaps below the route.",
         "visible": true,
         "count": -1
+      },
+      {
+        "id": "checkpoint-respawn",
+        "text": "One arrival/respawn marker at the beginning of each staged flight leg, allowing a failed flight over the sea to restart at that leg rather than at New Zealand.",
+        "visible": false,
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "checkpoint-respawn",
+        "text": "One arrival/respawn marker at the beginning of each staged flight leg, allowing a failed flight over the sea to restart at that leg rather than at New Zealand.",
+        "count": 1,
+        "where": "In the open-sky entry area before the first severe storm band of each staged flight leg."
       }
     ],
     "layout": {
-      "composition": "Frame the isometric composition diagonally along the flight direction, with the duck-scale route receding toward the next storm; the departure side is behind the player and a distant horizon lies ahead.",
+      "composition": "Broad open sky and a low ocean horizon frame each compact flight map; the calm entry area is in the foreground, the forward flight line leads toward a threatening storm front, and the next weather challenge lies beyond it.",
       "zones": [
         {
-          "name": "Ocean-flight migration legs",
-          "role": "Several compact, separate staged flight zones forming the migration route from New Zealand toward Canada.",
-          "where": "Ordered along the migration route, with each leg leading into the next.",
-          "size": "Several small compact legs."
+          "name": "Open-sky entry area",
+          "role": "Arrival and respawn area before the severe weather begins.",
+          "where": "Foreground of each flight leg.",
+          "size": ""
         },
         {
-          "name": "Storm-safe aerial corridor",
-          "role": "A broad navigable route threading toward or around a dark storm front, with calmer sky openings making the forward path legible.",
-          "where": "Through each ocean-flight leg, ahead of the departure side.",
-          "size": "Broad."
+          "name": "Ocean-flight corridor",
+          "role": "Clear forward flight line progressing from New Zealand toward Canada.",
+          "where": "Through each compact map segment, from the entry horizon toward the storm front.",
+          "size": "compact"
         },
         {
-          "name": "Atmospheric transition point",
-          "role": "Clear endpoint leading from one flight leg into the next.",
-          "where": "At the end of each segment.",
+          "name": "Storm-front challenge",
+          "role": "Threatening weather section ahead of the intended direction of travel before continuing to the next leg.",
+          "where": "Beyond the entry area, toward the exit side of each segment.",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Departure side",
-          "to": "Atmospheric transition point",
+          "from": "Open-sky entry area",
+          "to": "Storm-front challenge",
+          "kind": "open ground"
+        },
+        {
+          "from": "Storm-front challenge",
+          "to": "next staged flight leg",
           "kind": "open ground"
         }
       ],
-      "terrain": "Mostly open sky over an unbroken choppy ocean surface far below, with layered cloud banks, rain curtains, wind-torn wave fields, storm fronts, and occasional calmer sky openings.",
+      "terrain": "Rough dark slate ocean far below the flight route, with wind-torn wave patterns, whitecaps, darker wave fields, rain curtains, heavy cloud banks, and storm fronts ahead.",
       "props": [
         {
-          "name": "Layered cloud banks",
+          "name": "Storm clouds",
           "count": -1,
-          "where": "Across each flight leg and around storm fronts"
+          "where": "Concentrated ahead of the duck's intended direction of travel."
         },
         {
           "name": "Rain curtains",
           "count": -1,
-          "where": "Within threatening storm bands"
+          "where": "Ahead along the flight corridor."
         },
         {
-          "name": "Wind-torn wave fields",
+          "name": "Darker wave fields",
           "count": -1,
-          "where": "Across the ocean surface below"
+          "where": "Below and ahead of the route."
         }
       ],
-      "boundary": "Open sky and horizon, visually constrained by storm mass and fading weather rather than walls.",
+      "boundary": "Each segment is bounded by its horizon and storm-wall backdrop rather than physical walls.",
       "scale_band": "medium",
-      "theme": "Naturalistic, threatening maritime weather: slate seas, heavy clouds, rain, and distant cold horizons."
+      "theme": "Naturalistic storm migration; slate seas, heavy cloud banks, rain, wind, and a cold distant horizon."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the staged aerial corridors and storm-safe openings must remain coherent and traversable.",
+      "why": "The staged flight corridors and their entry-to-exit continuity must be readable and valid for play before naturalistic dressing is derived.",
       "set_piece": false
     },
     "route": [
@@ -109,7 +116,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

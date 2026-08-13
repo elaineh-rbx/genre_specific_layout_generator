@@ -14,184 +14,175 @@
     }
   ],
   "scene_prompt": "Crea un mapa 3D de simulador de viaje en el tiempo centrado en un laboratorio/base destruido del presente, con una máquina del tiempo averiada y grandes portales desbloqueables que conducen a cuatro zonas separadas. Cada era es una zona temática compacta y claramente explorable, con espacio de recolección, su portal y Cápsulas del Tiempo: un valle prehistórico con dinosaurios gigantes, volcanes y energía de ámbar; un Antiguo Egipto con pirámides, oasis y energía mística; una era medieval con castillos imponentes, caballeros y magia antigua; y un futuro ciberpunk con ciudad de neón, autos voladores y energía de plasma.",
-  "blob": "### 1. Género\nEl género dominante es Simulation: el bucle de progreso, mejora y acceso escalonado a nuevas zonas corresponde a un simulador incremental, no a una aventura. No se requiere género secundario.\n\n### 2. Forma y preset\nUse la forma `world-shared`, entendida como un laboratorio-hub común que enlaza cuatro mapas de era independientes mediante portales. El preset base es Incremental Simulator; se conserva su hub y sus accesos progresivos, pero se sustituye la circulación terrestre entre zonas por conexiones de portal, porque las eras no coexisten en un solo mapa.\n\n### 3. Requisitos de configuración\n`social-hub` es geometría visible: el laboratorio destruido del presente funciona como núcleo de reunión alrededor de la máquina del tiempo averiada. `gate-progression` es geometría visible: cuatro portales gigantes ocupan los bordes del laboratorio, cada uno con una identidad visual de era. `collectible-nodes` es invisible: son los puntos de colocación de energía temporal dentro de cada zona, aunque sus partículas brillantes se representan visualmente. `npc-population` es ambos: dinosaurios y caballeros visibles ocupan terreno definido en sus respectivas eras, con sus ubicaciones reservadas fuera de las rutas principales.\n\n### 4. Componentes de layout\nConstruya cinco mapas separados. El hub es un laboratorio compacto y destruido, con la máquina del tiempo rota como centro, cuatro portales monumentales alrededor y suelo industrial agrietado. Cada portal lleva a una zona temática compacta y claramente explorable, y cada era contiene un portal de retorno y Cápsulas del Tiempo cerca de un borde accesible.\n\nEl Valle Prehistórico combina terreno de valle, volcanes, afloramientos de ámbar brillante y dinosaurios gigantes. El Antiguo Egipto dispone pirámides como hitos, un oasis central y ruinas de piedra con energía mística. La Era Medieval concentra un castillo imponente, patios y caminos de piedra, caballeros y focos de magia antigua. El Futuro Ciberpunk forma una pequeña ciudad de neón con torres, calles compactas, autos voladores visibles sobre la vía y energía de plasma. Delimite cada mapa con fondos naturales o arquitectónicos temáticos, no con bordes artificiales. Componga cada era alrededor de su hito principal y mantenga el portal legible desde la zona de llegada.\n\n### 5. Orden de render\nUse `isometric`: la prioridad es la lectura visual distintiva de los cinco escenarios temáticos; una topología exacta no condiciona la jugabilidad de estos recintos compactos.\n\n### 6. Escala, tema y coste de pipeline\nEscala media: un hub más cuatro zonas compactas, no regiones extensas. Tema: ciencia ficción de viaje temporal, ruina tecnológica y contrastes históricos estilizados. Aplique `P4` porque el laboratorio y las cuatro eras son mapas separados enlazados por portales; no fuerce las cinco zonas en una sola captura de superficie.",
+  "blob": "### 1. Genre\nThe dominant genre is Simulation: the collection, return-to-base, upgrade, zone-unlock, and rebirth loop identifies an Incremental Simulator. There is no secondary genre.\n\n### 2. Shape and preset\nUse `world-chaptered`, taken from outside Simulation’s usual shape set. The destroyed present-day laboratory is the hub map, while each of the four historical eras is a genuinely separate compact map reached through its own giant portal. The preset is none: no Simulation preset retains both this separate-era structure and its portal-led time-travel theme.\n\n### 3. Config requirements\nUse `water-body` for the contained oasis within the Egyptian era. Use `terrain-relief` for the prehistoric valley and volcanic ground. Use `settlement-density` only in the cyberpunk era, as a dense neon city district. Use `npc-population` for the giant dinosaurs in the prehistoric zone and knights in the medieval zone; these inhabit their themed collection grounds.\n\n### 4. Layout requirements\nUse `collectible-nodes` as temporal-energy pickup locations throughout each era: amber-energy locations in the prehistoric valley, mystical-energy locations around Egypt, ancient-magic locations in the medieval zone, and plasma-energy locations in the cyberpunk zone. Provide several distributed nodes per compact era, concentrated around the zone’s landmark features rather than at portals. No other placed gameplay markers are required.\n\n### 5. Layout components\nThe central present-day hub is a compact ruined laboratory containing a damaged time machine, with four oversized portal frames arranged around it. Each portal leads to one separate era map. The prehistoric map is a compact valley with giant dinosaurs, volcanic slopes, amber-energy clusters, and its return portal. Ancient Egypt is a compact desert enclosure with pyramids, one oasis, mystical-energy clusters, Time Capsules, and its portal. The medieval map contains an imposing castle, knight-inhabited grounds, old-magic clusters, Time Capsules, and a portal. The cyberpunk map is a compact neon city block with flying cars overhead, plasma-energy clusters, Time Capsules, and a portal. Keep each era clearly explorable without sprawling into a full region. Frame the laboratory hub as the visual center, with each era rendered as its own readable themed composition.\n\n### 6. Render order\nUse `isometric`: the strong visual contrast between the ruined laboratory and four distinct historical settings should lead, while the separate-map structure is preserved through portal connections rather than a topology-critical traversable route.\n\n### 7. Scale, theme, and pipeline cost\nScale is large overall because it comprises the laboratory hub plus four separate compact maps. The theme is colorful, stylized sci-fi time travel: ruined present technology contrasted with prehistoric, Egyptian, medieval, and neon-cyberpunk imagery. Use `P4` because the four eras are separate maps. Use `tiered` for the valley and volcanic relief; no surfaces need to overhang one another.",
   "spec": {
     "genre": "Simulation",
     "secondary": [],
-    "shape": "world-shared",
-    "preset": "Incremental Simulator",
+    "shape": "world-chaptered",
+    "preset": "none",
     "axes": {},
     "options": [
       {
-        "id": "social-hub",
-        "text": "El laboratorio destruido del presente funciona como núcleo de reunión alrededor de la máquina del tiempo averiada.",
+        "id": "water-body",
+        "text": "One contained oasis within the Ancient Egyptian era.",
+        "visible": true,
+        "count": 1
+      },
+      {
+        "id": "terrain-relief",
+        "text": "Prehistoric valley and volcanic ground with volcanic slopes.",
         "visible": true,
         "count": -1
       },
       {
-        "id": "gate-progression",
-        "text": "Cuatro portales gigantes ocupan los bordes del laboratorio, cada uno con una identidad visual de era.",
+        "id": "settlement-density",
+        "text": "A dense neon city district in the cyberpunk era.",
         "visible": true,
-        "count": 4
-      },
-      {
-        "id": "collectible-nodes",
-        "text": "Puntos de colocación de energía temporal dentro de cada zona; sus partículas brillantes se representan visualmente.",
-        "visible": false,
         "count": -1
       },
       {
         "id": "npc-population",
-        "text": "Dinosaurios y caballeros visibles ocupan terreno definido en sus respectivas eras, con sus ubicaciones reservadas fuera de las rutas principales.",
+        "text": "Giant dinosaurs inhabiting the prehistoric collection grounds and knights inhabiting the medieval collection grounds.",
         "visible": true,
+        "count": -1
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "Several distributed temporal-energy pickup nodes per compact era: amber energy in the prehistoric valley, mystical energy around Egypt, ancient magic in the medieval zone, and plasma energy in the cyberpunk zone.",
+        "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "npc-population",
+        "text": "Giant dinosaurs inhabiting the prehistoric collection grounds and knights inhabiting the medieval collection grounds.",
+        "count": -1,
+        "where": ""
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "Several distributed temporal-energy pickup nodes per compact era: amber energy in the prehistoric valley, mystical energy around Egypt, ancient magic in the medieval zone, and plasma energy in the cyberpunk zone.",
+        "count": -1,
+        "where": "Throughout each compact era, concentrated around landmark features rather than at portals."
+      }
+    ],
     "layout": {
-      "composition": "Cinco mapas separados: un laboratorio-hub central compacto y cuatro eras temáticas independientes enlazadas mediante portales; cada era se compone alrededor de su hito principal y mantiene legible el portal desde la zona de llegada.",
+      "composition": "The compact ruined present-day laboratory hub is the visual center, with its damaged time machine and four oversized portal frames arranged around it; each portal leads to a separate, readable themed era composition.",
       "zones": [
         {
-          "name": "Laboratorio-hub del presente",
-          "role": "Núcleo de reunión y acceso progresivo a las eras mediante portales.",
-          "where": "Mapa central separado.",
-          "size": "Compacto."
+          "name": "Present-day laboratory hub",
+          "role": "Central return-to-base hub containing the damaged time machine and portal access to each era.",
+          "where": "Visual center",
+          "size": "compact"
         },
         {
-          "name": "Valle Prehistórico",
-          "role": "Zona explorable de recolección con portal de retorno y Cápsulas del Tiempo.",
-          "where": "Mapa de era separado, accesible desde un portal del laboratorio.",
-          "size": "Compacta."
+          "name": "Prehistoric era",
+          "role": "Collection ground with giant dinosaurs, volcanic slopes, amber energy, and a return portal.",
+          "where": "Separate map reached through its hub portal",
+          "size": "compact"
         },
         {
-          "name": "Antiguo Egipto",
-          "role": "Zona explorable de recolección con portal de retorno y Cápsulas del Tiempo.",
-          "where": "Mapa de era separado, accesible desde un portal del laboratorio.",
-          "size": "Compacta."
+          "name": "Ancient Egyptian era",
+          "role": "Collection ground with pyramids, an oasis, mystical energy, Time Capsules, and a return portal.",
+          "where": "Separate map reached through its hub portal",
+          "size": "compact"
         },
         {
-          "name": "Era Medieval",
-          "role": "Zona explorable de recolección con portal de retorno y Cápsulas del Tiempo.",
-          "where": "Mapa de era separado, accesible desde un portal del laboratorio.",
-          "size": "Compacta."
+          "name": "Medieval era",
+          "role": "Collection ground with an imposing castle, knight-inhabited grounds, old magic, Time Capsules, and a return portal.",
+          "where": "Separate map reached through its hub portal",
+          "size": "compact"
         },
         {
-          "name": "Futuro Ciberpunk",
-          "role": "Zona explorable de recolección con portal de retorno y Cápsulas del Tiempo.",
-          "where": "Mapa de era separado, accesible desde un portal del laboratorio.",
-          "size": "Compacta."
+          "name": "Cyberpunk era",
+          "role": "Collection ground with a neon city block, flying cars overhead, plasma energy, Time Capsules, and a return portal.",
+          "where": "Separate map reached through its hub portal",
+          "size": "compact"
         }
       ],
       "paths": [
         {
-          "from": "Laboratorio-hub del presente",
-          "to": "Valle Prehistórico",
+          "from": "Present-day laboratory hub",
+          "to": "Prehistoric era",
           "kind": "portal"
         },
         {
-          "from": "Laboratorio-hub del presente",
-          "to": "Antiguo Egipto",
+          "from": "Present-day laboratory hub",
+          "to": "Ancient Egyptian era",
           "kind": "portal"
         },
         {
-          "from": "Laboratorio-hub del presente",
-          "to": "Era Medieval",
+          "from": "Present-day laboratory hub",
+          "to": "Medieval era",
           "kind": "portal"
         },
         {
-          "from": "Laboratorio-hub del presente",
-          "to": "Futuro Ciberpunk",
+          "from": "Present-day laboratory hub",
+          "to": "Cyberpunk era",
           "kind": "portal"
         }
       ],
-      "terrain": "El hub tiene suelo industrial agrietado. El Valle Prehistórico combina terreno de valle y volcanes; Egipto incluye un oasis central y ruinas de piedra; la era medieval tiene patios y caminos de piedra; el futuro ciberpunk tiene calles compactas. Cada mapa se delimita con fondos naturales o arquitectónicos temáticos, sin bordes artificiales.",
+      "terrain": "Prehistoric valley with volcanic slopes and volcanic ground; contained oasis in the compact Egyptian desert enclosure.",
       "props": [
         {
-          "name": "Máquina del tiempo rota",
-          "count": -1,
-          "where": "Centro del laboratorio-hub."
+          "name": "Damaged time machine",
+          "count": 1,
+          "where": "Central ruined laboratory hub"
         },
         {
-          "name": "Portales monumentales",
+          "name": "Oversized portal frames",
           "count": 4,
-          "where": "Alrededor de los bordes del laboratorio-hub."
+          "where": "Arranged around the damaged time machine in the laboratory hub"
         },
         {
-          "name": "Cápsulas del Tiempo",
+          "name": "Pyramids",
           "count": -1,
-          "where": "Cerca de un borde accesible de cada era."
+          "where": "Ancient Egyptian era"
         },
         {
-          "name": "Volcanes",
+          "name": "Time Capsules",
           "count": -1,
-          "where": "Valle Prehistórico."
+          "where": "Ancient Egyptian, medieval, and cyberpunk eras"
         },
         {
-          "name": "Afloramientos de ámbar brillante",
-          "count": -1,
-          "where": "Valle Prehistórico."
+          "name": "Imposing castle",
+          "count": 1,
+          "where": "Medieval era"
         },
         {
-          "name": "Dinosaurios gigantes",
+          "name": "Flying cars",
           "count": -1,
-          "where": "Valle Prehistórico, fuera de las rutas principales."
-        },
-        {
-          "name": "Pirámides",
-          "count": -1,
-          "where": "Antiguo Egipto."
-        },
-        {
-          "name": "Oasis",
-          "count": -1,
-          "where": "Centro del Antiguo Egipto."
-        },
-        {
-          "name": "Ruinas de piedra",
-          "count": -1,
-          "where": "Antiguo Egipto."
-        },
-        {
-          "name": "Castillo imponente",
-          "count": -1,
-          "where": "Era Medieval."
-        },
-        {
-          "name": "Caballeros",
-          "count": -1,
-          "where": "Era Medieval, fuera de las rutas principales."
-        },
-        {
-          "name": "Torres de neón",
-          "count": -1,
-          "where": "Futuro Ciberpunk."
-        },
-        {
-          "name": "Autos voladores",
-          "count": -1,
-          "where": "Sobre la vía del Futuro Ciberpunk."
+          "where": "Overhead in the cyberpunk era"
         }
       ],
-      "boundary": "Fondos naturales o arquitectónicos temáticos delimitan cada mapa; no hay bordes artificiales.",
-      "scale_band": "medium",
-      "theme": "Ciencia ficción de viaje temporal, ruina tecnológica y contrastes históricos estilizados."
+      "boundary": "Each historical era is a separate compact map connected by its own portal from the central laboratory hub.",
+      "scale_band": "large",
+      "theme": "Colorful, stylized sci-fi time travel; ruined present technology contrasted with prehistoric, Egyptian, medieval, and neon-cyberpunk imagery."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "La prioridad es la lectura visual distintiva de los cinco escenarios temáticos; una topología exacta no condiciona la jugabilidad de estos recintos compactos.",
+      "why": "Strong visual contrast between the ruined laboratory and four distinct historical settings should lead because portal connections preserve the separate-map structure without a topology-critical traversable route.",
       "set_piece": false
     },
     "route": [
-      "P4"
+      "P4",
+      "tiered"
     ],
-    "notes": [],
+    "notes": [
+      "Shape world-chaptered is taken from outside Simulation's usual shape set.",
+      "The collectible-node count is unspecified; the blob describes several distributed nodes per compact era.",
+      "All axes remain at schema defaults because the blob names a shape.",
+      "placement mirrored from option 'npc-population': no siting rule given"
+    ],
     "scene_prompt": "Crea un mapa 3D de simulador de viaje en el tiempo centrado en un laboratorio/base destruido del presente, con una máquina del tiempo averiada y grandes portales desbloqueables que conducen a cuatro zonas separadas. Cada era es una zona temática compacta y claramente explorable, con espacio de recolección, su portal y Cápsulas del Tiempo: un valle prehistórico con dinosaurios gigantes, volcanes y energía de ámbar; un Antiguo Egipto con pirámides, oasis y energía mística; una era medieval con castillos imponentes, caballeros y magia antigua; y un futuro ciberpunk con ciudad de neón, autos voladores y energía de plasma."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

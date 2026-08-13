@@ -19,175 +19,166 @@
     }
   ],
   "scene_prompt": "Create a compact open 3D city spanning a few connected, drivable blocks, laid out for active police chases. Place key landmarks close together: a central police station and SWAT base, robbery-target bank, jewelry store, and gas station, plus a weapon shop, vehicle dealership, criminal hideout, houses, and apartment buildings. Use streets with working traffic links between the landmarks; houses and apartments remain exterior scenery, while the robbery targets and the two faction bases have enterable interiors.",
-  "blob": "### Genre\nDominant genre: `RPG`, with `Shooter` secondary for the armed police-versus-criminal conflict. Persistent cash and XP progression, missions, robberies, arrests, and vehicle acquisition make RPG the owner of the city-wide form; Shooter contributes combat context but not a lane map.\n\n### Shape and preset\nUse `world-single`: one compact, contiguous open city built from a few connected drivable blocks, with landmarks deliberately close enough for sustained pursuits. Preset: none. The city is not a hub-and-dungeon structure or a biome world, and no RPG preset remains recognisable after retaining the compact crime-city layout without sanctuary or mob-nest requirements.\n\n### Config requirements\n`building-interior` is visible geometry: enterable interiors are limited to the bank, jewelry store, gas station, police station/SWAT base, and criminal hideout; houses and apartments remain closed exterior shells. `settlement-density` is visible geometry: the city is a built-up set of urban blocks with continuous street-facing houses, apartments, shops, and civic buildings. No invisible layout options are required.\n\n### Layout components\nPlace a central civic block containing the police station and adjacent SWAT base as the primary law-enforcement anchor. Surround it with several connected drivable blocks: put the bank and jewelry store on prominent nearby commercial corners, the gas station along an outer through-street, and the weapon shop and vehicle dealership on accessible roadside lots. Set the criminal hideout apart on a less exposed edge block while keeping multiple street approaches for escapes and chases. Fill remaining parcels with exterior-only houses and apartment buildings to establish residential density without creating extra interiors. Use a connected street grid with intersections and traffic links between every landmark; include sidewalks and building-front setbacks. Bound the compact city at its outer arterial streets and dense perimeter facades rather than opening into an unbuilt void. Frame the whole city as a readable isometric urban district, with the police civic block central and robbery sites visibly distributed around it.\n\n### Render order\nUse `topdown`: the connected vehicle street network and chase routes must remain navigable and coherent, so topology is authoritative before the isometric city dressing.\n\n### Scale, theme, and pipeline cost\nScale band: medium, driven by a few compact but fully connected drivable city blocks rather than a highway-scale region. Theme: contemporary Roblox urban crime city, civic architecture, commercial storefronts, and dense residential streets. Pipeline modifier: `P3`, forced by travel between outdoor streets and the specified enterable robbery targets and faction bases.",
+  "blob": "### Genre\nThe dominant genre is `Shooter`, with `Simulation` secondary for the persistent mission-and-progression context. The shooter conflict between police and criminals owns the city’s combat-oriented spatial structure; the secondary genre adds no extra layout content.\n\n### Shape and preset\nUse `open-battlefield`, taken from the Shooter catalogue: one compact but contiguous city map with dispersed objectives rather than formal combat lanes. Preset is none: the Battle Royale preset shares the open-field shape but its contracting boundary and scattered-loot emphasis do not describe this persistent cops-versus-criminals city.\n\n### Config requirements\nUse `spawn-teambase` for a protected police station–SWAT compound and a separate criminal hideout as faction anchors. Use `path-road-vehicle` for broad, connected drivable streets linking every major landmark and supporting vehicle chases. Use `building-interior` only for the bank, jewelry store, gas station, police/SWAT compound, and criminal hideout; houses and apartments are closed exterior scenery. Use `settlement-density` for continuous urban blocks of houses, apartments, shops, and civic buildings.\n\n### Layout requirements\nPlace `spawn-teambase` twice: one team spawn inside the police station–SWAT compound near the central civic block, and one inside the criminal hideout at the opposite edge of the compact city. Both must be screened from direct street sightlines and feed immediately into the road network. No other placed gameplay markers are required by the prompt.\n\n### Layout components\nBuild a compact open 3D city of a few connected, drivable blocks. Put the central police station and attached SWAT base near the middle, with the bank, jewelry store, and gas station distributed on nearby blocks as visible robbery targets. Place the weapon shop and vehicle dealership on accessible commercial corners, and put the criminal hideout on a less exposed perimeter block with more than one street approach. Fill intervening blocks with exterior-only houses and apartment buildings. Use a connected street grid with intersections and vehicle-scale turns between all landmarks; sidewalks and short alleys provide alternate foot routes. Keep the city boundary as dense outer building fronts and blocked road ends rather than open countryside. Compose the map as a readable overhead urban grid, with the police compound as the central anchor and robbery sites visibly spread around it.\n\n### Render order\nUse `topdown` first and make it authoritative, because the connected drivable street topology must remain coherent for active chases before the isometric city dressing is generated.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by a few dense connected city blocks rather than a highway-scale region. Theme: modern stylized urban crime city, civic police infrastructure, commercial robbery targets, and residential streets. Use `P3`, forced by players crossing between city streets and the specified enterable robbery and faction-base interiors.",
   "spec": {
-    "genre": "RPG",
+    "genre": "Shooter",
     "secondary": [
-      "Shooter"
+      "Simulation"
     ],
-    "shape": "world-single",
+    "shape": "open-battlefield",
     "preset": "none",
     "axes": {},
     "options": [
       {
-        "id": "building-interior",
-        "text": "Enterable interiors are limited to the bank, jewelry store, gas station, police station/SWAT base, and criminal hideout; houses and apartments remain closed exterior shells.",
+        "id": "spawn-teambase",
+        "text": "A protected police station–SWAT compound and a separate criminal hideout serving as faction anchors.",
         "visible": true,
-        "count": -1
+        "count": 2
+      },
+      {
+        "id": "building-interior",
+        "text": "Enterable interiors only for the bank, jewelry store, gas station, police/SWAT compound, and criminal hideout; houses and apartments remain closed exterior scenery.",
+        "visible": true,
+        "count": 5
       },
       {
         "id": "settlement-density",
-        "text": "A built-up set of urban blocks with continuous street-facing houses, apartments, shops, and civic buildings.",
+        "text": "Continuous urban blocks of houses, apartments, shops, and civic buildings.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "spawn-teambase",
+        "text": "One team spawn inside the police station–SWAT compound and one inside the criminal hideout.",
+        "count": 2,
+        "where": "Place the police team spawn near the central civic block and the criminal team spawn at the opposite edge of the compact city; screen both from direct street sightlines and feed them immediately into the road network."
+      }
+    ],
     "layout": {
-      "composition": "Readable isometric urban district framing the whole compact city, with the central police civic block as the anchor and robbery sites visibly distributed around it.",
+      "composition": "Readable overhead urban grid: the central police compound anchors the middle, with visible robbery sites spread around nearby blocks and the criminal hideout on a less exposed perimeter block.",
       "zones": [
         {
-          "name": "Police Civic Block",
-          "role": "Primary law-enforcement anchor containing the police station and adjacent SWAT base.",
-          "where": "centre",
-          "size": "central block"
-        },
-        {
-          "name": "Commercial Corners",
-          "role": "Prominent robbery-target locations containing the bank and jewelry store.",
-          "where": "nearby commercial corners around the civic block",
+          "name": "Police station–SWAT compound",
+          "role": "Central police faction anchor with an enterable interior and team spawn.",
+          "where": "Near the middle, at the central civic block.",
           "size": ""
         },
         {
-          "name": "Outer Through-Street",
-          "role": "Roadside gas station location on an outer route.",
-          "where": "outer city edge",
+          "name": "Robbery targets",
+          "role": "Enterable bank, jewelry store, and gas station serving as visible robbery targets.",
+          "where": "Distributed on nearby blocks around the police compound.",
           "size": ""
         },
         {
-          "name": "Roadside Lots",
-          "role": "Accessible lots for the weapon shop and vehicle dealership.",
-          "where": "along connected streets",
+          "name": "Commercial corners",
+          "role": "Accessible weapon shop and vehicle dealership.",
+          "where": "Commercial corners within the connected city blocks.",
           "size": ""
         },
         {
-          "name": "Criminal Hideout Block",
-          "role": "Less exposed criminal base with multiple street approaches for escapes and chases.",
-          "where": "edge block",
+          "name": "Criminal hideout",
+          "role": "Criminal faction anchor with an enterable interior and team spawn.",
+          "where": "A less exposed perimeter block at the opposite edge of the compact city.",
           "size": ""
         },
         {
-          "name": "Residential Parcels",
-          "role": "Exterior-only houses and apartment buildings establishing residential density without extra interiors.",
-          "where": "remaining parcels",
+          "name": "Residential blocks",
+          "role": "Exterior-only houses and apartment buildings filling intervening urban blocks.",
+          "where": "Between the major landmarks.",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Police Civic Block",
-          "to": "Commercial Corners",
+          "from": "Police station–SWAT compound",
+          "to": "Robbery targets",
           "kind": "road"
         },
         {
-          "from": "Police Civic Block",
-          "to": "Outer Through-Street",
+          "from": "Police station–SWAT compound",
+          "to": "Commercial corners",
           "kind": "road"
         },
         {
-          "from": "Police Civic Block",
-          "to": "Roadside Lots",
+          "from": "Police station–SWAT compound",
+          "to": "Criminal hideout",
           "kind": "road"
         },
         {
-          "from": "Police Civic Block",
-          "to": "Criminal Hideout Block",
+          "from": "Criminal hideout",
+          "to": "Road network",
           "kind": "road"
         },
         {
-          "from": "Commercial Corners",
-          "to": "Criminal Hideout Block",
-          "kind": "road"
-        },
-        {
-          "from": "All landmarks",
-          "to": "All landmarks",
-          "kind": "road"
+          "from": "Residential blocks",
+          "to": "Major landmarks",
+          "kind": "alley"
         }
       ],
-      "terrain": "Compact urban ground with connected street grid, intersections, traffic links, sidewalks, and building-front setbacks.",
+      "terrain": "Compact urban ground with a connected street grid, intersections, vehicle-scale turns, sidewalks, and short alleys.",
       "props": [
-        {
-          "name": "police station",
-          "count": -1,
-          "where": "central civic block"
-        },
-        {
-          "name": "SWAT base",
-          "count": -1,
-          "where": "adjacent to the police station"
-        },
         {
           "name": "bank",
           "count": -1,
-          "where": "prominent nearby commercial corner"
+          "where": "Nearby blocks around the central police compound."
         },
         {
           "name": "jewelry store",
           "count": -1,
-          "where": "prominent nearby commercial corner"
+          "where": "Nearby blocks around the central police compound."
         },
         {
           "name": "gas station",
           "count": -1,
-          "where": "outer through-street"
+          "where": "Nearby blocks around the central police compound."
         },
         {
           "name": "weapon shop",
           "count": -1,
-          "where": "accessible roadside lot"
+          "where": "Accessible commercial corners."
         },
         {
           "name": "vehicle dealership",
           "count": -1,
-          "where": "accessible roadside lot"
-        },
-        {
-          "name": "criminal hideout",
-          "count": -1,
-          "where": "less exposed edge block"
+          "where": "Accessible commercial corners."
         },
         {
           "name": "houses",
           "count": -1,
-          "where": "remaining residential parcels"
+          "where": "Intervening residential blocks."
         },
         {
           "name": "apartment buildings",
           "count": -1,
-          "where": "remaining residential parcels"
+          "where": "Intervening residential blocks."
         }
       ],
-      "boundary": "Compact city bounded at its outer arterial streets and dense perimeter facades rather than opening into an unbuilt void.",
+      "boundary": "Dense outer building fronts and blocked road ends rather than open countryside.",
       "scale_band": "medium",
-      "theme": "Contemporary Roblox urban crime city, civic architecture, commercial storefronts, and dense residential streets."
+      "theme": "Modern stylized urban crime city with civic police infrastructure, commercial robbery targets, and residential streets."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the connected vehicle street network and chase routes must remain navigable and coherent.",
+      "why": "the connected drivable street topology must remain coherent for active chases.",
       "set_piece": false
     },
     "route": [
       "P3"
     ],
-    "notes": [],
+    "notes": [
+      "`path-road-vehicle` was named in the blob but is not an option in the dominant Shooter genre, so it was not included in options; its connected drivable-street requirement is retained in layout paths and terrain.",
+      "The schema has no `render.then` field; the blob's isometric dressing follows from the topdown-first render rationale."
+    ],
     "scene_prompt": "Create a compact open 3D city spanning a few connected, drivable blocks, laid out for active police chases. Place key landmarks close together: a central police station and SWAT base, robbery-target bank, jewelry store, and gas station, plus a weapon shop, vehicle dealership, criminal hideout, houses, and apartment buildings. Use streets with working traffic links between the landmarks; houses and apartments remain exterior scenery, while the robbery targets and the two faction bases have enterable interiors."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

@@ -19,83 +19,67 @@
     }
   ],
   "scene_prompt": "Create a 3D adventure map set in a dense magical pine forest at dusk. A narrow dirt path forms a short, guided route through tightly packed tall realistic pine trees, with glowing red and green mushrooms scattered beside the path and among the forest floor. Use moody, foggy atmospheric lighting that limits distant visibility; the path leads from the foreground through the dense midground forest to a small mysterious glowing clearing as the destination.",
-  "blob": "### Genre\nThe dominant genre is Adventure: this is a purely exploratory, short guided walk with a destination and no combat. \n\n### Shape and preset\nUse `world-corridor`, matching the Guided Trail preset. The narrow forest path is the whole navigable route, carrying the player from the entry through restricted visibility to the glowing clearing. Keep the preset’s guided form, but use the prompt’s clearing rather than an interior-to-valley reveal.\n\n### Config requirements\n`path-trail` is visible geometry: a narrow worn dirt trail provides the continuous guided route through the trees. `landmark-focal` is visible geometry: the small glowing clearing is the destination, glimpsed only faintly through fog until the route reaches it. Do not add collectibles, hazards, enemies, structures, or unrequested interiors.\n\n### Layout components\nPlace a small entry area at the foreground edge, immediately feeding into one continuous, gently winding dirt path. The route occupies the central composition and travels through a dense midground of tightly packed, tall realistic pine trees; tree trunks and low branches sit close enough to make the forest feel enclosing while leaving the path consistently clear. Scatter glowing red and green mushrooms in small irregular clusters along both path verges and across the visible forest floor, with brighter clusters subtly drawing attention forward. Terminate the short path at a small circular mysterious clearing in the background, softly illuminated by an undefined magical glow and enclosed by a ring of pines. The terrain is mostly level, dark needle-covered soil and forest litter around the path, without significant relief or water. The boundary is implicit dense forest: layered pine rows and fog prevent views beyond the playable corridor. Frame the scene from a slightly elevated isometric foreground view, with the path leading diagonally inward toward the clearing.\n\n### Render order\nUse `isometric`: the atmospheric dusk composition, fog depth, dense tree layering, and glowing destination lead; derive the top-down plan from that authoritative image.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the requested short guided walk rather than a forest intended for getting lost in. Theme is realistic magical pine forest at dusk, moody fog, restrained red-and-green bioluminescence. Use `P0`; this is a single exterior ground surface with no forced multi-level, interior, volumetric, multi-map, or validity-by-construction requirement.",
+  "blob": "### 1. Genre\nThe dominant genre is Adventure: the player explores a short guided forest walk toward a clear destination, with no combat or hostile creatures.\n\n### 2. Shape and preset\nUse `route-guided`, matching the Guided Trail preset. It is a single narrow dirt route through one continuous forest, directing the player from the entrance to the glowing clearing rather than inviting free-roam exploration. Retain the preset’s route and focal destination, but omit its reveal-exit because no cave-to-valley transition is requested.\n\n### 3. Config requirements\nUse `path-trail` as the narrow, worn dirt path that visibly leads through the trees. Use `landmark-focal` for the small mysterious glowing clearing at the path’s endpoint; it must read as the destination through the fog without introducing a new narrative object.\n\n### 4. Layout requirements\nNo placed layout-only components are required. This is a short atmospheric exploration route with no pickups, enemy spawns, checkpoints, quest targets, or teleporters.\n\n### 5. Layout components\nCreate one elongated forest zone, beginning in the foreground entrance and extending through a dense midground to a compact glowing clearing at the far end. The dirt path is the sole continuous pedestrian route, gently winding enough to hide portions of the destination while remaining unambiguous. Pack tall realistic pine trees tightly on both sides, with irregular natural spacing and dense forest-floor undergrowth; do not leave open wandering areas beyond the path. Scatter glowing red and green mushrooms in small clusters beside the path and between tree trunks. The clearing is small, enclosed by pines, and softly illuminated as a mysterious arrival space. Use dark earthy ground, dusk sky tones, and low fog that restricts long sightlines. The forest itself forms the soft boundary, with dense tree walls preventing views beyond the route. Compose the frame along the path’s diagonal or depth axis, from the darker entrance toward the distant clearing glow.\n\n### 6. Render order\nUse `isometric`: the atmospheric dusk lighting, fog depth, pine density, and clearing glow are authoritative, while the simple single path can be projected into top-down afterward.\n\n### 7. Scale, theme, and pipeline cost\nScale band: small, driven by the requested short guided walk. Theme: realistic magical pine forest at foggy dusk, moody and mysterious, with restrained red-and-green bioluminescent accents. Pipeline modifier: `P0`, since this is one contiguous, single-surface exterior route with no forced multi-level, indoor, volumetric, or validity-by-construction geometry.",
   "spec": {
     "genre": "Adventure",
     "secondary": [],
-    "shape": "world-corridor",
+    "shape": "route-guided",
     "preset": "Guided Trail",
     "axes": {},
     "options": [
       {
         "id": "path-trail",
-        "text": "A narrow worn dirt trail provides the continuous guided route through the trees.",
+        "text": "A narrow, worn dirt path visibly leading through the trees.",
         "visible": true,
         "count": -1
       },
       {
         "id": "landmark-focal",
-        "text": "A small glowing clearing is the destination, glimpsed only faintly through fog until the route reaches it.",
+        "text": "A small mysterious glowing clearing at the path's endpoint, reading as the destination through the fog without a new narrative object.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "Slightly elevated isometric foreground view, with the entry at the foreground edge and a central path leading diagonally inward through dense midground pines toward the glowing clearing in the background.",
+      "composition": "Frame the scene along the dirt path's diagonal or depth axis, from the darker foreground entrance through the dense midground forest toward the distant glow of the clearing.",
       "zones": [
         {
-          "name": "Entry area",
-          "role": "Player arrival, immediately feeding into the guided route.",
-          "where": "foreground edge",
-          "size": "small"
-        },
-        {
-          "name": "Forest path",
-          "role": "The continuous short guided walk through restricted-visibility forest.",
-          "where": "central composition, running diagonally inward through the midground",
-          "size": "short and narrow"
-        },
-        {
-          "name": "Glowing clearing",
-          "role": "Mysterious destination at the end of the route.",
-          "where": "background",
-          "size": "small and circular"
+          "name": "Elongated forest route",
+          "role": "A short guided forest walk beginning at the entrance, passing through dense pines, and ending at the glowing clearing.",
+          "where": "From the foreground entrance through the midground to the far end.",
+          "size": "Small, elongated"
         }
       ],
       "paths": [
         {
-          "from": "Entry area",
+          "from": "Foreground entrance",
           "to": "Glowing clearing",
           "kind": "track"
         }
       ],
-      "terrain": "Mostly level dark needle-covered soil and forest litter around the dirt path, without significant relief or water.",
+      "terrain": "Dark earthy forest ground with dense forest-floor undergrowth, dusk sky tones, and low fog restricting long sightlines.",
       "props": [
         {
           "name": "Tall realistic pine trees",
           "count": -1,
-          "where": "Tightly packed through the dense midground, with layered rows enclosing the corridor and a ring around the clearing."
+          "where": "Tightly packed on both sides of the path, enclosing the clearing and forming dense tree walls."
         },
         {
           "name": "Glowing red and green mushrooms",
           "count": -1,
-          "where": "Small irregular clusters along both path verges and across the visible forest floor, with brighter clusters drawing attention forward."
-        },
-        {
-          "name": "Fog",
-          "count": -1,
-          "where": "Layered through the forest, limiting distant visibility and faintly obscuring the clearing."
+          "where": "In small clusters beside the path and between tree trunks."
         }
       ],
-      "boundary": "Implicit dense forest boundary: layered pine rows and fog prevent views beyond the playable corridor.",
+      "boundary": "The forest forms a soft boundary: dense tree walls prevent views and wandering beyond the route.",
       "scale_band": "small",
-      "theme": "Realistic magical pine forest at dusk, moody fog, restrained red-and-green bioluminescence."
+      "theme": "Realistic magical pine forest at foggy dusk, moody and mysterious, with restrained red-and-green bioluminescent accents."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "Atmospheric dusk composition, fog depth, dense tree layering, and the glowing destination lead.",
+      "why": "Atmospheric dusk lighting, fog depth, pine density, and clearing glow are authoritative while the simple single path can be projected afterward.",
       "set_piece": false
     },
     "route": [
@@ -107,7 +91,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

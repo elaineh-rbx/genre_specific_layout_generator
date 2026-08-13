@@ -24,120 +24,107 @@
     }
   ],
   "scene_prompt": "Create a 3D comic-book-stylized modern city spanning a few dense city blocks for web-swinging. Arrange streets and intersections at ground level between clusters of shorter buildings, with several taller landmarks rising up to about 20 stories and varied rooftops, façades, and alleyways creating different swing heights and routes. Keep street-level spaces clear enough for small mugging and robbery encounters.",
-  "blob": "### Genre\nThe dominant genre is Action, specifically free-roam superhero combat rather than an RPG: the player swings through the city and responds to street encounters. There is no secondary genre.\n\n### Shape and preset\nUse `arena-stacked`, matching the Open World Action preset. Here it is a compact vertical city rather than a conventional arena: streets form the ground layer while rooftops and tall building faces create overlapping traversal heights. The prompt supports the preset’s stacked shape but not its generic combat-cover or chokepoint bundle.\n\n### Config requirements\nUse `settlement-density` as visible geometry: several dense modern city blocks are built as continuous street walls, not isolated structures. Do not add enterable interiors, ambient crowds, pickups, hazards, emitters, or other invisible gameplay markers; the requested encounters need clear street space but do not require visible layout mechanics.\n\n### Layout components\nBuild a few tightly connected city blocks, with a central street intersection and branching streets as the main ground-level circulation. Cluster shorter mid-rise buildings around the perimeter and along each block, broken by narrow alleyways that provide alternate ground routes and visual depth. Place several distinct landmark towers, reaching about 20 stories, at separated corners and block ends so they establish varied web-swing heights and long aerial lines between them. Vary rooftop silhouettes, setbacks, façades, water-tower-like roof props, and building heights to make swing routes legible without making every roof level.\n\nKeep broad sidewalk corners, small plazas at intersections, and open street segments clear for quick street-level mugging and robbery scenes. Alley mouths should remain visibly connected to streets rather than becoming sealed dead ends. Enclose the playable few-block district with a continuous outer ring of building façades and distant skyline massing, implying a larger city beyond without expanding the traversable map. Compose the scene in a three-quarter aerial view that reads streets, towers, and rooftop height differences together.\n\n### Render order\nUse `topdown`: the street grid, alleys, and viable swinging circulation need to remain connected before the isometric city dressing is generated.\n\n### Scale, theme, and pipeline cost\nScale is small: only a few dense blocks, but with enough vertical variation for sustained swinging. Theme is comic-book-stylized modern city, bold and readable rather than photoreal. Use `P2` because accessible rooftops and street-level space stack within the same urban footprint, so a single top-down capture would occlude lower traversal surfaces.",
+  "blob": "### Genre\nDominant genre: Action. The player’s web-swinging traversal and rapid intervention in street crimes make this a city-scale action experience rather than a roleplay town or an open-world showcase.\n\n### Shape and preset\nUse `traversal-city`, taken from Action’s usual shapes: a compact city specifically built to be crossed above street level, with streets as fallback circulation. Use the Parkour Traversal preset for its city-crossing intent, while omitting its unrequested combat-cover, hazard, and chokepoint options.\n\n### Config requirements\nApply `settlement-density` as a dense modern city of contiguous building blocks, rather than isolated structures. No enterable interiors, water, natural relief, or other unrequested image options are needed.\n\n### Layout requirements\nPlace `spawner-npc` at several street-level encounter pockets: use one unobtrusive hostile-event origin in selected alleys, storefront forecourts, or quieter intersection corners per block, never in the main swinging corridors. These support quick mugging and robbery encounters without placing enemies visibly in the render.\n\n### Layout components\nBuild a small, contiguous district spanning a few dense city blocks. Lay out a readable ground-level network of streets and intersections through the center, with narrow alleyways and storefront setbacks branching between blocks as compact crime-event spaces. Cluster shorter mid-rise buildings around several distinct landmark towers, with the tallest reaching about 20 stories. Give every block varied roof heights, parapets, façades, rooftop service structures, and gaps that create changing web-swinging heights and routes. Keep the primary streets broad and visually clear for street-level encounters, while alleys remain secondary routes and encounter pockets. Enclose the playable district with a continuous perimeter of building façades and skyline massing, disguising the map edge as the surrounding city. Compose the frame from an elevated oblique view that clearly shows the street grid, rooftop layers, and the tallest towers rising above the district.\n\n### Render order\nUse `isometric`: render the comic-book city look first, then project its street and rooftop arrangement into top-down form. The city’s traversal richness matters visually, but it is not a fixed, validation-critical course.\n\n### Scale, theme, and pipeline cost\nScale band: small, driven by the requested few city blocks, while the 20-story landmarks provide vertical swing range. Theme: comic-book-stylized modern metropolis, bold façades and readable urban silhouettes. Use `P2` because roofs, towers, and elevated traversal surfaces overhang the streets and alleys below.",
   "spec": {
     "genre": "Action",
     "secondary": [],
-    "shape": "arena-stacked",
-    "preset": "Open World Action",
+    "shape": "traversal-city",
+    "preset": "Parkour Traversal",
     "axes": {},
     "options": [
       {
         "id": "settlement-density",
-        "text": "Several dense modern city blocks built as continuous street walls rather than isolated structures.",
+        "text": "A dense modern city of contiguous building blocks rather than isolated structures.",
         "visible": true,
+        "count": -1
+      },
+      {
+        "id": "spawner-npc",
+        "text": "Unobtrusive hostile-event origins supporting quick mugging and robbery encounters.",
+        "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "spawner-npc",
+        "text": "One unobtrusive hostile-event origin in selected alleys, storefront forecourts, or quieter intersection corners per block, supporting quick mugging and robbery encounters.",
+        "count": -1,
+        "where": "At street-level encounter pockets in selected alleys, storefront forecourts, or quieter intersection corners per block; never in the main swinging corridors."
+      }
+    ],
     "layout": {
-      "composition": "Three-quarter aerial view reading the central streets and intersections, separated corner and block-end towers, rooftop height differences, perimeter mid-rises, and the enclosing skyline massing together.",
+      "composition": "An elevated oblique view clearly showing the central street grid and rooftop layers, with the tallest landmark towers rising above the compact district.",
       "zones": [
         {
-          "name": "Central street intersection",
-          "role": "Main ground-level circulation and clear space for quick street-level mugging and robbery scenes.",
-          "where": "centre",
+          "name": "Dense city blocks",
+          "role": "Contiguous district for web-swinging traversal and street-level intervention.",
+          "where": "Across the small playable district.",
+          "size": "A few dense city blocks"
+        },
+        {
+          "name": "Primary streets and intersections",
+          "role": "Broad, clear ground-level circulation and street-level encounter space.",
+          "where": "Through the center between building clusters.",
           "size": ""
         },
         {
-          "name": "Branching streets and alley network",
-          "role": "Ground-level circulation with visibly connected alternate alley routes.",
-          "where": "branching outward from the central intersection through the blocks",
-          "size": ""
+          "name": "Alleys and storefront setbacks",
+          "role": "Secondary routes and compact crime-event spaces.",
+          "where": "Branching between blocks off the primary streets.",
+          "size": "Narrow and compact"
         },
         {
-          "name": "Perimeter and block-edge mid-rises",
-          "role": "Shorter buildings define continuous street walls, with narrow alleyways and varied rooftop silhouettes.",
-          "where": "around the perimeter and along each block",
-          "size": ""
-        },
-        {
-          "name": "Landmark tower corners",
-          "role": "Tall separated aerial anchors establishing varied web-swing heights and long aerial lines.",
-          "where": "separated corners and block ends",
-          "size": "about 20 stories"
-        },
-        {
-          "name": "Intersection plazas and sidewalk corners",
-          "role": "Open street-level encounter space.",
-          "where": "at intersections and street corners",
-          "size": "small"
-        },
-        {
-          "name": "Outer façade ring",
-          "role": "Encloses the playable few-block district while implying a larger city beyond.",
-          "where": "outer boundary",
-          "size": ""
+          "name": "Landmark towers",
+          "role": "Provide vertical swing range and distinct urban landmarks.",
+          "where": "Rising among clusters of shorter mid-rise buildings.",
+          "size": "Tallest reaches about 20 stories"
         }
       ],
       "paths": [
         {
-          "from": "Central street intersection",
-          "to": "Branching streets and alley network",
+          "from": "Primary streets and intersections",
+          "to": "Dense city blocks",
           "kind": "road"
         },
         {
-          "from": "Branching streets and alley network",
-          "to": "Perimeter and block-edge mid-rises",
+          "from": "Primary streets and intersections",
+          "to": "Alleys and storefront setbacks",
           "kind": "corridor"
-        },
-        {
-          "from": "Streets",
-          "to": "Alley mouths",
-          "kind": "corridor"
-        },
-        {
-          "from": "Landmark tower corners",
-          "to": "Landmark tower corners",
-          "kind": "open ground"
         }
       ],
-      "terrain": "Modern paved streets, broad sidewalk corners, small intersection plazas, narrow connected alleyways, accessible rooftops, and stacked tall building faces.",
+      "terrain": "Modern urban ground-level streets and intersections, with varied rooftop heights, parapets, façades, rooftop service structures, and gaps creating changing web-swinging heights and routes.",
       "props": [
         {
-          "name": "Dense modern city blocks",
+          "name": "Shorter mid-rise building clusters",
           "count": -1,
-          "where": "across the playable few-block district"
+          "where": "Around several distinct landmark towers"
         },
         {
-          "name": "Shorter mid-rise buildings",
+          "name": "Landmark towers",
           "count": -1,
-          "where": "around the perimeter and along each block"
+          "where": "Rising above the district"
         },
         {
-          "name": "Landmark towers reaching about 20 stories",
+          "name": "Rooftop service structures",
           "count": -1,
-          "where": "separated corners and block ends"
+          "where": "On varied-height roofs across every block"
         },
         {
-          "name": "Water-tower-like roof props",
+          "name": "Storefront setbacks",
           "count": -1,
-          "where": "on varied rooftops"
-        },
-        {
-          "name": "Distant skyline massing",
-          "count": -1,
-          "where": "beyond the outer façade ring"
+          "where": "Branching between blocks"
         }
       ],
-      "boundary": "A continuous outer ring of building façades and distant skyline massing encloses the playable few-block district.",
+      "boundary": "A continuous perimeter of building façades and skyline massing disguises the map edge as the surrounding city.",
       "scale_band": "small",
-      "theme": "Comic-book-stylized modern city, bold and readable rather than photoreal."
+      "theme": "Comic-book-stylized modern metropolis with bold façades and readable urban silhouettes."
     },
     "render": {
-      "first": "topdown",
-      "then": "isometric",
-      "authoritative": "topdown",
-      "why": "the street grid, alleys, and viable swinging circulation must remain connected before city dressing.",
+      "first": "isometric",
+      "then": "topdown",
+      "authoritative": "isometric",
+      "why": "Traversal richness matters visually, but the city is not a fixed validation-critical course.",
       "set_piece": false
     },
     "route": [
@@ -149,12 +136,10 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
-  "mapper_notes": [
-    "blob asked for topdown first; the route ['P2'] gives isometric"
-  ]
+  "mapper_notes": []
 }

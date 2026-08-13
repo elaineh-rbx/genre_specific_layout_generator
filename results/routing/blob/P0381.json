@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a 3D alpine forest mountain map with a single winding paved path descending from a high starting point to the bottom over a roughly thirty-second run. The narrow road snakes through rocky slopes and trees, with repeated left and right bends and exposed edges where the terrain drops away; place the tyre at the top of the descent.",
-  "blob": "### Genre\nThe dominant genre is Racing: a finite downhill time-trial route where the player steers a rolling tyre through a continuous descent.\n\n### Shape and preset\nUse `route-point-to-point`, a single unbroken mountain road from a high alpine start to the valley-bottom endpoint. This matches the Downhill Descent preset in its descending, edge-risk route, while omitting its unrequested recovery points and distance markers.\n\n### Config requirements\nUse `hazard-kill` as visible geometry: unguarded road edges and steep drop-offs punish a tyre that leaves the paved route. Use `terrain-relief` as visible geometry: rocky mountain slopes step down continuously around the descent. No invisible configuration elements are requested; do not render triggers, checkpoints, or UI markers.\n\n### Layout components\nBuild one roughly thirty-second downhill route. The start zone is a small high-elevation paved turnout at the mountain crest, holding one car tyre at the road’s head. From there, a narrow paved road descends in a readable continuous sequence of repeated left and right bends, including tight switchbacks and broader sweeping curves. Keep the route visibly traceable from top to bottom rather than obscured by trees.\n\nRocky alpine slopes rise against the inside of bends and fall sharply away beyond exposed outer edges. Dense conifer trees cluster on wider shelves and downhill slopes, with occasional open rocky sections that reveal the drop and distant lower terrain. The bottom zone is a broader, level paved runout or small valley turnout that clearly terminates the descent. Natural rock faces, trees, and steep terrain form the boundary; the road has no protective roadside barrier along its riskier exposed sections. Compose the map as a diagonal mountain descent, with the high start visually above and behind the route and the destination visibly lower in frame.\n\n### Render order\nUse `authored_plan`: the point-to-point racing road must be valid by construction, with one continuous followable descent and no broken, ambiguous, or self-crossing segments.\n\n### Scale, theme, and pipeline cost\nUse medium scale, driven by the compact but complete roughly thirty-second mountain run. Theme: alpine forest mountain road, paved asphalt, grey rock, conifers, and dramatic exposed slopes. Apply `P6` because the playable race route must remain connected and valid, and `tiered` because the mountain terrain has substantial elevation changes without overlapping road layers.",
+  "blob": "### Genre\nRacing is the dominant genre: this is a compact point-to-point downhill time trial in which controlled forward descent and reaching the bottom define the activity.\n\n### Shape and preset\nUse `route-point-to-point`, matching the Downhill Descent preset’s single continuous mountain run from a summit start to a valley finish. Retain the prompt’s exposed-road character, but omit the preset’s recovery points and distance markers because neither was requested.\n\n### Config requirements\nUse `startpoint-line` as a clear starting marker on the high mountain road, with the tyre positioned there. Use `trigger-finish` as a visible finish gate or line at the bottom of the descent. Use `hazard-kill` for the unguarded road edges and steep fall-away terrain that visually make leaving the pavement consequential. Use `terrain-relief` for rocky alpine slopes descending around the road.\n\n### Layout requirements\nPlace one `startpoint-line` across the paved road at the summit, immediately before the first bend; it is the tyre’s sole initial position. Place one `trigger-finish` across the full road width at the bottom terminus, after the final controlled bend. No `checkpoint-respawn` is required: failure returns the tyre to the summit start.\n\n### Layout components\nBuild three sequential zones: a small rocky summit start pad, the main descending road corridor, and a compact lower finish turnout. The paved path is a single narrow continuous road sized for a roughly thirty-second descent, snaking downhill through repeated left and right bends without forks or crossings. Rocky slopes rise on the inside of turns, while the outside edges periodically open onto steep forested drops. Scatter conifer trees and exposed stone outcrops along both sides, keeping the road itself clean and legible. The natural mountain terrain forms the boundary; the outer road edge is intentionally exposed rather than enclosed by continuous guardrails. Compose the map as a long diagonal descent from upper summit to lower valley, with the winding road readable in one plan.\n\n### Render order\nUse `authored_plan`: the point-to-point racing route must be a valid, continuous, followable descent with no ambiguous breaks, then the alpine terrain and dressing can be built around that computed road.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the compact roughly thirty-second run. Theme: alpine forest mountain road, dark paved surface, grey rock, conifers, and steep exposed slopes. Use `tiered` for the non-overhanging mountain relief and `P6` because the racing route must be valid by construction.",
   "spec": {
     "genre": "Racing",
     "secondary": [],
@@ -23,74 +23,100 @@
     "axes": {},
     "options": [
       {
+        "id": "startpoint-line",
+        "text": "A clear starting marker across the high mountain road, with the tyre positioned there.",
+        "visible": true,
+        "count": 1
+      },
+      {
+        "id": "trigger-finish",
+        "text": "A visible finish gate or line across the road at the bottom of the descent.",
+        "visible": true,
+        "count": 1
+      },
+      {
         "id": "hazard-kill",
-        "text": "Unguarded road edges and steep drop-offs punish a tyre that leaves the paved route.",
+        "text": "Unguarded road edges and steep fall-away terrain make leaving the pavement consequential.",
         "visible": true,
         "count": -1
       },
       {
         "id": "terrain-relief",
-        "text": "Rocky mountain slopes step down continuously around the descent.",
+        "text": "Rocky alpine slopes descend around the road.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "startpoint-line",
+        "text": "A starting marker across the paved road at the summit, immediately before the first bend; it is the tyre's sole initial position.",
+        "count": 1,
+        "where": "Across the paved road at the summit immediately before the first bend."
+      },
+      {
+        "id": "trigger-finish",
+        "text": "A finish gate or line across the full road width at the bottom terminus, after the final controlled bend.",
+        "count": 1,
+        "where": "Across the full road width at the bottom terminus after the final controlled bend."
+      }
+    ],
     "layout": {
-      "composition": "A diagonal mountain descent, with the high start visually above and behind the winding route and the valley destination visibly lower in frame; the road remains traceable from top to bottom.",
+      "composition": "A long diagonal descent runs from the upper summit to the lower valley, with the winding road readable in one plan.",
       "zones": [
         {
-          "name": "High alpine start",
-          "role": "Small high-elevation paved turnout at the mountain crest holding the tyre at the road head.",
-          "where": "High and behind the route at the mountain crest.",
+          "name": "Rocky summit start pad",
+          "role": "The tyre begins the downhill time trial here.",
+          "where": "Upper summit",
           "size": "small"
         },
         {
-          "name": "Continuous downhill road",
-          "role": "The roughly thirty-second tyre time-trial descent through repeated bends, tight switchbacks, and broader sweeping curves.",
-          "where": "Diagonally from the high start through the mountain to the valley bottom.",
-          "size": "roughly thirty-second run"
+          "name": "Descending road corridor",
+          "role": "The single continuous downhill route snakes through repeated left and right bends.",
+          "where": "Between the summit and lower valley",
+          "size": "main"
         },
         {
-          "name": "Valley-bottom endpoint",
-          "role": "A level paved runout or small valley turnout that clearly terminates the descent.",
-          "where": "Lower in frame at the valley bottom.",
-          "size": "broader"
+          "name": "Lower finish turnout",
+          "role": "The descent terminates at the finish.",
+          "where": "Lower valley",
+          "size": "compact"
         }
       ],
       "paths": [
         {
-          "from": "High alpine start",
-          "to": "Valley-bottom endpoint",
+          "from": "Rocky summit start pad",
+          "to": "Descending road corridor",
+          "kind": "road"
+        },
+        {
+          "from": "Descending road corridor",
+          "to": "Lower finish turnout",
           "kind": "road"
         }
       ],
-      "terrain": "Rocky alpine slopes rise against the inside of bends and fall sharply away beyond exposed outer edges. Dense conifer trees cluster on wider shelves and downhill slopes, with occasional open rocky sections revealing the drop and distant lower terrain.",
+      "terrain": "Rocky alpine slopes rise on the inside of turns, while outside road edges periodically open onto steep forested drops.",
       "props": [
         {
-          "name": "car tyre",
-          "count": 1,
-          "where": "At the road head in the high alpine start turnout."
+          "name": "Conifer trees",
+          "count": -1,
+          "where": "Scattered along both sides of the road."
         },
         {
-          "name": "conifer trees",
+          "name": "Exposed stone outcrops",
           "count": -1,
-          "where": "Clustered on wider shelves and downhill slopes."
-        },
-        {
-          "name": "natural rock faces",
-          "count": -1,
-          "where": "Along the mountain descent and road bends."
+          "where": "Along both sides of the road."
         }
       ],
-      "boundary": "Natural rock faces, trees, and steep terrain form the boundary; riskier exposed road sections have no protective roadside barrier.",
-      "scale_band": "medium",
-      "theme": "alpine forest mountain road, paved asphalt, grey rock, conifers, dramatic exposed slopes"
+      "boundary": "Natural mountain terrain forms the boundary; the outer road edge is intentionally exposed rather than enclosed by continuous guardrails.",
+      "scale_band": "small",
+      "theme": "Alpine forest mountain road, dark paved surface, grey rock, conifers, and steep exposed slopes."
     },
     "render": {
       "first": "authored_plan",
       "then": "topdown",
       "authoritative": "authored_plan",
-      "why": "the point-to-point racing road must be a continuous, followable descent with no broken, ambiguous, or self-crossing segments.",
+      "why": "The point-to-point racing route must be a valid, continuous, followable descent with no ambiguous breaks.",
       "set_piece": false
     },
     "route": [
@@ -103,7 +129,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "layout",

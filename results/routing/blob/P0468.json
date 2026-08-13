@@ -19,103 +19,107 @@
     }
   ],
   "scene_prompt": "Create a stylized, game-like 3D rugby arena with a compact rugby field about half the length and width of a regulation pitch. Keep the clear marked pitch, goal areas, and goalposts close together so play stays tightly contained.",
-  "blob": "### Genre\nThe dominant genre is Sports: the original request is a competitive rugby match with timed halves and points deciding the winner. Character upgrades are mechanics and do not alter the field layout.\n\n### Shape and preset\nUse `field-bounded`, matching the Field Sport preset. This is a compact rugby-specific field rather than a generic full-size stadium: the reduced dimensions keep both teams, tackles, and the scoring ends close together.\n\n### Config requirements\nUse visible `marker-distance` for clear rugby field striping: halfway line, transverse field markings, touchlines, dead-ball lines, and two close goal areas. Use visible `barrier-perimeter` as a low, unobtrusive arena edge beyond the touchlines and goal lines to contain the compact play space. Use `trigger-bounds` as both visible painted boundary lines and invisible foul/out-of-play detection around the pitch. Use `startpoint-play` as both the visible centre restart mark and invisible reset positions. Use `trigger-scoring` as visible H-shaped goalposts at each end with invisible scoring volumes in their goal mouths.\n\n### Layout components\nBuild one rectangular 3D rugby field at about half the length and half the width of a regulation rugby pitch. The central playing zone occupies most of the footprint, with a strong centre line and restart marking. Put equal shallow in-goal areas directly beyond the two short ends, each terminated by a pair of H-shaped rugby goalposts; keep the opposing posts visually close across the field. Lay crisp pale field markings over a clean green turf surface, including sidelines and repeated transverse markings that communicate distance and territory. Enclose the field with a narrow runoff strip and low stylized perimeter wall or rail, with no large stands, buildings, interior spaces, water, terrain relief, or extra districts. Compose the arena as a clean, symmetrical, highly readable game field seen in three-quarter isometric view, with both scoring ends visible.\n\n### Render order\nUse `topdown`: valid symmetric field proportions, boundaries, restart placement, and scoring ends are essential to playable rugby, so the plan should be established before the isometric dressing.\n\n### Scale, theme, and pipeline cost\nScale is small: the field is explicitly about half regulation length and width. Theme is a stylized, compact, game-like rugby arena with bright turf and clear markings. Pipeline modifier `P0` applies; this is one flat, bounded playing surface with no forced multi-level, interior, volumetric, or separate-map capture path.",
+  "blob": "### Genre\nThe dominant genre is Sports: a competitive rugby match with timed halves and point scoring. There is no secondary genre; player upgrades are mechanics, not layout content.\n\n### Shape and preset\nUse `space-bounded`, matching the Field Sport preset. This is a compact bounded rugby pitch whose marked perimeter, in-goal areas, and opposing goalposts define play. The preset remains recognisable; omit its distance-marker emphasis because none was requested.\n\n### Config requirements\nUse `trigger-bounds` as clear painted touchlines, dead-ball lines, and in-goal boundaries around the compact pitch. Use `trigger-scoring` as visible goalpost and in-goal scoring geometry at both short ends. Use `startpoint-play` as a centered midfield kickoff marking and reset position.\n\n### Layout requirements\nPlace `trigger-bounds` as one continuous detection perimeter aligned precisely with every marked field edge and in-goal boundary. Place `trigger-scoring` in two goal-end zones, one beneath and behind each set of posts, to register tries and successful kicks. Place `startpoint-play` once at the exact center of the halfway line for kickoffs and match resets.\n\n### Layout components\nBuild one rectangular, compact 3D rugby field at about half the length and half the width of a regulation pitch. The central play zone occupies most of the rectangle, with shallow in-goal zones at both ends. Painted halfway, touch, goal, and in-goal markings remain bold and legible. Put one H-shaped rugby goalpost set at the back of each in-goal area, keeping both close enough to preserve frequent tackles and short transitions. Use a simple low boundary treatment around the field without obstructing play. Compose the full pitch symmetrically in frame, with both goal ends visible.\n\n### Render order\nUse `topdown` first and make it authoritative, because the compact rugby pitch needs an accurate, symmetric playable perimeter and correctly opposed scoring ends.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the explicitly half-regulation field dimensions. Theme is a clean, stylized game-like sports arena rather than a realistic stadium. Pipeline modifier: `P0`, because this is one flat bounded surface with no forced extra capture path.",
   "spec": {
     "genre": "Sports",
     "secondary": [],
-    "shape": "field-bounded",
+    "shape": "space-bounded",
     "preset": "Field Sport",
     "axes": {},
     "options": [
       {
-        "id": "marker-distance",
-        "text": "Clear rugby field striping: halfway line, transverse field markings, touchlines, dead-ball lines, and two close goal areas.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "barrier-perimeter",
-        "text": "A low, unobtrusive arena edge beyond the touchlines and goal lines to contain the compact play space.",
-        "visible": true,
-        "count": -1
-      },
-      {
         "id": "trigger-bounds",
-        "text": "Visible painted boundary lines and invisible foul/out-of-play detection around the pitch.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "startpoint-play",
-        "text": "The visible centre restart mark and invisible reset positions.",
+        "text": "Clear painted touchlines, dead-ball lines, and in-goal boundaries around the compact pitch.",
         "visible": true,
         "count": 1
       },
       {
         "id": "trigger-scoring",
-        "text": "Visible H-shaped goalposts at each end with invisible scoring volumes in their goal mouths.",
+        "text": "Visible goalpost and in-goal scoring geometry at both short ends.",
         "visible": true,
         "count": 2
+      },
+      {
+        "id": "startpoint-play",
+        "text": "A centered midfield kickoff marking and reset position.",
+        "visible": true,
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "trigger-bounds",
+        "text": "One continuous detection perimeter aligned precisely with every marked field edge and in-goal boundary.",
+        "count": 1,
+        "where": "Aligned with every marked field edge and in-goal boundary."
+      },
+      {
+        "id": "trigger-scoring",
+        "text": "Goal-end zones beneath and behind each set of posts to register tries and successful kicks.",
+        "count": 2,
+        "where": "One beneath and behind each set of posts at the two goal ends."
+      },
+      {
+        "id": "startpoint-play",
+        "text": "The exact center of the halfway line for kickoffs and match resets.",
+        "count": 1,
+        "where": "At the exact center of the halfway line."
       }
     ],
     "layout": {
-      "composition": "A clean, symmetrical, highly readable game field in three-quarter isometric view, with the central pitch filling most of the frame and both scoring ends visible close across the field.",
+      "composition": "The full compact pitch is composed symmetrically in frame, with both goal ends visible.",
       "zones": [
         {
-          "name": "Central playing zone",
-          "role": "Main competitive rugby play area with the centre restart marking.",
-          "where": "centre",
-          "size": "occupies most of the footprint"
+          "name": "Central play zone",
+          "role": "The main competitive rugby play area.",
+          "where": "Centre of the rectangular pitch.",
+          "size": "Occupies most of the rectangle."
         },
         {
-          "name": "In-goal area",
-          "role": "Scoring end terminated by H-shaped rugby goalposts.",
-          "where": "beyond one short end",
-          "size": "shallow"
+          "name": "North in-goal zone",
+          "role": "Goal-end scoring area.",
+          "where": "One short end of the pitch.",
+          "size": "Shallow."
         },
         {
-          "name": "In-goal area",
-          "role": "Scoring end terminated by H-shaped rugby goalposts.",
-          "where": "beyond the opposing short end",
-          "size": "shallow"
-        },
-        {
-          "name": "Runoff strip",
-          "role": "Narrow buffer enclosing the field outside the marked pitch.",
-          "where": "around the field",
-          "size": "narrow"
+          "name": "South in-goal zone",
+          "role": "Goal-end scoring area.",
+          "where": "Opposite short end of the pitch.",
+          "size": "Shallow."
         }
       ],
       "paths": [],
-      "terrain": "Clean green turf surface with crisp pale rugby field markings; flat bounded playing surface.",
+      "terrain": "One flat marked rugby field surface with bold, legible painted halfway, touch, goal, and in-goal markings.",
       "props": [
         {
-          "name": "H-shaped rugby goalposts",
+          "name": "H-shaped rugby goalpost set",
           "count": 2,
-          "where": "one pair at each scoring end"
+          "where": "One at the back of each in-goal area."
         }
       ],
-      "boundary": "A narrow runoff strip and low stylized perimeter wall or rail beyond the touchlines and goal lines; no large stands.",
+      "boundary": "A simple low boundary treatment around the field that does not obstruct play.",
       "scale_band": "small",
-      "theme": "Stylized, compact, game-like rugby arena with bright turf and clear markings."
+      "theme": "Clean, stylized game-like sports arena."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "Valid symmetric field proportions, boundaries, restart placement, and scoring ends are essential to playable rugby.",
+      "why": "the compact rugby pitch needs an accurate, symmetric playable perimeter and correctly opposed scoring ends.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
-    "notes": [],
+    "notes": [
+      "The Field Sport preset's distance-marker emphasis is omitted because none was requested."
+    ],
     "scene_prompt": "Create a stylized, game-like 3D rugby arena with a compact rugby field about half the length and width of a regulation pitch. Keep the clear marked pitch, goal areas, and goalposts close together so play stays tightly contained."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

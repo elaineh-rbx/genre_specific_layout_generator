@@ -19,185 +19,126 @@
     }
   ],
   "scene_prompt": "Create a 3D game map showing a small, dense abandoned Japanese village entered from a tunnel lobby. In the foreground lobby, players spawn before the tunnel beside an NPC station; passing through the tunnel leads into the village. The village contains a handful of weathered, genuinely enterable houses arranged along narrow paths with key outdoor areas between them, all compact enough to explore in one session. Distribute five possessed dolls across house interiors and outdoor locations, with memories, exorcising tools, and special items placed throughout searchable rooms and the surrounding village spaces. The tunnel serves as the return connection from the cleared village back to the lobby.",
-  "blob": "### Genre\nThe dominant genre is Adventure, with a light Puzzle secondary: the core activity is searching a compact village for items and doll encounters, while the question encounters add puzzle flavor without changing the world layout.\n\n### Shape and preset\nUse `world-open` for one compact, freely searchable village map rather than a linear chapter route. The closest preset is Exploration, but use **none** as the preset name because its landmark and secret-alcove bundle is not requested; retain only the village’s explicit circulation and searchable spaces.\n\n### Config requirements\nUse visible `path-trail` for the narrow pedestrian paths joining the tunnel, houses, and outdoor search areas. Use visible `building-interior` for the handful of genuinely enterable key houses; their exterior-to-interior transitions require linked captures. Use both `teleporter-link` for the tunnel’s arrival and return connection. Use both `npc-population` for the single tutorial-and-shop NPC station beside the lobby spawn. Use invisible `collectible-nodes` for memories, exorcising tools, special items, and the five doll encounter placements; these gameplay placements are added after image segmentation and do not appear as generic pickups in the render.\n\n### Layout components\nMake a small, dense abandoned Japanese village, with the tunnel lobby in the foreground at the village edge. The lobby is a compact threshold space: a spawn apron faces the tunnel mouth, with one NPC station beside it. Passing through the tunnel connects to the village and provides the return route. Beyond it, narrow worn paths form a compact loop through a handful of weathered wooden houses and several key outdoor pockets such as a small shrine clearing, an overgrown lane, and a neglected courtyard. Make every key house enterable, with small searchable rooms. Place the five possessed dolls across a mix of house interiors and outdoor locations; distribute the memory pieces, tools, and special items through those same rooms and spaces. Use overgrown ground, aging timber, paper screens, stone lanterns, fences, and dense vegetation. Enclose the village with forest and slopes rather than hard walls. Frame the tunnel as the foreground entry, with the village clustered beyond it.\n\n### Render order\nUse `topdown`: the authoritative plan must preserve the compact path loop, every accessible house entrance, and the tunnel-to-village connection before the isometric view dresses the horror scene.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by a small village plus several linked interiors, though it remains searchable in one session. Theme: atmospheric abandoned rural Japan, restrained supernatural horror. Pipeline modifiers: `P3` because play crosses between the village exterior and enterable house interiors.",
+  "blob": "### 1. Genre\nThe dominant genre is Adventure, with Puzzle as a secondary genre. The village run is exploration directed toward locating and resolving all five possessed-doll encounters; the clue-based confrontations contribute puzzle intent without adding puzzle-room geometry.\n\n### 2. Shape and preset\nUse `space-staged`, taken from outside Adventure’s usual shape set. It is a physically separate tunnel lobby and a teleported village play area, so waiting players remain outside the active search map. Preset: none; the Party & Casual Minigame preset is not recognisable because this is a persistent exploration village rather than a round arena.\n\n### 3. Config requirements\nUse `path-trail` for narrow, worn pedestrian paths threading between houses and outdoor search spaces. Use `building-interior` for the genuinely enterable, searchable key houses. Use `teleporter-link` for the visible tunnel transfer between lobby and village. Use `npc-population` for the single tutorial-and-shop NPC station beside the lobby spawn.\n\n### 4. Layout requirements\nPlace `teleporter-link` at the lobby-side tunnel threshold and at the village return tunnel, making the latter the exit used after the village is cleared. Place `npc-population` as one NPC interaction marker immediately beside, but not blocking, the lobby spawn approach. Place `collectible-nodes` throughout the searchable village: distribute memories, exorcising tools, and special items across house rooms and outdoor pockets, with no single house holding all required finds. Place five possessed-doll encounter markers: divide them between enterable house interiors and key outdoor locations, each reachable from the village path network.\n\n### 5. Layout components\nThe first zone is a small forecourt lobby in the foreground, with a spawn area facing a weathered tunnel and one NPC station to one side. The tunnel is the sole transition into the second zone: a compact, dense abandoned Japanese village. Arrange a handful of weathered houses along narrow lanes, with small courtyards, overgrown side yards, and shrine-like outdoor clearings between them. Keep only the key houses enterable, each with several searchable rooms. The return tunnel sits at the village edge. Frame the lobby tunnel in the foreground and the clustered village beyond as the dominant mass, emphasizing enclosed, neglected lanes and readable house entrances.\n\n### 6. Render order\nUse `topdown` first, then dress the authoritative plan isometrically, because all five doll sites, every searchable interior, and the return route must remain connected and reachable.\n\n### 7. Scale, theme, and pipeline cost\nScale is small, driven by a handful of houses and a one-session village run. Theme: compact abandoned rural Japan, weathered wood, overgrowth, muted supernatural horror. Pipeline modifiers are `P4` because the lobby and village are separate maps linked by teleport, and `P3` because exploration crosses from village exteriors into enterable house interiors.",
   "spec": {
     "genre": "Adventure",
     "secondary": [
       "Puzzle"
     ],
-    "shape": "world-open",
+    "shape": "space-staged",
     "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "path-trail",
-        "text": "narrow pedestrian paths joining the tunnel, houses, and outdoor search areas",
+        "text": "Narrow, worn pedestrian paths threading between houses and outdoor search spaces.",
         "visible": true,
         "count": -1
       },
       {
         "id": "building-interior",
-        "text": "a handful of genuinely enterable key houses with small searchable rooms and exterior-to-interior transitions",
+        "text": "Genuinely enterable, searchable key houses, each with several searchable rooms.",
         "visible": true,
         "count": -1
       },
       {
         "id": "teleporter-link",
-        "text": "the tunnel’s arrival and return connection",
+        "text": "Visible tunnel transfer between the lobby and village, with the village return tunnel used after the village is cleared.",
         "visible": true,
-        "count": -1
+        "count": 2
       },
       {
         "id": "npc-population",
-        "text": "the single tutorial-and-shop NPC station beside the lobby spawn",
+        "text": "A single tutorial-and-shop NPC station beside the lobby spawn.",
         "visible": true,
         "count": 1
       },
       {
         "id": "collectible-nodes",
-        "text": "memories, exorcising tools, special items, and the five doll encounter placements distributed through house interiors and outdoor locations",
+        "text": "Memories, exorcising tools, and special items distributed throughout searchable house rooms and outdoor village pockets, with no single house holding all required finds.",
         "visible": false,
-        "count": 5
+        "count": -1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "teleporter-link",
+        "text": "Visible tunnel transfer between the lobby and village, with the village return tunnel used after the village is cleared.",
+        "count": 2,
+        "where": "At the lobby-side tunnel threshold and at the village return tunnel."
+      },
+      {
+        "id": "npc-population",
+        "text": "A single tutorial-and-shop NPC interaction marker.",
+        "count": 1,
+        "where": "Immediately beside, but not blocking, the lobby spawn approach."
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "Memories, exorcising tools, and special items distributed throughout searchable house rooms and outdoor village pockets, with no single house holding all required finds.",
+        "count": -1,
+        "where": "Throughout searchable village house rooms and outdoor pockets."
       }
     ],
     "layout": {
-      "composition": "The tunnel lobby is the foreground entry at the village edge, with its spawn apron facing the tunnel mouth and an NPC station beside it. The dense village clusters beyond the tunnel, with houses and outdoor search pockets arranged around a compact worn-path loop.",
+      "composition": "A small forecourt lobby fills the foreground, with its weathered tunnel facing toward the clustered abandoned village beyond as the dominant mass; frame enclosed neglected lanes and readable house entrances.",
       "zones": [
         {
-          "name": "Tunnel lobby",
-          "role": "Compact threshold, spawn, tutorial-and-shop station, and return point.",
-          "where": "foreground at the village edge",
-          "size": "compact"
-        },
-        {
-          "name": "Tunnel",
-          "role": "Arrival passage into the village and return route to the lobby.",
-          "where": "between the foreground lobby and village",
-          "size": ""
-        },
-        {
-          "name": "Abandoned village loop",
-          "role": "Freely searchable village core linking houses and outdoor pockets.",
-          "where": "beyond the tunnel in the midground",
-          "size": "small and dense"
-        },
-        {
-          "name": "Weathered key houses",
-          "role": "Enterable searchable rooms containing a mix of doll encounters and items.",
-          "where": "clustered along the village paths",
-          "size": "a handful"
-        },
-        {
-          "name": "Shrine clearing",
-          "role": "Key outdoor search pocket.",
-          "where": "within the village loop",
+          "name": "Forecourt lobby",
+          "role": "Players spawn before the tunnel, with an NPC station to one side.",
+          "where": "Foreground",
           "size": "small"
         },
         {
-          "name": "Overgrown lane",
-          "role": "Key outdoor search pocket.",
-          "where": "within the village loop",
-          "size": ""
-        },
-        {
-          "name": "Neglected courtyard",
-          "role": "Key outdoor search pocket.",
-          "where": "within the village loop",
-          "size": ""
+          "name": "Abandoned Japanese village",
+          "role": "Compact searchable play area containing enterable key houses, outdoor search spaces, collectible placement, and possessed-doll encounter locations.",
+          "where": "Beyond the lobby tunnel",
+          "size": "compact"
         }
       ],
       "paths": [
         {
-          "from": "Tunnel lobby",
-          "to": "Tunnel",
+          "from": "Forecourt lobby",
+          "to": "Abandoned Japanese village",
           "kind": "tunnel"
         },
         {
-          "from": "Tunnel",
-          "to": "Abandoned village loop",
-          "kind": "corridor"
-        },
-        {
-          "from": "Abandoned village loop",
-          "to": "Weathered key houses",
-          "kind": "path"
-        },
-        {
-          "from": "Abandoned village loop",
-          "to": "Shrine clearing",
-          "kind": "path"
-        },
-        {
-          "from": "Abandoned village loop",
-          "to": "Overgrown lane",
-          "kind": "path"
-        },
-        {
-          "from": "Abandoned village loop",
-          "to": "Neglected courtyard",
-          "kind": "path"
-        },
-        {
-          "from": "Abandoned village loop",
-          "to": "Tunnel lobby",
+          "from": "Abandoned Japanese village",
+          "to": "Forecourt lobby",
           "kind": "tunnel"
         }
       ],
-      "terrain": "Overgrown ground with narrow worn pedestrian paths; forest and slopes surround the village.",
+      "terrain": "Compact outdoor village ground with narrow lanes, small courtyards, overgrown side yards, and shrine-like outdoor clearings.",
       "props": [
         {
-          "name": "tutorial-and-shop NPC station",
+          "name": "Weathered tunnel",
           "count": 1,
-          "where": "beside the lobby spawn apron"
+          "where": "Between the foreground lobby and the village edge"
         },
         {
-          "name": "weathered wooden houses",
+          "name": "Weathered abandoned Japanese houses",
           "count": -1,
-          "where": "along the compact village path loop"
+          "where": "Along narrow village lanes"
         },
         {
-          "name": "possessed dolls",
+          "name": "Possessed-doll encounter markers",
           "count": 5,
-          "where": "across a mix of house interiors and outdoor locations"
-        },
-        {
-          "name": "memory pieces, exorcising tools, and special items",
-          "count": -1,
-          "where": "through searchable rooms and surrounding village spaces"
-        },
-        {
-          "name": "paper screens",
-          "count": -1,
-          "where": "inside key houses"
-        },
-        {
-          "name": "stone lanterns",
-          "count": -1,
-          "where": "throughout village outdoor areas"
-        },
-        {
-          "name": "fences",
-          "count": -1,
-          "where": "throughout the village"
-        },
-        {
-          "name": "dense vegetation",
-          "count": -1,
-          "where": "around paths, houses, and the village boundary"
+          "where": "Divided between enterable house interiors and key outdoor locations, each reachable from the village path network"
         }
       ],
-      "boundary": "Forest and slopes enclose the village rather than hard walls.",
-      "scale_band": "medium",
-      "theme": "atmospheric abandoned rural Japan, restrained supernatural horror"
+      "boundary": "The lobby and village are physically separate maps connected only by the tunnel transfer; the tunnel is the sole transition and return connection.",
+      "scale_band": "small",
+      "theme": "Compact abandoned rural Japan, weathered wood, overgrowth, muted supernatural horror"
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the compact path loop, accessible house entrances, and tunnel-to-village connection must remain valid.",
+      "why": "All five doll sites, searchable interiors, and the return route must remain connected and reachable.",
       "set_piece": false
     },
     "route": [
+      "P4",
       "P3"
     ],
     "notes": [],
@@ -206,12 +147,12 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
   "mapper_notes": [
-    "blob asked for topdown first; the route ['P3'] gives isometric"
+    "blob asked for topdown first; the route ['P4', 'P3'] gives isometric"
   ]
 }

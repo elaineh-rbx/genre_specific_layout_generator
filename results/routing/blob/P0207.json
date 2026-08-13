@@ -14,111 +14,128 @@
     }
   ],
   "scene_prompt": "Create a compact, plainly playable 3D idle farming simulator map in a retro studded blocky Roblox style with vibrant pastel colors and soft ambient lighting, viewed from a fixed third-person isometric top-down camera. A bustling central courtyard forms the hub, with courtyard-facing NPC market stalls for seeds, crop selling, and trading, plus a prominent leaderboard board. Six individual fenced garden plots surround the hub in a clear ring; each plot has a flat grass grid, dark-brown plantable dirt tiles, a simple white wooden fence, and a customizable front gate sign reading \"[Player Name]'s Garden.\" Design plots to visibly support expansion from a 3x3 to a 10x10 dirt-tile farm grid, with open walking paths connecting every plot to the central courtyard.",
-  "blob": "### Genre\nThe dominant genre is Simulation: the original request is an idle farming simulator with assigned player plots and a recurring production loop. No secondary genre is needed.\n\n### Shape and preset\nUse `plot-isolated`: six separate player-owned garden plots form a compact ring around one shared courtyard hub. The closest preset is none; although the shape resembles Sandbox, its resource-node emphasis is not the requested courtyard-and-farm arrangement.\n\n### Config requirements\n`social-hub` is visible geometry: a bustling central courtyard concentrates the seed, crop-selling, and trading stalls around the prominent leaderboard board. `path-circulation` is visible geometry: broad, simple walking paths radiate from the courtyard to every plot gate. `trigger-task` is both: each plot’s dark-brown dirt-tile grid is visible, while its tile interaction volumes are invisible and placed only after segmentation. `npc-population` is both: visible stallkeepers occupy the courtyard-facing market stalls, with their interaction markers kept invisible. Do not add `building-interior`; all shops are direct-interaction stalls.\n\n### Layout components\nPlace a roughly square central courtyard at the map center, sized as the shared market and clear gathering space. Arrange seed, crop-selling, and trading stalls along its outer edges facing inward, with the leaderboard as a tall, prominent rear-courtyard prop visible from the plot approaches. Surround it with exactly six individual garden plots in an even ring, each reached by an open path from the hub. Each plot is a flat rectangular grass parcel enclosed by a simple white wooden fence, with a front gate and a readable sign, \"[Player Name]'s Garden.\" Inside each fence, center a dark-brown dirt-tile farm grid with enough reserved grass perimeter for visible expansion from a 3x3 grid to a maximum 10x10 grid. Keep paths unobstructed and leave the outer map edge as open grass with a soft natural boundary rather than buildings. Frame the whole compact hub-and-ring composition clearly from a fixed third-person isometric top-down view.\n\n### Render order\nUse `isometric`: the compact symmetric courtyard and six-plot ring are simple enough for the isometric scene to lead, with the top-down plan projected from it.\n\n### Scale, theme, and pipeline cost\nScale band: small, driven by one compact hub and exactly six plots. Theme: retro studded blocky Roblox, vibrant pastels, soft ambient light, friendly garden market. Pipeline modifier: `P0`; all play occurs on one flat exterior surface, with no interiors, stacked surfaces, separate maps, or topology requiring construction validation.",
+  "blob": "### Genre\nThe dominant genre is Simulation: the continuous idle crop-growth, harvesting, selling, tool upgrades, and plot expansion form a farming simulator loop.\n\n### Shape and preset\nUse `plot-isolated`, taken from the Simulation Sandbox preset. It is six independent, equally legible player farm plots arranged around a shared market hub. Retain the preset’s isolated plots and hub idea, but omit pre-scattered resource nodes because planting happens on each owner’s prepared soil grid rather than in a common field.\n\n### Config requirements\nUse `social-hub` for the bustling central courtyard where all market activity concentrates. Use `trigger-task` as visible dark-brown plantable soil tiles within every garden plot, with room for watering and harvesting interaction. Use `npc-population` for the directly accessible seed vendor, crop-selling vendor, and trading vendor stationed at courtyard-facing stalls. No `building-interior` applies: all shops are exterior stalls.\n\n### Layout requirements\nPlace `trigger-task` interaction surfaces as an initial 3x3 set of nine dirt tiles in each of the six plots, with reserved contiguous grass area for each grid to expand to 10x10 tiles. Place three `npc-population` markers, one at each seed, selling, and trading stall, facing the courtyard. No other placed gameplay volumes are required.\n\n### Layout components\nThe central zone is a compact square or rounded courtyard at map center, large enough for market circulation, three open-front NPC stalls, and one prominent leaderboard board. Six individual garden zones form an even ring around it. Each plot is flat grass, initially holding a 3x3 dark-brown dirt-tile grid and a clearly empty expansion footprint up to 10x10. Every plot has a simple white wooden fence, a front gate, and a customizable sign reading \"[Player Name]’s Garden.\" Broad open footpaths radiate from the courtyard to every gate and leave enough clearance around fences for players to pass. Keep terrain entirely flat with no water, buildings, or interiors. The map edge remains an open landscaped perimeter rather than a hard architectural enclosure. Compose the isometric frame with the courtyard as the focal center and all six plot entrances visibly readable around it.\n\n### Render order\nRender `isometric` first and treat it as authoritative; this compact symmetric hub-and-plot arrangement does not require topology validation before dressing.\n\n### Scale, theme, and pipeline cost\nScale band: medium, driven by a central market plus six expandable player plots. Theme: classic retro Roblox studs, blocky forms, vibrant pastel farming village, and soft ambient light. Pipeline modifier: `P0`, because the entire map is one flat, contiguous exterior surface with no forced extra capture path.",
   "spec": {
     "genre": "Simulation",
     "secondary": [],
     "shape": "plot-isolated",
-    "preset": "none",
+    "preset": "Sandbox",
     "axes": {},
     "options": [
       {
         "id": "social-hub",
-        "text": "A bustling central courtyard concentrates the seed, crop-selling, and trading stalls around the prominent leaderboard board.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "path-circulation",
-        "text": "Broad, simple walking paths radiate from the courtyard to every plot gate.",
+        "text": "A bustling central courtyard where all market activity concentrates.",
         "visible": true,
         "count": -1
       },
       {
         "id": "trigger-task",
-        "text": "Each plot has a visible dark-brown dirt-tile grid, while tile interaction volumes are invisible and placed only after segmentation.",
+        "text": "Visible dark-brown plantable soil tiles within every garden plot, with room for watering and harvesting interaction; each plot begins with a 3x3 set of nine tiles and can expand to 10x10 tiles.",
         "visible": true,
-        "count": 6
+        "count": 54
       },
       {
         "id": "npc-population",
-        "text": "Visible stallkeepers occupy the courtyard-facing market stalls, with their interaction markers kept invisible.",
+        "text": "Directly accessible seed vendor, crop-selling vendor, and trading vendor stationed at courtyard-facing stalls.",
         "visible": true,
         "count": 3
       }
     ],
+    "layout_placement": [
+      {
+        "id": "trigger-task",
+        "text": "Plantable interaction surfaces as an initial 3x3 set of nine dirt tiles in each of the six plots, with reserved contiguous grass area for each grid to expand to 10x10 tiles.",
+        "count": 54,
+        "where": "Within every individual garden plot, with contiguous adjacent grass reserved for expansion."
+      },
+      {
+        "id": "npc-population",
+        "text": "Three NPC markers, one at each seed, selling, and trading stall, facing the courtyard.",
+        "count": 3,
+        "where": "At the three open-front courtyard-facing market stalls in the central courtyard."
+      }
+    ],
     "layout": {
-      "composition": "Fixed third-person isometric top-down view framing the compact square central courtyard at centre, with six fenced garden plots in an even surrounding ring and open radial paths between hub and plot gates.",
+      "composition": "The compact central courtyard is the focal center of the isometric frame, with all six fenced plot entrances visibly readable in an even ring around it.",
       "zones": [
         {
-          "name": "Central Courtyard Hub",
-          "role": "Shared market and clear gathering space with seed, crop-selling, and trading stalls plus the leaderboard.",
-          "where": "map center",
-          "size": "roughly square and compact"
+          "name": "Central market courtyard",
+          "role": "Shared market hub for circulation, seed sales, crop selling, trading, and the leaderboard.",
+          "where": "Map center",
+          "size": "Compact square or rounded courtyard"
         },
         {
-          "name": "Garden Plots",
-          "role": "Individual player-owned farming parcels with expandable dirt-tile grids.",
-          "where": "surrounding the hub in an even ring",
-          "size": "six flat rectangular plots"
+          "name": "Six individual garden plots",
+          "role": "Independent player farming areas with plantable soil grids and reserved expansion space.",
+          "where": "An even ring around the central courtyard",
+          "size": "Six equally legible plots"
+        },
+        {
+          "name": "Open landscaped perimeter",
+          "role": "Open map edge surrounding the farm hub and plots.",
+          "where": "Around the outside of the plot ring",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Central Courtyard Hub",
-          "to": "Garden Plots",
+          "from": "Central market courtyard",
+          "to": "Six individual garden plots",
           "kind": "open ground"
         }
       ],
-      "terrain": "Flat exterior grass parcels, dark-brown dirt-tile farm grids, and open grass around the outer map edge.",
+      "terrain": "Entirely flat grass terrain with dark-brown dirt-tile grids; no water.",
       "props": [
         {
-          "name": "seed, crop-selling, and trading stalls",
+          "name": "Open-front NPC market stalls",
           "count": 3,
-          "where": "along the outer edges of the central courtyard, facing inward"
+          "where": "Facing the central courtyard"
         },
         {
-          "name": "leaderboard board",
+          "name": "Prominent leaderboard board",
           "count": 1,
-          "where": "rear of the central courtyard"
+          "where": "In the central courtyard"
         },
         {
-          "name": "white wooden fences",
+          "name": "Simple white wooden fences",
           "count": 6,
-          "where": "around each individual garden plot"
+          "where": "Around each individual garden plot"
         },
         {
-          "name": "front gates with \"[Player Name]'s Garden\" signs",
+          "name": "Front gates",
           "count": 6,
-          "where": "front of each garden plot"
+          "where": "At the courtyard-facing entrance of each garden plot"
         },
         {
-          "name": "dirt-tile farm grids",
+          "name": "Customizable garden signs reading \"[Player Name]'s Garden\"",
           "count": 6,
-          "where": "centered inside each fenced plot"
+          "where": "At each plot's front gate"
         }
       ],
-      "boundary": "Open grass at the outer map edge with a soft natural boundary rather than buildings.",
-      "scale_band": "small",
-      "theme": "retro studded blocky Roblox, vibrant pastels, soft ambient light, friendly garden market"
+      "boundary": "An open landscaped perimeter rather than a hard architectural enclosure.",
+      "scale_band": "medium",
+      "theme": "Classic retro Roblox studs, blocky forms, vibrant pastel farming village, soft ambient light."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "the compact symmetric courtyard and six-plot ring are simple enough for the isometric scene to lead.",
+      "why": "This compact symmetric hub-and-plot arrangement does not require topology validation before dressing.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
-    "notes": [],
+    "notes": [
+      "The Sandbox preset's pre-scattered resource nodes are omitted because planting occurs on each owner's prepared soil grid rather than in a common field.",
+      "No building-interior option applies because all shops are exterior stalls."
+    ],
     "scene_prompt": "Create a compact, plainly playable 3D idle farming simulator map in a retro studded blocky Roblox style with vibrant pastel colors and soft ambient lighting, viewed from a fixed third-person isometric top-down camera. A bustling central courtyard forms the hub, with courtyard-facing NPC market stalls for seeds, crop selling, and trading, plus a prominent leaderboard board. Six individual fenced garden plots surround the hub in a clear ring; each plot has a flat grass grid, dark-brown plantable dirt tiles, a simple white wooden fence, and a customizable front gate sign reading \"[Player Name]'s Garden.\" Design plots to visibly support expansion from a 3x3 to a 10x10 dirt-tile farm grid, with open walking paths connecting every plot to the central courtyard."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

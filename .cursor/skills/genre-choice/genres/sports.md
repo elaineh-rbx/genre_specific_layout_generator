@@ -8,10 +8,15 @@ Regulation fields are fixed templates, so parametric placement of a known field 
 
 **Shape — pick one.**
 
-| ID | Shape | What it is | Pipeline |
-| :---- | :---- | :---- | :---- |
-| `field-bounded` | **Zone (Bounded Field or Court)** | A rigid geometric perimeter — foul lines, touchlines, baselines — defining the active area, with teams competing inside it. | |
-| `range-directed` | **Lane (Directed Range)** | A single directed lane or range replacing a foul perimeter entirely, with a discrete target at the end — bowling, golf, archery, darts. | |
+**Typical shapes.** `space-bounded` *(default)* · `range-directed`
+
+This genre words these its own way:
+
+| ID | Shape | What it is |
+| :---- | :---- | :---- |
+| `space-bounded` | **Zone (Bounded Field or Court)** | A rigid geometric perimeter — foul lines, touchlines, baselines — defining the active area, with teams competing inside it. |
+| `range-directed` | **Lane (Directed Range)** | A single directed lane or range replacing a foul perimeter entirely, with a discrete target at the end — bowling, golf, archery, darts. |
+
 
 **Options** — combine freely on top of the chosen shape.
 
@@ -29,16 +34,16 @@ Regulation fields are fixed templates, so parametric placement of a known field 
 
 | Preset | Modelled on *(internal)* | Shape | Options |
 | :---- | :---- | :---- | :---- |
-| **Field Sport** | FIFA, Madden; Football Fusion 2 (Roblox) | `field-bounded` | `trigger-bounds`, `startpoint-play`, `trigger-scoring`, `marker-distance` |
-| **Court Sport** | NBA 2K; Roblox basketball games | `field-bounded` | `trigger-bounds`, `trigger-scoring`, `startpoint-play` |
+| **Field Sport** | FIFA, Madden; Football Fusion 2 (Roblox) | `space-bounded` | `trigger-bounds`, `startpoint-play`, `trigger-scoring`, `marker-distance` |
+| **Court Sport** | NBA 2K; Roblox basketball games | `space-bounded` | `trigger-bounds`, `trigger-scoring`, `startpoint-play` |
 | **Target Sport** | Golf, bowling; Super Golf! (Roblox) | `range-directed` | `trigger-scoring`, `marker-distance` |
-| **Physics Sport** | Rocket League | `field-bounded` | `trigger-scoring`, `barrier-perimeter`, `startpoint-play` |
-| **Full Stadium** | Any of the above, dressed | `field-bounded` | `spectator-bleachers`, `barrier-perimeter`, `spectator-zone` |
+| **Physics Sport** | Rocket League | `space-bounded` | `trigger-scoring`, `barrier-perimeter`, `startpoint-play` |
+| **Full Stadium** | Any of the above, dressed | `space-bounded` | `spectator-bleachers`, `barrier-perimeter`, `spectator-zone` |
 
 **Genre notes**
 
 * **Target sports don't fit the field model at all.** Bowling, golf, archery, and darts have no foul perimeter and no scoring plane — they have a directed range and a target at the end. Two of the three field-sport staples simply don't apply, which is worth watching: if a third such variant appears, Sports is really two genres.
-* **Dugouts are a stadium-build feature, not a sport feature.** An informal pitch or a street court needs none of it. Build's original version required team enclosures of every sports game.
+* **Dugouts are a stadium-build feature, not a sport feature.** An informal pitch or a street court needs none of it, so do not require team enclosures of every sports game.
 * **Bleachers are the genre's most common source of tiered elevation.** Stepped seating is relief with no overhang, so it stays P0 — but the height has to be captured or the stadium builds completely flat.
 * **Field specs are known quantities.** Regulation dimensions are public and fixed, which makes parametric placement more reliable than asking an image model to invent a tennis court.
 * **Roblox files Sports and Racing as two subgenres of one Sports & Racing genre.** This document splits them into genres 12 and 13 instead, because Racing routes P6 and Sports is a parametric template — they share a taxonomy label but almost nothing about how they generate.
@@ -48,7 +53,7 @@ Regulation fields are fixed templates, so parametric placement of a known field 
 
 Six features that belong to **no genre in particular because they belong to all of them**. Every genre inherits this table on top of its own.
 
-They exist because the alternative is worse. Each was measured against 620 real prompts and requested in eleven to fifteen different genres, so filing them per-genre would restate the same row seventy-eight times — and leaving them out is what produced the largest hole in the system, with *who is in the world* having no home anywhere.
+They exist because the alternative is worse. Each is wanted across nearly every genre, so filing them per-genre would restate the same row dozens of times, and leaving them out strands common requests — *who is in the world* would have no home anywhere.
 
 | ID | Option | What it is | Core | Goes to | Pipeline |
 | :---- | :---- | :---- | :--: | :---- | :---- |
@@ -59,13 +64,13 @@ They exist because the alternative is worse. Each was measured against 620 real 
 | `terrain-relief` | **Zone (Terrain Relief)** | Natural landform shaping the ground: hills, mountains, cliffs, a valley, or a canyon. | | `image` | `P0 + tiered` |
 | `island-cluster` | **Zone (Island Cluster)** | Several separate landmasses with water or open air between them, crossed by bridge, boat, or flight. | | `image` | `CHECK` |
 
-**None of these is `Core`, and that is deliberate.** They must never appear in the tune menu, which shows `Core` options only, and no preset includes one. A universal option is a **landing place for a request the user actually made** — reached from the open question in step 5 when a free-text ask matches it — never a default and never a suggestion. Measured against 620 prompts, each of the six would fire on 6–15% of them, so a run that applies one unasked is wrong far more often than it is right.
+**None of these is `Core`, and that is deliberate.** They must never appear in the tune menu, which shows `Core` options only, and no preset includes one. A universal option is a **landing place for a request the user actually made** — reached from the open question in step 5 when a free-text ask matches it — never a default and never a suggestion. Most builds want none of them, so a run that applies one unasked is wrong far more often than right.
 
 **A genre's own wording wins.** Four genres already define `building-interior` in their own terms — Shooter's is a breachable structure, Survival's is a shelter to hide in. Those rows are the definition for those genres; the universal row is the fallback for the other eleven. Dedupe by ID exactly as with any shared ID.
 
 **Bend the wording to the prompt.** These are written generically because they are genre-neutral, which makes the instruction to rewrite them *more* important than usual, not less. `water-body` for a pirate game is "open sea between the islands, deep enough to sail"; for a park it is "a duck pond at the centre of the green." Ship the prompt's water, not the word "water."
 
-**Two pipeline notes.** `terrain-relief` is `P0 + tiered` for hills and cliffs, but **caves, overhangs, and tunnels push it to `P2`** — say so when the prompt asks for them. `water-body` and `island-cluster` are `CHECK` because swimming and flight are volumetric: usually fine as a play-height envelope over a representable surface, and only a real problem when the volume self-occludes (layered floating islands, 3D cave networks). See *Layout Attributes* in Build.md for the underlying axis.
+**Two pipeline notes.** `terrain-relief` is `P0 + tiered` for hills and cliffs, but **caves, overhangs, and tunnels push it to `P2`** — say so when the prompt asks for them. `water-body` and `island-cluster` are `CHECK` because swimming and flight are volumetric: usually fine as a play-height envelope over a representable surface, and only a real problem when the volume self-occludes (layered floating islands, 3D cave networks). See *The Five Routing Axes* in Build.md for the axis behind it.
 
 **`npc-population` is not `spawner-npc`.** `spawner-npc` is where hostiles enter a fight — an emitter, wired to combat. `npc-population` is who lives here. A market crowd, a quest giver, and a herd of deer are not spawners, and filing them as one produces enemy waves in a town square.
 

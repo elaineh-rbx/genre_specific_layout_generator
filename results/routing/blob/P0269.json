@@ -19,169 +19,170 @@
     }
   ],
   "scene_prompt": "Create a 3D game map inside a large cosy realistic house, viewed at doll-sized scale so normal furniture and rooms feel oversized. Arrange connected household rooms with towering tables, chairs, sofas, cabinets, and doorways forming the escape route through the house; include a large person moving through the interior as a looming presence. Provide a clear path leading from the starting rooms toward an exit from the house.",
-  "blob": "### Genre\nThis is Survival, specifically an escape-from-pursuer scenario: doll-sized players flee one looming hostile person through a house to reach an exit.\n\n### Shape and preset\nUse `warren-looping`, matching the Escape preset. The house becomes a connected interior warren of rooms and furniture-scale passages, with loop-back alternatives so pursuit never traps players in a dead-end. The preset remains recognisable; its interior, escape, and concealment qualities fit the brief.\n\n### Config requirements\nUse `gate-escape` as visible geometry and an invisible completion volume: a clearly readable exterior door or other house exit at the route’s far end. Use `cover-los` as visible geometry: towering table legs, sofas, chairs, cabinets, and doorway offsets create doll-scale hiding breaks and alternate sightlines. Use `building-interior` as visible geometry: the playable space is the house interior. Use `spawner-npc` as invisible layout data for the single hostile person’s entry and patrol origin; the one large person is visibly present in the dressed interior but its navigation origin is not rendered as a marker.\n\n### Layout components\nBegin in a modest starting room near one side of the house, with low doll-scale clearance beneath a table or beside a sofa. Link several oversized household rooms—such as living room, kitchen, dining area, and hall—through open doorways and furniture gaps. Make the main escape route legible but provide looping side passages around sofas, under tables, behind cabinets, and through adjoining rooms. Place the final exit on the opposite side of the plan, framed by a normal-sized exterior door that feels enormous at doll scale. Furniture is the primary terrain: tall chairs, towering table legs, sofa bases, cabinet faces, and broad floor expanses. Enclose the map fully within cosy realistic domestic walls, with the exit as the only outward transition. Compose the view to emphasize oversized furniture and long interior sightlines while retaining readable escape connections.\n\n### Render order\nUse `topdown` first, authoritative, because the room loops, viable escape route, and absence of trapping dead ends must be valid for play before the isometric dressing is generated.\n\n### Scale, theme, and pipeline cost\nUse a medium scale driven by several connected rooms within one large house. Theme: cosy realistic home, warm domestic materials, normal furniture rendered monumental at doll scale. Apply `P6` because chase-route connectivity must be valid by construction, and `P3` because play crosses the house interior to an exterior escape exit.",
+  "blob": "### Genre\n`Survival` is the dominant genre: doll-sized players evade one lethal larger person and win by escaping. There is no secondary genre.\n\n### Shape and preset\nUse `interior-single`, taken from outside Survival’s usual shortlist: one oversized house interior contains the entire playable chase space, ending at an exterior exit. Preset: none; the Mascot Horror preset shares the interior form but its specific horror styling is not requested.\n\n### Config requirements\nUse `cover-los` as towering tables, chairs, sofas, and cabinets that interrupt the larger person’s sightlines and create hiding routes. Use `gate-escape` as the clearly visible house exit at the end of the route.\n\n### Layout requirements\nUse `spawner-npc` for one hostile origin/patrol start in a central interior room, with navigable room floors and doorways around it. Use `gate-escape` for one escape-trigger volume directly inside the final exterior door; its visible door is rendered, while the trigger is placed against its threshold. No other placed pickups or checkpoints are implied.\n\n### Layout components\nBuild one large cosy realistic house seen at doll scale. Starting rooms occupy one end of the interior, with a clear connected route through household rooms toward the exit at the opposite end. Use broad rooms linked by standard doorways: a living room dominated by a sofa and coffee table, a dining area with towering table and chairs, and kitchen or hallway space with cabinets and furniture that create alternate sightline breaks. Normal domestic furniture is oversized relative to the small people but remains legible as a realistic home. Keep the boundary as the enclosing house walls and closed interior edges, with the single final exterior door as the escape endpoint. Frame the plan so the start-to-exit progression and the central patrol area are readable.\n\n### Render order\nUse `topdown` first and make it authoritative, because the connected indoor escape route and patrol circulation must remain traversable rather than being implied by a look-first interior render.\n\n### Scale, theme, and pipeline cost\nScale band: medium, driven by one substantial multi-room house rather than multiple maps. Theme: cosy realistic domestic interior, warmly furnished but tense at doll-sized scale. Pipeline modifier: `P0`; this is one enclosed, single-surface map, with no stacked floors or separate exterior map required.",
   "spec": {
     "genre": "Survival",
     "secondary": [],
-    "shape": "warren-looping",
-    "preset": "Escape",
+    "shape": "interior-single",
+    "preset": "none",
     "axes": {},
     "options": [
       {
-        "id": "gate-escape",
-        "text": "A clearly readable normal-sized exterior door at the far end of the route, enormous at doll scale, with an invisible completion volume.",
-        "visible": true,
-        "count": -1
-      },
-      {
         "id": "cover-los",
-        "text": "Towering table legs, sofas, chairs, cabinets, and doorway offsets create doll-scale hiding breaks and alternate sightlines.",
+        "text": "Towering tables, chairs, sofas, and cabinets interrupt the larger person's sightlines and create hiding routes.",
         "visible": true,
         "count": -1
       },
       {
-        "id": "building-interior",
-        "text": "The playable space is the cosy realistic house interior.",
+        "id": "gate-escape",
+        "text": "A clearly visible house exit at the end of the route.",
         "visible": true,
-        "count": -1
+        "count": 1
       },
       {
         "id": "spawner-npc",
-        "text": "The single hostile person’s entry and patrol origin; the looming person is visibly present in the dressed interior, but its navigation origin is not rendered as a marker.",
+        "text": "One hostile origin/patrol start in a central interior room, with navigable room floors and doorways around it.",
         "visible": false,
         "count": 1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "gate-escape",
+        "text": "One escape-trigger volume directly inside the final exterior door; its visible door is rendered, while the trigger is placed against its threshold.",
+        "count": 1,
+        "where": "Directly inside the final exterior door, against its threshold."
+      },
+      {
+        "id": "spawner-npc",
+        "text": "One hostile origin/patrol start in a central interior room, with navigable room floors and doorways around it.",
+        "count": 1,
+        "where": "In a central interior room, with navigable room floors and doorways around it."
+      }
+    ],
     "layout": {
-      "composition": "Oversized furniture and long interior sightlines dominate the view while readable escape connections run through the house from the starting room on one side to the exit on the opposite side.",
+      "composition": "Frame the plan so the starting rooms at one end, the central patrol area, and the start-to-exit progression toward the opposite-end exterior door are readable.",
       "zones": [
         {
-          "name": "Starting room",
-          "role": "Initial doll-scale escape area with low clearance beneath a table or beside a sofa.",
-          "where": "Near one side of the house",
-          "size": "modest"
+          "name": "Starting rooms",
+          "role": "Starting end of the indoor escape route.",
+          "where": "One end of the interior.",
+          "size": ""
         },
         {
           "name": "Living room",
-          "role": "Connected household room forming part of the escape route and looping alternatives.",
-          "where": "Interior",
-          "size": ""
-        },
-        {
-          "name": "Kitchen",
-          "role": "Connected household room forming part of the escape route and looping alternatives.",
-          "where": "Interior",
-          "size": ""
+          "role": "A household room dominated by a sofa and coffee table, providing oversized sightline breaks and hiding routes.",
+          "where": "Along the connected route through the house.",
+          "size": "broad"
         },
         {
           "name": "Dining area",
-          "role": "Connected household room with furniture-scale passages.",
-          "where": "Interior",
+          "role": "A household room with a towering table and chairs creating alternate sightline breaks.",
+          "where": "Along the connected route through the house.",
+          "size": "broad"
+        },
+        {
+          "name": "Central interior room",
+          "role": "Hostile patrol circulation and hostile origin/patrol start.",
+          "where": "Centre of the interior.",
           "size": ""
         },
         {
-          "name": "Hall",
-          "role": "Adjoining room and connection space leading toward the far exit.",
-          "where": "Interior",
+          "name": "Kitchen or hallway space",
+          "role": "Cabinets and furniture create alternate sightline breaks.",
+          "where": "Along the connected route toward the exit.",
           "size": ""
         },
         {
-          "name": "Final exit",
-          "role": "Escape endpoint and completion area.",
-          "where": "Opposite side of the plan",
+          "name": "Final exterior door",
+          "role": "Escape endpoint with the escape trigger directly inside its threshold.",
+          "where": "Opposite end of the interior from the starting rooms.",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Starting room",
+          "from": "Starting rooms",
           "to": "Living room",
-          "kind": "open ground"
+          "kind": "doorway"
         },
         {
           "from": "Living room",
-          "to": "Kitchen",
-          "kind": "corridor"
-        },
-        {
-          "from": "Kitchen",
           "to": "Dining area",
-          "kind": "corridor"
+          "kind": "doorway"
         },
         {
           "from": "Dining area",
-          "to": "Hall",
-          "kind": "corridor"
+          "to": "Central interior room",
+          "kind": "doorway"
         },
         {
-          "from": "Hall",
-          "to": "Final exit",
-          "kind": "corridor"
+          "from": "Central interior room",
+          "to": "Kitchen or hallway space",
+          "kind": "doorway"
         },
         {
-          "from": "Living room",
-          "to": "Dining area",
-          "kind": "open ground"
-        },
-        {
-          "from": "Living room",
-          "to": "Hall",
-          "kind": "open ground"
+          "from": "Kitchen or hallway space",
+          "to": "Final exterior door",
+          "kind": "doorway"
         }
       ],
-      "terrain": "Furniture is the primary terrain: tall chairs, towering table legs, sofa bases, cabinet faces, broad floor expanses, and doll-scale gaps beneath and behind furnishings.",
+      "terrain": "Navigable interior room floors in a cosy realistic house.",
       "props": [
         {
-          "name": "towering tables",
+          "name": "sofa",
           "count": -1,
-          "where": "Throughout connected household rooms"
+          "where": "Living room"
         },
         {
-          "name": "chairs",
+          "name": "coffee table",
           "count": -1,
-          "where": "Throughout connected household rooms"
+          "where": "Living room"
         },
         {
-          "name": "sofas",
+          "name": "towering table",
           "count": -1,
-          "where": "Living room and side passages"
+          "where": "Dining area"
         },
         {
-          "name": "cabinets",
+          "name": "towering chairs",
           "count": -1,
-          "where": "Kitchen and adjoining rooms"
+          "where": "Dining area"
         },
         {
-          "name": "looming hostile person",
-          "count": 1,
-          "where": "Dressed interior"
+          "name": "cabinets and furniture",
+          "count": -1,
+          "where": "Kitchen or hallway space"
         }
       ],
-      "boundary": "Fully enclosed within cosy realistic domestic walls; the exterior exit is the only outward transition.",
+      "boundary": "Enclosing house walls and closed interior edges, with the single final exterior door as the escape endpoint.",
       "scale_band": "medium",
-      "theme": "cosy realistic home, warm domestic materials, monumental normal furniture at doll scale"
+      "theme": "Cosy realistic domestic interior, warmly furnished but tense at doll-sized scale."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "room loops, the viable escape route, and the absence of trapping dead ends must be valid for play.",
+      "why": "the connected indoor escape route and patrol circulation must remain traversable rather than being implied by a look-first interior render.",
       "set_piece": false
     },
     "route": [
-      "P6",
-      "P3"
+      "P0"
     ],
-    "notes": [],
+    "notes": [
+      "`interior-single` is taken from outside Survival's usual shortlist."
+    ],
     "scene_prompt": "Create a 3D game map inside a large cosy realistic house, viewed at doll-sized scale so normal furniture and rooms feel oversized. Arrange connected household rooms with towering tables, chairs, sofas, cabinets, and doorways forming the escape route through the house; include a large person moving through the interior as a looming presence. Provide a clear path leading from the starting rooms toward an exit from the house."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
-  "order": "p6",
-  "first": "topdown",
-  "mapper_notes": []
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P0'] gives isometric"
+  ]
 }

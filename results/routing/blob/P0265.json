@@ -14,128 +14,132 @@
     }
   ],
   "scene_prompt": "Create a 3D Monster Tag / Hide & Seek map set in a compact but giant-scale, overgrown forest that can be crossed in roughly 1–2 minutes. Dense woodland cover fills the play area: scattered giant mossy rocks, hollow fallen trees, tall grass, elevated ruined-stone platforms, and hidden tunnels create unpredictable sightlines and vertical escape routes. Giant ruined stone structures rise through the midground and background, while oversized furniture provides additional hiding spaces beneath and around it. Use a moody twilight sky, low ground-hugging volumetric fog, and glowing mushrooms or lanterns to mark concealed paths. Place a small separate lobby outside the forest as the round staging area, connected to the main map by a clear teleport entry point.",
-  "blob": "### Genre\nThe dominant genre is Party & Casual, with Survival as a secondary influence from the asymmetric monster-and-hider round. The round-based tag format and separate staging lobby make Party & Casual own the shape.\n\n### Shape and preset\nUse `space-staged`, matching the Minigame preset: a small lobby is a distinct between-round space, with the forest as the isolated active-round map. Retain the Minigame preset name despite omitting its unrequested leaderboard, scoring volume, and spectator zone.\n\n### Config requirements\nVisible geometry: `social-hub` is the compact staging lobby outside the forest, with open standing room around the departure point. `teleporter-link` is a clear, glowing forest-entry portal or gate between lobby and match map; its portal marker is visible. `cover-los` is the forest’s dense, irregular concealment: giant mossy rocks, hollow fallen trunks, tall grass, ruined stonework, and oversized furniture that break long sightlines. The teleport trigger itself is invisible layout geometry and must not enter the image render.\n\n### Layout components\nBuild two separate zones. The main zone is a compact giant-scale overgrown forest, sized so a hider can cross it in roughly 1–2 minutes while still losing sight of the far side behind dense cover. Its central and background mass consists of giant ruined stone structures, with scattered giant mossy rocks, hollow fallen trees, tall grass patches, and oversized furniture arranged as hiding pockets beneath, inside, and around objects. Raised ruined-stone platforms provide vertical escape routes, while hidden tunnels pass beneath or through the ruin clusters to create alternate movement lines. Concealed paths are marked sparingly with glowing mushrooms and lanterns. Keep the forest boundary visually closed by dense woodland, ruin walls, and terrain rather than a hard visible wall. Place the small lobby as a separate, simple staging zone with the teleport entry as its focal exit. Frame the forest isometrically with foreground cover, a readable central ruin, and taller ruins receding into misty background depth.\n\n### Render order\nUse `isometric`: the scene is primarily atmospheric and visually composed; it has no required maze, circuit, or physics-validated route.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by giant-scale props and a 1–2 minute cross-map traversal distance, though the forest remains compact relative to its theme. Theme: moody twilight fantasy forest, ancient overgrown ruins, low ground fog, bioluminescent path lights. Use `P4` for the separate lobby and forest maps, and `P2` because elevated platforms and tunnels create overlapping traversable layers.",
+  "blob": "### 1. Genre\nThe dominant genre is Survival, specifically asymmetric `1 vs All` monster tag. The round-based lobby is supporting presentation, not a secondary genre.\n\n### 2. Shape and preset\nUse `space-staged`: a small, isolated waiting lobby teleports players into a separate forest round map. This shape is taken from outside Survival’s usual set because the author explicitly requires the lobby to be separate. Use the 1 vs All preset as the basis, but override its `warren-looping` shape with this staged forest arrangement.\n\n### 3. Config requirements\nUse `cover-los` as dense giant-scale concealment: mossy boulders, hollow fallen trunks, tall grass, ruined stone masses, oversized furniture, and tunnel entrances repeatedly break sightlines. Use `teleporter-link` as a clearly visible round-entry portal or gate in the lobby leading to the forest. Do not add an escape exit; survival is based on lasting through the round rather than reaching a destination.\n\n### 4. Layout requirements\nUse `teleporter-link` in both maps: one lobby-side entry marker and one forest-side arrival marker, placed just inside the forest edge at a safe orientation toward the main cover field. Use `spawn-protected` for role assignment: place one Monster start on a screened forest perimeter and a separated cluster of Hider starts on the opposite perimeter, with intervening cover and no immediate line of sight.\n\n### 5. Layout components\nThe main zone is a compact giant-scale overgrown forest, large enough to cross in roughly 1–2 minutes but dense enough that the far side is rarely visible. Its central midground contains several giant ruined stone structures and elevated stone platforms; low routes weave through tall grass, giant mossy rocks, hollow fallen trees, and concealed tunnels. Oversized abandoned furniture forms additional under-and-around hiding pockets. Glowing mushrooms and lanterns sparsely mark hidden routes through the fog. Enclose the forest with dense woodland, ruin walls, and impassable outer growth rather than a visible hard edge. The separate small lobby is a clean staging clearing outside the forest, focused on its single teleport entry. Compose the forest around layered foreground cover, central ruins, and distant silhouettes under twilight fog.\n\n### 6. Render order\nRender `isometric` first and treat it as authoritative; the forest’s atmosphere, giant props, and layered hiding compositions lead, while no exact maze or circuit topology is required.\n\n### 7. Scale, theme, and pipeline cost\nScale is large, driven by the 1–2 minute cross-map traversal distance and giant environmental props. Theme is moody twilight dark fantasy woodland: overgrown ruins, moss, low volumetric fog, and bioluminescent path lights. Use `P4` because the lobby and round forest are separate maps. Use `P2` because elevated platforms, furniture-overhead hiding spaces, and tunnels create stacked, occluding surfaces.",
   "spec": {
-    "genre": "Party & Casual",
-    "secondary": [
-      "Survival"
-    ],
+    "genre": "Survival",
+    "secondary": [],
     "shape": "space-staged",
-    "preset": "Minigame",
+    "preset": "1 vs All",
     "axes": {},
     "options": [
       {
-        "id": "social-hub",
-        "text": "Compact staging lobby outside the forest, with open standing room around the departure point.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "teleporter-link",
-        "text": "A clear, glowing forest-entry portal or gate between the lobby and match map; its portal marker is visible, while the teleport trigger itself is invisible layout geometry.",
-        "visible": true,
-        "count": -1
-      },
-      {
         "id": "cover-los",
-        "text": "Dense, irregular forest concealment: giant mossy rocks, hollow fallen trunks, tall grass, ruined stonework, and oversized furniture that break long sightlines.",
+        "text": "Dense giant-scale concealment: mossy boulders, hollow fallen trunks, tall grass, ruined stone masses, oversized furniture, and tunnel entrances repeatedly break sightlines.",
         "visible": true,
+        "count": -1
+      },
+      {
+        "id": "spawn-protected",
+        "text": "Role assignment starts: one Monster start on a screened forest perimeter and a separated cluster of Hider starts on the opposite perimeter, with intervening cover and no immediate line of sight.",
+        "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "spawn-protected",
+        "text": "Role assignment starts: one Monster start on a screened forest perimeter and a separated cluster of Hider starts on the opposite perimeter, with intervening cover and no immediate line of sight.",
+        "count": -1,
+        "where": "One Monster start on a screened forest perimeter; a separated cluster of Hider starts on the opposite perimeter, with intervening cover and no immediate line of sight."
+      }
+    ],
     "layout": {
-      "composition": "Isometric forest frame with foreground cover, a readable central ruin, and taller ruins receding into misty background depth; the separate small lobby sits outside the forest with its teleport entry as the focal exit.",
+      "composition": "Layered foreground cover frames central ruined stone structures and elevated platforms in the forest midground, with distant silhouettes under twilight fog; the separate small lobby is a clean staging clearing focused on its single teleport entry.",
       "zones": [
         {
-          "name": "Forest active-round map",
-          "role": "Main monster-and-hider round space with dense hiding pockets, broken sightlines, vertical escape routes, and alternate movement lines.",
-          "where": "Main isolated map; central and background mass framed isometrically.",
-          "size": "Compact giant-scale forest, crossable by a hider in roughly 1–2 minutes."
+          "name": "Waiting lobby",
+          "role": "Small isolated round staging clearing focused on the teleport entry to the forest.",
+          "where": "Outside the forest, on a separate map.",
+          "size": "small"
         },
         {
-          "name": "Staging lobby",
-          "role": "Separate between-round staging area with open standing room around the departure point.",
-          "where": "Outside the forest, connected to the active-round map by the teleport entry.",
-          "size": "Small and simple."
+          "name": "Overgrown forest round map",
+          "role": "Main Monster Tag / Hide & Seek round area with dense concealment, hiding pockets, and vertical escape routes.",
+          "where": "Separate from the lobby.",
+          "size": "compact giant-scale; large enough to cross in roughly 1–2 minutes"
         }
       ],
       "paths": [
         {
-          "from": "Staging lobby",
-          "to": "Forest active-round map",
+          "from": "Waiting lobby",
+          "to": "Overgrown forest round map",
           "kind": "portal"
         },
         {
-          "from": "Forest active-round map",
-          "to": "Raised ruined-stone platforms",
-          "kind": "ramp"
-        },
-        {
-          "from": "Forest active-round map",
-          "to": "Ruin clusters",
-          "kind": "tunnel"
+          "from": "Forest edge arrival marker",
+          "to": "Main cover field",
+          "kind": "open ground"
         }
       ],
-      "terrain": "Overgrown forest ground with dense woodland, giant mossy rocks, tall grass patches, ruined stonework, low ground-hugging fog, and terrain closing the boundary. Concealed paths are marked sparingly with glowing mushrooms and lanterns.",
+      "terrain": "Overgrown forest ground with tall grass, giant mossy rocks, hollow fallen trees, low routes, concealed tunnels, elevated stone platforms, twilight fog, and low ground-hugging volumetric fog.",
       "props": [
         {
-          "name": "giant ruined stone structures",
+          "name": "Giant ruined stone structures",
           "count": -1,
-          "where": "Central and background forest mass"
+          "where": "Central midground and background"
         },
         {
-          "name": "giant mossy rocks",
+          "name": "Elevated ruined-stone platforms",
           "count": -1,
-          "where": "Scattered through the forest"
+          "where": "Central midground"
         },
         {
-          "name": "hollow fallen trees",
+          "name": "Giant mossy rocks",
           "count": -1,
-          "where": "Through the forest as hiding pockets"
+          "where": "Across the forest cover field"
         },
         {
-          "name": "tall grass patches",
+          "name": "Hollow fallen trees",
           "count": -1,
-          "where": "Through the forest as concealment"
+          "where": "Across the forest cover field"
         },
         {
-          "name": "oversized furniture",
+          "name": "Tall grass",
           "count": -1,
-          "where": "Beneath, inside, and around objects in the forest"
+          "where": "Across the forest"
         },
         {
-          "name": "raised ruined-stone platforms",
+          "name": "Concealed tunnels",
           "count": -1,
-          "where": "Within ruin clusters"
+          "where": "Low routes through the forest"
         },
         {
-          "name": "glowing mushrooms and lanterns",
+          "name": "Oversized abandoned furniture",
           "count": -1,
-          "where": "Sparingly along concealed paths"
+          "where": "Additional under-and-around hiding pockets"
+        },
+        {
+          "name": "Glowing mushrooms and lanterns",
+          "count": -1,
+          "where": "Sparsely along hidden routes through the fog"
         }
       ],
-      "boundary": "Visually closed by dense woodland, ruin walls, and terrain rather than a hard visible wall.",
+      "boundary": "Dense woodland, ruin walls, and impassable outer growth enclose the forest rather than a visible hard edge.",
       "scale_band": "large",
-      "theme": "Moody twilight fantasy forest, ancient overgrown ruins, low ground fog, bioluminescent path lights."
+      "theme": "Moody twilight dark fantasy woodland with overgrown ruins, moss, low volumetric fog, and bioluminescent path lights."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "The scene is primarily atmospheric and visually composed, with no required maze, circuit, or physics-validated route.",
+      "why": "Atmosphere, giant props, and layered hiding compositions lead, while no exact maze or circuit topology is required.",
       "set_piece": false
     },
     "route": [
       "P4",
       "P2"
     ],
-    "notes": [],
+    "notes": [
+      "The shared-catalogue shape `space-staged` is used outside Survival’s usual shape set because the lobby must be separate from the forest round map.",
+      "`teleporter-link` was named in the blob but is not an option in the dominant Survival genre, so it was dropped from options and layout placement. The stated portal connection remains transcribed as a layout path.",
+      "No escape exit was added, as specified."
+    ],
     "scene_prompt": "Create a 3D Monster Tag / Hide & Seek map set in a compact but giant-scale, overgrown forest that can be crossed in roughly 1–2 minutes. Dense woodland cover fills the play area: scattered giant mossy rocks, hollow fallen trees, tall grass, elevated ruined-stone platforms, and hidden tunnels create unpredictable sightlines and vertical escape routes. Giant ruined stone structures rise through the midground and background, while oversized furniture provides additional hiding spaces beneath and around it. Use a moody twilight sky, low ground-hugging volumetric fog, and glowing mushrooms or lanterns to mark concealed paths. Place a small separate lobby outside the forest as the round staging area, connected to the main map by a clear teleport entry point."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

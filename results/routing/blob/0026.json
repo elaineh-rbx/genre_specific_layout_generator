@@ -3,42 +3,49 @@
   "source": "A long, complex, and challenging labyrinth with high walls. The labyrinth should be designed to be difficult to escape, with many dead ends and long corridors. Expose attributes for wall height, corridor width, and total labyrinth size.",
   "answers": [],
   "scene_prompt": "Create a large, complex 3D labyrinth with high enclosing walls, long corridors, numerous branching paths, and many dead ends. Build it as a challenging escape maze with adjustable wall height, corridor width, and overall labyrinth size.",
-  "blob": "### Genre\n`Puzzle` is dominant: the stated challenge is escaping a labyrinth, so solvable maze topology—not a generic explorable environment—defines the build.\n\n### Shape and preset\nUse `puzzle-maze`, matched to the Maze / Labyrinth preset. Retain its procedurally valid labyrinth form, but do not carry the preset’s `path-loop` or `collectible-nodes`: this scene explicitly calls for numerous dead ends and names no pickups.\n\n### Config requirements\nNo additional configuration options apply. The high enclosing walls, branching corridors, long runs, and dead ends are visible geometry inherent to the maze shape. There are no requested invisible pickups, triggers, emitters, or spawn markers.\n\n### Layout components\nBuild one large, complex labyrinth occupying nearly the full frame. Start at a clear outer-edge entry and route through long, narrow corridors that repeatedly branch into numerous dead ends before reaching a distinct escape opening on the far side. Use consistently high opaque walls to prevent players seeing over the maze and to make corridor-level navigation difficult. Keep corridor width and wall height uniform within a generated version, with the overall footprint, wall height, and corridor width treated as adjustable build dimensions. Ground is a single flat continuous floor inside the maze; there is no water, terrain relief, building interior, or separate zone. The outermost wall forms the boundary, interrupted only by the entry and exit. Compose the plan as a dense rectilinear maze with readable wall separation from above, while the isometric view emphasizes the enclosing wall height and the scale of the corridor network.\n\n### Render order\nUse `authored_plan`: generate a solvable maze blueprint first, then produce top-down and isometric renders from that blueprint, because an invalid corridor graph or unreachable escape would make the puzzle unplayable.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by the requested long, complex labyrinth with many branches and dead ends. Theme is austere monumental maze architecture: tall plain walls, repetitive corridors, and a deliberately disorienting enclosed atmosphere. Apply `P6` because reachability from entry to escape and the intentional placement of dead ends must be valid by construction.",
+  "blob": "### Genre\nPuzzle is the dominant genre: the player’s task is escaping a deliberately difficult labyrinth.\n\n### Shape and preset\nUse `puzzle-maze`, a single large high-walled labyrinth whose branching corridors, dead ends, entrance, and reachable exit are the puzzle itself. The closest preset is Maze / Labyrinth, but use preset none because its loop-back-corridor emphasis conflicts with the requested many dead ends and long punishing branches.\n\n### Config requirements\nNo additional image options apply. The enclosing walls, long corridors, dense branching, and dead ends are intrinsic geometry of `puzzle-maze`, not separate decoration.\n\n### Layout requirements\nNo additional placed markers, pickups, or trigger volumes are requested. Preserve one clearly identifiable entrance and one reachable escape exit in the generated topology, with the exit at a distant outer portion of the maze.\n\n### Layout components\nBuild one large enclosed maze zone on a flat ground plane. Place the entrance at one edge and the escape exit far across the labyrinth, separated by a long critical route. Fill the interior with a dense orthogonal network of tall opaque walls forming long corridors, numerous junctions, branching routes, and many true dead ends. Make the walls the enclosing boundary as well as the maze structure; there is no open exterior route around them. Keep the ground visually simple and the walls dominant, so the maze reads clearly in plan while remaining imposing at player height. Frame the full labyrinth from an elevated three-quarter view, with enough of the outer perimeter visible to communicate its overall scale.\n\n### Render order\nUse `authored_plan`: a generated maze blueprint is authoritative before top-down and isometric dressing, because a sealed route or unreachable exit would make the escape puzzle unplayable.\n\n### Scale, theme, and pipeline cost\nUse the large scale band, driven by the requested long, complex, challenging labyrinth. Theme: austere monumental stone maze, tall walls and sparse ground detail. Apply `P6`, forced by the solvable maze topology that must be valid by construction.",
   "spec": {
     "genre": "Puzzle",
     "secondary": [],
     "shape": "puzzle-maze",
-    "preset": "Maze / Labyrinth",
+    "preset": "none",
     "axes": {},
     "options": [],
+    "layout_placement": [],
     "layout": {
-      "composition": "Dense rectilinear labyrinth occupying nearly the full frame, with readable wall separation from above; the isometric view emphasizes enclosing wall height and the scale of the corridor network.",
+      "composition": "Elevated three-quarter view framing the full labyrinth, with enough of the outer perimeter visible to communicate its overall scale.",
       "zones": [
         {
-          "name": "Labyrinth",
-          "role": "A challenging escape maze from an outer-edge entry through branching corridors and dead ends to an escape opening on the far side.",
-          "where": "Nearly the full frame, from one outer edge to the far side.",
+          "name": "Enclosed maze",
+          "role": "A deliberately difficult escape labyrinth with branching corridors, dead ends, one entrance, and one reachable escape exit.",
+          "where": "One large enclosed zone on a flat ground plane; entrance at one edge and escape exit at a distant outer portion across the labyrinth.",
           "size": "large"
         }
       ],
       "paths": [
         {
-          "from": "Outer-edge entry",
-          "to": "Escape opening",
+          "from": "Entrance",
+          "to": "Escape exit",
           "kind": "corridor"
         }
       ],
-      "terrain": "A single flat continuous floor inside the maze; no water or terrain relief.",
-      "props": [],
-      "boundary": "The outermost high opaque wall forms the boundary, interrupted only by the entry and exit.",
+      "terrain": "Flat, visually simple ground plane with sparse ground detail.",
+      "props": [
+        {
+          "name": "Tall opaque stone walls",
+          "count": -1,
+          "where": "Throughout the interior as the dense orthogonal maze network and around the outer perimeter as the enclosing boundary."
+        }
+      ],
+      "boundary": "Tall opaque maze walls form the enclosing boundary; there is no open exterior route around them.",
       "scale_band": "large",
-      "theme": "Austere monumental maze architecture with tall plain walls, repetitive corridors, and a deliberately disorienting enclosed atmosphere."
+      "theme": "Austere monumental stone maze, tall walls and sparse ground detail."
     },
     "render": {
       "first": "authored_plan",
       "then": "topdown",
       "authoritative": "authored_plan",
-      "why": "an invalid corridor graph or unreachable escape would make the puzzle unplayable.",
+      "why": "because a sealed route or unreachable exit would make the escape puzzle unplayable.",
       "set_piece": false
     },
     "route": [
@@ -50,7 +57,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "layout",

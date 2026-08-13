@@ -19,129 +19,117 @@
     }
   ],
   "scene_prompt": "Create a compact, roughly 500-stud 3D mech combat battlefield in a grimy, war-torn industrial sci-fi setting, scaled for mechs about three times avatar height. Arrange uneven terrain with open combat lanes, industrial ruins and damaged structures for cover, plus scattered trees and terrain doodads across the battlefield.",
-  "blob": "### Genre\nThe dominant genre is Shooter: the original request is a first-person free-for-all built around mech-mounted ranged weapons, and the battlefield is organized around combat lanes and cover rather than a shared melee arena.\n\n### Shape and preset\nUse the Shooter shape `open-battlefield`: a compact, roughly 500-stud outdoor war zone with broad mech-scale engagement spaces broken by ruins and relief. The closest preset is none; the free-for-all battlefield does not retain the recognizable option bundle of Battle Royale or Arena Deathmatch, and the scene prompt outranks those presets.\n\n### Config requirements\nUse `cover-los` as visible geometry: damaged industrial structures, broken walls, wrecked machinery, and large ruin fragments interrupt long mech firing lines and create repositioning cover. Use `terrain-relief` as visible geometry: uneven ground, low rises, scarred embankments, and shallow depressions shape the lanes without creating stacked play surfaces. No invisible layout options are required by the prompt.\n\n### Layout components\nMake one roughly square, compact 500-stud battlefield sized for mechs approximately three avatar heights tall. Keep a broad central open combat basin, with two or three irregular open lanes radiating through it rather than a symmetric team-map layout. Place the densest industrial ruin clusters around lane intersections and along the outer thirds of the field, leaving enough clearance for large mech movement between cover pieces. Use damaged factory shells, collapsed walls, rusted pipes, broken gantries, wrecked machinery, and scattered industrial debris as the primary props; scatter trees and smaller terrain doodads irregularly through quieter edges and broken ground, not in the central firing lanes. Terrain is dusty, cratered, and uneven, with low ridges and shallow trenches providing readable ground-level variation. Bound the map with ruined industrial perimeter walls, steep rubble banks, and distant wreckage rather than a clean arena wall. Frame the composition from an elevated isometric angle, with the central basin readable and the ruin clusters visibly dividing the lanes.\n\n### Render order\nUse `isometric`: the battlefield’s visual mood, ruin silhouettes, and irregular cover composition lead; it does not require a procedurally guaranteed traversal topology.\n\n### Scale, theme, and pipeline cost\nScale band: medium, driven by the roughly 500-stud compact battlefield and oversized mech proportions. Theme: grimy, war-torn industrial sci-fi, with rust, soot, cratered earth, and damaged heavy infrastructure. Pipeline modifier: `tiered`, forced by the real but non-overhanging terrain relief.",
+  "blob": "### Genre\nThe dominant genre is `Shooter`: first-person mech free-for-all combat is organized around ranged firing lanes, cover, and safe respawns rather than melee clashes or objectives.\n\n### Shape and preset\nUse `lane-network`, taken from the Shooter Arena Deathmatch preset. Here it becomes a compact, loosely three-lane industrial battlefield whose routes converge and reconnect through a central ruin field; retain the shape but omit the preset’s unrequested pickups and elevated firing positions.\n\n### Config requirements\nUse `cover-los` as broken factory walls, collapsed gantries, wrecked industrial modules, and damaged structures distributed across every combat lane so large mechs can break hostile sightlines. Use `terrain-relief` for uneven blasted ground, shallow ridges, crater lips, and rubble slopes without stacked walkable levels. Use `spawn-protected` as screened spawn pockets behind ruin walls and terrain folds, never directly exposed to a central firing lane.\n\n### Layout requirements\nPlace `spawn-protected` respawn markers in multiple evenly distributed perimeter pockets around the battlefield, each facing an available lane but screened from the center and from the nearest opposing pocket. No other placed gameplay elements are required for the stated simple free-for-all mode.\n\n### Layout components\nBuild one roughly 500-stud square battlefield sized for mechs about three avatar heights tall. The center is a broad, cratered industrial ruin zone, with three readable but irregular open combat lanes radiating between perimeter sectors and reconnecting around the central cover. Uneven ash-grey ground forms low ridges, shallow trenches, impact craters, and rubble banks; keep traversal continuous across the terrain. Place dense clusters of broken walls, damaged factory shells, fallen machinery, pipe segments, and wreckage at lane edges and intersections, leaving deliberate long firing views through lane centers. Scatter sparse blasted trees, dead brush, rocks, scrap, and other terrain doodads between cover clusters. Enclose the play area with impassable ruined industrial walls, collapsed structures, and distant contaminated wasteland rather than a clean arena border. Frame the plan with the central ruins as the visual anchor and the three lanes legible around them.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because the lane connections, cover distribution, and protected respawn sightlines need a fair, traversable combat plan before the isometric dressing is generated.\n\n### Scale, theme, and pipeline cost\nScale band: medium, driven by the compact roughly 500-stud footprint but enlarged player-scale mechs. Theme: grimy, war-torn industrial sci-fi, with scorched metal, soot, rust, rubble, and dead vegetation. Pipeline modifier: `tiered`, forced by the real low relief of ridges, craters, and rubble slopes; no overhanging surfaces are required.",
   "spec": {
     "genre": "Shooter",
     "secondary": [],
-    "shape": "open-battlefield",
-    "preset": "none",
+    "shape": "lane-network",
+    "preset": "Arena Deathmatch",
     "axes": {},
     "options": [
       {
         "id": "cover-los",
-        "text": "Damaged industrial structures, broken walls, wrecked machinery, and large ruin fragments interrupt long mech firing lines and create repositioning cover.",
+        "text": "Broken factory walls, collapsed gantries, wrecked industrial modules, and damaged structures distributed across every combat lane so large mechs can break hostile sightlines.",
         "visible": true,
         "count": -1
       },
       {
         "id": "terrain-relief",
-        "text": "Uneven ground, low rises, scarred embankments, and shallow depressions shape the lanes without creating stacked play surfaces.",
+        "text": "Uneven blasted ground with shallow ridges, crater lips, and rubble slopes, without stacked walkable levels.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "spawn-protected",
+        "text": "Screened spawn pockets behind ruin walls and terrain folds, never directly exposed to a central firing lane.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "spawn-protected",
+        "text": "Respawn markers in multiple evenly distributed perimeter pockets, each facing an available lane but screened from the center and the nearest opposing pocket.",
+        "count": -1,
+        "where": "In evenly distributed perimeter pockets around the battlefield, facing available lanes while screened from the center and nearest opposing pocket."
+      }
+    ],
     "layout": {
-      "composition": "Elevated isometric view with the broad central combat basin readable in the centre; irregular open lanes radiate through it, while dense industrial ruin clusters visibly divide lane intersections and the outer thirds.",
+      "composition": "Frame the central cratered industrial ruins as the visual anchor, with three irregular open combat lanes legible around them and perimeter sectors at the edges.",
       "zones": [
         {
-          "name": "Central open combat basin",
-          "role": "Broad mech-scale engagement space and central firing ground.",
-          "where": "centre",
-          "size": "broad"
+          "name": "Central industrial ruin zone",
+          "role": "Broad cratered central cover field where the combat lanes converge and reconnect.",
+          "where": "Centre",
+          "size": "Broad"
         },
         {
-          "name": "Irregular open lanes",
-          "role": "Two or three radiating combat routes through the basin.",
-          "where": "radiating through the centre",
-          "size": "broad mech-scale"
+          "name": "Perimeter sectors",
+          "role": "Outer battlefield sectors containing screened respawn pockets and lane approaches.",
+          "where": "Around the battlefield perimeter",
+          "size": ""
         },
         {
-          "name": "Industrial ruin clusters",
-          "role": "Cover and lane division, with clearance for large mech movement between cover pieces.",
-          "where": "lane intersections and outer thirds of the field",
-          "size": "dense clusters"
-        },
-        {
-          "name": "Quiet broken edges",
-          "role": "Irregular placement ground for trees and smaller terrain doodads outside central firing lanes.",
-          "where": "field edges and broken ground",
+          "name": "Open combat lanes",
+          "role": "Three readable but irregular firing and traversal lanes between perimeter sectors and the central cover.",
+          "where": "Radiating around and through the central ruins",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Central open combat basin",
-          "to": "Outer battlefield thirds",
-          "kind": "two or three irregular open lanes"
+          "from": "Perimeter sectors",
+          "to": "Central industrial ruin zone",
+          "kind": "open ground"
+        },
+        {
+          "from": "Central industrial ruin zone",
+          "to": "Open combat lanes",
+          "kind": "open ground"
         }
       ],
-      "terrain": "Dusty, cratered, uneven earth with low ridges, scarred embankments, shallow trenches, and depressions providing readable ground-level variation.",
+      "terrain": "Uneven ash-grey blasted ground with low ridges, shallow trenches, impact craters, rubble banks, and continuous traversal across the terrain.",
       "props": [
         {
-          "name": "Damaged factory shells",
+          "name": "Broken walls, damaged factory shells, fallen machinery, pipe segments, and wreckage",
           "count": -1,
-          "where": "industrial ruin clusters"
+          "where": "Dense clusters at lane edges and intersections, leaving deliberate long firing views through lane centers."
         },
         {
-          "name": "Collapsed walls",
+          "name": "Blasted trees, dead brush, rocks, scrap, and terrain doodads",
           "count": -1,
-          "where": "lane intersections and outer thirds"
-        },
-        {
-          "name": "Rusted pipes",
-          "count": -1,
-          "where": "industrial ruin clusters"
-        },
-        {
-          "name": "Broken gantries",
-          "count": -1,
-          "where": "industrial ruin clusters"
-        },
-        {
-          "name": "Wrecked machinery",
-          "count": -1,
-          "where": "between and around cover pieces"
-        },
-        {
-          "name": "Scattered industrial debris",
-          "count": -1,
-          "where": "across the battlefield outside movement clearances"
-        },
-        {
-          "name": "Trees and smaller terrain doodads",
-          "count": -1,
-          "where": "quieter edges and broken ground, not central firing lanes"
-        },
-        {
-          "name": "Distant wreckage",
-          "count": -1,
-          "where": "map perimeter"
+          "where": "Scattered sparsely between cover clusters."
         }
       ],
-      "boundary": "Ruined industrial perimeter walls, steep rubble banks, and distant wreckage rather than a clean arena wall.",
+      "boundary": "Impassable ruined industrial walls, collapsed structures, and distant contaminated wasteland enclose the play area rather than a clean arena border.",
       "scale_band": "medium",
-      "theme": "Grimy, war-torn industrial sci-fi with rust, soot, cratered earth, and damaged heavy infrastructure."
+      "theme": "Grimy, war-torn industrial sci-fi; scorched metal, soot, rust, rubble, and dead vegetation."
     },
     "render": {
-      "first": "isometric",
-      "then": "topdown",
-      "authoritative": "isometric",
-      "why": "Visual mood, ruin silhouettes, and irregular cover composition lead; traversal topology does not need procedural guarantees.",
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "lane connections, cover distribution, and protected respawn sightlines need a fair, traversable combat plan.",
       "set_piece": false
     },
     "route": [
       "tiered"
     ],
-    "notes": [],
+    "notes": [
+      "Arena Deathmatch is named as the preset reference, but its unrequested powerup-buffs and cover-elevated options are explicitly omitted.",
+      "visible on 'spawn-protected' set from goes_to=both"
+    ],
     "scene_prompt": "Create a compact, roughly 500-stud 3D mech combat battlefield in a grimy, war-torn industrial sci-fi setting, scaled for mechs about three times avatar height. Arrange uneven terrain with open combat lanes, industrial ruins and damaged structures for cover, plus scattered trees and terrain doodads across the battlefield."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
-  "mapper_notes": []
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P0', 'tiered'] gives isometric"
+  ]
 }

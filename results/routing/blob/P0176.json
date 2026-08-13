@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a 3D obby map built across a giant keyboard, with eight platforming stages numbered 1 through 8 arranged sequentially over the oversized keys.",
-  "blob": "### Genre\nDominant genre: Obby & Platformer. The author explicitly defines an eight-stage obby, so the keyboard is the course surface rather than a typing interface.\n\n### Shape and preset\nUse `course-flat`, matching the Classic Obby preset: the giant keyboard forms a broad, mostly level course with a sequential platform route. The prompt overrides the rest of that preset; retain only the explicitly requested stage path rather than adding checkpoints, moving obstacles, or lethal hazards.\n\n### Config requirements\n`path-track` is visible geometry: an ordered chain of landable oversized keyboard keys and key-top platforms, forming the continuous route through stages 1 to 8. The numbered stage markers are visible labels integrated into the corresponding keys or small stage plaques. No invisible pickups, triggers, emitters, or unrequested hazards are needed.\n\n### Layout components\nBuild one continuous giant 3D keyboard as the full play surface. Divide it into eight sequential platforming zones, clearly numbered 1 through 8, progressing across oversized keys from the near starting end toward the far finishing end. Each stage occupies a readable cluster or run of raised keys, with deliberate gaps and height changes between key platforms to create platforming progression while keeping every critical jump physically legal. Connect each stage directly to the next with an unambiguous chain of keys; do not create alternate routes or puzzle branches. Use a simple keyboard-like base beneath the raised keys, with key rows, seams, and familiar keycap proportions as the terrain and props. Keep the outer keyboard perimeter visually clean and contained, with no added scenery competing with the course. Frame the whole keyboard at a high three-quarter isometric angle so all eight numbered stages and their route read in one view.\n\n### Render order\nUse `topdown`: render the top-down route plan first and treat it as authoritative, because an invalid sequential jump chain would make the obby unplayable; then dress it as the giant keyboard.\n\n### Scale, theme, and pipeline cost\nScale band: medium, driven by eight distinct sequential stages on one oversized keyboard. Theme: clean oversized 3D keyboard, readable numbered key platforms, playful obby construction. Pipeline modifier: `P6`, because the critical platform sequence must be physics-valid by construction.",
+  "blob": "### Genre\nThe dominant genre is Obby & Platformer: the player traverses eight sequential platforming stages rather than solving keyboard puzzles.\n\n### Shape and preset\nUse `course-flat`, matching the Classic Obby preset. The giant keyboard is one horizontal course, with oversized keys forming the ordered platform route from stage 1 to stage 8; retain the preset’s sequential track, checkpoint, and jump language, but omit unsupported moving obstacles.\n\n### Config requirements\nUse `path-track` for a continuous, physics-legal chain of keyboard keys and short connecting platforms through the numbered stages. Use `checkpoint-respawn` as clearly visible flat safe pads integrated into selected large keys. Use `obstacle-jump` for gaps, raised keys, and varying key-height jumps that make the keyboard itself the platforming challenge.\n\n### Layout requirements\nPlace `checkpoint-respawn` eight times: one safe landing/respawn pad at the beginning of each numbered stage, from 1 through 8, on a broad key before that stage’s jump sequence. No other placed gameplay components are required.\n\n### Layout components\nBuild one giant 3D keyboard as the complete map, with eight sequential stage zones labelled 1, 2, 3, 4, 5, 6, 7, and 8 in large readable numerals. Stage 1 begins at one end of the keyboard and stage 8 finishes at the opposite end. Each stage occupies a distinct cluster of oversized raised keys, with intentional gaps and stepped key elevations leading forward to the next cluster. The path must never branch ambiguously: each landing sequence visibly points to the next numbered stage. Keep broad key surfaces around checkpoints and use narrower or more separated keys for the jumps. The keyboard’s outer perimeter is the course boundary; do not add scenery that obscures the key layout. Frame the entire keyboard diagonally in an isometric view so all eight numbered sections and their progression are legible.\n\n### Render order\nUse `topdown` first, then derive the isometric render, because an invalid jump chain would make the obby unplayable and the ordered eight-stage topology must remain clear.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by one complete oversized keyboard divided into eight stages. Theme: clean stylized giant 3D keyboard, readable numbered keys, playful platforming. Use `P6` because the sequential platform route must be valid by construction, with legal jumps and connected progression.",
   "spec": {
     "genre": "Obby & Platformer",
     "secondary": [],
@@ -24,61 +24,81 @@
     "options": [
       {
         "id": "path-track",
-        "text": "An ordered chain of landable oversized keyboard keys and key-top platforms, forming the continuous route through stages 1 to 8.",
+        "text": "A continuous, physics-legal chain of keyboard keys and short connecting platforms through the numbered stages.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "checkpoint-respawn",
+        "text": "Clearly visible flat safe pads integrated into selected large keys.",
         "visible": true,
         "count": 8
+      },
+      {
+        "id": "obstacle-jump",
+        "text": "Gaps, raised keys, and varying key-height jumps that make the keyboard itself the platforming challenge.",
+        "visible": true,
+        "count": -1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "checkpoint-respawn",
+        "text": "A safe landing/respawn pad at the beginning of each numbered stage, from 1 through 8.",
+        "count": 8,
+        "where": "On a broad key before that stage's jump sequence."
       }
     ],
     "layout": {
-      "composition": "High three-quarter isometric view framing the whole giant keyboard so all eight numbered stages and their continuous route read in one view, from the near starting end to the far finishing end.",
+      "composition": "Frame the entire giant keyboard diagonally in an isometric view, with all eight numbered sections and their progression legible from stage 1 at one end to stage 8 at the opposite end.",
       "zones": [
         {
           "name": "Stage 1",
-          "role": "Starting platforming stage on oversized keyboard keys.",
-          "where": "near starting end",
-          "size": ""
+          "role": "The first numbered platforming stage and start of the ordered keyboard route.",
+          "where": "One end of the keyboard.",
+          "size": "Distinct cluster of oversized raised keys."
         },
         {
           "name": "Stage 2",
-          "role": "Sequential platforming stage on a readable cluster or run of raised keys.",
-          "where": "after Stage 1",
-          "size": ""
+          "role": "The second sequential platforming stage.",
+          "where": "After stage 1 along the keyboard route.",
+          "size": "Distinct cluster of oversized raised keys."
         },
         {
           "name": "Stage 3",
-          "role": "Sequential platforming stage on a readable cluster or run of raised keys.",
-          "where": "after Stage 2",
-          "size": ""
+          "role": "The third sequential platforming stage.",
+          "where": "After stage 2 along the keyboard route.",
+          "size": "Distinct cluster of oversized raised keys."
         },
         {
           "name": "Stage 4",
-          "role": "Sequential platforming stage on a readable cluster or run of raised keys.",
-          "where": "after Stage 3",
-          "size": ""
+          "role": "The fourth sequential platforming stage.",
+          "where": "After stage 3 along the keyboard route.",
+          "size": "Distinct cluster of oversized raised keys."
         },
         {
           "name": "Stage 5",
-          "role": "Sequential platforming stage on a readable cluster or run of raised keys.",
-          "where": "after Stage 4",
-          "size": ""
+          "role": "The fifth sequential platforming stage.",
+          "where": "After stage 4 along the keyboard route.",
+          "size": "Distinct cluster of oversized raised keys."
         },
         {
           "name": "Stage 6",
-          "role": "Sequential platforming stage on a readable cluster or run of raised keys.",
-          "where": "after Stage 5",
-          "size": ""
+          "role": "The sixth sequential platforming stage.",
+          "where": "After stage 5 along the keyboard route.",
+          "size": "Distinct cluster of oversized raised keys."
         },
         {
           "name": "Stage 7",
-          "role": "Sequential platforming stage on a readable cluster or run of raised keys.",
-          "where": "after Stage 6",
-          "size": ""
+          "role": "The seventh sequential platforming stage.",
+          "where": "After stage 6 along the keyboard route.",
+          "size": "Distinct cluster of oversized raised keys."
         },
         {
           "name": "Stage 8",
-          "role": "Finishing platforming stage on oversized keyboard keys.",
-          "where": "far finishing end",
-          "size": ""
+          "role": "The final numbered platforming stage and finish of the ordered keyboard route.",
+          "where": "The opposite end of the keyboard from stage 1.",
+          "size": "Distinct cluster of oversized raised keys."
         }
       ],
       "paths": [
@@ -118,40 +138,42 @@
           "kind": "track"
         }
       ],
-      "terrain": "A simple keyboard-like base beneath raised keys, with key rows, seams, familiar keycap proportions, deliberate gaps, and height changes between key platforms.",
+      "terrain": "One horizontal course formed by oversized raised keyboard keys, with intentional gaps and stepped key elevations; broad keys hold checkpoints and narrower or more separated keys form jumps.",
       "props": [
         {
-          "name": "Numbered stage markers integrated into keys or small stage plaques",
-          "count": 8,
-          "where": "corresponding stages 1 through 8"
+          "name": "Giant 3D keyboard",
+          "count": 1,
+          "where": "The complete map."
         },
         {
-          "name": "Oversized keyboard keys and key-top platforms",
-          "count": -1,
-          "where": "across the full keyboard play surface"
+          "name": "Large readable stage numerals 1 through 8",
+          "count": 8,
+          "where": "On the eight sequential stage zones."
         }
       ],
-      "boundary": "Clean, visually contained outer keyboard perimeter with no added scenery.",
+      "boundary": "The keyboard's outer perimeter is the course boundary; no scenery obscures the key layout.",
       "scale_band": "medium",
-      "theme": "Clean oversized 3D keyboard, readable numbered key platforms, playful obby construction."
+      "theme": "Clean stylized giant 3D keyboard, readable numbered keys, playful platforming."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "an invalid sequential jump chain would make the obby unplayable.",
+      "why": "An invalid jump chain would make the obby unplayable and the ordered eight-stage topology must remain clear.",
       "set_piece": false
     },
     "route": [
       "P6"
     ],
-    "notes": [],
+    "notes": [
+      "The blob explicitly omits unsupported moving obstacles from the Classic Obby preset, so `obstacle-moving` is not included."
+    ],
     "scene_prompt": "Create a 3D obby map built across a giant keyboard, with eight platforming stages numbered 1 through 8 arranged sequentially over the oversized keys."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

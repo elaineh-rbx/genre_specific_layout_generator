@@ -9,18 +9,28 @@ which every sub-genre carried mandatory Hard Needs. Part II is a *menu*:
     Presets    one shape plus a few option IDs, modelled on a real game - this is
                what stands in for what earlier drafts called sub-genres
 
+Shapes live in **one shared catalogue of 45**, and every one is reachable from every
+genre; `SHAPES` holds it and is the only place a shape's route is read from. A genre owns
+two things about a shape and not the shape itself: a `typical` shortlist naming a default,
+which is presentation rather than restriction, and its own wording for rows it words
+differently - `range-directed` is a firing line in Shooter and a bowling lane in Sports.
+`Genre.shapes` is therefore the whole catalogue wearing that genre's words.
+
+When nothing in the catalogue fits, a build may carry no shape at all and answer the five
+routing axes directly - the document's *described shape*. That is the same mechanism
+`No Genre` uses, which is why `Genre.axis` falls back to the axis table No Genre holds.
+
 Six of the options belong to every genre rather than to one - who inhabits the space,
 water, terrain relief - and live in their own table. They are merged into each genre
 here, so nothing downstream has to know they arrived differently, except that they
 carry `universal` and are never `core`.
 
 A sixteenth destination has no genre at all. A prompt describing a place rather than a
-game - a lobby, a swamp, a farm scene - routes to `No Genre`, which the document says
-was right on 7% of 620 real prompts and is "a legitimate outcome, not a failure". It
-has options and presets like any genre, but no shape table: with no genre prior to
-infer from, the five routing axes are asked directly, each with a default that costs
-nothing. `NO_GENRE` carries it, and `route_of` takes those axes where it would
-otherwise take a shape.
+game - a lobby, a swamp, a farm scene - routes to `No Genre`, which the document calls
+"a legitimate outcome, not a failure". It has options and presets like any genre, but no
+shape: with no genre prior to infer from, the five routing axes are asked directly, each
+with a default that costs nothing. `NO_GENRE` carries it, and `route_of` takes those axes
+where it would otherwise take a shape.
 
 The single most important field for us is `Goes to`. Pipeline step 4 recovers
 geometry from the isometric render, so anything invisible - a trigger volume, a
@@ -34,10 +44,12 @@ Only `image`, and the visible half of `both`, is injectable.
 
 from __future__ import annotations
 
+import json
 import re
 from dataclasses import dataclass, field
 
 from layoutgen.paths import BUILD_DOC as DOC
+from layoutgen.paths import SHAPE_MIGRATION as MIGRATION_DOC
 
 _LINK = re.compile(r"\[([^\]]+)\]\([^)]*\)")
 _BOLD = re.compile(r"\*\*(.+?)\*\*")
@@ -170,26 +182,81 @@ class Genre:
     name: str
     tagline: str
     route: str
+    #: Every shape in the catalogue, reworded where this genre words one its own way.
+    #: All 45 are here because the document says every one is reachable from every
+    #: genre; what a genre owns is the wording and the shortlist, not the set.
     shapes: list[Shape] = field(default_factory=list)
+    #: The handful the genre publishes, in the document's order, first one the default.
+    #: Presentation rather than restriction - "a shared catalogue nobody reaches past
+    #: the first five closes nothing" - so nothing may reject a shape for being absent.
+    typical: list[str] = field(default_factory=list)
     options: list[Option] = field(default_factory=list)
     presets: list[Preset] = field(default_factory=list)
     notes: list[str] = field(default_factory=list)
     #: Only `No Genre` has these, and it has them instead of shapes.
     axes: list[Axis] = field(default_factory=list)
+    #: Catalogue id -> this genre's own (name, type, flavor, what). Filled while
+    #: parsing and spent building `shapes`; kept afterwards so the difference between
+    #: an inherited wording and an owned one stays visible.
+    wording: dict[str, tuple[str, str, str, str]] = field(default_factory=dict)
+
+    @property
+    def default_shape(self) -> str:
+        """The shape the genre marks `(default)`, or its first typical one."""
+        return self.typical[0] if self.typical else ""
 
     def shape(self, sid: str) -> Shape | None:
         return next((s for s in self.shapes if s.id == sid), None)
 
     def axis(self, key: str) -> Axis | None:
         """By either spelling: the document's ``axis-enclosure`` or a block's
-        ``enclosure``."""
-        return next((a for a in self.axes if key in (a.id, a.key)), None)
+        ``enclosure``.
+
+        The five axes are not genre-specific - "every 3D game has a value on all five" -
+        and only `No Genre` carries the table, because that is where the document keeps
+        "the copy these are checked against". Any genre may still need them: a described
+        shape answers the axes directly when nothing in the catalogue fits, and without
+        this fallback such a build would lose both its route and its addendum wording.
+        """
+        here = next((a for a in self.axes if key in (a.id, a.key)), None)
+        if here is not None or self.name == NO_GENRE_NAME:
+            return here
+        return next((a for a in NO_GENRE.axes if key in (a.id, a.key)), None)
 
     def option(self, oid: str) -> Option | None:
         return next((o for o in self.options if o.id == oid), None)
 
     def preset(self, name: str) -> Preset | None:
         return next((p for p in self.presets if p.name == name), None)
+
+
+def _catalog(lines: list[str]) -> dict[str, Shape]:
+    """The Shape Catalog - every shape in the system, and the only place a route lives.
+
+    Shapes used to be filed per genre, and a genre could only pick from its own five or
+    six. They are now one shared table that every genre reaches into, which is a change
+    of kind and not of degree: `interior-single` was previously unreachable from any
+    genre whose shapes all assumed outdoors, so a prompt wanting one large interior got
+    the nearest wrong answer instead. What a genre still owns is the wording and a
+    shortlist, both handled in `_fill`.
+
+    The route is deliberately read here and nowhere else. A genre's own wording table
+    has no Pipeline column, so there is no second copy to disagree with this one.
+    """
+    try:
+        i = next(n for n, x in enumerate(lines)
+                 if x.strip() == "## **Shape Catalog**")
+    except StopIteration:
+        return {}
+    rows, _ = _table(lines, i + 1)
+    out: dict[str, Shape] = {}
+    for r in rows:
+        if len(r) < 4 or not (sid := _clean(r[0])):
+            continue
+        full, typ, flav = _split_name(r[1])
+        out[sid] = Shape(id=sid, name=full, type=typ, flavor=flav,
+                         what=_clean(r[2]), pipeline=_clean(r[3]))
+    return out
 
 
 def _universal(lines: list[str]) -> list[Option]:
@@ -264,15 +331,27 @@ def _fill(g: Genre, body: list[str]) -> None:
             g.tagline = _clean(line).rstrip(".")
         if line.startswith("**Genre route:"):
             g.route = _clean(line)
-        if line.startswith("**Shape"):
+        # The shortlist the genre publishes. It is a line rather than a table, and the
+        # first entry carries `(default)`. Reading it is not the same as reading a shape
+        # table: the shapes themselves come from the catalogue, and this only says which
+        # of them this genre puts on screen first.
+        if line.startswith("**Typical shapes"):
+            g.typical = _CODE.findall(line)
+            if (m := re.search(r"`([\w-]+)`\s*\*?\(default\)", line)) and g.typical:
+                g.typical.remove(m.group(1))
+                g.typical.insert(0, m.group(1))
+            i += 1
+            continue
+        # Ten genres reword some catalogue rows for themselves - `range-directed` is a
+        # firing line in Shooter and a bowling lane in Sports. Three columns, and no
+        # Pipeline column on purpose: the route lives in the catalogue and only there.
+        if line.startswith("This genre words these"):
             rows, i = _table(body, i + 1)
             for r in rows:
-                if len(r) < 4:
+                if len(r) < 3:
                     continue
                 full, typ, flav = _split_name(r[1])
-                g.shapes.append(Shape(id=_clean(r[0]), name=full, type=typ,
-                                      flavor=flav, what=_clean(r[2]),
-                                      pipeline=_clean(r[3])))
+                g.wording[_clean(r[0])] = (full, typ, flav, _clean(r[2]))
             continue
         if line.startswith("**Options**"):
             rows, i = _table(body, i + 1)
@@ -333,8 +412,10 @@ def _no_genre(lines: list[str]) -> Genre:
     return g
 
 
-def _parse() -> tuple[dict[str, Genre], list[tuple[str, str]], list[Option], Genre]:
+def _parse() -> tuple[dict[str, Genre], list[tuple[str, str]], list[Option], Genre,
+                      dict[str, Shape]]:
     lines = DOC.read_text().splitlines()
+    catalog = _catalog(lines)
 
     # The Genre List gives the one-line description for each of the fifteen.
     descs: list[tuple[str, str]] = []
@@ -356,6 +437,15 @@ def _parse() -> tuple[dict[str, Genre], list[tuple[str, str]], list[Option], Gen
         name = _clean(m.group(2))
         g = Genre(num=int(m.group(1)), name=name, tagline="", route="")
         _fill(g, body)
+        # Every catalogue row, in catalogue order, wearing this genre's words where it
+        # has any. Materialised per genre rather than shared so that `g.shape(id).what`
+        # is the sentence that reaches the image model for *this* genre without any
+        # caller having to know a wording table exists.
+        g.shapes = [
+            Shape(id=s.id, name=w[0], type=w[1], flavor=w[2], what=w[3],
+                  pipeline=s.pipeline) if (w := g.wording.get(s.id)) else
+            Shape(**vars(s))
+            for s in catalog.values()]
         genres[name] = g
 
     # Every genre inherits the universal table on top of its own, and its own row wins
@@ -369,13 +459,26 @@ def _parse() -> tuple[dict[str, Genre], list[tuple[str, str]], list[Option], Gen
         own = {o.id for o in g.options}
         g.options.extend(o for o in universal if o.id not in own)
 
-    return genres, descs, universal, no_genre
+    return genres, descs, universal, no_genre, catalog
 
 
 #: The document's own name for the sixteenth destination, which is not a genre.
 NO_GENRE_NAME = "No Genre"
 
-GENRES, GENRE_DESCS, UNIVERSAL, NO_GENRE = _parse()
+GENRES, GENRE_DESCS, UNIVERSAL, NO_GENRE, SHAPES = _parse()
+
+#: Retired shape id -> the catalogue row that absorbed it, vendored from the upstream
+#: rules repo beside the documents it belongs to.
+#:
+#: Merging the fifteen per-genre shape tables into one catalogue collapsed rows that had
+#: been separate only because they lived in different genres: `arena-flat`, `field-bounded`
+#: and `space-continuous` were one bounded single-level space described three times, and
+#: are now `space-bounded`. Specs written before the merge name ids the catalogue no longer
+#: has, and dropping their shape would silently turn a decided build into an undecided one,
+#: so they are rewritten instead. This is a rename, not a re-decision - anything that needs
+#: the new document's *judgement* needs a new run, not this.
+SHAPE_MIGRATION: dict[str, str] = json.loads(MIGRATION_DOC.read_text()) \
+    if MIGRATION_DOC.is_file() else {}
 
 
 def genre(name: str) -> Genre | None:

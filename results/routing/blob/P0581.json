@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a 3D marble-and-glass hotel lobby designed as a social hangout space, with a water fountain as the central focal point. Arrange the lobby openly around the fountain, with no round teleporters or queue area.",
-  "blob": "### Genre\n`No Genre`: this is a social hangout place with no round, scoring, combat, or progression loop. Use the Social Space preset, expressed as an enclosed lobby rather than an outdoor plaza.\n\n### Shape and preset\nNo genre shape applies. Set `enclosure` to `interior-only`; leave `verticality`, `zone-count`, `structure`, and `play-space` at their defaults: single-surface, single zone, dressed, and grounded-surface. The Social Space preset remains recognisable through its gathering-focused central arrangement, but omit its arrival-point and orientation-anchor options because neither was requested.\n\n### Config requirements\nUse visible-geometry `social-hub`: one open gathering floor surrounds the fountain and allows avatars to congregate without a queue or staging lane. Use visible-geometry `water-body`: the central fountain has a real basin and water feature. Do not include teleporters, queue structures, round staging, pickups, NPCs, or other unrequested gameplay components.\n\n### Layout components\nBuild one medium-sized enclosed hotel-lobby zone, approximately square in plan, with the fountain centered as the sole focal object. The fountain sits in a circular or octagonal marble basin at the middle of a broad open floor, leaving clear circulation on every side. Arrange low lounge seating clusters around the perimeter facing inward, with a reception-like architectural backdrop only as non-interactive hotel dressing; keep the center open for social gathering. Use polished light marble flooring, glass exterior or interior wall panels, tall clean glass partitions, and restrained metallic trim. The boundary is a continuous glazed-and-marble interior shell, with no visible exterior play area. Compose the isometric view symmetrically around the centered fountain, showing the open ring of floor and perimeter seating.\n\n### Render order\nUse `isometric`: the lobby is a simple single-surface social interior whose visual symmetry and material presentation lead; no topology must be valid by construction.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by a single social room sized around its central fountain and open gathering floor. Theme: polished marble-and-glass upscale hotel lobby, bright, clean, and calm. Pipeline modifier: `P0`; the enclosed single-level room forces no additional capture path.",
+  "blob": "### 1. Genre\n`No Genre`: this is a social hangout place with no rounds, scoring, combat, or other game loop.\n\n### 2. Shape and preset\nUse no shape because `No Genre` is selected. Use the Social Space preset. Set `enclosure` to `interior-only`: the entire map is one enclosed hotel lobby. Leave `verticality` as `single-surface`, `zone-count` as `single`, `structure` as `dressed`, and `play-space` as `grounded-surface`.\n\n### 3. Config requirements\nUse `social-hub` as an open gathering floor arranged around the fountain. Use `landmark-focal` for the central water fountain, visible from all sides of the lobby. No teleporters, queue area, or other round-staging geometry is present.\n\n### 4. Layout requirements\nUse `spawn-area`, with one arrival point at the lobby entrance, oriented directly toward the fountain so the first view is composed around the central feature. No other placed gameplay components are needed.\n\n### 5. Layout components\nBuild one medium-sized enclosed hotel-lobby zone. Place a circular water fountain at the exact center as the dominant gathering landmark, with broad open marble floor around it for social circulation. Set the main glass entrance on one side of the lobby facing the fountain; use wide, unobstructed walking paths from the entrance around both sides of the fountain and across the open floor. Surround the space with marble walls, tall glass panels, and a high hotel-style ceiling; the glass may reveal an abstract exterior but is not a traversable transition. Keep props restrained: the fountain, polished marble flooring, glass partitions, and subtle hotel architectural detailing. The boundary is the enclosing lobby shell. Compose the frame symmetrically around the fountain, with the entrance and central axis clearly legible.\n\n### 6. Render order\nRender `isometric` first and treat it as authoritative, since this is a simple, single-level social interior with no topology that must be validated.\n\n### 7. Scale, theme, and pipeline cost\nScale is medium, driven by a single lobby sized for a social gathering around one central fountain. Theme: upscale marble-and-glass hotel lobby, polished and modern. Pipeline modifier: `P0`, because the space is a single enclosed, single-surface interior with no forced extra capture path.",
   "spec": {
     "genre": "No Genre",
     "secondary": [],
@@ -30,60 +30,95 @@
     "options": [
       {
         "id": "social-hub",
-        "text": "one open gathering floor surrounds the fountain and allows avatars to congregate without a queue or staging lane",
+        "text": "An open gathering floor arranged around the fountain.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "landmark-focal",
+        "text": "The central water fountain, visible from all sides of the lobby.",
         "visible": true,
         "count": 1
       },
       {
-        "id": "water-body",
-        "text": "the central fountain has a real basin and water feature",
+        "id": "spawn-area",
+        "text": "One arrival point at the lobby entrance, oriented directly toward the fountain so the first view is composed around the central feature.",
         "visible": true,
         "count": 1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "spawn-area",
+        "text": "One arrival point at the lobby entrance, oriented directly toward the fountain so the first view is composed around the central feature.",
+        "count": 1,
+        "where": "At the lobby entrance, oriented directly toward the fountain."
+      }
+    ],
     "layout": {
-      "composition": "Symmetrical isometric view around the centered fountain, showing the open ring of floor and inward-facing perimeter seating.",
+      "composition": "Symmetrical frame centered on the fountain, with the entrance and central axis clearly legible.",
       "zones": [
         {
           "name": "Hotel lobby",
-          "role": "Open social gathering room around the central fountain.",
-          "where": "single enclosed room",
-          "size": "medium-sized, approximately square in plan"
+          "role": "Social gathering space arranged around the central fountain.",
+          "where": "Entire enclosed map, with the fountain at the exact center and the glass entrance on one side facing it.",
+          "size": "medium-sized"
         }
       ],
-      "paths": [],
-      "terrain": "Polished light marble flooring; central circular or octagonal marble fountain basin with water.",
+      "paths": [
+        {
+          "from": "Glass entrance",
+          "to": "Central fountain",
+          "kind": "open ground"
+        },
+        {
+          "from": "Glass entrance",
+          "to": "Open floor around the fountain",
+          "kind": "open ground"
+        }
+      ],
+      "terrain": "Polished marble flooring with broad open floor around the circular water fountain.",
       "props": [
         {
-          "name": "central fountain",
+          "name": "Circular water fountain",
           "count": 1,
-          "where": "centre"
+          "where": "Exact center of the lobby."
         },
         {
-          "name": "low lounge seating clusters",
+          "name": "Polished marble flooring",
           "count": -1,
-          "where": "around the perimeter facing inward"
+          "where": "Across the lobby floor."
         },
         {
-          "name": "reception-like architectural backdrop",
+          "name": "Glass partitions",
           "count": -1,
-          "where": "perimeter, as non-interactive hotel dressing"
+          "where": "Around the enclosing lobby shell."
         },
         {
-          "name": "tall clean glass partitions",
+          "name": "Subtle hotel architectural detailing",
           "count": -1,
-          "where": "within the lobby"
+          "where": "Throughout the lobby."
+        },
+        {
+          "name": "Tall glass panels",
+          "count": -1,
+          "where": "Around the lobby walls."
+        },
+        {
+          "name": "High hotel-style ceiling",
+          "count": 1,
+          "where": "Above the enclosed lobby."
         }
       ],
-      "boundary": "Continuous glazed-and-marble interior shell with glass wall panels, restrained metallic trim, and no visible exterior play area.",
+      "boundary": "The enclosing lobby shell of marble walls, tall glass panels, and a high hotel-style ceiling; glass may reveal an abstract exterior but is not a traversable transition.",
       "scale_band": "medium",
-      "theme": "polished marble-and-glass upscale hotel lobby, bright, clean, calm"
+      "theme": "Upscale polished modern marble-and-glass hotel lobby."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "visual symmetry and material presentation lead; no topology must be valid by construction",
+      "why": "A simple single-level social interior has no topology that must be validated.",
       "set_piece": false
     },
     "route": [
@@ -95,7 +130,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

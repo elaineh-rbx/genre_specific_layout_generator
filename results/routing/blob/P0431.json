@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a bright cartoon tropical 3D island with colorful beaches around the shoreline, a friendly volcano rising in the middle, and stylized jungle trees surrounding it. Place a few cabanas along the beach areas, with five coconuts distributed across the island.",
-  "blob": "### Genre\nAdventure is dominant: the five-item search and completion goal make this a compact exploration scavenger hunt, rather than a mere island showcase.\n\n### Shape and preset\nUse `world-open`, a single freely navigable tropical island arranged around its central volcano. The closest preset is Scavenger Hunt, but its quest board and discovery-alcove bundle are not requested, so retain only the open-world collection structure rather than adding those features.\n\n### Config requirements\n`collectible-nodes` is invisible placement logic: distribute exactly five reachable coconut pickup locations across distinct parts of the island. Render the five coconuts themselves as visible physical props. `landmark-focal` is visible geometry: the friendly central volcano is the island-wide orientation anchor. `terrain-relief` is visible geometry: the volcano rises above the otherwise low beach and jungle terrain.\n\n### Layout components\nBuild one medium-sized island zone, roughly circular in plan, with colorful sandy beaches forming a continuous outer ring. A broad, gently sloped volcano occupies the center and remains visible above the tree canopy. Dense stylized jungle trees cover most of the middle belt around its base, leaving readable clearings and beach access. Place a few small cabanas spaced along the beach areas, especially near open sand rather than clustered as a town. Put the five visible coconuts in separated, reachable locations: one near a cabana, one at a beach-edge jungle opening, two within distinct jungle clearings, and one on a safe lower volcanic slope. Natural sandy clearings and gaps in the trees provide informal circulation between these locations; do not add formal roads. The island boundary is an open shoreline ring. Frame the whole island in a three-quarter isometric view, with the volcano centered and beaches visible around it.\n\n### Render order\nUse `isometric`: the scene is a simple contiguous island whose collection placement does not require topology to be generated or validated before the visual composition.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by one complete island with five distributed search locations. Theme: bright cartoon tropical, colorful beaches, stylized jungle foliage, and a friendly volcano. Use `tiered`, forced by the volcano’s climbable elevation without overhanging surfaces.",
+  "blob": "### 1. Genre\nThe dominant genre is Adventure: the player searches the island for five coconuts, and finding all five ends the round.\n\n### 2. Shape and preset\nUse `world-open`, a single freely explorable tropical island whose beach, jungle, and central volcano coexist on one continuous map. This matches the Scavenger Hunt preset’s open exploration structure, but the preset is otherwise not retained because the prompt does not request its hidden alcoves or tracker.\n\n### 3. Config requirements\nUse `landmark-focal` for the friendly volcano, which rises at the island’s centre as the visible orientation anchor. Use `terrain-relief` for the volcano’s sloping elevated landform. Use `water-body` for the surrounding ocean and colorful beach shoreline.\n\n### 4. Layout requirements\nUse `collectible-nodes`: place exactly five coconut pickups, distributed across distinct island areas rather than clustered together—beach, cabana area, jungle edge, jungle interior, and volcano foothill. These are the five required round-ending objectives.\n\n### 5. Layout components\nBuild one medium-sized island zone, ringed by bright sandy beaches and shallow tropical ocean. Raise a broad, friendly stylized volcano in the middle, with jungle ground and dense stylized trees spreading around its lower slopes and toward the coast. Place a few cabanas along separate beach areas. Leave clear natural walking routes through the jungle and around the volcano so all five coconut locations are reachable. The shoreline and ocean form the map boundary; use the island silhouette as the dominant top-down composition, with the volcano centered and beach structures kept peripheral.\n\n### 6. Render order\nRender `isometric` first and treat it as authoritative, then project the top-down plan from it. The island’s topology is simple exploration terrain, so an image-led composition is sufficient.\n\n### 7. Scale, theme, and pipeline cost\nUse a medium scale, driven by a full island with five distributed search locations, a central volcano, jungle, beaches, and several cabanas. Theme: bright cartoon tropical, colorful beaches, stylized jungle foliage, and a welcoming volcano. Use `tiered` because the volcano creates non-overhanging elevation; no other pipeline modifier is forced.",
   "spec": {
     "genre": "Adventure",
     "secondary": [],
@@ -23,85 +23,92 @@
     "axes": {},
     "options": [
       {
-        "id": "collectible-nodes",
-        "text": "Distribute exactly five reachable coconut pickup locations across distinct parts of the island.",
-        "visible": false,
-        "count": 5
-      },
-      {
         "id": "landmark-focal",
-        "text": "The friendly central volcano is the island-wide orientation anchor.",
+        "text": "The friendly volcano rises at the island's centre as the visible orientation anchor.",
         "visible": true,
         "count": -1
       },
       {
         "id": "terrain-relief",
-        "text": "The volcano rises above the otherwise low beach and jungle terrain.",
+        "text": "The volcano's sloping, elevated non-overhanging landform.",
         "visible": true,
         "count": -1
+      },
+      {
+        "id": "water-body",
+        "text": "The surrounding ocean and colorful beach shoreline.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "Exactly five coconut pickups distributed across distinct island areas rather than clustered together; these are the required round-ending objectives.",
+        "visible": false,
+        "count": 5
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "collectible-nodes",
+        "text": "Exactly five coconut pickups distributed across distinct island areas rather than clustered together; these are the required round-ending objectives.",
+        "count": 5,
+        "where": "Beach, cabana area, jungle edge, jungle interior, and volcano foothill."
       }
     ],
     "layout": {
-      "composition": "Frame the whole island in a three-quarter isometric view, with the volcano centered and beaches visible around it.",
+      "composition": "Dominant top-down island silhouette, with the volcano centered and beach structures kept peripheral.",
       "zones": [
         {
           "name": "Tropical island",
-          "role": "A single freely navigable exploration scavenger-hunt island containing the distributed coconut search locations.",
-          "where": "Whole map, roughly circular in plan around the central volcano.",
-          "size": "medium-sized"
+          "role": "Freely explorable island containing the beach, cabana areas, jungle, and central volcano, with five distributed coconut search locations.",
+          "where": "Centre of the map, surrounded by ocean.",
+          "size": "medium"
         }
       ],
       "paths": [
         {
-          "from": "beach areas",
-          "to": "jungle clearings",
-          "kind": "open ground"
-        },
-        {
-          "from": "jungle clearings",
-          "to": "lower volcanic slope",
+          "from": "Beach and cabana areas",
+          "to": "Jungle and volcano foothill",
           "kind": "open ground"
         }
       ],
-      "terrain": "Colorful sandy beaches form a continuous outer ring; a broad, gently sloped central volcano rises above low beach and jungle terrain; dense stylized jungle trees cover most of the middle belt around its base, with readable clearings and beach access.",
+      "terrain": "Bright sandy beaches ring the island beside shallow tropical ocean. Jungle ground and dense stylized trees spread around the lower slopes of a broad, friendly stylized central volcano.",
       "props": [
         {
-          "name": "coconuts",
-          "count": 5,
-          "where": "One near a cabana, one at a beach-edge jungle opening, two in distinct jungle clearings, and one on a safe lower volcanic slope."
+          "name": "Cabanas",
+          "count": -1,
+          "where": "Along separate peripheral beach areas."
         },
         {
-          "name": "small cabanas",
+          "name": "Stylized jungle trees",
           "count": -1,
-          "where": "Spaced along beach areas, especially near open sand rather than clustered as a town."
-        },
-        {
-          "name": "stylized jungle trees",
-          "count": -1,
-          "where": "Across most of the middle belt around the volcano's base."
+          "where": "Around the volcano's lower slopes and toward the coast."
         }
       ],
-      "boundary": "Open shoreline ring.",
+      "boundary": "The shoreline and surrounding ocean form the map boundary.",
       "scale_band": "medium",
-      "theme": "bright cartoon tropical, colorful beaches, stylized jungle foliage, friendly volcano"
+      "theme": "Bright cartoon tropical, colorful beaches, stylized jungle foliage, welcoming volcano."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "the scene is a simple contiguous island whose collection placement does not require topology to be generated or validated before the visual composition.",
+      "why": "The island topology is simple exploration terrain, so an image-led composition is sufficient.",
       "set_piece": false
     },
     "route": [
+      "P0",
       "tiered"
     ],
-    "notes": [],
+    "notes": [
+      "The Scavenger Hunt preset was considered as a structural match but was explicitly not retained."
+    ],
     "scene_prompt": "Create a bright cartoon tropical 3D island with colorful beaches around the shoreline, a friendly volcano rising in the middle, and stylized jungle trees surrounding it. Place a few cabanas along the beach areas, with five coconuts distributed across the island."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

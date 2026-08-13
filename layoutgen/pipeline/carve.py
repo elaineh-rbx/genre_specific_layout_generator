@@ -23,22 +23,28 @@ from layoutgen.paths import OUT
 #: P6 - the topology is the game, so it is generated procedurally first and dressed
 #: after. Only the maze generator exists today; the track, lane, course and chunk
 #: generators the other P6 routes call for are unbuilt.
-#: Scoped by genre, because the generator carves a *perfect* maze - one route from a
-#: start to an end - and a shared ID does not mean the same thing everywhere.
-#: `obstacle-maze` is a routed maze in Obby ("a maze the player has to route through"),
-#: but in Party it is "a warren of rooms and corridors to hide and be hunted in", which
-#: has no start and no end and wants loops rather than a single solution.
-MAZE_SHAPES = {("Puzzle", "puzzle-maze")}
+#: Keyed by shape alone, because a shape means the same thing in every genre now that
+#: they share one catalogue: `puzzle-maze` is "a maze whose solvable topology *is* the
+#: puzzle" whoever picks it, and a Survival prompt reaching for it wants the same carve a
+#: Puzzle one does. Scoping these by genre while the catalogue is shared would refuse a
+#: blueprint to exactly the prompts the shared catalogue was opened up for.
+MAZE_SHAPES = {"puzzle-maze"}
+
+#: Options stay scoped by genre, and that is not an inconsistency. An option's sentence is
+#: written per genre and a shared ID genuinely means different things: `obstacle-maze` is
+#: a routed maze in Obby ("a maze the player has to route through"), but in Party it is "a
+#: warren of rooms and corridors to hide and be hunted in", which has no start and no end
+#: and wants loops rather than the single solution this generator carves.
 MAZE_OPTIONS = {("Obby & Platformer", "obstacle-maze")}
 
-#: Racing shapes whose route can be authored as a closed loop instead of drawn.
-#: Build.md routes all of Racing P6 for exactly this reason - the track has to read as
-#: one connected route with no ambiguous self-crossings, which a free image cannot
-#: promise. `route-multitier` is the same loop with a crossing that a bridge resolves.
+#: Shapes whose route can be authored as a loop instead of drawn. Build.md routes each of
+#: them `P6` for exactly this reason - the track has to read as one connected route with
+#: no ambiguous self-crossings, which a free image cannot promise. `route-multitier` is
+#: the same loop with a crossing that a bridge resolves.
 TRACK_SHAPES = {
-    ("Racing", "route-circuit"): {"closed": True, "crossings": 0},
-    ("Racing", "route-multitier"): {"closed": True, "crossings": 1},
-    ("Racing", "route-point-to-point"): {"closed": False, "crossings": 0},
+    "route-circuit": {"closed": True, "crossings": 0},
+    "route-multitier": {"closed": True, "crossings": 1},
+    "route-point-to-point": {"closed": False, "crossings": 0},
 }
 
 ROUTE_TINT = (40, 230, 120)
@@ -137,7 +143,9 @@ def carve_track(complexity: int, seed: int, crossings: int = 0,
 
 
 def track_params(genre_name: str, shape_id: str) -> dict:
-    return TRACK_SHAPES.get((genre_name, shape_id), {"closed": True, "crossings": 0})
+    """The loop the shape asks for. `genre_name` is unused, kept so callers need not
+    know which half of `layout_kind` still consults it."""
+    return TRACK_SHAPES.get(shape_id, {"closed": True, "crossings": 0})
 
 
 def carve(spec: dict) -> dict:
@@ -153,10 +161,14 @@ def carve(spec: dict) -> dict:
 
 
 def layout_kind(genre_name: str, shape_id: str, option_ids) -> str | None:
-    """`maze`, `track`, or None when nothing here can be authored outright."""
-    if (genre_name, shape_id) in TRACK_SHAPES:
+    """`maze`, `track`, or None when nothing here can be authored outright.
+
+    `genre_name` is still taken because an *option* can make a scene carveable and options
+    are genre-scoped; the shape half no longer consults it.
+    """
+    if shape_id in TRACK_SHAPES:
         return "track"
-    if ((genre_name, shape_id) in MAZE_SHAPES
+    if (shape_id in MAZE_SHAPES
             or any((genre_name, o) in MAZE_OPTIONS for o in option_ids or ())):
         return "maze"
     return None

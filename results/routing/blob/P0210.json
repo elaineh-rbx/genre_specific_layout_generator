@@ -14,102 +14,125 @@
     }
   ],
   "scene_prompt": "Create a 3D game map as a bright, cartoony chill park that a Roblox character can freely walk around. Arrange open grassy paths and simple park scenery around a central physical rebirth button that players can walk up to; the button has no text label. Include a pet egg as a visible park prop or interaction point, also without ground text, signs, or on-screen labels.",
-  "blob": "### Genre\nThe dominant genre is Simulation: an incremental clicker game. Its walkable park is a shared game world rather than a plot or a course.\n\n### Shape and preset\nUse `world-shared`, matching the Incremental Simulator preset. Here it is a compact, freely walkable park centered on the physical interaction landmarks rather than a dense commercial simulator plaza.\n\n### Config requirements\nUse visible `path-circulation` as broad, curving grassy and paved walking routes that converge on the park center. Use `trigger-rebirth`: the visible geometry is one large, text-free physical rebirth button on a small central pad; its activation volume is invisible and must not appear in renders. The pet egg is a visible standalone park prop and interaction point, with its interaction volume invisible. Do not render signs, ground text, screen UI, labels, probability displays, or other written markers.\n\n### Layout components\nBuild one small central park zone, with the rebirth-button pad at its center and the pet egg placed nearby as a second focal prop, separated enough that each reads clearly. A loose ring of open grass, simple paved or worn paths, rounded trees, low flowerbeds, shrubs, and a few benches surrounds these landmarks, leaving generous unobstructed character-walking space. Curved paths connect every edge of the lawn to the central pad and egg area. Keep the terrain flat, with bright green grass and minimal decorative relief. The park has no hard architectural enclosure; use a soft outer edge of trees and shrubs rather than walls. Compose the map as a clean isometric park tableau, with the central button and egg immediately legible and no typography anywhere.\n\n### Render order\nUse `isometric`: render the cheerful visual composition first, since the park has no topology whose validity is required for play.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by a single walkable park and two central interaction landmarks. Theme: bright, cartoony, relaxed Roblox park. Use `P0`; the flat, single-surface outdoor layout forces no additional capture path.",
+  "blob": "### 1. Genre\nThe dominant genre is Simulation: this is a clicker/incremental game with rebirth progression, while the park is its walkable setting.\n\n### 2. Shape and preset\nUse `world-open`, taken from the Simulation Incremental Simulator preset: one contiguous, freely walkable park rather than isolated plots or a tiered progression route. The preset’s shop hub, purchase gates, and dedicated circulation chain are not requested and are omitted.\n\n### 3. Config requirements\nNo image-config options are required beyond the described park geometry. Do not add shops, gates, NPCs, water, terrain relief, signs, ground text, UI labels, or decorative text. The central rebirth control and pet egg are scene props, not labelled interfaces.\n\n### 4. Layout requirements\nPlace one `trigger-rebirth` at the central physical rebirth button, reachable directly from all surrounding paths. Its interaction is represented by the button’s placement only; it must carry no visible text, icon, or ground label.\n\n### 5. Layout components\nBuild a small open park on one level. The central zone is a circular grassy clearing containing one oversized, friendly cartoony physical rebirth button, visually distinct through shape and color but completely unlabelled. Place one pet egg interaction prop slightly off-center beside the clearing, also without text, signs, or ground markings. Several broad, gently curving grassy paths radiate from and loop around the clearing, creating relaxed free-roam circulation rather than a directed course. Add sparse simple park scenery—rounded trees, bushes, flowers, benches, and low decorative rocks—kept clear of the main walking routes. Use a soft tree-and-bush perimeter as the natural map edge without walls or urban structures. Compose the clearing as the visual center, with the button immediately legible and the egg visible nearby in the isometric frame.\n\n### 6. Render order\nUse `isometric`: the simple, open single-surface park does not need topology validation before its cartoony visual composition is drawn.\n\n### 7. Scale, theme, and pipeline cost\nScale is small, driven by one central interaction clearing and a compact free-roam park. Theme: bright, cartoony, calm Roblox clicker park with clean readable shapes and no written labels. Pipeline modifier: `P0`, because the map is one open, single-level surface with no forced additional capture path.",
   "spec": {
     "genre": "Simulation",
     "secondary": [],
-    "shape": "world-shared",
+    "shape": "world-open",
     "preset": "Incremental Simulator",
     "axes": {},
     "options": [
       {
-        "id": "path-circulation",
-        "text": "Broad, curving grassy and paved walking routes that converge on the park center.",
-        "visible": true,
-        "count": -1
-      },
-      {
         "id": "trigger-rebirth",
-        "text": "One large, text-free physical rebirth button on a small central pad; its activation volume is invisible and must not appear in renders.",
-        "visible": true,
+        "text": "One central physical rebirth button, unlabelled and reachable directly from all surrounding paths.",
+        "visible": false,
         "count": 1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "trigger-rebirth",
+        "text": "One central physical rebirth button with no visible text, icon, or ground label.",
+        "count": 1,
+        "where": "At the central physical rebirth button in the circular grassy clearing, directly reachable from all surrounding paths."
+      }
+    ],
     "layout": {
-      "composition": "Clean isometric park tableau with the central rebirth-button pad and nearby pet egg immediately legible, surrounded by open lawn, curved paths, and a soft ring of scenery.",
+      "composition": "The circular grassy clearing is the visual center of the isometric frame, with the oversized rebirth button immediately legible at its center and the pet egg visible slightly off-center beside it. Curving paths and sparse scenery surround the clearing.",
       "zones": [
         {
-          "name": "Central park",
-          "role": "Freely walkable shared park centered on the physical rebirth-button pad and pet egg interaction landmark.",
-          "where": "centre",
-          "size": "small"
+          "name": "Central grassy clearing",
+          "role": "Central interaction area containing the physical rebirth button.",
+          "where": "Centre",
+          "size": "Small"
+        },
+        {
+          "name": "Surrounding open park",
+          "role": "Relaxed free-roam circulation around the clearing.",
+          "where": "Around the central clearing",
+          "size": "Compact"
+        },
+        {
+          "name": "Tree-and-bush perimeter",
+          "role": "Natural map edge.",
+          "where": "Outer edge of the park",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "every edge of the lawn",
-          "to": "central rebirth-button pad and pet egg area",
-          "kind": "path"
+          "from": "Surrounding open park",
+          "to": "Central grassy clearing",
+          "kind": "open ground"
+        },
+        {
+          "from": "Central grassy clearing",
+          "to": "Surrounding open park",
+          "kind": "open ground"
         }
       ],
-      "terrain": "Flat bright green grass with minimal decorative relief, plus simple paved or worn walking paths.",
+      "terrain": "A small open, single-level grassy park with broad, gently curving grassy paths.",
       "props": [
         {
-          "name": "text-free physical rebirth button",
+          "name": "Oversized friendly cartoony physical rebirth button",
           "count": 1,
-          "where": "on the small central pad"
+          "where": "Central grassy clearing"
         },
         {
-          "name": "pet egg",
+          "name": "Pet egg interaction prop",
           "count": 1,
-          "where": "near the central rebirth-button pad, separated enough to read clearly"
+          "where": "Slightly off-center beside the central clearing"
         },
         {
-          "name": "rounded trees",
+          "name": "Rounded trees",
           "count": -1,
-          "where": "in a loose outer ring around the landmarks"
+          "where": "Sparse scenery and the tree-and-bush perimeter, clear of main walking routes"
         },
         {
-          "name": "low flowerbeds",
+          "name": "Bushes",
           "count": -1,
-          "where": "around the open grass and paths"
+          "where": "Sparse scenery and the tree-and-bush perimeter, clear of main walking routes"
         },
         {
-          "name": "shrubs",
+          "name": "Flowers",
           "count": -1,
-          "where": "along the soft outer edge"
+          "where": "Sparse scenery, clear of main walking routes"
         },
         {
-          "name": "benches",
+          "name": "Benches",
           "count": -1,
-          "where": "around the park scenery"
+          "where": "Sparse scenery, clear of main walking routes"
+        },
+        {
+          "name": "Low decorative rocks",
+          "count": -1,
+          "where": "Sparse scenery, clear of main walking routes"
         }
       ],
-      "boundary": "No hard architectural enclosure; a soft outer edge of trees and shrubs rather than walls.",
+      "boundary": "A soft tree-and-bush perimeter forms the natural map edge, with no walls or urban structures.",
       "scale_band": "small",
-      "theme": "bright, cartoony, relaxed Roblox park"
+      "theme": "Bright, cartoony, calm Roblox clicker park with clean readable shapes and no written labels."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "the park has no topology whose validity is required for play",
+      "why": "the simple open single-surface park does not need topology validation before its cartoony visual composition is drawn",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
     "notes": [
-      "The pet egg is retained as a visible layout prop; no canonical Simulation option ID was named for it.",
-      "The rebirth button's invisible activation volume and the pet egg's invisible interaction volume must not appear in renders.",
-      "Do not render signs, ground text, screen UI, labels, probability displays, or other typography."
+      "The Incremental Simulator preset is named by the blob, but its shop hub, purchase gates, and dedicated circulation chain are explicitly omitted.",
+      "No image-config options are requested beyond the described park geometry."
     ],
     "scene_prompt": "Create a 3D game map as a bright, cartoony chill park that a Roblox character can freely walk around. Arrange open grassy paths and simple park scenery around a central physical rebirth button that players can walk up to; the button has no text label. Include a pet egg as a visible park prop or interaction point, also without ground text, signs, or on-screen labels."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

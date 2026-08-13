@@ -14,80 +14,91 @@
     }
   ],
   "scene_prompt": "Create a 3D arcade soccer map centered on one compact, enclosed 3v3 street court roughly 150 studs across. The rectangular pitch is bounded on all sides by solid rebound walls, with goals centered at the two short ends and no out-of-bounds space; keep the court open, highly readable, and framed for fast continuous play. Build one consistent collision layout that can be redressed as four colorful, stylized urban-themed variants: a rooftop pitch, narrow alley court, neon night court, and beach court. Use high-contrast surfacing and clear sightlines so the ball and goals remain visible from a slightly elevated, dynamic gameplay camera.",
-  "blob": "### Genre\nThe dominant genre is Sports: this is a competitive arcade soccer match with goals and a fixed enclosed court. There is no secondary genre.\n\n### Shape and preset\nUse `field-bounded`, matching the Physics Sport preset. Here it is a compact rectangular street-football court whose rebound walls replace out-of-bounds space. Keep the preset’s enclosed, goal-oriented field logic, but do not add a conventional foul boundary because the ball must remain in continuous play.\n\n### Config requirements\n`barrier-perimeter` is visible geometry: solid, continuous rebound walls enclose all four sides of the pitch and contain the ball. `trigger-scoring` is both visible and invisible: each short end has a centered visible goal structure, with an invisible scoring plane inside its mouth. No other configuration options are required by the scene.\n\n### Layout components\nBuild one compact rectangular 3v3 street court, roughly 150 studs across overall, as the sole play zone. Goals are centered and mirrored on the two short ends, recessed cleanly into the enclosing rebound walls; leave broad, open central ground between them for readable ball travel and uninterrupted play. The court has no exterior runoff or out-of-bounds apron.\n\nUse a high-contrast, low-clutter pitch surface with clearly legible center and goal areas, while retaining open sightlines from end to end. The walls are the primary boundary and should be tall enough to visibly read as ricochet surfaces without obscuring the elevated gameplay view. Redress this identical collision layout into four visual variants: a rooftop pitch with skyline parapets, a narrow alley court with urban wall dressing, a neon night court with luminous signage and saturated trim, and a beach court with coastal color and boardwalk-like wall treatment. These are four skins of one map, not separate spatial layouts. Frame the whole court in a slightly elevated three-quarter composition, with both goals and the central play area readable at once.\n\n### Render order\nUse `topdown`: the bounded rectangle, mirrored goal placement, and uninterrupted interior floor need an authoritative playable plan before the isometric dressing is derived.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the single tight 3v3 court and its roughly 150-stud footprint. Theme is colorful, stylized, high-contrast urban street soccer, with rooftop, alley, neon-night, and beach redress passes. Pipeline modifier: `P0`, because this is one flat enclosed surface; the walls and themed dressing do not create stacked, interior, volumetric, or separate-map geometry.",
+  "blob": "### Genre\nThe dominant genre is Sports: the original specifies timed 3v3 soccer matches, goals, and a compact competitive field. There is no secondary genre.\n\n### Shape and preset\nUse `space-bounded`, a single rectangular street-football court whose solid perimeter keeps the ball in continuous play. Match the Physics Sport preset: its enclosed, rebound-friendly field model fits arcade soccer better than a regulation open pitch. Retain the preset’s visible goal-and-wall logic, but omit an elaborate stadium treatment.\n\n### Config requirements\nUse `barrier-perimeter` as solid rebound walls on all four sides, flush with the court boundary and high enough to keep the ball in play. Use `trigger-scoring` as two clearly legible goal mouths centered in the short-end walls, with contrasting nets and frames that remain visible from the elevated gameplay view.\n\n### Layout requirements\nPlace `trigger-scoring` twice: one scoring volume immediately inside each of the two end goals, spanning the full goal mouth behind the line. The two volumes must be mirrored across the court’s long axis and sit entirely within the rebound-wall boundary.\n\n### Layout components\nBuild one compact, open rectangular 3v3 court roughly 150 studs across, with a broad uninterrupted central play area and no out-of-bounds apron. Put two identical goals at the centers of the opposing short ends. Solid continuous rebound walls enclose all four sides and meet the goal structures cleanly, leaving no escape gaps or dead corners. Keep surfacing high-contrast and uncluttered, with clear long sightlines between both goals for a slightly elevated dynamic camera.\n\nThis is one authoritative collision layout, redressed rather than duplicated into four variants: a rooftop pitch with skyline edge dressing beyond the walls; a narrow alley court with urban facades outside the enclosure; a neon night court with luminous trim and dark surroundings; and a beach court with bright sand-adjacent scenery beyond the same walls. These are visual skins of the same court, not separate maps. Frame the isometric composition diagonally so both goals, the full perimeter, and the open center read at once.\n\n### Render order\nUse `isometric`: the topology is a simple, symmetric enclosed court, so the visual presentation can lead and the top-down plan can be projected from it.\n\n### Scale, theme, and pipeline cost\nScale band: small, driven by the single roughly 150-stud 3v3 court. Theme: clean, colorful, stylized arcade street football with mobile-legible contrast. Pipeline modifier: `P0`; one flat, enclosed court is fully captured in a single top-down surface, and the four themes are redresses rather than separate spaces.",
   "spec": {
     "genre": "Sports",
     "secondary": [],
-    "shape": "field-bounded",
+    "shape": "space-bounded",
     "preset": "Physics Sport",
     "axes": {},
     "options": [
       {
         "id": "barrier-perimeter",
-        "text": "Solid, continuous rebound walls enclose all four sides of the pitch and contain the ball.",
+        "text": "Solid rebound walls on all four sides, flush with the court boundary and high enough to keep the ball in play.",
         "visible": true,
         "count": 4
       },
       {
         "id": "trigger-scoring",
-        "text": "Each short end has a centered visible goal structure, with an invisible scoring plane inside its mouth.",
+        "text": "Two clearly legible goal mouths centered in the short-end walls, with contrasting nets and frames visible from the elevated gameplay view.",
         "visible": true,
         "count": 2
       }
     ],
+    "layout_placement": [
+      {
+        "id": "trigger-scoring",
+        "text": "Scoring volumes immediately inside each of the two end goals, spanning the full goal mouth behind the line.",
+        "count": 2,
+        "where": "Mirrored across the court's long axis, entirely within the rebound-wall boundary."
+      }
+    ],
     "layout": {
-      "composition": "Slightly elevated three-quarter view framing the entire compact rectangular court, with both mirrored short-end goals and the broad open central play area readable at once.",
+      "composition": "Frame the isometric composition diagonally so both goals, the full perimeter, and the open center read at once.",
       "zones": [
         {
-          "name": "3v3 street court",
-          "role": "The sole compact enclosed play zone for fast continuous arcade soccer.",
-          "where": "centre",
-          "size": "roughly 150 studs across overall"
+          "name": "Street-football court",
+          "role": "Compact open 3v3 soccer play area for timed competitive matches.",
+          "where": "Centre",
+          "size": "Roughly 150 studs across"
+        },
+        {
+          "name": "Opposing end goals",
+          "role": "Scoring targets centered in the short-end walls.",
+          "where": "Centres of the two opposing short ends",
+          "size": ""
         }
       ],
       "paths": [],
-      "terrain": "Flat, high-contrast low-clutter pitch surface with clearly legible center and goal areas; open sightlines run end to end.",
+      "terrain": "High-contrast, uncluttered court surfacing with broad uninterrupted central play space; rooftop, narrow alley, neon night, and beach scenery are visual skins beyond the walls.",
       "props": [
         {
-          "name": "centered recessed goal structures",
+          "name": "Identical goals with contrasting nets and frames",
           "count": 2,
-          "where": "mirrored in the enclosing rebound walls at the two short ends"
+          "where": "Centred at the opposing short ends"
         },
         {
-          "name": "rebound walls",
+          "name": "Solid continuous rebound walls",
           "count": 4,
-          "where": "continuous around all sides of the rectangular pitch"
+          "where": "Flush with all four court boundaries, meeting the goal structures cleanly"
         }
       ],
-      "boundary": "Tall solid continuous rebound walls enclose all four sides; there is no exterior runoff, out-of-bounds apron, or conventional foul boundary.",
+      "boundary": "Solid continuous rebound walls enclose all four sides, with no escape gaps, dead corners, out-of-bounds apron, or separate maps.",
       "scale_band": "small",
-      "theme": "Colorful, stylized, high-contrast urban street soccer; identical collision layout redressed as rooftop, narrow alley, neon-night, and beach variants."
+      "theme": "Clean, colorful, stylized arcade street football with mobile-legible contrast."
     },
     "render": {
-      "first": "topdown",
-      "then": "isometric",
-      "authoritative": "topdown",
-      "why": "The bounded rectangle, mirrored goal placement, and uninterrupted interior floor need an authoritative playable plan.",
+      "first": "isometric",
+      "then": "topdown",
+      "authoritative": "isometric",
+      "why": "the topology is a simple, symmetric enclosed court, so visual presentation can lead.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
     "notes": [
-      "The four rooftop, alley, neon-night, and beach treatments are visual skins of one map, not separate spatial layouts.",
-      "The visible goal structures include invisible scoring planes inside their mouths; the option remains visible because it explicitly includes both visible and invisible components."
+      "visible on 'trigger-scoring' set from goes_to=both"
     ],
     "scene_prompt": "Create a 3D arcade soccer map centered on one compact, enclosed 3v3 street court roughly 150 studs across. The rectangular pitch is bounded on all sides by solid rebound walls, with goals centered at the two short ends and no out-of-bounds space; keep the court open, highly readable, and framed for fast continuous play. Build one consistent collision layout that can be redressed as four colorful, stylized urban-themed variants: a rooftop pitch, narrow alley court, neon night court, and beach court. Use high-contrast surfacing and clear sightlines so the ball and goals remain visible from a slightly elevated, dynamic gameplay camera."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
-  "mapper_notes": [
-    "blob asked for topdown first; the route ['P0'] gives isometric"
-  ]
+  "mapper_notes": []
 }

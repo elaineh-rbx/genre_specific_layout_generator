@@ -19,70 +19,75 @@
     }
   ],
   "scene_prompt": "Create a 3D drifting map on a bare baseplate with one short, compact course laid out using simple pavement markings and barriers. The course fits comfortably on the baseplate and winds through several turns designed for drifting.",
-  "blob": "### Genre\nThe dominant genre is Simulation: this is free drifting scored for style rather than a lap race or finish-line event. No secondary genre is needed.\n\n### Shape and preset\nUse `world-shared`, a single compact drivable drift course occupying a bare baseplate. The closest preset is Vehicle Sim, but the requested course is not a resource-hauling world, so retain only the shared-world shape and treat the preset options as not applicable.\n\n### Config requirements\nUse `path-circulation` as visible geometry: a continuous paved driving route defined by simple painted course markings across the baseplate. No invisible layout options are required. The requested barriers are visible course-edge geometry, not gameplay volumes.\n\n### Layout components\nBuild one short, compact drift course centered on a plain rectangular baseplate, leaving a broad clear margin around its outer edge. The course is a continuous paved loop or connected return route with several closely spaced turns: begin with a wide entry bend, tighten into alternating left-right bends through the center, then open into a broad final corner that reconnects to the start-side pavement. Paint simple lane-edge and apex markings directly on the baseplate/pavement to make the intended drift line legible. Place low, simple barriers along the outside of each turn and around the course perimeter where cars would otherwise leave the marked route; keep the inside of corners open for readable drifting space. Terrain is completely flat, with no buildings, water, props, foliage, or scenery beyond markings and barriers. The boundary is the visible edge of the bare baseplate. Compose the course as a clear central shape with its full sequence of turns readable in one frame.\n\n### Render order\nUse `isometric`: the compact course is simple, flat geometry and does not require a topology-valid circuit or procedurally authored blueprint.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by one short course fitting comfortably on a baseplate. Theme is bare baseplate driving-test layout, with plain pavement, painted markings, and simple barriers. Use `P0`; one flat exterior surface fully captures the build.",
+  "blob": "### Genre\n`Sports` is dominant: this is a judged drifting activity scored for driving style rather than a lap race. `Racing` is secondary only, contributing the drivable-course vocabulary; it does not impose a start grid, lap count, or finish line.\n\n### Shape and preset\nUse `course-flat`, taken from outside Sports’ usual shapes. It is one compact, ground-level paved drift course that winds horizontally across the baseplate through several linked turns. Preset: none; no Sports preset represents free-style drifting, and Racing’s circuit and sprint presets would incorrectly add race structure.\n\n### Config requirements\nUse `lane-corridor` for simple pavement markings that clearly trace the permitted drift route and its turn entries, apexes, and exits. Use `barrier-guardrail` for low, continuous physical barriers following the outer edges and protecting the tightest turns. Do not add a start line, finish, lap markers, spectators, scenery, or buildings.\n\n### Layout requirements\nNo additional placed layout components are required. Style scoring is game logic rather than a visible target or a fixed scoring volume; it should evaluate drifting anywhere on the paved course without adding a rendered checkpoint, finish trigger, or lap trigger.\n\n### Layout components\nBuild one short, compact asphalt course centered on a bare rectangular baseplate, occupying its middle with generous empty margins around the perimeter. The single course is a continuous winding paved ribbon with several consecutive drifting turns: a broad entry bend, a tighter central turn complex, and a final sweeping bend that feeds back into the usable drift area without presenting a formal race finish. Paint simple edge lines and directional course markings directly on the pavement. Place continuous low barriers along the outside of each turn and at the baseplate-facing edges; leave the inside of turns open where possible to preserve wide drift arcs. Keep terrain entirely flat, with no water, buildings, props, elevation, or decorative environment. Compose the map in a clear near-top-down view so the complete route and turn sequence read at once.\n\n### Render order\nUse `topdown`: the paved course must be an unbroken, driveable sequence with readable turns and barriers, so the plan is authoritative before its isometric dressing. Do not use `authored_plan`, because this is not a racing circuit or maze.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by one short course fitting comfortably on a baseplate. Theme: bare baseplate prototype, plain asphalt, minimal white or yellow markings, and simple safety barriers. Use `P6` because the connected drivable route must be valid and readable from plan view.",
   "spec": {
-    "genre": "Simulation",
-    "secondary": [],
-    "shape": "world-shared",
+    "genre": "Sports",
+    "secondary": [
+      "Racing"
+    ],
+    "shape": "course-flat",
     "preset": "none",
     "axes": {},
-    "options": [
-      {
-        "id": "path-circulation",
-        "text": "a continuous paved driving route defined by simple painted course markings across the baseplate",
-        "visible": true,
-        "count": -1
-      }
-    ],
+    "options": [],
+    "layout_placement": [],
     "layout": {
-      "composition": "A clear central compact course shape, with its full sequence of turns readable in one frame and a broad clear baseplate margin around the outer edge.",
+      "composition": "Clear near-top-down view of the complete winding course and turn sequence at once, centered in the middle of a bare rectangular baseplate with generous empty margins around the perimeter.",
       "zones": [
         {
-          "name": "compact drift course",
-          "role": "Free drifting through several closely spaced turns scored for style.",
-          "where": "centred on the baseplate",
-          "size": "one short, compact course fitting comfortably on the baseplate"
+          "name": "Paved drift course",
+          "role": "One short, compact, continuous winding asphalt ribbon for judged free-style drifting, with a broad entry bend, tighter central turn complex, and final sweeping bend feeding back into the usable drift area without a formal finish.",
+          "where": "Centre of the bare rectangular baseplate",
+          "size": "Small; fits comfortably on the baseplate"
         }
       ],
       "paths": [
         {
-          "from": "start-side pavement",
-          "to": "start-side pavement",
-          "kind": "road"
-        }
-      ],
-      "terrain": "Completely flat bare rectangular baseplate with plain pavement and painted lane-edge and apex markings; no water, foliage, scenery, buildings, or relief.",
-      "props": [
+          "from": "Broad entry bend",
+          "to": "Tighter central turn complex",
+          "kind": "track"
+        },
         {
-          "name": "low simple barriers",
-          "count": -1,
-          "where": "along the outside of each turn and around the course perimeter where cars would otherwise leave the marked route"
+          "from": "Tighter central turn complex",
+          "to": "Final sweeping bend",
+          "kind": "track"
+        },
+        {
+          "from": "Final sweeping bend",
+          "to": "Usable drift area",
+          "kind": "track"
         }
       ],
-      "boundary": "The visible edge of the bare baseplate.",
+      "terrain": "Entirely flat bare rectangular baseplate with plain asphalt pavement; no water or elevation.",
+      "props": [],
+      "boundary": "Generous empty baseplate margins around the course; continuous low barriers follow the outside of each turn and the baseplate-facing course edges.",
       "scale_band": "small",
-      "theme": "bare baseplate driving-test layout, plain pavement, painted markings, and simple barriers"
+      "theme": "Bare baseplate prototype, plain asphalt, minimal white or yellow markings, simple safety barriers."
     },
     "render": {
-      "first": "isometric",
-      "then": "topdown",
-      "authoritative": "isometric",
-      "why": "the compact flat course does not require a topology-valid circuit or procedurally authored blueprint",
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "the paved course must be an unbroken, driveable sequence with readable turns and barriers.",
       "set_piece": false
     },
     "route": [
-      "P0"
+      "P6"
     ],
-    "notes": [],
+    "notes": [
+      "`course-flat` is taken from outside Sports' usual shapes.",
+      "No additional placed layout components are required; drifting style scoring evaluates anywhere on the paved course without a rendered checkpoint, finish trigger, or lap trigger.",
+      "dropped option 'lane-corridor': not in Sports",
+      "dropped option 'barrier-guardrail': not in Sports"
+    ],
     "scene_prompt": "Create a 3D drifting map on a bare baseplate with one short, compact course laid out using simple pavement markings and barriers. The course fits comfortably on the baseplate and winds through several turns designed for drifting."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
-  "order": "std",
-  "first": "isometric",
+  "order": "p6",
+  "first": "topdown",
   "mapper_notes": []
 }

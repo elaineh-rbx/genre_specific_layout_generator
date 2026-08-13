@@ -19,7 +19,7 @@
     }
   ],
   "scene_prompt": "Create a compact 3D escape map inside a giant futuristic computer keyboard floating in a dark room. An open keyboard board forms the main traversable space, with a handful of oversized keys built as room-scale puzzle chambers across the board; each key room contains its own hazards and holds one of four key fragments. Arrange raised and separated keys so players cross gaps and reach higher keys via moving platforms, while laser barriers and falling keys create hazards between or within rooms. Place a massive glowing Exit key as the final destination, sealed until all four fragments are collected, with neon RGB lighting, digital effects, and a visible dark-room backdrop around the keyboard.",
-  "blob": "### Genre\nDominant genre: Puzzle, with Obby & Platformer as a secondary influence for the gap-crossing and moving-platform traversal. The escape objective, individual room puzzles, and four collected fragments define the layout; movement hazards support that puzzle structure.\n\n### Shape and preset\nUse `puzzle-open`, matching the open keyboard board that players can wander across rather than sealed rooms in a linear sequence. Preset: none; this keeps the open-board shape but does not retain the recognizable option bundle of Open-Air Puzzle or Escape Room.\n\n### Config requirements\nUse `gate-solve` as visible geometry: the massive Exit key is a clearly sealed final gate that opens only after the four room puzzles are completed. Use `collectible-nodes` as invisible layout placement: place one key-fragment pickup endpoint in each of the four key rooms; do not render pickup markers into the environment image. No additional puzzle input type is specified.\n\n### Layout components\nBuild a compact giant futuristic keyboard floating within a dark, visible surrounding room. The central zone is an open keyboard-board deck, broad enough to act as the main circulation surface. Arrange four oversized, room-scale key chambers across this board, each with a distinct internal puzzle space, one fragment location, laser barriers, and either falling-key hazards or moving platforms. Raise and separate selected keys from the deck to form short traversal gaps and higher destinations; moving platforms bridge the intended difficult crossings. Put the huge glowing Exit key at the far end of the board as the final destination, visibly locked and more prominent than all other keys. The keyboard perimeter and fall-away gaps form the boundary, with the dark-room void/backdrop visible beyond it. Frame the whole keyboard diagonally, with the Exit key as the strongest focal point and the four puzzle keys readable as distributed destinations.\n\n### Render order\nUse `topdown`: a valid, legible network of board routes, elevated keys, gaps, and moving-platform connections is needed so every puzzle room and the Exit key remain reachable.\n\n### Scale, theme, and pipeline cost\nScale is small: one compact keyboard board containing four key rooms and a final Exit key. Theme is neon RGB cyber-futurist hardware, dark-room contrast, glowing digital effects, and mechanical-key geometry. Apply `P2` because raised key chambers and bridging moving platforms create overlapping traversable surfaces above the keyboard deck.",
+  "blob": "### Genre\nThe dominant genre is Puzzle: progress depends on solving room-scale key puzzles and collecting fragments to open the final Exit key. Obby & Platformer is secondary, contributing movement obstacles only; it does not own the open-board topology.\n\n### Shape and preset\nUse `puzzle-open`, an open keyboard-board puzzle space where players may wander among four oversized key chambers in any order. The nearest preset is Open-Air Puzzle, but the preset is otherwise none: this scene replaces its clue-and-input focus with collectible-gated keyboard rooms and traversal hazards.\n\n### Config requirements\nUse `gate-solve` for the massive Exit key visibly sealed until the four room fragments are obtained. Use `hazard-kill` for red laser barriers and falling-key danger zones. Use `obstacle-moving` for moving platforms spanning the separations and height changes between keys. Use `checkpoint-respawn` as clearly readable safe pads integrated at key-room entrances or completion landings.\n\n### Layout requirements\nUse `collectible-nodes`: place exactly four key fragments, one as the earned reward inside each of the four puzzle key rooms. Use `checkpoint-respawn`: site one checkpoint at the safe completion edge of each key room, before the player makes the next hazardous cross-board transition. No other invisible placement system is required.\n\n### Layout components\nThe compact main zone is a giant RGB mechanical keyboard floating inside a dark, visibly surrounding room. Its open board is the shared traversable base. Build exactly four oversized room-scale keys as distinct puzzle chambers distributed across the board, each with a fragment reward, internal laser or falling-key hazard treatment, and a safe exit landing. Stagger selected keys upward and leave physical gaps between them; moving platforms form the readable connections to higher or separated keys. Place the massive glowing Exit key beyond the four chambers as the final focal destination, with a sealed digital door face, electrical effects, and a clear approach platform. Keep the board boundary readable as the keyboard perimeter against the dark-room void, with no additional outdoor terrain. Compose the map as a compact diagonal keyboard layout, with the Exit key visually dominant at the far end and all four key rooms legible around the central board.\n\n### Render order\nUse `topdown` first, then derive the isometric view, because valid access between all four chambers, their raised keys, and the final Exit route must remain playable even though this is not a carveable maze or circuit.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the stated compact map and exactly four key rooms. Theme: neon cyberpunk RGB keyboard, dark-room backdrop, glowing digital machinery. Apply `tiered` because raised keys create elevation without overhanging walkable surfaces.",
   "spec": {
     "genre": "Puzzle",
     "secondary": [
@@ -31,127 +31,128 @@
     "options": [
       {
         "id": "gate-solve",
-        "text": "The massive glowing Exit key is a clearly sealed final gate at the far end of the board, opening only after the four room puzzles are completed.",
+        "text": "The massive glowing Exit key is visibly sealed until the four room fragments are obtained.",
         "visible": true,
-        "count": 1
+        "count": -1
       },
       {
         "id": "collectible-nodes",
-        "text": "One key-fragment pickup endpoint sits in each of the four key rooms; do not render pickup markers into the environment image.",
+        "text": "Four key fragments, one earned reward inside each of the four puzzle key rooms.",
         "visible": false,
         "count": 4
       }
     ],
+    "layout_placement": [
+      {
+        "id": "collectible-nodes",
+        "text": "Four key fragments, one earned reward inside each of the four puzzle key rooms.",
+        "count": 4,
+        "where": "One inside each of the four oversized room-scale puzzle key chambers."
+      }
+    ],
     "layout": {
-      "composition": "Frame the whole compact keyboard diagonally within the dark surrounding room, with four distributed puzzle-key destinations across the central board deck and the huge glowing Exit key as the strongest focal point at the far end.",
+      "composition": "A compact diagonal keyboard layout fills the frame inside a visibly surrounding dark room. The open central keyboard board holds four legible key chambers, while the massive Exit key dominates the far end as the final focal destination.",
       "zones": [
         {
-          "name": "Open keyboard-board deck",
-          "role": "Main traversable circulation surface across the floating keyboard.",
-          "where": "centre",
-          "size": "broad, compact board"
+          "name": "Open keyboard board",
+          "role": "The shared traversable base where players wander among the key chambers in any order.",
+          "where": "Centre of the floating keyboard",
+          "size": "compact"
         },
         {
-          "name": "Puzzle key chambers",
-          "role": "Four oversized room-scale key chambers, each holding a distinct internal puzzle space, one fragment location, laser barriers, and either falling-key hazards or moving platforms.",
-          "where": "distributed across the keyboard board",
-          "size": "four oversized key rooms"
-        },
-        {
-          "name": "Raised key destinations",
-          "role": "Selected elevated and separated keys that create short traversal gaps and higher destinations.",
-          "where": "across the board",
-          "size": ""
+          "name": "Four oversized key chambers",
+          "role": "Distinct room-scale puzzle chambers, each containing a fragment reward, internal laser or falling-key hazards, and a safe exit landing.",
+          "where": "Distributed across the central board",
+          "size": "oversized room-scale keys"
         },
         {
           "name": "Exit key",
-          "role": "Visibly locked final destination that opens after all four fragments are collected.",
-          "where": "far end of the board",
-          "size": "huge and more prominent than all other keys"
-        },
-        {
-          "name": "Dark surrounding room",
-          "role": "Visible void and backdrop surrounding the floating keyboard.",
-          "where": "beyond the keyboard perimeter",
-          "size": ""
+          "role": "Final destination, sealed until all four fragments are collected.",
+          "where": "Far end of the diagonal keyboard layout",
+          "size": "massive"
         }
       ],
       "paths": [
         {
-          "from": "Open keyboard-board deck",
-          "to": "Puzzle key chambers",
+          "from": "Open keyboard board",
+          "to": "Four oversized key chambers",
           "kind": "open ground"
         },
         {
-          "from": "Open keyboard-board deck",
-          "to": "Raised key destinations",
-          "kind": "gap"
-        },
-        {
-          "from": "Raised and separated keys",
-          "to": "Higher key destinations",
+          "from": "Separated and raised key chambers",
+          "to": "Higher or separated key chambers",
           "kind": "bridge"
         },
         {
-          "from": "Puzzle key chambers",
+          "from": "Four oversized key chambers",
           "to": "Exit key",
           "kind": "open ground"
         }
       ],
-      "terrain": "Mechanical keyboard geometry: an open board deck with raised and separated keys, short fall-away gaps, and moving platforms bridging difficult crossings.",
+      "terrain": "No outdoor terrain; a giant RGB mechanical keyboard floats inside a dark surrounding room, with physical gaps and selected raised keys.",
       "props": [
         {
-          "name": "Oversized room-scale keys",
-          "count": 4,
-          "where": "across the keyboard board"
-        },
-        {
-          "name": "Key fragments",
-          "count": 4,
-          "where": "one endpoint in each puzzle key room"
-        },
-        {
-          "name": "Laser barriers",
+          "name": "Giant RGB mechanical keyboard",
           "count": -1,
-          "where": "between or within puzzle key rooms"
+          "where": "The compact main zone, floating inside the dark room."
         },
         {
-          "name": "Falling-key hazards",
-          "count": -1,
-          "where": "within selected puzzle key rooms"
+          "name": "Oversized room-scale puzzle keys",
+          "count": 4,
+          "where": "Distributed across the open keyboard board."
         },
         {
           "name": "Moving platforms",
           "count": -1,
-          "where": "bridging intended difficult crossings between raised and separated keys"
+          "where": "Across gaps and height changes between separated or raised keys."
         },
         {
-          "name": "Glowing Exit key",
-          "count": 1,
-          "where": "far end of the board"
+          "name": "Red laser barriers",
+          "count": -1,
+          "where": "Between or within the key rooms."
+        },
+        {
+          "name": "Falling keys",
+          "count": -1,
+          "where": "In key-room danger zones."
+        },
+        {
+          "name": "Massive glowing Exit key",
+          "count": -1,
+          "where": "Beyond the four chambers at the far end."
+        },
+        {
+          "name": "Sealed digital door face and electrical effects",
+          "count": -1,
+          "where": "On the Exit key above its clear approach platform."
         }
       ],
-      "boundary": "The keyboard perimeter and fall-away gaps form the boundary, with the dark-room void and backdrop visible beyond.",
+      "boundary": "The readable keyboard perimeter forms the board boundary against the dark-room void.",
       "scale_band": "small",
-      "theme": "neon RGB cyber-futurist hardware, dark-room contrast, glowing digital effects, mechanical-key geometry"
+      "theme": "neon cyberpunk RGB keyboard, dark-room backdrop, glowing digital machinery"
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "A valid, legible network of board routes, elevated keys, gaps, and moving-platform connections is needed so every puzzle room and the Exit key remain reachable.",
+      "why": "Valid access between all four chambers, their raised keys, and the final Exit route must remain playable.",
       "set_piece": false
     },
     "route": [
-      "P2"
+      "tiered"
     ],
-    "notes": [],
+    "notes": [
+      "dropped option 'hazard-kill': not in Puzzle",
+      "dropped option 'obstacle-moving': not in Puzzle",
+      "dropped option 'checkpoint-respawn': not in Puzzle",
+      "dropped placement 'checkpoint-respawn': not in Puzzle"
+    ],
     "scene_prompt": "Create a compact 3D escape map inside a giant futuristic computer keyboard floating in a dark room. An open keyboard board forms the main traversable space, with a handful of oversized keys built as room-scale puzzle chambers across the board; each key room contains its own hazards and holds one of four key fragments. Arrange raised and separated keys so players cross gaps and reach higher keys via moving platforms, while laser barriers and falling keys create hazards between or within rooms. Place a massive glowing Exit key as the final destination, sealed until all four fragments are collected, with neon RGB lighting, digital effects, and a visible dark-room backdrop around the keyboard."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

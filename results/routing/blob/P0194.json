@@ -19,7 +19,7 @@
     }
   ],
   "scene_prompt": "Create a realistic 3D deserted-Earth map covering one small ruined town and its nearby abandoned countryside. The town forms the central exploration zone, with empty streets, damaged buildings, and scattered notes, recordings, and environmental objects left behind; surrounding fields, roads, and rural terrain extend outward as a focused outer zone.",
-  "blob": "### Genre\nThe dominant genre is Adventure: exploration of a post-human world is directed by discovering evidence of what happened. There is no secondary genre.\n\n### Shape and preset\nUse `world-open`, a single compact explorable region whose central ruined town opens directly into its surrounding abandoned countryside. The closest preset is Exploration, but use `none` because the requested evidence hunt and settlement-focused geography replace its landmark-and-secret bundle.\n\n### Config requirements\nUse visible `path-trail` as cracked town streets, neglected access roads, and faint tracks through the fields. Use visible `settlement-density` for the small, concentrated ruined town rather than isolated structures. Use invisible `collectible-nodes` as placed discovery markers for the notes, recordings, and environmental evidence; their visible paper, recorder, and debris representations are rendered as props, while the interaction placements are not shown to the image model.\n\n### Layout components\nPlace the small ruined town at the center, occupying roughly the middle third of the map. It has an intersecting grid of empty cracked streets, damaged low-rise buildings, overgrown sidewalks, abandoned vehicles, scattered debris, and several readable evidence locations such as papers on desks, discarded recording devices, and disturbed domestic or civic spaces. Preserve a few partially collapsed buildings as exterior shells and do not imply enterable interiors.\n\nRoads lead out from the town into a broad outer ring of abandoned countryside: unmaintained fields, scrub, roadside ditches, broken fences, utility poles, and sparse farm remnants. Keep the terrain gently rolling but broadly readable as one continuous surface. Evidence sites are distributed between town streets, roadside pull-offs, field edges, and farm remnants, encouraging outward exploration without a prescribed linear route. The boundary is natural and distant: thick vegetation, low hills, tree lines, and fading roads limit the region. Compose the town as the dense visual center, with open rural ground receding around it and roads visibly tying every zone together.\n\n### Render order\nUse `isometric`: the realistic abandoned-world atmosphere and composed town-to-countryside contrast lead, while the top-down plan can be projected from that authoritative isometric scene. Invalid topology would not make exploration unplayable.\n\n### Scale, theme, and pipeline cost\nUse a medium scale, driven by one small town plus enough nearby countryside to feel like a complete region. Theme: realistic, somber post-apocalyptic rural decay, quiet and uninhabited. Use `P0`; the map is one continuous exterior surface with no forced overhangs, interiors, separate maps, or topology-validity construction.",
+  "blob": "### Genre\nThe dominant genre is Adventure: the player explores a deserted Earth to uncover the cause of humanity’s disappearance through distributed environmental evidence.\n\n### Shape and preset\nUse `world-open`, a single contiguous, freely explorable region consisting of a ruined town and its immediately surrounding countryside. This is the Adventure `world-open` shape. Preset: none; the Exploration preset’s focal landmark and secret alcoves are not specified, while this scene is centered on evidence discovery.\n\n### Config requirements\nUse `path-trail` for the abandoned roads and walkable routes that lead outward from town streets into the rural area. Use `settlement-density` for the compact small town: a coherent cluster of damaged buildings and empty streets rather than isolated structures.\n\n### Layout requirements\nUse `collectible-nodes` for notes, recordings, and environmental evidence. Place an unspecified but deliberate distribution across both zones: concentrate several clues in accessible town buildings and along the main streets, then place the remainder at rural roadside, field, and abandoned-object locations so exploration of the outer zone is necessary. No other placed gameplay markers are required.\n\n### Layout components\nThe central zone is one small ruined town, roughly the visual and navigational core of the map, with empty intersecting streets, damaged buildings, debris, abandoned vehicles or objects, and evidence locations. The outer zone is nearby abandoned countryside: open fields, rural terrain, sparse roadside remnants, and the roads that radiate from the town before reaching a natural map edge. A main paved road enters and crosses the town, branching into narrower streets and rural roads or tracks that make the countryside reachable without making the region feel large or unfocused. Keep building exteriors visibly damaged but readable as a former lived-in settlement. The boundary is a soft natural limit of distant fields, tree lines, terrain, and road fade-outs rather than a hard wall. Compose the town near the center of frame, with outward roads and open countryside clearly visible around it to establish the town-to-wilderness relationship.\n\n### Render order\nRender `isometric` first and treat it as authoritative, because this is an atmospheric exploration environment whose topology does not need procedural validity.\n\n### Scale, theme, and pipeline cost\nScale band: medium, driven by one complete small town plus its nearby countryside. Theme: realistic, grounded post-apocalyptic deserted Earth; muted weathering, abandonment, and environmental storytelling. Pipeline modifier: `P0`; this is one contiguous, ground-level exterior surface with no forced overhangs, interiors, separate maps, or volumetric traversal.",
   "spec": {
     "genre": "Adventure",
     "secondary": [],
@@ -29,42 +29,60 @@
     "options": [
       {
         "id": "path-trail",
-        "text": "Cracked town streets, neglected access roads, and faint tracks through the fields.",
+        "text": "Abandoned roads and walkable routes leading outward from town streets into the rural area.",
         "visible": true,
         "count": -1
       },
       {
         "id": "settlement-density",
-        "text": "A small, concentrated ruined town at the center rather than isolated structures.",
+        "text": "A compact small town: a coherent cluster of damaged buildings and empty streets rather than isolated structures.",
         "visible": true,
         "count": -1
       },
       {
         "id": "collectible-nodes",
-        "text": "Placed discovery markers for notes, recordings, and environmental evidence; their paper, recorder, and debris representations are props, while the interaction placements are not shown to the image model.",
+        "text": "Notes, recordings, and environmental evidence revealing the cause of humanity's disappearance.",
         "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "collectible-nodes",
+        "text": "Notes, recordings, and environmental evidence.",
+        "count": -1,
+        "where": "Distributed across both zones: concentrate several clues in accessible town buildings and along the main streets, then place the remainder at rural roadside, field, and abandoned-object locations so exploration of the outer zone is necessary."
+      }
+    ],
     "layout": {
-      "composition": "The small ruined town is the dense visual center in the middle third of the map, with open abandoned rural ground receding around it. Roads visibly tie the town to the surrounding countryside and outward evidence sites.",
+      "composition": "The ruined town sits near the centre of frame as the visual and navigational core, with outward roads and open countryside clearly visible around it to establish the town-to-wilderness relationship.",
       "zones": [
         {
           "name": "Ruined town",
-          "role": "Central exploration zone with readable evidence locations among empty streets, damaged buildings, and abandoned civic or domestic spaces.",
-          "where": "center, occupying roughly the middle third of the map",
-          "size": "small, concentrated; roughly the middle third"
+          "role": "Central exploration zone with empty intersecting streets, damaged buildings, debris, abandoned vehicles or objects, and evidence locations.",
+          "where": "Centre of the map and frame.",
+          "size": "One small town."
         },
         {
           "name": "Abandoned countryside",
-          "role": "Outer exploration zone containing fields, roadside pull-offs, field edges, and sparse farm remnants with distributed evidence sites.",
-          "where": "broad outer ring around the town",
-          "size": "broad outer ring"
+          "role": "Focused outer exploration zone of open fields, rural terrain, sparse roadside remnants, and evidence locations.",
+          "where": "Surrounding the town, extending outward to the natural map edge.",
+          "size": "Nearby countryside."
         }
       ],
       "paths": [
         {
+          "from": "Main paved road",
+          "to": "Ruined town",
+          "kind": "road"
+        },
+        {
           "from": "Ruined town",
+          "to": "Town streets",
+          "kind": "road"
+        },
+        {
+          "from": "Town streets",
           "to": "Abandoned countryside",
           "kind": "road"
         },
@@ -74,68 +92,38 @@
           "kind": "track"
         }
       ],
-      "terrain": "Gently rolling but broadly readable continuous exterior surface; unmaintained fields, scrub, roadside ditches, broken fences, utility poles, sparse farm remnants, low hills, tree lines, and fading roads.",
+      "terrain": "Ground-level exterior terrain with open fields, rural terrain, distant tree lines, and weathered paved and rural roads.",
       "props": [
         {
-          "name": "damaged low-rise buildings",
+          "name": "Damaged buildings",
           "count": -1,
-          "where": "ruined town"
+          "where": "Clustered throughout the ruined town."
         },
         {
-          "name": "overgrown sidewalks",
+          "name": "Debris",
           "count": -1,
-          "where": "ruined town"
+          "where": "Throughout town streets and buildings."
         },
         {
-          "name": "abandoned vehicles",
+          "name": "Abandoned vehicles or objects",
           "count": -1,
-          "where": "town streets"
+          "where": "In the town and at rural roadside, field, and abandoned-object locations."
         },
         {
-          "name": "scattered debris",
+          "name": "Sparse roadside remnants",
           "count": -1,
-          "where": "ruined town and evidence locations"
-        },
-        {
-          "name": "papers on desks",
-          "count": -1,
-          "where": "town evidence locations"
-        },
-        {
-          "name": "discarded recording devices",
-          "count": -1,
-          "where": "town evidence locations"
-        },
-        {
-          "name": "partially collapsed building exterior shells",
-          "count": -1,
-          "where": "ruined town"
-        },
-        {
-          "name": "broken fences",
-          "count": -1,
-          "where": "abandoned countryside"
-        },
-        {
-          "name": "utility poles",
-          "count": -1,
-          "where": "roadsides and countryside"
-        },
-        {
-          "name": "sparse farm remnants",
-          "count": -1,
-          "where": "abandoned countryside"
+          "where": "Across the surrounding countryside."
         }
       ],
-      "boundary": "Natural and distant: thick vegetation, low hills, tree lines, and fading roads limit the region.",
+      "boundary": "A soft natural limit of distant fields, tree lines, terrain, and road fade-outs rather than a hard wall.",
       "scale_band": "medium",
-      "theme": "realistic, somber post-apocalyptic rural decay; quiet and uninhabited"
+      "theme": "Realistic, grounded post-apocalyptic deserted Earth; muted weathering, abandonment, and environmental storytelling."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "Invalid topology would not make exploration unplayable.",
+      "why": "the atmospheric exploration topology does not need procedural validity.",
       "set_piece": false
     },
     "route": [
@@ -147,7 +135,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

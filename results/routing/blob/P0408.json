@@ -14,70 +14,77 @@
     }
   ],
   "scene_prompt": "Create a 3D free-roam mudding map on the American plains: one compact open mud field with varied muddy tracks, rutted paths, and puddles spread across the terrain for driving around.",
-  "blob": "### Genre\n`Simulation` is dominant: this is free-roam vehicle mudding with no lap, finish line, or racing route.\n\n### Shape and preset\nUse `world-shared`, one persistent compact driving field rather than isolated plots or a circuit. Match the Vehicle Sim preset in its shared-world vehicle focus, retaining its drivable-route intent but omitting its unrequested extraction field.\n\n### Config requirements\n`path-road-vehicle` is visible geometry: varied vehicle-width muddy tracks and deeply rutted paths form the drivable circulation across the field. `water-body` is visible geometry: scattered standing puddles occupy low ruts and muddy depressions. No invisible layout options are required.\n\n### Layout components\nBuild one compact, open American-plains mud field. The central and largest zone is a broad churned mud flat, with several intersecting muddy tracks looping and branching across it so vehicles can choose routes rather than follow a prescribed course. Put the deepest rutted lanes through the middle and along the lower edges, with shallow alternate tracks around them. Spread puddles of varied size through tire depressions and low ground, including a few broad splash-through puddles and smaller water-filled ruts. Surround the usable field with flat grassy plains that visually taper into the horizon and serve as a soft natural boundary; do not add a formal race start, finish, barriers, or separate zones. Frame the composition from an elevated three-quarter view with the mud field readable as one dense, irregular driving area against the open plains.\n\n### Render order\nUse `isometric`: the field is free-roam terrain, so an invalid route cannot make the game unplayable and the muddy visual read should lead.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the request for one compact field rather than miles of terrain. Theme: rugged American plains, wet brown mud, rutted tire tracks, and sparse grassland. Use `CHECK` because the requested puddles are real water geometry; otherwise the single ground surface needs no additional pipeline pass.",
+  "blob": "### Genre\nSimulation is dominant: this is free-roam vehicle operation with no race finish or lap condition.\n\n### Shape and preset\nUse `world-open`, matched from the Vehicle Sim preset. It is one shared, contiguous compact mud field that drivers explore freely rather than a validated race route; the preset remains recognizable, with the driving surface adapted from hauling roads to off-road tracks.\n\n### Config requirements\nUse `path-road-vehicle` as a network of vehicle-width muddy tracks and deeply rutted paths that connect the field’s different driving lines. Use `water-body` for the scattered shallow mud puddles and water-filled ruts across the field.\n\n### Layout requirements\nNo additional placed layout markers are required. The prompt specifies free-roam driving rather than tasks, resources, starts, checkpoints, or scoring volumes.\n\n### Layout components\nBuild one compact, open American-plains mud field. Its central zone is a broad churned mud basin, large enough for several vehicles to circulate and choose lines. Around it, irregular muddy tracks loop, split, and reconnect through firmer grass-edged ground; include deep ruts, slick turns, broad puddles, and narrow water-filled wheel grooves as driving features. Keep the terrain mostly flat plains with subtle low spots that collect water, not hills or stacked structures. Use wet dark-brown mud, pale dry grass, sparse prairie scrub, and open horizon vegetation. There are no buildings, enclosed zones, finish line, or perimeter wall; the playable field fades naturally into open plains at its edges. Compose the map in an oblique isometric view with the central basin readable at once and the branching tracks visibly spreading outward.\n\n### Render order\nUse `isometric`: the muddy visual character and readable off-road surface lead, while this free-roam field does not require route-validating topology.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the requested single compact field rather than miles of plains. Theme: rugged American prairie off-road mudding, wet churned earth and open grassland. Use `P0`; the map is one continuous, mostly level exterior surface, and its shallow puddles do not create a volumetric or self-occluding play space.",
   "spec": {
     "genre": "Simulation",
     "secondary": [],
-    "shape": "world-shared",
+    "shape": "world-open",
     "preset": "Vehicle Sim",
     "axes": {},
     "options": [
       {
         "id": "path-road-vehicle",
-        "text": "Varied vehicle-width muddy tracks and deeply rutted paths form the drivable circulation across the field.",
+        "text": "A network of vehicle-width muddy tracks and deeply rutted paths connecting the field's different driving lines.",
         "visible": true,
         "count": -1
       },
       {
         "id": "water-body",
-        "text": "Scattered standing puddles occupy low ruts and muddy depressions.",
+        "text": "Scattered shallow mud puddles and water-filled ruts across the field.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "Elevated three-quarter view framing the mud field as one dense, irregular driving area against open plains.",
+      "composition": "Oblique isometric view with the central mud basin readable at once and branching muddy tracks visibly spreading outward through the surrounding grass-edged ground.",
       "zones": [
         {
-          "name": "Churned mud flat",
-          "role": "Broad free-roam driving field where vehicles choose among looping and branching muddy tracks.",
+          "name": "Central mud basin",
+          "role": "Broad churned mud driving area where several vehicles can circulate and choose lines.",
           "where": "centre",
-          "size": "central and largest"
+          "size": "broad"
+        },
+        {
+          "name": "Outer driving lines",
+          "role": "Irregular muddy tracks that loop, split, and reconnect through firmer grass-edged ground.",
+          "where": "around the central basin",
+          "size": "compact"
         }
       ],
       "paths": [
         {
-          "from": "Churned mud flat",
-          "to": "Churned mud flat",
-          "kind": "road"
-        }
-      ],
-      "terrain": "Wet brown churned mud with deeply rutted lanes through the middle and along the lower edges, shallow alternate tracks around them, varied puddles in tire depressions and low ground, and flat grassy plains tapering into the horizon.",
-      "props": [
-        {
-          "name": "Broad splash-through puddles",
-          "count": -1,
-          "where": "through tire depressions and low ground"
+          "from": "Central mud basin",
+          "to": "Outer driving lines",
+          "kind": "track"
         },
         {
-          "name": "Smaller water-filled ruts",
-          "count": -1,
-          "where": "across the mud field"
+          "from": "Outer driving lines",
+          "to": "Outer driving lines",
+          "kind": "track"
         }
       ],
-      "boundary": "Flat grassy plains form a soft natural boundary; no formal barriers.",
+      "terrain": "Mostly flat American-plains terrain with subtle low spots collecting water; wet dark-brown mud, pale dry grass, deep ruts, slick turns, broad puddles, narrow water-filled wheel grooves, sparse prairie scrub, and open-horizon vegetation.",
+      "props": [
+        {
+          "name": "Sparse prairie scrub",
+          "count": -1,
+          "where": "across the open grass-edged ground and horizon"
+        }
+      ],
+      "boundary": "No perimeter wall; the playable mud field fades naturally into open plains at its edges.",
       "scale_band": "small",
-      "theme": "Rugged American plains, wet brown mud, rutted tire tracks, sparse grassland."
+      "theme": "Rugged American prairie off-road mudding, wet churned earth and open grassland."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "The field is free-roam terrain, so an invalid route cannot make the game unplayable and the muddy visual read should lead.",
+      "why": "The muddy visual character and readable off-road surface lead because free-roam driving does not require route-validating topology.",
       "set_piece": false
     },
     "route": [
-      "CHECK"
+      "P0"
     ],
     "notes": [],
     "scene_prompt": "Create a 3D free-roam mudding map on the American plains: one compact open mud field with varied muddy tracks, rutted paths, and puddles spread across the terrain for driving around."
@@ -85,7 +92,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

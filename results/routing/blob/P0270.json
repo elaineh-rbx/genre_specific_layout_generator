@@ -14,134 +14,128 @@
     }
   ],
   "scene_prompt": "Create a dim, frightening 3D horror survival map with task locations distributed around the playable area and space for a killer to pursue players between them.",
-  "blob": "### Genre\nThe dominant genre is Survival: players evade a killer while moving among distributed task locations, and completing the tasks ends the round. There is no escape objective.\n\n### Shape and preset\nUse `warren-looping`, a connected horror pursuit warren whose routes loop back into one another so survivors always have alternate ways to leave a chase. The closest preset is 1 vs All, but the preset is `none`: its escape exit contradicts the stated task-completion ending, and the prompt does not ask for its hiding or role-spawn features.\n\n### Config requirements\nNo additional menu options are selected. The task locations are scene-specific visible prop clusters rather than a new gameplay option. Each task cluster also needs an invisible local interaction volume placed after segmentation; do not render those volumes.\n\n### Layout components\nBuild one medium-sized, dim horror compound divided into several recognizable task zones around a central circulation area. Place task stations in distinct rooms, alcoves, service corners, and exposed side spaces so survivors must cross the map rather than complete everything from one safe location. Link every zone through a dense network of corridors, doorways, and short alternate passages; avoid terminal dead ends and provide at least two exits from each task zone where practical. Include a few broad intersections and narrow turns that create pursuit decisions, with sparse industrial clutter, damaged walls, shadowed recesses, and flickering practical lights as visual cover without blocking the critical loops. Use worn concrete or dark floor surfaces throughout. Enclose the playable area with opaque perimeter walls, locked-looking exterior doors, and darkness beyond the boundary. Compose the map as a legible overhead network with the central junction readable as the anchor and task zones spread around its perimeter.\n\n### Render order\nUse `topdown`: the looping chase topology must remain connected and free of unfair sealed corridors, while this is not a carveable maze or racing circuit.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by multiple separated task zones and enough connected route length for sustained pursuits. Theme is dim, frightening industrial horror: low light, decayed surfaces, deep shadows, and tense enclosed circulation. Apply `P6` because the looping pursuit structure must be valid by construction; an unreachable task area or cornered route would make the survival play unfair.",
+  "blob": "### Genre\n`Survival` is dominant: survivors evade a killer while completing distributed tasks to win the round. `Simulation` is secondary only for the repeatable task-station interaction; it does not alter the survival topology.\n\n### Shape and preset\nUse `warren-looping`, matching the Survival 1 vs All preset. This is a compact horror warren of rooms and interlinked corridors with no dead ends, so survivors always have a viable pursuit route. Keep its hiding geometry and separated role starts, but drop `gate-escape` because completing all tasks, not escaping, wins.\n\n### Config requirements\nUse `cover-los` as dim lockers, crawlspaces, alcoves, and broken sightline corners embedded along the pursuit routes. Use `trigger-task` as visibly distinct task consoles, repair panels, or workstations distributed across the map.\n\n### Layout requirements\nPlace `spawn-protected` as two separated role-assignment starts: one killer start at an outer edge of the warren and survivor starts screened from it on the opposite side, with no direct initial sightline. Place `trigger-task` stations across the loop network: distribute them among separate rooms and route junctions rather than clustering them, with at least one task on each major loop. The killer is player-controlled, so no `spawner-npc` is needed.\n\n### Layout components\nBuild one enclosed, contiguous horror facility. A central junction room anchors several medium task rooms around the perimeter; each room has a visible task station and at least two corridor connections. Corridors form overlapping loops between the central junction, side rooms, and secondary intersections, with alcoves, lockers, crawlspaces, partitions, and corners breaking long sightlines without creating cul-de-sacs. Keep a clear chase-width circulation path throughout. The outer boundary is solid facility walls; no exterior or escape gate is present. Compose the plan as a readable dense interior network, with the central junction visually recognizable and task rooms spaced around it.\n\n### Render order\nUse `topdown` first and make it authoritative, because an invalid or dead-ending pursuit network would make killer evasion unfair and the loop connectivity must be verified before the horror dressing is applied.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by a single enclosed map with several separated task rooms and multiple chase loops. Theme is dim, frightening industrial-horror interior lighting with shadowy corners. Use `P6` because the looping, no-dead-end pursuit topology must be valid by construction.",
   "spec": {
     "genre": "Survival",
-    "secondary": [],
+    "secondary": [
+      "Simulation"
+    ],
     "shape": "warren-looping",
-    "preset": "none",
+    "preset": "1 vs All",
     "axes": {},
-    "options": [],
+    "options": [
+      {
+        "id": "cover-los",
+        "text": "Dim lockers, crawlspaces, alcoves, partitions, and broken sightline corners embedded along the pursuit routes.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "spawn-protected",
+        "text": "Two separated role-assignment starts: one killer start at an outer edge of the warren and survivor starts screened on the opposite side with no direct initial sightline.",
+        "visible": false,
+        "count": 2
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "spawn-protected",
+        "text": "Two separated role-assignment starts: one killer start at an outer edge of the warren and survivor starts screened on the opposite side with no direct initial sightline.",
+        "count": 2,
+        "where": "Place the killer start at an outer edge of the warren and the survivor starts on the opposite side, screened from it with no direct initial sightline."
+      }
+    ],
     "layout": {
-      "composition": "Legible overhead network with a central junction as the anchor and task zones spread around the perimeter; corridors, doorways, and short alternate passages form dense looping connections between them.",
+      "composition": "A readable dense interior network with the central junction visually recognizable at the centre and task rooms spaced around the perimeter.",
       "zones": [
         {
-          "name": "Central circulation area",
-          "role": "Main pursuit junction connecting the distributed task zones.",
-          "where": "centre",
+          "name": "Central junction room",
+          "role": "Anchors the connected pursuit loops and links the surrounding task rooms.",
+          "where": "Centre",
+          "size": ""
+        },
+        {
+          "name": "Perimeter task rooms",
+          "role": "Separated rooms containing visible task stations; each has at least two corridor connections.",
+          "where": "Around the central junction",
           "size": "medium"
         },
         {
-          "name": "Task rooms",
-          "role": "Distinct task-station locations that require survivors to cross the compound.",
-          "where": "around the perimeter",
-          "size": ""
-        },
-        {
-          "name": "Task alcoves",
-          "role": "Task-station locations set off the circulation loops.",
-          "where": "around the perimeter",
-          "size": ""
-        },
-        {
-          "name": "Service corners",
-          "role": "Task-station locations separated from safer central circulation.",
-          "where": "around the perimeter",
-          "size": ""
-        },
-        {
-          "name": "Exposed side spaces",
-          "role": "Task-station locations creating exposed pursuit movement between zones.",
-          "where": "around the perimeter",
-          "size": ""
-        },
-        {
-          "name": "Broad intersections",
-          "role": "Pursuit decision points within the looping route network.",
-          "where": "between task zones and the central area",
-          "size": ""
-        },
-        {
-          "name": "Narrow turns",
-          "role": "Tight pursuit-routing decisions without blocking critical loops.",
-          "where": "throughout the corridor network",
+          "name": "Secondary intersections",
+          "role": "Connect the central junction, side rooms, and overlapping pursuit loops.",
+          "where": "Between the central junction and side rooms",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Central circulation area",
-          "to": "Task rooms",
+          "from": "Central junction room",
+          "to": "Perimeter task rooms",
           "kind": "corridor"
         },
         {
-          "from": "Central circulation area",
-          "to": "Task alcoves",
+          "from": "Central junction room",
+          "to": "Secondary intersections",
           "kind": "corridor"
         },
         {
-          "from": "Central circulation area",
-          "to": "Service corners",
+          "from": "Secondary intersections",
+          "to": "Perimeter task rooms",
           "kind": "corridor"
         },
         {
-          "from": "Central circulation area",
-          "to": "Exposed side spaces",
-          "kind": "corridor"
-        },
-        {
-          "from": "Task zones",
-          "to": "Task zones",
+          "from": "Perimeter task rooms",
+          "to": "Perimeter task rooms",
           "kind": "corridor"
         }
       ],
-      "terrain": "Worn concrete or dark floor surfaces throughout, with damaged walls, shadowed recesses, and deep darkness beyond the playable boundary.",
+      "terrain": "",
       "props": [
         {
-          "name": "task stations",
+          "name": "Dim lockers",
           "count": -1,
-          "where": "distinct rooms, alcoves, service corners, and exposed side spaces around the compound"
+          "where": "Along pursuit routes"
         },
         {
-          "name": "sparse industrial clutter",
+          "name": "Crawlspaces",
           "count": -1,
-          "where": "throughout corridors and pursuit intersections"
+          "where": "Along pursuit routes"
         },
         {
-          "name": "damaged walls",
+          "name": "Alcoves",
           "count": -1,
-          "where": "throughout the compound"
+          "where": "Along pursuit routes"
         },
         {
-          "name": "flickering practical lights",
+          "name": "Partitions and broken sightline corners",
           "count": -1,
-          "where": "throughout enclosed circulation"
+          "where": "Along pursuit routes"
         }
       ],
-      "boundary": "Opaque perimeter walls and locked-looking exterior doors enclose the playable area, with darkness beyond the boundary.",
+      "boundary": "Solid facility walls enclosing the contiguous interior; no exterior and no escape gate.",
       "scale_band": "medium",
-      "theme": "dim, frightening industrial horror; low light, decayed surfaces, deep shadows, tense enclosed circulation"
+      "theme": "Dim, frightening industrial-horror interior lighting with shadowy corners."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the looping chase topology must remain connected and free of unfair sealed corridors.",
+      "why": "The looping no-dead-end pursuit connectivity must be verified before horror dressing is applied.",
       "set_piece": false
     },
     "route": [
       "P6"
     ],
     "notes": [
-      "Task locations are scene-specific visible prop clusters rather than selected menu options.",
-      "Each task cluster requires an invisible local interaction volume placed after segmentation; these volumes are not rendered."
+      "dropped option 'trigger-task': not in Survival",
+      "dropped placement 'trigger-task': not in Survival"
     ],
     "scene_prompt": "Create a dim, frightening 3D horror survival map with task locations distributed around the playable area and space for a killer to pursue players between them."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

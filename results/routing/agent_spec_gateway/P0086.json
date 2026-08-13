@@ -1,0 +1,237 @@
+{
+  "scene": "P0086",
+  "source": "You are an expert Roblox game developer, technical artist, and sound designer. Build a complete, playable, visually charming Roblox 3D platformer inspired by the original Spyro the Dragon trilogy (Insomniac, PS1). Single-player and drop-in co-op friendly. It must play and look great on ALL platforms: phone, tablet, PC, and console.\n\nFIRST: produce a full Game Design Document (GDD) - game pillars and vision, target audience, core loop, movement and combat design, hub-and-level world structure, collectible/progression economy, enemy and boss design, art direction, audio direction, UI/UX and cross-platform input strategy, monetization philosophy (cosmetic-only, no pay-to-win), and success metrics. THEN produce a detailed technical implementation plan - architecture, module breakdown, instance hierarchy, data flow, and milestone order. THEN autonomously implement the entire plan end to end without waiting for further input: write all scripts, build/define all visual and audio systems, wire everything up, and deliver a working, good-looking, good-sounding game.\n\nCORE MOVEMENT & COMBAT (the Spyro feel)\n- Tight, responsive dragon movement: run, jump, double-jump, and a signature glide (hold to glide, descend slowly, with a dive/charge-into-glide flow). Air control that feels floaty-but-controlled.\n- Charge: a horn-down dash that bowls over weak enemies, breaks charge-only gates/chests, and crosses gaps; can charge off ramps.\n- Flame breath: ranged fire that torches flammable enemies and objects; some enemies must be charged not flamed, and vice versa (the classic metal-armor vs. flammable rule).\n- Ground-pound/headbash as an unlockable; hover as an optional glide-extension unlock.\n- Enemy variety: chargeable, flammable, shielded (must flank), and flying foes. Readable tells and knockback.\n\nWORLD STRUCTURE\n- Central hub worlds that portal into themed levels (grassy realm, lava caverns, ice cliffs, spooky night world, sky/cloud realm). Return-portal home stone in each level.\n- Levels are open-ish 3D playgrounds with branching paths, hidden alcoves, and vertical secrets rewarding glide/charge mastery.\n- A guide companion (dragonfly-style) that follows, gives hints, and acts as a hit buffer (lose it on hit, recover it from nearby critters) - classic Spyro health model.\n\nCOLLECTIBLES & PROGRESSION\n- Gems (scattered, in chests, from enemies) as the primary currency - some hidden, some behind skill gates. Sparkle + chime on pickup, magnetize toward the player at close range.\n- Trapped dragons / captured creatures to free as the milestone collectible that gates world progress.\n- Eggs as rare hidden-challenge rewards. Per-level completion % and a total-completion tracker. Unlock cosmetics (scale colors, glide trails, flame colors) - no pay-to-win.\n\nVISUAL QUALITY (bright, storybook, AAA-charming - not default Roblox)\n- Warm, saturated, high-readability art direction: rounded stylized geometry, soft gradients, painterly skyboxes, gentle atmospheric fog for depth. Each realm gets a distinct palette and mood (sunny meadow, molten orange caverns, cool blue ice, purple haunted night).\n- Lighting: Future lighting, Bloom + ColorCorrection + SunRays + subtle DepthOfField, per-realm color grade. Soft rim light on the dragon so it pops from backgrounds.\n- Materials & maps: cohesive stylized PBR, clean silhouettes, strong focal lighting on portals, chests, and dragons-to-free. No flat untextured parts.\n- VFX: flame breath as layered particles + light with heat shimmer; glide trail ribbons; gem sparkle and collect burst; charge dust and speed lines; portal swirl; enemy poof on defeat. Screen-space feedback on hit.\n- Camera & feel: smooth follow-cam with auto-framing, gentle catch-up, glide pull-back for speed sense, subtle shake on charge impacts and landings, light hit-stop on flame kills, FOV kick on charge.\n- Character: expressive dragon idle fidgets, flap/glide poses, charge lean, flame wind-up. Readable, cute, lively.\n- Performance: pool particles, LOD distant geometry/VFX, streaming level loads, hold 60fps.\n\nSOUND DESIGN (playful, orchestral, reactive)\n- Dragon: flappy glide whoosh, charge gallop + wind rush, flame roar with crackle, jump/land grunts, footsteps by surface. 3D positional sound.\n- World: gem pickup chime that rises in pitch on streaks, chest-smash, portal hum/swoosh, dragon-freed fanfare, egg-found jingle. Enemy poofs and stings.\n- Music: melodic, whimsical orchestral per realm; adaptive layers that swell near combat or secrets; boss theme; victory/complete fanfare. Diegetic UI plips.\n- Mixing: SoundGroups for SFX/Music/UI/Ambience with ducking under fanfares. Reverb zones (caverns vs. open sky). Per-realm 3D ambient beds (birds, wind, lava bubble, spooky wind). Master + per-bus volume in settings.\n\nMOBILE & CROSS-PLATFORM (must play well on phone/tablet/console, not just PC)\n- Detect input type and adapt: touch, mouse/keyboard, and gamepad all first-class. Never assume PC.\n- Touch controls: on-screen thumbstick for movement; clear buttons for jump/glide (context-sensitive: hold jump to glide), charge, and flame; auto-face-nearest-enemy assist for flame/charge on touch.\n- Auto-scaling UI: Scale-based UDim2 + anchor points so the HUD (gems, guide, health, level %) reflows for phone, tablet, and TV-safe zones. Large, thumb-reachable targets on mobile.\n- Adaptive quality tiers: auto-detect device power and scale particles, dynamic lights, bloom/DOF, and draw distance down on mobile to hold 60fps (30fps floor). Manual quality toggle in settings.\n- Camera: touch-drag look with sensible sensitivity and glide auto-align; full gamepad mapping with charge/flame aim assist.\n- Test every system against touch and gamepad, not just PC input.\n\nTECH\n- Luau, server-authoritative where it matters (collectibles, progression, co-op enemy state); client-predicted movement for responsiveness. Anti-exploit checks on gem/egg awards; no client-trusted currency.\n- Modular: MovementController, GlideSystem, CombatSystem (charge/flame), EnemyAI, CollectibleManager, World/PortalManager, ProgressionSaveManager, VFXManager, AudioManager, CameraController, InputManager (cross-platform), UI. Clean RemoteEvents/RemoteFunctions. DataStore-backed saves with session locking.\n- Custom animations for run/jump/glide/charge/flame; raycast ground/ledge detection; charge and glide physics tuned for game feel.\n\nDeliver in this order: (1) the GDD, (2) the technical implementation plan, (3) all commented scripts, the folder/instance hierarchy, and VFX/lighting/audio setup, (4) setup steps. Implement the code in order: movement core → glide & charge feel → flame/combat & enemies → collectibles & progression → hub/portal world flow → cross-platform input & UI scaling. Work autonomously through every milestone until the game looks, sounds, and plays great on every device.",
+  "answers": [
+    {
+      "field": "scale",
+      "ask": "Should each realm be its own map at district size, or would you rather see the hub alone first?",
+      "answer": "Each realm should be its own compact district-sized map, connected from the central hub by portals; build the hub plus the five named themed levels as a small but complete vertical slice."
+    },
+    {
+      "field": "shape",
+      "ask": "Are the realm levels open playgrounds you can roam, or a mostly forward route with side branches? The answer changes whether the course is generated or hand-composed.",
+      "answer": "The levels are open-ish 3D playgrounds with branching paths, hidden alcoves, and vertical secrets, hand-composed rather than generated."
+    }
+  ],
+  "scene_prompt": "Create a 3D single-player/co-op friendly dragon platformer world built as a central hub connected by glowing portals to five compact, district-sized themed realm maps: a sunny grassy realm, molten lava caverns, cool blue ice cliffs, a purple spooky night world, and a sky-and-cloud realm. Each hand-composed realm is an open-ish 3D playground with branching routes, hidden alcoves, elevated glide-accessible secrets, charge ramps, breakable gates or chests, scattered gems, rare eggs, captives to free, enemies, and a return portal home stone. Use rounded stylized geometry, warm saturated storybook materials, painterly sky backdrops, atmospheric depth, and strong focal lighting on portals, treasure, and captive creatures. Compose each district with clear foreground traversal space, midground paths and landmarks, and scenic background terrain; use distinct palettes for meadow, orange volcanic cave, icy blue cliffs, haunted purple night, and bright clouds. Include a small dragon character with a nearby dragonfly-style companion, along with chargeable and flammable environmental targets.",
+  "blob": "## Genre\nThe dominant genre is Obby & Platformer, matching the self-declared 3D platformer and movement challenges. Adventure is secondary because exploration, secrets, and collectibles shape each realm.\n\n## Shape and preset\nUse `hub-portals`, outside the dominant genre’s usual set, for one central hub feeding five separate realm maps. Match the Adventure Exploration preset with this shape substituted; its landmarks, trails, and hidden alcoves remain central.\n\n## Config requirements\nApply `path-trail` to branching traversable routes, `landmark-focal` to each realm’s strongly lit destination, `alcove-secret` to elevated glide-accessible hiding places, and `obstacle-jump` to charge ramps and platform gaps. Draw both ends of `teleporter-link` as five glowing hub portals and five return stones. Apply `hazard-kill` to lava and fatal chasms, `terrain-relief` to cliffs and vertical landforms, and `island-cluster` to separated cloud platforms.\n\n## Layout requirements\nPlace `collectible-nodes` for scattered gems, rare eggs, and captives across safe routes, skill-gated branches, chests, and hidden alcoves in all five realms. Place the functional endpoints of `teleporter-link` at every hub portal and its matching return stone. Site enemy entry markers near combat clearings without blocking traversal.\n\n## Layout components\nBuild one compact hub and exactly five district-sized maps: sunny grassland, molten caverns, icy cliffs, spooky purple night, and bright cloud realm. Each needs branching ground routes, elevated glide secrets, charge ramps, breakable gates or chests, a focal landmark, and a return stone. Caverns may overhang; cloud platforms occupy open air. Keep the small dragon and companion readable in foreground compositions.\n\n## Render order\nUse `topdown`: portal pairing, branching route connectivity, and physics-legal platform access must be valid before storybook dressing.\n\n## Scale, theme, and pipeline cost\nScale is huge from six spaces total. The theme is saturated rounded storybook fantasy with realm-specific palettes. Use genre-wide `P6`, `P4` for separate portal maps, `P2` for cavern overhangs, `tiered` for cliffs, and `CHECK` for volumetric gliding among clouds.",
+  "agent_artifact": "# Scene prompt\nCreate a 3D single-player/co-op friendly dragon platformer world built as a central hub connected by glowing portals to five compact, district-sized themed realm maps: a sunny grassy realm, molten lava caverns, cool blue ice cliffs, a purple spooky night world, and a sky-and-cloud realm. Each hand-composed realm is an open-ish 3D playground with branching routes, hidden alcoves, elevated glide-accessible secrets, charge ramps, breakable gates or chests, scattered gems, rare eggs, captives to free, enemies, and a return portal home stone. Use rounded stylized geometry, warm saturated storybook materials, painterly sky backdrops, atmospheric depth, and strong focal lighting on portals, treasure, and captive creatures. Compose each district with clear foreground traversal space, midground paths and landmarks, and scenic background terrain; use distinct palettes for meadow, orange volcanic cave, icy blue cliffs, haunted purple night, and bright clouds. Include a small dragon character with a nearby dragonfly-style companion, along with chargeable and flammable environmental targets.\n\n# Agent decision\n## Genre\nThe dominant genre is Obby & Platformer, matching the self-declared 3D platformer and movement challenges. Adventure is secondary because exploration, secrets, and collectibles shape each realm.\n\n## Shape and preset\nUse `hub-portals`, outside the dominant genre’s usual set, for one central hub feeding five separate realm maps. Match the Adventure Exploration preset with this shape substituted; its landmarks, trails, and hidden alcoves remain central.\n\n## Config requirements\nApply `path-trail` to branching traversable routes, `landmark-focal` to each realm’s strongly lit destination, `alcove-secret` to elevated glide-accessible hiding places, and `obstacle-jump` to charge ramps and platform gaps. Draw both ends of `teleporter-link` as five glowing hub portals and five return stones. Apply `hazard-kill` to lava and fatal chasms, `terrain-relief` to cliffs and vertical landforms, and `island-cluster` to separated cloud platforms.\n\n## Layout requirements\nPlace `collectible-nodes` for scattered gems, rare eggs, and captives across safe routes, skill-gated branches, chests, and hidden alcoves in all five realms. Place the functional endpoints of `teleporter-link` at every hub portal and its matching return stone. Site enemy entry markers near combat clearings without blocking traversal.\n\n## Layout components\nBuild one compact hub and exactly five district-sized maps: sunny grassland, molten caverns, icy cliffs, spooky purple night, and bright cloud realm. Each needs branching ground routes, elevated glide secrets, charge ramps, breakable gates or chests, a focal landmark, and a return stone. Caverns may overhang; cloud platforms occupy open air. Keep the small dragon and companion readable in foreground compositions.\n\n## Render order\nUse `topdown`: portal pairing, branching route connectivity, and physics-legal platform access must be valid before storybook dressing.\n\n## Scale, theme, and pipeline cost\nScale is huge from six spaces total. The theme is saturated rounded storybook fantasy with realm-specific palettes. Use genre-wide `P6`, `P4` for separate portal maps, `P2` for cavern overhangs, `tiered` for cliffs, and `CHECK` for volumetric gliding among clouds.\n",
+  "agent_notes": "## Genre\nThe dominant genre is Obby & Platformer, matching the self-declared 3D platformer and movement challenges. Adventure is secondary because exploration, secrets, and collectibles shape each realm.\n\n## Shape and preset\nUse `hub-portals`, outside the dominant genre’s usual set, for one central hub feeding five separate realm maps. Match the Adventure Exploration preset with this shape substituted; its landmarks, trails, and hidden alcoves remain central.\n\n## Config requirements\nApply `path-trail` to branching traversable routes, `landmark-focal` to each realm’s strongly lit destination, `alcove-secret` to elevated glide-accessible hiding places, and `obstacle-jump` to charge ramps and platform gaps. Draw both ends of `teleporter-link` as five glowing hub portals and five return stones. Apply `hazard-kill` to lava and fatal chasms, `terrain-relief` to cliffs and vertical landforms, and `island-cluster` to separated cloud platforms.\n\n## Layout requirements\nPlace `collectible-nodes` for scattered gems, rare eggs, and captives across safe routes, skill-gated branches, chests, and hidden alcoves in all five realms. Place the functional endpoints of `teleporter-link` at every hub portal and its matching return stone. Site enemy entry markers near combat clearings without blocking traversal.\n\n## Layout components\nBuild one compact hub and exactly five district-sized maps: sunny grassland, molten caverns, icy cliffs, spooky purple night, and bright cloud realm. Each needs branching ground routes, elevated glide secrets, charge ramps, breakable gates or chests, a focal landmark, and a return stone. Caverns may overhang; cloud platforms occupy open air. Keep the small dragon and companion readable in foreground compositions.\n\n## Render order\nUse `topdown`: portal pairing, branching route connectivity, and physics-legal platform access must be valid before storybook dressing.\n\n## Scale, theme, and pipeline cost\nScale is huge from six spaces total. The theme is saturated rounded storybook fantasy with realm-specific palettes. Use genre-wide `P6`, `P4` for separate portal maps, `P2` for cavern overhangs, `tiered` for cliffs, and `CHECK` for volumetric gliding among clouds.",
+  "secondary": [
+    "Adventure"
+  ],
+  "spec": {
+    "genre": "Obby & Platformer",
+    "secondary": [
+      "Adventure"
+    ],
+    "shape": "hub-portals",
+    "preset": "none",
+    "axes": {},
+    "options": [
+      {
+        "id": "obstacle-jump",
+        "text": "Charge ramps and platform gaps in each realm.",
+        "visible": true,
+        "count": 5
+      },
+      {
+        "id": "teleporter-link",
+        "text": "Five glowing hub portals paired with five return stones.",
+        "visible": true,
+        "count": 10
+      },
+      {
+        "id": "hazard-kill",
+        "text": "Lava and fatal chasms.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "terrain-relief",
+        "text": "Cliffs and vertical landforms.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "island-cluster",
+        "text": "Separated cloud platforms.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "Scattered gems, rare eggs, and captives across safe routes, skill-gated branches, chests, and hidden alcoves.",
+        "visible": false,
+        "count": -1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "teleporter-link",
+        "text": "The functional endpoints of five glowing hub portals and their matching return stones.",
+        "count": 10,
+        "where": "At every hub portal and its matching return stone."
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "Scattered gems, rare eggs, and captives across safe routes, skill-gated branches, chests, and hidden alcoves.",
+        "count": -1,
+        "where": "Across safe routes, skill-gated branches, chests, and hidden alcoves in all five realms."
+      }
+    ],
+    "layout": {
+      "composition": "Keep the small dragon and nearby dragonfly-style companion readable in foreground traversal space; place midground paths and landmarks with scenic background terrain in each district.",
+      "zones": [
+        {
+          "name": "Central hub",
+          "role": "Compact portal hub connecting the five separate realm maps.",
+          "where": "Centre",
+          "size": "compact"
+        },
+        {
+          "name": "Sunny grassland",
+          "role": "District-sized realm with branching ground routes, elevated glide secrets, charge ramps, breakable gates or chests, a focal landmark, and a return stone.",
+          "where": "Separate portal map",
+          "size": "district-sized"
+        },
+        {
+          "name": "Molten caverns",
+          "role": "District-sized realm with branching ground routes, elevated glide secrets, charge ramps, breakable gates or chests, a focal landmark, and a return stone; caverns may overhang.",
+          "where": "Separate portal map",
+          "size": "district-sized"
+        },
+        {
+          "name": "Icy cliffs",
+          "role": "District-sized realm with branching ground routes, elevated glide secrets, charge ramps, breakable gates or chests, a focal landmark, and a return stone.",
+          "where": "Separate portal map",
+          "size": "district-sized"
+        },
+        {
+          "name": "Spooky purple night",
+          "role": "District-sized realm with branching ground routes, elevated glide secrets, charge ramps, breakable gates or chests, a focal landmark, and a return stone.",
+          "where": "Separate portal map",
+          "size": "district-sized"
+        },
+        {
+          "name": "Bright cloud realm",
+          "role": "District-sized realm with branching ground routes, elevated glide secrets, charge ramps, breakable gates or chests, a focal landmark, and a return stone; cloud platforms occupy open air.",
+          "where": "Separate portal map",
+          "size": "district-sized"
+        }
+      ],
+      "paths": [
+        {
+          "from": "Central hub",
+          "to": "Sunny grassland",
+          "kind": "portal"
+        },
+        {
+          "from": "Central hub",
+          "to": "Molten caverns",
+          "kind": "portal"
+        },
+        {
+          "from": "Central hub",
+          "to": "Icy cliffs",
+          "kind": "portal"
+        },
+        {
+          "from": "Central hub",
+          "to": "Spooky purple night",
+          "kind": "portal"
+        },
+        {
+          "from": "Central hub",
+          "to": "Bright cloud realm",
+          "kind": "portal"
+        },
+        {
+          "from": "Return stones",
+          "to": "Central hub",
+          "kind": "portal"
+        },
+        {
+          "from": "Branching ground routes",
+          "to": "Elevated glide-accessible secrets",
+          "kind": "ramp"
+        }
+      ],
+      "terrain": "Sunny grassland, molten lava caverns, cool blue ice cliffs, purple spooky-night terrain, and separated bright cloud platforms; cliffs and vertical landforms, cavern overhangs, lava, and fatal chasms.",
+      "props": [
+        {
+          "name": "glowing hub portals",
+          "count": 5,
+          "where": "Central hub"
+        },
+        {
+          "name": "return stones",
+          "count": 5,
+          "where": "One in each realm"
+        },
+        {
+          "name": "small dragon character",
+          "count": 1,
+          "where": "Foreground compositions"
+        },
+        {
+          "name": "dragonfly-style companion",
+          "count": 1,
+          "where": "Near the small dragon"
+        },
+        {
+          "name": "charge ramps",
+          "count": 5,
+          "where": "Across the five realms"
+        },
+        {
+          "name": "breakable gates or chests",
+          "count": 5,
+          "where": "Across the five realms"
+        },
+        {
+          "name": "focal landmarks",
+          "count": 5,
+          "where": "One in each realm"
+        }
+      ],
+      "boundary": "",
+      "scale_band": "huge",
+      "theme": "Saturated rounded storybook fantasy with realm-specific palettes, painterly sky backdrops, atmospheric depth, and strong focal lighting on portals, treasure, and captive creatures."
+    },
+    "render": {
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "Portal pairing, branching route connectivity, and physics-legal platform access must be valid before storybook dressing.",
+      "set_piece": false
+    },
+    "route": [
+      "P6",
+      "P4",
+      "P2",
+      "tiered",
+      "CHECK"
+    ],
+    "notes": [
+      "`hub-portals` is outside Obby & Platformer’s usual shape set, as specified.",
+      "The Adventure Exploration preset is matched with `hub-portals` substituted for its usual shape.",
+      "Enemy entry markers are described in the layout requirements but have no named canonical option in the dominant Obby & Platformer option set, so they are not added as an option or layout-placement row.",
+      "dropped option 'path-trail': not in Obby & Platformer",
+      "dropped option 'landmark-focal': not in Obby & Platformer",
+      "dropped option 'alcove-secret': not in Obby & Platformer",
+      "unknown preset 'Exploration'"
+    ],
+    "scene_prompt": "Create a 3D single-player/co-op friendly dragon platformer world built as a central hub connected by glowing portals to five compact, district-sized themed realm maps: a sunny grassy realm, molten lava caverns, cool blue ice cliffs, a purple spooky night world, and a sky-and-cloud realm. Each hand-composed realm is an open-ish 3D playground with branching routes, hidden alcoves, elevated glide-accessible secrets, charge ramps, breakable gates or chests, scattered gems, rare eggs, captives to free, enemies, and a return portal home stone. Use rounded stylized geometry, warm saturated storybook materials, painterly sky backdrops, atmospheric depth, and strong focal lighting on portals, treasure, and captive creatures. Compose each district with clear foreground traversal space, midground paths and landmarks, and scenic background terrain; use distinct palettes for meadow, orange volcanic cave, icy blue cliffs, haunted purple night, and bright clouds. Include a small dragon character with a nearby dragonfly-style companion, along with chargeable and flammable environmental targets."
+  },
+  "stage": "done",
+  "status": "ok",
+  "error": "",
+  "pipeline_version": "1986e1975066",
+  "served_by": "subagent/genre-choice -> gateway/production/gpt-5.6-terra",
+  "schema_degraded": false,
+  "reused_uprez": true,
+  "order": "p6",
+  "first": "topdown",
+  "mapper_notes": []
+}

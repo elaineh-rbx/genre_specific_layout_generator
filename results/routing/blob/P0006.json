@@ -5,88 +5,84 @@
     {
       "field": "scale",
       "ask": "How large should each dungeon zone be - a single room you can see across, or a hall that takes half a minute to cross?",
-      "answer": "اجعل كل منطقة ساحة/غرفة مدمجة يمكن رؤية معظمها عبرها؛ هذا يناسب الألغاز والقتال السريع دون إطالة الخريطة."
+      "answer": "Use compact single-room zones that players can mostly see across; each should be large enough for its combat and puzzle mechanics without extending traversal time."
     },
     {
       "field": "shape",
       "ask": "Should the three dungeon zones be genuinely separate maps, or one continuous descent?",
-      "answer": "اجعلها نزولاً واحداً متصلاً داخل قلعة الآلات، مع بوابات انتقال واضحة ونقاط حفظ عند بداية كل منطقة."
+      "answer": "Make them one continuous descent within the Crystal Citadel, with clear transitions and checkpoints at the start of each zone."
     }
   ],
   "scene_prompt": "Create a 3D game map with a safe futuristic floating citadel lobby in space. The lobby centers on a large neon dungeon portal, with a training-dummy area nearby and a platform of freestanding 3D leaderboard displays. Beyond the portal, build one continuous descending Crystal Citadel dungeon, divided by clear transition gates into three compact, easily visible arena-sized zones with a checkpoint at each entrance. First, a closed black-stone courtyard holds four colored crystal pillars and a large exit gate. Next, a laser chamber contains a floor of shifting-height cubes, crossing red horizontal and vertical laser beams, three physical energy keys hidden behind the moving blocks, and a central control panel. At the bottom, a vast crystal throne hall has a glass floor over neon volcanic lava, four glowing pressure circles across the arena floor, and a raised throne area for the crystal boss.",
-  "blob": "### Genre\nThe dominant genre is RPG, with Puzzle as a secondary genre: progression combat and the safe hub establish an Action RPG, while the dungeon rooms use physical solve spaces. Mechanics, currencies, combat timings, and UI are not part of the map build.\n\n### Shape and preset\nUse RPG shape `world-hub-dungeon`. It is matched from the Action RPG preset: a protected hub feeds a combat dungeon. The author’s clarification overrides any implication that the three dungeon zones are separate maps: they form one connected downward sequence within the Crystal Citadel, while the floating lobby remains the linked hub map.\n\n### Config requirements\nVisible geometry: `safezone-town` is the safe floating citadel lobby, centered on the neon portal; `social-hub` is the open gathering ring around that portal; `hazard-aggro` provides compact enemy-clearings in the first two dungeon rooms; and `building-interior` is the enclosed black-stone and crystal citadel interior. From Puzzle, `gate-solve` supplies the transition gates, and `trigger-solve` supplies the visible central panel and four pressure circles. Invisible layout elements: `spawner-npc` marks guardian-bot and flying-enemy origins; `collectible-nodes` marks the three energy-key pickup locations and their interaction volumes; pressure plates retain invisible activation volumes. Checkpoint beacons are visible at each zone entrance, with invisible respawn markers.\n\n### Layout components\nThe lobby is a medium open floating platform in space, with the large neon dungeon portal as its focal center, a training-dummy pad to one side, and a freestanding platform of 3D leaderboard displays opposite it. The portal leads into a single descending interior route through three compact rooms, each largely visible across its full span and divided by a clear gate.\n\nZone one is a closed black-stone courtyard containing exactly four colored crystal pillars, space reserved for 20 guardian bots, and a large exit gate. Zone two is a laser chamber descending beyond that gate: its floor is a dense field of shifting-height cubes, crossed by red horizontal and vertical laser beams, with exactly three physical energy keys concealed behind blocks and a central control panel. Zone three is a vast but still readable throne hall at the bottom, with a glass floor over neon volcanic lava, exactly four glowing pressure circles across the arena, and a raised crystal-boss throne at the far end. Frame the portal, gates, and throne along a clear descending central axis.\n\n### Render order\nUse `isometric`: the authoritative first render is the dramatic isometric view, since the connected room sequence is straightforward and does not require a procedurally solved topology.\n\n### Scale, theme, and pipeline cost\nScale is medium: one lobby plus three compact arena-sized dungeon zones. Theme is dark futuristic crystal fantasy, black stone, neon red lasers, cyan portal light, and volcanic glow. Use `P4` for the linked lobby and dungeon maps, `P3` for the outside-space lobby to interior-citadel transition, and `P2` because the transparent glass floor visibly overlays the lava surface below.",
+  "blob": "### Genre\nThe dominant genre is `RPG`, with `Puzzle` as a secondary genre: progression combat and an instanced-style dungeon run define the game, while the room puzzles support it.\n\n### Shape and preset\nUse `rooms-sequence`, taken from outside the RPG usual shape set. The Crystal Citadel is a single continuous, descending chain of three compact dungeon rooms entered from the lobby, with each gate clearly leading to the next room. Preset: none; the Action RPG preset's separate hub-and-dungeon maps contradict the requested continuous descent and its sanctuary-town bundle is not present.\n\n### Config requirements\nUse `building-interior` for the enclosed black-stone courtyard, laser chamber, and throne hall reached from the exterior floating lobby. Use `trigger-solve` for the central panel that visibly receives the three energy keys in the laser chamber. Use `button-solve` for the four glowing pressure circles distributed across the boss arena floor.\n\n### Layout requirements\nPlace `checkpoint-respawn` markers at all three dungeon-zone entrances, immediately inside each transition gate on safe clear floor. Place `spawner-npc` origins for 20 guardian bots spread around the first courtyard away from its entrance and exit gate, plus one boss origin at the raised throne in the final hall. Place `collectible-nodes` as exactly three energy-key pickups in separate recesses behind the shifting cubes in zone two. For `trigger-solve`, site three key input positions on the central panel; for `button-solve`, site the four pressure triggers exactly on the four drawn circles in the final arena.\n\n### Layout components\nThe outer zone is a safe floating futuristic citadel lobby suspended in space, medium-sized and organized around a large neon dungeon portal. Put the training dummy area to one side of the portal and a raised platform of freestanding 3D leaderboard displays opposite it. The portal leads indoors through a clear threshold into the first compact, fully enclosed black-stone courtyard: four colored crystal pillars occupy its central combat space and a large exit gate faces the entrance. The second compact room descends beyond that gate and contains a field of shifting-height cubes, crossing red horizontal and vertical lasers, three hidden-key recesses, and a central control panel. A final gate descends into the largest zone, a crystal throne hall with a glass arena floor above neon volcanic lava, four spaced glowing circles, and a raised throne at the far end. Keep all rooms mostly visible across, linked only in this forward order.\n\n### Render order\nUse `topdown` first and make it authoritative, because the sequential gates, room transitions, and puzzle-object access must remain connected and playable; the isometric render dresses that verified plan.\n\n### Scale, theme, and pipeline cost\nScale is medium: the lobby and three zones form a substantial set, but each dungeon zone remains a compact single-room encounter. Theme: futuristic neon crystal citadel, black stone, red lasers, and volcanic glow. Use `P3` because play crosses from the exterior space lobby into enclosed dungeon interiors.",
   "spec": {
     "genre": "RPG",
     "secondary": [
       "Puzzle"
     ],
-    "shape": "world-hub-dungeon",
-    "preset": "Action RPG",
+    "shape": "rooms-sequence",
+    "preset": "none",
     "axes": {},
     "options": [
       {
-        "id": "safezone-town",
-        "text": "safe floating citadel lobby, centered on the neon portal",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "social-hub",
-        "text": "open gathering ring around the portal",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "hazard-aggro",
-        "text": "compact enemy-clearings in the first two dungeon rooms",
-        "visible": true,
-        "count": -1
-      },
-      {
         "id": "building-interior",
-        "text": "enclosed black-stone and crystal citadel interior",
+        "text": "Enclosed black-stone courtyard, laser chamber, and throne hall reached from the exterior floating lobby.",
         "visible": true,
         "count": -1
       },
       {
         "id": "spawner-npc",
-        "text": "guardian-bot and flying-enemy origins, with space reserved for 20 guardian bots in the first courtyard",
+        "text": "Twenty guardian-bot origins spread around the first courtyard away from its entrance and exit gate, plus one boss origin at the raised throne in the final hall.",
         "visible": false,
-        "count": 20
+        "count": 21
       },
       {
         "id": "collectible-nodes",
-        "text": "the three energy-key pickup locations and their interaction volumes",
-        "visible": false,
+        "text": "Exactly three energy-key pickups in separate recesses behind the shifting cubes in zone two.",
+        "visible": true,
         "count": 3
       }
     ],
+    "layout_placement": [
+      {
+        "id": "spawner-npc",
+        "text": "Twenty guardian-bot origins spread around the first courtyard away from its entrance and exit gate, plus one boss origin at the raised throne in the final hall.",
+        "count": 21,
+        "where": "Spread the 20 guardian-bot origins around the first courtyard away from its entrance and exit gate; place the boss origin at the raised throne in the final hall."
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "Exactly three energy-key pickups in separate recesses behind the shifting cubes in zone two.",
+        "count": 3,
+        "where": "In separate recesses behind the shifting cubes in the second room."
+      }
+    ],
     "layout": {
-      "composition": "A medium floating lobby platform sits in space with the large cyan neon portal at its focal center; the training-dummy pad is to one side and freestanding 3D leaderboard displays are opposite. Beyond the portal, gates and the distant raised throne align on a clear descending central axis through the interior rooms.",
+      "composition": "Top-down plan begins at the outer floating lobby organized around the neon portal, then descends through the courtyard, laser chamber, and final throne hall in one forward-only sequence. The training dummy area sits to one side of the portal, with freestanding leaderboard displays on a raised platform opposite.",
       "zones": [
         {
           "name": "Floating Citadel Lobby",
-          "role": "Protected safe hub and gathering space before the dungeon.",
-          "where": "foreground and upper start of the central axis, floating in space",
-          "size": "medium open floating platform"
+          "role": "Safe exterior arrival lobby centered on the dungeon portal.",
+          "where": "Outer starting zone before the dungeon threshold.",
+          "size": "medium-sized"
         },
         {
           "name": "Black-Stone Courtyard",
-          "role": "First compact enemy-clearing dungeon room.",
-          "where": "beyond the portal at the start of the descending interior route",
-          "size": "compact arena-sized room"
+          "role": "First compact enclosed combat room for guardian bots.",
+          "where": "Immediately indoors beyond the portal threshold.",
+          "size": "compact"
         },
         {
           "name": "Laser Chamber",
-          "role": "Second dungeon room containing the energy-key and control-panel solve space.",
-          "where": "descending beyond the courtyard exit gate",
-          "size": "compact arena-sized room"
+          "role": "Second compact puzzle room containing shifting cubes, lasers, hidden keys, and the control panel.",
+          "where": "Descending beyond the courtyard exit gate.",
+          "size": "compact"
         },
         {
           "name": "Crystal Throne Hall",
-          "role": "Bottom arena and crystal-boss throne area.",
-          "where": "bottom of the descending central axis, beyond the laser chamber gate",
-          "size": "vast but readable"
+          "role": "Final boss arena with pressure circles and the raised crystal-boss throne.",
+          "where": "At the bottom of the final descending gate.",
+          "size": "largest zone"
         }
       ],
       "paths": [
@@ -98,111 +94,93 @@
         {
           "from": "Black-Stone Courtyard",
           "to": "Laser Chamber",
-          "kind": "corridor"
+          "kind": "gate"
         },
         {
           "from": "Laser Chamber",
           "to": "Crystal Throne Hall",
-          "kind": "corridor"
+          "kind": "gate"
         }
       ],
-      "terrain": "Floating platform in space; enclosed black-stone and crystal interior descending through rooms; shifting-height cube floor and red laser beams in the laser chamber; transparent glass floor over neon volcanic lava in the throne hall.",
+      "terrain": "Floating space lobby; enclosed black-stone dungeon floors; a glass arena floor above neon volcanic lava in the throne hall.",
       "props": [
         {
           "name": "large neon dungeon portal",
           "count": 1,
-          "where": "center of the floating lobby"
+          "where": "Centre of the floating citadel lobby."
         },
         {
-          "name": "training-dummy pad",
-          "count": 1,
-          "where": "one side of the lobby"
-        },
-        {
-          "name": "freestanding platform of 3D leaderboard displays",
-          "count": 1,
-          "where": "opposite the training-dummy pad in the lobby"
-        },
-        {
-          "name": "clear transition gates",
+          "name": "training dummy area",
           "count": -1,
-          "where": "between the dungeon rooms"
+          "where": "To one side of the portal."
         },
         {
-          "name": "checkpoint beacons",
-          "count": 3,
-          "where": "at each dungeon-zone entrance"
+          "name": "freestanding 3D leaderboard displays",
+          "count": -1,
+          "where": "On a raised platform opposite the training dummy area."
         },
         {
           "name": "colored crystal pillars",
           "count": 4,
-          "where": "inside the closed black-stone courtyard"
+          "where": "Central combat space of the black-stone courtyard."
         },
         {
           "name": "large exit gate",
           "count": 1,
-          "where": "far end of the black-stone courtyard"
+          "where": "Facing the courtyard entrance."
         },
         {
           "name": "shifting-height cubes",
           "count": -1,
-          "where": "dense field across the laser-chamber floor"
+          "where": "Across the floor of the laser chamber."
         },
         {
-          "name": "red horizontal and vertical laser beams",
+          "name": "crossing red horizontal and vertical lasers",
           "count": -1,
-          "where": "crossing the laser chamber"
+          "where": "In the laser chamber."
         },
         {
-          "name": "physical energy keys",
-          "count": 3,
-          "where": "concealed behind blocks in the laser chamber"
-        },
-        {
-          "name": "central control panel",
+          "name": "raised throne",
           "count": 1,
-          "where": "center of the laser chamber"
-        },
-        {
-          "name": "glowing pressure circles",
-          "count": 4,
-          "where": "across the crystal throne-hall arena floor"
-        },
-        {
-          "name": "raised crystal-boss throne",
-          "count": 1,
-          "where": "far end of the throne hall"
+          "where": "At the far end of the crystal throne hall."
         }
       ],
-      "boundary": "The lobby is open on a floating platform in space; the dungeon is enclosed within the black-stone and crystal citadel interior.",
+      "boundary": "The exterior lobby is suspended in space; the three dungeon rooms are fully enclosed and linked only by forward transition gates.",
       "scale_band": "medium",
-      "theme": "dark futuristic crystal fantasy, black stone, neon red lasers, cyan portal light, and volcanic glow"
+      "theme": "Futuristic neon crystal citadel, black stone, red lasers, and volcanic glow."
     },
     "render": {
-      "first": "isometric",
-      "then": "topdown",
-      "authoritative": "isometric",
-      "why": "the connected room sequence is straightforward and does not require a procedurally solved topology.",
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "Sequential gates, room transitions, and puzzle-object access must remain connected and playable.",
       "set_piece": false
     },
     "route": [
-      "P4",
-      "P3",
-      "P2"
+      "P3"
     ],
     "notes": [
-      "Dropped `gate-solve` and `trigger-solve`: they are not canonical option IDs for the dominant RPG genre.",
-      "Checkpoint beacons and their invisible respawn markers are retained as layout components; no matching canonical RPG option ID was named."
+      "The `rooms-sequence` shape is taken from outside the RPG usual shape set.",
+      "The render-order blob states that the isometric render dresses the verified top-down plan.",
+      "dropped option 'trigger-solve': not in RPG",
+      "dropped option 'button-solve': not in RPG",
+      "dropped option 'checkpoint-respawn': not in RPG",
+      "dropped placement 'checkpoint-respawn': not in RPG",
+      "dropped placement 'trigger-solve': not in RPG",
+      "dropped placement 'button-solve': not in RPG",
+      "visible on 'collectible-nodes' set from goes_to=both"
     ],
     "scene_prompt": "Create a 3D game map with a safe futuristic floating citadel lobby in space. The lobby centers on a large neon dungeon portal, with a training-dummy area nearby and a platform of freestanding 3D leaderboard displays. Beyond the portal, build one continuous descending Crystal Citadel dungeon, divided by clear transition gates into three compact, easily visible arena-sized zones with a checkpoint at each entrance. First, a closed black-stone courtyard holds four colored crystal pillars and a large exit gate. Next, a laser chamber contains a floor of shifting-height cubes, crossing red horizontal and vertical laser beams, three physical energy keys hidden behind the moving blocks, and a central control panel. At the bottom, a vast crystal throne hall has a glass floor over neon volcanic lava, four glowing pressure circles across the arena floor, and a raised throne area for the crystal boss."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
-  "mapper_notes": []
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P3'] gives isometric"
+  ]
 }

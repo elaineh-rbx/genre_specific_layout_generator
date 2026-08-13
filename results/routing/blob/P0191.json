@@ -14,115 +14,105 @@
     }
   ],
   "scene_prompt": "Create a 3D mountain adventure map in a bleak survival whiteout: a snow-covered ascent leading toward a high mountain summit, with a tent shelter positioned along the route as a safe stop from the cold.",
-  "blob": "### Genre\nAdventure is dominant, with Survival as a secondary tonal influence only: the player’s stated purpose is to reach the summit, while the cold and tent shelter frame that journey.\n\n### Shape and preset\nUse `world-corridor`, matching the Guided Trail preset. This is a constrained snow ascent rather than an open mountain sandbox: the route climbs from a low trailhead toward one high summit. Retain its trail-and-landmark logic, but omit the preset’s reveal-exit because no cave-to-valley transition was requested.\n\n### Config requirements\nUse visible `path-trail` as a compact, readable snow path climbing continuously between sheltered ledges. Use visible `landmark-focal` for the summit peak, always visible in breaks in the whiteout and increasingly dominant uphill. Use visible `building-interior` for the enterable tent shelter along the route; its lock is not rendered as gameplay logic. Use visible `terrain-relief` for steep snow ridges, cliffs, wind-carved drifts, and the summit rise. No invisible config elements are required.\n\n### Layout components\nBegin at a small lower snowfield trailhead in the foreground. A single winding packed-snow trail traverses upward across narrow ridges and wider resting ledges, leading to the summit occupying the upper background. Place one tent shelter on a protected mid-route ledge, slightly off the trail but immediately accessible, with a visible entrance and enough surrounding flat snow for a safe stop. Terrain is deep snow over dark rock, with steep drop-offs beyond the route and intermittent boulders or ice outcrops as sparse landmarks. Use cliff walls, ridgelines, and whiteout falloff as the boundary rather than artificial walls. Compose the map as a strong bottom-to-top diagonal ascent, with the tent as the midpoint anchor and the peak silhouetted above it.\n\n### Render order\nUse `topdown` first, authoritative because the ascent trail must remain continuously connected from trailhead through the shelter to the reachable summit.\n\n### Scale, theme, and pipeline cost\nUse a medium scale: enough route length for a meaningful mountain approach, but one continuous climb rather than separate regions. Theme: bleak survival whiteout, muted blue-gray snow, dark exposed rock, sparse low-visibility atmosphere. Apply `tiered` for the non-overhanging mountain elevation and `P3` because travel crosses from the exterior snowfield into the tent interior.",
+  "blob": "### 1. Genre\nThe dominant genre is Adventure: the player’s purpose is to travel upward and reach the mountain summit, while the tent is an intermediate shelter rather than a survival-loop objective.\n\n### 2. Shape and preset\nUse `route-guided`, a single continuous snowbound ascent that leads from the lower mountain toward the summit without open-world branching. This matches the Guided Trail preset, adapted by retaining the trail and summit pull while omitting its cave-to-valley reveal.\n\n### 3. Config requirements\nUse `path-trail` as a visibly continuous packed-snow climbing trail, with switchbacks and short traverses across the slope. Use `landmark-focal` for the distant high summit, kept visible whenever weather permits to pull travel upward. Use `terrain-relief` for steep snow-covered ridges, ledges, and ascending mountain faces; this is mountain elevation rather than stacked walkable layers.\n\n### 4. Layout requirements\nNo additional placed gameplay markers are required. The tent is a rendered, identifiable shelter along the route, but the prompt does not request a respawn point, collectible, trigger, or other segmented placement.\n\n### 5. Layout components\nStart at a lower snowy approach zone with a broad enough trailhead to orient the player. The main zone is a long ascending mountainside, occupying most of the map, with a packed-snow route winding upward through exposed slopes, narrow ridgeline traverses, and sheltered bends. Place one tent shelter beside a widened, relatively level trail section around the middle of the ascent, visibly protected by a snowbank or rock outcrop. The final zone is a high summit platform above the route, distinct in silhouette and reached by the final climb. Use deep snow, wind-carved drifts, dark exposed rock, and sparse ice-crusted outcrops. Natural steep slopes, cliffs, and the whiteout fading into the surrounding mountain define the boundary. Compose the scene diagonally from low foreground trailhead to high-background summit, with the tent clearly readable as the midpoint refuge.\n\n### 6. Render order\nUse `topdown`: the climbing route must remain visibly continuous from trailhead through the shelter to the summit, so plan topology is authoritative before the bleak isometric dressing is generated.\n\n### 7. Scale, theme, and pipeline cost\nUse a medium scale, driven by a single substantial ascent with three readable moments: start, tent shelter, and summit. Theme: bleak survival whiteout, cold blue-grey snow, low visibility, wind, and dark alpine rock. Apply `tiered`, forced by the continuous mountain relief with no walkable overhangs.",
   "spec": {
     "genre": "Adventure",
-    "secondary": [
-      "Survival"
-    ],
-    "shape": "world-corridor",
+    "secondary": [],
+    "shape": "route-guided",
     "preset": "Guided Trail",
     "axes": {},
     "options": [
       {
         "id": "path-trail",
-        "text": "a compact, readable snow path climbing continuously between sheltered ledges",
-        "visible": true,
-        "count": 1
-      },
-      {
-        "id": "landmark-focal",
-        "text": "the summit peak, always visible in breaks in the whiteout and increasingly dominant uphill",
+        "text": "A visibly continuous packed-snow climbing trail, with switchbacks and short traverses across the slope.",
         "visible": true,
         "count": -1
       },
       {
-        "id": "building-interior",
-        "text": "the enterable tent shelter along the route; its lock is not rendered as gameplay logic",
+        "id": "landmark-focal",
+        "text": "The distant high summit, kept visible whenever weather permits to pull travel upward.",
         "visible": true,
-        "count": 1
+        "count": -1
       },
       {
         "id": "terrain-relief",
-        "text": "steep snow ridges, cliffs, wind-carved drifts, and the summit rise",
+        "text": "Steep snow-covered ridges, ledges, and ascending mountain faces; mountain elevation rather than stacked walkable layers.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "A strong bottom-to-top diagonal ascent: the lower trailhead sits in the foreground, the tent anchors the midpoint, and the peak is silhouetted in the upper background above it.",
+      "composition": "Compose diagonally from the low foreground trailhead to the high-background summit, with the tent clearly readable as a midpoint refuge.",
       "zones": [
         {
-          "name": "Lower snowfield trailhead",
-          "role": "Starting point for the mountain ascent.",
-          "where": "foreground",
-          "size": "small"
+          "name": "Lower snowy approach",
+          "role": "Starting approach and player orientation at the trailhead.",
+          "where": "Low foreground",
+          "size": ""
         },
         {
-          "name": "Protected mid-route ledge",
-          "role": "Safe stop containing the accessible tent shelter.",
-          "where": "midpoint, slightly off the trail",
-          "size": "enough surrounding flat snow for a safe stop"
+          "name": "Ascending mountainside",
+          "role": "The main climb, with the packed-snow route winding through exposed slopes, narrow ridgeline traverses, and sheltered bends.",
+          "where": "Middle of the ascent",
+          "size": "Most of the map"
         },
         {
-          "name": "Summit",
-          "role": "Reachable destination of the ascent.",
-          "where": "upper background",
-          "size": "high"
+          "name": "High summit platform",
+          "role": "Final destination, reached by the final climb.",
+          "where": "High background above the route",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Lower snowfield trailhead",
-          "to": "Protected mid-route ledge",
+          "from": "Lower snowy approach",
+          "to": "Ascending mountainside",
           "kind": "trail"
         },
         {
-          "from": "Protected mid-route ledge",
-          "to": "Summit",
+          "from": "Ascending mountainside",
+          "to": "High summit platform",
           "kind": "trail"
         }
       ],
-      "terrain": "Deep snow over dark rock, with narrow ridges, wider resting ledges, steep drop-offs, wind-carved drifts, intermittent boulders, and ice outcrops.",
+      "terrain": "Deep snow, wind-carved drifts, dark exposed rock, sparse ice-crusted outcrops, steep snow-covered ridges, ledges, and ascending mountain faces.",
       "props": [
         {
           "name": "Tent shelter",
           "count": 1,
-          "where": "protected mid-route ledge, slightly off the trail"
-        },
-        {
-          "name": "Boulders or ice outcrops",
-          "count": -1,
-          "where": "intermittently along the route"
+          "where": "Beside a widened, relatively level trail section around the middle of the ascent, protected by a snowbank or rock outcrop."
         }
       ],
-      "boundary": "Cliff walls, ridgelines, and whiteout falloff rather than artificial walls.",
+      "boundary": "Natural steep slopes, cliffs, and the whiteout fading into the surrounding mountain define the boundary.",
       "scale_band": "medium",
-      "theme": "bleak survival whiteout, muted blue-gray snow, dark exposed rock, sparse low-visibility atmosphere"
+      "theme": "Bleak survival whiteout, cold blue-grey snow, low visibility, wind, and dark alpine rock."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the ascent trail must remain continuously connected from trailhead through the shelter to the reachable summit.",
+      "why": "The climbing route must remain visibly continuous from trailhead through the shelter to the summit.",
       "set_piece": false
     },
     "route": [
-      "P3",
       "tiered"
     ],
-    "notes": [],
+    "notes": [
+      "Guided Trail is adapted by retaining the trail and summit pull while omitting its cave-to-valley reveal.",
+      "No additional placed gameplay markers were requested."
+    ],
     "scene_prompt": "Create a 3D mountain adventure map in a bleak survival whiteout: a snow-covered ascent leading toward a high mountain summit, with a tent shelter positioned along the route as a safe stop from the cold."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
   "mapper_notes": [
-    "blob asked for topdown first; the route ['P3', 'P0', 'tiered'] gives isometric"
+    "blob asked for topdown first; the route ['P0', 'tiered'] gives isometric"
   ]
 }

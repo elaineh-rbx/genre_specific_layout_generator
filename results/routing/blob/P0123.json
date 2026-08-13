@@ -19,160 +19,188 @@
     }
   ],
   "scene_prompt": "Create a 3D FPS map showing a colorful, slightly stylized Factory arena sized for 8 players. Build a compact looping layout through interconnected warehouses, conveyor-belt work areas, and accessible rooftops, with player spawns distributed around the loop rather than in opposing bases. Use interior warehouse routes and open rooftop sections to create a tight, readable combat space with both close-range cover and longer sightlines; frame the arena with factory structures and industrial walls.",
-  "blob": "### Genre\nThe dominant genre is Shooter, specifically a free-for-all Gun Game rather than a team-lane match. The elimination-and-weapon-progression rules establish the genre, while the requested Factory map supplies the spatial build.\n\n### Shape and preset\nUse `lane-network`: a compact, interconnected factory loop with several combat routes rather than opposing team bases. The matching preset is Arena Deathmatch, retained for its looping free-for-all circulation and varied engagement elevations; omit its unrequested powerup placement. The prompt’s distributed free-for-all spawns override any team-base reading.\n\n### Config requirements\n`path-loop` is visible geometry: interconnected warehouse rooms, conveyor work areas, roof access, and return routes prevent the arena from becoming a dead-end sequence. `cover-los` is visible geometry: machinery, crate stacks, conveyor housings, and warehouse columns break close-range sightlines while leaving selected longer lanes. `cover-elevated` is visible geometry: accessible rooftops and raised catwalk-like industrial platforms create exposed longer-range firing positions. `building-interior` is visible geometry: players move through warehouse interiors and out onto roofs. `spawn-protected` is both visible geometry and invisible spawn markers: screened, distributed spawn pockets sit around the loop, out of direct firing lines.\n\n### Layout components\nBuild one compact Factory arena sized for 8 players. Place a central conveyor-belt production floor as the main conflict zone, roughly one-third of the footprint, enclosed by two connected warehouse volumes on opposite sides. Run interior aisles through both warehouses, using machinery, pallets, crate stacks, and structural columns as cover. Add two to three exterior rooftop sections above the warehouses, each reached by clearly visible stairs or industrial access ramps; these roofs look across the conveyor floor and into selected streetside gaps, but remain exposed. Connect all zones into a continuous loop with at least two alternate cross-links so players can rotate between interior close-quarters spaces and open roof sightlines. Surround the perimeter with dense factory facades, loading-bay walls, pipes, and industrial boundary walls; no opposing bases. Keep player spawn pockets distributed around outer warehouse edges and roof-access returns. Frame the composition as a readable three-quarter isometric industrial compound, with the central conveyor floor and roof elevations both legible.\n\n### Render order\nUse `isometric`: the compact arena’s stylized industrial readability and cover composition lead; its loop is important but does not require a procedurally guaranteed track or maze topology.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the tight 8-player target. Theme is colorful, slightly stylized industrial factory combat: bright painted metal, conveyors, warehouses, rooftop ducts, and clear weapon-friendly sightlines. Use `P2` because accessible roofs and elevated industrial surfaces sit above warehouse interiors, and `P3` because play repeatedly crosses between exterior rooftops and enclosed warehouse spaces.",
+  "blob": "### 1. Genre\nThe dominant genre is Shooter, specifically a free-for-all gun-game arena rather than a team-lane match. No secondary genre is needed.\n\n### 2. Shape and preset\nUse `arena-stacked`, taken from outside Shooter’s usual shape shortlist, because accessible rooftops sit above interior warehouse combat floors. The closest preset is Arena Deathmatch, but it is not recognisable after replacing its lane-network shape and omitting its pickup emphasis; preset: none.\n\n### 3. Config requirements\nUse `cover-los` as crates, machinery, conveyor housings, and warehouse columns that break close-range sightlines. Use `path-loop` for interconnected warehouse corridors, work floors, roof access, and return routes with no isolated combat pocket. Use `cover-elevated` for exposed rooftop firing positions overlooking selected factory lanes. Use `building-interior` for warehouse interiors that connect directly to exterior rooftop sections. Use `spawn-protected` as screened spawn alcoves that do not open directly into a firing lane.\n\n### 4. Layout requirements\nPlace `spawn-protected` as eight distributed spawn markers around the outer loop, each recessed behind machinery, walls, or short bends and spaced away from direct mutual sightlines. No opposing team bases, scoring volumes, pickups, or AI emitters are required for this first Factory build.\n\n### 5. Layout components\nBuild one compact Factory arena sized for 8 players. The central zone is a large warehouse work floor with conveyor-belt machinery, crate cover, and several crossing combat routes. Flank it with two smaller warehouse bays and connecting interior corridors, each with multiple entrances and exits. Rooftops occupy the perimeter and upper warehouse surfaces, reached by exterior stairs and interior stairwells; they provide longer but exposed sightlines back into the work floor and across neighboring roofs. Conveyors create readable work-area landmarks rather than forced traversal. Industrial walls, warehouse facades, and roof parapets enclose the arena boundary. Compose the frame around the central machinery floor, with rooftops visibly layered above the connected interior network.\n\n### 6. Render order\nRender `isometric` first and treat it as authoritative, because this is a compact combat environment whose visual readability and layered industrial silhouette lead; the top-down plan can be projected from that coherent arena view.\n\n### 7. Scale, theme, and pipeline cost\nScale is medium: the arena is deliberately tight for 8 players but includes several warehouse rooms and accessible roofs. Theme: colorful, slightly stylized industrial factory, with clear combat readability. Pipeline modifiers: `P2` because rooftop and interior surfaces overlap vertically; `P3` because play crosses between warehouse interiors and exterior roofs.",
   "spec": {
     "genre": "Shooter",
     "secondary": [],
-    "shape": "lane-network",
-    "preset": "Arena Deathmatch",
+    "shape": "arena-stacked",
+    "preset": "none",
     "axes": {},
     "options": [
       {
-        "id": "path-loop",
-        "text": "Interconnected warehouse rooms, conveyor work areas, roof access, and return routes prevent the arena from becoming a dead-end sequence.",
+        "id": "cover-los",
+        "text": "Crates, machinery, conveyor housings, and warehouse columns that break close-range sightlines.",
         "visible": true,
         "count": -1
       },
       {
-        "id": "cover-los",
-        "text": "Machinery, crate stacks, conveyor housings, and warehouse columns break close-range sightlines while leaving selected longer lanes.",
+        "id": "path-loop",
+        "text": "Interconnected warehouse corridors, work floors, roof access, and return routes with no isolated combat pocket.",
         "visible": true,
         "count": -1
       },
       {
         "id": "cover-elevated",
-        "text": "Accessible rooftops and raised catwalk-like industrial platforms create exposed longer-range firing positions.",
+        "text": "Exposed rooftop firing positions overlooking selected factory lanes.",
         "visible": true,
         "count": -1
       },
       {
         "id": "building-interior",
-        "text": "Players move through warehouse interiors and out onto roofs.",
+        "text": "Warehouse interiors that connect directly to exterior rooftop sections.",
         "visible": true,
         "count": -1
       },
       {
         "id": "spawn-protected",
-        "text": "Screened, distributed spawn pockets sit around the loop, out of direct firing lines.",
+        "text": "Screened spawn alcoves that do not open directly into a firing lane.",
         "visible": true,
-        "count": -1
+        "count": 8
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "spawn-protected",
+        "text": "Eight distributed spawn markers around the outer loop, each recessed behind machinery, walls, or short bends and spaced away from direct mutual sightlines.",
+        "count": 8,
+        "where": "Around the outer loop, recessed behind machinery, walls, or short bends and away from direct mutual sightlines."
       }
     ],
     "layout": {
-      "composition": "Readable three-quarter isometric industrial compound, with the central conveyor floor and roof elevations both legible; the conveyor production floor is central, connected warehouse volumes sit on opposite sides, and exterior rooftops look across the conveyor floor and selected streetside gaps.",
+      "composition": "Frame the arena around the central machinery floor, with rooftops visibly layered above the connected interior network.",
       "zones": [
         {
-          "name": "Central conveyor-belt production floor",
-          "role": "Main conflict zone.",
+          "name": "Central warehouse work floor",
+          "role": "Large combat work floor with conveyor-belt machinery, crate cover, and several crossing combat routes.",
           "where": "centre",
-          "size": "Roughly one-third of the footprint."
+          "size": "large"
         },
         {
-          "name": "Connected warehouse volumes",
-          "role": "Interior close-quarters combat routes with aisles and cover.",
-          "where": "Opposite sides of the central conveyor floor.",
+          "name": "Warehouse bay",
+          "role": "Smaller flank warehouse combat bay with multiple entrances and exits.",
+          "where": "one side of the central work floor",
+          "size": "smaller"
+        },
+        {
+          "name": "Warehouse bay",
+          "role": "Smaller flank warehouse combat bay with multiple entrances and exits.",
+          "where": "opposite side of the central work floor",
+          "size": "smaller"
+        },
+        {
+          "name": "Interior corridors",
+          "role": "Connect the warehouse work floor and bays into a looping network with return routes.",
+          "where": "between and through the warehouse areas",
           "size": ""
         },
         {
-          "name": "Exterior rooftop sections",
-          "role": "Exposed longer-range firing positions with views across the conveyor floor and into selected streetside gaps.",
-          "where": "Above the warehouses.",
-          "size": "Two to three sections."
-        },
-        {
-          "name": "Spawn pockets",
-          "role": "Distributed free-for-all player spawns screened from direct firing lines.",
-          "where": "Around outer warehouse edges and roof-access returns.",
+          "name": "Rooftops",
+          "role": "Upper perimeter combat surfaces with longer but exposed sightlines into the work floor and across neighbouring roofs.",
+          "where": "perimeter and upper warehouse surfaces",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Central conveyor-belt production floor",
-          "to": "Connected warehouse volumes",
+          "from": "Central warehouse work floor",
+          "to": "Warehouse bay",
           "kind": "corridor"
         },
         {
-          "from": "Connected warehouse volumes",
-          "to": "Exterior rooftop sections",
+          "from": "Central warehouse work floor",
+          "to": "Warehouse bay",
+          "kind": "corridor"
+        },
+        {
+          "from": "Warehouse bay",
+          "to": "Interior corridors",
+          "kind": "corridor"
+        },
+        {
+          "from": "Warehouse bay",
+          "to": "Interior corridors",
+          "kind": "corridor"
+        },
+        {
+          "from": "Interior corridors",
+          "to": "Rooftops",
           "kind": "stair"
         },
         {
-          "from": "Connected warehouse volumes",
-          "to": "Connected warehouse volumes",
-          "kind": "corridor"
-        },
-        {
-          "from": "Exterior rooftop sections",
-          "to": "Spawn pockets",
-          "kind": "ramp"
+          "from": "Central warehouse work floor",
+          "to": "Rooftops",
+          "kind": "stair"
         }
       ],
-      "terrain": "Compact industrial factory ground with conveyor work areas, warehouse interiors, rooftops, streetside gaps, bright painted metal, rooftop ducts, pipes, and loading-bay walls.",
+      "terrain": "",
       "props": [
         {
-          "name": "machinery",
+          "name": "Conveyor-belt machinery",
           "count": -1,
-          "where": "Interior aisles and conveyor work areas."
+          "where": "Central warehouse work floor"
         },
         {
-          "name": "pallets",
+          "name": "Crate cover",
           "count": -1,
-          "where": "Interior warehouse aisles."
+          "where": "Central warehouse work floor"
         },
         {
-          "name": "crate stacks",
+          "name": "Machinery",
           "count": -1,
-          "where": "Interior warehouse aisles."
+          "where": "Around the outer loop and across warehouse combat areas"
         },
         {
-          "name": "structural columns",
+          "name": "Conveyor housings",
           "count": -1,
-          "where": "Warehouse interiors."
+          "where": "Warehouse work areas"
         },
         {
-          "name": "factory facades",
+          "name": "Warehouse columns",
           "count": -1,
-          "where": "Perimeter."
+          "where": "Warehouse combat floors"
         },
         {
-          "name": "loading-bay walls",
+          "name": "Industrial walls",
           "count": -1,
-          "where": "Perimeter."
+          "where": "Arena boundary"
         },
         {
-          "name": "pipes",
+          "name": "Warehouse facades",
           "count": -1,
-          "where": "Perimeter and industrial compound."
+          "where": "Arena boundary"
         },
         {
-          "name": "industrial boundary walls",
+          "name": "Roof parapets",
           "count": -1,
-          "where": "Perimeter."
+          "where": "Rooftop perimeter"
         }
       ],
-      "boundary": "Dense factory facades, loading-bay walls, pipes, and industrial boundary walls surround the perimeter; no opposing bases.",
-      "scale_band": "small",
-      "theme": "Colorful, slightly stylized industrial factory combat with bright painted metal, conveyors, warehouses, rooftop ducts, and clear weapon-friendly sightlines."
+      "boundary": "Industrial walls, warehouse facades, and roof parapets enclose the arena boundary.",
+      "scale_band": "medium",
+      "theme": "Colorful, slightly stylized industrial factory with clear combat readability."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "the compact arena’s stylized industrial readability and cover composition lead, while its loop does not require procedurally guaranteed track or maze topology.",
+      "why": "visual readability and the layered industrial silhouette lead in this compact combat environment.",
       "set_piece": false
     },
     "route": [
       "P2",
       "P3"
     ],
-    "notes": [],
+    "notes": [
+      "arena-stacked is taken from outside Shooter’s usual shape shortlist.",
+      "No opposing team bases, scoring volumes, pickups, or AI emitters are required.",
+      "visible on 'spawn-protected' set from goes_to=both"
+    ],
     "scene_prompt": "Create a 3D FPS map showing a colorful, slightly stylized Factory arena sized for 8 players. Build a compact looping layout through interconnected warehouses, conveyor-belt work areas, and accessible rooftops, with player spawns distributed around the loop rather than in opposing bases. Use interior warehouse routes and open rooftop sections to create a tight, readable combat space with both close-range cover and longer sightlines; frame the arena with factory structures and industrial walls."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a detailed 3D open-world city map with a realistic, lived-in street grid. Arrange claimable pre-built detailed houses in residential neighborhoods, with stores and other city buildings along commercial streets. Include broad drivable roads for cars throughout the city and a dedicated racing-street circuit with a visible start/finish line and lap route. Compose dense urban foreground streets leading through housing and shop districts toward a larger city backdrop.",
-  "blob": "### Genre\nThe dominant genre is Roleplay & Avatar Sim, with Racing as a secondary genre because the city is primarily a realistic, claimable-home social world that contains a dedicated lap circuit.\n\n### Shape and preset\nUse `settlement-claimable`: pre-built detailed 3D houses are arranged for players to claim, rather than empty construction plots. This matches the Life preset, retaining its city-scale residential model; the explicitly requested circuit is added from the secondary Racing genre.\n\n### Config requirements\nVisible geometry includes `path-road-vehicle` as broad, turn-capable city streets for cars; `district-zoned` as distinct residential neighborhoods and commercial shop streets; `lane-corridor` as clearly marked racing lanes; and `startpoint-line` as the visible circuit start/finish frontage. `trigger-finish` is both visible through the finish-line structure and invisible as its detection zone. `trigger-lap` is invisible, placed at the finish and intermediate route checkpoints after the city layout is segmented. Do not add enterable interiors, crowds, or extra city facilities not named by the prompt.\n\n### Layout components\nBuild one large open city. Residential districts occupy the side and midground blocks, with repeated but individually detailed pre-built houses on claimable parcels, front drives, sidewalks, and local streets. Commercial streets run through the denser central foreground, lined with stores and other civic-scale city buildings. A broad connected road grid links every district and supports vehicle circulation, with major avenues leading toward a larger dense city backdrop.\n\nPlace the dedicated racing-street circuit as a legible closed loop on the city road network or along its outer boulevard, separated from ordinary intersections by lane markings and a clear start/finish line. The route must remain continuously followable in plan view, with its lap checkpoints spaced around the loop. Use paved asphalt, sidewalks, curbs, street furniture, parking edges, and layered building frontage; enclose the playable city naturally with distant urban massing and perimeter boulevards rather than a hard visible wall. Frame dense foreground streets to lead through housing and shops toward the skyline.\n\n### Render order\nUse `authored_plan`: the timed lap circuit must be a valid closed route with an unambiguous finish and lap sequence, so generate its plan in code first, then dress the connected city around it.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by multiple residential neighborhoods, commercial corridors, a city road grid, and the full racing circuit. Theme: highly detailed, realistic contemporary lived-in city. Pipeline modifiers are `P3` for the claimable-house interior boundary implied by `settlement-claimable`, and `P6` because the racing circuit must be valid by construction.",
+  "blob": "### Genre\nThe dominant genre is Roleplay & Avatar Sim, with Racing as a secondary genre because the city is primarily a Brookhaven-style realistic social city but contains a dedicated lap-racing activity.\n\n### Shape and preset\nUse `settlement-claimable`, matching the Life preset: a connected city of finished, claimable houses rather than empty construction plots. Retain that preset’s residential-city logic, while adding Racing options for the dedicated circuit; the circuit does not replace the city as the dominant shape.\n\n### Config requirements\nUse `path-road-vehicle` for broad, connected drivable streets serving cars across residential and commercial districts. Use `district-zoned` to keep quiet housing neighborhoods distinct from active store-lined commercial streets. Add `startpoint-line` and `trigger-finish` as visible start/finish markings for the racing circuit; the latter is also a placed finish trigger.\n\n### Layout requirements\nPlace one `startpoint-line` at the circuit launch straight and one `trigger-finish` exactly across that same start/finish line for lap completion. Place `trigger-lap` detection regions at each major circuit sector and at the lap line, ensuring racers follow the complete loop rather than cutting through city streets. No other invisible gameplay placement is required by the prompt.\n\n### Layout components\nBuild a large, contiguous realistic city. Residential neighborhoods occupy the foreground and side districts, with rows of detailed pre-built claimable 3D homes on individual parcels. Commercial corridors run through the central city with stores and larger urban buildings facing the main streets. A broad, readable road grid links every district and accommodates cars, with intersections, sidewalks, curbs, parking edges, and a denser skyline backdrop. Set a dedicated paved racing-street circuit along a distinct outer or industrial-side district, clearly separated from ordinary traffic streets; it forms one closed lap route with a long launch straight, visible start/finish line, marked turns, and continuous road surface. Keep the city open rather than enclosing it with a hard wall, fading into a larger urban backdrop at the perimeter. Frame dense foreground streets leading inward through homes and shops toward the distant city mass.\n\n### Render order\nUse `authored_plan`: the lap circuit must be a valid, continuous closed route before the city is dressed around it, or the racing activity becomes unplayable.\n\n### Scale, theme, and pipeline cost\nScale is huge, driven by multiple city districts, a full drivable street grid, and a separate racing circuit. Theme: high-detail, realistic contemporary lived-in city. Use `P6` because the circuit must be valid by construction; no other pipeline modifier is forced.",
   "spec": {
     "genre": "Roleplay & Avatar Sim",
     "secondary": [
@@ -26,115 +26,150 @@
     "options": [
       {
         "id": "path-road-vehicle",
-        "text": "broad, turn-capable city streets for cars, forming a connected road grid linking every district",
+        "text": "Broad, connected drivable streets serving cars across residential and commercial districts.",
         "visible": true,
         "count": -1
       },
       {
         "id": "district-zoned",
-        "text": "distinct residential neighborhoods and commercial shop streets, with denser central commercial corridors",
+        "text": "Quiet housing neighborhoods kept distinct from active store-lined commercial streets.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "Dense urban foreground streets lead through housing and shop districts toward a larger dense city skyline backdrop; residential blocks sit to the sides and in the midground, while commercial streets occupy the denser central foreground.",
+      "composition": "Dense foreground streets lead inward through residential homes and shop districts toward the distant larger city mass and denser skyline backdrop.",
       "zones": [
         {
-          "name": "Residential districts",
-          "role": "Claimable pre-built detailed houses on parcels with front drives, sidewalks, and local streets.",
-          "where": "side and midground blocks",
-          "size": "multiple neighborhoods"
+          "name": "Residential neighborhoods",
+          "role": "Rows of detailed pre-built claimable 3D homes on individual parcels.",
+          "where": "Foreground and side districts.",
+          "size": ""
         },
         {
-          "name": "Commercial streets",
-          "role": "Stores and civic-scale city buildings line denser commercial corridors.",
-          "where": "central foreground",
-          "size": "dense"
+          "name": "Commercial corridors",
+          "role": "Stores and larger urban buildings face the main streets.",
+          "where": "Central city.",
+          "size": ""
+        },
+        {
+          "name": "Drivable road grid",
+          "role": "Broad readable streets link every district and accommodate cars, with intersections, sidewalks, curbs, and parking edges.",
+          "where": "Throughout the contiguous city.",
+          "size": ""
         },
         {
           "name": "Racing-street circuit",
-          "role": "A dedicated timed lap circuit with a continuous closed loop, marked lanes, start/finish frontage, and lap checkpoints.",
-          "where": "on the city road network or along the outer boulevard",
-          "size": "full circuit loop"
+          "role": "A dedicated paved closed lap route with a long launch straight, visible start/finish line, marked turns, and continuous road surface.",
+          "where": "A distinct outer or industrial-side district, separated from ordinary traffic streets.",
+          "size": ""
         },
         {
-          "name": "City backdrop",
-          "role": "Larger dense urban massing extending the visual city beyond the foreground districts.",
-          "where": "background",
-          "size": "large"
+          "name": "Urban backdrop",
+          "role": "A larger city mass and denser skyline fading outward from the city perimeter.",
+          "where": "Background and perimeter.",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Residential districts",
-          "to": "Commercial streets",
+          "from": "Residential neighborhoods",
+          "to": "Commercial corridors",
           "kind": "road"
         },
         {
-          "from": "Commercial streets",
-          "to": "City backdrop",
+          "from": "Commercial corridors",
+          "to": "Urban backdrop",
           "kind": "road"
         },
         {
-          "from": "Racing-street circuit",
-          "to": "Racing-street circuit",
+          "from": "Racing-street circuit launch straight",
+          "to": "Racing-street circuit marked turns",
+          "kind": "track"
+        },
+        {
+          "from": "Racing-street circuit marked turns",
+          "to": "Racing-street circuit launch straight",
           "kind": "track"
         }
       ],
-      "terrain": "Paved asphalt city streets with sidewalks, curbs, parking edges, and layered building frontage.",
+      "terrain": "Paved city streets, sidewalks, curbs, parking edges, and a continuous paved racing circuit.",
       "props": [
         {
-          "name": "pre-built detailed claimable houses",
+          "name": "Detailed pre-built claimable 3D homes",
           "count": -1,
-          "where": "residential neighborhoods on claimable parcels"
+          "where": "Residential neighborhoods on individual parcels."
         },
         {
-          "name": "stores and civic-scale city buildings",
+          "name": "Stores",
           "count": -1,
-          "where": "commercial streets and central foreground"
+          "where": "Commercial corridors facing main streets."
         },
         {
-          "name": "street furniture",
+          "name": "Larger urban buildings",
           "count": -1,
-          "where": "along streets and sidewalks"
+          "where": "Commercial corridors and the denser skyline backdrop."
         },
         {
-          "name": "start/finish line structure",
+          "name": "Intersections",
           "count": -1,
-          "where": "racing-street circuit"
+          "where": "Across the broad drivable road grid."
         },
         {
-          "name": "lap checkpoints",
+          "name": "Sidewalks",
           "count": -1,
-          "where": "spaced around the racing-street circuit"
+          "where": "Along city streets."
+        },
+        {
+          "name": "Curbs",
+          "count": -1,
+          "where": "Along city streets."
+        },
+        {
+          "name": "Parking edges",
+          "count": -1,
+          "where": "Along city streets."
+        },
+        {
+          "name": "Visible start/finish line",
+          "count": 1,
+          "where": "On the racing-street circuit launch straight."
+        },
+        {
+          "name": "Marked turns",
+          "count": -1,
+          "where": "Along the racing-street circuit."
         }
       ],
-      "boundary": "Naturally enclosed by distant urban massing and perimeter boulevards rather than a hard visible wall.",
-      "scale_band": "large",
-      "theme": "highly detailed, realistic contemporary lived-in city"
+      "boundary": "Open city with no hard wall, fading into a larger urban backdrop at the perimeter.",
+      "scale_band": "huge",
+      "theme": "High-detail, realistic contemporary lived-in city."
     },
     "render": {
       "first": "authored_plan",
       "then": "topdown",
       "authoritative": "authored_plan",
-      "why": "the timed lap circuit must be a valid closed route with an unambiguous finish and lap sequence.",
+      "why": "the lap circuit must be a valid continuous closed route before the city is dressed around it or racing becomes unplayable.",
       "set_piece": false
     },
     "route": [
-      "P3",
       "P6"
     ],
     "notes": [
-      "Dropped `lane-corridor`, `startpoint-line`, `trigger-finish`, and `trigger-lap` from options because they are not canonical option IDs for the dominant Roleplay & Avatar Sim genre; their specified circuit geometry and checkpoints remain recorded in the layout.",
-      "No enterable interiors, crowds, or extra city facilities were added."
+      "dropped option 'startpoint-line': not in Roleplay & Avatar Sim",
+      "dropped option 'trigger-finish': not in Roleplay & Avatar Sim",
+      "dropped option 'trigger-lap': not in Roleplay & Avatar Sim",
+      "dropped placement 'startpoint-line': not in Roleplay & Avatar Sim",
+      "dropped placement 'trigger-finish': not in Roleplay & Avatar Sim",
+      "dropped placement 'trigger-lap': not in Roleplay & Avatar Sim"
     ],
     "scene_prompt": "Create a detailed 3D open-world city map with a realistic, lived-in street grid. Arrange claimable pre-built detailed houses in residential neighborhoods, with stores and other city buildings along commercial streets. Include broad drivable roads for cars throughout the city and a dedicated racing-street circuit with a visible start/finish line and lap route. Compose dense urban foreground streets leading through housing and shop districts toward a larger city backdrop."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

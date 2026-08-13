@@ -3,111 +3,160 @@
   "source": "Epic race track for a speed run minigame. A long winding track with hills, ramps, curves, obstacles to dodge, tunnels to run through, and a grand finish line arch. Vibrant cartoon style with green grass edges, colorful barriers, and exciting track design. Include speed boost sections and tricky jump sections.",
   "answers": [],
   "scene_prompt": "Create a 3D speed-run race map with a long, winding track that crosses rolling hills through curves, ramps, tunnels, dodge obstacles, speed-boost stretches, and tricky jump sections. Frame the track with vibrant green grass edges and colorful barriers, culminating at a prominent grand finish-line arch; use an energetic cartoon-like composition with the course clearly readable from start through the distant finish.",
-  "blob": "### Genre\nThe dominant genre is Racing: the original request defines a speed-run competition over a designated course. No secondary genre is needed.\n\n### Shape and preset\nUse `route-point-to-point`, a single long winding run from a clear entry stretch to the distant grand finish arch. The closest preset is Obstacle Race, but use none because the prompt retains its point-to-point form and finish while not requesting its recovery points or explicit off-track penalties.\n\n### Config requirements\n`trigger-finish` is both visible geometry and invisible layout: the prominent finish-line arch visibly terminates the course, with its detection zone placed beneath it after segmentation. `barrier-guardrail` is visible geometry: colorful physical barriers line exposed bends, ramps, and track edges. `terrain-relief` is visible geometry: rolling green hills rise around and beneath the route. The dodge obstacles, ramps, tunnels, painted speed-boost stretches, and jump sections are concrete course geometry rather than extra gameplay options.\n\n### Layout components\nBuild one extended course zone, beginning at a broad readable track entry in the foreground and winding away across rolling hills to a large finish arch in the far distance. The continuous paved track repeatedly curves through open grass-edged terrain, with alternating wide sweeping bends and tighter barrier-lined turns. Include several raised ramps and clearly separated jump gaps that remain part of the authored route; add colorful stationary dodge obstacles on selected straightaways and turns. Carve tunnels through hill masses to create enclosed passages before reopening onto exposed hilltop track. Insert bright, visually distinct striped speed-boost stretches along straighter sections. Green grass borders the track throughout, while colorful rails contain the outer edges and frame the most elevated ramps and curves. Keep the outer world open beyond the grass, using hills and the course geometry as the visual boundary. Compose the full route diagonally through an energetic cartoon landscape, with the finish arch visibly anchoring the endpoint.\n\n### Render order\nUse `authored_plan`: a racing route must be valid by construction, with one continuous, unambiguous point-to-point track and legal jump connections, before images dress the terrain and props.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by the long multi-feature route and distant finish. Theme: vibrant cartoon racing landscape, saturated grass, colorful barriers, playful high-energy track design. Apply `P6` for the generated continuous race route, `tiered` for rolling hills and ramps without stacked driving surfaces, and `P3` because tunnel passages take racers between open exterior track and enclosed interiors.",
+  "blob": "### 1. Genre\nThe dominant genre is Racing: player speed and a designated start-to-finish route define the map.\n\n### 2. Shape and preset\nUse `route-point-to-point`, a single long racecourse that winds continuously from its launch point across hills to the finish arch. Match the Obstacle Race preset, retaining its recovery and finish emphasis while omitting unrequested off-track lethal hazards; add the prompted hills, tunnels, boost stretches, and jump geometry.\n\n### 3. Config requirements\nUse `startpoint-line` as a clear launch line at the near end of the course, `trigger-finish` as the prominent grand finish-line arch, `barrier-guardrail` as colorful physical rails on exposed curves and ramps, and `terrain-relief` as rolling grassy hills carrying the route. The speed-boost stretches should read as bright, contrasting track pads, while ramps, dodge obstacles, and jump gaps are visible course geometry.\n\n### 4. Layout requirements\nPlace one `startpoint-line` marker at the course entrance and one `trigger-finish` volume directly beneath the final arch. Use `checkpoint-respawn` recovery points immediately after major hill climbs, tunnels, and tricky jump sections, so a missed jump restores the racer to the last safe completed section. Use `powerup-buffs` markers along each explicitly visible boost stretch, aligned centrally on the racing surface.\n\n### 5. Layout components\nBuild one continuous, wide winding track running from the foreground start through rolling green hills toward a distant finish. Sequence broad curves, raised ramps, short dodge-obstacle runs, enclosed tunnels through the hills, vivid boost-pad straights, and several clearly signposted jump sections. Grass borders frame both sides of the track, with colorful guardrails concentrated on curves, elevated edges, ramps, and jump approaches. The final zone is a broad straight with the large finish arch as its focal endpoint. Keep the outer boundary natural: hills and grass contain the course rather than enclosing it with walls. Compose the whole route in an elevated three-quarter overview, with readable track continuity from the start to the distant arch.\n\n### 6. Render order\nUse `authored_plan`: the connected point-to-point racing route, safe jump sequence, and tunnel continuity must be valid before visual dressing.\n\n### 7. Scale, theme, and pipeline cost\nScale is large, driven by the long multi-section course. Theme: vibrant cartoon racing world with saturated barriers, lush green grass, and energetic obstacle design. Apply `P6` because the route must be connected and playable by construction; `tiered` for rolling hills; `P2` because tunnel terrain overhangs the traversable course; and `P3` because racers repeatedly cross between open track and enclosed tunnel interiors.",
   "spec": {
     "genre": "Racing",
     "secondary": [],
     "shape": "route-point-to-point",
-    "preset": "none",
+    "preset": "Obstacle Race",
     "axes": {},
     "options": [
       {
-        "id": "trigger-finish",
-        "text": "The prominent grand finish-line arch visibly terminates the course, with its detection zone placed beneath it after segmentation.",
+        "id": "startpoint-line",
+        "text": "A clear launch line at the near end of the course.",
         "visible": true,
-        "count": -1
+        "count": 1
+      },
+      {
+        "id": "trigger-finish",
+        "text": "The prominent grand finish-line arch at the end of the course.",
+        "visible": true,
+        "count": 1
       },
       {
         "id": "barrier-guardrail",
-        "text": "Colorful physical barriers line exposed bends, ramps, and track edges, containing the outer edges and framing the most elevated ramps and curves.",
+        "text": "Colorful physical rails on exposed curves and ramps.",
         "visible": true,
         "count": -1
       },
       {
         "id": "terrain-relief",
-        "text": "Rolling green hills rise around and beneath the route.",
+        "text": "Rolling grassy hills carrying the route.",
         "visible": true,
+        "count": -1
+      },
+      {
+        "id": "checkpoint-respawn",
+        "text": "Recovery points after major hill climbs, tunnels, and tricky jump sections, restoring a racer to the last safe completed section after a missed jump.",
+        "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "startpoint-line",
+        "text": "A clear launch line.",
+        "count": 1,
+        "where": "At the course entrance."
+      },
+      {
+        "id": "trigger-finish",
+        "text": "A finish volume.",
+        "count": 1,
+        "where": "Directly beneath the final arch."
+      },
+      {
+        "id": "checkpoint-respawn",
+        "text": "Recovery points that restore a missed-jump racer to the last safe completed section.",
+        "count": -1,
+        "where": "Immediately after major hill climbs, tunnels, and tricky jump sections."
+      }
+    ],
     "layout": {
-      "composition": "The full route runs diagonally through an energetic cartoon landscape, beginning with a broad readable track entry in the foreground and winding across rolling hills toward the large finish arch anchoring the far-distance endpoint.",
+      "composition": "An elevated three-quarter overview shows the continuous track from the foreground start through rolling green hills to the distant finish arch, with readable route continuity throughout.",
       "zones": [
         {
-          "name": "Extended course zone",
-          "role": "One continuous point-to-point speed-run course with curves, ramps, tunnels, dodge obstacles, speed-boost stretches, and jump sections.",
-          "where": "From the foreground entry diagonally across the landscape to the far distance.",
-          "size": "large"
+          "name": "Course entrance",
+          "role": "Launch point for racers.",
+          "where": "Foreground, at the near end of the course.",
+          "size": ""
+        },
+        {
+          "name": "Winding racecourse",
+          "role": "The continuous route through curves, raised ramps, dodge-obstacle runs, enclosed tunnels, boost-pad straights, and signposted jump sections.",
+          "where": "Running from the foreground through the rolling hills.",
+          "size": ""
+        },
+        {
+          "name": "Final zone",
+          "role": "The broad final straight ending at the grand finish-line arch.",
+          "where": "Distant end of the course.",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Broad track entry",
-          "to": "Grand finish-line arch",
+          "from": "Course entrance",
+          "to": "Final zone",
           "kind": "track"
         }
       ],
-      "terrain": "Rolling green hills and open grass-edged terrain surround and sit beneath the continuous paved track; hill masses contain carved tunnel passages.",
+      "terrain": "Rolling lush green grassy hills carry the route, with grass borders framing both sides of the track.",
       "props": [
         {
-          "name": "Grand finish-line arch",
-          "count": 1,
-          "where": "Far-distance endpoint"
+          "name": "Colorful guardrails",
+          "count": -1,
+          "where": "Concentrated on curves, elevated edges, ramps, and jump approaches."
         },
         {
           "name": "Raised ramps",
           "count": -1,
-          "where": "Along the route"
+          "where": "Along the winding track."
         },
         {
-          "name": "Jump gaps",
+          "name": "Dodge obstacles",
           "count": -1,
-          "where": "Clearly separated sections of the authored route"
+          "where": "In short runs along the course."
         },
         {
-          "name": "Colorful stationary dodge obstacles",
+          "name": "Enclosed tunnels",
           "count": -1,
-          "where": "Selected straightaways and turns"
+          "where": "Through the hills."
         },
         {
-          "name": "Tunnels",
+          "name": "Bright contrasting boost pads",
           "count": -1,
-          "where": "Carved through hill masses"
+          "where": "On vivid boost-pad straights."
         },
         {
-          "name": "Bright striped speed-boost stretches",
+          "name": "Clearly signposted jump sections",
           "count": -1,
-          "where": "Straighter track sections"
+          "where": "Along the track."
         },
         {
-          "name": "Colorful rails",
-          "count": -1,
-          "where": "Outer track edges, elevated ramps, and curves"
+          "name": "Grand finish-line arch",
+          "count": 1,
+          "where": "At the focal endpoint of the broad final straight."
         }
       ],
-      "boundary": "Open outer world beyond the grass, with hills and course geometry forming the visual boundary.",
+      "boundary": "Natural hills and grass contain the course rather than enclosing it with walls.",
       "scale_band": "large",
-      "theme": "Vibrant cartoon racing landscape with saturated grass, colorful barriers, and playful high-energy track design."
+      "theme": "Vibrant cartoon racing world with saturated barriers, lush green grass, and energetic obstacle design."
     },
     "render": {
       "first": "authored_plan",
       "then": "topdown",
       "authoritative": "authored_plan",
-      "why": "The continuous point-to-point track and legal jump connections must be valid by construction.",
+      "why": "The connected point-to-point route, safe jump sequence, and tunnel continuity must be valid before visual dressing.",
       "set_piece": false
     },
     "route": [
       "P6",
       "tiered",
+      "P2",
       "P3"
     ],
-    "notes": [],
+    "notes": [
+      "dropped option 'powerup-buffs': not in Racing",
+      "dropped placement 'powerup-buffs': not in Racing",
+      "visible on 'trigger-finish' set from goes_to=both"
+    ],
     "scene_prompt": "Create a 3D speed-run race map with a long, winding track that crosses rolling hills through curves, ramps, tunnels, dodge obstacles, speed-boost stretches, and tricky jump sections. Frame the track with vibrant green grass edges and colorful barriers, culminating at a prominent grand finish-line arch; use an energetic cartoon-like composition with the course clearly readable from start through the distant finish."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "layout",

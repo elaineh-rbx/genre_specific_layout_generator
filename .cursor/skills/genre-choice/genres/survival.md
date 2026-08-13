@@ -6,11 +6,14 @@
 
 **Shape — pick one.**
 
-| ID | Shape | What it is | Pipeline |
-| :---- | :---- | :---- | :---- |
-| `arena-contained` | **BoundaryZone (Contained Arena)** | A clearly bounded space the round plays out in, keeping the threat and the player in meaningful proximity. | |
-| `warren-looping` | **Path (Looping Warren)** | Architecture built on interconnected circles with **zero dead ends**, so a fleeing player is never artificially cornered by pathfinding AI. | `P6` |
-| `world-biomes` | **Zone (Biome World)** | Regions whose threat level scales with distance or depth. | `P4` |
+**Typical shapes.** `space-bounded` *(default)* · `warren-looping` · `world-biomes` · `interior-single` · `interior-endless`
+
+This genre words these its own way:
+
+| ID | Shape | What it is |
+| :---- | :---- | :---- |
+| `space-bounded` | **BoundaryZone (Contained Arena)** | A clearly bounded space the round plays out in, keeping the threat and the player in meaningful proximity. |
+
 
 **Options** — combine freely on top of the chosen shape.
 
@@ -33,16 +36,18 @@
 | :---- | :---- | :---- | :---- |
 | **1 vs All** | Flee the Facility, Survive the Killer (Roblox); Dead by Daylight | `warren-looping` | `cover-los`, `gate-escape`, `spawn-protected` |
 | **Escape** | Piggy (Roblox) | `warren-looping` | `gate-escape`, `cover-los`, `building-interior` |
-| **Disaster Survival** | Natural Disaster Survival (Roblox) | `arena-contained` | `hazard-kill`, `terrain-tiered`, `destructible-cluster` |
-| **Horde Defense** | Left 4 Dead, Killing Floor | `arena-contained` | `spawner-npc`, `destructible-cluster`, `cover-los` |
+| **Disaster Survival** | Natural Disaster Survival (Roblox) | `space-bounded` | `hazard-kill`, `terrain-tiered`, `destructible-cluster` |
+| **Horde Defense** | Left 4 Dead, Killing Floor | `space-bounded` | `spawner-npc`, `destructible-cluster`, `cover-los` |
 | **Resource Survival** | [Booga Booga](https://www.roblox.com/games/11729688377/Booga-Booga) (Roblox); Rust | `world-biomes` | `collectible-nodes`, `buildzone-plot` |
+| **Mascot Horror** | Poppy Playtime, Garten of Banban; Roblox mascot-horror places | `interior-single` | `cover-los`, `gate-escape`, `spawner-npc` |
+| **Liminal Horror** | The Backrooms; Apeirophobia (Roblox) | `interior-endless` | `cover-los`, `spawner-npc`, `collectible-nodes` |
 
 **Genre notes**
 
 * **Reference.** Natural Disaster Survival for the disaster bundle.
 * **Disaster survival has no exit, and that's the whole distinction.** The arena is periodically engulfed by scripted events and players survive *in place* using high ground, cover, and collapsing structures. **The win is outlasting the timer, not reaching an escape.** Adding an exit gate breaks the mode.
 * **Boundaries.** Resource/Base Survival overlaps heavily with the RPG Open World & Survival bundle — they're near-duplicates, so pick one. Chase horror versus Puzzle escape room: the pressure is a pursuing threat, not a locked door.
-* **The threat can be a region or an actor, and they're different builds.** A damaging volume needs a shape and a boundary; patrolling AI needs an origin and navigable ground. Build's original version only described the chase case and missed disaster survival entirely.
+* **The threat can be a region or an actor, and they're different builds.** A damaging volume needs a shape and a boundary; patrolling AI needs an origin and navigable ground. Cover both — describing only the chase case loses disaster survival.
 * **Zero dead ends is a hard topology property.** A single cornered corridor makes a chase game unfair, and a free image won't guarantee loop connectivity — hence the procedural-first route.
 * **Roblox's own subgenres here are 1 vs All and Escape**, both presets above. *1 vs All* is the asymmetric-roles case — one player is "it" — which needed `spawn-protected` so the hunter and the hunted don't start on top of each other. The genre had no way to express separated role spawns.
 * **Disaster Survival deliberately has no escape gate.** It is the one preset here whose win condition is a timer rather than an exit, so `gate-escape` is absent on purpose rather than by oversight.
@@ -51,7 +56,7 @@
 
 Six features that belong to **no genre in particular because they belong to all of them**. Every genre inherits this table on top of its own.
 
-They exist because the alternative is worse. Each was measured against 620 real prompts and requested in eleven to fifteen different genres, so filing them per-genre would restate the same row seventy-eight times — and leaving them out is what produced the largest hole in the system, with *who is in the world* having no home anywhere.
+They exist because the alternative is worse. Each is wanted across nearly every genre, so filing them per-genre would restate the same row dozens of times, and leaving them out strands common requests — *who is in the world* would have no home anywhere.
 
 | ID | Option | What it is | Core | Goes to | Pipeline |
 | :---- | :---- | :---- | :--: | :---- | :---- |
@@ -62,13 +67,13 @@ They exist because the alternative is worse. Each was measured against 620 real 
 | `terrain-relief` | **Zone (Terrain Relief)** | Natural landform shaping the ground: hills, mountains, cliffs, a valley, or a canyon. | | `image` | `P0 + tiered` |
 | `island-cluster` | **Zone (Island Cluster)** | Several separate landmasses with water or open air between them, crossed by bridge, boat, or flight. | | `image` | `CHECK` |
 
-**None of these is `Core`, and that is deliberate.** They must never appear in the tune menu, which shows `Core` options only, and no preset includes one. A universal option is a **landing place for a request the user actually made** — reached from the open question in step 5 when a free-text ask matches it — never a default and never a suggestion. Measured against 620 prompts, each of the six would fire on 6–15% of them, so a run that applies one unasked is wrong far more often than it is right.
+**None of these is `Core`, and that is deliberate.** They must never appear in the tune menu, which shows `Core` options only, and no preset includes one. A universal option is a **landing place for a request the user actually made** — reached from the open question in step 5 when a free-text ask matches it — never a default and never a suggestion. Most builds want none of them, so a run that applies one unasked is wrong far more often than right.
 
 **A genre's own wording wins.** Four genres already define `building-interior` in their own terms — Shooter's is a breachable structure, Survival's is a shelter to hide in. Those rows are the definition for those genres; the universal row is the fallback for the other eleven. Dedupe by ID exactly as with any shared ID.
 
 **Bend the wording to the prompt.** These are written generically because they are genre-neutral, which makes the instruction to rewrite them *more* important than usual, not less. `water-body` for a pirate game is "open sea between the islands, deep enough to sail"; for a park it is "a duck pond at the centre of the green." Ship the prompt's water, not the word "water."
 
-**Two pipeline notes.** `terrain-relief` is `P0 + tiered` for hills and cliffs, but **caves, overhangs, and tunnels push it to `P2`** — say so when the prompt asks for them. `water-body` and `island-cluster` are `CHECK` because swimming and flight are volumetric: usually fine as a play-height envelope over a representable surface, and only a real problem when the volume self-occludes (layered floating islands, 3D cave networks). See *Layout Attributes* in Build.md for the underlying axis.
+**Two pipeline notes.** `terrain-relief` is `P0 + tiered` for hills and cliffs, but **caves, overhangs, and tunnels push it to `P2`** — say so when the prompt asks for them. `water-body` and `island-cluster` are `CHECK` because swimming and flight are volumetric: usually fine as a play-height envelope over a representable surface, and only a real problem when the volume self-occludes (layered floating islands, 3D cave networks). See *The Five Routing Axes* in Build.md for the axis behind it.
 
 **`npc-population` is not `spawner-npc`.** `spawner-npc` is where hostiles enter a fight — an emitter, wired to combat. `npc-population` is who lives here. A market crowd, a quest giver, and a herd of deer are not spawners, and filing them as one produces enemy waves in a town square.
 

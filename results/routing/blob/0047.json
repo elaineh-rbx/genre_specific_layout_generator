@@ -3,92 +3,100 @@
   "source": "Create a realistic city driving map for a car game. The city should have a grid layout of streets with the following elements: - A ground/base plate representing asphalt roads forming a grid pattern with intersections - Buildings of varying heights on the blocks between roads (some tall, some medium, some short) - Sidewalks along the edges of roads - Road markings (lane dividers, crosswalks at intersections) - Street lights at intersections - Trees or small vegetation on some sidewalks - Parking lots or open spaces in some blocks Make it look realistic with appropriate colors: dark gray asphalt, gray sidewalks, varied building colors (browns, grays, blues), green trees. Expose the following configurable attributes: - blockSize: size of each city block (controls building area) - roadWidth: width of the roads - gridCount: number of blocks in the grid (controls overall map size) - buildingHeightMin: minimum building height - buildingHeightMax: maximum building height - treeDensity: how many trees to place along sidewalks - streetLightSpacing: distance between street lights",
   "answers": [],
   "scene_prompt": "Create a realistic 3D city driving map organized as a grid of asphalt streets and intersections. City blocks between the roads contain buildings of varied heights—tall, medium, and short—in brown, gray, and blue tones, with some blocks used for parking lots or open open spaces. Gray sidewalks border every road, with green trees or small vegetation placed along selected sidewalks. Use dark gray asphalt with lane dividers and crosswalks at intersections, and place street lights at intersections. Size the overall grid, blocks, roads, building-height range, tree density, and street-light spacing to be configurable.",
-  "blob": "### Genre\nThe dominant genre is Simulation, specifically a vehicle-driving map without a stated race, lap, or finish condition. No secondary genre applies.\n\n### Shape and preset\nUse `world-shared`: one contiguous city street network that vehicles can traverse freely. The closest preset is Vehicle Sim, but its shared-resource-field option is not part of this prompt, so the preset is `none`; retain only its shared-world driving form.\n\n### Config requirements\nUse visible-geometry option `path-road-vehicle` for a connected, vehicle-width orthogonal street grid with intersections, lane corridors, and turning space. Use visible-geometry universal option `settlement-density` for dense city blocks populated by varied-height buildings, parking lots, and occasional open parcels. No invisible layout options are required. Keep block size, road width, grid count, minimum and maximum building height, tree density, and street-light spacing as adjustable dimensional parameters; they control the stated geometry rather than appearing as UI.\n\n### Layout components\nBuild a single rectangular city zone organized as an adjustable grid of dark-gray asphalt roads. Each road segment meets at clear four-way intersections and is bordered by gray sidewalks. Mark roads with lane dividers and place crosswalks across every intersection. Set street lights at intersections, with optional intermediate lights governed by the adjustable spacing. Fill the blocks between roads with a varied skyline of tall, medium, and short brown, gray, and blue buildings. Reserve some complete or partial blocks for paved parking lots and open spaces. Distribute green trees and small vegetation along selected sidewalk runs according to the adjustable density. The road grid is the primary circulation network, with parking and open blocks breaking up building mass. Keep the outer city edge as the map boundary, visually closed by a continuation of perimeter buildings or distant urban backdrop. Compose the scene from an elevated three-quarter view that clearly shows the street lattice, intersections, sidewalks, and height variation.\n\n### Render order\nUse `topdown`: the connected street grid and intersection topology must be established in plan before the isometric city dressing is generated.\n\n### Scale, theme, and pipeline cost\nUse a medium scale, driven by the configurable grid count and block dimensions. Theme: realistic contemporary urban driving district, dark asphalt, neutral concrete, muted brown/gray/blue buildings, and green roadside planting. Pipeline modifier: `P0`, because this is one contiguous, single-surface outdoor city with no stacked roads, interiors, separate maps, or volumetric traversal.",
+  "blob": "### Genre\nThe dominant genre is `Simulation`, specifically a Vehicle Sim: players drive through a persistent city rather than race toward laps or a finish line.\n\n### Shape and preset\nUse `world-open`, a single contiguous drivable city grid whose streets can be explored in any order. This matches the Vehicle Sim preset in shape, but use only the road-network aspect; the preset’s extraction field is not present.\n\n### Config requirements\nUse `path-road-vehicle` for a connected, vehicle-width rectilinear street grid with regular intersections. Use `settlement-density` for dense urban blocks filled with varied-height buildings, while selected blocks remain parking lots or open spaces. Road width, block size, grid count, minimum and maximum building height, tree density, and street-light spacing remain configurable scene dimensions. Draw dark-gray asphalt, gray sidewalks, lane dividers, crosswalks, intersection street lights, and scattered green sidewalk vegetation.\n\n### Layout requirements\nNo separate placed gameplay markers are required; this prompt specifies the drivable built environment only.\n\n### Layout components\nBuild a configurable square or rectangular grid of asphalt roads, with each block bounded by sidewalks and each intersection marked by crosswalks, lane dividers, and street lights. Fill most intervening blocks with brown, gray, and blue buildings distributed across tall, medium, and short height bands. Reserve some complete blocks for parking lots or open open spaces. Place trees or low vegetation along selected sidewalk runs according to the configurable tree density, and repeat street lights along roads according to the configurable spacing, with mandatory lights at intersections. The city boundary is the outermost road-and-block ring; frame the full grid clearly from an elevated three-quarter view.\n\n### Render order\nUse `isometric`: the visual realism and urban massing lead, while the top-down plan is projected from the rendered grid.\n\n### Scale, theme, and pipeline cost\nScale is medium, expanding or contracting with configurable `gridCount`. Theme: realistic contemporary city driving environment, dark asphalt, neutral concrete, muted brown/gray/blue buildings, and green streetscape. Use `P0`; the city is one connected ground surface with no forced multi-layer, interior, or topology-validation pass.",
   "spec": {
     "genre": "Simulation",
     "secondary": [],
-    "shape": "world-shared",
-    "preset": "none",
+    "shape": "world-open",
+    "preset": "Vehicle Sim",
     "axes": {},
     "options": [
       {
         "id": "path-road-vehicle",
-        "text": "A connected, vehicle-width orthogonal street grid with intersections, lane corridors, and turning space.",
+        "text": "A connected, vehicle-width rectilinear street grid with regular intersections.",
         "visible": true,
         "count": -1
       },
       {
         "id": "settlement-density",
-        "text": "Dense city blocks populated by varied-height buildings, parking lots, and occasional open parcels.",
+        "text": "Dense urban blocks filled with varied-height buildings, with selected blocks reserved as parking lots or open spaces.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "Elevated three-quarter view clearly showing the rectangular street lattice, four-way intersections, sidewalks, parking and open blocks, and varied building heights.",
+      "composition": "Elevated three-quarter view framing the full square or rectangular city grid clearly, with the outer road-and-block ring defining the visible extent.",
       "zones": [
         {
-          "name": "Rectangular city zone",
-          "role": "Freely traversable vehicle-driving district with a connected street network.",
-          "where": "Entire map",
-          "size": "Medium; grid count and block dimensions are adjustable."
+          "name": "Rectilinear street grid",
+          "role": "Connected drivable asphalt roads with regular intersections.",
+          "where": "Across the full city grid.",
+          "size": "Configurable road width and grid count."
         },
         {
-          "name": "City blocks",
-          "role": "Hold varied-height buildings, parking lots, and open spaces between roads.",
-          "where": "Between the road grid",
-          "size": "Adjustable block size."
+          "name": "Dense urban blocks",
+          "role": "Most intervening blocks contain brown, gray, and blue buildings in tall, medium, and short height bands.",
+          "where": "Between the roads throughout the grid.",
+          "size": "Configurable block size and minimum and maximum building height."
+        },
+        {
+          "name": "Parking lots and open spaces",
+          "role": "Reserved complete blocks without buildings.",
+          "where": "Selected intervening blocks within the grid.",
+          "size": "-1"
+        },
+        {
+          "name": "Sidewalk streetscape",
+          "role": "Gray sidewalks border every road, with trees or low vegetation along selected sidewalk runs and street lights along roads.",
+          "where": "Along road edges and at every intersection.",
+          "size": "Configurable tree density and street-light spacing."
         }
       ],
       "paths": [
         {
-          "from": "City blocks",
-          "to": "City blocks",
+          "from": "Rectilinear street grid",
+          "to": "Rectilinear street grid",
           "kind": "road"
         }
       ],
-      "terrain": "Single-surface outdoor city of dark-gray asphalt roads, gray sidewalks, paved parking lots, open parcels, and green roadside planting.",
+      "terrain": "One connected ground surface of dark-gray asphalt roads and gray sidewalks; lane dividers and crosswalks mark intersections. Green sidewalk vegetation appears along selected runs.",
       "props": [
         {
-          "name": "Lane dividers",
+          "name": "Brown, gray, and blue buildings in tall, medium, and short height bands",
           "count": -1,
-          "where": "Along road segments"
+          "where": "Most intervening city blocks."
         },
         {
-          "name": "Crosswalks",
+          "name": "Parking lots or open spaces",
           "count": -1,
-          "where": "Across every intersection"
+          "where": "Some complete city blocks."
+        },
+        {
+          "name": "Trees or low sidewalk vegetation",
+          "count": -1,
+          "where": "Selected sidewalk runs, according to configurable tree density."
         },
         {
           "name": "Street lights",
           "count": -1,
-          "where": "At intersections, with optional intermediate lights governed by adjustable spacing"
+          "where": "Repeated along roads according to configurable spacing, with mandatory lights at intersections."
         },
         {
-          "name": "Tall, medium, and short brown, gray, and blue buildings",
+          "name": "Lane dividers and crosswalks",
           "count": -1,
-          "where": "City blocks between roads"
-        },
-        {
-          "name": "Paved parking lots and open spaces",
-          "count": -1,
-          "where": "Complete or partial city blocks"
-        },
-        {
-          "name": "Green trees and small vegetation",
-          "count": -1,
-          "where": "Selected sidewalk runs"
+          "where": "On roads and at intersections."
         }
       ],
-      "boundary": "The outer city edge is the map boundary, visually closed by continuation of perimeter buildings or a distant urban backdrop.",
+      "boundary": "The outermost road-and-block ring is the city boundary.",
       "scale_band": "medium",
-      "theme": "Realistic contemporary urban driving district; dark asphalt, neutral concrete, muted brown, gray, and blue buildings, and green roadside planting."
+      "theme": "Realistic contemporary city driving environment with dark asphalt, neutral concrete, muted brown, gray, and blue buildings, and green streetscape."
     },
     "render": {
-      "first": "topdown",
-      "then": "isometric",
-      "authoritative": "topdown",
-      "why": "The connected street grid and intersection topology must be established in plan before city dressing.",
+      "first": "isometric",
+      "then": "topdown",
+      "authoritative": "isometric",
+      "why": "Visual realism and urban massing lead, while the top-down plan is projected from the rendered grid.",
       "set_piece": false
     },
     "route": [
@@ -100,12 +108,10 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
-  "mapper_notes": [
-    "blob asked for topdown first; the route ['P0'] gives isometric"
-  ]
+  "mapper_notes": []
 }

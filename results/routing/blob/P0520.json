@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a 3D obby map built as a small, bright stylized tower: one continuous vertical climb of approximately 10 short stages, using colorful platforms and simple, readable obstacles.",
-  "blob": "### 1. Genre\nThe dominant genre is Obby & Platformer: the author explicitly requests a playable tower obby with a continuous climb.\n\n### 2. Shape and preset\nUse `course-tower`, matching the Tower Obby preset. It is one compact vertical tower whose route spirals or climbs continuously through approximately 10 short stages. The prompt supports the preset’s tower form and readable traversal emphasis; no unrelated preset features are added.\n\n### 3. Config requirements\nUse visible `path-track` as the clearly legible, sequential chain of colorful platforms rising through all stages. Use visible `obstacle-jump` for simple, readable jumps, wrap-arounds, and stepped platform obstacles. Use visible `obstacle-timing` for a restrained selection of clearly readable timed or vanishing obstacles within the ascent. Use visible `obstacle-climb` for occasional ladders, trusses, or vertical climbing transitions. Use `winner-zone` as both visible geometry and an invisible completion area at the tower summit. No checkpoints are requested for this short continuous climb.\n\n### 4. Layout components\nBuild one small, freestanding tower with approximately 10 short stages arranged as a continuous upward route around and through its central structure. Start at a broad, safe ground-level pad on the front side. Stage platforms should rise in short, physics-legal jumps, alternating around the tower perimeter and occasionally crossing its interior. Use chunky colored blocks, narrow beams, simple wrap-around ledges, a few stepped ascents, and sparse truss or ladder sections; keep every obstacle visually distinct against the tower frame. Place a compact summit platform above stage 10 as the end reward area. The ground-level footprint is minimal, with no separate lobby. The boundary is the tower’s outer edges and open air below the playable platforms. Frame the full tower in a three-quarter isometric view, with the upward sequence visibly readable from base to summit.\n\n### 5. Render order\nUse `topdown`: the vertical jump chain must remain connected and physics-legal, so topology is authoritative before the isometric dressing.\n\n### 6. Scale, theme, and pipeline cost\nScale is small, driven by one compact tower and approximately 10 short stages. Theme is bright, stylized classic Roblox obby: saturated colorful platforms, clean geometric forms, and uncluttered readable hazards. Pipeline modifiers are `P6`, because the sequential platform track and all critical jump gaps must be valid by construction, and `P2`, because the tower stacks traversable surfaces above one another.",
+  "blob": "### Genre\nThe dominant genre is Obby & Platformer: the requested tower is a player-paced parkour climb built around discrete, readable jumps. There is no secondary genre.\n\n### Shape and preset\nUse `course-tower`, a compact vertical tower whose successive platforms wrap and stack directly above one another throughout the climb. Match the Tower Obby preset in overall format, but retain only the route and obstacle treatment actually requested; no separate reward area or timed/climbing-specific sections are implied.\n\n### Config requirements\nUse `path-track` as one continuous ordered chain of colorful platforms, with every critical jump physically legal. Use `obstacle-jump` for simple, highly legible parkour elements such as short gaps, stepped rises, and wrap-around platforms. Do not add lethal contact surfaces, moving hazards, checkpoints, shops, or decoration-specific features that were not requested.\n\n### Layout requirements\nNo additional placed gameplay components are required. The `path-track` is rendered as geometry; its continuous progression and legal jump spacing must be validated as part of the tower route.\n\n### Layout components\nBuild one small, bright stylized Roblox obby tower comprising approximately 10 short stages in a single unbroken vertical ascent. Begin with a broad, safe ground-level start pad, then arrange the stages as a readable upward spiral or alternating perimeter climb around a central tower void. Each stage is a compact platform cluster with one clear next destination: colored floating blocks, short horizontal gaps, low stepped rises, and occasional wrap-around ledges. Keep platforms generously readable and visually separated by contrasting colors rather than clutter. The final tenth stage reaches a distinct top landing platform. There is no exterior terrain, water, settlement, or side zone; the tower itself forms the play space, with open air around its outer edges and a vertical fall space inside and below. Frame the complete tower in an elevated three-quarter isometric view, clearly showing the start, the ascending route, and the summit.\n\n### Render order\nUse `topdown` first, then dress the resulting valid plan isometrically, because an impossible or disconnected vertical jump chain would make the obby unplayable.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the approximately 10 short stages and immediate-play intent. Theme: bright, colorful, classic Roblox obby, with clean simple geometry and strong readability. Apply `P2` because platforms stack over one another in the tower, and `P6` because the complete jump route must be valid by construction.",
   "spec": {
     "genre": "Obby & Platformer",
     "secondary": [],
@@ -24,111 +24,84 @@
     "options": [
       {
         "id": "path-track",
-        "text": "Clearly legible sequential chain of colorful platforms rising continuously through approximately 10 short stages around and through the tower.",
+        "text": "One continuous ordered chain of colorful platforms, with every critical jump physically legal.",
         "visible": true,
         "count": 10
       },
       {
         "id": "obstacle-jump",
-        "text": "Simple, readable jumps, wrap-arounds, and stepped platform obstacles in the continuous ascent.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "obstacle-timing",
-        "text": "A restrained selection of clearly readable timed or vanishing obstacles within the ascent.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "obstacle-climb",
-        "text": "Occasional ladders, trusses, or vertical climbing transitions.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "winner-zone",
-        "text": "A compact summit platform above stage 10 serving as the end reward area and invisible completion area.",
+        "text": "Simple, highly legible parkour elements: short gaps, stepped rises, and wrap-around platforms.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "Three-quarter isometric frame holding the full freestanding tower, with the broad start pad at the front base and the upward platform sequence visibly readable around the tower to the summit.",
+      "composition": "Elevated three-quarter isometric view framing the complete tower, clearly showing the broad ground-level start pad, the ascending spiral or alternating perimeter route, and the distinct summit landing platform.",
       "zones": [
         {
           "name": "Start pad",
-          "role": "Broad safe ground-level starting point for the climb.",
-          "where": "front side at the tower base",
+          "role": "Broad, safe ground-level beginning of the climb.",
+          "where": "ground level at the base of the tower",
           "size": "broad"
         },
         {
-          "name": "Tower ascent",
-          "role": "Continuous upward route of short physics-legal stages alternating around the perimeter and occasionally crossing the interior.",
-          "where": "around and through the central tower structure",
-          "size": "compact; approximately 10 short stages"
+          "name": "Vertical ascent",
+          "role": "Approximately 10 short stages forming a single unbroken climb of compact platform clusters with one clear next destination.",
+          "where": "spiraling or alternating around the central tower void",
+          "size": "small"
         },
         {
-          "name": "Summit reward area",
-          "role": "End reward and completion area.",
-          "where": "above stage 10 at the tower summit",
-          "size": "compact"
+          "name": "Top landing platform",
+          "role": "Distinct final landing at the tenth stage.",
+          "where": "summit of the tower",
+          "size": "distinct"
         }
       ],
       "paths": [
         {
           "from": "Start pad",
-          "to": "Tower ascent",
+          "to": "Vertical ascent",
           "kind": "track"
         },
         {
-          "from": "Tower ascent",
-          "to": "Summit reward area",
+          "from": "Vertical ascent",
+          "to": "Top landing platform",
           "kind": "track"
         }
       ],
-      "terrain": "Minimal ground-level footprint beneath a freestanding tower; open air below the playable platforms.",
+      "terrain": "No exterior terrain or water; open air surrounds the tower, with a vertical fall space inside and below it.",
       "props": [
         {
-          "name": "chunky colored blocks",
+          "name": "colorful floating blocks",
           "count": -1,
-          "where": "throughout the tower ascent"
+          "where": "along the vertical ascent"
         },
         {
-          "name": "narrow beams",
+          "name": "low stepped rises",
           "count": -1,
-          "where": "along the ascent"
+          "where": "along the vertical ascent"
         },
         {
-          "name": "simple wrap-around ledges",
+          "name": "wrap-around ledges",
           "count": -1,
-          "where": "around the tower perimeter"
-        },
-        {
-          "name": "stepped ascents",
-          "count": -1,
-          "where": "within the upward route"
-        },
-        {
-          "name": "truss or ladder sections",
-          "count": -1,
-          "where": "sparse vertical transitions"
+          "where": "along the vertical ascent"
         }
       ],
-      "boundary": "The tower's outer edges and open air below the playable platforms.",
+      "boundary": "The tower itself forms the play space; open air lies around its outer edges and the central void falls vertically inside and below.",
       "scale_band": "small",
-      "theme": "Bright, stylized classic Roblox obby with saturated colorful platforms, clean geometric forms, and uncluttered readable hazards."
+      "theme": "bright, colorful, classic Roblox obby; clean simple geometry and strong readability"
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the vertical jump chain must remain connected and physics-legal.",
+      "why": "an impossible or disconnected vertical jump chain would make the obby unplayable.",
       "set_piece": false
     },
     "route": [
-      "P6",
-      "P2"
+      "P2",
+      "P6"
     ],
     "notes": [],
     "scene_prompt": "Create a 3D obby map built as a small, bright stylized tower: one continuous vertical climb of approximately 10 short stages, using colorful platforms and simple, readable obstacles."
@@ -136,7 +109,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

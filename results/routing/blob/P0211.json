@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a compact, classic blocky 3D Roblox game map with eight claimable player plots arranged around a small central hub, spanning roughly 300–400 studs across. Simple walkable grass ground fills the shared space between plots, with no additional structures. Each plot contains an 8x8 green checkerboard planting grid made from 4x4x4 grass blocks, and a billboard positioned at the front displaying the owning player's name and avatar. The grid supports small stylized mushroom props: plain blue mushrooms, red fire-themed mushrooms, satellite-dish-shaped mushrooms, tiny shy mushrooms, and mushrooms with multiple heads.",
-  "blob": "### Genre\nThe dominant genre is Simulation, specifically an incremental manager. The player-owned planting boards make the map a compact plot-based simulation rather than a social town or an obby.\n\n### Shape and preset\nUse `plot-isolated`: eight discrete claimable player plots surround one shared central space. The closest preset is none; the isolated-plot shape is required by the prompt, but neither Sandbox nor the other Simulation presets supplies this compact eight-board arrangement or its requested central hub.\n\n### Config requirements\nUse `social-hub` as visible geometry: a small open central gathering pad, not a shop district, at the middle of the plot ring. Use `path-circulation` as visible geometry: simple walkable grass connections filling the gaps between all plots and the hub. No invisible configuration elements are required; do not render UI, currency markers, interaction effects, or placement logic.\n\n### Layout components\nBuild a roughly circular or octagonal ring of eight evenly spaced 32-stud-square player plots around a small central hub, keeping the whole shared map roughly 300–400 studs across. Each plot is a clearly bounded square of grass with an 8x8 planting board centered within it. Make every board a green checkerboard composed of 64 individual 4x4x4 grass blocks. At the front edge of each plot, place one upright billboard showing its owner name and avatar area.\n\nLeave the inter-plot ground as simple uninterrupted walkable grass; use broad radial grass paths from the hub to each plot, without extra buildings, fences, shops, or gameplay structures. The planting grids are the visual focal points. Dress example occupied cells only with the five requested small stylized mushroom prop forms: plain blue mushrooms, red fire-themed mushrooms, satellite-dish-shaped mushrooms, tiny shy mushrooms, and multi-headed mushrooms. Keep these props sparse enough that the checkerboard remains legible. The boundary is open grass at the outer perimeter, with the plot ring forming the composition. Frame the central hub and all eight plots in a readable elevated three-quarter view.\n\n### Render order\nUse `isometric`: the blocky visual presentation and symmetric plot-ring composition lead, while a projected top-down can preserve the simple board arrangement afterward. Invalid topology would not make this manager unplayable.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by eight 32-stud grids and spacing across a 300–400-stud footprint. Theme: classic blocky Roblox, bright green grass, clean checkerboard gardening boards, and colorful toy-like mushroom props. Use `P0`; this is one continuous exterior ground surface with no forced elevation, interiors, separate maps, volumetric traversal, or validity-by-construction requirement.",
+  "blob": "### Genre\nThe dominant genre is Simulation, specifically an incremental manager with personal player work areas. There is no secondary genre.\n\n### Shape and preset\nUse `plot-isolated`, taken from outside Simulation’s usual Incremental Simulator shape set: eight equal, separated claimable plots are the defining geometry. Preset none; the Sandbox preset shares the isolated-plot shape but its resource-field assumptions do not apply.\n\n### Config requirements\nUse `social-hub` for the small shared central gathering point. Use `path-circulation` as the simple walkable grass circulation surface connecting every plot to that hub. No other image configuration is required; the planting grids, billboards, and mushroom forms are scene components rather than extra genre options.\n\n### Layout requirements\nNo additional invisible layout options are required. The eight plot assignments, grid-cell interaction, inventory, currencies, costs, effects, and pop states are gameplay/UI logic and must not be rendered or sited as layout markers.\n\n### Layout components\nBuild a compact outdoor shared map roughly 300–400 studs across. Place one small, open central hub at the middle, surrounded evenly by eight identical square claimable plots in a radial ring with generous grass walkways between them. Each plot contains exactly one 8x8 green checkerboard planting grid, built from exactly 64 grass-material blocks measuring 4x4x4 studs each. At the front edge of every plot, facing inward toward the hub, place one billboard showing that plot owner’s name and avatar.\n\nThe ground between plots is simple flat walkable grass, with no shops, roads, buildings, fences, or additional gameplay structures. Use a soft outer grass boundary around the ring. The planting cells may contain sparse representative small mushroom props: plain blue mushrooms, red fire-themed mushrooms, satellite-dish mushrooms, tiny shy mushrooms, and multi-headed pop mushrooms; do not imply a fixed prop count or encode their behaviors in the environment. Compose the frame from a high three-quarter view with the hub centered and all eight plots readable as a clean symmetric ring.\n\n### Render order\nUse `isometric`: the compact symmetric plot ring and its blocky visual identity lead, and its simple topology can be projected reliably into top-down afterward.\n\n### Scale, theme, and pipeline cost\nScale band: large, driven by eight 32-stud-wide planting grids plus shared spacing across roughly 300–400 studs. Theme: classic blocky Roblox garden-manager space, bright green grass, colorful toy-like mushroom silhouettes. Pipeline modifier `P0`: this is one flat outdoor surface with no overhangs, interior transition, separate maps, volumetric movement, or topology that must be procedurally validated.",
   "spec": {
     "genre": "Simulation",
     "secondary": [],
@@ -24,111 +24,89 @@
     "options": [
       {
         "id": "social-hub",
-        "text": "a small open central gathering pad, not a shop district, at the middle of the plot ring",
+        "text": "Small shared central gathering point.",
         "visible": true,
         "count": 1
       },
       {
         "id": "path-circulation",
-        "text": "simple walkable grass connections filling the gaps between all plots and the hub, with broad radial grass paths",
+        "text": "Simple walkable grass circulation surface connecting every plot to the hub.",
         "visible": true,
-        "count": 8
+        "count": -1
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "Readable elevated three-quarter view framing the small central hub and all eight evenly spaced plots in a circular or octagonal ring; the planting grids are the visual focal points.",
+      "composition": "High three-quarter view with the small open hub centered and all eight identical plots readable in a clean symmetric radial ring around it. Generous grass walkways separate the plots.",
       "zones": [
         {
           "name": "Central hub",
-          "role": "Small open shared gathering pad.",
-          "where": "centre of the plot ring",
+          "role": "Small shared gathering point.",
+          "where": "middle",
           "size": "small"
         },
         {
-          "name": "Player plots",
-          "role": "Claimable planting areas with owner billboard and avatar area.",
-          "where": "eight evenly spaced positions around the central hub",
-          "size": "eight 32-stud-square plots"
-        },
-        {
-          "name": "Planting boards",
-          "role": "Green checkerboard gardening grids for sparse mushroom props.",
-          "where": "centred within each player plot",
-          "size": "8x8 per board"
-        },
-        {
-          "name": "Outer grass perimeter",
-          "role": "Open outer edge of the shared map.",
-          "where": "outside the plot ring",
-          "size": "roughly 300–400 studs across overall"
+          "name": "Eight claimable plots",
+          "role": "Identical personal player work areas containing planting grids and owner billboards.",
+          "where": "evenly surrounding the central hub in a radial ring",
+          "size": "eight equal square plots"
         }
       ],
       "paths": [
         {
           "from": "Central hub",
-          "to": "Player plots",
+          "to": "Eight claimable plots",
           "kind": "open ground"
         }
       ],
-      "terrain": "Bright green grass throughout, with uninterrupted walkable grass between plots and a green checkerboard of individual grass blocks on every planting board.",
+      "terrain": "Simple flat, walkable bright green grass between plots and across the shared space.",
       "props": [
         {
-          "name": "Green checkerboard grass blocks",
-          "count": 64,
-          "where": "on each 8x8 planting board"
-        },
-        {
-          "name": "Owner-name and avatar billboard",
+          "name": "8x8 green checkerboard planting grids",
           "count": 8,
-          "where": "front edge of each player plot"
+          "where": "one inside each claimable plot"
         },
         {
-          "name": "Plain blue mushroom props",
-          "count": -1,
-          "where": "sparsely dressing occupied planting-board cells"
+          "name": "4x4x4-stud grass-material planting blocks, 64 per grid",
+          "count": 64,
+          "where": "within each 8x8 planting grid"
         },
         {
-          "name": "Red fire-themed mushroom props",
-          "count": -1,
-          "where": "sparsely dressing occupied planting-board cells"
+          "name": "Owner billboards showing the plot owner's name and avatar",
+          "count": 8,
+          "where": "at the front edge of each plot, facing inward toward the hub"
         },
         {
-          "name": "Satellite-dish-shaped mushroom props",
+          "name": "Sparse representative mushroom props: plain blue mushrooms, red fire-themed mushrooms, satellite-dish mushrooms, tiny shy mushrooms, and multi-headed pop mushrooms",
           "count": -1,
-          "where": "sparsely dressing occupied planting-board cells"
-        },
-        {
-          "name": "Tiny shy mushroom props",
-          "count": -1,
-          "where": "sparsely dressing occupied planting-board cells"
-        },
-        {
-          "name": "Multi-headed mushroom props",
-          "count": -1,
-          "where": "sparsely dressing occupied planting-board cells"
+          "where": "in planting cells"
         }
       ],
-      "boundary": "Open grass at the outer perimeter, with the plot ring forming the composition.",
-      "scale_band": "medium",
-      "theme": "Classic blocky Roblox, bright green grass, clean checkerboard gardening boards, colorful toy-like mushroom props."
+      "boundary": "Soft outer grass boundary around the plot ring.",
+      "scale_band": "large",
+      "theme": "Classic blocky Roblox garden-manager space, bright green grass, colorful toy-like mushroom silhouettes."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "Invalid topology would not make this manager unplayable.",
+      "why": "the compact symmetric plot ring has simple topology that can be projected reliably into top-down afterward.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
-    "notes": [],
+    "notes": [
+      "The `plot-isolated` shape is used from outside Simulation's usual Incremental Simulator shape set.",
+      "No invisible layout options are required; plot assignments, grid-cell interaction, inventory, currencies, costs, effects, and pop states remain gameplay or UI logic.",
+      "No fixed mushroom prop count or mushroom behaviors are encoded in the environment."
+    ],
     "scene_prompt": "Create a compact, classic blocky 3D Roblox game map with eight claimable player plots arranged around a small central hub, spanning roughly 300–400 studs across. Simple walkable grass ground fills the shared space between plots, with no additional structures. Each plot contains an 8x8 green checkerboard planting grid made from 4x4x4 grass blocks, and a billboard positioned at the front displaying the owning player's name and avatar. The grid supports small stylized mushroom props: plain blue mushrooms, red fire-themed mushrooms, satellite-dish-shaped mushrooms, tiny shy mushrooms, and mushrooms with multiple heads."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

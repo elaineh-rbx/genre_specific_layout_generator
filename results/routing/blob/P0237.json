@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a compact 3D carnival throwing booth enclosed by a back wall and side walls. A bright red ball sits at the bottom center of the play area, facing three clearly separated horizontal target rows a few metres deep: a foreground row, a middle row, and a background row near the back wall. Arrange wooden targets at varying positions to the left and right of center along each row.",
-  "blob": "### Genre\nSports is dominant: this is a target-throwing scoring game rather than a combat range. \n\n### Shape and preset\nUse the Sports shape `range-directed`, matching the Target Sport preset. Retain the directed throwing lane and scoring targets, but omit distance markers because the compact three-row booth does not ask for a long graduated range.\n\n### Config requirements\n`startpoint-play` is both visible geometry and invisible placement: a bright red ball rests at the bottom-center throwing position. `trigger-scoring` is both visible geometry and invisible detection: each wooden target has its own hit volume. No unrequested universal options apply.\n\n### Layout components\nBuild one compact enclosed carnival booth, only a few metres deep. The near edge is the player-facing throwing apron, with the red ball centered at its front. Three clearly separated horizontal target rows recede from it: the foreground row nearest the ball, a middle row, and a background row immediately before the back wall. Scatter wooden targets across every row at varying left and right offsets from center; keep each row readable as a lateral band rather than a dense cluster. Solid side walls and a back wall enclose the booth, while the front remains open toward the player. Use a flat wooden floor, booth framing, and bright carnival red accents. Compose the view from a slightly elevated front three-quarter angle so the ball, all three depth rows, and enclosing walls read at once.\n\n### Render order\nUse `isometric`: render the isometric booth first as the authoritative image, then derive the top-down plan, because this compact stationary range does not require topology validation.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the requested real-booth depth and three compact rows. Theme is a cheerful classic carnival stall: painted wood, bright red balls, warm fairground color. Use `SET` because this is a visible throwing set rather than a traversed world; skip traversal and jump-gap checks.",
+  "blob": "### 1. Genre\nThe dominant genre is `Sports`, specifically a compact target-throwing activity with scored hits. There is no secondary genre.\n\n### 2. Shape and preset\nUse `range-directed`, matched from the Sports Target Sport preset. Here it is a short carnival throwing lane: the player-facing throwing apron directs attention forward through three compact target depths to a solid rear wall. The prompt retains the preset’s directed range but does not request distance-marker graphics.\n\n### 3. Config requirements\nUse `startpoint-play` as a clearly defined central throwing position at the front edge, visually occupied by the bright red ball. Use `trigger-scoring` as wooden target faces arranged in three readable horizontal rows; each target must visibly present a hit surface.\n\n### 4. Layout requirements\nPlace `startpoint-play` once at the bottom-center of the booth, centered on the shooting apron and aligned with the middle of all target rows. Place one `trigger-scoring` volume per wooden target, centered on its visible face; distribute these across the foreground, middle-ground, and background rows, with targets varying left and right of center. No other placed gameplay elements are required.\n\n### 5. Layout components\nBuild a small enclosed carnival booth. The front shooting apron is a shallow, open player-facing zone with one bright red ball at its bottom-center throwing mark. Beyond it, three parallel horizontal target bands occupy only a few metres of depth: a foreground row closest to the apron, a middle row behind it, and a background row immediately before the back wall. Each row contains wooden targets at staggered left-of-center and right-of-center positions; no target count was specified. Use a simple flat booth floor. Solid side walls tightly frame the lane, and a full back wall closes the far end behind the background targets. Compose the scene front-to-back so all three target rows remain distinct and unobscured, with the red ball anchoring the foreground.\n\n### 6. Render order\nRender `isometric` first and treat it as authoritative, because this compact, single-surface booth has simple directed geometry that does not require topology validation.\n\n### 7. Scale, theme, and pipeline cost\nScale is small, driven by the real-booth depth of only a few metres and three compact target rows. Theme is a bright, playful carnival stall with wood targets and vivid red ball accents. Use `P0`: the enclosed booth remains one flat, single-surface space with no forced extra capture path.",
   "spec": {
     "genre": "Sports",
     "secondary": [],
@@ -24,82 +24,86 @@
     "options": [
       {
         "id": "startpoint-play",
-        "text": "A bright red ball rests at the bottom-center throwing position.",
+        "text": "A clearly defined central throwing position at the front edge, visually occupied by the bright red ball.",
         "visible": true,
-        "count": -1
+        "count": 1
       },
       {
         "id": "trigger-scoring",
-        "text": "Each wooden target has its own hit volume.",
+        "text": "Wooden target faces arranged in three readable horizontal rows, each visibly presenting a hit surface.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "startpoint-play",
+        "text": "The central throwing position at the front edge, occupied by the bright red ball.",
+        "count": 1,
+        "where": "At the bottom-center of the booth, centered on the shooting apron and aligned with the middle of all target rows."
+      },
+      {
+        "id": "trigger-scoring",
+        "text": "One scoring volume per wooden target, centered on its visible face.",
+        "count": -1,
+        "where": "Across the foreground, middle-ground, and background target rows, with targets varying left and right of center."
+      }
+    ],
     "layout": {
-      "composition": "Slightly elevated front three-quarter view: the player-facing throwing apron and centered red ball sit at the near edge, three separated target rows recede through the booth, and the solid side walls plus back wall remain visible at once.",
+      "composition": "Front-to-back composition: the bright red ball anchors the bottom-center foreground on the shooting apron; three distinct, unobscured target rows recede through the compact booth toward the rear wall.",
       "zones": [
         {
-          "name": "throwing apron",
-          "role": "Player-facing throwing position with the red ball centered at its front.",
-          "where": "near edge / bottom center",
-          "size": "compact"
+          "name": "Shooting apron",
+          "role": "Shallow open player-facing throwing zone with the central throwing mark.",
+          "where": "Front and bottom-center of the booth.",
+          "size": "Shallow."
         },
         {
-          "name": "foreground target row",
-          "role": "Wooden targets arranged at varying left and right offsets from center.",
-          "where": "nearest row beyond the ball",
-          "size": "compact lateral band"
+          "name": "Foreground target row",
+          "role": "Closest wooden target band.",
+          "where": "Immediately beyond the shooting apron.",
+          "size": "Compact horizontal row."
         },
         {
-          "name": "middle target row",
-          "role": "Wooden targets arranged at varying left and right offsets from center.",
-          "where": "middle depth of booth",
-          "size": "compact lateral band"
+          "name": "Middle target row",
+          "role": "Middle wooden target band.",
+          "where": "Behind the foreground row.",
+          "size": "Compact horizontal row."
         },
         {
-          "name": "background target row",
-          "role": "Wooden targets arranged at varying left and right offsets from center.",
-          "where": "immediately before the back wall",
-          "size": "compact lateral band"
+          "name": "Background target row",
+          "role": "Farthest wooden target band.",
+          "where": "Immediately before the back wall.",
+          "size": "Compact horizontal row."
         }
       ],
       "paths": [],
-      "terrain": "Flat wooden floor.",
+      "terrain": "Simple flat booth floor.",
       "props": [
         {
-          "name": "bright red ball",
-          "count": -1,
-          "where": "bottom-center throwing position"
+          "name": "Bright red ball",
+          "count": 1,
+          "where": "Bottom-center throwing mark on the shooting apron."
         },
         {
-          "name": "wooden targets",
+          "name": "Wooden targets",
           "count": -1,
-          "where": "scattered across every target row at varying left and right offsets from center"
-        },
-        {
-          "name": "booth framing",
-          "count": -1,
-          "where": "around the enclosed carnival booth"
-        },
-        {
-          "name": "bright carnival red accents",
-          "count": -1,
-          "where": "throughout the booth"
+          "where": "Staggered left-of-center and right-of-center across all three target rows."
         }
       ],
-      "boundary": "Solid side walls and a back wall enclose the booth; the front remains open toward the player.",
+      "boundary": "Solid side walls tightly frame the lane, and a full back wall closes the far end behind the background targets.",
       "scale_band": "small",
-      "theme": "Cheerful classic carnival stall: painted wood, bright red balls, warm fairground color."
+      "theme": "Bright, playful carnival stall with wooden targets and vivid red ball accents."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "this compact stationary range does not require topology validation.",
-      "set_piece": true
+      "why": "This compact, single-surface booth has simple directed geometry that does not require topology validation.",
+      "set_piece": false
     },
     "route": [
-      "SET"
+      "P0"
     ],
     "notes": [],
     "scene_prompt": "Create a compact 3D carnival throwing booth enclosed by a back wall and side walls. A bright red ball sits at the bottom center of the play area, facing three clearly separated horizontal target rows a few metres deep: a foreground row, a middle row, and a background row near the back wall. Arrange wooden targets at varying positions to the left and right of center along each row."
@@ -107,7 +111,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

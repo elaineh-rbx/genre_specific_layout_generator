@@ -3,7 +3,7 @@
   "source": "Create a large 3D maze with simple colored block walls. The maze should be a grid-based labyrinth with walls made of rectangular blocks and open paths between them. Expose the following configurable attributes: MazeSize (number of cells, default 31x31 for a large maze), WallHeight (height of walls in studs, default 10), PathWidth (width of walkable paths in studs, default 6), WallThickness (thickness of walls in studs, default 2), WallColor (color of the walls, default dark gray), FloorColor (color of the floor, default light gray), and Seed (random seed for maze generation, default 12345). The maze should have a clearly marked start point on one edge and an end point on the opposite edge, both with different colored floor tiles (green for start, red for end). Include a floor plane underneath the entire maze. Use a recursive backtracker algorithm pattern for the maze layout so it has a proper solvable path from start to finish.",
   "answers": [],
   "scene_prompt": "Create a large 3D grid-based labyrinth maze with a 31x31-cell layout. Rectangular dark-gray block walls, 10 studs high and 2 studs thick, form the maze corridors; open walkable paths are 6 studs wide over a light-gray floor plane spanning the entire maze. Place a clearly marked green floor tile at the start on one outer edge and a red floor tile at the end on the opposite edge. Arrange the walls in a dense, solvable recursive-backtracker-style maze pattern with a continuous route between start and finish.",
-  "blob": "### Genre\nDominant genre: Puzzle. The stated requirement is a generated, solvable labyrinth with a continuous start-to-finish route; this is not merely a decorative maze.\n\n### Shape and preset\nUse `puzzle-maze`, matching the Maze / Labyrinth preset. The preset is retained for its procedural maze form, but its optional collectible emphasis does not apply. This scene is one dense 31×31-cell labyrinth rather than a sequence of puzzle chambers.\n\n### Config requirements\nNo additional menu options are required. All described elements are visible geometry: the wall grid, corridors, full floor plane, and distinct start and end tiles. There are no invisible triggers, pickups, emitters, or other placement-only components requested.\n\n### Layout components\nBuild one large square maze zone with a 31×31-cell grid. Fill it with a dense recursive-backtracker-style wall pattern that guarantees one continuous, solvable route from entrance to exit. Rectangular dark-gray block walls are 10 studs high and 2 studs thick. Open corridors are consistently 6 studs wide, laid over a light-gray floor plane extending beneath the entire maze, including all walls and paths. Put the start at an opening on one outer edge, marked by a green floor tile; place the end at an opening on the opposite outer edge, marked by a red floor tile. The outer wall perimeter encloses the maze except for these two edge openings. Frame the composition as a readable elevated isometric view, showing the overall square footprint, perimeter, wall height, and the colored endpoints.\n\n### Render order\nUse `authored_plan`: a maze must be carved procedurally first so the 31×31 topology has a guaranteed connected solution between the opposed edge endpoints; the top-down and isometric renders dress that authoritative blueprint.\n\n### Scale, theme, and pipeline cost\nScale band: large, driven by the explicit 31×31-cell maze footprint. Theme: minimal geometric block maze, dark-gray walls on a light-gray floor with green and red endpoint accents. Modifier `P6` applies because the solvable maze route must be valid by construction.",
+  "blob": "### 1. Genre\nThe dominant genre is Puzzle: the solvable labyrinth and its start-to-finish route define the activity.\n\n### 2. Shape and preset\nUse `puzzle-maze`, matching the Maze / Labyrinth preset. This is a single large grid maze whose topology must guarantee a continuous route from the entrance on one outer edge to the exit on the opposite edge.\n\n### 3. Config requirements\nNo additional image-config options apply. The maze’s walls, corridors, floor plane, and colored start and end tiles are intrinsic geometry of the selected shape rather than extra options.\n\n### 4. Layout requirements\nNo separate placed gameplay components are required. The green start tile and red end tile are drawn, segmented geometry at their respective edge openings; maze solvability is established by the authored maze plan rather than a placed marker system.\n\n### 5. Layout components\nBuild one large, square 31×31-cell labyrinth zone. Lay a light-gray floor plane beneath the entire maze. Form the dense maze pattern from dark-gray rectangular block walls, exactly 10 studs high and 2 studs thick, leaving open corridors exactly 6 studs wide. Use a recursive-backtracker-style carved grid with no isolated inaccessible regions and one continuous solvable route between the two edge openings. Put the green start floor tile at an opening along one outer edge and the red end floor tile at an opening on the opposite outer edge. Keep walls vertically uniform with no bridges, upper floors, terrain relief, props, or rooms beyond the wall network. Frame the full square maze clearly from an elevated isometric view, with both colored endpoint tiles legible near opposite borders.\n\n### 6. Render order\nUse `authored_plan`: generate the 31×31 maze blueprint in code first, then build the top-down and isometric renders from that valid carved layout. A free-rendered maze could seal the route or fail to connect start and finish.\n\n### 7. Scale, theme, and pipeline cost\nScale band: large, driven by the stated 31×31-cell footprint and dense corridor network. Theme: minimal geometric block maze, dark-gray walls over a light-gray floor with green and red endpoint accents. Pipeline modifier: `P6`, because the maze topology must be solvable by construction.",
   "spec": {
     "genre": "Puzzle",
     "secondary": [],
@@ -11,50 +11,35 @@
     "preset": "Maze / Labyrinth",
     "axes": {},
     "options": [],
+    "layout_placement": [],
     "layout": {
-      "composition": "Readable elevated isometric view showing the overall square maze footprint, enclosing perimeter, wall height, and green and red endpoint tiles.",
+      "composition": "Full square maze framed clearly from an elevated isometric view, with both colored endpoint tiles legible near opposite outer borders.",
       "zones": [
         {
           "name": "31×31-cell labyrinth",
-          "role": "Dense solvable maze with one continuous route from entrance to exit.",
-          "where": "Centre of the map, spanning the full square footprint.",
-          "size": "large 31×31-cell grid"
+          "role": "A single large solvable grid maze with a continuous route from the entrance to the exit.",
+          "where": "Entire map",
+          "size": "31×31 cells"
         }
       ],
       "paths": [
         {
-          "from": "green start tile at one outer edge",
-          "to": "red end tile at the opposite outer edge",
+          "from": "Green start tile at one outer-edge opening",
+          "to": "Red end tile at the opposite outer-edge opening",
           "kind": "corridor"
         }
       ],
-      "terrain": "Light-gray floor plane extending beneath the entire maze, including walls and paths; open corridors are consistently 6 studs wide.",
-      "props": [
-        {
-          "name": "dark-gray rectangular block walls",
-          "count": -1,
-          "where": "Dense recursive-backtracker-style grid throughout the maze, including the outer perimeter; walls are 10 studs high and 2 studs thick."
-        },
-        {
-          "name": "green floor start tile",
-          "count": 1,
-          "where": "At an opening on one outer edge."
-        },
-        {
-          "name": "red floor end tile",
-          "count": 1,
-          "where": "At an opening on the opposite outer edge."
-        }
-      ],
-      "boundary": "Outer wall perimeter encloses the maze except for the start and end edge openings.",
+      "terrain": "Light-gray floor plane beneath the entire maze; no terrain relief or water.",
+      "props": [],
+      "boundary": "Dense dark-gray outer maze walls with one edge opening for the green start and an opposite-edge opening for the red end.",
       "scale_band": "large",
-      "theme": "Minimal geometric block maze, dark-gray walls on a light-gray floor with green and red endpoint accents."
+      "theme": "Minimal geometric block maze, dark-gray walls over a light-gray floor with green and red endpoint accents."
     },
     "render": {
       "first": "authored_plan",
       "then": "topdown",
       "authoritative": "authored_plan",
-      "why": "The 31×31 maze topology must be procedurally carved to guarantee a connected solvable route between the opposed endpoints.",
+      "why": "A free-rendered maze could seal the route or fail to connect start and finish.",
       "set_piece": false
     },
     "route": [
@@ -66,7 +51,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "layout",

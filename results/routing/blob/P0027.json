@@ -19,181 +19,183 @@
     }
   ],
   "scene_prompt": "Create a 3D game map set inside a cosy modern family home with a playful cartoon style, viewed at cat scale. Build the house at roughly three times normal scale so the player appears very small beside huge furniture. Arrange explorable domestic rooms connected by doorways and hallways, with prominent scratchable furniture placed throughout each room.",
-  "blob": "### Genre\nThe dominant genre is Simulation: the ongoing earn-and-upgrade loop makes this an incremental simulator, even though the playable character is a cat. No secondary genre is needed.\n\n### Shape and preset\nUse `world-shared`, one continuous indoor world rather than separated plots or tiers. The closest preset is Incremental Simulator, but use none as the preset name because its bazaar, purchase gates, and circulation bundle are not specified and should not be invented.\n\n### Config requirements\nNo additional menu options are required. The house interior and its oversized furniture are visible geometry, not an outside-to-inside transition. Scratch interaction points, if later needed, are invisible gameplay placement and must not appear in the render.\n\n### Layout components\nBuild a massive, single cosy modern family home in a playful cartoon style, scaled to roughly three times normal household scale so the cat avatar appears extremely small beside the furnishings. Use a central hallway as the main circulation spine, with several explorable domestic rooms branching from it through open doorways: a living room, kitchen, dining area, bedroom, bathroom, and a small study or playroom. Keep each room large enough for cat-scale movement around and beneath furniture. Place prominent oversized scratchable furnishings throughout: a sofa and armchair in the living room, dining chairs in the dining area, kitchen stools and cabinet bases in the kitchen, a bed and dresser in the bedroom, and smaller upholstered or wooden furnishings in the remaining rooms. Doorways and hallways connect every room without dead ends. Use warm wood floors, soft rugs, rounded cabinetry, cushions, lamps, plants, and household clutter for scale reference. The boundary is the enclosing house walls, with no exterior play area. Compose the isometric frame from above a corner of the central hall so several open rooms and their huge furniture read at once.\n\n### Render order\nUse `isometric`: render the cat-scale, furniture-dense home first, then derive the top-down plan. Invalid topology would not make this ongoing indoor environment unplayable.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by a full multi-room house enlarged to roughly three times normal scale. Theme: cosy modern family home, playful cartoon proportions, warm domestic color. Use `P0`; the house is a single enclosed surface with no forced outside-to-inside transition, overhang-dependent route, separate map, or validity-by-construction requirement.",
+  "blob": "### Genre\nThe dominant genre is `Simulation`, specifically an ongoing incremental scratch-and-upgrade loop. The cat avatar and purchasable patterns establish progression, but do not add UI, currency, or upgrade mechanics to the map layout.\n\n### Shape and preset\nUse `interior-single`, taken from outside Simulation’s usual shapes: one complete, enclosed house is the entire playable map. The nearest Simulation preset is Incremental Simulator, but the prompt replaces its shared outdoor world with a connected domestic interior and does not describe its bazaar or purchase gates, so the preset is none.\n\n### Config requirements\nUse `path-circulation` for clear cat-scale hallways and doorways linking every domestic room. Use `trigger-task` as visibly designated scratchable furniture stations: oversized sofas, chairs, rugs, scratching-friendly table legs, and other household furniture distributed as focal interactable props. Do not add unrequested shops, NPCs, terrain, water, or exterior space.\n\n### Layout requirements\nPlace `trigger-task` interaction markers at each prominent scratchable furniture piece, positioned against reachable sides rather than inside or beneath the furniture; use one marker per distinct furniture station throughout every room. No other placed volumes, spawners, pickups, checkpoints, or teleports are required by the prompt.\n\n### Layout components\nCreate a single huge, cosy modern family home in a playful cartoon style, built at roughly three times normal human-house scale so the cat is extremely small beside furniture. Include a central living room as the broadest shared room, furnished with a huge sofa, armchairs, coffee table, rug, and media unit; a kitchen with oversized cabinets, dining table, chairs, and counter islands; a dining area; bedrooms with giant beds, dressers, and desks; and a bathroom or utility room with large domestic fixtures. Arrange the rooms as freely explorable connected spaces, with wide interior doorways and short hallways radiating from the central living area. Furniture should create readable cat-scale routes beneath, around, and between its legs without sealing room connections. The boundary is the enclosing walls, floors, ceilings, and closed outer shell of the house; no exterior is generated. Compose the frame as a cutaway/isometric dollhouse view that makes the room connections and the exaggerated furniture scale immediately legible.\n\n### Render order\nUse `isometric`: the playful oversized-house look and furniture scale are authoritative, while the top-down plan can be projected from that coherent interior arrangement.\n\n### Scale, theme, and pipeline cost\nScale is large: it is one interior map, but a multi-room family home enlarged to roughly three times normal scale. Theme is cosy modern domestic cartoon, warm and playful from a tiny cat’s perspective. Use `P0`; the map is one enclosed, single-surface interior with no outside-to-inside transition, stacked floors, separate maps, or topology that must be procedurally carved.",
   "spec": {
     "genre": "Simulation",
     "secondary": [],
-    "shape": "world-shared",
+    "shape": "interior-single",
     "preset": "none",
     "axes": {},
-    "options": [],
+    "options": [
+      {
+        "id": "path-circulation",
+        "text": "Clear cat-scale hallways and wide doorways linking every domestic room.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "trigger-task",
+        "text": "Visibly designated scratchable furniture stations: oversized sofas, chairs, rugs, scratching-friendly table legs, and other household furniture distributed as focal interactable props.",
+        "visible": true,
+        "count": -1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "trigger-task",
+        "text": "Interaction markers for each prominent scratchable furniture piece.",
+        "count": -1,
+        "where": "At each distinct furniture station throughout every room, positioned against reachable sides rather than inside or beneath the furniture."
+      }
+    ],
     "layout": {
-      "composition": "Isometric view from above a corner of the central hallway, showing several open domestic rooms and their huge furniture at once.",
+      "composition": "Cutaway isometric dollhouse view showing the central living room as the broad shared centre, with connected domestic rooms radiating around it so room connections and exaggerated cat-scale furniture are immediately legible.",
       "zones": [
         {
-          "name": "Central hallway",
-          "role": "Main circulation spine connecting every room without dead ends.",
-          "where": "centre",
-          "size": "large"
-        },
-        {
-          "name": "Living room",
-          "role": "Explorable domestic room with oversized scratchable seating.",
-          "where": "branching from the central hallway",
-          "size": "large"
+          "name": "Central living room",
+          "role": "Broadest shared room with prominent scratchable furniture and cat-scale circulation.",
+          "where": "Centre",
+          "size": "Broadest room"
         },
         {
           "name": "Kitchen",
-          "role": "Explorable domestic room with oversized stools and cabinet bases.",
-          "where": "branching from the central hallway",
-          "size": "large"
+          "role": "Domestic kitchen space with oversized cabinets, counter islands, dining table, and chairs.",
+          "where": "Radiating from the central living area",
+          "size": ""
         },
         {
           "name": "Dining area",
-          "role": "Explorable domestic room with oversized dining chairs.",
-          "where": "branching from the central hallway",
-          "size": "large"
+          "role": "Connected domestic dining space.",
+          "where": "Radiating from the central living area",
+          "size": ""
         },
         {
-          "name": "Bedroom",
-          "role": "Explorable domestic room with an oversized bed and dresser.",
-          "where": "branching from the central hallway",
-          "size": "large"
+          "name": "Bedrooms",
+          "role": "Domestic rooms containing giant beds, dressers, and desks.",
+          "where": "Radiating from the central living area",
+          "size": ""
         },
         {
-          "name": "Bathroom",
-          "role": "Explorable domestic room.",
-          "where": "branching from the central hallway",
-          "size": "large"
-        },
-        {
-          "name": "Small study or playroom",
-          "role": "Explorable domestic room with smaller upholstered or wooden furnishings.",
-          "where": "branching from the central hallway",
-          "size": "small"
+          "name": "Bathroom or utility room",
+          "role": "Domestic service room with large domestic fixtures.",
+          "where": "Radiating from the central living area",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Central hallway",
-          "to": "Living room",
-          "kind": "corridor"
-        },
-        {
-          "from": "Central hallway",
+          "from": "Central living room",
           "to": "Kitchen",
-          "kind": "corridor"
+          "kind": "hallway"
         },
         {
-          "from": "Central hallway",
+          "from": "Central living room",
           "to": "Dining area",
-          "kind": "corridor"
+          "kind": "hallway"
         },
         {
-          "from": "Central hallway",
-          "to": "Bedroom",
-          "kind": "corridor"
+          "from": "Central living room",
+          "to": "Bedrooms",
+          "kind": "hallway"
         },
         {
-          "from": "Central hallway",
-          "to": "Bathroom",
-          "kind": "corridor"
-        },
-        {
-          "from": "Central hallway",
-          "to": "Small study or playroom",
-          "kind": "corridor"
+          "from": "Central living room",
+          "to": "Bathroom or utility room",
+          "kind": "hallway"
         }
       ],
-      "terrain": "Warm wood floors with soft rugs throughout the enclosed house.",
+      "terrain": "Interior floors only; no terrain, water, or exterior space.",
       "props": [
         {
-          "name": "Sofa",
-          "count": 1,
-          "where": "Living room"
-        },
-        {
-          "name": "Armchair",
-          "count": 1,
-          "where": "Living room"
-        },
-        {
-          "name": "Dining chairs",
+          "name": "Huge sofa",
           "count": -1,
-          "where": "Dining area"
+          "where": "Central living room"
         },
         {
-          "name": "Kitchen stools",
+          "name": "Armchairs",
+          "count": -1,
+          "where": "Central living room"
+        },
+        {
+          "name": "Coffee table",
+          "count": -1,
+          "where": "Central living room"
+        },
+        {
+          "name": "Rug",
+          "count": -1,
+          "where": "Central living room"
+        },
+        {
+          "name": "Media unit",
+          "count": -1,
+          "where": "Central living room"
+        },
+        {
+          "name": "Oversized cabinets",
           "count": -1,
           "where": "Kitchen"
         },
         {
-          "name": "Cabinet bases",
+          "name": "Dining table",
+          "count": -1,
+          "where": "Kitchen and dining area"
+        },
+        {
+          "name": "Chairs",
+          "count": -1,
+          "where": "Kitchen and dining area"
+        },
+        {
+          "name": "Counter islands",
           "count": -1,
           "where": "Kitchen"
         },
         {
-          "name": "Bed",
-          "count": 1,
-          "where": "Bedroom"
-        },
-        {
-          "name": "Dresser",
-          "count": 1,
-          "where": "Bedroom"
-        },
-        {
-          "name": "Smaller upholstered or wooden furnishings",
+          "name": "Giant beds",
           "count": -1,
-          "where": "Bathroom and small study or playroom"
+          "where": "Bedrooms"
         },
         {
-          "name": "Rounded cabinetry",
+          "name": "Dressers",
           "count": -1,
-          "where": "Throughout the house"
+          "where": "Bedrooms"
         },
         {
-          "name": "Cushions",
+          "name": "Desks",
           "count": -1,
-          "where": "Throughout the house"
+          "where": "Bedrooms"
         },
         {
-          "name": "Lamps",
+          "name": "Large domestic fixtures",
           "count": -1,
-          "where": "Throughout the house"
-        },
-        {
-          "name": "Plants",
-          "count": -1,
-          "where": "Throughout the house"
-        },
-        {
-          "name": "Household clutter",
-          "count": -1,
-          "where": "Throughout the house"
+          "where": "Bathroom or utility room"
         }
       ],
-      "boundary": "Enclosing house walls; no exterior play area.",
+      "boundary": "Enclosing walls, floors, ceilings, and the closed outer shell of the house; no exterior is generated.",
       "scale_band": "large",
-      "theme": "Cosy modern family home, playful cartoon proportions, warm domestic color."
+      "theme": "Cosy modern domestic cartoon, warm and playful from a tiny cat's perspective."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "Invalid topology would not make this ongoing indoor environment unplayable.",
+      "why": "The playful oversized-house look and furniture scale are authoritative.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
-    "notes": [],
+    "notes": [
+      "Shape `interior-single` is taken from outside Simulation's usual shapes.",
+      "No shops, NPCs, terrain, water, exterior space, placed volumes, spawners, pickups, checkpoints, or teleports were requested."
+    ],
     "scene_prompt": "Create a 3D game map set inside a cosy modern family home with a playful cartoon style, viewed at cat scale. Build the house at roughly three times normal scale so the player appears very small beside huge furniture. Arrange explorable domestic rooms connected by doorways and hallways, with prominent scratchable furniture placed throughout each room."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

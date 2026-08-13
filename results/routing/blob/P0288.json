@@ -19,184 +19,187 @@
     }
   ],
   "scene_prompt": "Create a compact 3D open-world city map for a Police vs. Robber game, sized for 16 players and quick vehicle-based crossings between districts. A central financial downtown contains skyscrapers, a bank vault, jewelry stores, narrow alleys, and tight grid streets; connect it to an industrial docks district with warehouses, shipping-container yards, water access, armored transport routes, and laundering locations. Include a suburban residential zone with open roads, garages, apartments or hidden safehouses, and convenience stores, plus a high-security prison complex on the city edge. Keep heist interiors seamlessly connected to the street-level map, with continuous entrances and escape routes through alleys, subway tunnels, sewer networks, and roads. Arrange broad pursuit routes between districts with traffic intersections, drawbridges, and roadblock points, while helicopters and boats have clear access around the city.",
-  "blob": "### Genre\nThe dominant genre is `Shooter`, with `Simulation` as a secondary genre for the vehicle-led circulation. The asymmetric police-versus-robber conflict, interception, and on-foot confrontations make Shooter the owner of the map shape; Simulation contributes the roadway requirement.\n\n### Shape and preset\nUse `open-battlefield`: a compact but fully connected urban battlefield whose districts support pursuit in several directions rather than resolving into formal combat lanes. The closest Shooter preset is Battle Royale only in its open-field shape, but its loot-and-contracting-boundary bundle is not present here; preset: none.\n\n### Config requirements\nUse `building-interior` as visible geometry: heist buildings, apartments, garages, warehouses, and prison rooms have seamless street-level entrances and exit routes. Use `path-road-vehicle` as visible geometry: broad vehicle-capable streets form the primary cross-city pursuit network. Use `path-flank-tunnel` as visible geometry for the subway and sewer routes beneath the streets. Use `water-body` as visible geometry for the dock basin and navigable waterfront. Use `settlement-density` as visible geometry for the built-up downtown, industrial, and residential districts. No invisible config elements are requested.\n\n### Layout components\nPlace the dense financial downtown at the center, occupying roughly one quarter of the map: tight street grid, narrow alleys, skyscraper blocks, a bank vault, and jewelry-store fronts with connected interiors. Put the industrial docks along one outer edge, with warehouses, a shipping-container yard, armored-transport roads, laundering locations, drawbridges, and open water wide enough for boat access. Place the quieter suburban district opposite the docks, with broader roads, garages, apartments or hidden safehouses, and convenience stores. Set the high-security prison complex on the remaining city edge, enclosed by a hard perimeter but linked back to the city by roads and underground routes.\n\nCreate several broad road loops and intersections between all four districts so a vehicle can cross the compact city quickly. Thread alleys through downtown, and run subway tunnels and sewer networks below the street grid as alternate continuous escape paths. Keep helicopter approaches clear above major roads, docks, and the prison. Use dense city blocks as the boundary, with water closing the dock side and the prison wall anchoring the outer edge. Compose the map in an oblique isometric city view with downtown as the visual center and the waterfront readable along one side.\n\n### Render order\nUse `topdown`: road continuity, district connections, and uninterrupted surface-to-interior-to-tunnel escape routes must remain playable, so the plan is authoritative before the isometric dressing.\n\n### Scale, theme, and pipeline cost\nScale is medium: four distinct districts serve 16 players, but each contains only a few blocks for quick crossings. Theme: compact contemporary crime-thriller city, dense downtown steel and glass, gritty docks, subdued suburbs, fortified prison. Use `P2` because subway and sewer paths pass beneath surface streets, `P3` because continuous play crosses exterior-to-interior thresholds, and `CHECK` for the dock water and boat-access space.",
+  "blob": "### Genre\nThe dominant genre is `Shooter`, expressed as an asymmetric Police-versus-Robber urban pursuit game rather than a symmetric deathmatch. The continuous city and tactical pursuit sightlines matter more than a formal lane layout.\n\n### Shape and preset\nUse `world-open`, taken from outside Shooter’s usual shape set: this is one compact, contiguous city in which players choose routes freely and can enter heist buildings without loading. Preset: none; the city does not retain the lane network of Team Deathmatch or the isolated raid sequence of Tactical Shooter.\n\n### Config requirements\nUse `spawn-teambase` for visibly distinct police precinct and robber safehouse/apartment start locations. Use `cover-los` for skyscraper alleys, warehouse walls, container stacks, garages, and roadblock-ready street furniture that interrupt long pursuit sightlines. Use `path-flank-tunnel` for subway and sewer bypass routes below the streets. Use `building-interior` for seamless bank, jewelry store, warehouse, apartment, and prison entries. Use `water-body` for the dock basin and boat access. Use `settlement-density` for a compact built-up city of several blocks per district.\n\n### Layout requirements\nPlace `spawn-teambase` markers at the police precinct beside the prison-side arterial and at each designated hidden robber safehouse in the residential or industrial edge zones; both must have immediate vehicle-road access and be screened from direct opposing sightlines. No other placed gameplay markers are required by the scene.\n\n### Layout components\nDowntown occupies the central core, with skyscrapers, a bank vault, jewelry stores, narrow alleys, and tight street-grid blocks. Put the industrial docks along one side, with warehouses, shipping-container yards, laundering locations, armored-transport roads, a drawbridge, and open waterfront access for boats. Place the suburban district opposite the docks, using broader roads, garages, apartments, hidden safehouses, and convenience stores. Set the high-security prison complex at the city edge, separated by its perimeter but linked to the main road network. Broad arterials and traffic intersections connect every district for fast car chases, while alleys, connected interiors, subway tunnels, and sewer networks provide alternate escape paths. Keep clear air corridors above streets and water for helicopters. Frame the whole city as a readable compact urban basin, with downtown as the tallest central mass and docks/prison defining opposite edges.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because every district, road, tunnel, interior entrance, and pursuit route must remain continuously connected and playable.\n\n### Scale, theme, and pipeline cost\nScale band: medium, driven by a compact four-district city for 16 players that still requires vehicles for pursuits. Theme: contemporary crime-thriller city, dense downtown versus gritty docks and quieter suburbs. Pipeline modifiers: `P2` because subway and sewer routes pass beneath the city surface; `P3` because pursuits cross seamlessly between streets and enterable interiors.",
   "spec": {
     "genre": "Shooter",
-    "secondary": [
-      "Simulation"
-    ],
-    "shape": "open-battlefield",
+    "secondary": [],
+    "shape": "world-open",
     "preset": "none",
     "axes": {},
     "options": [
       {
-        "id": "building-interior",
-        "text": "Heist buildings, apartments, garages, warehouses, and prison rooms have seamless street-level entrances and exit routes.",
+        "id": "spawn-teambase",
+        "text": "Visibly distinct police precinct and robber safehouse/apartment start locations.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "cover-los",
+        "text": "Skyscraper alleys, warehouse walls, container stacks, garages, and roadblock-ready street furniture that interrupt long pursuit sightlines.",
         "visible": true,
         "count": -1
       },
       {
         "id": "path-flank-tunnel",
-        "text": "Subway and sewer routes run beneath the streets as alternate continuous escape paths.",
+        "text": "Subway and sewer bypass routes below the streets.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "building-interior",
+        "text": "Seamless bank, jewelry store, warehouse, apartment, and prison entries.",
         "visible": true,
         "count": -1
       },
       {
         "id": "water-body",
-        "text": "The dock basin and navigable waterfront provide open water wide enough for boat access.",
+        "text": "The dock basin and boat access.",
         "visible": true,
         "count": -1
       },
       {
         "id": "settlement-density",
-        "text": "A built-up compact city contains dense financial downtown, industrial docks, and suburban residential districts.",
+        "text": "A compact built-up city of several blocks per district.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "spawn-teambase",
+        "text": "Police precinct and designated hidden robber safehouse start markers.",
+        "count": -1,
+        "where": "Place police markers at the precinct beside the prison-side arterial and robber markers at each designated hidden safehouse in the residential or industrial edge zones; both need immediate vehicle-road access and screening from direct opposing sightlines."
+      }
+    ],
     "layout": {
-      "composition": "Oblique isometric city view with the dense financial downtown as the visual center and the waterfront readable along one side; industrial docks occupy one outer edge, suburbs sit opposite, and the prison anchors the remaining city edge.",
+      "composition": "Frame the whole map as a readable compact urban basin: the tallest downtown mass occupies the central core, industrial docks define one side, the suburban district sits opposite the docks, and the prison defines a city edge. Keep clear air corridors above streets and water for helicopters.",
       "zones": [
         {
-          "name": "Financial Downtown",
-          "role": "Central pursuit and on-foot confrontation district with a bank vault, jewelry-store fronts, connected interiors, tight street grid, and alleys.",
-          "where": "center",
-          "size": "roughly one quarter of the map"
+          "name": "Downtown",
+          "role": "Central financial and heist core with skyscrapers, a bank vault, jewelry stores, narrow alleys, and tight street-grid blocks.",
+          "where": "Central core",
+          "size": "Tallest central mass"
         },
         {
-          "name": "Industrial Docks",
-          "role": "Water-access industrial district with warehouses, shipping-container yard, armored-transport roads, laundering locations, drawbridges, and boat access.",
-          "where": "outer edge along the waterfront",
-          "size": ""
+          "name": "Industrial docks",
+          "role": "Waterfront pursuit and heist district with warehouses, shipping-container yards, laundering locations, armored-transport roads, a drawbridge, and boat access.",
+          "where": "Along one side of the city",
+          "size": "-1"
         },
         {
-          "name": "Suburban District",
-          "role": "Quieter residential district with broader roads, garages, apartments or hidden safehouses, and convenience stores.",
-          "where": "opposite the docks",
-          "size": ""
+          "name": "Suburban district",
+          "role": "Residential escape zone with broader roads, garages, apartments, hidden safehouses, and convenience stores.",
+          "where": "Opposite the docks",
+          "size": "-1"
         },
         {
-          "name": "High-Security Prison Complex",
-          "role": "Fortified prison district enclosed by a hard perimeter, with prison rooms and connections back to the city.",
-          "where": "remaining city edge",
-          "size": ""
+          "name": "High-security prison complex",
+          "role": "City-edge prison area, separated by its own perimeter and connected to the main road network.",
+          "where": "City edge beside the prison-side arterial",
+          "size": "-1"
         }
       ],
       "paths": [
         {
-          "from": "Financial Downtown",
-          "to": "Industrial Docks",
+          "from": "Downtown",
+          "to": "Industrial docks",
           "kind": "road"
         },
         {
-          "from": "Financial Downtown",
-          "to": "Suburban District",
+          "from": "Downtown",
+          "to": "Suburban district",
           "kind": "road"
         },
         {
-          "from": "Financial Downtown",
-          "to": "High-Security Prison Complex",
+          "from": "Downtown",
+          "to": "High-security prison complex",
           "kind": "road"
         },
         {
-          "from": "Industrial Docks",
-          "to": "Suburban District",
+          "from": "All districts",
+          "to": "All districts",
           "kind": "road"
         },
         {
-          "from": "all four districts",
-          "to": "all four districts",
-          "kind": "road"
-        },
-        {
-          "from": "Financial Downtown",
-          "to": "street-level connected interiors",
-          "kind": "corridor"
-        },
-        {
-          "from": "street grid",
-          "to": "alternate escape routes",
+          "from": "Downtown alleys and connected interiors",
+          "to": "Subway tunnels and sewer networks",
           "kind": "tunnel"
+        },
+        {
+          "from": "Industrial docks",
+          "to": "Waterfront boat access",
+          "kind": "open ground"
+        },
+        {
+          "from": "Industrial docks",
+          "to": "Road network",
+          "kind": "bridge"
         }
       ],
-      "terrain": "Compact contemporary city terrain with dense steel-and-glass downtown blocks, gritty docks, subdued suburbs, fortified prison ground, and open navigable dock water.",
+      "terrain": "Compact contemporary urban basin with dense street-level blocks, a dock basin and open waterfront water access; clear air corridors remain above streets and water for helicopters.",
       "props": [
         {
-          "name": "skyscraper blocks",
+          "name": "Skyscrapers",
           "count": -1,
-          "where": "financial downtown"
+          "where": "Downtown central core"
         },
         {
-          "name": "bank vault",
+          "name": "Bank vault and jewelry stores",
           "count": -1,
-          "where": "financial downtown"
+          "where": "Downtown"
         },
         {
-          "name": "jewelry-store fronts",
+          "name": "Warehouses and shipping-container yards",
           "count": -1,
-          "where": "financial downtown"
+          "where": "Industrial docks"
         },
         {
-          "name": "warehouses",
+          "name": "Garages, apartments, hidden safehouses, and convenience stores",
           "count": -1,
-          "where": "industrial docks"
+          "where": "Suburban district"
         },
         {
-          "name": "shipping-container yard",
+          "name": "Drawbridge",
           "count": -1,
-          "where": "industrial docks"
+          "where": "Industrial docks"
         },
         {
-          "name": "drawbridges",
+          "name": "Roadblock-ready street furniture",
           "count": -1,
-          "where": "industrial docks"
-        },
-        {
-          "name": "garages",
-          "count": -1,
-          "where": "suburban district"
-        },
-        {
-          "name": "apartments or hidden safehouses",
-          "count": -1,
-          "where": "suburban district"
-        },
-        {
-          "name": "convenience stores",
-          "count": -1,
-          "where": "suburban district"
+          "where": "Streets and pursuit routes"
         }
       ],
-      "boundary": "Dense city blocks form the boundary, with water closing the dock side and a hard prison wall anchoring the outer edge.",
+      "boundary": "The city is open and contiguous; the high-security prison complex is separated by its own perimeter.",
       "scale_band": "medium",
-      "theme": "compact contemporary crime-thriller city; dense downtown steel and glass, gritty docks, subdued suburbs, fortified prison"
+      "theme": "Contemporary crime-thriller city: dense downtown, gritty docks, and quieter suburbs."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "Road continuity, district connections, and uninterrupted surface-to-interior-to-tunnel escape routes must remain playable.",
+      "why": "Every district, road, tunnel, interior entrance, and pursuit route must remain continuously connected and playable.",
       "set_piece": false
     },
     "route": [
       "P2",
-      "P3",
-      "CHECK"
+      "P3"
     ],
     "notes": [
-      "Dropped `path-road-vehicle`: it is not a canonical option ID in the dominant Shooter genre."
+      "world-open is intentionally taken from outside Shooter's usual shape set.",
+      "visible on 'spawn-teambase' set from goes_to=both"
     ],
     "scene_prompt": "Create a compact 3D open-world city map for a Police vs. Robber game, sized for 16 players and quick vehicle-based crossings between districts. A central financial downtown contains skyscrapers, a bank vault, jewelry stores, narrow alleys, and tight grid streets; connect it to an industrial docks district with warehouses, shipping-container yards, water access, armored transport routes, and laundering locations. Include a suburban residential zone with open roads, garages, apartments or hidden safehouses, and convenience stores, plus a high-security prison complex on the city edge. Keep heist interiors seamlessly connected to the street-level map, with continuous entrances and escape routes through alleys, subway tunnels, sewer networks, and roads. Arrange broad pursuit routes between districts with traffic intersections, drawbridges, and roadblock points, while helicopters and boats have clear access around the city."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
   "mapper_notes": [
-    "blob asked for topdown first; the route ['P3', 'P2', 'CHECK'] gives isometric"
+    "blob asked for topdown first; the route ['P2', 'P3', 'CHECK'] gives isometric"
   ]
 }

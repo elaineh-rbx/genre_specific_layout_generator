@@ -19,175 +19,254 @@
     }
   ],
   "scene_prompt": "Create a 3D horror-adventure map for Floor 3: The Forgotten Underground, a huge subterranean world beneath an abandoned building. Build 100+ connected rooms as separately generated and stitched underground sections using a controlled modular layout: dark tunnels link forgotten laboratories, storage areas, rooms with broken machines, underground caves, and concealed secret rooms. Preserve key progression spaces including locked-door routes, puzzle and power-restoration rooms, checkpoints, hiding places, and trap-filled passages, while allowing the surrounding room arrangement to change each session. The map culminates in a large underground escape route leading into a separate final boss arena, followed by a cinematic exit area.",
-  "blob": "### Genre\nDominant genre: Survival, with Puzzle as the secondary genre. The pursuing monsters, traps, hiding, and escape pressure make this a horror survival warren; puzzle gates supply progression without changing the overall spatial form.\n\n### Shape and preset\nUse `warren-looping`, matched from the Escape preset. Its looping underground corridors must prevent players from being permanently cornered during hunts. Retain the preset’s escape and hiding logic, but expand it into controlled modular sections and add the prompt’s puzzle spaces. The separate boss arena is a distinct linked map rather than part of the warren.\n\n### Config requirements\nVisible geometry: `cover-los` creates lockers, crawlspaces, cabinets, and shadowed alcoves in laboratories and storage rooms for hiding; `hazard-kill` creates trap-filled passages and dangerous event zones; `gate-escape` is the large final escape threshold leading out of the underground network; `gate-solve` provides locked doors and power-restoration barriers; `button-solve` provides switches, breaker panels, and machine controls; `trigger-solve` provides key sockets and puzzle receptacles; `facade-clue` places readable clues on lab walls, control boards, and storage signage.\n\nInvisible layout elements: `spawner-npc` marks monster origins and chase-event entry points; `collectible-nodes` marks keys and coins; `checkpoint-respawn` marks checkpoint locations. These invisible elements must not enter the image render.\n\n### Layout components\nBuild more than 100 connected rooms as separately generated, stitched underground sections. A central chain of dark tunnels links forgotten laboratories, storage bays, broken-machine rooms, natural cave chambers, and concealed secret rooms. Each section has a modular main route with loops, alternate hiding recesses, locked progression doors, puzzle/power rooms, trap corridors, and periodically placed checkpoint rooms. Keep required progression rooms fixed while surrounding room modules can vary per session. The finale occupies a large underground escape route that drives toward a transition into a separate, broad final boss arena, followed by a small cinematic exit area. Use concrete, decayed industrial floors in built rooms, rough rock and rubble in caves, dim broken lights, fog, pipes, cables, machinery, crates, and sealed laboratory doors. Enclose the entire underground route with rock, concrete, and ceiling structure; frame the main route diagonally through the composition, with the boss threshold as a distant terminating landmark.\n\n### Render order\nUse `topdown`: the connected modular sections, looping escape routes, and required finale path must be topologically valid before isometric dressing, but this is not a carveable maze or racing circuit.\n\n### Scale, theme, and pipeline cost\nScale is huge, driven by 100+ rooms, separately generated stitched sections, a separate boss arena, and an exit area. Theme: polished original Roblox subterranean industrial horror, decayed laboratories, caves, darkness, fog, and malfunctioning machinery. Use `P4` for the separate boss arena map and linked cinematic exit map, and `P6` because the generated warren’s critical progression and chase-escape topology must be valid by construction.",
+  "blob": "### Genre\nThe dominant genre is Survival, with Puzzle as a secondary genre. Pursuit, hiding, traps, dangerous events, and the final escape make survival pressure the primary spatial driver; puzzles contribute the locked progression spaces without changing the overall route.\n\n### Shape and preset\nUse `world-chaptered`, taken from outside Survival’s usual shape set. The procedural underground is the main chapter, followed by a genuinely separate boss-arena map and a separate cinematic exit map. Preset: none: Survival’s Escape preset assumes a looping warren and a direct exit, while this is a controlled modular underground expedition with a boss transition.\n\n### Config requirements\nUse `cover-los` for lockers, crawlspaces, equipment alcoves, and cave recesses used as hiding places. Use `hazard-kill` for visibly trap-filled passages. Use `gate-solve` for locked doors blocking required routes, `button-solve` for power-restoration panels in laboratories and machine rooms, and `gate-progression` for visibly sequenced security doors. Use `gate-escape` as the large underground escape threshold leading to the boss arena.\n\n### Layout requirements\nPlace `collectible-nodes` as key-item spawn points in puzzle rooms, secret rooms, and guarded storage areas; use as many as the generated progression chain requires. Place `checkpoint-respawn` markers at safe rooms after major puzzle, laboratory, cave, and escape-route sections, never inside trap corridors. Place `spawner-npc` origins for the three hostile AI types in separate patrol, darkness-event, and chase-event sections, set back from checkpoints and key-item rooms. Place the `gate-escape` trigger at the terminal escape threshold into the separate boss map.\n\n### Layout components\nBuild 100+ connected rooms as separately generated, stitched modular underground sections. The main chapter begins at the sealed arrival from the previous floor, then branches through dark tunnels linking forgotten laboratories, storage rooms, broken-machine chambers, natural caves, concealed secret rooms, locked-door routes, puzzle rooms, power-restoration rooms, checkpoint refuges, hiding alcoves, and trap passages. Preserve one readable critical progression spine despite changing surrounding room arrangements each session. Finish it with a large, urgent underground escape route into the separate final boss arena, then a small cinematic exit area for outcome choices. Enclose the entire main chapter in bedrock, concrete foundations, damaged pipes, and abandoned-building service infrastructure. Compose the map as stitched sectional plans rather than one frame, with each section exposing clear connection portals to its neighbors.\n\n### Render order\nUse `topdown`: valid room connectivity, progression continuity, and safe checkpoint placement are essential to play, while the image model can still render each generated section plan before isometric dressing.\n\n### Scale, theme, and pipeline cost\nScale is huge, driven by 100+ rooms across a modular underground chapter plus two separate concluding maps. Theme: polished Roblox subterranean horror, decayed industrial laboratories, oppressive caves, fog, darkness, and broken machinery. Use `P4` because the boss arena and cinematic exit are separate maps. Use `P6` because the controlled modular generation must preserve a connected, playable progression route through every stitched section.",
   "spec": {
     "genre": "Survival",
     "secondary": [
       "Puzzle"
     ],
-    "shape": "warren-looping",
-    "preset": "Escape",
+    "shape": "world-chaptered",
+    "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "cover-los",
-        "text": "Lockers, crawlspaces, cabinets, and shadowed alcoves in laboratories and storage rooms for hiding.",
+        "text": "Lockers, crawlspaces, equipment alcoves, and cave recesses used as hiding places.",
         "visible": true,
         "count": -1
       },
       {
         "id": "hazard-kill",
-        "text": "Trap-filled passages and dangerous event zones.",
+        "text": "Visibly trap-filled passages.",
         "visible": true,
         "count": -1
       },
       {
         "id": "gate-escape",
-        "text": "The large final escape threshold leading out of the underground network.",
+        "text": "The large underground escape threshold leading to the separate boss arena.",
         "visible": true,
         "count": -1
       },
       {
-        "id": "spawner-npc",
-        "text": "Monster origins and chase-event entry points.",
+        "id": "collectible-nodes",
+        "text": "Key-item spawn points in puzzle rooms, secret rooms, and guarded storage areas, as many as the generated progression chain requires.",
         "visible": false,
         "count": -1
       },
       {
-        "id": "collectible-nodes",
-        "text": "Keys and coins.",
+        "id": "spawner-npc",
+        "text": "Origins for the three hostile AI types in separate patrol, darkness-event, and chase-event sections.",
         "visible": false,
-        "count": -1
+        "count": 3
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "gate-escape",
+        "text": "The trigger at the terminal escape threshold into the separate boss map.",
+        "count": -1,
+        "where": "At the terminal underground escape threshold leading into the separate final boss arena."
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "Key-item spawn points in puzzle rooms, secret rooms, and guarded storage areas, as many as the generated progression chain requires.",
+        "count": -1,
+        "where": "In puzzle rooms, secret rooms, and guarded storage areas."
+      },
+      {
+        "id": "spawner-npc",
+        "text": "Origins for the three hostile AI types in separate patrol, darkness-event, and chase-event sections.",
+        "count": 3,
+        "where": "In separate patrol, darkness-event, and chase-event sections, set back from checkpoints and key-item rooms."
       }
     ],
     "layout": {
-      "composition": "Frame the diagonal main underground route through the composition, terminating at the distant boss threshold landmark.",
+      "composition": "Stitched sectional plans rather than one frame, with each modular underground section exposing clear connection portals to its neighboring sections.",
       "zones": [
         {
-          "name": "Stitched underground warren",
-          "role": "More than 100 connected rooms generated as separately stitched modular sections; required progression rooms remain fixed while surrounding modules vary per session.",
-          "where": "Across the underground network",
-          "size": "more than 100 rooms"
+          "name": "Main procedural underground chapter",
+          "role": "A controlled modular expedition preserving one readable critical progression spine while surrounding room arrangements change each session.",
+          "where": "Main chapter beneath the abandoned building, beginning at the sealed arrival from the previous floor.",
+          "size": "100+ connected rooms"
+        },
+        {
+          "name": "Sealed arrival",
+          "role": "Entry from the previous floor.",
+          "where": "Beginning of the main underground chapter.",
+          "size": ""
+        },
+        {
+          "name": "Dark tunnels",
+          "role": "Connections between underground sections.",
+          "where": "Branching through the main chapter.",
+          "size": ""
         },
         {
           "name": "Forgotten laboratories",
-          "role": "Dark laboratory sections containing hiding spaces, sealed laboratory doors, clues, and progression rooms.",
-          "where": "Along the central tunnel chain",
+          "role": "Laboratory progression spaces with power-restoration panels.",
+          "where": "Linked by dark tunnels.",
           "size": ""
         },
         {
-          "name": "Storage bays",
-          "role": "Storage-room sections with cabinets, crates, signage, and alternate hiding recesses.",
-          "where": "Along the central tunnel chain",
+          "name": "Storage rooms",
+          "role": "Storage and guarded key-item areas.",
+          "where": "Linked by dark tunnels.",
           "size": ""
         },
         {
-          "name": "Broken-machine rooms",
-          "role": "Machine-control and power-restoration spaces with machinery, breaker panels, switches, and cables.",
-          "where": "Along the central tunnel chain",
+          "name": "Broken-machine chambers",
+          "role": "Industrial chambers containing broken machinery and power-restoration spaces.",
+          "where": "Linked by dark tunnels.",
           "size": ""
         },
         {
-          "name": "Natural cave chambers",
-          "role": "Rough rock and rubble cave sections embedded in the underground route.",
-          "where": "Along the central tunnel chain",
+          "name": "Natural caves",
+          "role": "Cave sections with recesses used as hiding places.",
+          "where": "Linked by dark tunnels.",
           "size": ""
         },
         {
           "name": "Concealed secret rooms",
-          "role": "Hidden rooms branching from the modular route.",
-          "where": "Off the main route",
+          "role": "Hidden rooms that can contain key items.",
+          "where": "Off the main progression spine.",
           "size": ""
         },
         {
-          "name": "Checkpoint rooms",
-          "role": "Periodically placed progression checkpoint spaces.",
-          "where": "Along the main route",
+          "name": "Locked-door and puzzle routes",
+          "role": "Required progression routes blocked by locked doors, solve gates, security doors, and puzzle rooms.",
+          "where": "Along the critical progression spine.",
           "size": ""
         },
         {
-          "name": "Final underground escape route",
-          "role": "Large finale route driving toward the escape threshold and transition.",
-          "where": "Terminating end of the underground network",
+          "name": "Checkpoint refuges",
+          "role": "Safe rooms for checkpoint placement.",
+          "where": "After major puzzle, laboratory, cave, and escape-route sections.",
+          "size": ""
+        },
+        {
+          "name": "Trap passages",
+          "role": "Visibly dangerous trapped routes.",
+          "where": "Within the underground chapter, away from checkpoint placement.",
+          "size": ""
+        },
+        {
+          "name": "Underground escape route",
+          "role": "Large urgent terminal route leading to the escape threshold.",
+          "where": "End of the main underground chapter.",
           "size": "large"
         },
         {
           "name": "Final boss arena",
-          "role": "Separate broad boss arena linked from the underground finale.",
-          "where": "Beyond the boss threshold",
-          "size": "broad"
+          "role": "Separate boss-arena map entered through the escape threshold.",
+          "where": "After the underground escape route.",
+          "size": ""
         },
         {
           "name": "Cinematic exit area",
-          "role": "Small exit area following the boss arena.",
-          "where": "After the final boss arena",
+          "role": "Separate concluding map for outcome choices.",
+          "where": "After the final boss arena.",
           "size": "small"
         }
       ],
       "paths": [
         {
-          "from": "Stitched underground warren",
-          "to": "Forgotten laboratories, storage bays, broken-machine rooms, natural cave chambers, and concealed secret rooms",
-          "kind": "tunnel"
-        },
-        {
-          "from": "Modular main route",
-          "to": "Alternate hiding recesses, locked progression doors, puzzle and power rooms, trap corridors, and checkpoint rooms",
+          "from": "Sealed arrival",
+          "to": "Dark tunnels",
           "kind": "corridor"
         },
         {
-          "from": "Final underground escape route",
+          "from": "Dark tunnels",
+          "to": "Forgotten laboratories",
+          "kind": "corridor"
+        },
+        {
+          "from": "Dark tunnels",
+          "to": "Storage rooms",
+          "kind": "corridor"
+        },
+        {
+          "from": "Dark tunnels",
+          "to": "Broken-machine chambers",
+          "kind": "corridor"
+        },
+        {
+          "from": "Dark tunnels",
+          "to": "Natural caves",
+          "kind": "tunnel"
+        },
+        {
+          "from": "Dark tunnels",
+          "to": "Concealed secret rooms",
+          "kind": "portal"
+        },
+        {
+          "from": "Dark tunnels",
+          "to": "Locked-door and puzzle routes",
+          "kind": "corridor"
+        },
+        {
+          "from": "Locked-door and puzzle routes",
+          "to": "Checkpoint refuges",
+          "kind": "corridor"
+        },
+        {
+          "from": "Checkpoint refuges",
+          "to": "Underground escape route",
+          "kind": "route"
+        },
+        {
+          "from": "Underground escape route",
           "to": "Final boss arena",
-          "kind": "transition"
+          "kind": "portal"
         },
         {
           "from": "Final boss arena",
           "to": "Cinematic exit area",
-          "kind": "corridor"
+          "kind": "portal"
         }
       ],
-      "terrain": "Concrete and decayed industrial floors in built rooms; rough rock and rubble in caves; dim broken lights and fog.",
+      "terrain": "Subterranean bedrock and natural caves, with concrete foundations, damaged pipes, abandoned-building service infrastructure, fog, darkness, and broken machinery.",
       "props": [
         {
-          "name": "pipes",
+          "name": "Connected modular underground sections",
           "count": -1,
-          "where": "Throughout built underground rooms"
+          "where": "Stitched across the main procedural underground chapter."
         },
         {
-          "name": "cables",
+          "name": "Rooms",
           "count": -1,
-          "where": "Throughout built underground rooms"
+          "where": "Across the connected modular underground sections; the chapter contains 100+ rooms."
         },
         {
-          "name": "machinery",
+          "name": "Bedrock",
           "count": -1,
-          "where": "Broken-machine rooms and power rooms"
+          "where": "Enclosing the entire main chapter."
         },
         {
-          "name": "crates",
+          "name": "Concrete foundations",
           "count": -1,
-          "where": "Storage bays"
+          "where": "Throughout the enclosed underground chapter."
         },
         {
-          "name": "sealed laboratory doors",
+          "name": "Damaged pipes",
           "count": -1,
-          "where": "Laboratories and locked progression routes"
+          "where": "Throughout the abandoned service infrastructure."
         },
         {
-          "name": "dim broken lights",
+          "name": "Broken machinery",
           "count": -1,
-          "where": "Throughout the underground route"
+          "where": "In broken-machine chambers and industrial laboratory areas."
         }
       ],
-      "boundary": "The entire underground route is enclosed by rock, concrete, and ceiling structure.",
+      "boundary": "The entire main chapter is enclosed in bedrock, concrete foundations, damaged pipes, and abandoned-building service infrastructure.",
       "scale_band": "huge",
-      "theme": "Polished original Roblox subterranean industrial horror: decayed laboratories, caves, darkness, fog, and malfunctioning machinery."
+      "theme": "Polished Roblox subterranean horror; decayed industrial laboratories, oppressive caves, fog, darkness, and broken machinery."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "The connected modular sections, looping escape routes, and required finale path must be topologically valid before isometric dressing.",
+      "why": "Valid room connectivity, progression continuity, and safe checkpoint placement are essential to play.",
       "set_piece": false
     },
     "route": [
@@ -195,18 +274,25 @@
       "P6"
     ],
     "notes": [
-      "Dropped `gate-solve`, `button-solve`, `trigger-solve`, and `facade-clue`: they are not canonical Survival option IDs.",
-      "Dropped `checkpoint-respawn`: it is not a canonical Survival option ID."
+      "`world-chaptered` is taken from outside Survival’s usual shape set.",
+      "The main procedural underground chapter is followed by genuinely separate boss-arena and cinematic-exit maps.",
+      "dropped option 'gate-solve': not in Survival",
+      "dropped option 'button-solve': not in Survival",
+      "dropped option 'gate-progression': not in Survival",
+      "dropped option 'checkpoint-respawn': not in Survival",
+      "dropped placement 'checkpoint-respawn': not in Survival"
     ],
     "scene_prompt": "Create a 3D horror-adventure map for Floor 3: The Forgotten Underground, a huge subterranean world beneath an abandoned building. Build 100+ connected rooms as separately generated and stitched underground sections using a controlled modular layout: dark tunnels link forgotten laboratories, storage areas, rooms with broken machines, underground caves, and concealed secret rooms. Preserve key progression spaces including locked-door routes, puzzle and power-restoration rooms, checkpoints, hiding places, and trap-filled passages, while allowing the surrounding room arrangement to change each session. The map culminates in a large underground escape route leading into a separate final boss arena, followed by a cinematic exit area."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
-  "order": "p6",
-  "first": "topdown",
-  "mapper_notes": []
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P4'] gives isometric"
+  ]
 }

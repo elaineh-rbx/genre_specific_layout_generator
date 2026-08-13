@@ -6,11 +6,14 @@
 
 **Shape — pick one.**
 
-| ID | Shape | What it is | Pipeline |
-| :---- | :---- | :---- | :---- |
-| `puzzle-open` | **Zone (Open-Air Puzzle Space)** | Puzzles staged across a plaza, island chain, or garden with no enclosure at all. | |
-| `puzzle-rooms` | **Zone (Sealed Chambers)** | Fully enclosed rooms that physically hold the player until the logic criteria are met. | `P0` if the whole game is indoors · `P3` if sealed rooms sit inside an open game |
-| `puzzle-maze` | **Zone (Maze / Labyrinth)** | A maze whose solvable topology *is* the puzzle — sealed interior or open hedge maze alike. | `P6` |
+**Typical shapes.** `puzzle-open` *(default)* · `rooms-sequence` · `puzzle-maze` · `interior-single`
+
+This genre words these its own way:
+
+| ID | Shape | What it is |
+| :---- | :---- | :---- |
+| `rooms-sequence` | **Zone (Sealed Chambers)** | Fully enclosed rooms that physically hold the player until the logic criteria are met. |
+
 
 **Options** — combine freely on top of the chosen shape.
 
@@ -28,7 +31,7 @@
 
 | Preset | Modelled on *(internal)* | Shape | Options |
 | :---- | :---- | :---- | :---- |
-| **Escape Room** | The Room, Portal; Roblox escape-room games | `puzzle-rooms` | `button-solve`, `facade-clue`, `collectible-nodes`, `gate-progression` |
+| **Escape Room** | The Room, Portal; Roblox escape-room games | `rooms-sequence` | `button-solve`, `facade-clue`, `collectible-nodes`, `gate-progression` |
 | **Maze / Labyrinth** | Pac-Man; Roblox maze games | `puzzle-maze` | `path-loop`, `collectible-nodes` |
 | **Open-Air Puzzle** | The Witness | `puzzle-open` | `gate-solve`, `trigger-solve`, `facade-clue` |
 | **Word / Quiz Puzzle** | [The Logo Quiz!](https://www.roblox.com/games/14826510707/The-Logo-Quiz) (Roblox) | `puzzle-open` | `facade-clue`, `gate-solve` |
@@ -37,17 +40,17 @@
 
 * **Reference.** [The Logo Quiz!](https://www.roblox.com/games/14826510707/The-Logo-Quiz) — players face a displayed image and type their guess into chat.
 * **Boundaries.** If a game is chat-quiz-only with no logic rooms or physical puzzle elements, build it under Party & Casual instead. If the pressure is a pursuing threat rather than a locked door, it's Survival.
-* **The requirement is the gate, not the enclosure.** Build's original version demanded sealed hermetic rooms, which described escape rooms specifically and excluded every open-air puzzle. A garden with a locked bridge is a puzzle.
+* **The requirement is the gate, not the enclosure.** Sealed hermetic rooms describe escape rooms specifically and exclude every open-air puzzle. A garden with a locked bridge is a puzzle.
 * **Non-spatial answers shrink the layout job.** When the answer is typed into chat or a UI box there's no slot to build — the layout only has to house the clue and gate the path once a correct answer registers. Verification itself is Mechanics/UI, out of scope here.
 * **Why mazes invert the pipeline.** A traversable maze with a reachable exit cannot be guaranteed by a free image — the reference failure case (`topdown_k`) produced a maze with no exit at all. So the topology is generated procedurally first and dressed afterward.
 * **Roblox's own subgenres here are Escape Room, Match & Merge, and Word.** All three are presets above — *Word / Quiz Puzzle* covers the third. *Match & Merge* routes to **P5** when the grid is a flat UI overlay, and is a **`SET`** when it is physical: a board on a table, tiles the camera looks down on, a merge yard with the pieces built as objects.
-* **Check the Word / Quiz preset before falling through to another genre.** It exists and was chosen zero times in a 620-prompt evaluation, while a spelling game went to Party & Casual instead. The preset name comes from Roblox's taxonomy, so it will not echo the user's words — "type the word that appears," "guess the answer before the timer," and trivia with a physical set all land here.
+* **Check the Word / Quiz preset before falling through to another genre.** It is easy to overlook, and spelling games get filed under Party & Casual instead. The preset name comes from Roblox's taxonomy, so it will not echo the user's words — "type the word that appears," "guess the answer before the timer," and trivia with a physical set all land here.
 
 ## Universal Options
 
 Six features that belong to **no genre in particular because they belong to all of them**. Every genre inherits this table on top of its own.
 
-They exist because the alternative is worse. Each was measured against 620 real prompts and requested in eleven to fifteen different genres, so filing them per-genre would restate the same row seventy-eight times — and leaving them out is what produced the largest hole in the system, with *who is in the world* having no home anywhere.
+They exist because the alternative is worse. Each is wanted across nearly every genre, so filing them per-genre would restate the same row dozens of times, and leaving them out strands common requests — *who is in the world* would have no home anywhere.
 
 | ID | Option | What it is | Core | Goes to | Pipeline |
 | :---- | :---- | :---- | :--: | :---- | :---- |
@@ -58,13 +61,13 @@ They exist because the alternative is worse. Each was measured against 620 real 
 | `terrain-relief` | **Zone (Terrain Relief)** | Natural landform shaping the ground: hills, mountains, cliffs, a valley, or a canyon. | | `image` | `P0 + tiered` |
 | `island-cluster` | **Zone (Island Cluster)** | Several separate landmasses with water or open air between them, crossed by bridge, boat, or flight. | | `image` | `CHECK` |
 
-**None of these is `Core`, and that is deliberate.** They must never appear in the tune menu, which shows `Core` options only, and no preset includes one. A universal option is a **landing place for a request the user actually made** — reached from the open question in step 5 when a free-text ask matches it — never a default and never a suggestion. Measured against 620 prompts, each of the six would fire on 6–15% of them, so a run that applies one unasked is wrong far more often than it is right.
+**None of these is `Core`, and that is deliberate.** They must never appear in the tune menu, which shows `Core` options only, and no preset includes one. A universal option is a **landing place for a request the user actually made** — reached from the open question in step 5 when a free-text ask matches it — never a default and never a suggestion. Most builds want none of them, so a run that applies one unasked is wrong far more often than right.
 
 **A genre's own wording wins.** Four genres already define `building-interior` in their own terms — Shooter's is a breachable structure, Survival's is a shelter to hide in. Those rows are the definition for those genres; the universal row is the fallback for the other eleven. Dedupe by ID exactly as with any shared ID.
 
 **Bend the wording to the prompt.** These are written generically because they are genre-neutral, which makes the instruction to rewrite them *more* important than usual, not less. `water-body` for a pirate game is "open sea between the islands, deep enough to sail"; for a park it is "a duck pond at the centre of the green." Ship the prompt's water, not the word "water."
 
-**Two pipeline notes.** `terrain-relief` is `P0 + tiered` for hills and cliffs, but **caves, overhangs, and tunnels push it to `P2`** — say so when the prompt asks for them. `water-body` and `island-cluster` are `CHECK` because swimming and flight are volumetric: usually fine as a play-height envelope over a representable surface, and only a real problem when the volume self-occludes (layered floating islands, 3D cave networks). See *Layout Attributes* in Build.md for the underlying axis.
+**Two pipeline notes.** `terrain-relief` is `P0 + tiered` for hills and cliffs, but **caves, overhangs, and tunnels push it to `P2`** — say so when the prompt asks for them. `water-body` and `island-cluster` are `CHECK` because swimming and flight are volumetric: usually fine as a play-height envelope over a representable surface, and only a real problem when the volume self-occludes (layered floating islands, 3D cave networks). See *The Five Routing Axes* in Build.md for the axis behind it.
 
 **`npc-population` is not `spawner-npc`.** `spawner-npc` is where hostiles enter a fight — an emitter, wired to combat. `npc-population` is who lives here. A market crowd, a quest giver, and a herd of deer are not spawners, and filing them as one produces enemy waves in a town square.
 

@@ -14,76 +14,122 @@
     }
   ],
   "scene_prompt": "Create a 3D fly-fishing map set along a small forest creek. A short, walkable stretch of clear water runs through grassy banks, trees, and scattered rocks, with several distinct fishable pools spaced along the creek; keep the map compact and focused.",
-  "blob": "### Genre\nThis is primarily `Simulation`: fly fishing is a repeatable physical activity loop, while the requested map is a compact natural setting rather than a competitive sport field. No secondary genre is needed.\n\n### Shape and preset\nUse `world-shared`, a single continuous creekside environment shared by all players. The nearest preset is Role Sim, but the prompt overrides its road-based task-world assumptions; retain the shared-world shape and treat the preset as `none` because its defining vehicle-road options do not apply.\n\n### Config requirements\nUse `trigger-task` for the fishable pools: each pool has visible clear-water geometry and an invisible interaction area placed over its fishable water. Use `path-circulation` as visible narrow grassy-bank walking routes that follow the creek between pools. Use `water-body` as the visible clear, gently running creek. Do not add unrequested buildings, roads, resource nodes, or NPCs.\n\n### Layout components\nBuild one compact, elongated forest-creek zone. A short, walkable stretch of shallow clear water runs diagonally through the map, widening at several distinct fishable pools spaced along its length. Grassy banks on both sides form the primary walking ground and connect each pool through informal dirt-and-grass bank paths. Cluster trees around the outer edges to frame the creek without blocking access to casting banks; scatter natural rocks at pool edges, in the stream, and beneath some tree groups. Keep the terrain largely level, with only gentle bank slopes down to the water. The outer boundary is a dense forest edge and rough vegetation, naturally closing the small playable corridor. Compose the creek as the visual spine, with pools readable in sequence from an elevated three-quarter view.\n\n### Render order\nUse `isometric`: the creek, bank access, and pool sequence are simple and do not require a topology-valid procedural plan.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the requested short, focused walkable creek stretch. Theme: tranquil forest fly-fishing, clear water, soft grass, stones, and leafy trees. Use `CHECK` because the creek is a water feature whose visible surface and playable interaction volume should be checked for representability; no overlapping water geometry is requested.",
+  "blob": "### 1. Genre\nThe dominant genre is `Simulation`: the fly-fishing activity and fish-fighting physics establish a focused fishing simulation, without a competitive sports field or broader adventure objective.\n\n### 2. Shape and preset\nUse `world-open`, the Simulation default shape, as one compact contiguous outdoor creek map that can be walked in either direction. Preset: none; the map retains the shared-world form but does not call for the machinery, gates, or task stations of a named Simulation preset.\n\n### 3. Config requirements\nUse `path-circulation` as a narrow natural walking route along the grassy creek banks, joining every fishable pool without formal roads. Use `water-body` for the shallow, transparent forest creek and its deeper clear pools. Use `npc-population` for visible fish inhabiting the pools, with their presence readable through the clear water.\n\n### 4. Layout requirements\nPlace `npc-population` markers in every distinct fishable pool, distributed within the deeper and calmer water rather than along shallow connecting riffles. No other placed gameplay volumes are required by the prompt.\n\n### 5. Layout components\nThe single map is a short, compact forest-creek stretch. A winding clear creek runs diagonally through the center, widening at several distinct, deeper fishable pools separated by short shallow riffles. Grassy, gently uneven banks line both sides, with a continuous informal dirt-and-grass footpath following one bank and occasional small crossings over stable rocks where needed. Trees cluster at the outer edges and behind the banks to form a forest enclosure without blocking access to the water. Scatter natural boulders and smaller rocks at pool margins and in the creek bed; keep open casting clearings beside each pool. The boundary is a dense tree line, rising brush, and creek continuation fading out at both ends, rather than hard walls. Frame the creek as the central visual ribbon, with pools clearly legible from an elevated three-quarter view.\n\n### 6. Render order\nUse `isometric`: the scene is a small natural environment with no topology whose failure would make play impossible, so the visual creek composition is authoritative.\n\n### 7. Scale, theme, and pipeline cost\nScale band: small, driven by one short walkable creek section and several pools. Theme: tranquil clear-water forest creek, grassy banks, mossy rocks, and modest woodland. Pipeline modifier: `P0`; all play is arranged on one outdoor surface, with no overhangs, interior transition, separate map, or volumetric traversal.",
   "spec": {
     "genre": "Simulation",
     "secondary": [],
-    "shape": "world-shared",
+    "shape": "world-open",
     "preset": "none",
     "axes": {},
     "options": [
       {
-        "id": "trigger-task",
-        "text": "Fishable pools, each with an invisible interaction area placed over its fishable water.",
-        "visible": false,
-        "count": -1
-      },
-      {
         "id": "path-circulation",
-        "text": "Visible narrow grassy-bank walking routes that follow the creek between pools.",
+        "text": "A narrow natural walking route along the grassy creek banks, joining every fishable pool without formal roads.",
         "visible": true,
         "count": -1
       },
       {
         "id": "water-body",
-        "text": "A visible clear, gently running creek.",
+        "text": "A shallow, transparent forest creek with deeper clear pools.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "npc-population",
+        "text": "Visible fish inhabiting the pools, with their presence readable through the clear water.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "npc-population",
+        "text": "Fish markers in every distinct fishable pool, distributed within the deeper and calmer water rather than along shallow connecting riffles.",
+        "count": -1,
+        "where": "In every distinct fishable pool, within deeper calmer water rather than shallow connecting riffles."
+      }
+    ],
     "layout": {
-      "composition": "The creek is the visual spine, running diagonally through the map, with fishable pools readable in sequence from an elevated three-quarter view. Grassy banks sit on both sides, while clustered outer-edge trees frame the creek.",
+      "composition": "Elevated three-quarter view framing the winding creek as a central diagonal visual ribbon, with clearly legible pools, grassy banks on both sides, and forest edges surrounding the compact stretch.",
       "zones": [
         {
-          "name": "forest-creek zone",
-          "role": "A compact, focused shared fly-fishing setting with walkable creek access and fishable pools.",
-          "where": "elongated diagonal corridor through the map",
-          "size": "small, compact, elongated"
+          "name": "Forest creek stretch",
+          "role": "The single compact walkable fishing map.",
+          "where": "Centre of the map, running diagonally through the frame.",
+          "size": "Short and compact."
+        },
+        {
+          "name": "Fishable pools",
+          "role": "Deeper, calmer clear-water areas for fishing, containing visible fish.",
+          "where": "Along the central creek, separated by short shallow riffles.",
+          "size": "Several distinct pools."
+        },
+        {
+          "name": "Grassy banks and casting clearings",
+          "role": "Walking access and open casting space beside each pool.",
+          "where": "On both sides of the creek.",
+          "size": ""
+        },
+        {
+          "name": "Forest enclosure",
+          "role": "Trees and brush enclose the creek without blocking water access.",
+          "where": "Outer edges and behind the banks.",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "fishable pools",
-          "to": "fishable pools",
+          "from": "Fishable pools",
+          "to": "Fishable pools",
           "kind": "open ground"
-        }
-      ],
-      "terrain": "A short, shallow clear-water creek widens at several distinct fishable pools along its length. Grassy banks form the walking ground, connected by informal dirt-and-grass bank paths. Terrain is largely level with gentle bank slopes down to the water.",
-      "props": [
-        {
-          "name": "trees",
-          "count": -1,
-          "where": "clustered around the outer edges and beneath some rock groups, framing the creek without blocking casting-bank access"
         },
         {
-          "name": "natural rocks",
-          "count": -1,
-          "where": "at pool edges, in the stream, and beneath some tree groups"
+          "from": "Grassy banks and casting clearings",
+          "to": "Fishable pools",
+          "kind": "open ground"
+        },
+        {
+          "from": "Grassy banks and casting clearings",
+          "to": "Grassy banks and casting clearings",
+          "kind": "bridge"
         }
       ],
-      "boundary": "Dense forest edge and rough vegetation naturally close the small playable corridor.",
+      "terrain": "A shallow transparent creek winds through grassy, gently uneven banks, widening into deeper clear pools and narrowing into short shallow riffles; mossy rocks and boulders sit at pool margins and in the creek bed.",
+      "props": [
+        {
+          "name": "Trees",
+          "count": -1,
+          "where": "Clustered along the outer edges and behind the banks."
+        },
+        {
+          "name": "Natural boulders and smaller rocks",
+          "count": -1,
+          "where": "At pool margins and in the creek bed."
+        },
+        {
+          "name": "Stable rock crossings",
+          "count": -1,
+          "where": "Occasionally across the creek where needed."
+        },
+        {
+          "name": "Open casting clearings",
+          "count": -1,
+          "where": "Beside each fishable pool."
+        }
+      ],
+      "boundary": "A dense tree line, rising brush, and the creek fading into continuation at both ends, rather than hard walls.",
       "scale_band": "small",
-      "theme": "tranquil forest fly-fishing, clear water, soft grass, stones, and leafy trees"
+      "theme": "Tranquil clear-water forest creek, grassy banks, mossy rocks, and modest woodland."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "the creek, bank access, and pool sequence are simple and do not require a topology-valid procedural plan.",
+      "why": "the visual creek composition is authoritative because no topology failure would make play impossible.",
       "set_piece": false
     },
     "route": [
-      "CHECK"
+      "P0"
     ],
     "notes": [],
     "scene_prompt": "Create a 3D fly-fishing map set along a small forest creek. A short, walkable stretch of clear water runs through grassy banks, trees, and scattered rocks, with several distinct fishable pools spaced along the creek; keep the map compact and focused."
@@ -91,7 +137,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

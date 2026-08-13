@@ -14,111 +14,96 @@
     }
   ],
   "scene_prompt": "Create a realistic 3D deep-sea fishing map centered on a seaworthy fishing boat in a small navigable open-ocean area. The boat has an enclosed small navigation cabin with a wheel, attached fishing rods along the sides, and crab nets on deck; it sits amid strong rolling waves and visible seawater spray. Scatter fishing spots across the surrounding ocean, with at most one small island kept distant in the background as minor scenery rather than a destination.",
-  "blob": "### Genre\nThe dominant genre is Simulation: players operate a fishing vessel through a shared navigable sea and work at fishing locations. No secondary genre is needed.\n\n### Shape and preset\nUse `world-shared`, matching the Vehicle Sim preset in its shared navigable-world form, but do not inherit its road or extraction-field options. Here the continuous travel surface is open water navigated by boat, with the vessel as the operational center.\n\n### Config requirements\n`water-body` is visible geometry: a broad open-ocean water surface with strong rolling swells, whitecaps, and seawater spray around the hull. `building-interior` is visible geometry: the small enclosed navigation cabin can be entered from the deck and contains the helm wheel. `trigger-task` is invisible layout: place fishing activity volumes at the scattered fishing spots; do not render markers or volumes themselves.\n\n### Layout components\nThe primary zone is one detailed seaworthy fishing boat, centered slightly forward of frame and large enough to read as the player-operated base. Its open working deck carries attached fishing rods along both side rails and crab nets stored or hung near the stern. A compact enclosed cabin rises near the boat’s middle, with clear windows, an interior helm wheel, and deck access. Surround it with a small navigable open-ocean zone extending evenly in all directions, with several spatially separated fishing spots distributed across the water rather than clustered beside the boat. Keep at most one small low island at the far horizon as distant scenery only, with no dock, path, or destination emphasis. The terrain is entirely animated-looking dark-blue ocean surface; use realistic marine meshes and textured equipment rather than blocky parts. There is no physical boundary: imply the map edge through open horizon, fog, and uninterrupted sea. Compose the boat as the focal foreground object against wide water, with the minor island only as a background silhouette.\n\n### Render order\nUse `isometric`: the visual fidelity of the boat, wave scale, spray, and open-water composition leads, while this small open area has no route topology whose failure would make play unworkable.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by a single boat and compact navigable ocean patch. Theme is realistic deep-sea commercial fishing, wet weather, rolling swells, and marine-industrial detail. Use `P3` because play crosses from the exterior deck into the enclosed cabin, and `CHECK` because the ocean is a real water volume/surface requiring water-aware capture.",
+  "blob": "### Genre\nSimulation is dominant: players operate a fishing vessel and work repeatable fishing locations. The vehicle-operation intent is primary rather than an open-world exploration game.\n\n### Shape and preset\nUse `vehicle-deck`, matched from the Vessel Operation preset. The fishing boat’s deck is the principal walkable and operable surface while it travels through a small, navigable sea area. Retain the preset identity but replace its generic passenger circulation emphasis with fishing work locations.\n\n### Config requirements\nUse `water-body` for the open ocean: a broad rolling sea surface with strong waves, whitecaps, and spray striking the hull. Use `building-interior` for the small enclosed navigation cabin, entered from the deck and containing the helm wheel. Use `trigger-task` for visible fishing spots, expressed as subtle realistic water activity such as buoyed patches, bird activity, bait balls, or crab-pot lines rather than game-like markers.\n\n### Layout requirements\nPlace `trigger-task` fishing interaction sites at every fishing spot, distributed across the surrounding navigable water at varied bearings from the boat; do not assign an invented fixed count. Place the navigation `trigger-task` at the wheel inside the cabin, immediately reachable from the deck. No other placed gameplay volumes are required.\n\n### Layout components\nThe central zone is one seaworthy deep-sea fishing boat, medium-sized in frame, with a working open deck, attached fishing rods along both rails, crab nets and gear grouped near the stern, and an enclosed small cabin forward of mid-deck. The cabin contains the navigation wheel and has a usable deck-to-cabin entrance. The surrounding zone is a small open-ocean sailing area, large enough to spread fishing spots apart while keeping the boat visually central. There is no road or land route; vessel travel across the water connects the boat to each fishing location. Strong rolling wave geometry, foam wakes, spray, and deep water fill the terrain. Include at most one small rocky island, held far on the horizon as background scenery only, with no dock, path, or destination treatment. The boundary is an ocean horizon and soft navigable limit hidden by distance and weather. Compose an elevated three-quarter isometric view with the boat dominant, deck equipment readable, and several fishing areas visible across the water.\n\n### Render order\nRender `isometric` first and treat it as authoritative: the realistic vessel, wave scale, and maritime composition lead, while the small open-water topology does not require a plan-valid route.\n\n### Scale, theme, and pipeline cost\nScale band: medium, driven by one detailed working vessel plus a compact navigable ocean area. Theme: realistic deep-sea commercial fishing, weathered marine equipment, cold blue water, heavy swells and sea spray. Use `P3` because players move between the exterior deck and enclosed cabin. Use `CHECK` for the ocean-water representation; it remains a single readable water surface rather than a self-occluding volumetric play space.",
   "spec": {
     "genre": "Simulation",
     "secondary": [],
-    "shape": "world-shared",
-    "preset": "Vehicle Sim",
+    "shape": "vehicle-deck",
+    "preset": "Vessel Operation",
     "axes": {},
     "options": [
       {
         "id": "water-body",
-        "text": "A broad open-ocean water surface with strong rolling swells, whitecaps, and seawater spray around the hull.",
+        "text": "A broad rolling open ocean with strong waves, whitecaps, and sea spray striking the hull.",
         "visible": true,
         "count": -1
       },
       {
         "id": "building-interior",
-        "text": "A small enclosed navigation cabin entered from the deck, with clear windows and an interior helm wheel.",
+        "text": "A small enclosed navigation cabin entered from the deck, containing the helm wheel.",
         "visible": true,
         "count": 1
       },
       {
         "id": "trigger-task",
-        "text": "Fishing activity volumes at the scattered fishing spots; do not render markers or volumes themselves.",
-        "visible": false,
-        "count": -1
+        "text": "A navigation task at the wheel inside the cabin.",
+        "visible": true,
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "trigger-task",
+        "text": "Navigation task at the wheel inside the cabin.",
+        "count": 1,
+        "where": "Inside the enclosed navigation cabin, immediately reachable from the deck."
       }
     ],
     "layout": {
-      "composition": "The detailed fishing boat is the focal foreground object, centered slightly forward of frame against wide open water; a minor low island is only a far-background silhouette.",
+      "composition": "Elevated three-quarter isometric view with the boat dominant and central, deck equipment readable, and several fishing areas visible across the surrounding water; at most one small rocky island sits far on the horizon as background scenery.",
       "zones": [
         {
-          "name": "Fishing boat",
-          "role": "Player-operated base and working fishing vessel.",
-          "where": "Centre, slightly forward in frame.",
-          "size": "Large enough to read as the operational center."
+          "name": "Deep-sea fishing boat",
+          "role": "The principal walkable and operable vessel surface, with fishing work on the open deck and navigation in the cabin.",
+          "where": "Centre of the map and frame.",
+          "size": "Medium-sized in frame."
         },
         {
-          "name": "Open-ocean zone",
-          "role": "Navigable sea surrounding the vessel and holding spatially separated fishing spots.",
-          "where": "Extending evenly in all directions around the boat.",
-          "size": "Small navigable patch."
-        },
-        {
-          "name": "Navigation cabin",
-          "role": "Enclosed helm space entered from the deck.",
-          "where": "Near the middle of the boat.",
-          "size": "Compact."
-        },
-        {
-          "name": "Fishing spots",
-          "role": "Locations for fishing activity volumes.",
-          "where": "Scattered across the surrounding water, spatially separated from one another.",
-          "size": ""
-        },
-        {
-          "name": "Distant island",
-          "role": "Minor background scenery only, with no destination emphasis.",
-          "where": "Far horizon.",
-          "size": "Small and low."
+          "name": "Open-ocean sailing area",
+          "role": "Navigable water surrounding the boat, spreading fishing spots apart while keeping the vessel visually central.",
+          "where": "Surrounding the central boat.",
+          "size": "Small navigable area."
         }
       ],
       "paths": [
         {
-          "from": "Open working deck",
-          "to": "Navigation cabin",
-          "kind": "open ground"
+          "from": "Deep-sea fishing boat",
+          "to": "Fishing locations",
+          "kind": "open water"
         }
       ],
-      "terrain": "Entirely animated-looking dark-blue ocean surface with rolling swells, whitecaps, and seawater spray around the hull.",
+      "terrain": "Deep water with strong rolling wave geometry, foam wakes, whitecaps, spray, and heavy swells.",
       "props": [
-        {
-          "name": "Seaworthy fishing boat",
-          "count": 1,
-          "where": "Centre, slightly forward of frame."
-        },
         {
           "name": "Attached fishing rods",
           "count": -1,
-          "where": "Along both side rails of the open working deck."
+          "where": "Along both rails of the boat."
         },
         {
-          "name": "Crab nets",
+          "name": "Crab nets and fishing gear",
           "count": -1,
-          "where": "Stored or hung near the stern."
+          "where": "Grouped near the stern on the open deck."
         },
         {
-          "name": "Interior helm wheel",
+          "name": "Helm wheel",
           "count": 1,
-          "where": "Inside the enclosed navigation cabin."
+          "where": "Inside the enclosed navigation cabin forward of mid-deck."
         },
         {
-          "name": "Small low island",
+          "name": "Small rocky island",
           "count": 1,
-          "where": "At the far horizon as a background silhouette."
+          "where": "Far on the horizon as background scenery only, with no dock, path, or destination treatment."
         }
       ],
-      "boundary": "No physical boundary; open horizon, fog, and uninterrupted sea imply the map edge.",
-      "scale_band": "small",
-      "theme": "Realistic deep-sea commercial fishing, wet weather, rolling swells, and marine-industrial detail with realistic marine meshes and textured equipment."
+      "boundary": "An ocean horizon and soft navigable limit hidden by distance and weather.",
+      "scale_band": "medium",
+      "theme": "Realistic deep-sea commercial fishing, weathered marine equipment, cold blue water, heavy swells, and sea spray."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "visual fidelity of the boat, wave scale, spray, and open-water composition leads because no route topology can make this small open area unworkable.",
+      "why": "The realistic vessel, wave scale, and maritime composition lead because the small open-water topology does not require a plan-valid route.",
       "set_piece": false
     },
     "route": [
@@ -131,7 +116,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

@@ -19,172 +19,178 @@
     }
   ],
   "scene_prompt": "Crea un mapa 3D continuo de evolución animal con estilo cartoon brillante y estilizado, apto para Roblox, donde seis biomas conectados se recorren a pie. La Jungla ocupa la zona inicial y conduce por transiciones claras hacia una región nevada, un desierto, un lago, un volcán reservado para criaturas poderosas y, al extremo final del mundo, las Tierras Oscuras como destino del Dragón de la Oscuridad. Cada bioma presenta terreno, vegetación o formaciones propias, comida u orbes repartidos por el suelo, animales exclusivos, áreas de misión y un espacio abierto para un jefe gigante; coloca criaturas cada vez más imponentes hacia el volcán y las Tierras Oscuras.",
-  "blob": "### Género\nEl género dominante es RPG: la progresión por evoluciones, combate, jefes y economía define un mundo de exploración y avance de poder. No se requiere género secundario.\n\n### Forma y preset\nUsa la forma `world-single`: los seis biomas coexisten en un único mundo continuo recorrible a pie, con la Jungla como comienzo y las Tierras Oscuras al extremo opuesto. El preset es none; Open World & Survival RPG se aproxima por los biomas, pero su forma `world-open-biomes` implica mapas separados y contradice expresamente el mundo continuo.\n\n### Requisitos de configuración\n`hazard-aggro` es geometría visible: cada bioma contiene un claro abierto y apartado del camino principal para su jefe gigante y criaturas hostiles. `spawner-npc` es invisible: coloca los orígenes de aparición dentro de esos claros, sin representarlos en la imagen. `collectible-nodes` es visible e invisible: comida y orbes se ven repartidos por suelo, vegetación y pequeñas formaciones, con sus puntos de recogida colocados después. `npc-population` es visible e invisible: animales exclusivos habitan cada bioma y sus posiciones se colocan sobre terreno navegable. `water-body` es visible: el Lago constituye una región acuática real. `terrain-relief` es visible: montañas, laderas volcánicas y cambios de altura distinguen las transiciones.\n\n### Componentes de layout\nConstruye seis zonas conectadas en una progresión larga: Jungla inicial, región Nevada, Desierto, Lago, Volcán y Tierras Oscuras finales. La Jungla, en el primer plano de entrada, tiene senderos anchos entre árboles, vegetación densa y un claro de jefe. Un paso de roca y vegetación cada vez más escasa conduce a la nieve; después, cañones secos llevan al desierto. Desde el desierto, una ribera amplia abre el bioma del Lago, con orbes y comida en orillas e islotes accesibles. Un sendero de piedra asciende desde el lago hacia el Volcán, con roca negra, lava contenida y un gran cráter-arena. La ruta final cruza una transición erosionada hacia las Tierras Oscuras: suelo ceniciento, cristales oscuros, siluetas de criaturas colosales y el mayor claro de jefe como destino final. Cada uno de los seis biomas incluye su propia zona de misión, claro de jefe y distribución de objetos. El límite exterior se cierra con acantilados, montañas, agua y niebla oscura; no hay edificios ni interiores. La composición debe mostrar la Jungla abajo o delante y la progresión visual hacia el Volcán y las Tierras Oscuras al fondo.\n\n### Orden de render\nUsa `isometric`: una vista isométrica autoritativa expresa mejor las transiciones temáticas y la escala ascendente del mundo; la conectividad es importante, pero no exige una topología procedimental estricta.\n\n### Escala, tema y coste de pipeline\nEscala large, impulsada por seis biomas completos, seis arenas de jefe y largas transiciones caminables. Tema: aventura RPG de animales cartoon brillantes y estilizados para Roblox, pasando de jungla colorida a fantasía volcánica y oscura. Modificadores: `tiered` por el relieve de montaña, nieve y volcán sin superficies superpuestas; `CHECK` por el Lago como masa de agua real. No se fuerza ningún coste adicional: `P0` para el resto de la geometría.",
+  "blob": "### Genre\nThe dominant genre is `RPG`: animal progression, hostile creatures, bosses, and a final high-tier destination define the game. No secondary genre is needed.\n\n### Shape and preset\nUse `world-open`, a single contiguous overworld crossed on foot from the starting jungle to the final Dark Lands. The closest RPG preset is none: Open World & Survival RPG supplies a biome-scaled world but its `world-open-biomes` shape assumes separate-map routing, which contradicts the explicitly continuous six-biome map.\n\n### Config requirements\nUse `hazard-aggro` for broad, readable combat clearings in every biome, set away from the main walking route and large enough for giant bosses. Use `collectible-nodes` as visible food and glowing orb clusters scattered across each biome. Use `water-body` for the lake as a substantial traversable or boundary-defining water feature. Use `terrain-relief` for jungle rises, snowy slopes, desert dunes, volcanic cliffs, and the harsh elevated forms approaching the Dark Lands.\n\n### Layout requirements\nPlace `collectible-nodes` throughout all six biomes, with distinct food or orb clusters on local terrain, along side clearings, and near but not inside boss arenas; no count is specified. Place six `spawner-npc` boss origins, one centered in each biome's dedicated open boss clearing, with the largest and most imposing origins in the volcano and Dark Lands. These markers are placed after segmentation and are not rendered as UI or mechanics.\n\n### Layout components\nBuild six connected zones in a clear west-to-east progression: a lush Jungle start zone; a Snow region beyond an icy transition; a dune-filled Desert; a Lake district with shore paths and water-separated features; a steep volcanic region; and the Dark Lands at the far end as the final, ominous destination. Each zone has its own ground material, vegetation or rock formations, exclusive animal habitat, orb/food clusters, a mission area, and one open giant-boss arena. Use broad walkable transition corridors between every adjacent biome, visually blending vegetation and terrain rather than loading separate maps. Keep combat clearings off the primary circulation line. Enclose the outer perimeter with impassable cliffs, dense jungle, deep water, desert escarpments, lava fields, and dark crags. Compose the frame so the jungle foreground leads through increasingly severe terrain toward the volcano and distant Dark Lands.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because the six biome connections and their continuous on-foot route must remain valid and legible before the isometric dressing is made.\n\n### Scale, theme, and pipeline cost\nScale is huge, driven by six full biomes, transition bands, boss arenas, and the long continuous progression across the world. The theme is bright, stylized Roblox cartoon wildlife: colorful, approachable environments with increasingly imposing but non-realistic creatures and darker endgame terrain. Pipeline modifiers are `tiered` for the terrain elevation and `CHECK` for the lake water surface; neither requires overhanging terrain or separate maps.",
   "spec": {
     "genre": "RPG",
     "secondary": [],
-    "shape": "world-single",
+    "shape": "world-open",
     "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "hazard-aggro",
-        "text": "Cada bioma contiene un claro abierto y apartado del camino principal para su jefe gigante y criaturas hostiles.",
+        "text": "Broad, readable combat clearings in every biome, set away from the main walking route and large enough for giant bosses.",
         "visible": true,
-        "count": 6
-      },
-      {
-        "id": "spawner-npc",
-        "text": "Coloca los orígenes de aparición dentro de los claros de jefe, sin representarlos en la imagen.",
-        "visible": false,
-        "count": 6
+        "count": -1
       },
       {
         "id": "collectible-nodes",
-        "text": "Comida y orbes repartidos por suelo, vegetación, pequeñas formaciones, orillas e islotes accesibles, con sus puntos de recogida colocados después.",
-        "visible": true,
-        "count": 6
-      },
-      {
-        "id": "npc-population",
-        "text": "Animales exclusivos habitan cada bioma y sus posiciones se colocan sobre terreno navegable.",
+        "text": "Visible food and glowing orb clusters scattered across each biome.",
         "visible": true,
         "count": -1
       },
       {
         "id": "water-body",
-        "text": "El Lago constituye una región acuática real, con orillas e islotes accesibles.",
+        "text": "A substantial lake that can be traversed or defines boundaries.",
         "visible": true,
-        "count": 1
+        "count": -1
       },
       {
         "id": "terrain-relief",
-        "text": "Montañas, laderas volcánicas y cambios de altura distinguen las transiciones entre biomas.",
+        "text": "Jungle rises, snowy slopes, desert dunes, volcanic cliffs, and harsh elevated forms approaching the Dark Lands.",
         "visible": true,
         "count": -1
+      },
+      {
+        "id": "spawner-npc",
+        "text": "Boss origins centered in each biome's dedicated open boss clearing, with the largest and most imposing origins in the volcano and Dark Lands.",
+        "visible": false,
+        "count": 6
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "collectible-nodes",
+        "text": "Distinct food or orb clusters on local terrain, along side clearings, and near but not inside boss arenas.",
+        "count": -1,
+        "where": "Throughout all six biomes, on local terrain, along side clearings, and near but not inside boss arenas."
+      },
+      {
+        "id": "spawner-npc",
+        "text": "Boss origins centered in each biome's dedicated open boss clearing, with the largest and most imposing origins in the volcano and Dark Lands.",
+        "count": 6,
+        "where": "One centered in each biome's dedicated open boss clearing."
       }
     ],
     "layout": {
-      "composition": "La Jungla ocupa el primer plano o la parte inferior de entrada; la progresión visual recorre nieve, desierto y Lago hacia el Volcán y las Tierras Oscuras al fondo.",
+      "composition": "The jungle fills the foreground and leads west-to-east through increasingly severe terrain toward the volcano and distant Dark Lands.",
       "zones": [
         {
-          "name": "Jungla",
-          "role": "Zona inicial con misión, claro de jefe, animales exclusivos y distribución de objetos.",
-          "where": "primer plano de entrada",
+          "name": "Jungle",
+          "role": "Starting biome with exclusive animal habitat, food or orb clusters, a mission area, and an open giant-boss arena.",
+          "where": "West end and foreground.",
           "size": ""
         },
         {
-          "name": "Región Nevada",
-          "role": "Bioma de progresión con misión, claro de jefe, animales exclusivos y distribución de objetos.",
-          "where": "después de la Jungla",
+          "name": "Snow Region",
+          "role": "Snow biome beyond an icy transition, with exclusive animal habitat, food or orb clusters, a mission area, and an open giant-boss arena.",
+          "where": "East of the Jungle.",
           "size": ""
         },
         {
-          "name": "Desierto",
-          "role": "Bioma de progresión con misión, claro de jefe, animales exclusivos y distribución de objetos.",
-          "where": "después de la región Nevada",
+          "name": "Desert",
+          "role": "Dune-filled biome with exclusive animal habitat, food or orb clusters, a mission area, and an open giant-boss arena.",
+          "where": "East of the Snow Region.",
           "size": ""
         },
         {
-          "name": "Lago",
-          "role": "Región acuática con misión, claro de jefe, animales exclusivos y objetos en orillas e islotes accesibles.",
-          "where": "después del Desierto",
+          "name": "Lake District",
+          "role": "Lake biome with shore paths, water-separated features, exclusive animal habitat, food or orb clusters, a mission area, and an open giant-boss arena.",
+          "where": "East of the Desert.",
           "size": ""
         },
         {
-          "name": "Volcán",
-          "role": "Bioma reservado para criaturas poderosas, con misión, gran cráter-arena para jefe y distribución de objetos.",
-          "where": "después del Lago",
+          "name": "Volcanic Region",
+          "role": "Steep volcanic biome for powerful creatures, with exclusive animal habitat, food or orb clusters, a mission area, and an open giant-boss arena.",
+          "where": "East of the Lake District.",
           "size": ""
         },
         {
-          "name": "Tierras Oscuras",
-          "role": "Destino final del Dragón de la Oscuridad, con misión, animales exclusivos, distribución de objetos y el mayor claro de jefe.",
-          "where": "extremo final del mundo, al fondo",
+          "name": "Dark Lands",
+          "role": "Final ominous high-tier destination with exclusive animal habitat, food or orb clusters, a mission area, and an open giant-boss arena.",
+          "where": "Far east end of the world, beyond the volcano.",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Jungla",
-          "to": "Región Nevada",
-          "kind": "corredor"
+          "from": "Jungle",
+          "to": "Snow Region",
+          "kind": "corridor"
         },
         {
-          "from": "Región Nevada",
-          "to": "Desierto",
-          "kind": "corredor"
+          "from": "Snow Region",
+          "to": "Desert",
+          "kind": "corridor"
         },
         {
-          "from": "Desierto",
-          "to": "Lago",
-          "kind": "open ground"
+          "from": "Desert",
+          "to": "Lake District",
+          "kind": "corridor"
         },
         {
-          "from": "Lago",
-          "to": "Volcán",
-          "kind": "track"
+          "from": "Lake District",
+          "to": "Volcanic Region",
+          "kind": "corridor"
         },
         {
-          "from": "Volcán",
-          "to": "Tierras Oscuras",
-          "kind": "corredor"
+          "from": "Volcanic Region",
+          "to": "Dark Lands",
+          "kind": "corridor"
         }
       ],
-      "terrain": "Jungla con senderos anchos, árboles y vegetación densa; paso de roca y vegetación escasa hacia nieve; cañones secos del desierto; lago con ribera e islotes; roca negra y lava contenida en el volcán; suelo ceniciento y cristales oscuros en las Tierras Oscuras.",
+      "terrain": "Six connected biome ground materials with jungle rises, snowy slopes, desert dunes, lake shores and water-separated features, volcanic cliffs, and harsh elevated Dark Lands terrain. Broad transition corridors blend vegetation and terrain between adjacent biomes.",
       "props": [
         {
-          "name": "biomas conectados",
-          "count": 6,
-          "where": "a lo largo del mundo continuo"
-        },
-        {
-          "name": "arenas o claros de jefe",
-          "count": 6,
-          "where": "una en cada bioma"
-        },
-        {
-          "name": "zonas de misión",
-          "count": 6,
-          "where": "una en cada bioma"
-        },
-        {
-          "name": "siluetas de criaturas colosales",
+          "name": "Food or glowing orb clusters",
           "count": -1,
-          "where": "Tierras Oscuras"
+          "where": "Across all six biomes on local terrain, along side clearings, and near but not inside boss arenas."
         },
         {
-          "name": "gran cráter-arena",
-          "count": 1,
-          "where": "Volcán"
+          "name": "Exclusive animal habitats",
+          "count": -1,
+          "where": "Within each biome."
+        },
+        {
+          "name": "Mission areas",
+          "count": -1,
+          "where": "Within each biome."
+        },
+        {
+          "name": "Open giant-boss arenas",
+          "count": 6,
+          "where": "One in each biome, off the primary circulation line."
         }
       ],
-      "boundary": "El límite exterior se cierra con acantilados, montañas, agua y niebla oscura.",
-      "scale_band": "large",
-      "theme": "Aventura RPG de animales cartoon brillantes y estilizados para Roblox, de jungla colorida a fantasía volcánica y oscura."
+      "boundary": "The outer perimeter is enclosed by impassable cliffs, dense jungle, deep water, desert escarpments, lava fields, and dark crags.",
+      "scale_band": "huge",
+      "theme": "Bright stylized Roblox cartoon wildlife, colorful and approachable, with increasingly imposing non-realistic creatures and darker endgame terrain."
     },
     "render": {
-      "first": "isometric",
-      "then": "topdown",
-      "authoritative": "isometric",
-      "why": "las transiciones temáticas y la escala ascendente se expresan mejor en una vista isométrica y la conectividad no exige topología procedimental estricta.",
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "the six biome connections and continuous on-foot route must remain valid and legible before isometric dressing.",
       "set_piece": false
     },
     "route": [
-      "P0",
       "tiered",
       "CHECK"
     ],
-    "notes": [],
+    "notes": [
+      "visible on 'collectible-nodes' set from goes_to=both"
+    ],
     "scene_prompt": "Crea un mapa 3D continuo de evolución animal con estilo cartoon brillante y estilizado, apto para Roblox, donde seis biomas conectados se recorren a pie. La Jungla ocupa la zona inicial y conduce por transiciones claras hacia una región nevada, un desierto, un lago, un volcán reservado para criaturas poderosas y, al extremo final del mundo, las Tierras Oscuras como destino del Dragón de la Oscuridad. Cada bioma presenta terreno, vegetación o formaciones propias, comida u orbes repartidos por el suelo, animales exclusivos, áreas de misión y un espacio abierto para un jefe gigante; coloca criaturas cada vez más imponentes hacia el volcán y las Tierras Oscuras."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
-  "mapper_notes": []
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['CHECK', 'P0', 'tiered'] gives isometric"
+  ]
 }

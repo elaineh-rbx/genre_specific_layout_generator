@@ -19,127 +19,90 @@
     }
   ],
   "scene_prompt": "Create a 3D medieval tycoon map with separate player plots, each containing a buildable fortress. Arrange space around each fortress for roughly a dozen defending soldiers and clear approaches for attacking waves.",
-  "blob": "### Genre\nThe dominant genre is Simulation, specifically a medieval Tycoon. Survival is secondary because each fortress has to withstand incoming hostile approaches; Simulation owns the per-player plot shape.\n\n### Shape and preset\nUse `plot-isolated`: a shared medieval map divided into separate, clearly bounded player fortress plots. The nearest preset is Tycoon, but the prompt explicitly replaces its shared-team plot with individual plots and does not retain most preset options, so the preset is none.\n\n### Config requirements\nUse `path-circulation` as visible geometry: broad dirt-and-stone approach roads run through the shared ground to each plot’s fortress gate, leaving readable open approach corridors. Use `spawner-npc` as invisible layout only: hostile-entry markers sit beyond the outer end of each approach, outside the fortress build ground; they must not appear in the image.\n\n### Layout components\nCreate a medium-sized shared exterior map arranged as a ring or loose grid of separate square-to-rectangular tycoon plots, each with enough central buildable ground for one medieval fortress. Every plot has a defensible front edge facing a clear approach road, open staging space immediately outside its gate, and an interior courtyard or parade yard sized for roughly a dozen defending soldiers. Keep neighboring fortresses separated by neutral terrain and roads so their walls, armies, and approaches remain visually distinct. Use packed earth, grass, stone paths, low medieval boundary walls or timber fencing between plots, and distant woodland or rocky perimeter terrain as the outer map boundary. Compose the view so several plots and their converging approach roads are legible at once, with one fortress foregrounded.\n\n### Render order\nUse `topdown`: the connected roads, plot separations, and unobstructed approaches must be validated in plan before dressing the fortresses isometrically.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by multiple independent fortress plots and space for roughly a dozen soldiers per player. Theme: readable stylized medieval fortress-building ground, stone walls, timber details, grass, and dirt roads. Pipeline modifier: `P0`; this is one contiguous exterior surface with no forced overhangs, interiors, separate maps, or generated topology.",
+  "blob": "### 1. Genre\nThe dominant genre is Simulation: this is a personal-plot medieval tycoon with a build-and-defend loop. No secondary genre is needed.\n\n### 2. Shape and preset\nUse `plot-isolated`, taken from the Simulation Sandbox preset. The preset’s isolated, equally spaced personal plots fits exactly, but omit its resource and hub assumptions; this scene is about individual fortress compounds rather than harvesting or a shared bazaar.\n\n### 3. Config requirements\nNo additional image-config options apply. The separate buildable plots, fortress footprints, defended interior space, and clear outer approaches are already required by the selected shape and scene description; do not add unrequested roads, resource fields, shops, or terrain features.\n\n### 4. Layout requirements\nUse `spawner-npc` for attacking-wave origins: place one wave origin at the outer edge of each player plot, aligned with that plot’s clear approach to the fortress and outside the defended compound. The origin emits repeated waves from the same readable direction. No other canonical placed markers are required.\n\n### 5. Layout components\nArrange several large, independent square player plots with generous separation so their fortress construction and combat space never overlap. Each plot contains a central buildable medieval fortress footprint: a walled keep or courtyard compound set back from the plot edge, with open defended ground around it sized for roughly a dozen defending soldiers per player. Leave one broad, unobstructed approach from the plot boundary toward the fortress for incoming waves; do not clutter it with buildings or props. Position the roughly dozen soldier props or deployment spaces within the courtyard, on wall-adjacent ground, and immediately behind the entrance approach, preserving a clear defensive line. Use flat, readable ground throughout. Plot edges are cleanly defined by low medieval boundary walls, hedges, or terrain strips, while the outer map remains open enough to read each plot independently. Compose the frame from a high three-quarter view, showing multiple fortress plots and their approach corridors at once.\n\n### 6. Render order\nUse `topdown` first and treat it as authoritative, because each fortress must retain a valid, unobstructed approach from its wave origin to its defensive perimeter; the isometric view is dressed from that verified plan.\n\n### 7. Scale, theme, and pipeline cost\nUse a medium scale: each individual fortress supports only roughly a dozen soldiers, but the map must show multiple separated player plots. Theme: compact medieval fortress tycoon, stone keeps, timber details, orderly defensive compounds. Pipeline modifier: `P0`, since all plots coexist on one flat surface and no overhangs, interior transitions, or procedurally carved topology are required.",
   "spec": {
     "genre": "Simulation",
-    "secondary": [
-      "Survival"
-    ],
+    "secondary": [],
     "shape": "plot-isolated",
-    "preset": "none",
+    "preset": "Sandbox",
     "axes": {},
-    "options": [
-      {
-        "id": "path-circulation",
-        "text": "Broad dirt-and-stone approach roads run through the shared ground to each plot’s fortress gate, leaving readable open approach corridors.",
-        "visible": true,
-        "count": -1
-      }
-    ],
+    "options": [],
+    "layout_placement": [],
     "layout": {
-      "composition": "Several separate fortress plots and their converging approach roads are legible at once, with one fortress foregrounded.",
+      "composition": "High three-quarter view showing multiple fortress plots and their broad approach corridors at once.",
       "zones": [
         {
-          "name": "Shared exterior map",
-          "role": "Medium-sized contiguous shared ground holding the separate player fortress plots.",
-          "where": "across the map",
-          "size": "medium"
+          "name": "Independent square player plots",
+          "role": "Separate personal fortress compounds for building and defending against incoming waves.",
+          "where": "Across the open outer map, generously separated from one another.",
+          "size": "Several large plots"
         },
         {
-          "name": "Player fortress plots",
-          "role": "Separate square-to-rectangular tycoon plots, each with central buildable ground for one medieval fortress.",
-          "where": "arranged as a ring or loose grid",
-          "size": "separate square-to-rectangular plots"
-        },
-        {
-          "name": "Fortress front edge and gate",
-          "role": "Defensible front edge facing a clear approach road.",
-          "where": "front of each plot",
+          "name": "Central fortress footprint",
+          "role": "Buildable walled keep or courtyard compound with defended interior space.",
+          "where": "Set back from the edge at the centre of each player plot.",
           "size": ""
         },
         {
-          "name": "Open staging space",
-          "role": "Space immediately outside each fortress gate for incoming hostile approaches.",
-          "where": "outside each gate",
-          "size": ""
-        },
-        {
-          "name": "Interior courtyard or parade yard",
-          "role": "Defending-soldier space within each fortress.",
-          "where": "inside each fortress plot",
-          "size": "roughly a dozen defending soldiers per player"
-        },
-        {
-          "name": "Neutral terrain separation",
-          "role": "Separates neighboring fortresses so walls, armies, and approaches remain visually distinct.",
-          "where": "between plots",
-          "size": ""
-        },
-        {
-          "name": "Hostile entry area",
-          "role": "Invisible hostile-entry marker placement beyond the fortress build ground.",
-          "where": "beyond the outer end of each approach",
-          "size": ""
+          "name": "Fortress approach",
+          "role": "Broad unobstructed incoming-wave route and defensive line.",
+          "where": "From each plot boundary toward its fortress entrance.",
+          "size": "Broad"
         }
       ],
       "paths": [
         {
-          "from": "Shared ground",
-          "to": "Fortress gate",
-          "kind": "road"
-        },
-        {
-          "from": "Fortress gate",
-          "to": "Open staging space",
-          "kind": "road"
+          "from": "Player plot boundary",
+          "to": "Central fortress footprint",
+          "kind": "open ground"
         }
       ],
-      "terrain": "Packed earth, grass, stone paths, and neutral terrain between plots; distant woodland or rocky perimeter terrain at the outer edge.",
+      "terrain": "Flat, readable ground throughout; clean plot edges use low medieval boundary walls, hedges, or terrain strips.",
       "props": [
         {
-          "name": "Defending soldiers",
+          "name": "Defending soldier props or deployment spaces",
           "count": 12,
-          "where": "interior courtyard or parade yard of each fortress"
+          "where": "Within the courtyard, on wall-adjacent ground, and immediately behind the entrance approach."
         },
         {
-          "name": "Stone walls",
+          "name": "Low medieval boundary walls, hedges, or terrain strips",
           "count": -1,
-          "where": "around fortresses and as low medieval boundaries between plots"
+          "where": "Along the cleanly defined edges of each player plot."
         },
         {
-          "name": "Timber fencing",
+          "name": "Stone keeps and timber details",
           "count": -1,
-          "where": "between plots"
-        },
-        {
-          "name": "Timber details",
-          "count": -1,
-          "where": "on the medieval fortress-building ground"
+          "where": "Within each central fortress footprint."
         }
       ],
-      "boundary": "Distant woodland or rocky perimeter terrain forms the outer map boundary.",
+      "boundary": "Each plot is cleanly defined by low medieval boundary walls, hedges, or terrain strips; the outer map remains open enough to read each plot independently.",
       "scale_band": "medium",
-      "theme": "Readable stylized medieval fortress-building ground with stone walls, timber details, grass, and dirt roads."
+      "theme": "Compact medieval fortress tycoon, stone keeps, timber details, orderly defensive compounds."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "connected roads, plot separations, and unobstructed approaches must be validated in plan before dressing the fortresses isometrically.",
+      "why": "each fortress must retain a valid, unobstructed approach from its wave origin to its defensive perimeter.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
     "notes": [
-      "dropped option 'spawner-npc': not in Simulation"
+      "The Simulation Sandbox preset is named, but its resource and shared-hub assumptions are explicitly omitted.",
+      "No additional image-config options apply; do not add roads, resource fields, shops, or terrain features.",
+      "The number of player plots is described as several, so no exact plot count is recorded.",
+      "The soldier quantity is stated as roughly a dozen; count is recorded as 12 while the approximate wording is retained in the layout description.",
+      "dropped option 'spawner-npc': not in Simulation",
+      "dropped placement 'spawner-npc': not in Simulation"
     ],
     "scene_prompt": "Create a 3D medieval tycoon map with separate player plots, each containing a buildable fortress. Arrange space around each fortress for roughly a dozen defending soldiers and clear approaches for attacking waves."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

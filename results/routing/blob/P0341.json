@@ -14,48 +14,81 @@
     }
   ],
   "scene_prompt": "Create a 3D neon-wireframe tank arena shooter set in a tight, open 300-stud box arena. The player tank is centered in a behind-and-above camera view, with open maneuvering space around it and enemy tanks approaching across the arena; use a Tron-like glowing grid ground and luminous boundary walls to frame the combat space.",
-  "blob": "### Genre\nThe dominant genre is Shooter, specifically a PvE arena-shooter experience: ranged tank combat and endlessly escalating enemy waves establish the genre. No secondary genre is needed.\n\n### Shape and preset\nUse the `open-battlefield` shape: a compact, unobstructed combat field sized for tanks to maneuver and engage from all directions. The closest preset is PvE Shooter, but the prompt overrides its lane-network form; preset `none` applies because this open arena retains none of that preset’s defining lane, choke, or interior bundle.\n\n### Config requirements\nNo additional Shooter options are selected. The prompt requires open maneuvering space and luminous containment, not cover arrays, lane pinch points, buildings, loot, or visible spawn hardware. Enemy-wave logic, crosshairs, score, radar, and camera behavior are mechanics/UI and remain out of the layout.\n\n### Layout components\nBuild one square, open 300-stud box arena. The central and dominant zone is a broad, flat neon grid floor with generous clear maneuvering space across nearly the full footprint; keep the center especially uncluttered so the player tank has readable movement room and threats can approach across open ground. Surround it on all four sides with tall luminous wireframe boundary walls, creating a hard rectangular combat enclosure without adding interior rooms, lanes, or obstacles. Use a black or very dark void-like surround beyond the walls so the glowing cyan/blue grid and boundaries silhouette clearly. The arena has no terrain relief, water, structures, props, or secondary zones. Compose the space as a centered, symmetrical square field with the boundary walls legible in the behind-and-above gameplay view.\n\n### Render order\nUse `isometric`: this is a simple flat, symmetric enclosed arena whose playability does not depend on a procedurally valid route or maze topology, so the rendered look can lead.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the explicit tight 300-stud arena footprint. Theme: minimalist Tron-style neon wireframe, glowing grid, dark void, luminous cyan-blue containment. Pipeline modifier: `P0`, because the arena is one flat exterior-equivalent surface with no overhangs, interiors, separate maps, volumetric traversal, or topology requiring construction validation.",
+  "blob": "### Genre\nThe dominant genre is Shooter, specifically a PvE arena-survival shooter: the player drives and fires from a tank against escalating enemy waves. No secondary genre is needed.\n\n### Shape and preset\nUse `space-bounded`, taken from outside Shooter’s usual shape set, because this is one tight, single-level open combat box rather than a lane network. The closest preset is PvE Shooter, but the prompt overrides its lanes and breached structures; use preset none.\n\n### Config requirements\nNo additional image config options apply. The requested glowing grid floor and luminous walls are concrete arena geometry, not separate option picks.\n\n### Layout requirements\nUse `spawner-npc` for enemy tank wave origins. Place several origins evenly around the inner perimeter and behind the luminous walls, aimed into the central maneuvering field, so waves can approach from varied directions without spawning beside the player. No other placed gameplay components are specified.\n\n### Layout components\nBuild one square, open 300-stud arena zone with a broad unobstructed central maneuvering field. Its ground is a dark Tron-style neon wireframe grid, flat and continuous. Enclose all four sides with tall luminous boundary walls that clearly frame and contain the combat space. Keep the arena free of cover, buildings, lanes, or interior rooms. Show the player tank near the visual center with open space on every side, while a small number of enemy tanks approach across the grid from the perimeter. Compose the isometric scene around the centered tank and the glowing square boundary, with diagonal enemy approach lines making the otherwise open arena readable.\n\n### Render order\nUse `isometric`: the scene is a simple bounded arena whose topology does not need plan-first validation, and the neon visual treatment leads the presentation.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the explicitly tight 300-stud box. Theme: high-contrast Tron-like neon wireframe, dark void-like backdrop, glowing cyan and magenta combat geometry. Use `P0`; this is one flat, single-surface arena with no overhangs, interior transition, separate map, or topology that must be procedurally validated.",
   "spec": {
     "genre": "Shooter",
     "secondary": [],
-    "shape": "open-battlefield",
+    "shape": "space-bounded",
     "preset": "none",
     "axes": {},
-    "options": [],
+    "options": [
+      {
+        "id": "spawner-npc",
+        "text": "Enemy tank wave origins placed around the inner perimeter behind the luminous walls, aimed into the central maneuvering field.",
+        "visible": false,
+        "count": -1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "spawner-npc",
+        "text": "Enemy tank wave origins.",
+        "count": -1,
+        "where": "Evenly around the inner perimeter and behind the luminous walls, aimed into the central maneuvering field so waves approach from varied directions without spawning beside the player."
+      }
+    ],
     "layout": {
-      "composition": "Centered, symmetrical square field viewed from behind and above, with the open neon grid floor dominating the frame and luminous boundary walls legible on all sides against the dark void.",
+      "composition": "Isometric scene composed around the player tank near the visual center and the glowing square boundary, with open space on every side and diagonal enemy approach lines across the grid.",
       "zones": [
         {
-          "name": "Open combat field",
-          "role": "Broad, uncluttered tank maneuvering and all-direction combat space.",
-          "where": "Centre, spanning nearly the full square arena footprint.",
+          "name": "Square open arena",
+          "role": "Tank combat and central maneuvering field for escalating enemy waves.",
+          "where": "Entire map, centered in frame.",
           "size": "300-stud square"
         }
       ],
       "paths": [],
-      "terrain": "Broad, flat glowing cyan-blue neon grid floor with no terrain relief or water; black or very dark void-like surround beyond the walls.",
-      "props": [],
-      "boundary": "Tall luminous wireframe boundary walls enclose all four sides as a hard rectangular combat enclosure.",
+      "terrain": "Flat, continuous dark Tron-style neon wireframe grid ground across the arena.",
+      "props": [
+        {
+          "name": "Player tank",
+          "count": 1,
+          "where": "Near the visual center of the arena."
+        },
+        {
+          "name": "Enemy tanks",
+          "count": -1,
+          "where": "Approaching across the grid from the perimeter along diagonal approach lines."
+        },
+        {
+          "name": "Tall luminous boundary walls",
+          "count": 4,
+          "where": "All four sides of the square arena."
+        }
+      ],
+      "boundary": "Tall luminous boundary walls enclose all four sides, clearly framing and containing the combat space.",
       "scale_band": "small",
-      "theme": "Minimalist Tron-style neon wireframe, glowing grid, dark void, luminous cyan-blue containment."
+      "theme": "High-contrast Tron-like neon wireframe; dark void-like backdrop; glowing cyan and magenta combat geometry."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "A simple flat symmetric enclosed arena whose playability does not depend on a procedurally valid route or maze topology.",
+      "why": "the simple bounded arena topology does not need plan-first validation, and the neon visual treatment leads the presentation.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
-    "notes": [],
+    "notes": [
+      "`space-bounded` was taken from outside Shooter’s usual shape set."
+    ],
     "scene_prompt": "Create a 3D neon-wireframe tank arena shooter set in a tight, open 300-stud box arena. The player tank is centered in a behind-and-above camera view, with open maneuvering space around it and enemy tanks approaching across the arena; use a Tron-like glowing grid ground and luminous boundary walls to frame the combat space."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

@@ -14,196 +14,195 @@
     }
   ],
   "scene_prompt": "Create a multiplayer story-game layout across separate loading places: a small hometown with the player's house, then a new town centered on a school. The school includes a lunch area, classrooms, principal's office, connecting corridors, and locked exit doors, with spaces for players to flee through as the normal school becomes unsettling and glitchy. After escape, return to the hometown and house, then load into an office that transforms into a distorted version of the school for the finale, populated by students and staff and joined by a glitchy helper character.",
-  "blob": "### Genre\nDominant genre: Survival, with Adventure as a secondary story-journey genre. The AI-driven school escape and hostile transformation make this a Survival chase-horror layout; the secondary genre only supports its ordered narrative progression.\n\n### Shape and preset\nUse `warren-looping`, matching the Escape preset. Here it means the school is a connected warren of classrooms, lunch space, offices, and alternate corridors with no trapping dead-end on the escape circulation. The preset remains recognisable, while the separately loaded hometown and finale are added because the prompt explicitly requires them.\n\n### Config requirements\nUse `gate-escape` as visible locked exterior exit doors and their invisible escape trigger beyond the threshold. Use `cover-los` as visible lockers, classroom partitions, alcoves, and corridor turns that break long sightlines. Use `building-interior` for the house, school, and office interiors; this is visible geometry. Use `npc-population` for the visible student, staff, and glitchy-helper staging areas, with their invisible placement markers. Do not render any invisible volumes or markers.\n\n### Layout components\nBuild three separately loaded places. The small hometown is a compact quiet residential block: the player house occupies the center-left, with a short street and sidewalks leading outward; its interior has a front room, kitchen/dining area, and exit. The new-town map places the school as the dominant central mass, approached from a modest street and entry forecourt. Inside, place a lunch hall near the main entrance, a classroom wing on each side, the principal’s office off the administrative corridor, and a looping network of halls connecting all areas. Put locked exit doors on the far exterior edge, with lockers, alcoves, and room partitions along alternate escape routes. Return to the same hometown house after the school escape. The finale is a separate office map that begins as a small office chamber and opens into a distorted, compressed school arrangement with warped classrooms, corridors, staff areas, and an assembly-like confrontation space. Keep the hometown calm and orderly, then progressively introduce visual glitch distortion in the school and finale. Frame each place in readable three-quarter isometric composition, with the school footprint and escape doors especially legible.\n\n### Render order\nUse `topdown` first, then dress the isometric view, because the school’s connected escape circulation must remain valid and readable rather than accidentally sealing players into a corridor.\n\n### Scale, theme, and pipeline cost\nScale is medium: each place is compact, but the build spans three distinct loading maps. Theme is suburban school mystery shifting into glitch-horror. Pipeline modifiers are `P4` for the three separate loaded places, `P3` for outdoor-to-indoor traversal, and `P6` because the looping school escape topology must remain valid by construction.",
+  "blob": "### Genre\nDominant genre: `Survival`, specifically a multiplayer chase-and-escape story. The teacher is hostile AI and the shared objective is to escape; the scripted narrative does not enter the layout as mechanics.\n\n### Shape and preset\nUse `world-chaptered`, taken from outside Survival’s usual shape set, because the hometown, new-town school, return home, and office finale are separate loading places. Preset: none; the chaptered story structure supersedes the Survival Escape preset’s single looping warren.\n\n### Config requirements\nUse `building-interior` for the enterable school, house, and office environments. Use `settlement-density` for the two small towns, with compact residential streets around the houses and school. Use `gate-escape` as visibly locked school exit doors that become the escape route. Use `npc-population` for students, school staff, the principal, and the glitchy helper, with ordinary school population becoming distorted in the finale.\n\n### Layout requirements\nPlace `spawner-npc` at one teacher origin in the school’s classroom-and-corridor zone, with a separate hostile origin in the transformed finale school. Place `collectible-nodes` as one required unlock item in a side classroom, office, or corridor branch away from the locked exits. Place `gate-escape` interaction/escape volumes at the school’s locked outer doors. Site `npc-population` markers across lunch, classroom, corridor, and finale-school zones; place the helper at the finale confrontation area.\n\n### Layout components\nThe first small hometown is a compact residential map with the player house as the focal home. The second place is a new small town leading directly to a large school building. Inside, a central lunch area connects to several classrooms, the principal’s office, and looping corridors; the locked exit doors sit on the far outer edge so players must cross the school to escape. After the escape, return to the original hometown house. The final separate place begins as a plain office, then spatially reveals a distorted, glitch-corrupted school arrangement with classrooms and corridors around a central confrontation space. Keep exterior town streets simple; school walls and doors form the interior boundary. Frame each chapter clearly around its arrival point and its next destination.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because corridor connectivity, the key-item branch, and a reachable escape route must remain playable through the chase.\n\n### Scale, theme, and pipeline cost\nScale: medium, driven by four small loading places rather than one oversized world. Theme: ordinary suburban school horror turning into digital glitch corruption. Pipeline modifiers: `P4` for the separate chapter maps, and `P3` for movement between town exteriors and enterable buildings.",
   "spec": {
     "genre": "Survival",
-    "secondary": [
-      "Adventure"
-    ],
-    "shape": "warren-looping",
-    "preset": "Escape",
+    "secondary": [],
+    "shape": "world-chaptered",
+    "preset": "none",
     "axes": {},
     "options": [
       {
-        "id": "gate-escape",
-        "text": "Visible locked exterior exit doors with an invisible escape trigger beyond the threshold.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "cover-los",
-        "text": "Visible lockers, classroom partitions, alcoves, and corridor turns that break long sightlines along alternate escape routes.",
-        "visible": true,
-        "count": -1
-      },
-      {
         "id": "building-interior",
-        "text": "Visible house, school, and office interiors.",
+        "text": "Enterable school, house, and office environments.",
+        "visible": true,
+        "count": 3
+      },
+      {
+        "id": "settlement-density",
+        "text": "Two small towns with compact residential streets around the houses and school.",
+        "visible": true,
+        "count": 2
+      },
+      {
+        "id": "gate-escape",
+        "text": "Visibly locked school exit doors that become the escape route.",
         "visible": true,
         "count": -1
       },
       {
         "id": "npc-population",
-        "text": "Visible student, staff, and glitchy-helper staging areas, with invisible placement markers.",
+        "text": "Students, school staff, the principal, and a glitchy helper, with the ordinary school population becoming distorted in the finale.",
         "visible": true,
         "count": -1
+      },
+      {
+        "id": "spawner-npc",
+        "text": "One teacher origin in the school and a separate hostile origin in the transformed finale school.",
+        "visible": false,
+        "count": 2
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "One required unlock item placed away from the locked exits.",
+        "visible": false,
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "gate-escape",
+        "text": "Interaction and escape volumes for the locked school exit doors.",
+        "count": -1,
+        "where": "At the school's locked outer doors on the far outer edge."
+      },
+      {
+        "id": "npc-population",
+        "text": "Students, school staff, the principal, and the glitchy helper, with the normal school population distorted in the finale.",
+        "count": -1,
+        "where": "Across lunch, classroom, corridor, and finale-school zones; place the helper at the finale confrontation area."
+      },
+      {
+        "id": "spawner-npc",
+        "text": "One teacher origin in the school and a separate hostile origin in the transformed finale school.",
+        "count": 2,
+        "where": "Place one in the school's classroom-and-corridor zone and the separate hostile origin in the transformed finale school."
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "One required unlock item.",
+        "count": 1,
+        "where": "Place it in a side classroom, office, or corridor branch away from the locked exits."
       }
     ],
     "layout": {
-      "composition": "Readable three-quarter isometric composition for each separately loaded place; the school is the dominant central mass with its footprint and far-edge escape doors especially legible.",
+      "composition": "Frame each separate chapter clearly around its arrival point and its next destination: the hometown house, the new-town school, the return home, and the office-to-glitched-school finale.",
       "zones": [
         {
-          "name": "Hometown map",
-          "role": "Compact, quiet residential opening and return location containing the player's house.",
-          "where": "Separate loaded place; player house at center-left with the street and sidewalks leading outward.",
-          "size": "small and compact"
+          "name": "First hometown",
+          "role": "Initial compact residential map with the player's house as the focal home.",
+          "where": "First separate loading place.",
+          "size": "small"
         },
         {
-          "name": "Player house",
-          "role": "Home interior with a front room, kitchen/dining area, and exit.",
-          "where": "Center-left of the hometown map.",
-          "size": ""
+          "name": "New town and school",
+          "role": "A small town leading directly to the school escape chapter.",
+          "where": "Second separate loading place.",
+          "size": "small town with a large school building"
         },
         {
-          "name": "New-town school map",
-          "role": "School escape place with connected circulation and alternate escape routes.",
-          "where": "Separate loaded place; school is the dominant central mass, approached from a modest street and entry forecourt.",
+          "name": "School interior",
+          "role": "Chase-and-escape area: a central lunch area connects to classrooms, the principal's office, and looping corridors; players cross the school to reach the locked exits.",
+          "where": "Inside the large school, with locked exits on the far outer edge.",
+          "size": "large"
+        },
+        {
+          "name": "Return hometown house",
+          "role": "Post-escape return to the original hometown and house.",
+          "where": "Third separate loading place.",
+          "size": "small"
+        },
+        {
+          "name": "Office finale",
+          "role": "Begins as a plain office and spatially reveals a distorted, glitch-corrupted school arrangement around a central confrontation space.",
+          "where": "Final separate loading place.",
           "size": "medium"
-        },
-        {
-          "name": "Lunch hall",
-          "role": "School lunch space.",
-          "where": "Near the main entrance.",
-          "size": ""
-        },
-        {
-          "name": "Classroom wings",
-          "role": "Classroom areas connected into the school escape circulation.",
-          "where": "One wing on each side of the school.",
-          "size": ""
-        },
-        {
-          "name": "Principal's office",
-          "role": "Administrative office area within the school.",
-          "where": "Off the administrative corridor.",
-          "size": ""
-        },
-        {
-          "name": "Looping school halls",
-          "role": "Connected escape circulation linking all school areas without trapping dead-ends.",
-          "where": "Throughout the school interior.",
-          "size": ""
-        },
-        {
-          "name": "Locked exterior exits",
-          "role": "Escape threshold doors at the far school edge.",
-          "where": "Far exterior edge of the school.",
-          "size": ""
-        },
-        {
-          "name": "Finale office map",
-          "role": "Final confrontation place beginning as an office chamber and opening into a distorted compressed school arrangement.",
-          "where": "Separate loaded place.",
-          "size": "small office chamber opening into a compressed school arrangement"
-        },
-        {
-          "name": "Assembly-like confrontation space",
-          "role": "Finale confrontation area amid warped classrooms, corridors, and staff areas.",
-          "where": "Within the distorted finale school arrangement.",
-          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Player house",
-          "to": "Hometown map",
-          "kind": "street"
+          "from": "New town",
+          "to": "School building",
+          "kind": "road"
         },
         {
-          "from": "Hometown map",
-          "to": "Player house",
-          "kind": "sidewalk"
-        },
-        {
-          "from": "New-town street",
-          "to": "School entry forecourt",
-          "kind": "street"
-        },
-        {
-          "from": "School entry forecourt",
-          "to": "Lunch hall",
+          "from": "Central lunch area",
+          "to": "Classrooms",
           "kind": "corridor"
         },
         {
-          "from": "Lunch hall",
-          "to": "Classroom wings",
-          "kind": "corridor"
-        },
-        {
-          "from": "Classroom wings",
+          "from": "Central lunch area",
           "to": "Principal's office",
           "kind": "corridor"
         },
         {
-          "from": "Looping school halls",
-          "to": "Locked exterior exits",
+          "from": "Central lunch area",
+          "to": "Looping corridors",
           "kind": "corridor"
         },
         {
-          "from": "Finale office chamber",
-          "to": "Distorted school arrangement",
+          "from": "Classrooms, office, and looping corridors",
+          "to": "Locked outer exit doors",
           "kind": "corridor"
         }
       ],
-      "terrain": "Compact suburban residential block with a short street and sidewalks; modest new-town street and school entry forecourt. The hometown remains calm and orderly, while glitch distortion progressively appears in the school and finale.",
+      "terrain": "Simple exterior town streets; school walls and doors form the interior boundary.",
       "props": [
         {
-          "name": "locked exterior exit doors",
-          "count": -1,
-          "where": "Far exterior edge of the school"
+          "name": "Player house",
+          "count": 1,
+          "where": "First hometown focal home and return-home chapter."
         },
         {
-          "name": "lockers",
-          "count": -1,
-          "where": "Along alternate school escape routes"
+          "name": "Large school building",
+          "count": 1,
+          "where": "New town, leading directly from the compact residential streets."
         },
         {
-          "name": "classroom partitions",
+          "name": "Locked school exit doors",
           "count": -1,
-          "where": "Along alternate school escape routes"
+          "where": "Far outer edge of the school interior."
         },
         {
-          "name": "alcoves",
+          "name": "Plain office",
+          "count": 1,
+          "where": "Beginning of the final separate place."
+        },
+        {
+          "name": "Glitch-corrupted classrooms and corridors",
           "count": -1,
-          "where": "Along alternate school escape routes"
+          "where": "Around the central confrontation space in the finale."
         }
       ],
-      "boundary": "The school escape boundary is defined by locked exterior exit doors on its far exterior edge.",
+      "boundary": "Exterior town streets remain simple; school walls and doors enclose the interior spaces.",
       "scale_band": "medium",
-      "theme": "suburban school mystery shifting into glitch-horror"
+      "theme": "Ordinary suburban school horror turning into digital glitch corruption."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the school’s connected escape circulation must remain valid and readable rather than accidentally sealing players into a corridor.",
+      "why": "Corridor connectivity, the key-item branch, and a reachable escape route must remain playable through the chase.",
       "set_piece": false
     },
     "route": [
       "P4",
-      "P3",
-      "P6"
+      "P3"
     ],
-    "notes": [],
+    "notes": [
+      "`world-chaptered` is taken from outside Survival's usual shape set, as specified for the separate loading places."
+    ],
     "scene_prompt": "Create a multiplayer story-game layout across separate loading places: a small hometown with the player's house, then a new town centered on a school. The school includes a lunch area, classrooms, principal's office, connecting corridors, and locked exit doors, with spaces for players to flee through as the normal school becomes unsettling and glitchy. After escape, return to the hometown and house, then load into an office that transforms into a distorted version of the school for the finale, populated by students and staff and joined by a glitchy helper character."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
-  "order": "p6",
-  "first": "topdown",
-  "mapper_notes": []
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P4', 'P3'] gives isometric"
+  ]
 }

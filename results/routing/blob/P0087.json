@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a 3D game map set in a simple warehouse with a broad open concrete floor. Arrange separate player build lanes side by side, each with a starting area of stacked milk crates and room for an independently built tall crate staircase; the route rises to a top turnaround point and descends back to the floor.",
-  "blob": "### Genre\nThe dominant genre is Racing, with Obby & Platformer secondary only for the physical crate-climbing character of the route. This is a competitive timed ascent-and-return, so Racing owns the route.\n\n### Shape and preset\nUse `route-point-to-point`: each lane is a complete start-to-finish route that climbs from the warehouse floor to a high turnaround and returns to a separate finish position at floor level. This adapts the Sprint / Drag preset: it retains parallel lanes, starts, and finishes, but replaces the flat sprint with a vertical crate-stair route.\n\n### Config requirements\n`startpoint-line` is visible as a clearly marked start strip at the foot of every build lane, with an invisible race-start position. `lane-corridor` is visible as side-by-side floor-marked or low-bounded lanes that reserve independent building space. `path-turnaround` is visible as a small, stable top platform where each ascent reverses into the descent. `trigger-finish` is visible as a finish strip at the base of each descending lane, with an invisible terminal detection zone. Do not render any invisible trigger volumes.\n\n### Layout components\nPlace one broad rectangular warehouse hall on a flat concrete slab. The central play zone is a row of separate, parallel player build lanes, each wide enough for a crate staircase and separated from its neighbours by clear floor gaps or painted lane lines so no stack overlaps another. At the near end of every lane, provide a compact starting bay with stacked milk crates. Each lane rises through an independently built tall staircase to a top turnaround platform, then descends back down along its own return side to a floor-level finish strip. Keep generous open concrete circulation around the outer sides of the lane row. Props are repeated stacked milk crates; the boundary is the warehouse walls, with a high simple ceiling. Frame the hall in a three-quarter isometric view that shows the full side-by-side lane progression from starts through tall climbs to returns.\n\n### Render order\nUse `authored_plan` first and make it authoritative, because the parallel race routes need valid continuous ascent, turnaround, and descent paths rather than ambiguous overlapping crate stacks.\n\n### Scale, theme, and pipeline cost\nUse a medium scale, driven by the broad multi-lane warehouse floor and tall vertical build clearance. Theme: plain industrial warehouse, gray concrete, utilitarian painted lane markings, and colorful plastic milk crates. Apply `tiered` for the staircase elevation without overhangs, and `P6` because each racing route must be valid by construction.",
+  "blob": "### 1. Genre\nThe dominant genre is Racing, with Obby & Platformer as a secondary genre: players compete on speed along independently climbed crate routes, while the crate steps supply the platforming challenge.\n\n### 2. Shape and preset\nUse `route-point-to-point`, adapted from the Racing Sprint / Drag preset into a vertical out-and-back route rather than a flat sprint. Each lane starts at floor level, climbs to a high turnaround, then descends to a separate floor-level finish. The preset remains recognizable through its start, bounded corridor, and terminal finish; add the prompt-required turnaround.\n\n### 3. Config requirements\nUse `startpoint-line` as a clear start marker across the base of every player lane. Use `lane-corridor` as visible side-by-side lane divisions that keep independently built crate staircases separate. Use `trigger-finish` as a floor-level finish line at the end of each descending route. Use `path-turnaround` as a small, stable top platform that forces a clean reversal from ascent to descent.\n\n### 4. Layout requirements\nPlace `startpoint-line` once per player lane, aligned across the warehouse floor at the lane entrances. Place `trigger-finish` once per lane on the floor beyond that lane’s descent, so completing the climb and return is required. No checkpoints, pickups, or other placed gameplay elements are implied.\n\n### 5. Layout components\nThe entire map is one simple enclosed warehouse with a broad open concrete floor. Arrange an unspecified number of equal-width build lanes side by side across the floor, with generous separation so players cannot disrupt neighbouring crate structures. Each lane has a floor-level start zone containing a compact pile of milk crates, a long reserved central strip for an independently assembled tall staircase, a narrow stable turnaround platform at the highest point, and a descending crate-stair route to a finish zone on the floor. Use repeating plastic milk crates as the principal prop and stepping material; do not add unrelated warehouse machinery. Warehouse walls, a high plain ceiling, and simple industrial lighting enclose the space. Frame the view wide enough to read the parallel lanes and the full ascent-and-descent height.\n\n### 6. Render order\nUse `topdown` first and treat it as authoritative, because every parallel route must remain continuous, separated, and physically followable from start through turnaround to finish.\n\n### 7. Scale, theme, and pipeline cost\nUse a medium scale, driven by several side-by-side tall build lanes within one warehouse. The theme is minimal industrial warehouse training space: pale concrete, plastic crates, plain walls, and functional overhead lights. Apply `P6` because each race route must be valid and connected, and `tiered` because the tall crate staircases create stepped elevation without overhangs.",
   "spec": {
     "genre": "Racing",
     "secondary": [
@@ -26,98 +26,111 @@
     "options": [
       {
         "id": "startpoint-line",
-        "text": "A clearly marked start strip at the foot of every build lane, with an invisible race-start position.",
+        "text": "A clear start marker across the base of every player lane.",
         "visible": true,
         "count": -1
       },
       {
         "id": "lane-corridor",
-        "text": "Side-by-side floor-marked or low-bounded lanes that reserve independent building space.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "path-turnaround",
-        "text": "A small, stable top platform where each ascent reverses into the descent.",
+        "text": "Visible side-by-side lane divisions that keep independently built crate staircases separate.",
         "visible": true,
         "count": -1
       },
       {
         "id": "trigger-finish",
-        "text": "A finish strip at the base of each descending lane, with an invisible terminal detection zone.",
+        "text": "A floor-level finish line at the end of each descending route.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "path-turnaround",
+        "text": "A small, stable top platform that forces a clean reversal from ascent to descent.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "startpoint-line",
+        "text": "A clear start marker across the base of every player lane.",
+        "count": -1,
+        "where": "Once per player lane, aligned across the warehouse floor at the lane entrances."
+      },
+      {
+        "id": "trigger-finish",
+        "text": "A floor-level finish line at the end of each descending route.",
+        "count": -1,
+        "where": "Once per lane on the floor beyond that lane's descent, so completing the climb and return is required."
+      }
+    ],
     "layout": {
-      "composition": "Three-quarter isometric view of the warehouse hall, showing the full side-by-side lane progression from near-end starts through tall climbs to floor-level returns.",
+      "composition": "A wide view reading the parallel side-by-side warehouse lanes and the full ascent-and-descent height of their crate routes.",
       "zones": [
         {
-          "name": "warehouse hall",
-          "role": "Contains the complete timed ascent-and-return race layout.",
-          "where": "whole map",
-          "size": "broad rectangular"
+          "name": "Warehouse",
+          "role": "The entire enclosed map, containing the parallel player build lanes.",
+          "where": "Entire map",
+          "size": "medium"
         },
         {
-          "name": "central play zone",
-          "role": "A row of separate, parallel player build lanes for the ascent-and-return routes.",
-          "where": "centre",
-          "size": ""
-        },
-        {
-          "name": "starting bays",
-          "role": "Compact starting areas with stacked milk crates at the foot of every build lane.",
-          "where": "near end of every lane",
+          "name": "Start zone",
+          "role": "Floor-level lane entrance containing a compact pile of milk crates.",
+          "where": "At the base of each player lane",
           "size": "compact"
         },
         {
-          "name": "top turnaround platforms",
-          "role": "Stable platforms where each ascent reverses into its descent.",
-          "where": "top of every lane",
-          "size": "small"
+          "name": "Central build strip",
+          "role": "Reserved strip for an independently assembled tall crate staircase.",
+          "where": "Centre of each lane",
+          "size": "long"
         },
         {
-          "name": "finish strips",
-          "role": "Floor-level terminal finish positions at the base of each descending lane.",
-          "where": "far end of each return side",
+          "name": "Turnaround platform",
+          "role": "Forces the route to reverse from ascent to descent.",
+          "where": "Highest point of each lane",
+          "size": "narrow"
+        },
+        {
+          "name": "Finish zone",
+          "role": "Floor-level end of the descending crate-stair route.",
+          "where": "Beyond each lane's descent",
           "size": ""
-        },
-        {
-          "name": "outer circulation",
-          "role": "Open concrete circulation around the lane row.",
-          "where": "outer sides of the lane row",
-          "size": "generous"
         }
       ],
       "paths": [
         {
-          "from": "starting bays",
-          "to": "top turnaround platforms",
-          "kind": "stair"
+          "from": "Start zone",
+          "to": "Turnaround platform",
+          "kind": "track"
         },
         {
-          "from": "top turnaround platforms",
-          "to": "finish strips",
-          "kind": "stair"
+          "from": "Turnaround platform",
+          "to": "Finish zone",
+          "kind": "track"
         }
       ],
-      "terrain": "Flat concrete slab and broad open concrete floor.",
+      "terrain": "Broad open pale concrete warehouse floor.",
       "props": [
         {
-          "name": "stacked milk crates",
+          "name": "Repeating plastic milk crates",
           "count": -1,
-          "where": "starting bays and independently built tall crate staircases in each lane"
+          "where": "In compact start piles and as the stepping material for the tall ascending and descending crate stair routes."
+        },
+        {
+          "name": "Simple industrial lighting",
+          "count": -1,
+          "where": "Overhead in the warehouse."
         }
       ],
-      "boundary": "Warehouse walls with a high simple ceiling.",
+      "boundary": "Warehouse walls and a high plain ceiling enclose the space.",
       "scale_band": "medium",
-      "theme": "Plain industrial warehouse, gray concrete, utilitarian painted lane markings, colorful plastic milk crates."
+      "theme": "Minimal industrial warehouse training space: pale concrete, plastic crates, plain walls, and functional overhead lights."
     },
     "render": {
-      "first": "authored_plan",
-      "then": "topdown",
-      "authoritative": "authored_plan",
-      "why": "the parallel race routes need valid continuous ascent, turnaround, and descent paths rather than ambiguous overlapping crate stacks.",
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "every parallel route must remain continuous, separated, and physically followable from start through turnaround to finish.",
       "set_piece": false
     },
     "route": [
@@ -130,10 +143,12 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "layout",
   "first": "authored_plan",
-  "mapper_notes": []
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P6'] gives authored_plan"
+  ]
 }

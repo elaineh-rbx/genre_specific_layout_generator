@@ -19,72 +19,78 @@
     }
   ],
   "scene_prompt": "Create a small modern indoor escape-room map consisting of one clean room. A large, clearly visible keyboard occupies the main area of the room, with a locked exit door set into one wall opposite it.",
-  "blob": "### Genre\nDominant genre: Puzzle. The original request defines a physical escape challenge, so this is not merely an indoor set.\n\n### Shape and preset\nUse `puzzle-rooms`, a single enclosed chamber rather than a chain of rooms. Match the Escape Room preset in its one-room form; retain its enclosed puzzle-room identity but omit unrequested clues, key items, and multi-step progression.\n\n### Config requirements\nUse `gate-solve` as visible geometry: the locked exit door is the room’s sole forward barrier, centered in the wall opposite the keyboard. Use `button-solve`: the large keyboard is visible geometry occupying the central floor area, with its individual keys also carrying invisible press-input regions placed after segmentation. No other puzzle furniture or collectible elements are needed.\n\n### Layout components\nBuild one small, clean, rectangular modern escape room. The large keyboard occupies the main central area, oriented toward the exit wall and leaving a clear circulation strip around all sides. Set one locked exit door centrally into the wall opposite the keyboard, visually isolated as the clear destination. Keep the remaining walls plain and uncluttered, with minimal modern trim and bright neutral floor and wall materials. There is no exterior terrain, water, or secondary zone. The room walls fully enclose the play space. Compose the view so the keyboard dominates the foreground and middle ground while the exit door remains clearly legible directly beyond it.\n\n### Render order\nUse `isometric`: this is a simple single-room composition whose topology is already explicit, so an appearance-led isometric render is authoritative.\n\n### Scale, theme, and pipeline cost\nScale band: small, driven by the requested single room. Theme: clean modern indoor escape room, restrained and readable. Pipeline modifier: `P0`; the fully indoor single chamber has no overhangs, exterior-to-interior transition, separate map, or validity-by-construction requirement.",
+  "blob": "### 1. Genre\nThe dominant genre is Puzzle: a physical escape-room challenge centered on a keyboard-operated exit.\n\n### 2. Shape and preset\nUse `interior-single`, taken from outside Puzzle’s usual shape shortlist because this is one enclosed room rather than a sequence of chambers. The matching preset is none: Escape Room supplies a multi-room progression, while this prompt explicitly requires one room.\n\n### 3. Config requirements\nUse `gate-solve` as the locked exit door opposite the keyboard, visibly blocking the only way out. Use `button-solve` for the large pressable keyboard keys occupying the room’s main area. The keyboard itself should be the prominent puzzle apparatus, with a clean, uncluttered modern room around it.\n\n### 4. Layout requirements\nPlace one `button-solve` interaction set across the large central keyboard, with each key’s interaction position centered on its visible key surface. Place one `gate-solve` completion boundary at the locked exit door on the wall opposite the keyboard, immediately beyond the threshold so it is reached only after the door opens. No pickups, respawn points, NPC emitters, or other placed gameplay elements are needed.\n\n### 5. Layout components\nMake one small rectangular enclosed escape room. The keyboard is the dominant central floor object, large enough to read clearly from anywhere in the room and leaving circulation space around all sides. Put the locked exit door centered in the wall opposite the keyboard’s primary facing side, creating a direct visual relationship between puzzle and exit. Use smooth pale walls, clean floor panels, restrained ceiling lighting, and minimal wall seams or trim; do not add unrelated furniture or secondary rooms. The room boundary is solid enclosing walls, ceiling, and floor, with the exit door as the only egress. Compose the view diagonally from an upper corner so the keyboard’s full footprint and the opposite exit wall are both legible.\n\n### 6. Render order\nUse `isometric`: this single-room topology is simple and its visual clarity, especially the oversized keyboard-to-door composition, should lead.\n\n### 7. Scale, theme, and pipeline cost\nScale is small, driven by the single plainly playable room. Theme is clean modern indoor escape room, bright and minimal. Pipeline modifier `P0` applies: one enclosed, single-level surface has no overhangs, map transitions, volumetric traversal, or topology that must be procedurally validated.",
   "spec": {
     "genre": "Puzzle",
     "secondary": [],
-    "shape": "puzzle-rooms",
-    "preset": "Escape Room",
+    "shape": "interior-single",
+    "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "gate-solve",
-        "text": "The locked exit door is the room’s sole forward barrier, centered in the wall opposite the keyboard.",
+        "text": "The locked exit door opposite the keyboard, visibly blocking the only way out.",
         "visible": true,
         "count": 1
       },
       {
         "id": "button-solve",
-        "text": "A large keyboard occupies the central floor area, with individual keys carrying invisible press-input regions placed after segmentation.",
+        "text": "Large pressable keyboard keys occupying the room's main area.",
         "visible": true,
         "count": 1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "button-solve",
+        "text": "One interaction set across the large central keyboard, with each key's interaction position centered on its visible key surface.",
+        "count": 1,
+        "where": "Across the large central keyboard, centered on each visible key surface."
+      }
+    ],
     "layout": {
-      "composition": "The keyboard dominates the foreground and middle ground, oriented toward the exit wall; the locked exit door remains clearly legible directly beyond it.",
+      "composition": "Diagonal view from an upper corner, showing the keyboard's full central footprint and the opposite exit wall clearly.",
       "zones": [
         {
-          "name": "escape room chamber",
-          "role": "Single enclosed puzzle chamber containing the keyboard input and locked exit.",
-          "where": "entire map",
-          "size": "small"
+          "name": "Enclosed escape room",
+          "role": "The single playable room containing the central keyboard puzzle and locked exit.",
+          "where": "Entire map",
+          "size": "small rectangular room"
         }
       ],
       "paths": [],
-      "terrain": "Bright neutral floor and wall materials with minimal modern trim; no exterior terrain or water.",
+      "terrain": "Clean floor panels beneath the central keyboard, with circulation space around all sides.",
       "props": [
         {
-          "name": "large keyboard",
-          "count": 1,
-          "where": "main central floor area"
-        },
-        {
-          "name": "locked exit door",
-          "count": 1,
-          "where": "centered in the wall opposite the keyboard"
+          "name": "Large central keyboard",
+          "count": -1,
+          "where": "Main area of the room"
         }
       ],
-      "boundary": "Plain room walls fully enclose the play space.",
+      "boundary": "Solid enclosing pale walls, ceiling, and floor; the locked exit door is the only egress.",
       "scale_band": "small",
-      "theme": "clean modern indoor escape room, restrained and readable"
+      "theme": "Clean modern indoor escape room, bright and minimal."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "The simple single-room topology is already explicit.",
+      "why": "The single-room topology is simple, so the oversized keyboard-to-door composition and visual clarity should lead.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
-    "notes": [],
+    "notes": [
+      "`interior-single` is taken from outside Puzzle’s usual shape shortlist because the scene is one enclosed room rather than a sequence of chambers.",
+      "dropped placement 'gate-solve': the document draws it (goes_to=image) rather than placing it"
+    ],
     "scene_prompt": "Create a small modern indoor escape-room map consisting of one clean room. A large, clearly visible keyboard occupies the main area of the room, with a locked exit door set into one wall opposite it."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

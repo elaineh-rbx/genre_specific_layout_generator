@@ -14,154 +14,181 @@
     }
   ],
   "scene_prompt": "Create a colorful, clean 3D lacrosse sports map called Lax Legends Arena. The main play space is a compact quarter-field turf arena sized so players can cross it in a few seconds, with a goal and marked goalie crease at each short end, field lines, a central faceoff spot, and open 3v3 play space between them. Place team benches along the sidelines, with arena lights, a surrounding crowd, team-color accents, and a prominent scoreboard framing the field. Include a separate small practice area for Skills Challenge drills, arranged with shooting targets and dodging cones.",
-  "blob": "### Genre\nSports is the dominant genre: timed 3v3 lacrosse matches are decided by scoring goals on a bounded field.\n\n### Shape and preset\nUse `field-bounded`, matched from the Field Sport preset. Here it is a compact quarter-field lacrosse arena rather than a regulation full-size field. The requested dedicated Skills Challenge area is an adjacent support zone, not a separate map.\n\n### Config requirements\nVisible geometry: `trigger-bounds` provides the clearly painted perimeter and field markings; `startpoint-play` provides the central faceoff spot and goal-area reset positions; `trigger-scoring` provides two visible goal mouths with marked goalie creases; `spectator-zone` provides team benches along the sidelines; `spectator-bleachers` provides low surrounding stands for the crowd; and `npc-population` provides the visible crowd occupying those stands. Invisible layout: `trigger-bounds` carries the foul/out-of-play perimeter, `startpoint-play` carries faceoff and restart markers, `trigger-scoring` carries goal detection volumes, and `npc-population` carries crowd placement points.\n\n### Layout components\nThe main zone is a compact rectangular turf arena, small enough to cross in a few seconds, with open 3v3 space between goals at opposite short ends. Put one net and a clearly painted semicircular goalie crease at each end, a central faceoff dot, and crisp lacrosse field lines. Run bench strips along both long sidelines. Wrap the field in a low tiered crowd stand, arena lights, team-color trim, and a prominent scoreboard centered on one long-side frame. Place the small Skills Challenge practice zone beside the arena, visually distinct but directly reachable, with grouped shooting targets and a slalom of dodging cones. Keep the outer edge stadium-like and contained, with the play field centered in an energetic isometric composition.\n\n### Render order\nUse `isometric`: the rectangular field and adjacent practice pad are simple, readable geometry, so the visual arena composition leads.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by one compact match field plus the dedicated practice area and spectator dressing. Theme is colorful, clean, high-energy modern sports arena. Use `P0`; the stepped crowd seating is tiered but has no overhang, and all spaces coexist on one surface.",
+  "blob": "### Genre\nThe dominant genre is Sports: short competitive 3v3 lacrosse matches are scored through opposing goals on a marked field. There is no secondary genre; the Skills Challenge is a practice annex within the sports venue.\n\n### Shape and preset\nUse `space-bounded`, matched to the Field Sport preset. This is a compact quarter-field lacrosse arena rather than a regulation full field: two opposing short-end goals, a central faceoff point, and a fast open midfield. Retain the preset’s field geometry and add the explicitly requested stadium dressing and adjacent practice area.\n\n### Config requirements\nUse `trigger-bounds` for the clearly painted field perimeter and lacrosse field lines; `startpoint-play` for the central faceoff spot; and `trigger-scoring` for the two visible goal mouths. Use `spectator-zone` for team benches along both sidelines and `spectator-bleachers` for stepped crowd seating around the arena. Use `npc-population` for the requested crowd occupying those stands. Arena lights, team-color trim, the scoreboard, goalie creases, targets, and cones are direct scene components rather than extra config choices.\n\n### Layout requirements\nPlace `trigger-bounds` as one detection perimeter following the quarter-field boundary. Place one `startpoint-play` marker at the exact center faceoff spot. Place two `trigger-scoring` volumes, one centered in each short-end goal mouth, with the visible crease kept outside each scoring volume. Site `npc-population` across the surrounding bleachers and at the two sideline benches. No other placed gameplay objects are required.\n\n### Layout components\nThe main zone is a compact rectangular turf arena, crossable in a few seconds, with open 3v3 space between two short-end goals. Paint field markings and a center faceoff circle; set a marked semicircular goalie crease before each goal. Put one team bench along each long sideline. Surround the field with crowd stands, tall arena lights, team-color accents, and a prominent scoreboard at a long-side or end-side framing position. Add a separate small Skills Challenge practice zone immediately beside the arena, visibly distinct but on the same venue surface, containing shooting targets and a slalom of dodging cones. Keep a safe circulation strip between the practice zone and spectator edges. Frame the main field centrally, with the practice annex readable as a smaller side zone.\n\n### Render order\nUse `topdown`: exact opposing goals, creases, faceoff alignment, and field bounds must be valid and symmetric before the isometric arena dressing is derived.\n\n### Scale, theme, and pipeline cost\nScale is medium: the match field is deliberately compact, but the venue also includes benches, stands, lights, scoreboard, and a dedicated practice annex. Theme: colorful, clean, high-energy professional lacrosse arena with Roblox-style sporty clarity. Apply `tiered` because the stepped bleachers require captured non-overhanging elevation; no other pipeline modifier is forced.",
   "spec": {
     "genre": "Sports",
     "secondary": [],
-    "shape": "field-bounded",
+    "shape": "space-bounded",
     "preset": "Field Sport",
     "axes": {},
     "options": [
       {
         "id": "trigger-bounds",
-        "text": "Clearly painted perimeter and crisp lacrosse field markings, with a foul and out-of-play perimeter.",
+        "text": "Clearly painted quarter-field perimeter and lacrosse field lines.",
         "visible": true,
-        "count": -1
+        "count": 1
       },
       {
         "id": "startpoint-play",
-        "text": "A central faceoff spot and goal-area reset positions.",
+        "text": "Central faceoff spot.",
         "visible": true,
-        "count": -1
+        "count": 1
       },
       {
         "id": "trigger-scoring",
-        "text": "Two visible goal mouths with marked semicircular goalie creases and goal detection volumes.",
+        "text": "Two visible short-end goal mouths, each with a marked semicircular goalie crease in front.",
         "visible": true,
         "count": 2
       },
       {
         "id": "spectator-zone",
-        "text": "Team bench strips running along both long sidelines.",
+        "text": "One team bench along each long sideline.",
         "visible": true,
         "count": 2
       },
       {
         "id": "spectator-bleachers",
-        "text": "Low tiered crowd stands surrounding the field.",
+        "text": "Stepped crowd seating surrounding the arena.",
         "visible": true,
         "count": -1
       },
       {
         "id": "npc-population",
-        "text": "A visible crowd occupying the surrounding stands, with crowd placement points.",
+        "text": "Crowd occupying the surrounding stands and the two sideline benches.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "trigger-bounds",
+        "text": "Detection perimeter following the quarter-field boundary.",
+        "count": 1,
+        "where": "Following the compact rectangular turf arena boundary."
+      },
+      {
+        "id": "startpoint-play",
+        "text": "Center faceoff marker.",
+        "count": 1,
+        "where": "At the exact center faceoff spot."
+      },
+      {
+        "id": "trigger-scoring",
+        "text": "Scoring volumes for the short-end goal mouths.",
+        "count": 2,
+        "where": "One centered in each short-end goal mouth, with the visible goalie crease outside each scoring volume."
+      },
+      {
+        "id": "npc-population",
+        "text": "Crowd population.",
+        "count": -1,
+        "where": "Across the surrounding bleachers and at the two sideline benches."
+      }
+    ],
     "layout": {
-      "composition": "Energetic isometric composition with the centered rectangular turf field as the focus, goals at opposite short ends, bench strips on both long sidelines, low surrounding stands, and the adjacent practice pad beside the arena.",
+      "composition": "The compact main field is framed centrally, with the smaller Skills Challenge practice annex clearly readable immediately beside it as a side zone; surrounding stands, lights, team-color accents, and a prominent scoreboard frame the venue.",
       "zones": [
         {
           "name": "Main lacrosse arena",
-          "role": "Compact timed 3v3 lacrosse match field with open play space between opposing goals.",
-          "where": "centre",
-          "size": "compact quarter-field, crossable in a few seconds"
+          "role": "Compact open 3v3 quarter-field match space between opposing short-end goals.",
+          "where": "Centre",
+          "size": "Compact; crossable in a few seconds."
         },
         {
           "name": "Skills Challenge practice zone",
-          "role": "Practice drills with grouped shooting targets and a slalom of dodging cones.",
-          "where": "beside the arena",
-          "size": "small"
+          "role": "Separate practice area for shooting targets and a slalom of dodging cones.",
+          "where": "Immediately beside the main arena",
+          "size": "Small"
         },
         {
-          "name": "Sideline bench strips",
-          "role": "Team seating and sideline support.",
-          "where": "along both long sides of the main field",
+          "name": "Sideline benches",
+          "role": "Team seating.",
+          "where": "One along each long sideline",
           "size": ""
         },
         {
-          "name": "Crowd stands",
-          "role": "Low tiered spectator dressing surrounding the match field.",
-          "where": "wrapping the field",
-          "size": "low"
+          "name": "Surrounding bleachers",
+          "role": "Crowd seating around the arena.",
+          "where": "Around the main field",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Main lacrosse arena",
-          "to": "Skills Challenge practice zone",
+          "from": "Skills Challenge practice zone",
+          "to": "spectator edges",
           "kind": "open ground"
         }
       ],
-      "terrain": "Compact rectangular turf field with crisp painted lacrosse lines and a directly adjacent practice pad.",
+      "terrain": "Rectangular turf venue surface with painted lacrosse field markings, a center faceoff circle, and marked semicircular goalie creases before each goal.",
       "props": [
         {
-          "name": "lacrosse nets",
+          "name": "short-end goals",
           "count": 2,
-          "where": "at opposite short ends of the main field"
+          "where": "At opposing short ends of the main turf arena."
         },
         {
-          "name": "semicircular goalie creases",
+          "name": "team benches",
           "count": 2,
-          "where": "in front of each net"
-        },
-        {
-          "name": "central faceoff dot",
-          "count": 1,
-          "where": "centre of the field"
+          "where": "Along both long sidelines."
         },
         {
           "name": "arena lights",
           "count": -1,
-          "where": "around the field"
+          "where": "Around the arena."
         },
         {
-          "name": "team-color trim",
+          "name": "team-color accents",
           "count": -1,
-          "where": "around the arena"
+          "where": "Around the venue."
         },
         {
           "name": "scoreboard",
           "count": 1,
-          "where": "centred on one long-side frame"
+          "where": "At a long-side or end-side framing position."
         },
         {
           "name": "shooting targets",
           "count": -1,
-          "where": "grouped in the Skills Challenge practice zone"
+          "where": "In the Skills Challenge practice zone."
         },
         {
           "name": "dodging cones",
           "count": -1,
-          "where": "in a slalom in the Skills Challenge practice zone"
+          "where": "Arranged as a slalom in the Skills Challenge practice zone."
         }
       ],
-      "boundary": "Contained stadium-like outer edge around the field and adjacent practice zone.",
+      "boundary": "Clearly painted quarter-field perimeter, enclosed visually by surrounding stepped crowd stands.",
       "scale_band": "medium",
-      "theme": "colorful, clean, high-energy modern sports arena"
+      "theme": "Colorful, clean, high-energy professional lacrosse arena with Roblox-style sporty clarity."
     },
     "render": {
-      "first": "isometric",
-      "then": "topdown",
-      "authoritative": "isometric",
-      "why": "the rectangular field and adjacent practice pad are simple, readable geometry, so the visual arena composition leads.",
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "Exact opposing goals, creases, faceoff alignment, and field bounds must be valid and symmetric before arena dressing is derived.",
       "set_piece": false
     },
     "route": [
       "P0",
       "tiered"
     ],
-    "notes": [],
+    "notes": [
+      "visible on 'trigger-bounds' set from goes_to=both",
+      "visible on 'startpoint-play' set from goes_to=both",
+      "visible on 'trigger-scoring' set from goes_to=both"
+    ],
     "scene_prompt": "Create a colorful, clean 3D lacrosse sports map called Lax Legends Arena. The main play space is a compact quarter-field turf arena sized so players can cross it in a few seconds, with a goal and marked goalie crease at each short end, field lines, a central faceoff spot, and open 3v3 play space between them. Place team benches along the sidelines, with arena lights, a surrounding crowd, team-color accents, and a prominent scoreboard framing the field. Include a separate small practice area for Skills Challenge drills, arranged with shooting targets and dodging cones."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
-  "mapper_notes": []
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P0', 'tiered'] gives isometric"
+  ]
 }

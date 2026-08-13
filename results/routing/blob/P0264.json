@@ -14,143 +14,93 @@
     }
   ],
   "scene_prompt": "Create a bright, cartoonish 3D zombie-defense map centered on a shared defensible base, with open approaches around it for incoming zombies and space around the base for friends to build turret defenses.",
-  "blob": "### Genre\nStrategy is dominant: cooperative turret placement defending a shared base against hostile zombies. The applicable preset is Base Defense.\n\n### Shape and preset\nUse `terrain-open`, matching the Base Defense preset. This is a single, open defensible field rather than an `lane-actor-track`: the prompt specifies broad approaches around the base, not one fixed enemy lane. The base occupies the visual and spatial centre, with defendable ground extending on every side.\n\n### Config requirements\nUse `tracker-core` as visible geometry and an invisible base-health anchor, expressed as a compact, sturdy central command base. Use `buildzone-plot` as visible geometry: clear, flat turret-building pads and open firing ground radiate around the base. Use `spawner-npc` as invisible layout markers positioned at the outer approaches, outside the visible central defense area; do not render markers or emitters in the image.\n\n### Layout components\nPlace one shared central base on a slightly raised circular or square fortified platform, roughly one quarter of the map width, with enough open perimeter directly around it for several friends to place turret defenses. Surround it with a broad, mostly level defense field divided into four readable approach sectors—front, rear, left, and right—each with generous clear sightlines toward the base. Arrange turret pads in concentric loose rings and along the edge of the base platform, leaving walkable gaps between pads and unobstructed routes around the structure. Keep the outer edge distant and visually defined by ruined low walls, broken highway fragments, rubble banks, and cartoonish collapsed city silhouettes; these form the boundary without closing off the approach field. Use cracked pavement mixed with bright grass and dirt patches. Frame the base centrally in a three-quarter isometric view, with foreground pads and several outer approaches visible at once.\n\n### Render order\nUse `isometric`: the scene is a readable open defense arena and does not require a generated continuous track or maze topology.\n\n### Scale, theme, and pipeline cost\nUse a medium scale, driven by one central shared base plus ample buildable ground on all sides. Theme: bright, cartoonish post-apocalyptic zombie defense, with colorful rubble, playful ruin shapes, and approachable fortified construction. Pipeline modifier `P0`: the map is one continuous, mostly flat exterior surface; no overhangs, interiors, separate maps, or construction-valid route are required.",
+  "blob": "### Genre\nThe dominant genre is Strategy: friends cooperatively build turret defenses against recurring zombie attacks on their shared base. The endless-wave rule establishes the defense loop but does not add layout geometry.\n\n### Shape and preset\nUse `terrain-open`, an open defensive field with a central base rather than a fixed enemy lane. This takes the Base Defense premise but its preset is `none`: retain the shared core and hostile origins, omit unrequested collapsing cover, and add explicit free turret-building ground.\n\n### Config requirements\n`tracker-core` is the prominent shared base at the center of the map, visibly the object being defended. `buildzone-plot` is broad, unobstructed buildable ground radiating around that base, with clear turret sightlines across the approaches.\n\n### Layout requirements\nPlace `tracker-core` once, at the exact map center, with a defensible perimeter and clear access around all sides. Place `spawner-npc` at multiple outer-edge approach origins, distributed around the base so zombies enter from the open perimeter rather than spawning inside the construction field. The number of origins is not specified; site each outside the turret-build radius with readable approach routes over open ground.\n\n### Layout components\nThe main zone is a compact central survivor base, occupying roughly the middle fifth of the field and serving as the visual core. Surround it with a wide, flat turret-construction ring where friends can place defenses without blocking one another. Beyond this is an open zombie approach field on every side, kept mostly free of tall clutter so incoming groups and turret firing arcs remain legible. Use a few low, ruined post-apocalyptic remnants only at the outer field edges as visual dressing, never as enclosed lanes or a dense settlement. The boundary is a distant ruined-city horizon, broken barricades, and impassable debris defining the outer spawn perimeter. Compose the map as a radial defense arena: the brightly colored base is immediately readable at center, with open approaches spreading outward.\n\n### Render order\nRender `isometric` first and treat it as authoritative: this is an open shared defense field, not a carved lane or maze whose exact topology must be procedurally validated.\n\n### Scale, theme, and pipeline cost\nUse a medium scale, driven by the central shared base plus enough surrounding open ground for cooperative turret placement and several zombie approaches. Theme: bright, cartoonish post-apocalyptic zombie defense, playful ruined props, saturated colors, and approachable silhouettes. Use `P0`; one contiguous ground surface contains the whole defense space and forces no extra capture path.",
   "spec": {
     "genre": "Strategy",
     "secondary": [],
     "shape": "terrain-open",
-    "preset": "Base Defense",
+    "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "tracker-core",
-        "text": "A compact, sturdy central command base with a visible fortified platform and an invisible base-health anchor.",
+        "text": "Prominent shared base at the center of the map, visibly the object being defended.",
         "visible": true,
         "count": 1
       },
       {
         "id": "buildzone-plot",
-        "text": "Clear, flat turret-building pads and open firing ground radiate around the base, arranged in loose concentric rings and along the platform edge.",
+        "text": "Broad, unobstructed buildable ground radiating around the base, with clear turret sightlines across the approaches.",
         "visible": true,
         "count": -1
       },
       {
         "id": "spawner-npc",
-        "text": "Invisible hostile-zombie spawn markers positioned at the distant outer approaches, beyond the visible central defense area.",
+        "text": "Multiple outer-edge approach origins distributed around the base so zombies enter from the open perimeter rather than spawning inside the construction field.",
         "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "tracker-core",
+        "text": "The prominent shared base at the center of the map, visibly the object being defended.",
+        "count": 1,
+        "where": "At the exact map center, with a defensible perimeter and clear access around all sides."
+      },
+      {
+        "id": "spawner-npc",
+        "text": "Multiple outer-edge approach origins where zombies enter from the open perimeter.",
+        "count": -1,
+        "where": "Distributed around the base, outside the turret-build radius, with readable approach routes over open ground."
+      }
+    ],
     "layout": {
-      "composition": "Three-quarter isometric view framing the shared fortified base centrally, with foreground turret pads and several distant outer approach sectors visible at once.",
+      "composition": "A radial defense arena with the brightly colored central base immediately readable at center and open approaches spreading outward on every side; ruined remnants sit only at the outer field edges.",
       "zones": [
         {
-          "name": "Shared central base",
-          "role": "Defended command core and shared base-health location.",
-          "where": "centre",
-          "size": "roughly one quarter of the map width"
+          "name": "Central survivor base",
+          "role": "Compact shared defensible base and visual core being defended.",
+          "where": "Exact map center",
+          "size": "Roughly the middle fifth of the field"
         },
         {
-          "name": "Fortified base platform",
-          "role": "Slightly raised ground around the command base for nearby turret defense placement.",
-          "where": "centre",
-          "size": "roughly one quarter of the map width"
+          "name": "Turret-construction ring",
+          "role": "Wide flat construction ground where friends place defenses without blocking one another.",
+          "where": "Surrounding the central survivor base",
+          "size": "Wide"
         },
         {
-          "name": "Defense field",
-          "role": "Open buildable firing ground surrounding the base for friends to place turret defenses.",
-          "where": "on all sides of the central base",
-          "size": "broad"
-        },
-        {
-          "name": "Front approach sector",
-          "role": "Open zombie approach with clear sightlines toward the base.",
-          "where": "front of the base",
-          "size": "generous"
-        },
-        {
-          "name": "Rear approach sector",
-          "role": "Open zombie approach with clear sightlines toward the base.",
-          "where": "rear of the base",
-          "size": "generous"
-        },
-        {
-          "name": "Left approach sector",
-          "role": "Open zombie approach with clear sightlines toward the base.",
-          "where": "left of the base",
-          "size": "generous"
-        },
-        {
-          "name": "Right approach sector",
-          "role": "Open zombie approach with clear sightlines toward the base.",
-          "where": "right of the base",
-          "size": "generous"
+          "name": "Open zombie approach field",
+          "role": "Open ground for incoming zombie groups and legible turret firing arcs.",
+          "where": "Beyond the construction ring on every side",
+          "size": "-1"
         }
       ],
       "paths": [
         {
-          "from": "Turret pads",
-          "to": "Shared central base",
-          "kind": "open ground"
-        },
-        {
-          "from": "Front approach sector",
-          "to": "Shared central base",
-          "kind": "open ground"
-        },
-        {
-          "from": "Rear approach sector",
-          "to": "Shared central base",
-          "kind": "open ground"
-        },
-        {
-          "from": "Left approach sector",
-          "to": "Shared central base",
-          "kind": "open ground"
-        },
-        {
-          "from": "Right approach sector",
-          "to": "Shared central base",
+          "from": "Open zombie approach field",
+          "to": "Central survivor base",
           "kind": "open ground"
         }
       ],
-      "terrain": "Mostly level cracked pavement mixed with bright grass and dirt patches; the central fortified platform is slightly raised.",
+      "terrain": "One contiguous wide, flat open ground surface, mostly free of tall clutter.",
       "props": [
         {
-          "name": "turret-building pads",
+          "name": "Low ruined post-apocalyptic remnants",
           "count": -1,
-          "where": "in loose concentric rings around the base and along the platform edge"
-        },
-        {
-          "name": "ruined low walls",
-          "count": -1,
-          "where": "distant outer edge"
-        },
-        {
-          "name": "broken highway fragments",
-          "count": -1,
-          "where": "distant outer edge"
-        },
-        {
-          "name": "rubble banks",
-          "count": -1,
-          "where": "distant outer edge"
-        },
-        {
-          "name": "cartoonish collapsed city silhouettes",
-          "count": -1,
-          "where": "distant outer edge"
+          "where": "Only at the outer field edges as visual dressing"
         }
       ],
-      "boundary": "The distant outer edge is visually defined by ruined low walls, broken highway fragments, rubble banks, and collapsed city silhouettes without closing off the approach field.",
+      "boundary": "A distant ruined-city horizon, broken barricades, and impassable debris define the outer spawn perimeter.",
       "scale_band": "medium",
-      "theme": "bright, cartoonish post-apocalyptic zombie defense with colorful rubble, playful ruin shapes, and approachable fortified construction"
+      "theme": "Bright, cartoonish post-apocalyptic zombie defense; playful ruined props, saturated colors, approachable silhouettes."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "the readable open defense arena does not require a generated continuous track or maze topology.",
+      "why": "This is an open shared defense field, not a carved lane or maze whose exact topology must be procedurally validated.",
       "set_piece": false
     },
     "route": [
@@ -162,7 +112,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

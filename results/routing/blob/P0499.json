@@ -14,85 +14,124 @@
     }
   ],
   "scene_prompt": "Create a high-fantasy multiplayer game map with up to 8 separate player base plots, each containing its own visible 3D grid for arranging swords and other fantasy-style base equipment. Arrange the plots as distinct, evenly spaced base areas within a shared map, with open approach space around each base for monster waves.",
-  "blob": "### Genre\nDominant genre is Simulation, with Strategy secondary: the merge-and-economy base loop owns the map form, while monster-wave defense contributes enemy approach placement. The session contains up to 8 separately owned plots.\n\n### Shape and preset\nUse Simulation shape `plot-isolated`: eight distinct, evenly spaced player territories share one exterior map while retaining clear ownership boundaries. Match the Sandbox preset, retaining its isolated-plot form but dropping its unrequested resource and bazaar options.\n\n### Config requirements\nUse `spawner-npc` as invisible layout geometry: place monster-wave origins beyond the shared outer approaches, with a readable route toward every plot. No other menu option is implied; the visible 3D equipment grids are concrete plot geometry rather than an added generic option.\n\n### Layout components\nBuild a medium shared fantasy battleground organized as a balanced ring or broad two-row arrangement of 8 equal base plots. Each plot is a distinct square or octagonal pad with a centered, clearly visible raised 3D grid of equipment cells for swords and other fantasy base apparatus. Leave generous open ground around all sides of each pad so monsters can visibly approach rather than appearing at its edge. Keep clear shared approach lanes between plots and around the map perimeter, without placing intervening buildings, cover, or settlement dressing. Terrain is mostly flat grass and packed earth, with subtle stone edging to define plot ownership. At the outer boundary, use low fantasy ruins, cliffs, or a forest wall as a visual limit while preserving open monster-entry corridors. Frame the full set of plots in a readable, symmetric isometric overview, with individual grids legible and the surrounding approach space apparent.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because the eight bases need evenly distributed, unobstructed approach routes from enemy origins; a blocked approach would undermine the defense space.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by 8 complete but compact player plots plus shared approach ground. Theme is straightforward high fantasy: grass, stone pads, sword racks, arcane grid cells, ruins, and monster-facing wilderness. Use `P0`; the layout is one flat exterior surface with no required overhangs, interiors, separate maps, or procedural-valid route construction.",
+  "blob": "### Genre\nDominant genre: Strategy, with Simulation as a secondary genre for the persistent personal-base economy. The monster-wave defense loop makes Strategy own the layout; the individual upgrade grids contribute the secondary simulation character.\n\n### Shape and preset\nUse `plot-isolated`, taken from outside Strategy’s usual shape set. It gives each of up to 8 players an equally spaced, independent fantasy base while preserving open common ground for enemy approaches. Preset: none; no Strategy preset matches separate personal bases with visible merge grids.\n\n### Config requirements\nUse `buildzone-grid` for the clearly visible three-dimensional placement grid within every base plot, sized as the focal equipment-arrangement surface. Do not add unrequested scenery, interiors, roads, resource fields, or settlement features.\n\n### Layout requirements\nUse `spawner-npc`: place 8 monster-wave origins, one on the outer approach side of each player plot, far enough from its grid that enemies have a readable run-in route and do not appear inside the base. Each origin should face only its associated plot, with open navigable ground between spawn and base.\n\n### Layout components\nBuild one shared high-fantasy map containing up to 8 separate, evenly spaced base plots arranged in a broad ring or orderly perimeter around shared open ground. Every plot is a comparable square base area with its own raised, visible 3D grid for swords and other fantasy base equipment; the grid is centrally placed and leaves a clear perimeter around it. The open approach zone outside each plot is deliberately uncluttered, creating a direct monster approach from that plot’s outer spawn origin to its base. Keep plots visually distinct through repeated stone borders, banners, and restrained fantasy ornament, but do not connect their grids into one shared build surface. The map boundary is a broad natural fantasy edge beyond the monster approach ground, such as distant cliffs, forest, or fog, without obstructing the direct approaches. Compose the scene as a wide overview that shows all 8 plots, their grids, and the empty approach corridors at once.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because all 8 monster origins need an unobstructed, legible approach to their corresponding bases; an isometric-first render could accidentally block or confuse these routes.\n\n### Scale, theme, and pipeline cost\nScale band: large, driven by 8 fully independent base plots plus dedicated approach space around each. Theme: straightforward high fantasy, with stone platforms, swords, monster-facing defenses, banners, and magical equipment. Pipeline modifier: `P0`; the plots and approach ground remain one non-overlapping surface, with no required interiors, separate maps, volumetric play, or topology that must be procedurally carved.",
   "spec": {
-    "genre": "Simulation",
+    "genre": "Strategy",
     "secondary": [
-      "Strategy"
+      "Simulation"
     ],
     "shape": "plot-isolated",
-    "preset": "Sandbox",
+    "preset": "none",
     "axes": {},
-    "options": [],
+    "options": [
+      {
+        "id": "buildzone-grid",
+        "text": "Clearly visible three-dimensional placement grid within every base plot, sized as the focal equipment-arrangement surface.",
+        "visible": true,
+        "count": 8
+      },
+      {
+        "id": "spawner-npc",
+        "text": "Monster-wave origins, one on the outer approach side of each player plot.",
+        "visible": false,
+        "count": 8
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "spawner-npc",
+        "text": "Monster-wave origins, one on the outer approach side of each player plot.",
+        "count": 8,
+        "where": "On each plot's outer approach side, far enough from its grid for a readable run-in route; each origin faces only its associated plot, with open navigable ground between spawn and base."
+      }
+    ],
     "layout": {
-      "composition": "A readable, symmetric isometric overview frames the full set of eight plots, with individual raised equipment grids legible and generous surrounding approach space apparent.",
+      "composition": "Wide overview showing all 8 evenly spaced plots, their centrally placed visible grids, and the empty direct approach corridors at once.",
       "zones": [
         {
-          "name": "Player base plots",
-          "role": "Eight equal, separately owned base territories for arranging swords and other fantasy base equipment on visible 3D equipment-cell grids.",
-          "where": "Balanced ring or broad two-row arrangement across the shared map.",
-          "size": "8 equal compact square or octagonal pads"
+          "name": "Shared high-fantasy map",
+          "role": "Common map containing the separate player base plots and open monster approach ground.",
+          "where": "Across the full map",
+          "size": "large"
         },
         {
-          "name": "Shared approach ground",
-          "role": "Open monster approach space between plots and around the perimeter.",
-          "where": "Around all sides of every plot, between plots, and along the map perimeter.",
-          "size": "Generous"
+          "name": "Independent base plots",
+          "role": "Comparable square player base areas with visible equipment-arrangement grids.",
+          "where": "Arranged in a broad ring or orderly perimeter around shared open ground",
+          "size": "8 equally spaced plots"
+        },
+        {
+          "name": "Placement grids",
+          "role": "Raised visible 3D surfaces for arranging swords and other fantasy base equipment.",
+          "where": "Centrally placed within each base plot, leaving a clear perimeter",
+          "size": ""
+        },
+        {
+          "name": "Open approach zones",
+          "role": "Uncluttered direct monster run-in ground between each outer spawn origin and its associated base.",
+          "where": "Outside each plot, between the outer spawn origin and the base",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Monster-wave origins",
-          "to": "Player base plots",
+          "from": "Each monster-wave origin",
+          "to": "Its associated base plot",
           "kind": "open ground"
         }
       ],
-      "terrain": "Mostly flat grass and packed earth, with subtle stone edging defining plot ownership; low fantasy ruins, cliffs, or a forest wall sit at the outer boundary while preserving open monster-entry corridors.",
+      "terrain": "One non-overlapping surface of open approach ground, with a broad natural fantasy edge beyond it: distant cliffs, forest, or fog.",
       "props": [
         {
-          "name": "Raised 3D grids of equipment cells for swords and other fantasy base apparatus",
-          "count": 8,
-          "where": "Centered on each player base plot"
+          "name": "Stone borders",
+          "count": -1,
+          "where": "Repeated around the distinct base plots"
         },
         {
-          "name": "Sword racks",
+          "name": "Banners",
           "count": -1,
-          "where": "On the player base plots"
+          "where": "On the distinct base plots"
         },
         {
-          "name": "Arcane grid cells",
+          "name": "Restrained fantasy ornament",
           "count": -1,
-          "where": "On the centered raised equipment grids"
+          "where": "On the distinct base plots"
         },
         {
-          "name": "Low fantasy ruins, cliffs, or forest wall",
+          "name": "Swords and fantasy base equipment",
           "count": -1,
-          "where": "Outer boundary"
+          "where": "Arranged on each plot's raised visible 3D grid"
+        },
+        {
+          "name": "Monster-facing defenses",
+          "count": -1,
+          "where": "At the base plots"
         }
       ],
-      "boundary": "Low fantasy ruins, cliffs, or a forest wall form a visual limit while preserving open monster-entry corridors.",
-      "scale_band": "medium",
-      "theme": "Straightforward high fantasy: grass, stone pads, sword racks, arcane grid cells, ruins, and monster-facing wilderness."
+      "boundary": "A broad natural fantasy edge beyond the monster approach ground, such as distant cliffs, forest, or fog, without obstructing direct approaches.",
+      "scale_band": "large",
+      "theme": "Straightforward high fantasy: stone platforms, swords, monster-facing defenses, banners, and magical equipment."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "Eight bases need evenly distributed, unobstructed approach routes from enemy origins.",
+      "why": "all 8 monster origins need an unobstructed, legible approach to their corresponding bases.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
     "notes": [
-      "dropped option 'spawner-npc': not in Simulation"
+      "`plot-isolated` is taken from outside Strategy’s usual shape set.",
+      "No unrequested scenery, interiors, roads, resource fields, or settlement features were added."
     ],
     "scene_prompt": "Create a high-fantasy multiplayer game map with up to 8 separate player base plots, each containing its own visible 3D grid for arranging swords and other fantasy-style base equipment. Arrange the plots as distinct, evenly spaced base areas within a shared map, with open approach space around each base for monster waves."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

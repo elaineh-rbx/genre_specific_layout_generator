@@ -14,128 +14,118 @@
     }
   ],
   "scene_prompt": "Создайте 3D-карту города для погони за торнадо: городские улицы и кварталы с домами, в которые можно заходить, соединены дорогами для управляемых игроками машин-перехватчиков. Оставьте открытые проезды и широкие улицы между зданиями, чтобы торнадо и машины могли двигаться по городу.",
-  "blob": "### Genre\nThe dominant genre is Simulation, specifically a vehicle-interception simulation rather than Survival: players drive interceptor vehicles through a city pursuing a tornado. \n\n### Shape and preset\nUse `world-shared`, matching the Vehicle Sim preset. Retain its shared drivable-world logic, but omit the preset’s unrequested extraction field; the city and its road network are the entire shared space.\n\n### Config requirements\n`path-road-vehicle` is visible geometry: broad connected streets, generous turning corners, and clear intersections let interceptor cars travel across the city without clipping buildings. `hazard-kill` is visible geometry: leave a wide, unobstructed central corridor and open junctions for the tornado’s passage through the street grid. `building-interior` is visible geometry: selected houses have readable entrances and playable rooms connected directly to the street. `settlement-density` is visible geometry: this is a continuous urban grid of blocks, houses, and streets. No invisible layout options are required.\n\n### Layout components\nBuild a medium-large, mostly flat city arranged as connected rectangular blocks. A broad central avenue runs through the map as the primary tornado and interceptor route, crossed by several wide perpendicular streets to create alternate approach paths. Smaller but still vehicle-passable roads branch into residential blocks. Place detached and closely spaced houses along these streets, with driveways, sidewalks, and open gaps at corners; do not create narrow alleys or blocked cul-de-sacs that would trap cars. Several houses distributed across the city have enterable ground-floor interiors, with front doors facing roads and enough exterior setback for vehicles to pass. Keep the main avenues and major intersections especially open between buildings. The outer edge is a sparse suburban fringe or low natural barrier rather than an abrupt wall. Frame the map in a high three-quarter view, with the central avenue and cross-street network legible at a glance.\n\n### Render order\nUse `topdown`: the road grid and vehicle-accessible connections must be coherent before the isometric city dressing is generated.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by a city-wide vehicle chase and multiple connected routes. Theme: storm-chasing American suburban city, broad asphalt streets, practical houses, exposed intersections. Use `P3` because play crosses between outdoor streets and enterable house interiors.",
+  "blob": "### Genre\nThe dominant genre is Simulation, specifically a vehicle-operation scenario: players drive interceptor vehicles through a tornado-threatened city. There is no secondary genre.\n\n### Shape and preset\nUse `world-open`, a single contiguous city map whose road network allows vehicle pursuit across districts. Match the Vehicle Sim preset: retain its vehicle-oriented circulation, but omit its shared extraction field because this is a tornado-chase city, not an industrial operation.\n\n### Config requirements\nUse `path-road-vehicle` for wide, continuous streets and open intersections that let player-driven interceptors turn, pursue, and pass through the city. Use `settlement-density` for a built-up urban grid of city blocks and houses rather than isolated structures. Use `building-interior` for houses with playable rooms entered directly from the streets; each exterior doorway must correspond to a usable interior.\n\n### Layout requirements\nNo additional placed gameplay options are required. The tornado itself, vehicle handling, interception logic, and any damage or scoring behavior are mechanics rather than segmented layout placements.\n\n### Layout components\nBuild a large city organized as several connected residential blocks around broad through-roads and generous intersections. The central zone is an open crossroads and boulevard system, kept clear enough for the tornado and interceptor vehicles to move without being trapped by dense props. Surround it with compact blocks of detached houses, each facing the street and containing a simple enterable interior. Add secondary streets between blocks, but preserve multiple wide vehicle routes between every district rather than narrow alley bottlenecks. Roads are paved and mostly level, with sidewalks, curbs, driveways, streetlights, sparse trees, and a few open lots as visual breathing space and maneuvering room. Keep the outer boundary as a believable city edge—low development, fields, or distant barriers—rather than a hard wall. Frame the city from an elevated three-quarter view, showing the main road network, house rows, and long open corridors through the blocks.\n\n### Render order\nUse `isometric`: the city’s visual readability and tornado-chase atmosphere lead, while the top-down plan can be projected afterward; the road network is open and redundant rather than a single topology that must be valid by construction.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by a vehicle-scale urban road network with multiple connected blocks and enterable houses. Theme: storm-chasing suburban city, broad wet-looking asphalt, practical interceptor access, and an ominous tornado-ready atmosphere. Apply `P3` because play crosses between exterior streets and house interiors, requiring linked outdoor and indoor top-down captures.",
   "spec": {
     "genre": "Simulation",
     "secondary": [],
-    "shape": "world-shared",
+    "shape": "world-open",
     "preset": "Vehicle Sim",
     "axes": {},
     "options": [
       {
         "id": "path-road-vehicle",
-        "text": "Broad connected streets, generous turning corners, and clear intersections let interceptor cars travel across the city without clipping buildings.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "hazard-kill",
-        "text": "Leave a wide, unobstructed central corridor and open junctions for the tornado’s passage through the street grid.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "building-interior",
-        "text": "Selected houses have readable entrances and playable rooms connected directly to the street.",
+        "text": "Wide, continuous streets and open intersections that let player-driven interceptors turn, pursue, and pass through the city.",
         "visible": true,
         "count": -1
       },
       {
         "id": "settlement-density",
-        "text": "A continuous urban grid of blocks, houses, and streets.",
+        "text": "A built-up urban grid of city blocks and houses rather than isolated structures.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "building-interior",
+        "text": "Houses with playable rooms entered directly from the streets; each exterior doorway must correspond to a usable interior.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "High three-quarter view with the broad central avenue running through the map and the cross-street network legible at a glance; rectangular city blocks fill the frame, while a sparse suburban fringe or low natural barrier sits at the outer edge.",
+      "composition": "Elevated three-quarter view showing the main road network, house rows, and long open corridors through the blocks; the open central crossroads and boulevards sit centrally, with compact residential blocks surrounding them.",
       "zones": [
         {
-          "name": "Central avenue corridor",
-          "role": "Primary tornado and interceptor route with especially open avenues and major intersections.",
-          "where": "centre, running through the map",
-          "size": "broad"
-        },
-        {
-          "name": "Cross-street network",
-          "role": "Alternate approach paths for interceptor vehicles.",
-          "where": "crossing the central avenue",
-          "size": "several wide streets"
+          "name": "Central crossroads and boulevard system",
+          "role": "Open vehicle movement space for the tornado and interceptor vehicles.",
+          "where": "centre",
+          "size": "open"
         },
         {
           "name": "Residential blocks",
-          "role": "Vehicle-passable neighborhood streets with detached, closely spaced houses and selected enterable homes.",
-          "where": "branching from the central avenue and cross streets",
-          "size": "medium-large"
+          "role": "Compact detached-house districts with simple enterable interiors facing the streets.",
+          "where": "surrounding the central zone",
+          "size": "several connected blocks"
         },
         {
-          "name": "Outer fringe",
-          "role": "Sparse suburban fringe or low natural barrier forming the city edge.",
-          "where": "outer edge",
-          "size": "sparse"
+          "name": "City edge",
+          "role": "Believable outer transition from the city rather than a hard wall.",
+          "where": "outer boundary",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Central avenue corridor",
-          "to": "Cross-street network",
-          "kind": "road"
-        },
-        {
-          "from": "Cross-street network",
+          "from": "Central crossroads and boulevard system",
           "to": "Residential blocks",
           "kind": "road"
         },
         {
           "from": "Residential blocks",
-          "to": "Enterable house interiors",
+          "to": "Residential blocks",
           "kind": "road"
         }
       ],
-      "terrain": "Mostly flat city ground with broad asphalt streets, sidewalks, driveways, rectangular blocks, and open corner gaps.",
+      "terrain": "Mostly level paved roads with wet-looking asphalt, sidewalks, curbs, driveways, sparse trees, and a few open lots; low development, fields, or distant barriers at the city edge.",
       "props": [
         {
-          "name": "Detached closely spaced houses",
+          "name": "Detached houses with simple enterable interiors",
           "count": -1,
-          "where": "along residential streets"
+          "where": "compact residential blocks, facing the streets"
         },
         {
-          "name": "Enterable ground-floor house interiors",
+          "name": "Streetlights",
           "count": -1,
-          "where": "distributed across the city, with front doors facing roads"
+          "where": "along streets and intersections"
         },
         {
-          "name": "Driveways and sidewalks",
+          "name": "Sparse trees",
           "count": -1,
-          "where": "along streets and houses"
+          "where": "around residential blocks and open lots"
+        },
+        {
+          "name": "Open lots",
+          "count": -1,
+          "where": "between city blocks"
         }
       ],
-      "boundary": "Sparse suburban fringe or low natural barrier rather than an abrupt wall.",
+      "boundary": "A believable city edge of low development, fields, or distant barriers rather than a hard wall.",
       "scale_band": "large",
-      "theme": "Storm-chasing American suburban city, broad asphalt streets, practical houses, exposed intersections."
+      "theme": "Storm-chasing suburban city, ominous tornado-ready atmosphere, practical interceptor access."
     },
     "render": {
-      "first": "topdown",
-      "then": "isometric",
-      "authoritative": "topdown",
-      "why": "the road grid and vehicle-accessible connections must be coherent before the isometric city dressing is generated.",
+      "first": "isometric",
+      "then": "topdown",
+      "authoritative": "isometric",
+      "why": "The road network is open and redundant rather than a single topology that must be valid by construction.",
       "set_piece": false
     },
     "route": [
       "P3"
     ],
-    "notes": [],
+    "notes": [
+      "Vehicle Sim preset is retained with its shared extraction field omitted because this is a tornado-chase city, not an industrial operation.",
+      "No additional placed gameplay options were required; tornado behavior, vehicle handling, interception logic, damage, and scoring are mechanics rather than segmented layout placements."
+    ],
     "scene_prompt": "Создайте 3D-карту города для погони за торнадо: городские улицы и кварталы с домами, в которые можно заходить, соединены дорогами для управляемых игроками машин-перехватчиков. Оставьте открытые проезды и широкие улицы между зданиями, чтобы торнадо и машины могли двигаться по городу."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
-  "mapper_notes": [
-    "blob asked for topdown first; the route ['P3'] gives isometric"
-  ]
+  "mapper_notes": []
 }

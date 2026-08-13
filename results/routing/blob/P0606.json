@@ -14,77 +14,78 @@
     }
   ],
   "scene_prompt": "Create a 3D endless free-flight map set in a small modern city. Arrange similar-looking buildings along compact streets, with checkpoint boards mounted on rooftops and building sides at varied heights for vehicles to fly through.",
-  "blob": "### Genre\nThe dominant genre is Simulation: this is a vehicle-focused free-flight activity with repeatable checkpoint interactions rather than a race with a finish. No secondary genre is needed.\n\n### Shape and preset\nUse `world-shared`, one persistent city map shared by all flyers. The closest preset is Vehicle Sim, but the compact urban free-flight layout does not retain its hauling-route and resource-field bundle, so the preset is none.\n\n### Config requirements\nUse `settlement-density` as visible geometry: a small, compact modern city of closely spaced, intentionally similar buildings. Use `path-circulation` as visible geometry for the compact street grid threading between blocks, even though the streets are supporting visual structure rather than the primary flight route. Use `trigger-task` as both: each physical checkpoint board carries an invisible hit volume placed just in front of its face; those volumes must not appear in the image.\n\n### Layout components\nBuild one compact city zone, roughly square in plan, with several short blocks of similar-looking modern mid-rise buildings arranged along narrow intersecting streets. Keep enough air gaps between roofs and facades for vehicles to weave through at varied heights. Mount checkpoint boards prominently on rooftop edges, rooftop faces, and building sides; distribute them from low street-facing facades to upper roofs so the flight space reads vertically as well as across the grid. The ground is flat paved streets and sidewalks with minimal street furniture, avoiding distinctive landmarks that would undermine the repeated-building look. The city boundary is a clean outer ring of buildings and streets, fading into a simple distant skyline rather than adding separate districts. Frame the whole city as a readable isometric block, with roofs and side-mounted boards visible together.\n\n### Render order\nUse `isometric`: no fixed route, finish sequence, or topology-critical corridor must be validated, so the visual density and vertical board placement should lead.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the requested small modern city, but vertically dense enough to support free flight. Theme: clean modern urban blocks, repeated facades, bright high-visibility checkpoint boards. Use `CHECK` because vehicles move through the open three-dimensional air volume around rooftops and facades; keep that volume visually readable without self-occluding stacked flight layers.",
+  "blob": "### 1. Genre\nThe dominant genre is Simulation: the activity is operating flying vehicles in an open-ended flight space rather than completing a finite race. There is no secondary genre.\n\n### 2. Shape and preset\nUse `volume-open-air`, taken from the Aircraft Operation preset. Here, the playable volume is the airspace threaded between, beside, and above a compact city’s buildings, with landing-free flight at varied elevations. The preset is otherwise none: the prompt does not call for its hub, task facilities, or progression gates.\n\n### 3. Config requirements\nUse `trigger-task` as visible checkpoint boards: bold, readable boards mounted on rooftops and building facades, oriented toward likely approach lines and distributed at varied flight heights.\n\n### 4. Layout requirements\nPlace `trigger-task` volumes at every rendered checkpoint board. Site them immediately in front of the board faces, including rooftop approaches, street-canyon passes, and higher side-mounted boards; no count is specified, so distribute them across the full city volume rather than clustering them at one altitude.\n\n### 5. Layout components\nBuild one compact small modern city zone composed of closely spaced, similar-looking mid-rise buildings arranged along short rectangular streets. The city’s role is an endlessly revisitable aerial checkpoint field, with clear open corridors between blocks and a vertical envelope above the rooftops. Use repeated contemporary building forms and materials, varied modestly by height and facade detail so the city remains legible without becoming a set of unique landmarks. Mount checkpoint boards on rooftop edges, rooftop pads, and building sides at low, mid, and high elevations. Keep streets and roofs as secondary visual reference surfaces, while the primary circulation is open air through street canyons and around building corners. The boundary is a soft outer city edge of additional low-detail blocks or skyline massing, avoiding a hard wall. Frame the full compact city and its layered flight lines in an elevated isometric view.\n\n### 6. Render order\nUse `isometric`: the city’s visual readability and varied board placements lead, and the top-down representation can be projected from that authoritative scene.\n\n### 7. Scale, theme, and pipeline cost\nScale is medium, driven by a compact city with enough building blocks and vertical clearance to support repeated free-flight routes. Theme: clean modern urban aerial playground, with repeated contemporary architecture and high-visibility checkpoint boards. Use `CHECK` because vehicles move through a three-dimensional open-air volume around the buildings; keep the volume visually readable without self-occluding stacked routes.",
   "spec": {
     "genre": "Simulation",
     "secondary": [],
-    "shape": "world-shared",
+    "shape": "volume-open-air",
     "preset": "none",
     "axes": {},
     "options": [
       {
-        "id": "settlement-density",
-        "text": "a small, compact modern city of closely spaced, intentionally similar buildings",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "path-circulation",
-        "text": "the compact street grid threading between blocks, supporting visual structure rather than the primary flight route",
-        "visible": true,
-        "count": -1
-      },
-      {
         "id": "trigger-task",
-        "text": "each physical checkpoint board carries an invisible hit volume just in front of its face",
+        "text": "Visible checkpoint boards mounted on rooftops and building facades, oriented toward likely approach lines and distributed at varied flight heights.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "trigger-task",
+        "text": "Trigger-task volumes at every rendered checkpoint board.",
+        "count": -1,
+        "where": "Immediately in front of board faces, including rooftop approaches, street-canyon passes, and higher side-mounted boards; distributed across the full city volume rather than clustered at one altitude."
+      }
+    ],
     "layout": {
-      "composition": "Frame the whole city as a readable isometric block, with rooftops and side-mounted checkpoint boards visible together; the compact grid fills the frame and fades to a simple distant skyline beyond its outer ring.",
+      "composition": "An elevated isometric view frames the full compact city and its layered flight lines. Closely spaced mid-rise blocks and short rectangular streets form the reference surfaces below, while open air through street canyons, around building corners, and above rooftops is the primary circulation volume. Checkpoint boards appear on rooftop edges, rooftop pads, and building sides at low, mid, and high elevations.",
       "zones": [
         {
-          "name": "Compact city",
-          "role": "Shared free-flight space with checkpoint boards distributed from low street-facing facades to upper roofs.",
-          "where": "centre, roughly square in plan",
-          "size": "small, compact"
+          "name": "Compact small modern city",
+          "role": "An endlessly revisitable aerial checkpoint field with clear open corridors between blocks and a vertical envelope above the rooftops.",
+          "where": "Full map, framed as the central compact city volume.",
+          "size": "Medium"
         }
       ],
       "paths": [
         {
-          "from": "city blocks",
-          "to": "city blocks",
-          "kind": "road"
+          "from": "Street canyons",
+          "to": "Open air above rooftops",
+          "kind": "open ground"
+        },
+        {
+          "from": "Open corridors between building blocks",
+          "to": "Around building corners",
+          "kind": "open ground"
         }
       ],
-      "terrain": "Flat paved streets and sidewalks, with enough air gaps between roofs and facades for vehicles to weave through at varied heights.",
+      "terrain": "Short rectangular streets and roofs serve as secondary visual reference surfaces beneath the open-air flight volume.",
       "props": [
         {
-          "name": "similar-looking modern mid-rise buildings",
+          "name": "Similar-looking mid-rise buildings",
           "count": -1,
-          "where": "several short blocks along narrow intersecting streets"
+          "where": "Closely spaced along compact short rectangular streets, with modest variation in height and facade detail."
         },
         {
-          "name": "checkpoint boards",
+          "name": "Checkpoint boards",
           "count": -1,
-          "where": "rooftop edges, rooftop faces, building sides, low street-facing facades, and upper roofs"
+          "where": "Mounted on rooftop edges, rooftop pads, and building sides at low, mid, and high elevations."
         },
         {
-          "name": "minimal street furniture",
+          "name": "Additional low-detail blocks or skyline massing",
           "count": -1,
-          "where": "streets and sidewalks"
+          "where": "At the soft outer city edge."
         }
       ],
-      "boundary": "A clean outer ring of buildings and streets fading into a simple distant skyline, with no separate districts.",
-      "scale_band": "small",
-      "theme": "clean modern urban blocks, repeated facades, bright high-visibility checkpoint boards"
+      "boundary": "A soft outer city edge of additional low-detail blocks or skyline massing, avoiding a hard wall.",
+      "scale_band": "medium",
+      "theme": "Clean modern urban aerial playground with repeated contemporary architecture and high-visibility checkpoint boards."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "No fixed route, finish sequence, or topology-critical corridor must be validated, so visual density and vertical board placement should lead.",
+      "why": "the city’s visual readability and varied board placements lead.",
       "set_piece": false
     },
     "route": [
@@ -96,7 +97,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

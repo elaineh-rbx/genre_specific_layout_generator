@@ -19,175 +19,162 @@
     }
   ],
   "scene_prompt": "Create a compact 3D flooded-temple treasure-hunt map built around one clear, directed route with simple forward progression and no backtracking. The entrance and first crossing are plainly visible at the start, leading through water-filled temple chambers and a dangerous traversal section toward three relic locations arranged sequentially along the path. Place the exit beyond the final relic area, visibly sealed until all three relics are retrieved. Keep the full route short enough for a couple-minute run, with water or lower recovery areas beneath hazardous crossings.",
-  "blob": "### Genre\nAdventure is dominant: the player follows a short treasure-retrieval journey through a temple, gathering three relics before escaping.\n\n### Shape and preset\nUse `world-corridor`, a single directed temple route that advances chamber by chamber without backtracking. Match the Guided Trail preset in its corridor-led exploration structure, but replace its reveal emphasis with the prompt’s sequential relic route and sealed final exit.\n\n### Config requirements\n`path-trail` is visible geometry: one obvious, continuous route from the entrance across the first crossing and through each chamber. `collectible-nodes` are invisible layout placements for exactly three relic locations, ordered along that route. `gate-progression` is visible geometry: a sealed exit door beyond the third relic. `checkpoint-respawn` is invisible recovery placement on safe ground after major hazardous crossings. `water-body` is visible geometry: flooded chamber floors and lower recovery pools beneath crossings. `hazard-kill` is visible geometry where drops or dangerous traversal demand failure and recovery.\n\n### Layout components\nStart at a compact temple entrance, framing the first water crossing directly ahead. The route moves through a small sequence of water-filled stone chambers: an opening crossing zone, a first relic alcove, a more hazardous elevated traversal section over lower water, a second relic chamber, then a final relic sanctuary leading directly to the exit threshold. Put exactly three relics in clearly distinct sequential locations, each visible from its local approach. Use narrow stone bridges, broken platforms, and short raised paths over flooded lower areas; place safe recovery pads after crossings. The final sealed exit sits beyond the third relic area as the route’s clear endpoint. Enclose the run with temple walls, columns, and chamber ceilings; water and collapsed masonry prevent lateral wandering. Compose the isometric view from above the entrance so the first crossing and forward route read immediately.\n\n### Render order\nUse `topdown`: route continuity, forward-only progression, and recoverable crossings must remain playable before the isometric dressing is derived.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the specified couple-minute expedition. Theme is a compact ancient flooded temple with wet stone, submerged floors, relic glow, and dangerous broken crossings. Use `P2` because raised crossings visibly pass above lower flooded recovery surfaces.",
+  "blob": "### 1. Genre\nThe dominant genre is Adventure: a compact treasure-hunt journey with sequential objectives and an escape goal. No secondary genre is needed.\n\n### 2. Shape and preset\nUse `route-guided`, a one-way temple run that carries the player from the visible entrance through each relic chamber to the exit without backtracking. This takes the Adventure Guided Trail shape, but the preset is `none` because its landmark and reveal emphasis are not requested.\n\n### 3. Config requirements\nUse `path-trail` as an unmistakable forward route through the chambers and crossings. Use `water-body` for flooded floors, channels, and the water or lower recovery areas beneath crossings. Use `hazard-kill` for the dangerous crossing failures, with the hazard expressed by fall-away edges and unsafe traversal. Use `gate-progression` for the visibly sealed exit door beyond the final relic chamber; its temple seal remains closed until the route objectives are complete.\n\n### 4. Layout requirements\nUse `collectible-nodes`: place exactly three relic pickup markers, one at each sequential relic location, with none bypassable from a later chamber. Use `checkpoint-respawn`: place three recovery checkpoints on safe dry pads immediately before or after the major hazardous crossing segments, so a fall restores the player close to the failed section rather than at the entrance.\n\n### 5. Layout components\nStart at a compact temple entrance foyer, with the first water crossing and forward route plainly visible ahead. Lead into a linear sequence of water-filled stone chambers, each containing one relic area in order: the first near an early crossing, the second deeper in a broader flooded chamber, and the third in the final shrine chamber. Join these zones with narrow stone bridges, broken walkways, and short platform crossings above water or lower recovery basins. Put the sealed exit gate directly beyond the third relic shrine, clearly readable as the final destination. Enclose the route with ancient temple walls, columns, archways, and chamber boundaries; do not add side routes. Frame the build as a readable cutaway sequence from entrance in the foreground to the exit at the far end.\n\n### 6. Render order\nUse `topdown` first and make it authoritative, because the directed no-backtracking route, hazardous crossings, and short recovery spacing must remain continuously playable before the isometric dressing is generated.\n\n### 7. Scale, theme, and pipeline cost\nScale is small, driven by the requested couple-minute end-to-end run and exactly three relic stops. Theme: submerged ancient-stone temple, shallow blue-green water, worn masonry, and restrained treasure-shrine glow. Use `P0`; the flooded chambers and crossings remain a single connected surface with no forced stacked, indoor-to-outdoor, separate-map, or volumetric capture path.",
   "spec": {
     "genre": "Adventure",
     "secondary": [],
-    "shape": "world-corridor",
-    "preset": "Guided Trail",
+    "shape": "route-guided",
+    "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "path-trail",
-        "text": "One obvious, continuous route from the entrance across the first crossing and through each chamber, advancing forward without backtracking.",
+        "text": "An unmistakable forward route through the temple chambers and crossings.",
         "visible": true,
-        "count": 1
-      },
-      {
-        "id": "collectible-nodes",
-        "text": "Exactly three relic locations, ordered sequentially along the route and each visible from its local approach.",
-        "visible": false,
-        "count": 3
-      },
-      {
-        "id": "gate-progression",
-        "text": "A sealed exit door beyond the third relic, forming the route's clear final endpoint.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "checkpoint-respawn",
-        "text": "Recovery placements on safe ground after major hazardous crossings.",
-        "visible": false,
         "count": -1
       },
       {
         "id": "water-body",
-        "text": "Flooded chamber floors and lower recovery pools beneath crossings.",
+        "text": "Flooded floors, channels, and water or lower recovery areas beneath crossings.",
         "visible": true,
         "count": -1
       },
       {
         "id": "hazard-kill",
-        "text": "Dangerous drops and traversal sections over lower water requiring failure and recovery.",
+        "text": "Dangerous crossing failures expressed by fall-away edges and unsafe traversal.",
         "visible": true,
         "count": -1
+      },
+      {
+        "id": "gate-progression",
+        "text": "A visibly sealed temple exit door beyond the final relic chamber that remains closed until the route objectives are complete.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "Three relic pickup markers, one at each sequential relic location, with none bypassable from a later chamber.",
+        "visible": false,
+        "count": 3
+      },
+      {
+        "id": "checkpoint-respawn",
+        "text": "Three recovery checkpoints on safe dry pads immediately before or after the major hazardous crossing segments.",
+        "visible": false,
+        "count": 3
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "collectible-nodes",
+        "text": "Three relic pickup markers, one at each sequential relic location, with none bypassable from a later chamber.",
+        "count": 3,
+        "where": "One at each sequential relic location: the first near an early crossing, the second deeper in the broader flooded chamber, and the third in the final shrine chamber."
+      },
+      {
+        "id": "checkpoint-respawn",
+        "text": "Three recovery checkpoints on safe dry pads immediately before or after the major hazardous crossing segments.",
+        "count": 3,
+        "where": "Immediately before or after the major hazardous crossing segments, restoring the player close to the failed section rather than at the entrance."
       }
     ],
     "layout": {
-      "composition": "Isometric view from above the compact entrance, with the first water crossing directly ahead and the forward chamber-by-chamber route reading into the background toward the sealed exit.",
+      "composition": "A readable cutaway sequence runs from the temple entrance in the foreground through the linear flooded chambers to the sealed exit at the far end; the first water crossing and forward route are plainly visible from the foyer.",
       "zones": [
         {
-          "name": "Temple entrance",
-          "role": "Starting point framing the first crossing.",
-          "where": "foreground",
+          "name": "Temple entrance foyer",
+          "role": "Starting area with the first water crossing and forward route visible ahead.",
+          "where": "Foreground / entrance",
           "size": "compact"
         },
         {
-          "name": "Opening crossing zone",
-          "role": "First water crossing on the directed route.",
-          "where": "directly ahead of the entrance",
+          "name": "First relic chamber",
+          "role": "Water-filled stone chamber containing the first relic area near an early crossing.",
+          "where": "Beyond the entrance foyer",
           "size": ""
         },
         {
-          "name": "First relic alcove",
-          "role": "First sequential relic location.",
-          "where": "after the opening crossing",
+          "name": "Broad flooded relic chamber",
+          "role": "Deeper water-filled stone chamber containing the second relic area.",
+          "where": "Mid-route",
+          "size": "broader"
+        },
+        {
+          "name": "Final shrine chamber",
+          "role": "Final relic location, followed directly by the sealed exit gate.",
+          "where": "Far end of the route",
           "size": ""
         },
         {
-          "name": "Elevated traversal section",
-          "role": "Hazardous raised crossing over lower flooded recovery surfaces.",
-          "where": "mid-route",
-          "size": ""
-        },
-        {
-          "name": "Second relic chamber",
-          "role": "Second sequential relic location.",
-          "where": "after the elevated traversal",
-          "size": ""
-        },
-        {
-          "name": "Final relic sanctuary",
-          "role": "Third sequential relic location and approach to the exit.",
-          "where": "far end of the route",
-          "size": ""
-        },
-        {
-          "name": "Exit threshold",
-          "role": "Sealed final exit beyond the third relic.",
-          "where": "beyond the final relic sanctuary",
+          "name": "Sealed exit",
+          "role": "Final destination, closed until all relic objectives are complete.",
+          "where": "Directly beyond the final shrine chamber",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Temple entrance",
-          "to": "Opening crossing zone",
+          "from": "Temple entrance foyer",
+          "to": "First relic chamber",
           "kind": "bridge"
         },
         {
-          "from": "Opening crossing zone",
-          "to": "First relic alcove",
-          "kind": "path"
-        },
-        {
-          "from": "First relic alcove",
-          "to": "Elevated traversal section",
+          "from": "First relic chamber",
+          "to": "Broad flooded relic chamber",
           "kind": "bridge"
         },
         {
-          "from": "Elevated traversal section",
-          "to": "Second relic chamber",
-          "kind": "path"
+          "from": "Broad flooded relic chamber",
+          "to": "Final shrine chamber",
+          "kind": "bridge"
         },
         {
-          "from": "Second relic chamber",
-          "to": "Final relic sanctuary",
-          "kind": "path"
-        },
-        {
-          "from": "Final relic sanctuary",
-          "to": "Exit threshold",
+          "from": "Final shrine chamber",
+          "to": "Sealed exit",
           "kind": "corridor"
         }
       ],
-      "terrain": "Flooded submerged stone floors and lower water recovery pools, with narrow stone bridges, broken platforms, short raised paths, and collapsed masonry.",
+      "terrain": "Shallow blue-green water fills stone chamber floors and channels, with lower recovery basins beneath hazardous crossings; narrow stone bridges, broken walkways, and short platform crossings span the water.",
       "props": [
         {
-          "name": "relics",
+          "name": "Ancient temple walls",
+          "count": -1,
+          "where": "Enclosing the directed route."
+        },
+        {
+          "name": "Columns",
+          "count": -1,
+          "where": "Throughout the temple chambers."
+        },
+        {
+          "name": "Archways",
+          "count": -1,
+          "where": "Between chamber boundaries."
+        },
+        {
+          "name": "Worn masonry",
+          "count": -1,
+          "where": "Across the submerged temple."
+        },
+        {
+          "name": "Treasure shrines",
           "count": 3,
-          "where": "in the first relic alcove, second relic chamber, and final relic sanctuary"
-        },
-        {
-          "name": "temple walls",
-          "count": -1,
-          "where": "enclosing the route"
-        },
-        {
-          "name": "columns",
-          "count": -1,
-          "where": "throughout the temple chambers"
-        },
-        {
-          "name": "chamber ceilings",
-          "count": -1,
-          "where": "above the route"
-        },
-        {
-          "name": "collapsed masonry",
-          "count": -1,
-          "where": "along flooded lower areas and lateral edges"
-        },
-        {
-          "name": "safe recovery pads",
-          "count": -1,
-          "where": "after major crossings"
+          "where": "At the sequential relic locations."
         }
       ],
-      "boundary": "Temple walls, columns, and chamber ceilings enclose the run; water and collapsed masonry prevent lateral wandering.",
+      "boundary": "Ancient temple walls, columns, archways, and chamber boundaries enclose the route; there are no side routes.",
       "scale_band": "small",
-      "theme": "compact ancient flooded temple, wet stone, submerged floors, relic glow, dangerous broken crossings"
+      "theme": "Submerged ancient-stone temple with shallow blue-green water, worn masonry, and restrained treasure-shrine glow."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "Route continuity, forward-only progression, and recoverable crossings must remain playable before isometric dressing is derived.",
+      "why": "the directed no-backtracking route, hazardous crossings, and short recovery spacing must remain continuously playable before isometric dressing.",
       "set_piece": false
     },
     "route": [
-      "P2"
+      "P0"
     ],
     "notes": [],
     "scene_prompt": "Create a compact 3D flooded-temple treasure-hunt map built around one clear, directed route with simple forward progression and no backtracking. The entrance and first crossing are plainly visible at the start, leading through water-filled temple chambers and a dangerous traversal section toward three relic locations arranged sequentially along the path. Place the exit beyond the final relic area, visibly sealed until all three relics are retrieved. Keep the full route short enough for a couple-minute run, with water or lower recovery areas beneath hazardous crossings."
@@ -195,7 +182,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

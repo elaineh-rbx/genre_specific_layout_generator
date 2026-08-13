@@ -9,7 +9,7 @@
     }
   ],
   "scene_prompt": "Create a simple stylized-toon tower-defense map on a flat grey baseplate, using clean colorful, highly readable shapes. A straight path made of parts runs from an enemy spawn point at one end to a base at the opposite end. Arrange fixed agent placement slots at intervals along both sides of the path, with open space around them for clear visibility; the base is the path endpoint.",
-  "blob": "### Genre\nThe dominant genre is Strategy, specifically a tower-defense wave-survival game: enemies follow a fixed path from a spawn origin to the base while players place defenders beside it.\n\n### Shape and preset\nUse `lane-actor-track`, matching the Tower Defense preset. Here it is a deliberately simple, straight enemy lane across one flat prototype baseplate. Retain the preset’s base, enemy-origin, and placement-ground logic, but omit its chokepoint because the prompt specifies an uninterrupted straight path.\n\n### Config requirements\n`buildzone-grid` is visible geometry: fixed, cleanly marked agent placement slots at regular intervals on both sides of the path, with ample open ground around each slot. `tracker-core` is both visible and invisible: the visible endpoint base is a colorful, easily recognized defended structure; its base-health tracking region is placed afterward and does not enter the image. `spawner-npc` is invisible layout logic: place the enemy wave origin at the path’s far end, represented visually only by a simple spawn-point marker.\n\n### Layout components\nBuild one small rectangular flat grey baseplate. Run a broad, straight path of modular parts down its long central axis, from the enemy spawn point at one narrow end to the base at the opposite narrow end. Place the base centered on the path endpoint, slightly larger and taller than the path pieces so it is unmistakably the destination. Set evenly spaced fixed agent slots in mirrored rows along both sides of the entire path, leaving clear open margins around the slots and between them for readability. Terrain is completely flat with no water, relief, buildings, or clutter. The baseplate edge is the simple outer boundary. Compose the isometric view diagonally along the lane so spawn, every slot row, and the base remain legible in a single glance.\n\n### Render order\nUse `authored_plan`: the straight enemy route must be valid by construction, continuously connecting its spawn origin to the base without breaks.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the minimal single-lane prototype scope. Theme is stylized toon prototype: flat grey ground, clean colorful path, slots, spawn marker, and base with strong readable silhouettes. Pipeline modifier: `P6`, forced by the tower-defense lane’s required continuous enemy path.",
+  "blob": "### Genre\nThe dominant genre is Strategy, specifically a tower-defense wave-survival prototype: hostile waves follow one fixed route toward a defended base.\n\n### Shape and preset\nUse `lane-actor-track`, the Tower Defense preset. Here it is a single straight, unbranching ground-level lane from the enemy end of the baseplate to the base at the other end. The preset remains recognisable, retaining the dedicated track, defense placement ground, base, and enemy origin; omit its pinch point because the prompt specifies a straight readable path.\n\n### Config requirements\nUse `buildzone-grid` as evenly spaced fixed agent-slot pads running along both sides of the path, with broad clear ground around every pad. Use `tracker-core` as the colorful defended base structure visibly terminating the path.\n\n### Layout requirements\nUse `tracker-core` with one base-health target located at the exact endpoint of the straight path. Use `spawner-npc` with one hostile-wave origin placed at the opposite path endpoint, facing directly down the lane toward the base. No pickups, checkpoints, or additional placed triggers are required by the stated map space.\n\n### Layout components\nBuild one small flat grey baseplate as the complete map. Place the enemy-spawn zone at one narrow end and the base at the far end. A straight path of modular parts crosses the baseplate between them with no branches, crossings, turns, or obstacles. Flank the full length of this route with regularly spaced fixed agent placement pads on both sides, leaving open sightlines and generous visibility around the pads and lane. The surrounding terrain remains flat grey prototype ground, with the colorful path, slot pads, spawn marker, and base as the only strong visual landmarks. The boundary is the outer edge of the baseplate. Frame the entire lane end-to-end in an elevated three-quarter isometric composition, clearly showing the spawn-to-base direction and both rows of slots.\n\n### Render order\nUse `authored_plan`: the fixed enemy lane must be valid by construction as one continuous, unbroken route from spawn to core before it is dressed.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by one compact lane, one base, one spawn, and a limited set of defense slots. Theme is a stylized toon prototype: clean colorful shapes against a neutral grey baseplate, with maximum route readability. Apply `P6` because the tower-defense track must remain a valid continuous enemy path.",
   "spec": {
     "genre": "Strategy",
     "secondary": [],
@@ -19,86 +19,83 @@
     "options": [
       {
         "id": "buildzone-grid",
-        "text": "Fixed, cleanly marked agent placement slots at regular intervals on both sides of the path, with ample open ground around each slot.",
+        "text": "Evenly spaced fixed agent-slot pads running along both sides of the path, with broad clear ground around every pad.",
         "visible": true,
         "count": -1
       },
       {
         "id": "tracker-core",
-        "text": "The visible endpoint base is a colorful, easily recognized defended structure; its base-health tracking region is placed afterward and does not enter the image.",
+        "text": "A colorful defended base structure visibly terminating the path.",
         "visible": true,
         "count": 1
       },
       {
         "id": "spawner-npc",
-        "text": "Place the enemy wave origin at the path’s far end, represented visually only by a simple spawn-point marker.",
+        "text": "One hostile-wave origin placed at the opposite path endpoint, facing directly down the lane toward the base.",
         "visible": false,
         "count": 1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "tracker-core",
+        "text": "One base-health target.",
+        "count": 1,
+        "where": "At the exact endpoint of the straight path, at the far end of the baseplate."
+      },
+      {
+        "id": "spawner-npc",
+        "text": "One hostile-wave origin.",
+        "count": 1,
+        "where": "At the opposite straight-path endpoint at the narrow enemy end of the baseplate, facing directly down the lane toward the base."
+      }
+    ],
     "layout": {
-      "composition": "Isometric view diagonally along the lane so the spawn, every slot row, and the base remain legible in a single glance.",
+      "composition": "Elevated three-quarter isometric framing of the entire lane end-to-end, clearly showing the enemy-spawn-to-base direction and both rows of placement slots.",
       "zones": [
         {
-          "name": "Flat grey baseplate",
-          "role": "Single flat prototype play surface.",
-          "where": "Entire map",
-          "size": "small rectangular"
-        },
-        {
-          "name": "Enemy spawn point",
-          "role": "Enemy wave origin.",
-          "where": "One narrow end of the baseplate",
+          "name": "Enemy-spawn zone",
+          "role": "Hostile waves enter the fixed lane.",
+          "where": "At one narrow end of the baseplate.",
           "size": ""
         },
         {
           "name": "Straight enemy lane",
-          "role": "Continuously connects the spawn origin to the defended base.",
-          "where": "Down the long central axis",
-          "size": "broad"
+          "role": "One continuous, unbranching ground-level route for hostile waves from spawn to core.",
+          "where": "Crossing the baseplate between the enemy spawn and the base.",
+          "size": ""
         },
         {
-          "name": "Mirrored agent slot rows",
-          "role": "Fixed defender placement ground.",
-          "where": "Both sides of the entire path",
+          "name": "Defense placement ground",
+          "role": "Fixed agent-slot pads flank the lane with open sightlines and generous visibility.",
+          "where": "Along both sides for the full length of the route.",
           "size": ""
         },
         {
           "name": "Defended base",
-          "role": "Endpoint destination and visible core base.",
-          "where": "Opposite narrow end, centered on the path endpoint",
-          "size": "slightly larger and taller than the path pieces"
+          "role": "The base-health target terminating the enemy route.",
+          "where": "At the far end of the baseplate, opposite the enemy-spawn zone.",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Enemy spawn point",
+          "from": "Enemy-spawn zone",
           "to": "Defended base",
           "kind": "track"
         }
       ],
-      "terrain": "Completely flat grey ground with a clean colorful modular path; no water, relief, buildings, or clutter.",
-      "props": [
-        {
-          "name": "Simple spawn-point marker",
-          "count": 1,
-          "where": "At the enemy spawn point at the far end of the path"
-        },
-        {
-          "name": "Fixed agent placement slots",
-          "count": -1,
-          "where": "Mirrored rows along both sides of the path"
-        }
-      ],
-      "boundary": "The baseplate edge is the simple outer boundary.",
+      "terrain": "Small flat grey prototype baseplate ground; a colorful modular-parts path and colorful slot pads provide the visual landmarks.",
+      "props": [],
+      "boundary": "The outer edge of the baseplate.",
       "scale_band": "small",
-      "theme": "Stylized toon prototype; flat grey ground, clean colorful path, slots, spawn marker, and base with strong readable silhouettes."
+      "theme": "Stylized toon prototype, clean colorful highly readable shapes against a neutral grey baseplate."
     },
     "render": {
       "first": "authored_plan",
       "then": "topdown",
       "authoritative": "authored_plan",
-      "why": "the straight enemy route must continuously connect its spawn origin to the base without breaks.",
+      "why": "the fixed enemy lane must be valid by construction as one continuous, unbroken route from spawn to core before it is dressed.",
       "set_piece": false
     },
     "route": [
@@ -110,7 +107,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

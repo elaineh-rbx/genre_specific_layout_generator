@@ -14,118 +14,101 @@
     }
   ],
   "scene_prompt": "Create a 3D zombie arena with a dark, foggy, rotting horror atmosphere and a defensible central area with approaches from multiple sides.",
-  "blob": "### Genre\nThe dominant genre is Survival: players hold a defensible position against endless hostile zombie waves. There is no secondary genre.\n\n### Shape and preset\nUse `arena-contained`, matching the Horde Defense preset. Here it is a compact horror-survival enclosure centered on a fortified holdout rather than an escape route. The preset remains recognisable; do not add an exit.\n\n### Config requirements\nUse `spawner-npc` as invisible hostile origins placed beyond the visible approaches, so zombies enter from several readable directions without showing spawn markers. Use `cover-los` as visible crawlspaces, ruined wall gaps, and locker-like hiding cutouts around the central holdout. No other options are implied.\n\n### Layout components\nMake one medium-sized, roughly circular contained arena. Place a defensible central area in the middle: a battered barricaded shelter or raised concrete pad with partial rotten walls, broken crates, and limited cover. Arrange several broad, navigable approach lanes from all sides, separated by crumbling masonry, wrecked partitions, and decayed structural fragments so players can see incoming zombies while using the central cover. Keep the approaches connected around the perimeter rather than sealing them into dead ends. Site the invisible zombie origins at the outer ends of these approaches, behind fog and ruined boundary dressing. The terrain is mostly flat, cracked and muddy or stained concrete, with scattered debris and small uneven rubble patches but no major elevation. Enclose the arena with ruined perimeter walls, collapsed buildings, iron fencing, and dense darkness; openings should read as hostile entry points rather than player exits. Frame the central holdout as the compositional anchor, with foggy approach corridors radiating outward.\n\n### Render order\nUse `topdown`: valid multi-sided approach connectivity is important for holding out, so establish the arena plan before dressing the isometric view.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by one central defense zone and multiple surrounding attack lanes. Theme is outright horror: dark, heavy fog, rotting ruins, grime, decay, and oppressive post-apocalyptic lighting. Pipeline modifier `P0`: the arena is a single exterior surface with no overhangs, interiors, separate maps, or geometry that must be procedurally valid.",
+  "blob": "### Genre\nThis is primarily Survival, specifically the Horde Defense preset: a defensible arena for resisting hostile waves. No secondary genre is needed.\n\n### Shape and preset\nUse `space-bounded`, matching Horde Defense. It is one contained outdoor arena rather than a route, maze, or separated set of maps; the central holdout must remain reachable from several directions.\n\n### Config requirements\nUse `cover-los` for decayed walls, ruined buildings, barricade fragments, and small hiding cutouts that break zombie sightlines around the arena. Use `destructible-cluster` for visibly unstable, rotting ruin clusters around the perimeter and approaches. Do not add unrequested interiors, water, terrain relief, settlements, or ambient civilians.\n\n### Layout requirements\nPlace `spawner-npc` at multiple concealed perimeter origins, distributed around the arena so zombies can converge on the central defense area from every side rather than entering through one corridor. The exact number is not specified; site origins behind ruins and boundary fog, with clear navigable approaches to the center. No other placed gameplay elements are required.\n\n### Layout components\nThe main zone is a medium-sized, roughly circular or irregular enclosed ruin arena, with a defensible central plaza occupying the visual and tactical core. A broken ring of outer ruin zones surrounds it, leaving several broad, readable approach corridors from north, south, east, west, and diagonal gaps. Use cracked asphalt and mud-dark ground, scattered rubble, collapsed masonry, bent fencing, rotting timber barricades, abandoned wreckage, and ruined wall shells as cover without sealing routes. The boundary is an opaque wall of dense black fog backed by collapsed urban ruins and impassable debris, keeping the arena contained. Frame the central holdout in the middle, with outer ruins and fog closing the composition around it.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because the multiple hostile approach routes must connect cleanly to the central holdout for the arena to function.\n\n### Scale, theme, and pipeline cost\nScale band: medium, driven by one central defense zone plus a surrounding ring of multi-directional approaches. Theme: outright horror—dark, dense fog, rotting post-apocalyptic ruins, wet grime, and decayed materials. Pipeline modifier: `P0`; this is a single-level enclosed arena with no forced overhangs, outside-to-inside transition, separate maps, or topology that must be procedurally carved.",
   "spec": {
     "genre": "Survival",
     "secondary": [],
-    "shape": "arena-contained",
+    "shape": "space-bounded",
     "preset": "Horde Defense",
     "axes": {},
     "options": [
       {
-        "id": "spawner-npc",
-        "text": "Invisible hostile origins placed beyond the visible approaches, so zombies enter from several readable directions without showing spawn markers.",
-        "visible": false,
+        "id": "cover-los",
+        "text": "Decayed walls, ruined buildings, barricade fragments, and small hiding cutouts that break zombie sightlines around the arena.",
+        "visible": true,
         "count": -1
       },
       {
-        "id": "cover-los",
-        "text": "Visible crawlspaces, ruined wall gaps, and locker-like hiding cutouts around the central holdout.",
+        "id": "destructible-cluster",
+        "text": "Visibly unstable, rotting ruin clusters around the perimeter and approaches.",
         "visible": true,
+        "count": -1
+      },
+      {
+        "id": "spawner-npc",
+        "text": "Multiple concealed perimeter origins where zombies emerge and converge on the central defense area from every side.",
+        "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "spawner-npc",
+        "text": "Multiple concealed perimeter origins where zombies emerge and converge on the central defense area from every side.",
+        "count": -1,
+        "where": "Distributed around the arena behind ruins and boundary fog, with clear navigable approaches to the central defense area."
+      }
+    ],
     "layout": {
-      "composition": "The central fortified holdout is the compositional anchor in the middle, with foggy approach corridors radiating outward from all sides and ruined boundary dressing around the perimeter.",
+      "composition": "Frame the defensible central holdout in the middle, with a broken ring of outer ruins around it and dense black fog closing the composition at the edges.",
       "zones": [
         {
-          "name": "Central holdout",
-          "role": "Defensible central area for players to hold against zombie waves.",
-          "where": "middle",
+          "name": "Central defense plaza",
+          "role": "Defensible central holdout and visual and tactical core of the arena.",
+          "where": "Centre",
           "size": "medium-sized"
         },
         {
-          "name": "Approach lanes",
-          "role": "Broad navigable zombie attack approaches connected around the perimeter.",
-          "where": "surrounding the central holdout on all sides",
-          "size": "-1"
-        },
-        {
-          "name": "Hostile origins",
-          "role": "Invisible zombie entry origins beyond the visible approaches.",
-          "where": "outer ends of the approaches behind fog and ruined boundary dressing",
+          "name": "Outer ruin ring",
+          "role": "Broken surrounding ruins forming cover and several broad readable approaches to the central plaza.",
+          "where": "Around the central plaza, with approaches from north, south, east, west, and diagonal gaps",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Approach lanes",
-          "to": "Central holdout",
-          "kind": "open ground"
-        },
-        {
-          "from": "Approach lanes",
-          "to": "Approach lanes",
+          "from": "Outer ruin ring",
+          "to": "Central defense plaza",
           "kind": "open ground"
         }
       ],
-      "terrain": "Mostly flat cracked and muddy or stained concrete, with scattered debris and small uneven rubble patches but no major elevation.",
+      "terrain": "Cracked asphalt and mud-dark ground with scattered rubble, collapsed masonry, bent fencing, rotting timber barricades, abandoned wreckage, and ruined wall shells.",
       "props": [
         {
-          "name": "Battered barricaded shelter or raised concrete pad",
+          "name": "Decayed walls and ruined buildings",
           "count": -1,
-          "where": "central holdout"
+          "where": "Around the arena and approaches"
         },
         {
-          "name": "Partial rotten walls",
+          "name": "Barricade fragments and small hiding cutouts",
           "count": -1,
-          "where": "central holdout"
+          "where": "Around the arena"
         },
         {
-          "name": "Broken crates",
+          "name": "Rotting ruin clusters",
           "count": -1,
-          "where": "central holdout"
+          "where": "Perimeter and approaches"
         },
         {
-          "name": "Crumbling masonry",
+          "name": "Scattered rubble and collapsed masonry",
           "count": -1,
-          "where": "between approach lanes"
+          "where": "Across the arena"
         },
         {
-          "name": "Wrecked partitions",
+          "name": "Bent fencing, rotting timber barricades, abandoned wreckage, and ruined wall shells",
           "count": -1,
-          "where": "between approach lanes"
-        },
-        {
-          "name": "Decayed structural fragments",
-          "count": -1,
-          "where": "between approach lanes"
-        },
-        {
-          "name": "Ruined perimeter walls",
-          "count": -1,
-          "where": "arena perimeter"
-        },
-        {
-          "name": "Collapsed buildings",
-          "count": -1,
-          "where": "arena perimeter"
-        },
-        {
-          "name": "Iron fencing",
-          "count": -1,
-          "where": "arena perimeter"
+          "where": "Across the arena and along approach routes"
         }
       ],
-      "boundary": "Ruined perimeter walls, collapsed buildings, iron fencing, and dense darkness enclose the arena; openings read as hostile entry points rather than player exits.",
+      "boundary": "An opaque wall of dense black fog backed by collapsed urban ruins and impassable debris keeps the arena contained.",
       "scale_band": "medium",
-      "theme": "Outright horror: dark heavy fog, rotting ruins, grime, decay, and oppressive post-apocalyptic lighting."
+      "theme": "Outright horror: dark dense fog, rotting post-apocalyptic ruins, wet grime, and decayed materials."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "valid multi-sided approach connectivity is important for holding out.",
+      "why": "multiple hostile approach routes must connect cleanly to the central holdout for the arena to function.",
       "set_piece": false
     },
     "route": [
@@ -137,7 +120,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

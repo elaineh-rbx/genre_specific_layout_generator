@@ -19,90 +19,101 @@
     }
   ],
   "scene_prompt": "Create a 3D slingshot game map set around a lake. A fixed slingshot stands on the lake shore in the foreground, aimed across roughly 35 studs of open water toward a crocodile positioned in the middle of the lake. Leave a clear, unobstructed launch path between the shore and the crocodile.",
-  "blob": "### Genre\nThe dominant genre is `Shooter`, specifically a stationary target-practice game: the player aims piggies from one fixed firing position at a single downrange target. The scoring loop establishes a game genre, but it does not add any layout mechanics.\n\n### Shape and preset\nUse `range-directed`, matching the Aim Trainer preset in its one-way firing-line composition. The preset is only partially retained: this is not a target gallery with many distances or a weapon bench, but one clear slingshot-to-crocodile lane.\n\n### Config requirements\nUse `target-practice` as both visible geometry and invisible placement: the visible target is the crocodile centered in the lake; its contact target volume is invisible and placed over the crocodile after segmentation. No other options apply. In particular, the lake is explicitly requested, so use `water-body` as visible geometry: open water fills the firing lane around the target.\n\n### Layout components\nMake one compact lakeside range. In the foreground, place a fixed oversized wooden slingshot on a small clear shore pad, facing directly toward the lake center. Across roughly 35 studs of uninterrupted open water, place one crocodile target in the middle of the lake, broadside and clearly readable from the slingshot. Keep the entire 35-stud launch corridor empty: no reeds, rocks, islands, docks, cover, or floating props may interrupt the piggy trajectory. The shore pad is the only player-use zone; the lake and crocodile are the downrange zone. Use a simple natural bank at the outer frame edge as a non-play boundary, without enclosing or cluttering the view. Compose from a slightly elevated isometric angle with the slingshot large in the lower foreground and the crocodile centered beyond it, making the direct line of fire immediately legible.\n\n### Render order\nUse `isometric`: the scene is a simple, fixed, unobstructed aiming composition, so the authoritative isometric image should establish the playful target read before deriving a top-down projection.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the single shore station and the approximately 35-stud shot across one lake. Theme: bright, cute, toy-like lakeside carnival slingshot range. Use `CHECK` because the lake is a real water surface around the target; otherwise the map remains a single flat, open composition.",
+  "blob": "### Genre\nThe dominant genre is Sports: this is an endless target-shooting score game from one fixed launch position, closest to a target sport rather than a traversable world.\n\n### Shape and preset\nUse `range-directed`, matching the Target Sport preset. Here it is a compact slingshot range: one shore-side firing line faces a single crocodile target across the lake.\n\n### Config requirements\nUse `startpoint-play` for the fixed slingshot launch position on the near shore. Use `trigger-scoring` for the visible crocodile target in the lake centre. Use `water-body` for the open lake spanning the range; it must remain clear of props or cover along the firing line.\n\n### Layout requirements\nPlace one `startpoint-play` marker exactly at the fixed slingshot, facing directly toward the crocodile. Place one `trigger-scoring` volume tightly around the crocodile in the middle of the lake, roughly 35 studs from the slingshot, so every successful piggy impact registers without requiring movement around the map.\n\n### Layout components\nBuild one small shore-side launch zone in the foreground, containing exactly one fixed slingshot aimed outward. Directly beyond it is a broad, calm lake with approximately 35 studs of unobstructed open water from sling to target. Place exactly one crocodile at the lake's centre as the focal target. Keep the lateral shore edges simple and non-playable, with no islands, reeds, rocks, or structures interrupting the launch path. Frame the composition from the slingshot shore toward the centered crocodile, making the full aiming distance legible in one view.\n\n### Render order\nRender `isometric` first and treat it as authoritative, since the simple directed range has no topology whose failure would make play impossible.\n\n### Scale, theme, and pipeline cost\nScale band: small, driven by the single slingshot, one crocodile, and 35-stud lake span. Theme: bright, playful cartoon lakeside range with a cute oversized crocodile target. Use `SET` because this is a fixed-position operated target set rather than a traversed play space; traversal and jump-gap checks are unnecessary.",
   "spec": {
-    "genre": "Shooter",
+    "genre": "Sports",
     "secondary": [],
     "shape": "range-directed",
-    "preset": "Aim Trainer",
+    "preset": "Target Sport",
     "axes": {},
     "options": [
       {
-        "id": "target-practice",
-        "text": "One crocodile target centered in the lake, broadside and clearly readable from the fixed slingshot.",
+        "id": "startpoint-play",
+        "text": "Fixed slingshot launch position on the near shore.",
         "visible": true,
         "count": 1
       },
       {
-        "id": "target-practice",
-        "text": "Its invisible contact target volume is placed over the crocodile after segmentation.",
-        "visible": false,
+        "id": "trigger-scoring",
+        "text": "Visible crocodile target in the lake centre.",
+        "visible": true,
         "count": 1
       },
       {
         "id": "water-body",
-        "text": "Open water fills the firing lane around the target.",
+        "text": "Open lake spanning the range, kept clear of props or cover along the firing line.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "startpoint-play",
+        "text": "Marker at the fixed slingshot, facing directly toward the crocodile.",
+        "count": 1,
+        "where": "Exactly at the fixed slingshot on the near shore, facing directly toward the crocodile."
+      },
+      {
+        "id": "trigger-scoring",
+        "text": "Scoring volume tightly around the crocodile.",
+        "count": 1,
+        "where": "Around the crocodile in the middle of the lake, roughly 35 studs from the slingshot."
+      }
+    ],
     "layout": {
-      "composition": "Slightly elevated isometric view with the oversized wooden slingshot large in the lower foreground, aimed directly across the lake toward the centered crocodile beyond it; the clear line of fire is immediately legible.",
+      "composition": "Frame from the foreground slingshot shore toward the centred crocodile, with the full aiming distance legible in one view.",
       "zones": [
         {
-          "name": "shore pad",
-          "role": "The only player-use zone, holding the fixed firing position.",
-          "where": "lower foreground on the lake shore",
+          "name": "Shore-side launch zone",
+          "role": "Fixed slingshot launch position.",
+          "where": "Foreground on the near shore.",
           "size": "small"
         },
         {
-          "name": "lake downrange zone",
-          "role": "Open-water target area containing the crocodile target.",
-          "where": "centre beyond the shore pad",
-          "size": "roughly 35 studs from the slingshot"
+          "name": "Lake target area",
+          "role": "Open-water firing range containing the crocodile target.",
+          "where": "Directly beyond the launch zone, with the target at the lake centre.",
+          "size": "broad"
         }
       ],
-      "paths": [
-        {
-          "from": "shore pad",
-          "to": "crocodile target",
-          "kind": "open ground"
-        }
-      ],
-      "terrain": "Flat open lake water with a small clear shore pad and a simple natural outer bank.",
+      "paths": [],
+      "terrain": "Broad, calm open lake with approximately 35 studs of unobstructed water from slingshot to target.",
       "props": [
         {
-          "name": "oversized wooden slingshot",
+          "name": "Fixed slingshot",
           "count": 1,
-          "where": "foreground shore pad"
+          "where": "Foreground shore-side launch zone, aimed outward toward the crocodile."
         },
         {
-          "name": "crocodile target",
+          "name": "Crocodile target",
           "count": 1,
-          "where": "middle of the lake"
+          "where": "Centre of the lake."
         }
       ],
-      "boundary": "A simple natural bank at the outer frame edge forms a non-play boundary without enclosing or cluttering the view.",
+      "boundary": "Simple, non-playable lateral shore edges; no islands, reeds, rocks, or structures interrupt the launch path.",
       "scale_band": "small",
-      "theme": "bright, cute, toy-like lakeside carnival slingshot range"
+      "theme": "Bright, playful cartoon lakeside range with a cute oversized crocodile target."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "A simple fixed unobstructed aiming composition needs the playful target read established first.",
-      "set_piece": false
+      "why": "the simple directed range has no topology whose failure would make play impossible.",
+      "set_piece": true
     },
     "route": [
-      "CHECK"
+      "SET"
     ],
-    "notes": [],
+    "notes": [
+      "visible on 'startpoint-play' set from goes_to=both",
+      "visible on 'trigger-scoring' set from goes_to=both"
+    ],
     "scene_prompt": "Create a 3D slingshot game map set around a lake. A fixed slingshot stands on the lake shore in the foreground, aimed across roughly 35 studs of open water toward a crocodile positioned in the middle of the lake. Leave a clear, unobstructed launch path between the shore and the crocodile."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

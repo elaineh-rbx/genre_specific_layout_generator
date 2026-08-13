@@ -14,71 +14,63 @@
     }
   ],
   "scene_prompt": "Create a 3D hide-and-seek map as a small, compact grass maze under dark lighting, with a few branching paths, enclosed turns, and hiding corners throughout the maze.",
-  "blob": "### Genre\nThe dominant genre is Party & Casual: the original request is a hide-and-seek round game. No secondary genre is needed.\n\n### Shape and preset\nUse `space-continuous`, a single compact maze play space where seekers and hiders occupy the same field. This follows the Childhood Game preset in its hide-and-seek form, but omit its unrequested lobby; the maze and concealment geometry remain the recognizable core.\n\n### Config requirements\nUse `obstacle-maze` as visible geometry: a tight grass-walled maze with several branch choices, enclosed turns, and dead-end hiding corners. Use `cover-los` as visible geometry: dense grass or hedge wall runs repeatedly break sightlines so hiders can disappear around corners. No invisible layout options are required.\n\n### Layout components\nBuild one small, compact, roughly square maze zone, sized so a seeker can sweep it quickly rather than lose players across a sprawling map. A clearly readable central junction feeds a few short branching corridors, with several loop-like side connections where possible and multiple recessed corner pockets for hiding. Keep corridor widths consistent and walkable, with tall grass or clipped hedge walls forming the maze structure and blocking views through the paths. Use dark grass ground, darker wall foliage, and sparse low ambient illumination; retain enough edge contrast that turns and passages remain legible. Enclose the outer edge with a continuous tall hedge or grass boundary so players remain within the maze. Frame the whole compact maze in a high three-quarter isometric composition, showing the outer boundary, central junction, and branching density.\n\n### Render order\nUse `authored_plan`: generate the maze blueprint first and treat it as authoritative, then build top-down and isometric renders from it, because a sealed branch or unreachable area would make the hide-and-seek space invalid.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the requirement that seekers can realistically find every hider. Theme is dark, atmospheric grass-maze hide-and-seek. Apply `P6` because maze connectivity must be valid by construction.",
+  "blob": "### Genre\nThe dominant genre is Party & Casual: this is a hide-and-seek round space. The all-hiders-found condition establishes the game type but adds no visible layout content.\n\n### Shape and preset\nUse `space-bounded`, a single compact enclosed play area containing the entire hiding game. The closest preset is Childhood Game, but use none because its lobby and dense prop-cluster assumptions were not requested; retain only the maze element explicitly described.\n\n### Config requirements\nUse `obstacle-maze` as a compact grass hedge maze with a few short branching paths, enclosed turns, and frequent recessed hiding corners. Do not add a lobby, shop, or unrelated clutter arrays.\n\n### Layout requirements\nUse `spawn-protected` with evenly distributed round-start markers: place several at separated outer-edge path entries so players do not begin together or with immediate sightlines into one another. No other placed layout elements are required; finding and round-resolution logic is not rendered.\n\n### Layout components\nBuild one small, dense grass-floored maze zone, sized so a seeker can traverse it quickly and realistically locate every hider. Form the maze from tall dark hedges, with a small number of readable branches rather than a sprawling labyrinth. Include enclosed right-angle turns, shallow dead-end recesses, and hiding corners along each branch. Keep the paths connected and compact, with enough intersections to permit short escapes but no large open plaza. The hedge perimeter is the complete boundary; no exterior terrain or secondary zone is needed. Compose the plan as a clearly legible compact maze footprint, with its branching structure and concealed corners visible from above.\n\n### Render order\nUse `authored_plan`: generate the maze topology in code first so its branches, turns, and hiding recesses are connected and playable, then build the top-down and isometric renders from that plan.\n\n### Scale, theme, and pipeline cost\nScale band: small, driven by the requested compact maze and realistic seeker coverage. Theme: dark, moody nighttime grass maze with shadowed hedges and low lighting. Pipeline modifier: `P6`, because the maze connectivity must be valid by construction.",
   "spec": {
     "genre": "Party & Casual",
     "secondary": [],
-    "shape": "space-continuous",
-    "preset": "Childhood Game",
+    "shape": "space-bounded",
+    "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "obstacle-maze",
-        "text": "a tight grass-walled maze with several branch choices, enclosed turns, and dead-end hiding corners",
+        "text": "A compact grass hedge maze with a few short branching paths, enclosed turns, and frequent recessed hiding corners.",
         "visible": true,
         "count": -1
       },
       {
-        "id": "cover-los",
-        "text": "dense grass or hedge wall runs repeatedly break sightlines so hiders can disappear around corners",
-        "visible": true,
+        "id": "spawn-protected",
+        "text": "Evenly distributed round-start markers at separated outer-edge path entries so players do not begin together or with immediate sightlines into one another.",
+        "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "spawn-protected",
+        "text": "Evenly distributed round-start markers.",
+        "count": -1,
+        "where": "At separated outer-edge path entries, preventing players from starting together or with immediate sightlines into one another."
+      }
+    ],
     "layout": {
-      "composition": "High three-quarter isometric composition framing the whole compact maze, with the outer boundary, central junction, and branching density visible.",
+      "composition": "A clearly legible compact maze footprint viewed from above, with branching structure and concealed corners visible.",
       "zones": [
         {
-          "name": "Compact grass maze",
-          "role": "Shared hide-and-seek field for seekers and hiders, with branching corridors, loop-like side connections, and recessed hiding pockets.",
-          "where": "centre of the map within the outer hedge boundary",
-          "size": "small, compact, roughly square"
+          "name": "Grass hedge maze",
+          "role": "The entire compact hide-and-seek round space, allowing a seeker to quickly traverse it and realistically locate every hider.",
+          "where": "The complete enclosed play area.",
+          "size": "small, dense, and compact"
         }
       ],
-      "paths": [
-        {
-          "from": "Central junction",
-          "to": "Short branching corridors",
-          "kind": "corridor"
-        },
-        {
-          "from": "Short branching corridors",
-          "to": "Loop-like side connections and recessed corner pockets",
-          "kind": "corridor"
-        }
-      ],
-      "terrain": "Dark grass ground with darker tall-grass or clipped-hedge maze walls; sparse low ambient illumination with enough edge contrast to keep turns and passages legible.",
+      "paths": [],
+      "terrain": "Grass floor within the maze; no exterior terrain.",
       "props": [
         {
-          "name": "Tall grass or clipped hedge maze walls",
+          "name": "Tall dark hedges",
           "count": -1,
-          "where": "forming maze corridors, enclosed turns, sightline breaks, and hiding corners"
-        },
-        {
-          "name": "Continuous tall hedge or grass boundary",
-          "count": -1,
-          "where": "outer edge of the maze"
+          "where": "Forming the maze branches, enclosed right-angle turns, shallow dead-end recesses, hiding corners, and complete perimeter."
         }
       ],
-      "boundary": "Continuous tall hedge or grass boundary enclosing the outer edge so players remain within the maze.",
+      "boundary": "The hedge perimeter is the complete boundary; there is no exterior terrain or secondary zone.",
       "scale_band": "small",
-      "theme": "dark, atmospheric grass-maze hide-and-seek"
+      "theme": "Dark, moody nighttime grass maze with shadowed hedges and low lighting."
     },
     "render": {
       "first": "authored_plan",
       "then": "topdown",
       "authoritative": "authored_plan",
-      "why": "a sealed branch or unreachable area would make the hide-and-seek space invalid.",
+      "why": "Maze connectivity must be valid by construction so branches, turns, and hiding recesses remain connected and playable.",
       "set_piece": false
     },
     "route": [
@@ -90,7 +82,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

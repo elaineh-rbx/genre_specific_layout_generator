@@ -19,7 +19,7 @@
     }
   ],
   "scene_prompt": "Create a cozy, stylized toon-coloured adventure map set in a single compact, dense forest grove that can be crossed in about half a minute. Layer winding walkable paths through closely packed trees and environmental obstacles, with small exploration pockets and scattered resource-gathering spots throughout the grove.",
-  "blob": "### Genre\nThe dominant genre is Adventure: the author specifies exploration and resource collection as the loop. There is no secondary genre; crafting purpose informs the adventure’s resource placement but does not add economy geometry.\n\n### Shape and preset\nUse `world-open`, a compact free-roam forest rather than a linear corridor: players can choose among interwoven paths and side pockets within one grove. Match the Exploration preset, retaining its exploratory route character while omitting its focal landmark because none is requested.\n\n### Config requirements\n`path-trail` is visible geometry: winding, walkable dirt paths make a dense but readable circulation web through the trees. `alcove-secret` is visible geometry: small tucked-away exploration pockets are formed by tree clusters, roots, and low natural obstacles. `collectible-nodes` is invisible layout placement: distribute resource-gathering spots across main-path edges and the more secluded pockets. `terrain-relief` is visible geometry: modest roots, hummocks, and low rises give the environmental obstacles shape without turning the grove into a multi-level landscape.\n\n### Layout components\nBuild one compact forest-grove zone, sized to cross on foot in about half a minute. Its broad central portion contains several converging winding paths, while narrow side trails peel into small, rewarding exploration pockets around the perimeter. Closely pack stylized tree trunks and rounded toon foliage to define the route edges, with fallen logs, exposed roots, mossy stones, and low earthen rises acting as environmental obstacles and sightline breaks. Scatter gathering spots throughout: some readable from the main paths and others placed in the tucked-away pockets. Use soft grass and packed-earth trails as the ground treatment. The outer edge is a dense wall of trees, brush, and gentle terrain that naturally closes the playable grove. Compose it as a legible overhead woodland weave, with paths and clearings visible amid the canopy rather than an open field.\n\n### Render order\nUse `isometric`: the grove’s topology is exploratory rather than a strict solvability requirement, so the stylized forest look should lead and the plan can be projected from it.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the specified half-minute crossing time, though the dense path network makes it feel discoverable. Theme is cozy, stylized, toon-coloured woodland. Use `tiered` for the requested low natural relief; no overhanging layers, interiors, separate maps, or topology-validating construction are required.",
+  "blob": "### 1. Genre\nThe dominant genre is Adventure: the player explores a compact environment and gathers resources, with crafting as the purpose of those finds.\n\n### 2. Shape and preset\nUse `world-open`, matching the Exploration preset. It is one freely explored but compact contiguous forest surface rather than a directed route; retain the preset’s exploration emphasis while omitting its unrequested landmark and secret alcoves.\n\n### 3. Config requirements\nUse `path-trail` as winding, walkable woodland paths that weave between tightly packed trees and environmental obstacles. Use `terrain-relief` for gentle uneven forest ground, shallow rises, and small embankments that make the pockets feel distinct without creating stacked surfaces.\n\n### 4. Layout requirements\nUse `collectible-nodes` for scattered resource-gathering locations. Place small clusters in each exploration pocket and occasional single nodes just off the main paths, always reachable around obstacles rather than requiring jumps or hidden mechanics.\n\n### 5. Layout components\nBuild one compact dense forest grove, sized to cross on foot in about half a minute. A loose central clearing acts as the readable orientation point, with several small exploration pockets distributed around its perimeter: a root-filled nook, a rocky pocket, a fallen-log passage, and a brushy resource clearing. Narrow winding dirt paths branch from the clearing, loop through closely packed toon-coloured trees, and reconnect so every pocket is reachable without dead ends. Environmental obstacles include fallen logs, boulders, exposed roots, dense shrubs, and low earthen rises; they shape routes and partially conceal the gathering spots without blocking the grove into separate zones. Use soft grassy ground, leaf litter, and gentle relief. The boundary is a dense wall of trees, undergrowth, and low natural ridges. Compose the grove as a readable central clearing surrounded by a dense irregular ring of woodland pockets.\n\n### 6. Render order\nUse `isometric`: the cozy stylized forest look and dense composition lead, while the compact path plan can be projected reliably afterward.\n\n### 7. Scale, theme, and pipeline cost\nScale is small, driven by the half-minute crossing time and single-grove scope. Theme is cozy, stylized, toon-coloured woodland. Use `tiered` because the grove includes gentle natural rises and embankments but no overhanging surfaces.",
   "spec": {
     "genre": "Adventure",
     "secondary": [],
@@ -29,70 +29,106 @@
     "options": [
       {
         "id": "path-trail",
-        "text": "Winding, walkable dirt paths make a dense but readable circulation web through the trees.",
+        "text": "Winding, walkable woodland paths that weave between tightly packed trees and environmental obstacles.",
         "visible": true,
         "count": -1
       },
       {
-        "id": "alcove-secret",
-        "text": "Small tucked-away exploration pockets are formed by tree clusters, roots, and low natural obstacles.",
+        "id": "terrain-relief",
+        "text": "Gentle uneven forest ground, shallow rises, and small embankments that make the pockets feel distinct without creating stacked surfaces.",
         "visible": true,
         "count": -1
       },
       {
         "id": "collectible-nodes",
-        "text": "Distribute resource-gathering spots across main-path edges and the more secluded pockets.",
+        "text": "Scattered resource-gathering locations.",
         "visible": false,
-        "count": -1
-      },
-      {
-        "id": "terrain-relief",
-        "text": "Modest roots, hummocks, and low rises give the environmental obstacles shape without turning the grove into a multi-level landscape.",
-        "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "collectible-nodes",
+        "text": "Scattered resource-gathering locations.",
+        "count": -1,
+        "where": "Place small clusters in each exploration pocket and occasional single nodes just off the main paths, always reachable around obstacles rather than requiring jumps or hidden mechanics."
+      }
+    ],
     "layout": {
-      "composition": "A legible overhead woodland weave, with winding paths and clearings visible amid the canopy rather than an open field; a broad central portion holds converging paths while narrow side trails peel toward the perimeter.",
+      "composition": "A readable loose central clearing sits at the centre, surrounded by a dense irregular ring of woodland pockets around its perimeter.",
       "zones": [
         {
-          "name": "Compact forest grove",
-          "role": "Free-roam exploration and resource gathering across interwoven paths and tucked-away pockets.",
-          "where": "Single grove with a broad central portion and perimeter side pockets.",
-          "size": "Small; crossable on foot in about half a minute."
+          "name": "Central clearing",
+          "role": "Readable orientation point.",
+          "where": "Centre of the grove.",
+          "size": "Loose central clearing."
+        },
+        {
+          "name": "Root-filled nook",
+          "role": "Small exploration pocket with gathering spots.",
+          "where": "Around the perimeter of the central clearing.",
+          "size": "Small."
+        },
+        {
+          "name": "Rocky pocket",
+          "role": "Small exploration pocket with gathering spots.",
+          "where": "Around the perimeter of the central clearing.",
+          "size": "Small."
+        },
+        {
+          "name": "Fallen-log passage",
+          "role": "Small exploration pocket and passage with gathering spots.",
+          "where": "Around the perimeter of the central clearing.",
+          "size": "Small."
+        },
+        {
+          "name": "Brushy resource clearing",
+          "role": "Small exploration pocket for resource gathering.",
+          "where": "Around the perimeter of the central clearing.",
+          "size": "Small."
         }
       ],
       "paths": [
         {
-          "from": "Broad central portion",
-          "to": "Perimeter exploration pockets",
-          "kind": "trail"
+          "from": "Central clearing",
+          "to": "Woodland pockets",
+          "kind": "track"
+        },
+        {
+          "from": "Woodland pockets",
+          "to": "Woodland pockets",
+          "kind": "track"
         }
       ],
-      "terrain": "Soft grass and packed-earth trails, with low earthen rises, hummocks, exposed roots, mossy stones, and fallen logs.",
+      "terrain": "Soft grassy ground and leaf litter with gentle relief, shallow rises, small embankments, and low earthen rises.",
       "props": [
         {
-          "name": "Stylized tree trunks and rounded toon foliage",
+          "name": "Closely packed toon-coloured trees",
           "count": -1,
-          "where": "Closely packed throughout the grove, defining route edges and the outer wall."
+          "where": "Throughout the grove and forming a dense irregular ring around the central clearing."
         },
         {
           "name": "Fallen logs",
           "count": -1,
-          "where": "Along paths and within exploration pockets."
+          "where": "Along routes and in the fallen-log passage."
+        },
+        {
+          "name": "Boulders",
+          "count": -1,
+          "where": "In the rocky pocket and along routes."
         },
         {
           "name": "Exposed roots",
           "count": -1,
-          "where": "Around tree clusters and tucked-away pockets."
+          "where": "In the root-filled nook and along routes."
         },
         {
-          "name": "Mossy stones",
+          "name": "Dense shrubs",
           "count": -1,
-          "where": "Throughout the grove as environmental obstacles and sightline breaks."
+          "where": "Around woodland pockets and gathering spots."
         }
       ],
-      "boundary": "A dense wall of trees, brush, and gentle terrain naturally closes the playable grove.",
+      "boundary": "A dense wall of trees, undergrowth, and low natural ridges.",
       "scale_band": "small",
       "theme": "Cozy, stylized, toon-coloured woodland."
     },
@@ -100,7 +136,7 @@
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "The grove’s topology is exploratory rather than a strict solvability requirement, so the stylized forest look should lead.",
+      "why": "The cozy stylized forest look and dense composition lead, while the compact path plan can be projected reliably afterward.",
       "set_piece": false
     },
     "route": [
@@ -112,7 +148,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

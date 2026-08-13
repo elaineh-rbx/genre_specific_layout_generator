@@ -14,65 +14,73 @@
     }
   ],
   "scene_prompt": "Create a 3D playable dungeon for a Roblox-style character: a classic stone-and-torches dungeon with a linear sequence of three enemy chambers, each separated by a heavy gate. The route leads from the entrance through the three chambers to a final boss chamber at the end, with stone walls, torch-lit corridors, and spaces for NPC enemies in every chamber.",
-  "blob": "### Genre\nThe dominant genre is RPG, specifically a dungeon-crawler combat progression game. No secondary genre is needed.\n\n### Shape and preset\nUse `world-single`, a single contiguous interior dungeon whose complete route runs from entrance to boss chamber. Match the Dungeon Crawler preset in its hostile-room and gated-route character, but the prompt overrides its hub-and-separate-dungeons shape: there is no town hub or separate map, so retain only the recognisable dungeon options.\n\n### Config requirements\nUse `spawner-npc` as invisible layout markers, placing enemy-origin points within each of the three intermediate chambers; these markers must not appear in the image. Use `gate-progression` as visible geometry: three heavy stone portcullises or barred gates divide the dungeon route, each clearly sealing the next chamber. Do not add a sanctuary town, shop ring, resource nodes, or fast travel because none are requested.\n\n### Layout components\nBuild one linear indoor dungeon. A compact entrance vestibule at the near edge opens into a torch-lit stone corridor. The corridor leads through exactly three enemy chambers in sequence, each a medium square or rectangular combat room with thick masonry walls, torch sconces, clear central floor space, and its own enemy-origin area. A heavy gate stands at the far wall of each chamber, followed by a short connecting corridor that prevents adjacent rooms from reading as one open space.\n\nBeyond the third chamber, place the final boss chamber as the largest room at the far end: a broad circular or octagonal stone hall with a raised rear dais or focal altar, open floor around its centre, and denser torch lighting. Stone block floors, rough grey walls, iron-banded gates, and warm torch pools define the terrain and props. The enclosing boundary is fully interior stone architecture, with no exterior space. Compose the dungeon as a readable receding route: entrance foreground, three gated chambers along the central axis, and the boss hall as the terminal focal point.\n\n### Render order\nUse `topdown`: the connected entrance-to-boss route and ordered chamber sequence must remain traversable and unambiguous, while the image model can still author the plan before the isometric dressing pass.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by three full chambers, connector corridors, an entrance, and a larger final hall. Theme: classic Roblox-scale stone-and-torches dungeon, warm firelight against dark grey masonry. Pipeline modifier: `P0`; this is one enclosed, single-level interior surface with no overhangs, separate maps, or outside-to-inside transition.",
+  "blob": "### Genre\nThe dominant genre is Action, specifically a linear dungeon combat run. The NPC fights and boss establish the Hack & Slash style; reward mechanics do not alter the map layout.\n\n### Shape and preset\nUse `rooms-sequence`, matching the Hack & Slash preset. This is a single enclosed stone dungeon arranged as an ordered chain of combat chambers and torch-lit connectors, rather than an open arena. Retain the preset’s recognizable combat-room structure while omitting unrequested breakable scenery.\n\n### Config requirements\nUse `arena-lockin` as heavy portcullis-style gates across each chamber exit, visibly separating one combat space from the next. The dungeon should show thick stone walls, arched doorways, iron gates, and wall-mounted torches as built architecture, but no additional universal options are implied.\n\n### Layout requirements\nUse `spawner-npc` with four hostile-origin markers: one placed in the usable central floor area of each of the three enemy chambers, away from entrances and exits, plus one central marker in the final boss chamber. These are placed against the recovered room floors and are not rendered as UI or effects.\n\n### Layout components\nBegin with a small enclosed entrance vestibule at the near end of the map, leading into a narrow, straight torch-lit stone corridor. The route then passes through exactly three enemy chambers in sequence, each a medium-sized square or rectangular stone room with open central fighting floor, perimeter wall torches, a heavy gate at its far exit, and short connecting corridors between rooms. The fourth and final zone is a larger boss chamber at the far end, visually more imposing than the preceding rooms, with a broad central arena, raised stone detailing around its walls, and no onward route. Keep the entire build indoors, bounded by continuous stone walls and a sealed dungeon perimeter. Compose it as a readable left-to-right or bottom-to-top progression, with the entrance nearest frame and the boss room clearly terminating the route.\n\n### Render order\nUse `topdown`: render an authoritative top-down plan first so the entrance, three ordered chambers, connecting corridors, and final boss room remain continuously reachable in the intended sequence; dress that valid plan as the isometric view.\n\n### Scale, theme, and pipeline cost\nScale band: medium, driven by one entrance, three full combat chambers, connecting corridors, and one larger boss chamber. Theme: classic medieval stone-and-torches dungeon, warm torch pools against dark gray masonry and iron gates. Pipeline modifier: `P0`, since this is one enclosed, single-surface interior with no overhangs, exterior transition, separate maps, or volumetric play.",
   "spec": {
-    "genre": "RPG",
+    "genre": "Action",
     "secondary": [],
-    "shape": "world-single",
-    "preset": "Dungeon Crawler",
+    "shape": "rooms-sequence",
+    "preset": "Hack & Slash",
     "axes": {},
     "options": [
       {
-        "id": "spawner-npc",
-        "text": "Invisible enemy-origin points within each of the three intermediate chambers; these markers must not appear in the image.",
-        "visible": false,
-        "count": 3
+        "id": "arena-lockin",
+        "text": "Heavy portcullis-style gates across each chamber exit, visibly separating one combat space from the next.",
+        "visible": true,
+        "count": -1
       },
       {
-        "id": "gate-progression",
-        "text": "Three heavy stone portcullises or barred gates divide the dungeon route, each clearly sealing the next chamber.",
-        "visible": true,
-        "count": 3
+        "id": "spawner-npc",
+        "text": "Four hostile-origin markers: one in the usable central floor area of each of the three enemy chambers, plus one central marker in the final boss chamber.",
+        "visible": false,
+        "count": 4
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "spawner-npc",
+        "text": "Four hostile-origin markers: one in the usable central floor area of each of the three enemy chambers, plus one central marker in the final boss chamber.",
+        "count": 4,
+        "where": "Place one marker on the usable central floor of each of the three enemy chambers, away from entrances and exits; place one central marker in the final boss chamber, against the recovered room floors."
       }
     ],
     "layout": {
-      "composition": "A readable receding route along the central axis: the entrance vestibule sits in the foreground near edge, three gated enemy chambers progress through the middle, and the boss hall is the terminal focal point at the far end.",
+      "composition": "A readable left-to-right or bottom-to-top progression, with the enclosed entrance nearest the frame, three ordered combat chambers and their torch-lit connectors through the middle, and the larger boss chamber clearly terminating the route at the far end.",
       "zones": [
         {
           "name": "Entrance vestibule",
-          "role": "Compact dungeon entrance opening onto the main route.",
-          "where": "Near edge / foreground",
-          "size": "compact"
+          "role": "Small enclosed starting entrance leading into the dungeon route.",
+          "where": "Near end of the map, nearest frame.",
+          "size": "small"
         },
         {
-          "name": "Torch-lit stone corridor",
-          "role": "Connects the entrance to the first enemy chamber.",
-          "where": "Central axis after the entrance vestibule",
-          "size": ""
+          "name": "Entrance corridor",
+          "role": "Narrow, straight, torch-lit stone connector from the vestibule into the combat sequence.",
+          "where": "Between the entrance vestibule and the first enemy chamber.",
+          "size": "narrow"
         },
         {
           "name": "Enemy chamber 1",
-          "role": "Combat room with clear central floor space and an enemy-origin area.",
-          "where": "First intermediate chamber on the central axis",
-          "size": "medium square or rectangular"
+          "role": "Combat chamber with an open central fighting floor, perimeter wall torches, and a heavy gate at its far exit.",
+          "where": "First chamber after the entrance corridor.",
+          "size": "medium-sized square or rectangular room"
         },
         {
           "name": "Enemy chamber 2",
-          "role": "Combat room with clear central floor space and an enemy-origin area.",
-          "where": "Second intermediate chamber on the central axis",
-          "size": "medium square or rectangular"
+          "role": "Combat chamber with an open central fighting floor, perimeter wall torches, and a heavy gate at its far exit.",
+          "where": "After enemy chamber 1, joined by a short connecting corridor.",
+          "size": "medium-sized square or rectangular room"
         },
         {
           "name": "Enemy chamber 3",
-          "role": "Combat room with clear central floor space and an enemy-origin area.",
-          "where": "Third intermediate chamber on the central axis",
-          "size": "medium square or rectangular"
+          "role": "Combat chamber with an open central fighting floor, perimeter wall torches, and a heavy gate at its far exit.",
+          "where": "After enemy chamber 2, joined by a short connecting corridor.",
+          "size": "medium-sized square or rectangular room"
         },
         {
-          "name": "Final boss chamber",
-          "role": "Terminal boss hall with open central floor, a raised rear dais or focal altar, and denser torch lighting.",
-          "where": "Far end of the dungeon",
-          "size": "largest room; broad circular or octagonal hall"
+          "name": "Boss chamber",
+          "role": "Final, more imposing combat chamber with a broad central arena, raised stone detailing around its walls, and no onward route.",
+          "where": "Far end of the map after enemy chamber 3.",
+          "size": "larger than the preceding rooms"
         }
       ],
       "paths": [
@@ -93,37 +101,47 @@
         },
         {
           "from": "Enemy chamber 3",
-          "to": "Final boss chamber",
+          "to": "Boss chamber",
           "kind": "corridor"
         }
       ],
-      "terrain": "Stone block floors, rough grey masonry walls, iron-banded gates, and warm torch pools.",
+      "terrain": "Indoor stone dungeon floors with dark gray masonry; warm torch pools light the corridors and chambers.",
       "props": [
         {
-          "name": "Torch sconces",
+          "name": "Thick stone walls",
           "count": -1,
-          "where": "Corridors and each enemy chamber"
+          "where": "Continuous around the dungeon, chambers, and corridors."
         },
         {
-          "name": "Heavy stone portcullises or barred gates",
-          "count": 3,
-          "where": "Far wall of each enemy chamber"
+          "name": "Arched doorways",
+          "count": -1,
+          "where": "At chamber and corridor transitions."
         },
         {
-          "name": "Raised rear dais or focal altar",
+          "name": "Iron gates",
           "count": -1,
-          "where": "Rear of the final boss chamber"
+          "where": "Across each chamber exit."
+        },
+        {
+          "name": "Wall-mounted torches",
+          "count": -1,
+          "where": "Along corridors and around chamber perimeters."
+        },
+        {
+          "name": "Raised stone detailing",
+          "count": -1,
+          "where": "Around the walls of the final boss chamber."
         }
       ],
-      "boundary": "Fully interior stone architecture with no exterior space.",
+      "boundary": "Continuous thick stone walls and a sealed dungeon perimeter; the entire build is indoors.",
       "scale_band": "medium",
-      "theme": "Classic Roblox-scale stone-and-torches dungeon, warm firelight against dark grey masonry."
+      "theme": "Classic medieval stone-and-torches dungeon, warm torchlight against dark gray masonry and iron gates."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the connected entrance-to-boss route and ordered chamber sequence must remain traversable and unambiguous.",
+      "why": "The ordered dungeon route must remain continuously reachable from the entrance through three chambers to the terminating boss room.",
       "set_piece": false
     },
     "route": [
@@ -135,7 +153,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

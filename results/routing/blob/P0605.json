@@ -14,98 +14,113 @@
     }
   ],
   "scene_prompt": "Create a 3D military rescue helicopter map set in a small city spanning a few blocks. Arrange multiple buildings with accessible rooftops and open street-level landing areas where eight stranded survivors are distributed at a time. Place a helicopter base as a distinct return location at the edge of or just outside the city, with a clear landing zone for loading and unloading up to eight passengers.",
-  "blob": "### Genre\nThe dominant genre is Simulation, specifically a role-based rescue task loop rather than open-ended roleplay. \n\n### Shape and preset\nUse `world-shared`, matching the Role Sim preset. The shared city and its outlying helicopter base are one persistent aerial operating area; retain the preset’s shared-world intent but omit vehicle roads because travel is by helicopter.\n\n### Config requirements\nUse `trigger-task` for the visible rooftop and street-level rescue landing pads, with invisible interaction/loading volumes placed on those pads after segmentation. Use `npc-population` for eight visible stranded survivors distributed across the city’s rescue sites, with their associated placement markers invisible. No other config options are required.\n\n### Layout components\nBuild a compact city spanning a few blocks, with a dense central cluster of varied mid-rise buildings and clear rooftop helipads or broad flat roofs. Leave open street-level plazas, parking lots, and intersections as secondary landing areas between the buildings. Distribute eight stranded survivors at a time across a mix of rooftops and street-level sites, ensuring each location has an unobstructed helicopter approach and landing footprint. Place a distinct military helicopter base on the city edge or just outside it: a large primary landing pad, low hangar or operations structures, and an open apron sized to receive the helicopter carrying up to eight passengers. Keep broad aerial corridors above streets and around rooflines. Use paved streets, concrete rooftops, sparse urban service props, and a clear outer map edge beyond the city blocks. Frame the city and base together in an angled isometric overview, with the base readable as the return anchor.\n\n### Render order\nUse `isometric`: the city’s visual rescue atmosphere and readable rooftop landing composition lead, while no strict carved route or circuit requires a generated plan.\n\n### Scale, theme, and pipeline cost\nScale is medium: a small city of a few blocks, but with enough separated rooftop and ground sites to make aerial searching meaningful. Theme is grounded low-poly military urban rescue, with practical helipads, concrete roofs, and emergency-service staging. Use `CHECK` because helicopter travel occupies a volumetric airspace above and between city structures; verify that the flight volume remains legible without self-occluding critical landing sites.",
+  "blob": "### Genre\nSimulation, specifically the Aircraft Operation preset. The pilot repeatedly searches, lands, loads stranded civilians, and returns them to base; those mechanics identify a vehicle-operation loop without adding rules to the build.\n\n### Shape and preset\nUse `volume-open-air`, matched from the Aircraft Operation preset. The playable space is low-altitude helicopter airspace over a compact city, with rooftops, streets, and landing pads as discrete touchdown surfaces rather than one continuous walkable ground plane.\n\n### Config requirements\nUse `trigger-task` for visible rescue landing pads on selected rooftops and open street clearings, plus the base helipad for loading and unloading. Use `npc-population` for the stranded survivor figures, visibly waiting in rescue locations.\n\n### Layout requirements\nPlace `trigger-task` markers at every designated rescue touchdown zone and one at the base helipad; the base marker serves the return/unload action, while field markers serve pickup actions. Place `npc-population` markers for exactly eight stranded survivors at a time, distributed across accessible rooftops and street-level clearings; keep each group clear of rotor obstacles and within a landable approach. Respawn placement is handled after safe return, not rendered.\n\n### Layout components\nBuild a small city of a few contiguous blocks. The central search zone contains several mid-rise military-urban buildings with broad accessible rooftops, interspersed with open streets, intersections, and plazas large enough for helicopter landings. Scatter the eight survivor locations across both rooftop and street-level sites so searching requires circling the blocks rather than following one route. Put a distinct helicopter base at the city edge or immediately outside it: a secure compound with one prominent helipad sized to receive the helicopter and its full load of eight passengers. Keep approach corridors above streets and around building corners open. The boundary is the outer city edge, fading into sparse perimeter ground. Compose the city in a readable overhead cluster, with the base visibly offset at one side.\n\n### Render order\nUse `isometric` first and make it authoritative: the compact city, rooftop pads, and base need a strong readable helicopter-rescue presentation, while no fixed route topology must be carved.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by a few dense city blocks plus a separate edge base. Theme: grounded military rescue operations, urban rooftops, marked helipads, and clear emergency landing clearings. Use `CHECK` because helicopter travel occupies volumetric open air above the city; keep the flight envelope visually readable without stacked self-occluding air routes.",
   "spec": {
     "genre": "Simulation",
     "secondary": [],
-    "shape": "world-shared",
-    "preset": "Role Sim",
+    "shape": "volume-open-air",
+    "preset": "Aircraft Operation",
     "axes": {},
     "options": [
       {
         "id": "trigger-task",
-        "text": "Visible rooftop and street-level rescue landing pads, with invisible interaction/loading volumes placed on those pads after segmentation.",
+        "text": "Visible rescue landing pads on selected rooftops and open street clearings, plus the base helipad for loading and unloading.",
         "visible": true,
         "count": -1
       },
       {
         "id": "npc-population",
-        "text": "Eight visible stranded survivors distributed across the city’s rooftop and street-level rescue sites, with associated placement markers invisible.",
+        "text": "Exactly eight stranded survivor figures waiting at rooftop and street-level rescue locations.",
         "visible": true,
         "count": 8
       }
     ],
+    "layout_placement": [
+      {
+        "id": "trigger-task",
+        "text": "Rescue touchdown markers for pickup actions, plus a base-helipad marker for the return and unload action.",
+        "count": -1,
+        "where": "At every designated rooftop and street-clearing rescue touchdown zone, with one marker at the base helipad."
+      },
+      {
+        "id": "npc-population",
+        "text": "Exactly eight stranded survivors distributed across accessible rooftops and street-level clearings.",
+        "count": 8,
+        "where": "Across rooftop and street-level rescue sites; keep each group clear of rotor obstacles and within a landable approach."
+      }
+    ],
     "layout": {
-      "composition": "Angled isometric overview framing the compact central city cluster together with the helicopter base at the city edge, with the base readable as the return anchor and broad aerial corridors visible above streets and rooflines.",
+      "composition": "A readable overhead cluster of dense central city blocks fills the frame, with accessible rooftops, open streets, intersections, and landing clearings throughout; the helicopter base is visibly offset at one side on the city edge.",
       "zones": [
         {
-          "name": "Central city cluster",
-          "role": "Rescue search area with varied mid-rise buildings, accessible rooftops, and rooftop landing sites.",
-          "where": "centre",
-          "size": "a few compact blocks"
+          "name": "Central search zone",
+          "role": "Helicopter search and rescue pickups across rooftop and street-level touchdown sites.",
+          "where": "Centre of the city cluster",
+          "size": "A few contiguous city blocks"
+        },
+        {
+          "name": "Rooftop rescue sites",
+          "role": "Broad accessible rooftops provide helicopter landing and survivor pickup locations.",
+          "where": "Across the central buildings",
+          "size": ""
         },
         {
           "name": "Street-level rescue sites",
-          "role": "Secondary helicopter landing areas and survivor rescue locations.",
-          "where": "between the central buildings",
-          "size": "open plazas, parking lots, and intersections"
+          "role": "Open streets, intersections, and plazas provide emergency landing clearings and survivor pickup locations.",
+          "where": "Between and around the central buildings",
+          "size": ""
         },
         {
           "name": "Helicopter base",
-          "role": "Distinct return location for loading and unloading rescued passengers.",
-          "where": "city edge or just outside the city",
-          "size": "large primary landing pad, low hangar or operations structures, and an open apron sized for a helicopter carrying up to eight passengers"
+          "role": "Secure return location for landing, loading, and unloading rescued civilians.",
+          "where": "At the city edge or immediately outside the city, visibly offset to one side",
+          "size": ""
         }
       ],
       "paths": [
         {
           "from": "Helicopter base",
-          "to": "Central city cluster",
+          "to": "Central search zone",
           "kind": "open ground"
         },
         {
-          "from": "Central city cluster",
+          "from": "Rooftop rescue sites",
           "to": "Street-level rescue sites",
-          "kind": "road"
+          "kind": "open ground"
         }
       ],
-      "terrain": "Paved streets, concrete rooftops, open plazas, parking lots, intersections, and broad volumetric aerial corridors above streets and around rooflines.",
+      "terrain": "Compact urban ground with broad accessible rooftops, open streets, intersections, plazas, marked helipads, and sparse perimeter ground beyond the outer city edge.",
       "props": [
         {
-          "name": "Varied mid-rise buildings",
+          "name": "Mid-rise military-urban buildings",
           "count": -1,
-          "where": "dense central city cluster"
+          "where": "Central search zone"
         },
         {
-          "name": "Rooftop helipads or broad flat roofs",
-          "count": -1,
-          "where": "building rooftops"
+          "name": "Helipad",
+          "count": 1,
+          "where": "Helicopter base"
         },
         {
-          "name": "Stranded survivors",
-          "count": 8,
-          "where": "mix of rooftops and street-level rescue sites"
+          "name": "Rooftop landing pads",
+          "count": -1,
+          "where": "Selected accessible rooftops"
         },
         {
-          "name": "Low hangar or operations structures",
+          "name": "Street-level landing clearings",
           "count": -1,
-          "where": "helicopter base"
-        },
-        {
-          "name": "Sparse urban service props",
-          "count": -1,
-          "where": "city streets and rescue sites"
+          "where": "Open streets, intersections, and plazas"
         }
       ],
-      "boundary": "Clear outer map edge beyond the city blocks.",
+      "boundary": "The outer city edge fades into sparse perimeter ground.",
       "scale_band": "medium",
-      "theme": "Grounded low-poly military urban rescue with practical helipads, concrete roofs, and emergency-service staging."
+      "theme": "Grounded military rescue operations, urban rooftops, marked helipads, and clear emergency landing clearings."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "the city’s visual rescue atmosphere and readable rooftop landing composition lead, while no strict carved route or circuit requires a generated plan.",
+      "why": "The compact city, rooftop pads, and offset base need a strong readable helicopter-rescue presentation, while no fixed route topology must be carved.",
       "set_piece": false
     },
     "route": [
@@ -117,7 +132,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

@@ -19,102 +19,89 @@
     }
   ],
   "scene_prompt": "Create a large, manageable free-roam off-roading map in sunlit rural farmland, roughly double the original map size. Lay out muddy trail networks through open fields and wooded sections, with multiple distinct areas sized for cars, utes, and trucks to drive across.",
-  "blob": "### Genre\nThe dominant genre is Simulation, specifically a free-roam vehicle simulation rather than Racing: driving is the activity, with no finish line, laps, or event course.\n\n### Shape and preset\nUse `world-shared`, a single persistent rural driving world that all vehicles occupy at once. This matches the Vehicle Sim preset, retaining its shared-world and vehicle-route intent; the prompt’s muddy trails replace formal paved hauling roads.\n\n### Config requirements\nUse `path-road-vehicle` as visible geometry: broad, driveable muddy trail networks with turn radii and widths suitable for cars, utes, and trucks. Do not add resource fields, extraction nodes, gates, hazards, or other simulation infrastructure not requested.\n\n### Layout components\nBuild one large, manageable map, roughly double the original mudding map’s scale. Place open farmland fields as the main broad driving zones across the central and outer map, divided by hedges, tree lines, shallow ditches, and muddy ruts. Thread a connected network of wide mud trails between these fields, with branching routes through dense wooded sections at the map edges. Include several distinct off-road areas: open fields for broad vehicle movement, tighter forest trails for slower technical driving, and churned mud clearings where cars, utes, and trucks can gather and turn around. Keep every trail driveable and reconnect branches to avoid isolated dead-end areas. Use woodland belts, field boundaries, and distant rural tree lines as the soft outer boundary. Frame the map from an elevated three-quarter view so the branching trail network, fields, and forest pockets remain legible.\n\n### Render order\nUse `isometric`: the free-roam terrain has no race route or other topology whose failure would make the game unplayable, so the visual rural composition leads.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by the requested roughly doubled map size and multiple vehicle-sized driving areas. Theme: sunlit rural farmland, wet brown mud, green fields, and wooded back sections. Use `P0`; this is one connected ground surface with no forced layered, indoor, volumetric, or procedurally validated geometry.",
+  "blob": "### Genre\nThe dominant genre is Simulation, specifically a free-roam Vehicle Sim rather than Racing: driving is the activity, with no event, lap, or finish-line route.\n\n### Shape and preset\nUse `world-open`, a single contiguous rural driving world where players freely choose among mud routes, fields, and wooded terrain. This matches the Vehicle Sim preset; retain its open shared-world logic while omitting its unrequested extraction field.\n\n### Config requirements\nUse `path-road-vehicle` for broad, continuously connected muddy trails sized for cars, utes, and trucks, including turnarounds and passing space. Do not add resource fields, buildings, water, or other unrequested features.\n\n### Layout requirements\nNothing additional needs placement. The prompt specifies free-roam terrain and driveable circulation, but no task stations, resource nodes, checkpoints, spawns, or finish triggers.\n\n### Layout components\nBuild one large, manageable exterior map, roughly double the original mudding-map scale. Divide it into several distinct but continuously connected driving areas: a central open farmland zone of broad muddy fields; branching rutted trail networks; denser wooded sections with narrower, winding mud tracks; and open turning or recovery clearings suitable for larger trucks. The trail network should form multiple loops and alternate links rather than a single directed route, allowing vehicles to roam without dead-ending constantly. Use sunlit rural farmland ground throughout: grass, churned brown mud, tire-rutted tracks, field edges, scattered tree lines, and woodland clusters. Keep the boundary natural and unobtrusive, using dense woods and distant farmland edges rather than a visible hard wall. Compose the isometric view so the central field and its branching muddy routes are immediately legible, with wooded routes visibly extending outward.\n\n### Render order\nUse `isometric`: the rural off-road look and terrain dressing lead, and no exact race route or otherwise failure-prone topology must be valid by construction.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by the requested roughly doubled map and several vehicle-sized free-roam areas. Theme: sunlit rural farmland, muddy trails, open fields, and wooded back-country driving. Use `P0`; this is one exterior ground surface with no forced stacked layers, interior transition, separate map, volumetric play, or validity-construction requirement.",
   "spec": {
     "genre": "Simulation",
     "secondary": [],
-    "shape": "world-shared",
+    "shape": "world-open",
     "preset": "Vehicle Sim",
     "axes": {},
     "options": [
       {
         "id": "path-road-vehicle",
-        "text": "Broad, driveable muddy trail networks with turn radii and widths suitable for cars, utes, and trucks.",
+        "text": "Broad, continuously connected muddy trails sized for cars, utes, and trucks, with turnarounds and passing space.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "Elevated three-quarter view over a single rural map: open farmland fields span the central and outer areas, connected by branching wide muddy trails; dense wooded sections occupy the map edges, with forest pockets and distant rural tree lines keeping the network legible.",
+      "composition": "Isometric view with the central open field immediately legible and branching muddy routes extending outward into visibly wooded sections.",
       "zones": [
         {
-          "name": "Open farmland fields",
-          "role": "Broad driving zones for vehicles to move across.",
-          "where": "Central and outer map",
-          "size": "Broad"
+          "name": "Central open farmland zone",
+          "role": "Broad muddy fields for free-roam off-road driving.",
+          "where": "centre",
+          "size": "large"
         },
         {
-          "name": "Wooded trail sections",
-          "role": "Tighter forest trails for slower technical driving.",
-          "where": "Map edges",
-          "size": "Tighter"
+          "name": "Branching rutted trail networks",
+          "role": "Continuously connected muddy driving routes with multiple loops and alternate links.",
+          "where": "branching outward from the central farmland",
+          "size": ""
         },
         {
-          "name": "Churned mud clearings",
-          "role": "Gathering and turnaround areas for cars, utes, and trucks.",
-          "where": "Along the off-road trail network",
-          "size": "-1"
+          "name": "Wooded driving sections",
+          "role": "Narrower winding mud tracks through denser woodland.",
+          "where": "outer areas around the central field",
+          "size": ""
+        },
+        {
+          "name": "Turning and recovery clearings",
+          "role": "Open areas suitable for larger trucks to turn around or recover.",
+          "where": "along the trail network",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Open farmland fields",
-          "to": "Open farmland fields",
-          "kind": "mud trail"
+          "from": "Central open farmland zone",
+          "to": "Branching rutted trail networks",
+          "kind": "road"
         },
         {
-          "from": "Open farmland fields",
-          "to": "Wooded trail sections",
-          "kind": "mud trail"
+          "from": "Branching rutted trail networks",
+          "to": "Wooded driving sections",
+          "kind": "road"
         },
         {
-          "from": "Wooded trail sections",
-          "to": "Churned mud clearings",
-          "kind": "mud trail"
-        },
-        {
-          "from": "Branching trail routes",
-          "to": "Reconnected trail network",
-          "kind": "mud trail"
+          "from": "Branching rutted trail networks",
+          "to": "Turning and recovery clearings",
+          "kind": "road"
         }
       ],
-      "terrain": "Sunlit rural farmland with wet brown mud, green fields, shallow ditches, muddy ruts, hedges, tree lines, dense woodland belts, and distant rural tree lines.",
+      "terrain": "Sunlit rural farmland ground: grass, churned brown mud, tire-rutted tracks, field edges, scattered tree lines, and woodland clusters.",
       "props": [
         {
-          "name": "Hedges",
+          "name": "Scattered tree lines",
           "count": -1,
-          "where": "Dividing open farmland fields"
+          "where": "across field edges"
         },
         {
-          "name": "Tree lines",
+          "name": "Woodland clusters",
           "count": -1,
-          "where": "Field boundaries and distant outer map"
-        },
-        {
-          "name": "Woodland belts",
-          "count": -1,
-          "where": "Map edges"
-        },
-        {
-          "name": "Shallow ditches",
-          "count": -1,
-          "where": "Between fields"
-        },
-        {
-          "name": "Muddy ruts",
-          "count": -1,
-          "where": "Across driving fields and trails"
+          "where": "around the wooded driving sections"
         }
       ],
-      "boundary": "Soft outer boundary formed by woodland belts, field boundaries, and distant rural tree lines.",
+      "boundary": "Natural and unobtrusive boundary formed by dense woods and distant farmland edges, with no visible hard wall.",
       "scale_band": "large",
-      "theme": "Sunlit rural farmland, wet brown mud, green fields, and wooded back sections."
+      "theme": "Sunlit rural farmland, muddy trails, open fields, and wooded back-country driving."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "The free-roam terrain has no race route or other topology whose failure would make the game unplayable.",
+      "why": "The rural off-road look and terrain dressing lead, with no exact race route or failure-prone topology requiring construction validity.",
       "set_piece": false
     },
     "route": [
@@ -126,7 +113,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a 3D racing game map collection for Battle of the Racing Cars, with five separate compact one-lap circuit courses designed to be completed in roughly 1–2 minutes each. Build a tanghulu ASMR course, a chewy chocolate-cookie ASMR course, a pop-it ASMR course, a wax-bubble-ball ASMR course, and a keycap ASMR course; each track forms a closed loop through oversized props and themed surfaces associated with its ASMR material.",
-  "blob": "### Genre\nThe dominant genre is Racing: each course is a competitive, one-lap vehicle circuit. There is no secondary genre; the ASMR themes dress the tracks rather than define play.\n\n### Shape and preset\nUse the Racing shape `route-circuit`. This is five separate closed-loop circuits, each compact enough for a full lap in roughly 1–2 minutes. Match the Circuit Racing preset for its continuous circuit logic, but retain only the explicitly required route markings and one-lap completion elements; omit unrequested starting grids, guardrails, and stands.\n\n### Config requirements\n`lane-corridor` is visible geometry: clearly delineate the drivable route around every loop with themed edge markings and readable track surfaces. `startpoint-line` is both visible and invisible: each circuit has one clearly marked start line and its associated start position. `trigger-finish` is both visible and invisible: place the finish detection at the start/finish line for the single completed lap. `trigger-lap` is invisible: a lap-check region verifies progression around each closed loop and must not appear in the render.\n\n### Layout components\nBuild five separate compact course maps: Tanghulu ASMR, chewy chocolate-cookie ASMR, pop-it ASMR, wax-bubble-ball ASMR, and keycap ASMR. Each map is one continuous, non-self-crossing loop with a shared start/finish straight and a short, readable route through oversized props associated with its material. Tanghulu uses giant glossy candied fruit skewers and syrup-like surfaces; the cookie course uses oversized chewy chocolate-cookie forms and crumb-textured ground; pop-it uses large silicone bubble grids and bright circular impressions; wax-bubble-ball uses rounded waxy spheres and pooled, smooth material forms; keycap uses oversized keyboard keys, key rows, and mechanical-looking gaps as scenery. Keep all props outside or alongside the drivable corridor rather than obscuring it. Each course is self-contained by themed outer scenery and track-edge treatment, with no connection between maps. Compose each plan with the full loop legible at a glance and the start/finish straight prominent near the foreground.\n\n### Render order\nUse `authored_plan`: a racing circuit must be valid by construction, with one closed, connected, non-ambiguous route before its themed props are dressed.\n\n### Scale, theme, and pipeline cost\nScale is medium overall: it is a collection of five small maps, each sized for a 1–2 minute lap. Theme is playful, colorful, toy-scale ASMR material fantasy. Use `P4` because the five courses are separate maps, and `P6` because every circuit route must be continuous and valid by construction.",
+  "blob": "### Genre\nThe dominant genre is Racing: players compete in vehicles over designated closed routes. There is no secondary genre.\n\n### Shape and preset\nUse `route-circuit`, following the Circuit Racing preset. The collection contains five distinct compact closed-loop circuits, each raced for one lap; the separate themed courses override the preset’s assumption of a single map.\n\n### Config requirements\nUse `lane-corridor` for clearly readable themed road surfaces and track edges around every loop. Use `barrier-guardrail` as physical containment along turns and hazardous outer edges, dressed to each ASMR theme. Use `spawn-grid` for a shared vehicle launch line at each circuit’s start/finish straight. Use `startpoint-line` and `trigger-finish` as visible start/finish markings on that same straight.\n\n### Layout requirements\nPlace `spawn-grid` with one aligned starting row at the start/finish straight of each of the five circuits. Place `startpoint-line` and `trigger-finish` across that row, with the finish trigger counting a single completed lap. Place `trigger-lap` once per circuit at the start/finish crossing to validate the closed loop. Place `checkpoint-respawn` at least one recovery point around the far side of each compact circuit, restoring a vehicle facing forward on the track.\n\n### Layout components\nBuild five separate compact maps: a tanghulu ASMR circuit with oversized glossy fruit skewers and syrup-like bends; a chewy chocolate-cookie circuit with thick cookie slabs and soft chocolate-textured curves; a pop-it circuit threaded around giant bubble-grid props; a wax-bubble-ball circuit with rounded waxy spheres and smooth molded banks; and a keycap circuit running between oversized keyboard keys. Each map has one unbroken, legible loop, a broad start/finish straight, continuous drivable surface, themed guardrails, and no ambiguous crossings. Frame each circuit from an elevated isometric angle so its full loop and dominant oversized props read clearly.\n\n### Render order\nUse `authored_plan`: every circuit must be a valid, continuous one-lap route before it is dressed, because a broken or ambiguous loop makes racing unplayable.\n\n### Scale, theme, and pipeline cost\nScale is large overall because the collection contains five maps, though each individual circuit is compact and intended for a roughly 1–2 minute lap. Theme: playful surreal ASMR toy-and-snack racing worlds with oversized tactile props. Use `P4` because these are five separate maps, and `P6` because every circuit route must be valid by construction.",
   "spec": {
     "genre": "Racing",
     "secondary": [],
@@ -24,140 +24,194 @@
     "options": [
       {
         "id": "lane-corridor",
-        "text": "Clearly delineated drivable routes around every loop, with themed edge markings and readable track surfaces.",
+        "text": "Clearly readable themed road surfaces and track edges around every loop.",
+        "visible": true,
+        "count": 5
+      },
+      {
+        "id": "barrier-guardrail",
+        "text": "Physical containment along turns and hazardous outer edges, dressed to each ASMR theme.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "spawn-grid",
+        "text": "A shared vehicle launch line at each circuit’s start/finish straight.",
         "visible": true,
         "count": 5
       },
       {
         "id": "startpoint-line",
-        "text": "Each circuit has one clearly marked start line and its associated start position on the shared start/finish straight.",
+        "text": "Visible start markings on the shared start/finish straight.",
         "visible": true,
         "count": 5
       },
       {
         "id": "trigger-finish",
-        "text": "Finish detection at each start/finish line for the single completed lap.",
+        "text": "Visible finish markings on the same start/finish straight, with the finish trigger counting a single completed lap.",
         "visible": true,
         "count": 5
       },
       {
         "id": "trigger-lap",
-        "text": "An invisible lap-check region verifies progression around each closed loop and must not appear in the render.",
+        "text": "A start/finish crossing trigger validating the closed loop once per circuit.",
+        "visible": false,
+        "count": 5
+      },
+      {
+        "id": "checkpoint-respawn",
+        "text": "At least one recovery point around the far side of each compact circuit, restoring a vehicle facing forward on the track.",
         "visible": false,
         "count": 5
       }
     ],
+    "layout_placement": [
+      {
+        "id": "spawn-grid",
+        "text": "One aligned starting row at the start/finish straight of each of the five circuits.",
+        "count": 5,
+        "where": "At the start/finish straight of each circuit."
+      },
+      {
+        "id": "startpoint-line",
+        "text": "Start markings across each aligned starting row.",
+        "count": 5,
+        "where": "Across the starting row at each circuit's start/finish straight."
+      },
+      {
+        "id": "trigger-finish",
+        "text": "Finish trigger across each aligned starting row, counting a single completed lap.",
+        "count": 5,
+        "where": "Across the starting row at each circuit's start/finish straight."
+      },
+      {
+        "id": "trigger-lap",
+        "text": "A trigger at the start/finish crossing to validate the closed loop.",
+        "count": 5,
+        "where": "Once per circuit at its start/finish crossing."
+      },
+      {
+        "id": "checkpoint-respawn",
+        "text": "At least one recovery point restoring a vehicle facing forward on the track.",
+        "count": 5,
+        "where": "Around the far side of each compact circuit."
+      }
+    ],
     "layout": {
-      "composition": "Five separate compact course plans, each showing its complete loop legibly at a glance. On every map, the shared start/finish straight is prominent near the foreground; oversized themed props sit outside or alongside the corridor without obscuring it.",
+      "composition": "Elevated isometric framing of each circuit so its full closed loop and dominant oversized props read clearly.",
       "zones": [
         {
           "name": "Tanghulu ASMR circuit",
-          "role": "A self-contained one-lap closed vehicle circuit through candied-fruit scenery.",
-          "where": "separate compact course map",
-          "size": "small; roughly a 1–2 minute lap"
+          "role": "One compact one-lap closed-loop vehicle circuit.",
+          "where": "Separate map.",
+          "size": "compact"
         },
         {
-          "name": "Chewy chocolate-cookie ASMR circuit",
-          "role": "A self-contained one-lap closed vehicle circuit through cookie-themed scenery.",
-          "where": "separate compact course map",
-          "size": "small; roughly a 1–2 minute lap"
+          "name": "Chewy chocolate-cookie circuit",
+          "role": "One compact one-lap closed-loop vehicle circuit.",
+          "where": "Separate map.",
+          "size": "compact"
         },
         {
-          "name": "Pop-it ASMR circuit",
-          "role": "A self-contained one-lap closed vehicle circuit through pop-it-themed scenery.",
-          "where": "separate compact course map",
-          "size": "small; roughly a 1–2 minute lap"
+          "name": "Pop-it circuit",
+          "role": "One compact one-lap closed-loop vehicle circuit.",
+          "where": "Separate map.",
+          "size": "compact"
         },
         {
-          "name": "Wax-bubble-ball ASMR circuit",
-          "role": "A self-contained one-lap closed vehicle circuit through wax-bubble-ball-themed scenery.",
-          "where": "separate compact course map",
-          "size": "small; roughly a 1–2 minute lap"
+          "name": "Wax-bubble-ball circuit",
+          "role": "One compact one-lap closed-loop vehicle circuit.",
+          "where": "Separate map.",
+          "size": "compact"
         },
         {
-          "name": "Keycap ASMR circuit",
-          "role": "A self-contained one-lap closed vehicle circuit through keyboard-themed scenery.",
-          "where": "separate compact course map",
-          "size": "small; roughly a 1–2 minute lap"
+          "name": "Keycap circuit",
+          "role": "One compact one-lap closed-loop vehicle circuit.",
+          "where": "Separate map.",
+          "size": "compact"
         }
       ],
       "paths": [
         {
-          "from": "Tanghulu ASMR circuit start/finish straight",
-          "to": "Tanghulu ASMR circuit start/finish straight",
+          "from": "Tanghulu ASMR circuit",
+          "to": "Tanghulu ASMR circuit",
           "kind": "track"
         },
         {
-          "from": "Chewy chocolate-cookie ASMR circuit start/finish straight",
-          "to": "Chewy chocolate-cookie ASMR circuit start/finish straight",
+          "from": "Chewy chocolate-cookie circuit",
+          "to": "Chewy chocolate-cookie circuit",
           "kind": "track"
         },
         {
-          "from": "Pop-it ASMR circuit start/finish straight",
-          "to": "Pop-it ASMR circuit start/finish straight",
+          "from": "Pop-it circuit",
+          "to": "Pop-it circuit",
           "kind": "track"
         },
         {
-          "from": "Wax-bubble-ball ASMR circuit start/finish straight",
-          "to": "Wax-bubble-ball ASMR circuit start/finish straight",
+          "from": "Wax-bubble-ball circuit",
+          "to": "Wax-bubble-ball circuit",
           "kind": "track"
         },
         {
-          "from": "Keycap ASMR circuit start/finish straight",
-          "to": "Keycap ASMR circuit start/finish straight",
+          "from": "Keycap circuit",
+          "to": "Keycap circuit",
           "kind": "track"
         }
       ],
-      "terrain": "Themed track surfaces: syrup-like surfaces for tanghulu, crumb-textured ground for cookie, bright circular pop-it impressions, pooled smooth waxy material forms, and mechanical-looking keycap gaps as scenery.",
+      "terrain": "Continuous themed drivable road surfaces forming five unbroken, legible closed loops, with no ambiguous crossings.",
       "props": [
         {
-          "name": "giant glossy candied fruit skewers",
+          "name": "Oversized glossy fruit skewers and syrup-like bends",
           "count": -1,
-          "where": "outside or alongside the Tanghulu ASMR circuit corridor"
+          "where": "Tanghulu ASMR circuit."
         },
         {
-          "name": "oversized chewy chocolate-cookie forms",
+          "name": "Thick cookie slabs and soft chocolate-textured curves",
           "count": -1,
-          "where": "outside or alongside the chewy chocolate-cookie ASMR circuit corridor"
+          "where": "Chewy chocolate-cookie circuit."
         },
         {
-          "name": "large silicone bubble grids",
+          "name": "Giant bubble-grid props",
           "count": -1,
-          "where": "outside or alongside the pop-it ASMR circuit corridor"
+          "where": "Around the pop-it circuit."
         },
         {
-          "name": "rounded waxy spheres",
+          "name": "Rounded waxy spheres and smooth molded banks",
           "count": -1,
-          "where": "outside or alongside the wax-bubble-ball ASMR circuit corridor"
+          "where": "Wax-bubble-ball circuit."
         },
         {
-          "name": "oversized keyboard keys and key rows",
+          "name": "Oversized keyboard keys",
           "count": -1,
-          "where": "outside or alongside the keycap ASMR circuit corridor"
+          "where": "Along the keycap circuit."
         }
       ],
-      "boundary": "Each course is self-contained by themed outer scenery and track-edge treatment, with no connection between maps.",
-      "scale_band": "medium",
-      "theme": "playful, colorful, toy-scale ASMR material fantasy"
+      "boundary": "Themed physical guardrails contain turns and hazardous outer edges on every circuit.",
+      "scale_band": "large",
+      "theme": "Playful surreal ASMR toy-and-snack racing worlds with oversized tactile props."
     },
     "render": {
       "first": "authored_plan",
       "then": "topdown",
       "authoritative": "authored_plan",
-      "why": "each circuit must be a valid closed, connected, non-ambiguous route before themed props are dressed.",
+      "why": "A broken or ambiguous loop makes racing unplayable.",
       "set_piece": false
     },
     "route": [
       "P4",
       "P6"
     ],
-    "notes": [],
+    "notes": [
+      "The collection contains five separate themed maps, overriding the Circuit Racing preset’s assumption of a single map.",
+      "visible on 'spawn-grid' set from goes_to=both",
+      "visible on 'trigger-finish' set from goes_to=both"
+    ],
     "scene_prompt": "Create a 3D racing game map collection for Battle of the Racing Cars, with five separate compact one-lap circuit courses designed to be completed in roughly 1–2 minutes each. Build a tanghulu ASMR course, a chewy chocolate-cookie ASMR course, a pop-it ASMR course, a wax-bubble-ball ASMR course, and a keycap ASMR course; each track forms a closed loop through oversized props and themed surfaces associated with its ASMR material."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "layout",

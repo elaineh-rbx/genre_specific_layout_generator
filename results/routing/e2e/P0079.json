@@ -9,27 +9,36 @@
   "questions": [
     {
       "field": "theme",
-      "ask": "What visual setting should the hide-and-seek map use (for example, suburban house, school, mall, forest, or sci-fi facility)?"
+      "ask": "What visual theme should the hide-and-seek map use (for example, suburban house, school, toy store, haunted mansion, or sci-fi facility)?"
     },
     {
       "field": "shape",
-      "ask": "Should the play area be one interconnected building, an outdoor area with separate structures, or a mix of indoor and outdoor spaces?"
+      "ask": "Should the map be a single dense building, an outdoor area with multiple structures, or a mix of indoor and outdoor spaces?"
+    },
+    {
+      "field": "goal",
+      "ask": "What should hiders be working toward besides surviving—simply remain hidden until time expires, reach an escape point, or complete objectives to unlock an exit?"
     }
   ],
   "answers": [
     {
       "field": "theme",
-      "ask": "What visual setting should the hide-and-seek map use (for example, suburban house, school, mall, forest, or sci-fi facility)?",
-      "answer": "Use a suburban house setting, which is a classic, easy-to-read hide-and-seek environment."
+      "ask": "What visual theme should the hide-and-seek map use (for example, suburban house, school, toy store, haunted mansion, or sci-fi facility)?",
+      "answer": "Use a suburban house theme, with familiar rooms and plenty of natural hiding spots."
     },
     {
       "field": "shape",
-      "ask": "Should the play area be one interconnected building, an outdoor area with separate structures, or a mix of indoor and outdoor spaces?",
-      "answer": "Use a mix of indoor and outdoor spaces: the house interior plus a small backyard for straightforward hiding variety."
+      "ask": "Should the map be a single dense building, an outdoor area with multiple structures, or a mix of indoor and outdoor spaces?",
+      "answer": "Make it a single dense house with a small backyard, so it stays compact and easy to play."
+    },
+    {
+      "field": "goal",
+      "ask": "What should hiders be working toward besides surviving—simply remain hidden until time expires, reach an escape point, or complete objectives to unlock an exit?",
+      "answer": "Hiders simply need to remain hidden until the round timer expires."
     }
   ],
-  "scene_prompt": "Create a 3D hide-and-seek map set in a suburban house, with connected indoor rooms and a small backyard for hiding spaces.",
-  "blob": "### Genre\nThe dominant genre is Party & Casual: this is a hide-and-seek game. No secondary genre is needed.\n\n### Shape and preset\nUse `space-continuous`, matching the Childhood Game preset. The preset remains recognisable: one connected hide-and-seek environment rather than a separate lobby and match stage. The house and backyard form one continuous play space.\n\n### Config requirements\nUse `cover-los` as visible geometry: dense domestic clutter and outdoor hiding cover break sightlines throughout the search area. Use `obstacle-maze` as visible geometry: the connected room layout and circulation routes should form a compact, maze-like warren with alternate ways around furniture and between rooms. Use `building-interior` as visible geometry: players move from the yard into the enterable suburban house interior. This explicitly requested indoor/outdoor transition overrides the Childhood Game preset’s otherwise single-space simplicity.\n\n### Layout components\nBuild a medium-sized suburban residential lot. The main zone is a compact two-storey-looking suburban house, but keep playable rooms on a single interconnected interior layer: an entry hall and living room at the front, a kitchen and dining area toward the rear, plus side bedrooms, a bathroom, and short connecting hallways. Make each room distinct and provide multiple doorways or furniture routes where practical, avoiding a single exposed central sightline. Populate rooms with large hiding props: sofas, armchairs, dining table and chairs, kitchen counters, beds, wardrobes, bookcases, storage boxes, curtains, and laundry or utility clutter. Windows and a rear door connect the house to a small fenced backyard.\n\nThe backyard is a secondary open zone behind the house, roughly one-third the footprint of the interior. Include a grass lawn, patio strip, garden shed, bushes, small trees, a swing set or play structure, and stacked garden supplies as hiding cover. A continuous path runs from the front entry through the house and out the rear door, with side routes through rooms and around backyard props. The boundary is the house walls, perimeter fencing, and dense hedges; no open world beyond the lot. Frame the composition in an elevated three-quarter view with the front façade partially opened or cut away so indoor rooms, the rear exit, and backyard read together.\n\n### Render order\nUse `topdown`: the connected hiding routes, room entrances, and backyard access must remain navigable and fair rather than becoming sealed or disconnected in a look-first render.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by a complete house interior plus a small backyard. Theme is clean, readable classic suburban hide-and-seek, with warm domestic rooms and a bright fenced garden. Use `P3` because play crosses the exterior backyard-to-house-interior boundary.",
+  "scene_prompt": "Create a compact 3D hide-and-seek map set in a single dense suburban house with a small backyard. The house contains familiar connected rooms and plenty of natural hiding spots throughout, with the backyard directly accessible from the interior.",
+  "blob": "### Genre\n`Party & Casual` is the dominant genre: this is a timed hide-and-seek round in a compact shared play space.\n\n### Shape and preset\nUse `space-continuous`, matching the Childhood Game preset’s single connected hiding ground. The preset’s maze and lobby elements are dropped because the requested house provides natural room-scale hiding places rather than a maze or separate gathering area.\n\n### Config requirements\nUse `cover-los` as dense domestic clutter: closets, beds, sofas, cabinets, curtains, storage boxes, and backyard shrubs break sightlines throughout the house. Use `building-interior` for the fully enterable house rooms, with the backyard directly reachable through an exterior door.\n\n### Layout requirements\nUse `spawn-protected` for round-start markers: place hider starts distributed across several rooms and the backyard, screened from one another by walls and furnishings; place the seeker start at the front entry or a small enclosed foyer, separated from immediate hider sightlines. No scoring volume, pickups, NPC emitters, or teleporters are required.\n\n### Layout components\nBuild one compact two-storey suburban house as the primary zone, with a small directly attached backyard as its exterior extension. The ground floor contains a front entry, living room, dining room, kitchen, bathroom, and connecting hall; the upper floor contains bedrooms, a bathroom, and a landing. Connect all rooms with ordinary interior doorways and stairs, avoiding inaccessible decorative rooms. Fill rooms with familiar, credible hiding geometry: beds with clearance beneath, wardrobes, closets, sofas, dining furniture, kitchen cabinetry, curtains, laundry/storage nooks, and grouped boxes. The backyard sits behind the kitchen or living room and contains a short patio, fence perimeter, shrubs, a small shed or play structure, and outdoor furniture as additional hiding cover. Enclose the lot with a suburban fence and the house walls; do not add a larger neighborhood. Frame the scene as a readable cutaway/isometric view showing the dense interior plan and the backyard together.\n\n### Render order\nUse `isometric`: the house’s domestic visual readability and furnished hiding spots lead, while the linked top-down capture can be projected afterward.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by one dense house and a small backyard designed for quick rounds. Theme is familiar suburban domestic realism, warm and approachable rather than haunted or stylized. Use `P3` because play crosses the house interior-to-backyard boundary and requires linked interior and exterior top-down captures.",
   "spec": {
     "genre": "Party & Casual",
     "secondary": [],
@@ -39,188 +48,185 @@
     "options": [
       {
         "id": "cover-los",
-        "text": "Dense domestic clutter and outdoor hiding cover break sightlines throughout the suburban house search area and fenced backyard.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "obstacle-maze",
-        "text": "A compact, maze-like warren of connected rooms, short hallways, alternate furniture routes, and multiple ways around the house interior.",
+        "text": "Dense domestic clutter throughout the house: closets, beds, sofas, cabinets, curtains, storage boxes, and backyard shrubs break sightlines.",
         "visible": true,
         "count": -1
       },
       {
         "id": "building-interior",
-        "text": "An enterable suburban house interior connected directly to the yard through windows and a rear door.",
+        "text": "A fully enterable two-storey suburban house with all rooms connected and the backyard directly reachable through an exterior door.",
         "visible": true,
+        "count": 1
+      },
+      {
+        "id": "spawn-protected",
+        "text": "Round-start markers: hider starts distributed across several rooms and the backyard, screened by walls and furnishings; the seeker starts at the front entry or a small enclosed foyer, out of immediate hider sightlines.",
+        "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "spawn-protected",
+        "text": "Round-start markers: hider starts distributed across several rooms and the backyard, screened by walls and furnishings; the seeker starts at the front entry or a small enclosed foyer, out of immediate hider sightlines.",
+        "count": -1,
+        "where": "Distribute hider starts across several rooms and the backyard, screened from one another by walls and furnishings; place the seeker start at the front entry or in a small enclosed foyer."
+      }
+    ],
     "layout": {
-      "composition": "Elevated three-quarter view of the residential lot, with the front façade partially opened or cut away so the front indoor rooms, rear exit, and fenced backyard read together.",
+      "composition": "Readable cutaway/isometric view showing the dense two-storey interior plan together with the directly attached backyard.",
       "zones": [
         {
-          "name": "Suburban house interior",
-          "role": "Main compact hide-and-seek warren with interconnected rooms, alternate routes, and large domestic hiding props.",
-          "where": "Centre and front of the lot, leading toward the rear exit.",
-          "size": "Medium-sized; about two-thirds of the lot footprint."
+          "name": "Two-storey suburban house",
+          "role": "Primary compact shared hiding ground with connected, enterable domestic rooms.",
+          "where": "Centre of the map and frame.",
+          "size": "Compact; two storeys."
         },
         {
-          "name": "Entry hall and living room",
-          "role": "Front indoor hiding and circulation area.",
-          "where": "Front of the house.",
+          "name": "Ground floor",
+          "role": "Contains the front entry, living room, dining room, kitchen, bathroom, and connecting hall.",
+          "where": "Lower level of the house.",
           "size": ""
         },
         {
-          "name": "Kitchen and dining area",
-          "role": "Rear indoor area connecting toward the backyard.",
-          "where": "Rear of the house.",
+          "name": "Upper floor",
+          "role": "Contains bedrooms, a bathroom, and a landing.",
+          "where": "Above the ground floor.",
           "size": ""
         },
         {
-          "name": "Side bedrooms, bathroom, and connecting hallways",
-          "role": "Secondary interior hiding rooms and alternate circulation routes.",
-          "where": "Along the sides of the house interior.",
-          "size": ""
-        },
-        {
-          "name": "Fenced backyard",
-          "role": "Secondary open hiding zone with outdoor props and cover.",
-          "where": "Behind the house.",
-          "size": "Roughly one-third the footprint of the interior."
+          "name": "Backyard",
+          "role": "Exterior extension providing additional hiding cover, directly accessible from the house.",
+          "where": "Directly attached behind the kitchen or living room.",
+          "size": "Small"
         }
       ],
       "paths": [
         {
           "from": "Front entry",
-          "to": "Rear door",
+          "to": "Ground-floor rooms",
           "kind": "corridor"
         },
         {
-          "from": "Entry hall and living room",
-          "to": "Kitchen and dining area",
-          "kind": "corridor"
+          "from": "Ground floor",
+          "to": "Upper floor",
+          "kind": "stair"
         },
         {
-          "from": "Side bedrooms, bathroom, and connecting hallways",
-          "to": "Main interior rooms",
-          "kind": "corridor"
+          "from": "Living room",
+          "to": "Backyard",
+          "kind": "doorway"
         },
         {
-          "from": "Rear door",
-          "to": "Fenced backyard",
-          "kind": "open ground"
+          "from": "Kitchen",
+          "to": "Backyard",
+          "kind": "doorway"
         },
         {
-          "from": "Fenced backyard",
-          "to": "Garden shed, bushes, trees, play structure, and garden supplies",
+          "from": "Backyard patio",
+          "to": "Backyard cover areas",
           "kind": "open ground"
         }
       ],
-      "terrain": "Warm domestic interior floors within the house; a grass lawn and patio strip in the bright fenced garden.",
+      "terrain": "Suburban domestic interior floors and a small backyard with a short patio and shrubs.",
       "props": [
         {
-          "name": "sofas",
-          "count": -1,
-          "where": "Living room"
+          "name": "Suburban house",
+          "count": 1,
+          "where": "Primary central zone."
         },
         {
-          "name": "armchairs",
+          "name": "Beds with clearance beneath",
           "count": -1,
-          "where": "Living room"
+          "where": "Bedrooms."
         },
         {
-          "name": "dining table and chairs",
+          "name": "Wardrobes and closets",
           "count": -1,
-          "where": "Dining area"
+          "where": "Bedrooms and domestic rooms."
         },
         {
-          "name": "kitchen counters",
+          "name": "Sofas",
           "count": -1,
-          "where": "Kitchen"
+          "where": "Living room."
         },
         {
-          "name": "beds",
+          "name": "Dining furniture",
           "count": -1,
-          "where": "Side bedrooms"
+          "where": "Dining room."
         },
         {
-          "name": "wardrobes",
+          "name": "Kitchen cabinetry",
           "count": -1,
-          "where": "Bedrooms"
+          "where": "Kitchen."
         },
         {
-          "name": "bookcases",
+          "name": "Curtains",
           "count": -1,
-          "where": "Interior rooms"
+          "where": "Throughout house rooms."
         },
         {
-          "name": "storage boxes",
+          "name": "Laundry and storage nooks",
           "count": -1,
-          "where": "Interior rooms"
+          "where": "House interior."
         },
         {
-          "name": "curtains",
+          "name": "Grouped boxes",
           "count": -1,
-          "where": "Windows and rooms"
+          "where": "Storage areas."
         },
         {
-          "name": "laundry or utility clutter",
-          "count": -1,
-          "where": "Interior utility areas"
+          "name": "Short patio",
+          "count": 1,
+          "where": "Backyard."
         },
         {
-          "name": "garden shed",
-          "count": -1,
-          "where": "Backyard"
+          "name": "Fence perimeter",
+          "count": 1,
+          "where": "Around the backyard and lot."
         },
         {
-          "name": "bushes",
+          "name": "Shrubs",
           "count": -1,
-          "where": "Backyard"
+          "where": "Backyard."
         },
         {
-          "name": "small trees",
+          "name": "Small shed or play structure",
           "count": -1,
-          "where": "Backyard"
+          "where": "Backyard."
         },
         {
-          "name": "swing set or play structure",
+          "name": "Outdoor furniture",
           "count": -1,
-          "where": "Backyard"
-        },
-        {
-          "name": "stacked garden supplies",
-          "count": -1,
-          "where": "Backyard"
+          "where": "Backyard."
         }
       ],
-      "boundary": "House walls, perimeter fencing, and dense hedges enclose the lot; no open world extends beyond it.",
-      "scale_band": "medium",
-      "theme": "Clean, readable classic suburban hide-and-seek with warm domestic rooms and a bright fenced garden."
+      "boundary": "The lot is enclosed by suburban fencing and house walls; no larger neighborhood is added.",
+      "scale_band": "small",
+      "theme": "Familiar suburban domestic realism, warm and approachable."
     },
     "render": {
-      "first": "topdown",
-      "then": "isometric",
-      "authoritative": "topdown",
-      "why": "connected hiding routes, room entrances, and backyard access must remain navigable and fair.",
+      "first": "isometric",
+      "then": "topdown",
+      "authoritative": "isometric",
+      "why": "Domestic visual readability and furnished hiding spots lead; the linked top-down capture can be projected afterward.",
       "set_piece": false
     },
     "route": [
       "P3"
     ],
     "notes": [],
-    "scene_prompt": "Create a 3D hide-and-seek map set in a suburban house, with connected indoor rooms and a small backyard for hiding spaces."
+    "scene_prompt": "Create a compact 3D hide-and-seek map set in a single dense suburban house with a small backyard. The house contains familiar connected rooms and plenty of natural hiding spots throughout, with the backyard directly accessible from the interior."
   },
-  "iso_prompt": "Build this scene from the attached top-down plan: Create a 3D hide-and-seek map set in a suburban house, with connected indoor rooms and a small backyard for hiding spaces.\n\nLAYOUT FEATURES for this Party & Casual map. Build these as the actual structure of the space rather than as set dressing, keep them visually distinct from one another, and keep the whole layout legible in one view.\n\nSHAPE OF THE SPACE - Continuous Play Space: The gathering space is the play space; there are no discrete rounds to stage.\n\nINCLUDE:\n- Dense Clutter Clusters: Large arrays of repeating props — closets, boxes, bushes — arranged to break sightlines for hide-and-seek.\n- Hide-and-Seek Maze: A maze-like warren of rooms and corridors to hide and be hunted in.\n- Enterable Interior: Buildings players actually go inside rather than interact with from the street. Polished square Roblox-like 3D environment concept, isometric three-quarter view, no captions or watermark.",
-  "td_prompt": "Generate directly from this text prompt only, with no reference image: Create a 3D hide-and-seek map set in a suburban house, with connected indoor rooms and a small backyard for hiding spaces.\n\nLAYOUT FEATURES for this Party & Casual map. Build these as the actual structure of the space rather than as set dressing, keep them visually distinct from one another, and keep the whole layout legible in one view.\n\nSHAPE OF THE SPACE - Continuous Play Space: The gathering space is the play space; there are no discrete rounds to stage.\n\nINCLUDE:\n- Dense Clutter Clusters: Large arrays of repeating props — closets, boxes, bushes — arranged to break sightlines for hide-and-seek.\n- Hide-and-Seek Maze: A maze-like warren of rooms and corridors to hide and be hunted in.\n- Enterable Interior: Buildings players actually go inside rather than interact with from the street. Draw this as a TRUE overhead nadir plan of the layout. Camera straight down (90 degrees), ZERO perspective and ZERO isometric tilt. Show only the tops of things - no side faces, no walls in elevation, no vertical surfaces of any kind. Flat game-minimap / floor-plan style with clean flat colour zones and strong contrast between walkable surface and blocked surface, so the connectivity of the layout is unmistakable. Square output, no captions or watermark.",
-  "addendum": "LAYOUT FEATURES for this Party & Casual map. Build these as the actual structure of the space rather than as set dressing, keep them visually distinct from one another, and keep the whole layout legible in one view.\n\nSHAPE OF THE SPACE - Continuous Play Space: The gathering space is the play space; there are no discrete rounds to stage.\n\nINCLUDE:\n- Dense Clutter Clusters: Large arrays of repeating props — closets, boxes, bushes — arranged to break sightlines for hide-and-seek.\n- Hide-and-Seek Maze: A maze-like warren of rooms and corridors to hide and be hunted in.\n- Enterable Interior: Buildings players actually go inside rather than interact with from the street.",
-  "order": "p6",
+  "iso_prompt": "Generate directly from this text prompt only, with no reference image: Create a compact 3D hide-and-seek map set in a single dense suburban house with a small backyard. The house contains familiar connected rooms and plenty of natural hiding spots throughout, with the backyard directly accessible from the interior.\n\nLAYOUT FEATURES for this Party & Casual map. Build these as the actual structure of the space rather than as set dressing, keep them visually distinct from one another, and keep the whole layout legible in one view.\n\nSHAPE OF THE SPACE - Continuous Play Space: The gathering space is the play space; there are no discrete rounds to stage.\n\nINCLUDE:\n- Dense Clutter Clusters: Large arrays of repeating props — closets, boxes, bushes — arranged to break sightlines for hide-and-seek.\n- Enterable Interior: Buildings players actually go inside rather than interact with from the street. Polished square Roblox-like 3D environment concept, isometric three-quarter view, no captions or watermark.",
+  "td_prompt": "Convert the referenced scene into a TRUE overhead nadir minimap layout. Camera is straight down (90° top-down), ZERO perspective and ZERO isometric tilt. Show ONLY the tops of objects. NO building walls, NO doorways, NO awnings, NO side faces, NO vertical surfaces of any kind. Flat game-minimap / floor-plan style with clean flat color zones. Preserve the EXACT position, shape, size and orientation of every object from the reference image. Tightly crop to the occupied layout footprint; everything outside the footprint must be pure black (#000000). Square output. Scene details: Create a compact 3D hide-and-seek map set in a single dense suburban house with a small backyard. The house contains familiar connected rooms and plenty of natural hiding spots throughout, with the backyard directly accessible from the interior.",
+  "addendum": "LAYOUT FEATURES for this Party & Casual map. Build these as the actual structure of the space rather than as set dressing, keep them visually distinct from one another, and keep the whole layout legible in one view.\n\nSHAPE OF THE SPACE - Continuous Play Space: The gathering space is the play space; there are no discrete rounds to stage.\n\nINCLUDE:\n- Dense Clutter Clusters: Large arrays of repeating props — closets, boxes, bushes — arranged to break sightlines for hide-and-seek.\n- Enterable Interior: Buildings players actually go inside rather than interact with from the street.",
+  "order": "std",
+  "mapper_notes": [],
   "stage": "done",
   "status": "ok",
   "error": "",
   "pipeline_version": "",
   "served_by": "",
-  "seconds": 25.7,
-  "mapper_notes": []
+  "seconds": 37.5
 }

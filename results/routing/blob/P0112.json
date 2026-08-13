@@ -14,116 +14,142 @@
     }
   ],
   "scene_prompt": "Create a simple low-polygon 3D first-person shooting arena as a true cubic combat volume, with vertical depth roughly equal to its width and length. Arrange platforms, corridors, cover structures, and suspended sections throughout the full XYZ space so the map extends upward and downward as much as across, rather than functioning as a flat arena.",
-  "blob": "### Genre\nThe dominant genre is Shooter: a first-person target-combat arena with hostile respawning bots, rather than Counter-Strike’s objective mode. There is no secondary genre.\n\n### Shape and preset\nUse `open-battlefield` as a non-lane, distributed combat volume. No preset applies: Aim Trainer is a single directed firing range, while this scene is an unconstrained cubic space with targets encountered throughout all axes.\n\n### Config requirements\nUse visible `cover-los`: simple polygonal cover blocks, wall fragments, and pillars dispersed through the volume to interrupt firing lines. Use invisible `spawner-npc`: bot spawn markers distributed across the full cubic space, including upper, central, and lower sectors; these markers and their random selection must not be rendered.\n\n### Layout components\nBuild one roughly cubic low-poly combat arena whose vertical depth is approximately equal to its width and length. Divide the cube into a central open combat pocket, elevated and suspended platform clusters in the upper volume, and lower platform clusters beneath the centre. Connect these layers with open corridors, short connecting platforms, and broad gaps through which zero-gravity players can travel freely in XYZ space. Scatter geometric cover structures throughout every layer: chunky pillars, angular wall slabs, boxy barricades, and floating cover islands. Keep sightlines deliberately varied rather than organizing the map into conventional flat lanes. The outer boundary is a simple enclosing cubic limit, visually expressed with sparse polygonal perimeter walls or frame structures while retaining readable open void between suspended sections. Compose the isometric view to show the full cube, with upper and lower platforms visibly extending as far vertically as the arena extends across.\n\n### Render order\nUse `isometric`: the authoritative first render must communicate the unusual full-volume XYZ arrangement, then derive a top-down representation from that spatial image.\n\n### Scale, theme, and pipeline cost\nScale band: medium, driven by a single arena that is equally substantial in width, length, and vertical depth. Theme: sparse, abstract low-poly sci-fi training arena with simple solid geometry. Use `P2` because suspended platforms and corridors overlap above and below one another, and `CHECK` because traversal occurs through a true three-dimensional combat volume rather than on one ground surface.",
+  "blob": "### Genre\nThe dominant genre is `Shooter`: this is a first-person combat space with hostile bots, but no round, bomb, team objective, or scoring mode. It is a free-form target arena rather than a conventional Counter-Strike lane map.\n\n### Shape and preset\nUse `volume-open-air`, taken from outside Shooter’s usual shape set. It represents a true cubic combat volume with landable structures distributed through open XYZ space, rather than a flat firing range or lane network. Preset: none; the Aim Trainer preset assumes a safe firing line and all targets downrange, which this fully three-dimensional arena explicitly rejects.\n\n### Config requirements\nUse `cover-los` for simple polygonal cover blocks, wall segments, and corridor corners that interrupt firing sightlines at multiple heights. Do not add static practice targets, bases, lanes, or objective structures.\n\n### Layout requirements\nUse `spawner-npc` for multiple randomized bot-spawn candidate markers distributed across the upper, central, and lower portions of the cube. Site them on protected platform edges, inside side corridors, and behind cover rather than directly visible from the player’s likely starting area; respawning bots select from these candidates. No other placed scoring, capture, or round volumes are needed.\n\n### Layout components\nBuild one roughly cubic arena whose vertical depth is approximately equal to its width and length. A central open void is surrounded and crossed by broad landing platforms, simple suspended decks, angular cover clusters, and short corridors at high, middle, and low elevations. Connect levels with open traversable passages, ramps, and exposed bridges suitable for zero-gravity movement rather than a single ground-bound route. Keep the low-poly geometry deliberately legible: large flat-shaded polygon planes, chunky rectangular barriers, sparse structural frames, and clear gaps between combat layers. The boundary is a closed cube-like containment shell with visible outer walls, ceiling, and floor so the full combat volume reads as finite. Compose the view diagonally through the cube, exposing upper and lower structures around the central void.\n\n### Render order\nUse `isometric` first and treat it as authoritative, because the primary requirement is communicating the spatial look and stacked three-dimensional combat composition rather than carving a maze or a closed race route.\n\n### Scale, theme, and pipeline cost\nScale band: medium, driven by a single arena with substantial depth in all three axes rather than a broad world. Theme: austere low-poly sci-fi training arena, flat-shaded and first-person readable. Apply `CHECK` because movement occupies a volumetric airspace, and `P2` because suspended decks and corridors overlap when projected from above, so one top-down capture would hide parts of the combat structure.",
   "spec": {
     "genre": "Shooter",
     "secondary": [],
-    "shape": "open-battlefield",
+    "shape": "volume-open-air",
     "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "cover-los",
-        "text": "simple polygonal cover blocks, wall fragments, and pillars dispersed through the volume to interrupt firing lines",
+        "text": "Simple polygonal cover blocks, wall segments, and corridor corners that interrupt firing sightlines at multiple heights.",
         "visible": true,
         "count": -1
       },
       {
         "id": "spawner-npc",
-        "text": "bot spawn markers distributed across the full cubic space, including upper, central, and lower sectors; these markers and their random selection must not be rendered",
+        "text": "Multiple randomized bot-spawn candidate markers distributed across the upper, central, and lower portions of the cube.",
         "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "spawner-npc",
+        "text": "Multiple randomized bot-spawn candidate markers distributed across the upper, central, and lower portions of the cube; respawning bots select from these candidates.",
+        "count": -1,
+        "where": "On protected platform edges, inside side corridors, and behind cover rather than directly visible from the player's likely starting area."
+      }
+    ],
     "layout": {
-      "composition": "Isometric view shows the full cube, with upper and lower platforms visibly extending as far vertically as the arena extends across.",
+      "composition": "View diagonally through the cube, exposing upper and lower structures around the central open void.",
       "zones": [
         {
-          "name": "central open combat pocket",
-          "role": "Central combat space.",
-          "where": "centre of the cubic arena",
+          "name": "Central open void",
+          "role": "Open combat space surrounded and crossed by structures.",
+          "where": "Centre of the cube",
           "size": ""
         },
         {
-          "name": "upper platform clusters",
-          "role": "Elevated and suspended combat platforms.",
-          "where": "upper volume",
+          "name": "Upper combat layer",
+          "role": "High-elevation landing platforms, suspended decks, cover clusters, and short corridors.",
+          "where": "Upper portion of the cube",
           "size": ""
         },
         {
-          "name": "lower platform clusters",
-          "role": "Combat platforms beneath the centre.",
-          "where": "lower volume beneath the centre",
+          "name": "Central combat layer",
+          "role": "Middle-elevation landing platforms, suspended decks, cover clusters, and short corridors.",
+          "where": "Central portion of the cube",
+          "size": ""
+        },
+        {
+          "name": "Lower combat layer",
+          "role": "Low-elevation landing platforms, suspended decks, cover clusters, and short corridors.",
+          "where": "Lower portion of the cube",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "central open combat pocket",
-          "to": "upper platform clusters",
-          "kind": "corridor"
-        },
-        {
-          "from": "central open combat pocket",
-          "to": "lower platform clusters",
-          "kind": "corridor"
-        },
-        {
-          "from": "upper platform clusters",
-          "to": "lower platform clusters",
+          "from": "Upper combat layer",
+          "to": "Central combat layer",
           "kind": "open ground"
+        },
+        {
+          "from": "Central combat layer",
+          "to": "Lower combat layer",
+          "kind": "open ground"
+        },
+        {
+          "from": "Combat layers",
+          "to": "Combat layers",
+          "kind": "ramp"
+        },
+        {
+          "from": "Combat layers",
+          "to": "Combat layers",
+          "kind": "bridge"
         }
       ],
-      "terrain": "Roughly cubic low-poly combat arena; vertical depth is approximately equal to its width and length, with readable open void between suspended sections.",
+      "terrain": "A true cubic combat volume with a central open void; large flat-shaded polygon planes, clear gaps between combat layers, and zero-gravity traversable space.",
       "props": [
         {
-          "name": "chunky pillars",
+          "name": "Broad landing platforms",
           "count": -1,
-          "where": "throughout every layer"
+          "where": "Surrounding and crossing the central open void at high, middle, and low elevations."
         },
         {
-          "name": "angular wall slabs",
+          "name": "Simple suspended decks",
           "count": -1,
-          "where": "throughout every layer"
+          "where": "Throughout the full XYZ space."
         },
         {
-          "name": "boxy barricades",
+          "name": "Angular cover clusters",
           "count": -1,
-          "where": "throughout every layer"
+          "where": "At high, middle, and low elevations."
         },
         {
-          "name": "floating cover islands",
+          "name": "Short corridors",
           "count": -1,
-          "where": "throughout every layer"
+          "where": "At high, middle, and low elevations."
         },
         {
-          "name": "sparse polygonal perimeter walls or frame structures",
+          "name": "Chunky rectangular barriers",
           "count": -1,
-          "where": "outer cubic boundary"
+          "where": "Throughout the combat layers."
+        },
+        {
+          "name": "Sparse structural frames",
+          "count": -1,
+          "where": "Throughout the cube."
         }
       ],
-      "boundary": "Simple enclosing cubic limit, visually expressed with sparse polygonal perimeter walls or frame structures.",
+      "boundary": "A closed cube-like containment shell with visible outer walls, ceiling, and floor.",
       "scale_band": "medium",
-      "theme": "sparse, abstract low-poly sci-fi training arena with simple solid geometry"
+      "theme": "Austere low-poly sci-fi training arena, flat-shaded and first-person readable."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "the authoritative first render must communicate the unusual full-volume XYZ arrangement.",
+      "why": "The primary requirement is communicating the spatial look and stacked three-dimensional combat composition rather than carving a maze or a closed race route.",
       "set_piece": false
     },
     "route": [
-      "P2",
-      "CHECK"
+      "CHECK",
+      "P2"
     ],
-    "notes": [],
+    "notes": [
+      "The shape volume-open-air is taken from outside Shooter's usual shape set."
+    ],
     "scene_prompt": "Create a simple low-polygon 3D first-person shooting arena as a true cubic combat volume, with vertical depth roughly equal to its width and length. Arrange platforms, corridors, cover structures, and suspended sections throughout the full XYZ space so the map extends upward and downward as much as across, rather than functioning as a flat arena."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

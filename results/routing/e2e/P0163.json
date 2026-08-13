@@ -9,27 +9,27 @@
   "questions": [
     {
       "field": "shape",
-      "ask": "Should the endless hallway be represented as a looping corridor or as procedurally generated hallway segments extending ahead of the player?"
+      "ask": "Should the hallway be a looping/modular corridor that feels endless, or should it lead to a final destination after a fixed distance?"
     },
     {
       "field": "goal",
-      "ask": "What is the player working toward in the hallway: surviving for time, reaching an exit, collecting items, or escaping the monsters?"
+      "ask": "What is the player trying to achieve in the hallway: survive, escape, reach an exit, or something else?"
     }
   ],
   "answers": [
     {
       "field": "shape",
-      "ask": "Should the endless hallway be represented as a looping corridor or as procedurally generated hallway segments extending ahead of the player?",
-      "answer": "Use procedurally generated hallway segments extending ahead of the player to make the hallway feel endless."
+      "ask": "Should the hallway be a looping/modular corridor that feels endless, or should it lead to a final destination after a fixed distance?",
+      "answer": "Use a looping modular corridor that feels endless."
     },
     {
       "field": "goal",
-      "ask": "What is the player working toward in the hallway: surviving for time, reaching an exit, collecting items, or escaping the monsters?",
-      "answer": "The player is trying to survive as long as possible while escaping the monsters."
+      "ask": "What is the player trying to achieve in the hallway: survive, escape, reach an exit, or something else?",
+      "answer": "The player is trying to survive the endless hallway and its monsters for as long as possible."
     }
   ],
-  "scene_prompt": "Create a 3D game map with a cramped hallway made of procedurally generated corridor segments extending endlessly ahead, densely occupied by monsters.",
-  "blob": "### Genre\nThe dominant genre is Survival: the player endures pursuit by monsters for as long as possible. No secondary genre applies; automatic forward movement is not stated, so this is not an Infinite Runner.\n\n### Shape and preset\nUse `warren-looping`, interpreted as a cramped, repeating interior corridor network whose generated segments preserve an escape route rather than sealing the player into a dead end. The closest preset is none: its shape fits the monster-pursuit space, but no exit, role separation, or hiding features were requested.\n\n### Config requirements\nUse `spawner-npc` as an invisible layout requirement: hostile-monster origins are embedded within generated corridor segments and placed after segmentation. The monsters themselves remain visible scene occupants, densely filling the hallways; do not add non-hostile ambient population.\n\n### Layout components\nBuild a narrow, enclosed hallway from modular procedural corridor segments extending endlessly ahead of the player. Each segment continues cleanly into the next and may introduce short bends, junction-like offsets, or side recesses only where they retain a navigable onward route. The primary zone is the active corridor stretch, with a finite representative run shown in frame and further matching segments implied beyond it. Dense hostile monster figures occupy the corridor floor and emerge from shadowed openings or behind the player-facing depth of the hall. Use grimy walls, low ceilings, hard floor surfaces, sparse failing ceiling lights, and deep darkness at the segment horizon. There is no visible exterior boundary; enclosing walls, ceiling, and darkness contain the play space. Compose the view down the long central corridor axis, emphasizing claustrophobia, repetition, and monsters crowding the path ahead.\n\n### Render order\nUse `topdown` first, because each generated corridor segment must remain connected and passable; a blocked or disconnected segment would make pursuit survival unplayable.\n\n### Scale, theme, and pipeline cost\nScale is huge in implied extent, while each rendered module is compact and cramped. Theme: oppressive liminal horror, industrial decay, dim cold lighting. Use `P6` because the generated corridor topology must remain valid by construction; no other modifier is forced.",
+  "scene_prompt": "Create a 3D game map showing a cramped, looping modular hallway that feels endless, densely occupied by monsters along the corridor.",
+  "blob": "### Genre\n`Survival` is dominant: the player endures hostile monsters for as long as possible, with no escape destination. There is no secondary genre.\n\n### Shape and preset\nUse `warren-looping`, interpreted here as a tightly connected, repeating corridor network whose modules create an endless-hallway illusion. Preset: none; the survival intent resembles Horde Defense, but the prompt’s looping hallway contradicts its contained-arena shape.\n\n### Config requirements\nNo additional image options apply. The cramped corridor geometry and its dense monster presence are direct scene requirements, not a reason to add unasked-for shelters, hazards, or escape doors.\n\n### Layout requirements\nPlace `spawner-npc` emitters throughout the modular corridor: one concealed emitter at the far end or blind corner of each repeated hall module, oriented so monsters emerge into the corridor rather than directly on the player’s arrival point. This supports the stated dense hostile population without rendering the emitters as visible props.\n\n### Layout components\nBuild one enclosed, narrow hallway system with repeating modular straight runs, turns, short junctions, and occasional offset wall sections. Each module must connect cleanly to the next and loop back into the network without exposing a final destination. Keep the ceiling low, walls close together, and sightlines short to make the space oppressive. Populate the corridor densely with monster figures occupying the passage and gathering around turns and junctions, while retaining a continuous navigable central path. Use worn industrial flooring, stained walls, dim ceiling fixtures, pipes, vents, and intermittent flickering light pools as repeated props. The boundary is fully enclosed by corridor walls, floor, and ceiling. Frame the render from an elevated isometric angle that clearly shows several connected modules and the repeating circulation pattern.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because a disconnected or dead-end-heavy looping corridor would make the survival space unfair and unusable; dress the validated plan into the isometric render afterward.\n\n### Scale, theme, and pipeline cost\nScale band: medium, driven by a representative looping module network rather than a literal infinite build. Theme: cramped industrial monster-horror hallway. Pipeline modifier: `P6`, because the modular loop and navigable corridor connectivity must be valid by construction.",
   "spec": {
     "genre": "Survival",
     "secondary": [],
@@ -39,67 +39,90 @@
     "options": [
       {
         "id": "spawner-npc",
-        "text": "Hostile-monster origins embedded within generated corridor segments and placed after segmentation.",
+        "text": "Concealed monster emitters at the far end or blind corner of each repeated hall module, oriented to release monsters into the corridor rather than at the player's arrival point.",
         "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "spawner-npc",
+        "text": "Concealed monster emitters at the far end or blind corner of each repeated hall module, oriented to release monsters into the corridor rather than at the player's arrival point.",
+        "count": -1,
+        "where": "At the far end or blind corner of each repeated hall module, oriented into the corridor and away from the player's arrival point."
+      }
+    ],
     "layout": {
-      "composition": "View straight down the long central corridor axis, with cramped corridor walls and low ceiling framing monsters crowding the path ahead; repeating segments recede into deep darkness at the horizon.",
+      "composition": "Elevated isometric framing clearly shows several connected hallway modules and their repeating looping circulation pattern.",
       "zones": [
         {
-          "name": "Active corridor stretch",
-          "role": "A narrow enclosed procedural hallway network where the player survives pursuit; a finite representative run is shown while matching segments continue endlessly beyond it.",
-          "where": "centre, extending from foreground into background",
-          "size": "Compact and cramped per rendered module; huge implied extent"
+          "name": "Looping modular hallway system",
+          "role": "A tightly connected repeating corridor network where the player survives dense hostile monsters without a final destination.",
+          "where": "Across the enclosed map",
+          "size": "medium"
         }
       ],
       "paths": [
         {
-          "from": "Active corridor stretch",
-          "to": "Further implied corridor segments",
+          "from": "repeating straight runs, turns, junctions, and offset wall sections",
+          "to": "the looping corridor network",
           "kind": "corridor"
         }
       ],
-      "terrain": "Hard floor surfaces beneath grimy walls and low ceilings; sparse failing ceiling lights and deep darkness at the segment horizon.",
+      "terrain": "Worn industrial flooring with stained walls; low ceiling, close walls, short sightlines, pipes, vents, dim ceiling fixtures, and intermittent flickering light pools.",
       "props": [
         {
-          "name": "Hostile monster figures",
+          "name": "monster figures",
           "count": -1,
-          "where": "Densely occupying the corridor floor, emerging from shadowed openings and behind the player-facing depth of the hall"
+          "where": "Densely occupying the passage and gathering around turns and junctions while leaving a continuous navigable central path."
         },
         {
-          "name": "Failing ceiling lights",
+          "name": "dim ceiling fixtures",
           "count": -1,
-          "where": "Sparse along the low corridor ceiling"
+          "where": "Along the repeated corridor modules."
+        },
+        {
+          "name": "pipes",
+          "count": -1,
+          "where": "Along the corridor walls and ceiling."
+        },
+        {
+          "name": "vents",
+          "count": -1,
+          "where": "Along the repeated corridor modules."
+        },
+        {
+          "name": "intermittent flickering light pools",
+          "count": -1,
+          "where": "Throughout the corridor system."
         }
       ],
-      "boundary": "No visible exterior boundary; enclosing walls, ceiling, and darkness contain the play space.",
-      "scale_band": "huge",
-      "theme": "Oppressive liminal horror, industrial decay, dim cold lighting"
+      "boundary": "Fully enclosed by corridor walls, floor, and ceiling.",
+      "scale_band": "medium",
+      "theme": "cramped industrial monster-horror hallway"
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "each generated corridor segment must remain connected and passable or pursuit survival becomes unplayable.",
+      "why": "a disconnected or dead-end-heavy looping corridor would make the survival space unfair and unusable",
       "set_piece": false
     },
     "route": [
       "P6"
     ],
     "notes": [],
-    "scene_prompt": "Create a 3D game map with a cramped hallway made of procedurally generated corridor segments extending endlessly ahead, densely occupied by monsters."
+    "scene_prompt": "Create a 3D game map showing a cramped, looping modular hallway that feels endless, densely occupied by monsters along the corridor."
   },
-  "iso_prompt": "Build this scene from the attached top-down plan: Create a 3D game map with a cramped hallway made of procedurally generated corridor segments extending endlessly ahead, densely occupied by monsters.\n\nLAYOUT FEATURES for this Survival map. Build these as the actual structure of the space rather than as set dressing, keep them visually distinct from one another, and keep the whole layout legible in one view.\n\nSHAPE OF THE SPACE - Looping Warren: Architecture built on interconnected circles with zero dead ends, so a fleeing player is never artificially cornered by pathfinding AI. Polished square Roblox-like 3D environment concept, isometric three-quarter view, no captions or watermark.",
-  "td_prompt": "Generate directly from this text prompt only, with no reference image: Create a 3D game map with a cramped hallway made of procedurally generated corridor segments extending endlessly ahead, densely occupied by monsters.\n\nLAYOUT FEATURES for this Survival map. Build these as the actual structure of the space rather than as set dressing, keep them visually distinct from one another, and keep the whole layout legible in one view.\n\nSHAPE OF THE SPACE - Looping Warren: Architecture built on interconnected circles with zero dead ends, so a fleeing player is never artificially cornered by pathfinding AI. Draw this as a TRUE overhead nadir plan of the layout. Camera straight down (90 degrees), ZERO perspective and ZERO isometric tilt. Show only the tops of things - no side faces, no walls in elevation, no vertical surfaces of any kind. Flat game-minimap / floor-plan style with clean flat colour zones and strong contrast between walkable surface and blocked surface, so the connectivity of the layout is unmistakable. Square output, no captions or watermark.",
+  "iso_prompt": "Build this scene from the attached top-down plan: Create a 3D game map showing a cramped, looping modular hallway that feels endless, densely occupied by monsters along the corridor.\n\nLAYOUT FEATURES for this Survival map. Build these as the actual structure of the space rather than as set dressing, keep them visually distinct from one another, and keep the whole layout legible in one view.\n\nSHAPE OF THE SPACE - Looping Warren: Architecture built on interconnected circles with zero dead ends, so a fleeing player is never artificially cornered by pathfinding AI. Polished square Roblox-like 3D environment concept, isometric three-quarter view, no captions or watermark.",
+  "td_prompt": "Generate directly from this text prompt only, with no reference image: Create a 3D game map showing a cramped, looping modular hallway that feels endless, densely occupied by monsters along the corridor.\n\nLAYOUT FEATURES for this Survival map. Build these as the actual structure of the space rather than as set dressing, keep them visually distinct from one another, and keep the whole layout legible in one view.\n\nSHAPE OF THE SPACE - Looping Warren: Architecture built on interconnected circles with zero dead ends, so a fleeing player is never artificially cornered by pathfinding AI. Draw this as a TRUE overhead nadir plan of the layout. Camera straight down (90 degrees), ZERO perspective and ZERO isometric tilt. Show only the tops of things - no side faces, no walls in elevation, no vertical surfaces of any kind. Flat game-minimap / floor-plan style with clean flat colour zones and strong contrast between walkable surface and blocked surface, so the connectivity of the layout is unmistakable. Square output, no captions or watermark.",
   "addendum": "LAYOUT FEATURES for this Survival map. Build these as the actual structure of the space rather than as set dressing, keep them visually distinct from one another, and keep the whole layout legible in one view.\n\nSHAPE OF THE SPACE - Looping Warren: Architecture built on interconnected circles with zero dead ends, so a fleeing player is never artificially cornered by pathfinding AI.",
   "order": "p6",
+  "mapper_notes": [],
   "stage": "done",
   "status": "ok",
   "error": "",
   "pipeline_version": "",
   "served_by": "",
-  "seconds": 28.6,
-  "mapper_notes": []
+  "seconds": 38.4
 }

@@ -9,103 +9,123 @@
     }
   ],
   "scene_prompt": "Create a bright, colorful low-poly open-world monster-collecting adventure map, World 1, approximately 250x250 studs. Build a Spawn Village as the central hub, with a simple enterable Shop and Monster Research Lab, plus a Quest NPC area. Dirt paths lead outward through a Slime Meadow, dense forest, and flower field, connecting small hills, an ancient tree landmark, a river with a wooden bridge, a pond, and a waterfall. Place a cave entrance leading into a short accessible cave area. Enclose the outer edges with cliffs, with the major biomes and landmarks distributed to encourage exploration. Use rounded stylized terrain, bright foliage, soft atmospheric lighting, and subtle animated grass, wind, and environmental particle effects.",
-  "blob": "### Genre\nThe dominant genre is RPG, with Adventure as a secondary exploration influence. Progression through monster collection, XP, coins, equipment upgrades, quests, and area unlocking makes this an RPG; the outward forest journey supplies the Adventure character.\n\n### Shape and preset\nUse `world-single`: World 1 is one contiguous approximately 250×250-stud forest map, not separate biome maps. The closest preset is Turn-based RPG because it shares the single-map town-and-overworld arrangement, but apply only the scene-supported parts; this is not a turn-based layout and does not need its level-gated route.\n\n### Config requirements\nVisible geometry: `safezone-town` is the central Spawn Village, isolated from wild-monster territory; `social-hub` clusters the Shop, Monster Research Lab, and Quest NPC around the village core; `landmark-focal` is the ancient tree visible from surrounding routes; `building-interior` provides simple accessible Shop and Lab interiors plus the short entered cave; `water-body` covers the river, pond, and waterfall; `terrain-relief` covers the small hills and enclosing cliff rim; `npc-population` visibly includes the Quest NPC in their designated village area. Invisible layout: `spawner-npc` marks wild-monster spawn-radius origins across the meadow, forest, and flower field; these markers must not appear in the render.\n\n### Layout components\nPlace the Spawn Village near the map center as a compact safe hub. Put the Shop and Research Lab as small enterable buildings facing the village clearing, with the Quest NPC area beside the main path. Dirt paths radiate from this hub: one through the Slime Meadow, one into the dense forest toward the cave entrance and its short accessible interior, and one through the flower field toward the river. Cross the river on one wooden bridge; widen it into a pond below a waterfall. Set the ancient tree as a prominent landmark in or at the edge of the dense forest. Scatter small rounded hills among the outer biomes. Use bright grass, flowers, stylized foliage, and clear wild-monster clearings rather than obstructing the main routes. Continuous cliffs enclose all outer map edges. Compose the village and path spokes as the readable center, with the ancient tree and waterfall serving as distant visual pulls.\n\n### Render order\nUse `topdown`: the connected hub-to-biome paths, bridge crossing, cave approach, and accessible interiors need a coherent plan before the isometric view is dressed.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by the stated 250×250-stud single world with several distinct biomes. Theme: bright colorful low-poly cartoon forest, rounded terrain, soft atmospheric lighting, animated grass, wind, and subtle environmental particles. Use `P3` because exploration crosses exterior-to-interior boundaries at the Shop, Lab, and cave. `P0` otherwise: the hills and cliffs are tiered relief without overhangs.",
+  "blob": "### 1. Genre\nThe dominant genre is `RPG`: progression, monster collection, XP, equipment upgrades, and increasingly rare creatures define the game. Adventure is secondary through exploration, but RPG owns the world shape.\n\n### 2. Shape and preset\nUse `world-open`, a single contiguous 250×250-stud forest world where the village, creature habitats, and landmarks coexist and can be explored in flexible order. The closest preset is Turn-based RPG, retaining its sanctuary-town and wild-creature placement logic while dropping `gate-progression`, since no physical level locks are requested.\n\n### 3. Config requirements\nUse `safezone-town` for the central Spawn Village, isolated from wild-monster habitat and containing restock and quest functions. Use `social-hub` as a compact shop, lab, and quest-giver cluster at its center. Use `building-interior` for the enterable Shop, Monster Research Lab, and short cave area. Use `npc-population` for the Quest NPC and the five starter monster species inhabiting their outdoor biomes. Use `water-body` for the river, pond, and waterfall. Use `terrain-relief` for rounded small hills and perimeter cliffs. Use `landmark-focal` for the ancient tree, visible as an exploration anchor.\n\n### 4. Layout requirements\nPlace `spawner-npc` points in sheltered, readable habitat pockets: Green and Blue Slimes in Slime Meadow near the riverbank, Bees in the flower field, Bunnies along meadow and forest edges, and Foxes deeper in dense forest. Use several distributed points per biome rather than placing creatures on the main paths. Place `npc-population` as one Quest NPC in the village quest area, with ambient creature ground reserved around each habitat. No other placed gameplay volumes are required.\n\n### 5. Layout components\nThe Spawn Village occupies the central clearing, roughly one quarter of the map width, with the Shop and Research Lab facing a small quest plaza. Dirt paths radiate from it: west into Slime Meadow, east through the flower field, and north into dense forest. Put the ancient tree in the deeper northern forest as the distant focal landmark. Run a river across one side of the world, widening into a pond and dropping as a waterfall near a cliff; a wooden bridge carries the main path over it. Put the cave entrance in a perimeter cliff and connect it to a short accessible interior cave. Scatter low rounded hills between biomes. Cliff walls fully enclose the outer map edge while foliage thickens at biome boundaries. Compose the frame from above with the village central, paths visibly branching, and the ancient tree and waterfall as opposing landmarks.\n\n### 6. Render order\nUse `topdown` first and treat it as authoritative, because all habitats, paths, river crossings, and outside-to-inside entrances must remain coherently connected for exploration.\n\n### 7. Scale, theme, and pipeline cost\nScale is medium, driven by the approximately 250×250-stud single world with several distinct biomes. Theme: bright colorful low-poly Roblox forest, rounded stylized terrain, soft atmospheric light, lively foliage and subtle environmental effects. Pipeline modifiers are `tiered` for the hills and cliffs without overhangs, and `P3` because players cross from the exterior village into the Shop, Research Lab, and cave interiors.",
   "spec": {
     "genre": "RPG",
     "secondary": [
       "Adventure"
     ],
-    "shape": "world-single",
+    "shape": "world-open",
     "preset": "Turn-based RPG",
     "axes": {},
     "options": [
       {
         "id": "safezone-town",
-        "text": "the central Spawn Village, isolated from wild-monster territory",
+        "text": "Central Spawn Village isolated from wild-monster habitat, containing restock and quest functions.",
         "visible": true,
         "count": -1
       },
       {
         "id": "social-hub",
-        "text": "clusters the Shop, Monster Research Lab, and Quest NPC around the village core",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "landmark-focal",
-        "text": "the ancient tree visible from surrounding routes",
+        "text": "A compact cluster of the Shop, Monster Research Lab, and quest giver at the village center.",
         "visible": true,
         "count": -1
       },
       {
         "id": "building-interior",
-        "text": "simple accessible Shop and Lab interiors plus the short entered cave",
+        "text": "Enterable Shop, Monster Research Lab, and short accessible cave interior.",
         "visible": true,
-        "count": -1
-      },
-      {
-        "id": "water-body",
-        "text": "the river, pond, and waterfall",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "terrain-relief",
-        "text": "the small hills and enclosing cliff rim",
-        "visible": true,
-        "count": -1
+        "count": 3
       },
       {
         "id": "npc-population",
-        "text": "the Quest NPC in their designated village area",
+        "text": "One Quest NPC in the village quest area, with five starter monster species inhabiting their outdoor biomes.",
+        "visible": true,
+        "count": 6
+      },
+      {
+        "id": "water-body",
+        "text": "A river, pond, and waterfall along one side of the world.",
+        "visible": true,
+        "count": 3
+      },
+      {
+        "id": "terrain-relief",
+        "text": "Rounded small hills between biomes and perimeter cliffs without overhangs.",
         "visible": true,
         "count": -1
       },
       {
+        "id": "landmark-focal",
+        "text": "An ancient tree in the deeper northern forest, visible as an exploration anchor.",
+        "visible": true,
+        "count": 1
+      },
+      {
         "id": "spawner-npc",
-        "text": "wild-monster spawn-radius origins across the meadow, forest, and flower field; these markers must not appear in the render",
+        "text": "Several distributed creature spawn points per biome, kept in sheltered readable habitat pockets away from main paths.",
         "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "npc-population",
+        "text": "One Quest NPC in the village quest area, with ambient creature ground reserved around each habitat.",
+        "count": 6,
+        "where": "Place the Quest NPC in the Spawn Village quest area; reserve ambient creature ground around Slime Meadow, the flower field, meadow and forest edges, and the deeper dense forest."
+      },
+      {
+        "id": "spawner-npc",
+        "text": "Several distributed creature spawn points per biome, kept in sheltered readable habitat pockets away from main paths.",
+        "count": -1,
+        "where": "Green and Blue Slimes in Slime Meadow near the riverbank; Bees in the flower field; Bunnies along meadow and forest edges; Foxes deeper in dense forest."
+      }
+    ],
     "layout": {
-      "composition": "The village and radiating path spokes form the readable center, with the ancient tree and waterfall as distant visual pulls.",
+      "composition": "Viewed from above, with the Spawn Village central and dirt paths visibly branching west, east, and north; the ancient tree and waterfall form opposing landmarks.",
       "zones": [
         {
           "name": "Spawn Village",
-          "role": "Compact central safe hub with the Shop, Monster Research Lab, and Quest NPC area.",
-          "where": "near the map center",
-          "size": "compact"
+          "role": "Central safe hub for spawning, restocking, shops, research, and quests.",
+          "where": "Central clearing",
+          "size": "Roughly one quarter of the map width"
+        },
+        {
+          "name": "Quest Plaza",
+          "role": "Village quest area with the Quest NPC.",
+          "where": "At the center of Spawn Village, facing the Shop and Research Lab",
+          "size": "Small"
         },
         {
           "name": "Slime Meadow",
-          "role": "Outer biome reached from the hub along a dirt path and containing wild-monster clearings.",
-          "where": "outward from the Spawn Village",
-          "size": ""
-        },
-        {
-          "name": "Dense Forest",
-          "role": "Forest route toward the cave entrance and short accessible cave interior, with the ancient tree landmark in or at its edge.",
-          "where": "outward from the Spawn Village",
+          "role": "Outdoor habitat for Green and Blue Slimes.",
+          "where": "West of Spawn Village near the riverbank",
           "size": ""
         },
         {
           "name": "Flower Field",
-          "role": "Outer biome on the dirt-path route toward the river.",
-          "where": "outward from the Spawn Village",
+          "role": "Outdoor Bee habitat.",
+          "where": "East of Spawn Village",
+          "size": ""
+        },
+        {
+          "name": "Dense Forest",
+          "role": "Outdoor Bunny and Fox habitat, containing the ancient tree landmark.",
+          "where": "North of Spawn Village",
           "size": ""
         },
         {
           "name": "River, Pond, and Waterfall",
-          "role": "Water feature crossed by the wooden bridge; the river widens into a pond below the waterfall.",
-          "where": "along the flower-field route",
+          "role": "Water feature and opposing landmark.",
+          "where": "Along one side of the world, widening into a pond and dropping as a waterfall near a cliff",
           "size": ""
         },
         {
-          "name": "Cave",
-          "role": "Short accessible entered cave area.",
-          "where": "at the end of the dense-forest approach",
-          "size": "short"
+          "name": "Cave Interior",
+          "role": "Short accessible interior cave entered from the perimeter cliff.",
+          "where": "Connected to a cave entrance in a perimeter cliff",
+          "size": "Short"
         }
       ],
       "paths": [
@@ -116,78 +136,67 @@
         },
         {
           "from": "Spawn Village",
-          "to": "Dense Forest",
-          "kind": "road"
-        },
-        {
-          "from": "Dense Forest",
-          "to": "Cave",
-          "kind": "corridor"
-        },
-        {
-          "from": "Spawn Village",
           "to": "Flower Field",
           "kind": "road"
         },
         {
-          "from": "Flower Field",
-          "to": "River, Pond, and Waterfall",
+          "from": "Spawn Village",
+          "to": "Dense Forest",
           "kind": "road"
         },
         {
-          "from": "Flower Field",
-          "to": "River, Pond, and Waterfall",
+          "from": "Main dirt path",
+          "to": "River crossing",
           "kind": "bridge"
+        },
+        {
+          "from": "Perimeter cliff cave entrance",
+          "to": "Cave Interior",
+          "kind": "corridor"
         }
       ],
-      "terrain": "Bright grass, flowers, stylized foliage, rounded terrain, small rounded hills among the outer biomes, a river widening into a pond below a waterfall, and tiered enclosing cliff relief.",
+      "terrain": "Bright rounded stylized forest terrain with low rounded hills between biomes, a river widening into a pond, a waterfall near a cliff, and foliage thickening at biome boundaries.",
       "props": [
         {
           "name": "Shop",
           "count": 1,
-          "where": "facing the Spawn Village clearing"
+          "where": "Spawn Village, facing the small quest plaza"
         },
         {
           "name": "Monster Research Lab",
           "count": 1,
-          "where": "facing the Spawn Village clearing"
+          "where": "Spawn Village, facing the small quest plaza"
         },
         {
-          "name": "Quest NPC area",
-          "count": -1,
-          "where": "beside the main village path"
-        },
-        {
-          "name": "ancient tree",
+          "name": "Ancient tree",
           "count": 1,
-          "where": "in or at the edge of the dense forest"
+          "where": "Deeper northern dense forest"
         },
         {
-          "name": "wooden bridge",
+          "name": "Wooden bridge",
           "count": 1,
-          "where": "crossing the river"
+          "where": "Carrying the main path over the river"
         },
         {
-          "name": "cave entrance",
+          "name": "Cave entrance",
           "count": 1,
-          "where": "along the dense-forest route"
+          "where": "Perimeter cliff"
         }
       ],
-      "boundary": "Continuous cliffs enclose all outer map edges.",
+      "boundary": "Cliff walls fully enclose the outer map edge.",
       "scale_band": "medium",
-      "theme": "bright colorful low-poly cartoon forest, rounded terrain, soft atmospheric lighting, animated grass, wind, and subtle environmental particles"
+      "theme": "Bright colorful low-poly Roblox forest, rounded stylized terrain, soft atmospheric light, lively foliage, and subtle environmental effects."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the connected hub-to-biome paths, bridge crossing, cave approach, and accessible interiors need a coherent plan before the isometric view is dressed.",
+      "why": "All habitats, paths, river crossings, and outside-to-inside entrances must remain coherently connected for exploration.",
       "set_piece": false
     },
     "route": [
-      "P3",
-      "P0",
-      "tiered"
+      "tiered",
+      "P3"
     ],
     "notes": [],
     "scene_prompt": "Create a bright, colorful low-poly open-world monster-collecting adventure map, World 1, approximately 250x250 studs. Build a Spawn Village as the central hub, with a simple enterable Shop and Monster Research Lab, plus a Quest NPC area. Dirt paths lead outward through a Slime Meadow, dense forest, and flower field, connecting small hills, an ancient tree landmark, a river with a wooden bridge, a pond, and a waterfall. Place a cave entrance leading into a short accessible cave area. Enclose the outer edges with cliffs, with the major biomes and landmarks distributed to encourage exploration. Use rounded stylized terrain, bright foliage, soft atmospheric lighting, and subtle animated grass, wind, and environmental particle effects."
@@ -195,7 +204,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

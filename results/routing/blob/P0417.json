@@ -19,72 +19,91 @@
     }
   ],
   "scene_prompt": "Create a small, minimalist 3D ASMR studio interior with soft pastel lighting and a calm, uncluttered composition. A single central work station holds relaxing breakable materials and objects—soap, kinetic sand, slime, fruit, and soft blocks—arranged neatly on a clean tabletop or display surface, with open space around it for the player. Use gentle visual effects and subtle relaxing particles around the station; no physical shop area.",
-  "blob": "### Género\nEl género dominante es Simulation: el bucle repetible de interactuar con materiales para obtener progreso define un simulador pequeño, aunque la escena no debe mostrar economía, puntuación ni interfaz.\n\n### Forma y preset\nUse la forma `world-shared`: un único estudio interior compartido, sin parcelas ni áreas separadas. El preset es none; comparte la escala compacta de Physics Sim, pero no requiere sus rampas, peligros ni circulación extensa.\n\n### Requisitos de configuración\nAplique `trigger-task` como geometría invisible: coloque puntos de interacción alineados con cada grupo de materiales sobre la estación central. No deben aparecer en la imagen. No se requieren otras opciones; la tienda es una interfaz y no un mostrador ni un área física.\n\n### Componentes de layout\nConstruya una sola sala-estudio interior pequeña, rectangular y despejada, con una estación de trabajo principal centrada que ocupe aproximadamente un tercio de la planta. Deje un anillo amplio y libre alrededor de la mesa para que el jugador se sitúe y rodee la estación. La superficie limpia de trabajo organiza cinco grupos visibles y ordenados: jabón, arena cinética, slime, frutas y bloques suaves; preséntelos en bandejas, pequeños recipientes o secciones discretas de la mesa, sin amontonar objetos. Añada partículas sutiles y efectos visuales suaves localizados sobre la estación, no por toda la sala. El suelo debe ser liso y claro, con paredes simples de tonos pastel y una iluminación ambiental suave y uniforme. La sala queda cerrada por sus cuatro paredes y techo, sin escaparate, tienda física, pasillos ni zonas secundarias. Componga la vista con la mesa como foco inequívoco y espacio negativo visible alrededor.\n\n### Orden de render\nUse `isometric`: la topología es una única sala simple y la imagen isométrica autoritativa puede establecer mejor la atmósfera pastel y la composición central; después se proyecta el plano superior.\n\n### Escala, tema y coste de pipeline\nEscala small, impulsada por una única estación y una sola sala. Tema: estudio ASMR minimalista, relajante, limpio, pastel y suavemente iluminado. Modificador `P0`: todo ocurre sobre una sola superficie interior representable; no hay cruce exterior-interior, niveles superpuestos ni topología que deba construirse proceduralmente.",
+  "blob": "### Genre\nThe dominant genre is Simulation: the core loop is operating and breaking tactile objects for progression. There is no secondary genre.\n\n### Shape and preset\nUse `interior-single`, taken from outside Simulation’s usual shape set: this is one compact enclosed ASMR studio, not a shared outdoor world or plot. Preset: none; the Physics Sim preset informs the breakable tactile subject, but its open-world circulation and hazards do not fit this quiet single-room scene.\n\n### Config requirements\nUse `physics-rig` for the central station’s soap, kinetic sand, slime, fruit, and soft blocks as tactile breakable or deformable-looking props. Do not add a physical shop: tools are accessed only through UI. Keep subtle particles and soft visual effects localized around the work surface without adding clutter.\n\n### Layout requirements\nNothing else needs placed against the segmented layout. The break/reward logic, coins, sound playback, particles, saving, leaderstats, and UI shop are mechanics or interface work rather than map placements.\n\n### Layout components\nBuild one small, enclosed minimalist studio with a single large central workstation occupying the visual and navigable focus. The clean tabletop/display surface holds neatly separated groups of soap, kinetic sand, slime, fruit, and soft blocks, with sufficient open floor around every side for the player to approach and interact. Use smooth pale flooring, softly rounded or simple studio walls, diffuse pastel lighting, and a calm uncluttered background. The boundary is the studio enclosure; no exterior, roads, side rooms, shop counter, or unlock zones. Compose the room symmetrically around the central table, with the materials clearly legible from an elevated isometric view.\n\n### Render order\nUse `isometric`: the studio is a simple single-room composition whose visual calm and material presentation lead, with no topology that must be validated first.\n\n### Scale, theme, and pipeline cost\nScale band: small, driven by one main station and one enclosed room. Theme: minimalist pastel ASMR studio, soft lighting, soothing tactile materials. Pipeline modifier: `P0`; the single-level interior has no forced extra capture path.",
   "spec": {
     "genre": "Simulation",
     "secondary": [],
-    "shape": "world-shared",
+    "shape": "interior-single",
     "preset": "none",
     "axes": {},
     "options": [
       {
-        "id": "trigger-task",
-        "text": "Puntos de interacción alineados con cada grupo de materiales sobre la estación central; no deben aparecer en la imagen.",
-        "visible": false,
-        "count": 5
+        "id": "physics-rig",
+        "text": "The central station's soap, kinetic sand, slime, fruit, and soft blocks as tactile breakable or deformable-looking props.",
+        "visible": true,
+        "count": -1
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "Vista isométrica con la mesa-estación central como foco inequívoco, ocupando aproximadamente un tercio de la planta, y espacio negativo visible en un anillo amplio alrededor.",
+      "composition": "Symmetrical enclosed room composition around the central table, viewed from an elevated isometric angle; the large workstation is the visual and navigable focus, with calm uncluttered studio walls and open floor around every side.",
       "zones": [
         {
-          "name": "Sala-estudio interior",
-          "role": "Única sala compartida para rodear e interactuar con la estación de trabajo central.",
-          "where": "Toda la planta rectangular cerrada.",
+          "name": "ASMR studio",
+          "role": "One small enclosed minimalist studio containing the entire scene.",
+          "where": "Entire map",
           "size": "small"
         },
         {
-          "name": "Estación de trabajo central",
-          "role": "Superficie principal para los materiales ASMR organizados.",
-          "where": "Centro de la sala.",
-          "size": "Aproximadamente un tercio de la planta"
+          "name": "Central workstation",
+          "role": "The single large work surface where players approach and interact with tactile materials.",
+          "where": "Centre",
+          "size": "large"
         }
       ],
       "paths": [],
-      "terrain": "Suelo liso y claro; superficie única interior sin niveles superpuestos.",
+      "terrain": "Smooth pale flooring, softly rounded or simple studio walls, diffuse pastel lighting, and subtle localized particles and soft visual effects around the work surface.",
       "props": [
         {
-          "name": "Grupos visibles y ordenados de jabón, arena cinética, slime, frutas y bloques suaves en bandejas, pequeños recipientes o secciones discretas de la mesa",
-          "count": 5,
-          "where": "Sobre la estación central"
+          "name": "soap",
+          "count": -1,
+          "where": "Neatly separated groups on the clean central tabletop/display surface"
         },
         {
-          "name": "Partículas sutiles y efectos visuales suaves localizados",
+          "name": "kinetic sand",
           "count": -1,
-          "where": "Sobre la estación central"
+          "where": "Neatly separated groups on the clean central tabletop/display surface"
+        },
+        {
+          "name": "slime",
+          "count": -1,
+          "where": "Neatly separated groups on the clean central tabletop/display surface"
+        },
+        {
+          "name": "fruit",
+          "count": -1,
+          "where": "Neatly separated groups on the clean central tabletop/display surface"
+        },
+        {
+          "name": "soft blocks",
+          "count": -1,
+          "where": "Neatly separated groups on the clean central tabletop/display surface"
         }
       ],
-      "boundary": "Sala cerrada por cuatro paredes simples de tonos pastel y techo; sin escaparate, tienda física, pasillos ni zonas secundarias.",
+      "boundary": "The studio enclosure; no exterior, roads, side rooms, shop counter, or unlock zones.",
       "scale_band": "small",
-      "theme": "Estudio ASMR minimalista, relajante, limpio, pastel y suavemente iluminado."
+      "theme": "minimalist pastel ASMR studio, soft lighting, soothing tactile materials"
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "La topología es una única sala simple y la composición central pastel se establece mejor desde la imagen isométrica.",
+      "why": "The studio is a simple single-room composition whose visual calm and material presentation lead, with no topology that must be validated first.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
-    "notes": [],
+    "notes": [
+      "`interior-single` is taken from outside Simulation’s usual shape set.",
+      "No layout placements were specified; break/reward logic, coins, sound playback, particles, saving, leaderstats, and the UI shop are mechanics or interface work rather than map placements."
+    ],
     "scene_prompt": "Create a small, minimalist 3D ASMR studio interior with soft pastel lighting and a calm, uncluttered composition. A single central work station holds relaxing breakable materials and objects—soap, kinetic sand, slime, fruit, and soft blocks—arranged neatly on a clean tabletop or display surface, with open space around it for the player. Use gentle visual effects and subtle relaxing particles around the station; no physical shop area."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

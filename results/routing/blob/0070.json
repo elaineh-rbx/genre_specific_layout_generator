@@ -3,86 +3,89 @@
   "source": "A parkour obstacle course section for a horror survival game like Forsaken ASYM. A raised platform with ramps, block obstacles to jump over, and barrier walls creating a challenging path. Dark gray and dark red colors. Built from simple primitive shapes. Expose attributes for: course length, obstacle height, platform width.",
   "answers": [],
   "scene_prompt": "Create a 3D horror survival parkour obstacle-course section built from simple primitive shapes. A raised platform forms the route, with ramps, block obstacles to jump over, and barrier walls arranged along a challenging path; use dark gray and dark red throughout. The layout supports adjustable course length, obstacle height, and platform width.",
-  "blob": "### Genre\nThe dominant genre is `Survival`, specifically a horror-survival obstacle section; `Obby & Platformer` is secondary because the immediate spatial challenge is a sequence of jumps and ramps. Survival owns the overall read, while the secondary genre supplies the route validation requirements.\n\n### Shape and preset\nUse the Survival shape `arena-contained`: this is one self-contained raised challenge platform rather than a town, biome world, or looping interior warren. The closest Survival preset is none, because the scene retains the contained footprint but does not describe a disaster arena, horde defense, escape route, or survival-resource world.\n\n### Config requirements\nUse `path-track` as visible geometry: an ordered, raised run of simple platforms, ramps, jumps, and blocking walls forming the course’s critical path. Use `obstacle-jump` as visible geometry: rectangular block hurdles and gaps sized as deliberate jump challenges. The barrier walls are visible route-shaping geometry that channel movement and prevent bypasses. There are no requested invisible emitters, pickups, triggers, or spawn markers.\n\n### Layout components\nBuild one elongated raised course zone, with a clear entry end, a central sequence of increasingly varied ramp and block-jump sections, and a readable far end. Keep the route predominantly linear, but offset successive platform segments so players must turn around barrier walls rather than run straight through. Use broad sloped ramps to change elevation and squared block obstacles as discrete hurdles; walls sit alongside and between segments to define the permitted path without enclosing it as an interior. The ground is a simple dark-gray primitive platform with dark-red obstacle faces, wall accents, and ramp details. Leave the surrounding space visually empty and open so the elevated course silhouette is legible; the platform edge itself forms the boundary. Frame the whole section from an elevated three-quarter view, with the entry foreground and the route receding toward the upper frame.\n\n### Render order\nUse `topdown`: render a top-down plan first and treat it as authoritative, because a broken jump chain or blocked route would make this course section unplayable; then dress an isometric image from that valid plan.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by a complete obstacle-course section with several route beats rather than a single jump. Theme: minimalist primitive-shape horror, dark gray structure with dark red accents. Apply `P6` because the sequential parkour route must be valid by construction; no additional pipeline modifier is forced.",
+  "blob": "### Genre\nDominant genre: `Obby & Platformer`, with Survival as a secondary horror register. The authored activity is a discrete parkour route, so Obby owns the connected, clearable course structure and `P6` requirement.\n\n### Shape and preset\nUse `course-flat`, taken from the Obby catalogue: one raised, horizontal obstacle route rather than a terraced climb or stacked tower. The closest preset is none; this retains the flat obstacle-course form but does not specify the Classic Obby checkpoint or moving-obstacle bundle.\n\n### Config requirements\nUse `path-track` as the continuous raised platform route, with every jump and ramp arranged as a valid ordered progression. Use `obstacle-jump` for the ramps and simple block obstacles that must be cleared. Do not add lethal hazards, checkpoints, enemies, or survival props not requested.\n\n### Layout requirements\nNo additional placed layout-only components are required. The course geometry itself must be validated as one traversable sequence under `P6`.\n\n### Layout components\nBuild a small single-zone horror parkour section. A long raised rectangular platform is the route, with a clear start at one end and a final landing at the other. Arrange primitive dark-gray ramps, dark-red block hurdles, and barrier-wall turns in sequence along the platform, varying the route between straight runs, ramp climbs, and blocked jumps. Barrier walls guide the player through the challenging line without fully enclosing the course; the raised platform footprint defines the play area. Keep the surroundings minimal and dark so the red obstacles and wall segments read clearly. Frame the whole route in a readable three-quarter composition, with start, middle obstacle cluster, and end all visible.\n\n### Render order\nUse `topdown`: the obstacle chain must remain physically connected and clearable, so the plan is authoritative before producing the isometric dressed view.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by a single self-contained course section. Theme: stark low-poly horror, simple primitive construction, dark gray with dark-red accents. Pipeline modifier: `P6`, because the ordered parkour path must be valid and traversable by construction.",
   "spec": {
-    "genre": "Survival",
+    "genre": "Obby & Platformer",
     "secondary": [
-      "Obby & Platformer"
+      "Survival"
     ],
-    "shape": "arena-contained",
+    "shape": "course-flat",
     "preset": "none",
     "axes": {},
-    "options": [],
+    "options": [
+      {
+        "id": "path-track",
+        "text": "A continuous raised platform route, with every jump and ramp arranged as a valid ordered progression.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "obstacle-jump",
+        "text": "Ramps and simple block obstacles that must be cleared.",
+        "visible": true,
+        "count": -1
+      }
+    ],
+    "layout_placement": [],
     "layout": {
-      "composition": "Elevated three-quarter view framing the whole raised section, with the clear entry in the foreground and the route receding toward the upper frame to a readable far end.",
+      "composition": "Readable three-quarter composition framing the whole route, with the start, middle obstacle cluster, and end all visible.",
       "zones": [
         {
-          "name": "raised challenge course",
-          "role": "A self-contained horror-survival parkour section with an ordered critical path of ramps, jumps, hurdles, and route-shaping walls.",
-          "where": "Elongated from the foreground entry toward the upper-frame far end.",
-          "size": "medium"
+          "name": "Horror parkour section",
+          "role": "A single self-contained obstacle-course route with a clear start, sequential challenges, and a final landing.",
+          "where": "The whole framed course area.",
+          "size": "small"
         }
       ],
       "paths": [
         {
-          "from": "entry end",
-          "to": "central ramp and block-jump sequence",
-          "kind": "track"
-        },
-        {
-          "from": "central ramp and block-jump sequence",
-          "to": "far end",
+          "from": "start",
+          "to": "final landing",
           "kind": "track"
         }
       ],
-      "terrain": "A simple dark-gray primitive raised platform; broad sloped ramps change elevation, with dark-red obstacle faces, wall accents, and ramp details. Surrounding space is visually empty and open.",
+      "terrain": "A long raised rectangular platform forms the route; surroundings are minimal and dark.",
       "props": [
         {
-          "name": "broad sloped ramps",
+          "name": "dark-gray ramps",
           "count": -1,
-          "where": "Along the ordered raised route"
+          "where": "In sequence along the raised platform"
         },
         {
-          "name": "squared block jump obstacles",
+          "name": "dark-red block hurdles",
           "count": -1,
-          "where": "Central and successive course segments"
+          "where": "In sequence along the raised platform"
         },
         {
-          "name": "barrier walls",
+          "name": "barrier-wall turns",
           "count": -1,
-          "where": "Alongside and between route segments, offsetting the path and preventing bypasses"
+          "where": "Along the challenging line on the raised platform"
         }
       ],
-      "boundary": "The raised platform edge forms the boundary; the surrounding space is open.",
-      "scale_band": "medium",
-      "theme": "Minimalist primitive-shape horror, dark gray structure with dark red accents."
+      "boundary": "The raised platform footprint defines the play area; barrier walls guide the player without fully enclosing the course.",
+      "scale_band": "small",
+      "theme": "Stark low-poly horror, simple primitive construction, dark gray with dark-red accents."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "A broken jump chain or blocked route would make the course section unplayable.",
+      "why": "the obstacle chain must remain physically connected and clearable, so the plan is authoritative before producing the isometric dressed view.",
       "set_piece": false
     },
     "route": [
       "P6"
     ],
-    "notes": [
-      "`path-track` was named in the blob but is not a canonical option ID for the dominant Survival genre, so it was dropped from options.",
-      "`obstacle-jump` was named in the blob but is not a canonical option ID for the dominant Survival genre, so it was dropped from options.",
-      "Barrier walls were described as visible route-shaping geometry but no canonical Survival option ID was named for them."
-    ],
+    "notes": [],
     "scene_prompt": "Create a 3D horror survival parkour obstacle-course section built from simple primitive shapes. A raised platform forms the route, with ramps, block obstacles to jump over, and barrier walls arranged along a challenging path; use dark gray and dark red throughout. The layout supports adjustable course length, obstacle height, and platform width."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
-  "order": "std",
-  "first": "isometric",
-  "mapper_notes": [
-    "blob asked for topdown first; the route ['P0'] gives isometric"
-  ]
+  "order": "p6",
+  "first": "topdown",
+  "mapper_notes": []
 }

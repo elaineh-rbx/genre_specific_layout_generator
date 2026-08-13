@@ -19,7 +19,7 @@
     }
   ],
   "scene_prompt": "Create a premium 3D mining world with three separate lobby places connected by portals, centered on a high-tech surface Main Hub. The Main Hub contains portal stations, leaderboard displays, and personal ore display cases. A separate Cave Arena serves as the mine entrance: a sprawling, dark multi-tiered chasm roughly 300 studs deep, visually descending through five playable cave-depth tiers. The upper caves have dusty volumetric air, rock walls with compacted dirt and copper, and torchlight; each lower tier grows darker and more atmospheric, progressing through deep iron, sunken gold, and frost sapphire, with metallic, emissive, or vaporous ore veins embedded in the walls. A hidden separate black-market lobby is a dim alleyway containing the upgrade forge and altar. Deep caves transition toward ethereal glowing mist and cosmic visual accents, while Levels 6–10 remain unbuilt for later progression.",
-  "blob": "### Genre\nThe dominant genre is Simulation: mining, upgrades, progression tiers, and ore collection define an extraction loop. No secondary genre is needed.\n\n### Shape and preset\nUse `world-underground`, matching the Mining & Extraction preset. Here it is a surface hub above a deep mine rather than a generic subterranean world. Keep the preset’s mining identity but omit its hauling roads and shared open resource field, which the prompt does not describe.\n\n### Config requirements\nUse `collectible-nodes` as both visible geometry and invisible layout: the visible part is distinct ore-vein clusters embedded in cave walls, while hidden harvest-placement anchors sit at those veins. Do not add unrequested shops, roads, NPC population, water, or terrain outside the described cave system.\n\n### Layout components\nBuild three separate lobby places. The Main Hub is a medium high-tech surface facility and the central portal destination, with portal stations as its dominant edge-facing structures, leaderboard display walls, and rows of personal ore display cases around a clear central concourse. One portal leads to the Cave Arena and another to the hidden black-market lobby.\n\nThe Cave Arena is the largest place: a sprawling mine-entry chasm roughly 300 studs deep, reading as five descending playable cave-depth tiers. The upper tier is broad, dusty rock with compacted-dirt veins, copper-bearing walls, torches, and a gathering ledge at the rim. Sequential descending cave passages, ramps, and ledges connect the five tiers without breaking the route. Tier two emphasizes raw copper; tier three has sharper silver deep-iron formations; tier four uses glossy sunken-gold seams; tier five is darkest, with frost-sapphire veins emitting cold vapor. Each tier occupies a distinct terrace or cavern shelf in the chasm, becoming visually darker and more atmospheric downward. Dusty volumetric air fills upper chambers, transitioning toward ethereal glowing mist and restrained cosmic accents at the deepest built tier. Levels 6–10 remain absent as built geometry.\n\nThe third place is a compact hidden black-market alleyway, dimly lit and enclosed by dense industrial facades, with the upgrade forge and altar as its two focal stations. Portal thresholds are the only links between the three places.\n\n### Render order\nUse `topdown`: render the top-down plan first and treat it as authoritative so the five-tier descent, continuous access route, and separate-place portal relationships remain coherent; dress the isometric view from that plan.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by three places and a 300-stud, five-tier mine. Theme: premium sci-fi mining, PBR metal and crystal, dark torchlit caverns, luminous cosmic ore. Use `P2` for stacked descending cave surfaces, `P3` for traversal between the surface facility and underground mine interiors, and `P4` because the Main Hub, Cave Arena, and black-market alley are separate portal-linked places.",
+  "blob": "### 1. Genre\nThe dominant genre is Simulation: the mining, ore extraction, and upgrade loop identifies the Mining & Extraction style.\n\n### 2. Shape and preset\nUse `world-underground`, following the Mining & Extraction preset. It is a portal-linked mining progression world: a surface hub feeds a vertically descending mine whose first five cave depths are built, while the black-market alley is a separate support lobby.\n\n### 3. Config requirements\nUse `collectible-nodes` for visually distinct ore veins embedded in each playable cave tier, from compacted dirt through frost sapphire. Use `teleporter-link` for physical portal stations between the three separate lobby places. Use `npc-population` for the single mysterious Sus Unc proprietor occupying the black-market alley.\n\n### 4. Layout requirements\nPlace `collectible-nodes` as repeated mineable-vein markers along exposed rock walls and alcoves on all five descending cave tiers, with each tier restricted to its corresponding ore material. Place `teleporter-link` as two outbound portals in the Main Hub, one to the Cave Arena and one to the black-market lobby, with one return portal in each destination. Place `npc-population` once: Sus Unc stands beside the forge and altar at the deepest, most concealed end of the alley.\n\n### 5. Layout components\nThe Main Hub is a medium high-tech surface facility and central arrival place, containing two portal stations, leaderboard display walls, and personal ore-display cases. The Cave Arena is the largest zone: a roughly 300-stud-deep open chasm, reading as five descending playable cave-depth terraces. Its upper tiers use dusty air, torchlit brown dirt and tarnished copper walls; the middle tiers introduce silver deep iron and glossy sunken gold; the fifth tier is dark, cold, and misty with blue frost-sapphire veins. Ramps, carved ledges, and broad descending paths connect every tier without implying Levels 6–10, which remain absent. The third place is a compact, hidden dim black-market alley containing the forge, altar, Sus Unc, and its return portal. Chasm walls and darkness bound the mine; each lobby is separately bounded. Compose the mine as a legible cutaway descent, with the five terraces visibly stepping into the chasm.\n\n### 6. Render order\nUse `topdown`: the plan must authoritatively preserve access through all five cave tiers and the portal-linked lobby topology before the isometric dressing adds the premium lighting and atmosphere.\n\n### 7. Scale, theme, and pipeline cost\nScale is large, driven by three separate places and a 300-stud, five-tier mine. Theme is premium sci-fi extraction: PBR metal, emissive ore, torchlit rock, dust, and ethereal deep-cave mist. Apply `P2` for stacked/overlooking chasm tiers, `P3` for the mine entrance transition into enclosed cave space, and `P4` because the Main Hub, Cave Arena, and black-market lobby are separate maps.",
   "spec": {
     "genre": "Simulation",
     "secondary": [],
@@ -29,78 +29,50 @@
     "options": [
       {
         "id": "collectible-nodes",
-        "text": "Distinct ore-vein clusters embedded in cave walls: compacted dirt and copper above, deep iron, sunken gold, and frost-sapphire deeper down.",
-        "visible": true,
+        "text": "Visually distinct ore veins embedded in each playable cave tier, progressing from compacted dirt through frost sapphire.",
+        "visible": false,
         "count": -1
       },
       {
+        "id": "npc-population",
+        "text": "The single mysterious Sus Unc proprietor occupying the black-market alley.",
+        "visible": true,
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
         "id": "collectible-nodes",
-        "text": "Hidden harvest-placement anchors at the embedded ore veins.",
-        "visible": false,
-        "count": -1
+        "text": "Repeated mineable-vein markers along exposed rock walls and alcoves on all five descending cave tiers, with each tier restricted to its corresponding ore material.",
+        "count": -1,
+        "where": "Along exposed rock walls and alcoves on all five descending cave tiers."
+      },
+      {
+        "id": "npc-population",
+        "text": "Sus Unc stands beside the forge and altar.",
+        "count": 1,
+        "where": "At the deepest, most concealed end of the black-market alley."
       }
     ],
     "layout": {
-      "composition": "Top-down authoritative arrangement of three separate portal-linked places: the medium surface Main Hub is the central destination, with its portal stations on the edges around a clear central concourse; the Cave Arena is the largest place, organized as a deep five-tier descending chasm; the compact hidden black-market alley is a separate enclosed destination.",
+      "composition": "A legible cutaway descent into the mine, with five terraces visibly stepping down through the chasm. The Main Hub is the central surface arrival place; the concealed black-market alley is a separate support lobby.",
       "zones": [
         {
           "name": "Main Hub",
-          "role": "Central surface facility and portal destination with leaderboard displays and personal ore display cases.",
-          "where": "Central separate place",
+          "role": "Central arrival place and high-tech surface facility with portal stations, leaderboard display walls, and personal ore-display cases.",
+          "where": "Surface hub",
           "size": "medium"
         },
         {
-          "name": "Main Hub central concourse",
-          "role": "Clear gathering space surrounded by rows of personal ore display cases.",
-          "where": "Centre of the Main Hub",
-          "size": ""
-        },
-        {
-          "name": "Main Hub portal stations",
-          "role": "Edge-facing portal structures linking to the Cave Arena and hidden black-market lobby.",
-          "where": "Edges of the Main Hub",
-          "size": "2 portal destinations"
-        },
-        {
           "name": "Cave Arena",
-          "role": "Mine entrance and largest playable place, descending through five cave-depth tiers.",
-          "where": "Separate portal-linked underground place",
-          "size": "roughly 300 studs deep"
+          "role": "Mine entrance and playable extraction space descending through five cave-depth terraces.",
+          "where": "Separate mine map",
+          "size": "largest zone; roughly 300 studs deep"
         },
         {
-          "name": "Cave Arena tier 1",
-          "role": "Broad upper cave tier with dusty rock, compacted-dirt veins, copper-bearing walls, torches, and a gathering ledge.",
-          "where": "Chasm rim and upper shelf",
-          "size": ""
-        },
-        {
-          "name": "Cave Arena tier 2",
-          "role": "Descending cave shelf emphasizing raw copper.",
-          "where": "Below tier 1",
-          "size": ""
-        },
-        {
-          "name": "Cave Arena tier 3",
-          "role": "Descending cave shelf with sharper silver deep-iron formations.",
-          "where": "Below tier 2",
-          "size": ""
-        },
-        {
-          "name": "Cave Arena tier 4",
-          "role": "Descending cave shelf with glossy sunken-gold seams.",
-          "where": "Below tier 3",
-          "size": ""
-        },
-        {
-          "name": "Cave Arena tier 5",
-          "role": "Darkest built cave shelf with frost-sapphire veins emitting cold vapor and restrained cosmic accents.",
-          "where": "Deepest built tier, below tier 4",
-          "size": ""
-        },
-        {
-          "name": "Hidden black-market lobby",
-          "role": "Dim enclosed industrial alleyway with an upgrade forge and altar as focal stations.",
-          "where": "Separate portal-linked hidden place",
+          "name": "Black-market alley",
+          "role": "Hidden support lobby containing the upgrade forge, altar, Sus Unc, and a return portal.",
+          "where": "Separate concealed lobby",
           "size": "compact"
         }
       ],
@@ -112,36 +84,31 @@
         },
         {
           "from": "Main Hub",
-          "to": "Hidden black-market lobby",
+          "to": "Black-market alley",
           "kind": "portal"
         },
         {
-          "from": "Cave Arena tier 1",
-          "to": "Cave Arena tier 2",
+          "from": "Cave Arena",
+          "to": "Main Hub",
+          "kind": "portal"
+        },
+        {
+          "from": "Black-market alley",
+          "to": "Main Hub",
+          "kind": "portal"
+        },
+        {
+          "from": "Upper cave tiers",
+          "to": "lower cave tiers",
           "kind": "ramp"
-        },
-        {
-          "from": "Cave Arena tier 2",
-          "to": "Cave Arena tier 3",
-          "kind": "corridor"
-        },
-        {
-          "from": "Cave Arena tier 3",
-          "to": "Cave Arena tier 4",
-          "kind": "ramp"
-        },
-        {
-          "from": "Cave Arena tier 4",
-          "to": "Cave Arena tier 5",
-          "kind": "ledge"
         }
       ],
-      "terrain": "High-tech surface facility above a dark mine-entry chasm. Five distinct descending rocky cave terraces transition from broad dusty compacted-dirt and copper upper caves to deep iron, glossy sunken gold, and frost-sapphire at the deepest built tier. Dusty volumetric upper air transitions into ethereal glowing mist and restrained cosmic accents below. Levels 6–10 are absent as built geometry.",
+      "terrain": "A sprawling dark chasm with five descending playable cave-depth terraces. Upper tiers have dusty air, torchlit brown compacted dirt and tarnished copper walls; middle tiers introduce silver deep iron and glossy sunken gold; the fifth tier is dark, cold, and misty with blue frost-sapphire veins. Carved ledges and broad descending paths connect every tier. Deep caves transition toward ethereal glowing mist and cosmic visual accents.",
       "props": [
         {
           "name": "portal stations",
           "count": 2,
-          "where": "Main Hub edges"
+          "where": "Main Hub"
         },
         {
           "name": "leaderboard display walls",
@@ -149,45 +116,40 @@
           "where": "Main Hub"
         },
         {
-          "name": "personal ore display cases",
+          "name": "personal ore-display cases",
           "count": -1,
-          "where": "Rows around the Main Hub central concourse"
+          "where": "Main Hub"
         },
         {
-          "name": "torches",
-          "count": -1,
-          "where": "Cave Arena upper tier"
-        },
-        {
-          "name": "ore-vein clusters",
-          "count": -1,
-          "where": "Embedded in Cave Arena walls across the five built tiers"
-        },
-        {
-          "name": "gathering ledge",
-          "count": -1,
-          "where": "Cave Arena rim"
-        },
-        {
-          "name": "upgrade forge",
+          "name": "forge",
           "count": 1,
-          "where": "Hidden black-market alley"
+          "where": "Black-market alley beside Sus Unc and the altar"
         },
         {
           "name": "altar",
           "count": 1,
-          "where": "Hidden black-market alley"
+          "where": "Black-market alley beside Sus Unc and the forge"
+        },
+        {
+          "name": "return portal",
+          "count": 1,
+          "where": "Cave Arena"
+        },
+        {
+          "name": "return portal",
+          "count": 1,
+          "where": "Black-market alley"
         }
       ],
-      "boundary": "The Cave Arena is enclosed by chasm and cavern walls; the black-market alley is enclosed by dense industrial facades. Portal thresholds are the only links between the three separate places.",
+      "boundary": "Chasm walls and darkness bound the mine; each lobby is separately bounded.",
       "scale_band": "large",
-      "theme": "Premium sci-fi mining; PBR metal and crystal, dark torchlit caverns, luminous cosmic ore."
+      "theme": "Premium sci-fi extraction: PBR metal, emissive ore, torchlit rock, dust, and ethereal deep-cave mist."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "The five-tier descent, continuous access route, and portal-linked separate places must remain coherent.",
+      "why": "Access through all five cave tiers and the portal-linked lobby topology must remain valid.",
       "set_piece": false
     },
     "route": [
@@ -195,13 +157,16 @@
       "P3",
       "P4"
     ],
-    "notes": [],
+    "notes": [
+      "`teleporter-link` was named in the blob but is not an option published for the dominant Simulation genre, so it was dropped from options and layout_placement. The explicitly described portal stations and portal connections remain transcribed as layout components.",
+      "Levels 6–10 remain absent and are not represented as zones or terrain tiers."
+    ],
     "scene_prompt": "Create a premium 3D mining world with three separate lobby places connected by portals, centered on a high-tech surface Main Hub. The Main Hub contains portal stations, leaderboard displays, and personal ore display cases. A separate Cave Arena serves as the mine entrance: a sprawling, dark multi-tiered chasm roughly 300 studs deep, visually descending through five playable cave-depth tiers. The upper caves have dusty volumetric air, rock walls with compacted dirt and copper, and torchlight; each lower tier grows darker and more atmospheric, progressing through deep iron, sunken gold, and frost sapphire, with metallic, emissive, or vaporous ore veins embedded in the walls. A hidden separate black-market lobby is a dim alleyway containing the upgrade forge and altar. Deep caves transition toward ethereal glowing mist and cosmic visual accents, while Levels 6–10 remain unbuilt for later progression."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

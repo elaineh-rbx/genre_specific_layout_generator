@@ -14,134 +14,100 @@
     }
   ],
   "scene_prompt": "Create a large 3D game map with varied terrain and decorative elements, featuring a bright, cartoonish fantasy-style city zone built along a massive boundary wall. The city begins as a small empty area beside the wall, leaving open plots for purchased buildings, additional walls, and upgrades to expand it into a huge lively city with colorful buildings, windows, doors, and sports areas. Place open monster-filled terrain around the city, with colorful slime monsters and other monster types appearing across the map; use clear readable visual effects around the creatures.",
-  "blob": "### Genre\nThe dominant genre is `RPG`: sword combat against recurring slime and monster groups, with a protected city serving as the progression base. There is no secondary genre; city expansion informs its visual growth but does not replace the combat-led RPG world.\n\n### Shape and preset\nUse `world-single`, a single large contiguous map with the city pressed against its boundary wall and hostile terrain spreading outward from it. The closest preset is Action RPG, but the requested continuous city-and-wilderness map contradicts its separate hub-and-dungeon structure, so the preset is none.\n\n### Config requirements\n`safezone-town` is visible geometry: the small initial city area is a monster-free sanctuary along the wall, designed to expand into a major city. `hazard-aggro` is visible geometry: broad clearings and nests in the outer terrain hold colorful slimes and varied monsters away from the city approaches. `spawner-npc` is invisible layout: place monster-emitter points inside those nests, never in the city. `settlement-density` is visible geometry: reserve dense buildable urban blocks for the eventual huge city. `terrain-relief` is visible geometry: use gentle hills, ridges, and shallow valleys to vary the surrounding ground.\n\n### Layout components\nSet the city zone along one long side of a massive enclosing wall, initially a small open plaza and a few empty urban plots near the center of that wall. Lay out a future city grid beside it: wide streets, blocks reserved for colorful fantasy buildings, wall extensions, decorative façades with windows and doors, and dedicated sports courts or fields. Keep the city footprint visibly capable of growing into a huge built-up district without moving its core.\n\nBeyond the city, make a large ring of open monster terrain. Place several distinct slime clearings and monster nests across grassland, decorative rock outcrops, low hills, and shallow valleys, with readable colorful magical effects around creature groups. Use broad roads from the city edge into the wilderness, branching toward each clearing while leaving open terrain between them. The massive wall forms the city-side boundary; the far wilderness edge is enclosed by rising terrain and distant natural barriers. Frame the city wall and colorful skyline in the foreground, with monster country receding around and beyond it.\n\n### Render order\nUse `isometric`: render the isometric scene first and treat it as authoritative, since an invalid exact route topology would not make this open RPG map unplayable.\n\n### Scale, theme, and pipeline cost\nScale is huge, driven by the planned huge city footprint plus the large surrounding combat terrain. Theme is bright cartoon fantasy, with saturated colorful slimes, lively readable effects, and cheerful fantasy architecture. Use `tiered` because the surrounding hills and valleys require elevation capture but have no overhanging surfaces.",
+  "blob": "### Genre\nDominant genre: `RPG`, with `Simulation` as a secondary genre because monster-combat earnings fund the expansion of the city. RPG owns the open-world shape; the secondary genre only informs the reserved construction space.\n\n### Shape and preset\nUse `world-open`: one contiguous fantasy map where the wall-side city district and surrounding monster terrain coexist on the same surface. This follows no single preset exactly: it retains the single-map structure of Turn-based RPG but replaces its fixed town with an initially empty, expandable city district.\n\n### Config requirements\nUse `hazard-aggro` for broad, readable monster clearings across the outer terrain, visibly separated from the city edge. Use `terrain-relief` for varied cartoon hills, shallow valleys, rocky rises, and decorative terrain variation around those clearings. Do not render an already dense settlement: the city is deliberately a starter-sized open district with expansion plots.\n\n### Layout requirements\nUse `spawner-npc` for several distributed monster-emitter locations, each placed inside an outer-terrain clearing rather than beside the city wall or primary approach paths. Place at least one clearing in each major terrain direction so slime and other monster encounters are not concentrated in one corner.\n\n### Layout components\nPlace a compact starter city zone along the inside face of one massive boundary wall, occupying a smaller portion of a much larger planned urban strip. Its central area is mostly clear ground, divided into regular open plots for future purchased buildings, wall sections, and upgrades; reserve wider plots for colorful storefront or civic buildings and dedicated sports areas. The city has broad, simple streets and paths running parallel and perpendicular to the wall, connecting plots to several outward routes into the wilderness. Beyond it, build a large contiguous monster territory of grass, dirt paths, hills, rock clusters, trees, and decorative fantasy props, punctuated by open combat clearings. Show colorful slimes and varied monster silhouettes with readable magical impact and spawn effects. The massive wall anchors one city-side map boundary; distant hills, cliffs, and natural barriers contain the outer perimeter. Compose the city and wall in the foreground or one frame edge, with the monster terrain spreading visibly outward behind it.\n\n### Render order\nUse `isometric` first and treat it as authoritative, because the map is a broad visual open world rather than a topology whose invalid connections would make play impossible.\n\n### Scale, theme, and pipeline cost\nScale band: huge, driven by the large wilderness map and the reserved footprint for a city that can grow far beyond its starter area. Theme: bright cartoon fantasy, with saturated colorful slimes, lively readable effects, and cheerful fantasy architecture. Pipeline modifier: `tiered`, forced by the explicitly varied relief while all traversable ground remains one non-overhanging surface.",
   "spec": {
     "genre": "RPG",
-    "secondary": [],
-    "shape": "world-single",
+    "secondary": [
+      "Simulation"
+    ],
+    "shape": "world-open",
     "preset": "none",
     "axes": {},
     "options": [
       {
-        "id": "safezone-town",
-        "text": "the small initial city area is a monster-free sanctuary along the wall, designed to expand into a major city",
-        "visible": true,
-        "count": -1
-      },
-      {
         "id": "hazard-aggro",
-        "text": "broad clearings and nests in the outer terrain hold colorful slimes and varied monsters away from the city approaches",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "spawner-npc",
-        "text": "place monster-emitter points inside those nests, never in the city",
-        "visible": false,
-        "count": -1
-      },
-      {
-        "id": "settlement-density",
-        "text": "reserve dense buildable urban blocks for the eventual huge city",
+        "text": "Broad, readable monster clearings across the outer terrain, visibly separated from the city edge.",
         "visible": true,
         "count": -1
       },
       {
         "id": "terrain-relief",
-        "text": "use gentle hills, ridges, and shallow valleys to vary the surrounding ground",
+        "text": "Varied cartoon hills, shallow valleys, rocky rises, and decorative terrain variation around the monster clearings.",
         "visible": true,
+        "count": -1
+      },
+      {
+        "id": "spawner-npc",
+        "text": "Distributed monster-emitter locations inside outer-terrain clearings, with slime and other monster spawn effects.",
+        "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "spawner-npc",
+        "text": "Distributed monster-emitter locations inside outer-terrain clearings, with slime and other monster spawn effects.",
+        "count": -1,
+        "where": "Inside outer-terrain clearings rather than beside the city wall or primary approach paths; place at least one clearing in each major terrain direction."
+      }
+    ],
     "layout": {
-      "composition": "The city wall and colorful skyline sit in the foreground along one long side, while monster country recedes around and beyond the city into the background.",
+      "composition": "The compact starter city and massive boundary wall occupy the foreground or one frame edge, while the monster terrain spreads visibly outward behind them.",
       "zones": [
         {
-          "name": "Initial city sanctuary",
-          "role": "Monster-free progression base, beginning as a small open plaza with a few empty urban plots.",
-          "where": "Along one long side of the massive enclosing wall, near the center of that wall.",
-          "size": "small initially"
+          "name": "Starter city district",
+          "role": "A small, expandable city area with regular open plots for purchased buildings, wall sections, upgrades, colorful storefront or civic buildings, and dedicated sports areas.",
+          "where": "Along the inside face of one massive boundary wall.",
+          "size": "A smaller portion of a much larger planned urban strip."
         },
         {
-          "name": "Future city grid",
-          "role": "Expansion district with wide streets, reserved blocks for colorful fantasy buildings, wall extensions, decorative facades, and sports courts or fields.",
-          "where": "Beside the initial city zone along the wall.",
-          "size": "huge planned footprint"
-        },
-        {
-          "name": "Outer monster terrain",
-          "role": "Open combat terrain holding slime clearings and monster nests away from city approaches.",
-          "where": "Beyond the city in a large ring around it.",
-          "size": "large"
-        },
-        {
-          "name": "Slime clearings and monster nests",
-          "role": "Distinct combat locations for colorful slimes and varied monster groups, with readable magical effects.",
-          "where": "Across the outer grassland and open terrain.",
-          "size": "-1"
+          "name": "Monster territory",
+          "role": "Open combat terrain containing monster-filled clearings, colorful slimes, varied monster silhouettes, magical impact effects, and spawn effects.",
+          "where": "Beyond and outward from the city.",
+          "size": "Large contiguous territory."
         }
       ],
       "paths": [
         {
-          "from": "Initial city sanctuary",
-          "to": "Outer monster terrain",
+          "from": "Starter city district",
+          "to": "Open plots",
           "kind": "road"
         },
         {
-          "from": "City edge",
-          "to": "Slime clearings and monster nests",
+          "from": "Starter city district",
+          "to": "Monster territory",
           "kind": "road"
         }
       ],
-      "terrain": "Grassland with decorative rock outcrops, gentle low hills, ridges, and shallow valleys; open terrain remains between clearings.",
+      "terrain": "Grass, dirt paths, varied cartoon hills, shallow valleys, rocky rises, rock clusters, trees, decorative fantasy props, distant hills, cliffs, and natural barriers; all traversable ground remains one non-overhanging surface.",
       "props": [
         {
-          "name": "massive enclosing wall",
-          "count": -1,
-          "where": "Along the city-side boundary"
+          "name": "Massive boundary wall",
+          "count": 1,
+          "where": "Along one city-side map boundary."
         },
         {
-          "name": "empty urban plots",
+          "name": "Regular open expansion plots",
           "count": -1,
-          "where": "Near the centre of the wall beside the initial plaza"
+          "where": "Across the mostly clear central area of the starter city district."
         },
         {
-          "name": "wide streets and reserved city blocks",
+          "name": "Wider building and sports plots",
           "count": -1,
-          "where": "Future city grid beside the initial city"
+          "where": "Within the planned urban strip."
         },
         {
-          "name": "colorful fantasy buildings",
+          "name": "Open combat clearings",
           "count": -1,
-          "where": "Reserved blocks in the future city grid"
+          "where": "Across the outer monster terrain in each major terrain direction."
         },
         {
-          "name": "wall extensions",
+          "name": "Colorful slimes and varied monster silhouettes",
           "count": -1,
-          "where": "Future city grid"
-        },
-        {
-          "name": "decorative facades with windows and doors",
-          "count": -1,
-          "where": "Future city grid"
-        },
-        {
-          "name": "sports courts or fields",
-          "count": -1,
-          "where": "Future city grid"
-        },
-        {
-          "name": "colorful magical effects",
-          "count": -1,
-          "where": "Around creature groups in slime clearings and monster nests"
-        },
-        {
-          "name": "decorative rock outcrops",
-          "count": -1,
-          "where": "Outer monster terrain"
+          "where": "Across the monster territory and its open combat clearings."
         }
       ],
-      "boundary": "The massive wall encloses the city side; the far wilderness edge is enclosed by rising terrain and distant natural barriers.",
+      "boundary": "One massive wall anchors the city-side boundary; distant hills, cliffs, and natural barriers contain the outer perimeter.",
       "scale_band": "huge",
       "theme": "Bright cartoon fantasy with saturated colorful slimes, lively readable effects, and cheerful fantasy architecture."
     },
@@ -149,19 +115,21 @@
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "an invalid exact route topology would not make this open RPG map unplayable.",
+      "why": "The map is a broad visual open world rather than topology whose invalid connections would make play impossible.",
       "set_piece": false
     },
     "route": [
       "tiered"
     ],
-    "notes": [],
+    "notes": [
+      "The city is deliberately a starter-sized open district with expansion plots, not an already dense settlement."
+    ],
     "scene_prompt": "Create a large 3D game map with varied terrain and decorative elements, featuring a bright, cartoonish fantasy-style city zone built along a massive boundary wall. The city begins as a small empty area beside the wall, leaving open plots for purchased buildings, additional walls, and upgrades to expand it into a huge lively city with colorful buildings, windows, doors, and sports areas. Place open monster-filled terrain around the city, with colorful slime monsters and other monster types appearing across the map; use clear readable visual effects around the creatures."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

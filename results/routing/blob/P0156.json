@@ -19,182 +19,195 @@
     }
   ],
   "scene_prompt": "Create a super-realistic 3D horror escape map set in a small 1985 neighborhood centered on Fred's Pizzeria. The pizzeria is the main playable area, with a ball pit serving as the time-travel entrance and escape route; the player emerges from it into the past and must return through it before it closes. Include the yellow, ten-foot-tall bunny monster in a worn spring-style mascot suit moving through the pizzeria and nearby neighborhood spaces, initially appearing as a guide before pursuing the player. The non-playable opening is a cinematic drive to the pizzeria.",
-  "blob": "### Genre\nThe dominant genre is Survival: a hostile pursuer and an escape route define the playable experience.\n\n### Shape and preset\nUse `warren-looping`, matching the Escape preset. The main pizzeria should be a looping escape warren rather than a linear dead-end building: its rooms, service areas, and exits reconnect so pursuit routes remain fair. The preset remains recognizable, with the small exterior neighborhood expanding the pizzeria’s approaches.\n\n### Config requirements\nUse `gate-escape` as visible geometry and an invisible escape trigger: the ball pit is the distinct time-travel return point inside the pizzeria. Use `cover-los` as visible geometry: booths, party-room dividers, kitchen counters, storage racks, and small hiding cutouts break views through the interior. Use `building-interior` as visible geometry for the enterable pizzeria, connecting the outdoor neighborhood to its playable rooms. Use `spawner-npc` as invisible layout placement for the hostile yellow bunny’s patrol/origin points across the pizzeria and its immediate exterior. Use `settlement-density` as visible geometry for the explicitly requested small 1985 neighborhood.\n\n### Layout components\nPlace Fred’s Pizzeria centrally as the dominant, medium-sized building. Its public front contains the entrance, dining room with pizza tables, arcade/party spaces, and the ball pit; put the ball pit near the rear or a side party room so returning to it requires crossing the interior. Behind and beside this public zone, create interconnected kitchen, staff corridor, storage, utility, and service-door spaces, with at least two looping paths back toward the dining room rather than sealed dead ends. Screened openings, booth rows, counters, and shelving provide concealment and route choices.\n\nOutside, build a compact ring of period residential and commercial facades around the pizzeria, with sidewalks, a short street approach, alley/service lane, and fenced rear yard. These nearby exterior spaces are secondary escape approaches and reconnect to the pizzeria’s front and service entrances. The yellow, ten-foot-tall bunny in a worn spring-style mascot suit is a prominent physical figure, sized to read above furniture and doorways. Do not build the opening drive; it is cinematic only. Frame the pizzeria as the visual anchor, with the neighborhood falling away around it in a moody isometric cutaway.\n\n### Render order\nUse `topdown` first and make it authoritative, because the interior and exterior loops must remain connected with no unfairly sealed pursuit routes; an image-drawn plan is sufficient, while this is not a carveable maze.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by one substantial pizzeria plus a compact surrounding neighborhood. Theme: super-realistic 1985 suburban mascot horror, worn fluorescent interiors, dim streetlights, and uncanny nostalgia. Apply `P3` for outdoor-to-indoor play across the pizzeria threshold and `P6` because the looping escape topology must be valid by construction.",
+  "blob": "### 1. Genre\nDominant genre: Survival, specifically mascot horror: a hostile costumed monster pursues the player through an escape scenario. Adventure is not needed as a secondary genre; the time-travel premise supplies horror context rather than an exploration loop.\n\n### 2. Shape and preset\nUse `warren-looping`, taken from Survival’s chase-horror topology rather than the usual Mascot Horror `interior-single` shape. The pizzeria and its immediately surrounding 1985 neighborhood must form interlinked loops with no dead ends that unfairly trap a fleeing player. Use the Mascot Horror preset, retaining its escape and hiding logic while overriding its single-interior shape for the explicitly requested exterior neighborhood.\n\n### 3. Config requirements\nUse `cover-los` as crawlspaces, booth gaps, storage recesses, and neighborhood-side hiding cutouts that break the bunny’s sightlines. Use `gate-escape` as the visible ball pit escape portal, clearly distinct and readable inside the pizzeria. Use `building-interior` for Fred’s Pizzeria as an enterable building connected to the outdoor neighborhood.\n\n### 4. Layout requirements\nPlace one `spawner-npc` hostile-origin marker at the yellow ten-foot bunny’s initial guide encounter, in a readable pizzeria-facing neighborhood approach, with patrol access through all loop routes. Place `gate-escape`’s escape detection volume at the ball pit opening, with the visible ball pit rendered in config and the return trigger seated inside it. The ball pit is both the arrival point into 1985 and the final escape destination.\n\n### 5. Layout components\nBuild a small 1985 neighborhood centered on Fred’s Pizzeria, with the pizzeria occupying most of the playable footprint. Its zones include a dining room with tables and booths, a stage-facing public area, kitchen and service spaces, storage/back rooms, and the ball-pit escape room. Outside, add a compact street edge, parking or forecourt, and a few accessible neighborhood-side paths around the pizzeria rather than a full city. Link dining, service corridors, rear exits, and exterior side paths into multiple circular chase routes. Use worn period-appropriate brick, asphalt, signage, dim practical lighting, and degraded mascot-themed interiors. Natural walls, locked-looking perimeter edges, and neighboring building facades bound the map. Compose the pizzeria as the central visual anchor, with the ball pit legible as a strong interior destination.\n\n### 6. Render order\nUse `topdown` first and make it authoritative, because invalid loop connectivity or a sealed escape path would make the chase unplayable; the isometric render should dress the verified plan.\n\n### 7. Scale, theme, and pipeline cost\nScale is medium, driven by one dense pizzeria plus a compact surrounding neighborhood. Theme: super-realistic 1985 suburban mascot horror, grimy pizza-parlor nostalgia, tense night lighting. Pipeline modifiers: `P6` because the chase routes must be valid with no trapping dead ends; `P3` because play crosses between the neighborhood exterior and pizzeria interior.",
   "spec": {
     "genre": "Survival",
     "secondary": [],
     "shape": "warren-looping",
-    "preset": "Escape",
+    "preset": "Mascot Horror",
     "axes": {},
     "options": [
       {
-        "id": "gate-escape",
-        "text": "The ball pit is the distinct time-travel return point inside the pizzeria, serving as visible escape geometry and an invisible escape trigger.",
+        "id": "cover-los",
+        "text": "Crawlspaces, booth gaps, storage recesses, and neighborhood-side hiding cutouts that break the bunny's sightlines.",
         "visible": true,
         "count": -1
       },
       {
-        "id": "cover-los",
-        "text": "Booths, party-room dividers, kitchen counters, storage racks, and small hiding cutouts break views through the interior.",
+        "id": "gate-escape",
+        "text": "A visible ball pit escape portal, clearly distinct and readable inside the pizzeria.",
         "visible": true,
         "count": -1
       },
       {
         "id": "building-interior",
-        "text": "The enterable pizzeria connects the outdoor neighborhood to its playable public rooms and service areas.",
+        "text": "Fred's Pizzeria as an enterable building connected to the outdoor neighborhood.",
         "visible": true,
         "count": -1
       },
       {
         "id": "spawner-npc",
-        "text": "Hostile yellow bunny patrol/origin points are placed across the pizzeria and its immediate exterior.",
+        "text": "A hostile-origin marker at the yellow ten-foot bunny's initial guide encounter, with patrol access through all loop routes.",
         "visible": false,
-        "count": -1
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "gate-escape",
+        "text": "The ball pit escape detection volume and return trigger.",
+        "count": -1,
+        "where": "At and inside the ball pit opening in the pizzeria's ball-pit escape room."
       },
       {
-        "id": "settlement-density",
-        "text": "A compact ring of period residential and commercial facades forms the explicitly requested small 1985 neighborhood around the pizzeria.",
-        "visible": true,
-        "count": -1
+        "id": "spawner-npc",
+        "text": "Hostile-origin marker at the yellow ten-foot bunny's initial guide encounter.",
+        "count": 1,
+        "where": "In a readable pizzeria-facing neighborhood approach, with patrol access through all loop routes."
       }
     ],
     "layout": {
-      "composition": "Moody isometric cutaway framing Fred's Pizzeria as the central visual anchor, with the compact neighborhood falling away around it; public rooms sit toward the front, service spaces behind and beside them, and exterior approaches reconnect at the front and rear.",
+      "composition": "The pizzeria is the central visual anchor and occupies most of the playable footprint, surrounded by a compact neighborhood edge. The ball pit reads clearly as a strong interior destination.",
       "zones": [
         {
           "name": "Fred's Pizzeria",
-          "role": "Dominant central playable escape warren containing public rooms, service areas, hiding geometry, and the time-travel return point.",
-          "where": "centre",
-          "size": "medium-sized"
+          "role": "Main playable area and central anchor.",
+          "where": "Centre of the map.",
+          "size": "Most of the playable footprint."
         },
         {
-          "name": "Public Front",
-          "role": "Entrance, dining room with pizza tables, arcade and party spaces leading into the pizzeria interior.",
-          "where": "front of the pizzeria",
+          "name": "Dining room",
+          "role": "Pizzeria dining space with tables and booths.",
+          "where": "Inside the pizzeria.",
           "size": ""
         },
         {
-          "name": "Ball Pit",
-          "role": "Distinct time-travel return point and escape route that requires crossing the interior to reach.",
-          "where": "rear or side party room",
+          "name": "Stage-facing public area",
+          "role": "Public pizzeria area facing the stage.",
+          "where": "Inside the pizzeria.",
           "size": ""
         },
         {
-          "name": "Service Warrant",
-          "role": "Interconnected kitchen, staff corridor, storage, utility, and service-door spaces that provide fair pursuit loops.",
-          "where": "behind and beside the public zone",
+          "name": "Kitchen and service spaces",
+          "role": "Service and back-of-house circulation.",
+          "where": "Inside the pizzeria.",
           "size": ""
         },
         {
-          "name": "Neighborhood Approaches",
-          "role": "Secondary exterior escape approaches reconnecting to the pizzeria front and service entrances.",
-          "where": "around the pizzeria",
-          "size": "compact"
+          "name": "Storage and back rooms",
+          "role": "Back-room hiding and chase spaces.",
+          "where": "Inside the pizzeria.",
+          "size": ""
         },
         {
-          "name": "Fenced Rear Yard",
-          "role": "Rear exterior approach and service-side space.",
-          "where": "behind the pizzeria",
+          "name": "Ball-pit escape room",
+          "role": "Time-travel arrival point and final escape destination.",
+          "where": "Inside the pizzeria.",
           "size": ""
+        },
+        {
+          "name": "Compact street edge",
+          "role": "Exterior neighborhood approach and chase space.",
+          "where": "Outside the pizzeria.",
+          "size": "Compact."
+        },
+        {
+          "name": "Parking or forecourt",
+          "role": "Exterior approach space at the pizzeria.",
+          "where": "Outside the pizzeria.",
+          "size": ""
+        },
+        {
+          "name": "Neighborhood-side paths",
+          "role": "Accessible exterior paths that connect into circular chase routes.",
+          "where": "Around the pizzeria.",
+          "size": "A few."
         }
       ],
       "paths": [
         {
-          "from": "Public Front",
-          "to": "Ball Pit",
+          "from": "Dining room",
+          "to": "Kitchen and service spaces",
           "kind": "corridor"
         },
         {
-          "from": "Dining Room",
-          "to": "Service Warrant",
+          "from": "Kitchen and service spaces",
+          "to": "Storage and back rooms",
           "kind": "corridor"
         },
         {
-          "from": "Service Warrant",
-          "to": "Dining Room",
+          "from": "Storage and back rooms",
+          "to": "Exterior side paths",
+          "kind": "rear exit"
+        },
+        {
+          "from": "Exterior side paths",
+          "to": "Dining room",
+          "kind": "open ground"
+        },
+        {
+          "from": "Stage-facing public area",
+          "to": "Ball-pit escape room",
           "kind": "corridor"
-        },
-        {
-          "from": "Service Warrant",
-          "to": "Dining Room",
-          "kind": "corridor"
-        },
-        {
-          "from": "Neighborhood Approaches",
-          "to": "Public Front",
-          "kind": "street"
-        },
-        {
-          "from": "Neighborhood Approaches",
-          "to": "Service Warrant",
-          "kind": "alley"
-        },
-        {
-          "from": "Fenced Rear Yard",
-          "to": "Service Warrant",
-          "kind": "service lane"
         }
       ],
-      "terrain": "Compact suburban ground with sidewalks, a short street approach, an alley/service lane, and a fenced rear yard around the pizzeria.",
+      "terrain": "Worn asphalt around the compact street edge and forecourt; degraded period-appropriate pizzeria interiors.",
       "props": [
         {
-          "name": "pizza tables",
+          "name": "Dining tables and booths",
           "count": -1,
-          "where": "dining room"
+          "where": "Dining room."
         },
         {
-          "name": "booth rows",
+          "name": "Ball pit",
           "count": -1,
-          "where": "pizzeria interior"
+          "where": "Ball-pit escape room."
         },
         {
-          "name": "party-room dividers",
-          "count": -1,
-          "where": "party spaces"
+          "name": "Yellow ten-foot bunny monster in a worn spring-style mascot suit",
+          "count": 1,
+          "where": "Pizzeria and nearby neighborhood spaces, initially at the pizzeria-facing neighborhood approach."
         },
         {
-          "name": "kitchen counters",
+          "name": "Period-appropriate signage",
           "count": -1,
-          "where": "kitchen"
+          "where": "Pizzeria and neighborhood edge."
         },
         {
-          "name": "storage shelving and racks",
+          "name": "Dim practical lighting",
           "count": -1,
-          "where": "storage spaces"
+          "where": "Throughout the pizzeria and surrounding neighborhood."
         },
         {
-          "name": "yellow ten-foot-tall bunny in a worn spring-style mascot suit",
+          "name": "Neighboring building facades",
           "count": -1,
-          "where": "pizzeria and nearby neighborhood spaces"
-        },
-        {
-          "name": "period residential and commercial facades",
-          "count": -1,
-          "where": "compact ring around the pizzeria"
+          "where": "Around the exterior neighborhood boundary."
         }
       ],
-      "boundary": "A compact neighborhood perimeter with a fenced rear yard; nearby exterior spaces remain open as pizzeria approaches.",
+      "boundary": "Natural walls, locked-looking perimeter edges, and neighboring building facades bound the map.",
       "scale_band": "medium",
-      "theme": "Super-realistic 1985 suburban mascot horror; worn fluorescent interiors, dim streetlights, and uncanny nostalgia."
+      "theme": "Super-realistic 1985 suburban mascot horror, grimy pizza-parlor nostalgia, tense night lighting."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the interior and exterior pursuit loops must remain connected without unfairly sealed routes.",
+      "why": "Invalid loop connectivity or a sealed escape path would make the chase unplayable.",
       "set_piece": false
     },
     "route": [
-      "P3",
-      "P6"
+      "P6",
+      "P3"
     ],
-    "notes": [],
+    "notes": [
+      "The Mascot Horror preset is retained while its usual interior-single shape is overridden by warren-looping for the requested exterior neighborhood and looped chase topology."
+    ],
     "scene_prompt": "Create a super-realistic 3D horror escape map set in a small 1985 neighborhood centered on Fred's Pizzeria. The pizzeria is the main playable area, with a ball pit serving as the time-travel entrance and escape route; the player emerges from it into the past and must return through it before it closes. Include the yellow, ten-foot-tall bunny monster in a worn spring-style mascot suit moving through the pizzeria and nearby neighborhood spaces, initially appearing as a guide before pursuing the player. The non-playable opening is a cinematic drive to the pizzeria."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

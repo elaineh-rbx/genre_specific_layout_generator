@@ -14,103 +14,121 @@
     }
   ],
   "scene_prompt": "Create a 3D game map set in an eerie, unsettling forest search area compact enough to cross in a few minutes of walking, with dense woodland paths and clear spaces for finding a missing person.",
-  "blob": "### Genre\nAdventure is dominant: the player undertakes a focused search journey to locate a missing person. There is no secondary genre.\n\n### Shape and preset\nUse `world-open`, a compact but freely searchable forest rather than a forced linear corridor. The closest preset is Exploration, but retain only its route logic: the requested dense paths and search clearings matter, while unrequested ruins, secrets, and landmarks do not.\n\n### Config requirements\n`path-trail` is visible geometry: a branching but legible network of worn woodland trails links the search area’s clearings. No invisible layout components are required.\n\n### Layout components\nBuild one compact forest zone, sized to be crossed in a few minutes on foot. Place a modest arrival clearing at the near edge, then lead into dense coniferous and deciduous woodland occupying most of the map. Several distinct clearings sit off and along the trail network as readable places to conduct the search; make one deeper clearing the most secluded and visually important, suitable for the eventual discovery without placing the person in the render. Use packed earth trails, scattered roots, mossy rocks, fallen logs, low ferns, and close tree trunks to define the paths without creating impassable maze walls. Keep the outer boundary natural and subtle: thick undergrowth, tree density, shallow ravines, and dark forest depth close off the playable area. Compose the map with the arrival clearing in the foreground, trail forks threading toward the deeper forest, and the secluded clearing toward the far side.\n\n### Render order\nUse `isometric`: the forest’s mood, density, and readable clearings lead the design, while the top-down plan can be projected from the authoritative isometric scene.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the stated few-minutes-on-foot search area. Theme: eerie, unsettling woodland search, muted daylight, deep shadows, and enclosing vegetation. Use `P0`; this is one exterior ground surface with no required overhangs, interiors, separate maps, volumetric travel, or topology that must be procedurally valid.",
+  "blob": "### Genre\nThe dominant genre is Adventure: the player explores a forest to locate a missing person. There is no secondary genre.\n\n### Shape and preset\nUse `world-open`, a compact contiguous forest search area whose paths and clearings can be explored in flexible order. This matches the Exploration preset’s open-world search character, but the preset is `none` because the scene specifically requires only the search paths and the missing-person destination, not its broader landmark or secret bundle.\n\n### Config requirements\nUse `path-trail` for dense, readable woodland trails threading between the forest clearings. Use `npc-population` to depict the one missing person as a non-hostile named search subject in the forest, rather than random avatar replacements.\n\n### Layout requirements\nPlace `npc-population` once: site the missing person in the most secluded rear clearing, visibly off the main trail but reachable by a short branch path. This is the sole objective subject and should use the players’ own avatars for players; no random player-avatar stand-ins are part of the scene.\n\n### Layout components\nBuild a small forest map crossable in a few minutes of walking. Put a modest entry clearing at the near edge, leading into a dense central woodland of tall closely spaced trees, undergrowth, rocks, fallen logs, and several clearly differentiated open clearings. A network of worn dirt paths branches from the entry through the trees, reconnecting around the central woods and sending one narrower side trail to the secluded rear clearing containing the missing person. Keep sightlines short within the woods, with occasional clearings providing orientation and safe visual pauses. Enclose the playable search area with increasingly dense impassable woodland, boulders, and dark brush rather than a visible hard wall. Compose the map as a readable overhead forest mass: entry at the front, branching routes through the middle, and the destination clearing deep at the back.\n\n### Render order\nUse `isometric`: the eerie woodland atmosphere and dense dressed forest are authoritative, while the top-down plan can be projected afterward because no exact topology is mechanically required.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the stated few-minutes-on-foot search area. Theme is eerie, unsettling woodland search: dim filtered light, muted greens and browns, deep shadowed undergrowth, and an isolated destination clearing. Use `P0`; this is one contiguous ground-level forest surface with no forced extra capture path.",
   "spec": {
     "genre": "Adventure",
     "secondary": [],
     "shape": "world-open",
-    "preset": "Exploration",
+    "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "path-trail",
-        "text": "A branching but legible network of worn woodland trails links the search area’s clearings.",
+        "text": "Dense, readable woodland trails threading between the forest clearings.",
         "visible": true,
         "count": -1
+      },
+      {
+        "id": "npc-population",
+        "text": "One missing person as a non-hostile named search subject in the forest, with players using their own avatars and no random player-avatar stand-ins.",
+        "visible": true,
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "npc-population",
+        "text": "The sole missing-person objective subject.",
+        "count": 1,
+        "where": "In the most secluded rear clearing, visibly off the main trail but reachable by a short branch path."
       }
     ],
     "layout": {
-      "composition": "Arrival clearing in the foreground at the near edge; trail forks thread through dense woodland toward the deeper forest, with the secluded clearing on the far side.",
+      "composition": "Readable overhead forest mass with the entry clearing at the front, branching dirt routes through the dense central woodland in the middle, and the secluded destination clearing deep at the back.",
       "zones": [
         {
-          "name": "Compact forest search zone",
-          "role": "Freely searchable woodland area for the focused search journey.",
-          "where": "Across the map",
-          "size": "Compact; crossed in a few minutes on foot"
+          "name": "Entry clearing",
+          "role": "Modest near-edge arrival clearing leading players into the forest search area.",
+          "where": "Front / near edge",
+          "size": "modest"
         },
         {
-          "name": "Arrival clearing",
-          "role": "Modest arrival area at the start of the search.",
-          "where": "Near edge, foreground",
-          "size": "Modest"
+          "name": "Central woodland",
+          "role": "Dense traversable forest with branching and reconnecting search paths, short sightlines, and orienting clearings.",
+          "where": "Centre",
+          "size": "-1"
         },
         {
-          "name": "Search clearings",
-          "role": "Readable places to conduct the search along and off the trail network.",
-          "where": "Throughout the woodland along and off trails",
-          "size": "-1 distinct clearings"
-        },
-        {
-          "name": "Secluded clearing",
-          "role": "Visually important eventual discovery location, without placing the person in the render.",
-          "where": "Far side, deeper forest",
+          "name": "Secluded rear clearing",
+          "role": "Destination clearing containing the missing person.",
+          "where": "Deep rear / back",
           "size": "-1"
         }
       ],
       "paths": [
         {
-          "from": "Arrival clearing",
-          "to": "Search clearings",
+          "from": "Entry clearing",
+          "to": "Central woodland",
           "kind": "trail"
         },
         {
-          "from": "Search clearings",
-          "to": "Secluded clearing",
+          "from": "Central woodland",
+          "to": "Central woodland",
+          "kind": "trail"
+        },
+        {
+          "from": "Central woodland",
+          "to": "Secluded rear clearing",
           "kind": "trail"
         }
       ],
-      "terrain": "Packed earth trails through dense coniferous and deciduous woodland, with scattered roots, mossy rocks, fallen logs, low ferns, shallow ravines, and dark forest depth.",
+      "terrain": "Ground-level forest surface with worn dirt paths, dense tall closely spaced trees, undergrowth, rocks, fallen logs, and several differentiated open clearings.",
       "props": [
         {
-          "name": "Coniferous and deciduous trees",
+          "name": "Tall closely spaced trees",
           "count": -1,
-          "where": "Occupying most of the map and closing the outer edge"
+          "where": "Dense central woodland and increasingly dense outer boundary woodland"
         },
         {
-          "name": "Scattered roots",
+          "name": "Undergrowth",
           "count": -1,
-          "where": "Along the trails"
+          "where": "Throughout the woods, deep and shadowed beneath the trees"
         },
         {
-          "name": "Mossy rocks",
+          "name": "Rocks",
           "count": -1,
-          "where": "Throughout the woodland"
+          "where": "Throughout the central woodland and clearings"
         },
         {
           "name": "Fallen logs",
           "count": -1,
-          "where": "Throughout the woodland"
+          "where": "Throughout the central woodland"
         },
         {
-          "name": "Low ferns",
+          "name": "Open clearings",
           "count": -1,
-          "where": "Along paths and woodland floor"
+          "where": "Differentiated spaces throughout the forest, including entry and secluded rear clearings"
         },
         {
-          "name": "Thick undergrowth",
+          "name": "Boulders",
           "count": -1,
-          "where": "Outer boundary"
+          "where": "Around the playable search-area boundary"
+        },
+        {
+          "name": "Dark brush",
+          "count": -1,
+          "where": "Around the playable search-area boundary"
         }
       ],
-      "boundary": "Natural and subtle: thick undergrowth, tree density, shallow ravines, and dark forest depth close off the playable area.",
+      "boundary": "Increasingly dense impassable woodland, boulders, and dark brush rather than a visible hard wall.",
       "scale_band": "small",
-      "theme": "Eerie, unsettling woodland search; muted daylight, deep shadows, enclosing vegetation."
+      "theme": "Eerie, unsettling woodland search; dim filtered light, muted greens and browns, deep shadowed undergrowth, isolated destination clearing."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "The forest’s mood, density, and readable clearings lead the design, while the top-down plan can be projected from the authoritative isometric scene.",
+      "why": "No exact topology is mechanically required, so the eerie dressed woodland atmosphere is authoritative.",
       "set_piece": false
     },
     "route": [
@@ -122,7 +140,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

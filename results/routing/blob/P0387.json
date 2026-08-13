@@ -9,7 +9,7 @@
     }
   ],
   "scene_prompt": "Create a 3D endless-runner map in a bright, colorful cartoon urban subway setting, viewed from a third-person camera behind and above the runner. A straight track corridor extends along the +Z axis as repeating 100-stud chunks, with three parallel 8-stud-wide lanes centered at X = -8, 0, and +8. Arrange open track sections, train-yard sections with parallel rails, parked subway trains, signals, and simple platform-side props; barrier-run sections with lane-based barriers and signs; lit concrete tunnel sections with overhead signs and low-clearance overhangs spanning the tracks; and ramp sections that lead onto train roofs or raised track. Place coins in straight lines, arcs, and curved trails above or between the lanes. Keep the track corridor readable ahead, with urban subway structures framing the sides and a clear forward route.",
-  "blob": "### Genre\nThe dominant genre is Infinite Runner: the original specifies automatic forward motion through an endless, lane-snapped obstacle path. No secondary genre is needed.\n\n### Shape and preset\nUse `lane-snap`, a fixed three-lane subway corridor with the runner shifting between parallel tracks rather than steering freely. This matches the Lane Runner preset; retain its modular chunk and collectible-trail character, while replacing its generic moving-traffic emphasis with the explicitly requested subway-yard, barrier, tunnel, and ramp chunk scenery.\n\n### Config requirements\nUse visible `chunk-modular`: repeating 100-stud straight segments align exactly end-to-end along +Z. Use visible `obstacle-jump` for low lane barriers, raised signs, low tunnel clearances, and ramps onto train roofs or raised track. Use `collectible-nodes` as invisible pickup placements, while their coin models remain visibly arranged as straight runs, arcs, and curved aerial trails over and between lanes. No unrequested universal options apply.\n\n### Layout components\nBuild one infinite straight corridor with three parallel, 8-stud-wide lanes centered at X = -8, 0, and +8. Each 100-stud chunk has a matching entrance and exit cross-section so chunks join without lateral drift. Alternate open track, TrainYard, BarrierRun, TunnelSection, and RampSection chunks without making adjacent chunks visually identical.\n\nOpen-track chunks are clear rails with colorful urban retaining walls, support posts, and distant city-subway framing. TrainYard chunks widen visually with parallel rails, parked subway trains, signal masts, platform edges, and simple platform-side props; train roofs can align with ramp approaches. BarrierRun chunks keep the three lane reads clear while placing low barriers, full-height blockers, and raised sign frames in individual lanes. TunnelSection chunks are lit concrete tubes with overhead signs and broad low-clearance overhangs spanning the corridor. RampSection chunks use simple aligned ramps rising from a lane onto a train roof or raised rail deck before returning to the main track. Keep side structures framing the corridor but never obscuring the forward read. Compose from behind and above the runner, with the three lanes converging toward a bright vanishing point.\n\n### Render order\nUse `topdown`: draw the authoritative plan first so every modular lane segment, obstacle pattern, ramp connection, and clear continuation is readable and physically continuous before dressing it isometrically.\n\n### Scale, theme, and pipeline cost\nScale is huge because this is an endlessly repeated chunk system rather than a finite course. Theme is bright, colorful cartoon urban subway. Use `P6` because modular obstacle sequences and speed-scaled clearances must remain valid by construction. No additional pipeline modifier is forced.",
+  "blob": "### 1. Genre\nThe dominant genre is `Infinite Runner`: the player continuously advances through a repeating subway corridor, reacting to lane obstacles and collecting coin trails.\n\n### 2. Shape and preset\nUse `lane-snap`, the fixed three-lane corridor shape. It is a straight +Z subway route with lateral movement confined to the three aligned rail lanes. Match the Lane Runner preset, retaining its modular corridor and collectible emphasis while replacing its generic street obstacles with the specified subway barriers, trains, tunnel clearance bars, and roof ramps.\n\n### 3. Config requirements\nUse `chunk-modular` for visually seamless 100-stud subway segments whose rail bed, lane boundaries, side structures, and skyline framing join cleanly from one chunk to the next. Use `hazard-kill` for lane-occupying full blockers, train bodies, and barrier patterns that visibly terminate a bad line. Use `obstacle-jump` for low barriers and ramps that create readable vertical avoidance and access to train roofs or raised track. Do not add unrequested scenery systems or population.\n\n### 4. Layout requirements\nUse `collectible-nodes`: place coin trails as straight five-to-ten-coin runs along a lane, rising arcs over low barriers and ramps, and gentle curves that encourage lateral lane changes. Site each trail in the clear route immediately before or above its associated obstacle pattern, never inside a train, barrier, tunnel ceiling, or side wall.\n\n### 5. Layout components\nBuild one continuous track-corridor zone aligned along +Z. It has exactly three parallel lanes, each 8 studs wide, centered at X = -8, 0, and +8, with rails and a readable open forward path. Repeat five 100-stud chunk types: open track; TrainYard with parallel rails, parked subway trains, signal posts, platforms, and simple platform-side props; BarrierRun with lane-based low barriers, full blockers, and raised signs; TunnelSection with lit concrete walls, overhead signage, and a low-clearance overhang spanning all three lanes; and RampSection with simple approach ramps onto train roofs or raised track. Urban subway structures frame both sides while preserving long sightlines down the corridor. Compose from a third-person, behind-and-above runner view, with the track converging clearly toward the forward horizon.\n\n### 6. Render order\nUse `topdown` first and treat it as authoritative, because the three-lane route, obstacle clearance, and chunk-to-chunk continuity must remain playable before the isometric dressing is derived.\n\n### 7. Scale, theme, and pipeline cost\nUse a medium scale: render a representative consecutive run of the repeating 100-stud chunks rather than an implied infinite world. Theme: bright, colorful cartoon urban subway. Apply `P6` because the modular lane route and avoidance geometry must remain valid by construction; `P2` because train roofs and tunnel ceilings overhang the track; and `P3` because the route passes between open urban track and enclosed tunnel interiors.",
   "spec": {
     "genre": "Infinite Runner",
     "secondary": [],
@@ -19,156 +19,102 @@
     "options": [
       {
         "id": "chunk-modular",
-        "text": "Repeating 100-stud straight subway-corridor segments aligned exactly end-to-end along +Z, each with matching entrance and exit cross-sections so chunks join without lateral drift.",
+        "text": "Visually seamless 100-stud subway segments whose rail bed, lane boundaries, side structures, and skyline framing join cleanly from one chunk to the next.",
+        "visible": true,
+        "count": 5
+      },
+      {
+        "id": "hazard-kill",
+        "text": "Lane-occupying full blockers, train bodies, and barrier patterns that visibly terminate a bad line.",
         "visible": true,
         "count": -1
       },
       {
         "id": "obstacle-jump",
-        "text": "Low lane barriers, raised signs, low tunnel clearances, and aligned ramps onto train roofs or raised track.",
+        "text": "Low barriers and ramps that create readable vertical avoidance and access to train roofs or raised track.",
         "visible": true,
         "count": -1
       },
       {
         "id": "collectible-nodes",
-        "text": "Invisible pickup placements whose visible coin models form straight runs, arcs, and curved aerial trails over and between the lanes.",
+        "text": "Coin trails as straight five-to-ten-coin runs along a lane, rising arcs over low barriers and ramps, and gentle curves that encourage lateral lane changes.",
         "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "collectible-nodes",
+        "text": "Coin trails as straight five-to-ten-coin runs along a lane, rising arcs over low barriers and ramps, and gentle curves that encourage lateral lane changes.",
+        "count": -1,
+        "where": "In the clear route immediately before or above its associated obstacle pattern, never inside a train, barrier, tunnel ceiling, or side wall."
+      }
+    ],
     "layout": {
-      "composition": "Third-person view from behind and above the runner; three parallel lanes fill the foreground and converge toward a bright vanishing point ahead. Urban subway structures frame both sides without obscuring the clear forward route.",
+      "composition": "Third-person behind-and-above runner view, with the straight track corridor converging clearly toward the forward horizon; urban subway structures frame both sides while preserving long sightlines down the corridor.",
       "zones": [
         {
-          "name": "Infinite straight corridor",
-          "role": "Endless lane-snapped runner route made from repeating modular chunks.",
-          "where": "Extending forward along +Z from the runner.",
-          "size": "Huge; repeating 100-stud chunks."
-        },
-        {
-          "name": "Open-track chunks",
-          "role": "Clear running segments between obstacle set pieces.",
-          "where": "Alternating along the corridor.",
-          "size": "100-stud chunk."
-        },
-        {
-          "name": "TrainYard chunks",
-          "role": "Widened visual sections with parallel rails and parked trains; train roofs can meet ramp approaches.",
-          "where": "Alternating along the corridor.",
-          "size": "100-stud chunk."
-        },
-        {
-          "name": "BarrierRun chunks",
-          "role": "Lane-based obstacle sections while preserving the three-lane read.",
-          "where": "Alternating along the corridor.",
-          "size": "100-stud chunk."
-        },
-        {
-          "name": "TunnelSection chunks",
-          "role": "Lit concrete tunnel obstacle sections with overhead signage and low-clearance spans.",
-          "where": "Alternating along the corridor.",
-          "size": "100-stud chunk."
-        },
-        {
-          "name": "RampSection chunks",
-          "role": "Aligned ramps rise from a lane onto a train roof or raised rail deck, then return to the main track.",
-          "where": "Alternating along the corridor.",
-          "size": "100-stud chunk."
+          "name": "Track Corridor",
+          "role": "One continuous endless-runner route through repeating open track, TrainYard, BarrierRun, TunnelSection, and RampSection chunks.",
+          "where": "Aligned along the +Z axis.",
+          "size": "Medium representative consecutive run of repeating 100-stud chunks."
         }
       ],
       "paths": [
         {
-          "from": "Runner start",
-          "to": "Infinite straight corridor",
+          "from": "Track Corridor",
+          "to": "Track Corridor",
           "kind": "track"
-        },
-        {
-          "from": "Left lane",
-          "to": "Forward chunk exit",
-          "kind": "track"
-        },
-        {
-          "from": "Centre lane",
-          "to": "Forward chunk exit",
-          "kind": "track"
-        },
-        {
-          "from": "Right lane",
-          "to": "Forward chunk exit",
-          "kind": "track"
-        },
-        {
-          "from": "RampSection lane",
-          "to": "Train roof or raised rail deck",
-          "kind": "ramp"
-        },
-        {
-          "from": "Train roof or raised rail deck",
-          "to": "Main track",
-          "kind": "ramp"
         }
       ],
-      "terrain": "Straight subway track corridor running along +Z, with three parallel 8-stud-wide lanes centred at X = -8, 0, and +8; open rails, concrete tunnel surfaces, and colorful urban retaining walls.",
+      "terrain": "Rail bed with three parallel 8-stud-wide rail lanes centered at X = -8, 0, and +8; open urban track transitions into lit concrete tunnel interiors.",
       "props": [
         {
-          "name": "Parallel runner lanes",
-          "count": 3,
-          "where": "Centred at X = -8, 0, and +8 along the full corridor."
+          "name": "Open track section",
+          "count": -1,
+          "where": "Within the repeating track corridor."
         },
         {
-          "name": "Colorful urban retaining walls",
+          "name": "TrainYard sections with parallel rails, parked subway trains, signal posts, platforms, and simple platform-side props",
           "count": -1,
-          "where": "Sides of open-track chunks."
+          "where": "Within the repeating track corridor."
         },
         {
-          "name": "Support posts",
+          "name": "BarrierRun sections with lane-based low barriers, full blockers, and raised signs",
           "count": -1,
-          "where": "Along open-track chunk sides."
+          "where": "Within the repeating track corridor."
         },
         {
-          "name": "Parked subway trains",
+          "name": "TunnelSection with lit concrete walls, overhead signage, and a low-clearance overhang spanning all three lanes",
           "count": -1,
-          "where": "TrainYard chunks beside parallel rails."
+          "where": "Within the repeating track corridor."
         },
         {
-          "name": "Signal masts",
+          "name": "RampSection approach ramps onto train roofs or raised track",
           "count": -1,
-          "where": "TrainYard chunks."
+          "where": "Within the repeating track corridor."
         },
         {
-          "name": "Platform edges and simple platform-side props",
+          "name": "Urban subway side structures",
           "count": -1,
-          "where": "TrainYard chunks."
-        },
-        {
-          "name": "Low barriers, full-height blockers, and raised sign frames",
-          "count": -1,
-          "where": "Individual lanes in BarrierRun chunks."
-        },
-        {
-          "name": "Overhead signs and broad low-clearance overhangs",
-          "count": -1,
-          "where": "TunnelSection chunks spanning the corridor."
-        },
-        {
-          "name": "Coin models",
-          "count": -1,
-          "where": "In straight runs, arcs, and curved aerial trails over or between lanes."
+          "where": "Framing both sides of the corridor."
         }
       ],
-      "boundary": "Side structures, retaining walls, tunnel walls, and urban subway framing contain the corridor edges while leaving the forward route unobscured.",
-      "scale_band": "huge",
+      "boundary": "Urban subway structures frame both sides; the route remains open and readable forward along the corridor.",
+      "scale_band": "medium",
       "theme": "Bright, colorful cartoon urban subway."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "Modular lane segments, obstacle patterns, ramp connections, and clear continuation must remain physically continuous.",
+      "why": "the three-lane route, obstacle clearance, and chunk-to-chunk continuity must remain playable before isometric dressing is derived",
       "set_piece": false
     },
     "route": [
-      "P6"
+      "P6",
+      "P2",
+      "P3"
     ],
     "notes": [],
     "scene_prompt": "Create a 3D endless-runner map in a bright, colorful cartoon urban subway setting, viewed from a third-person camera behind and above the runner. A straight track corridor extends along the +Z axis as repeating 100-stud chunks, with three parallel 8-stud-wide lanes centered at X = -8, 0, and +8. Arrange open track sections, train-yard sections with parallel rails, parked subway trains, signals, and simple platform-side props; barrier-run sections with lane-based barriers and signs; lit concrete tunnel sections with overhead signs and low-clearance overhangs spanning the tracks; and ramp sections that lead onto train roofs or raised track. Place coins in straight lines, arcs, and curved trails above or between the lanes. Keep the track corridor readable ahead, with urban subway structures framing the sides and a clear forward route."
@@ -176,7 +122,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

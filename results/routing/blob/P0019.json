@@ -19,182 +19,207 @@
     }
   ],
   "scene_prompt": "Create a compact, continuous 3D fantasy RPG world that players can walk across, progressing through nine connected regions: Beginner's Plain, Mist Forest, Ice Canyon, Lava Volcano, Golden Desert, Abyssal Sea, Sky City, Shadow Kingdom, and Black Moon Castle. Arrange the regions as a clear journey from open grassy plains through foggy woodland, icy ravines, volcanic terrain, desert, a deep-sea-themed area, a city suspended in the sky, and a dark kingdom, ending at the Black Moon Castle beneath the looming remnants of an exploded black moon. Place dedicated entrances within each regional map leading to separate small dungeon and raid maps. Feature region-appropriate monsters and imposing boss encounter spaces, including an icy titan arena, a volcanic dragon lair, and a final cosmic throne or fortress arena within the castle.",
-  "blob": "### Genre\n주 장르는 `RPG`이다. 레벨·장비·몬스터 처치·보스·퀘스트에 따른 성장과 지역별 전투 여정이 핵심이며, 이 수치는 레이아웃에는 반영하지 않는다.\n\n### Shape and preset\n형상은 `world-single`이다. 아홉 지역은 하나의 작은 연속 지표 위에서 도보로 이어지는 순차적 세계이며, 분리된 던전·레이드 입구는 지역 내부의 부속 목적지로 둔다. 어느 단일 프리셋도 이 연속 세계와 지역별 별도 던전 구조를 온전히 담지 못하므로 프리셋은 none이다.\n\n### Config requirements\n`hazard-aggro`는 **보이는 지형**으로, 일반 몬스터 서식지와 전투가 일어날 도로 밖의 넓은 공터·둥지, 그리고 세 개의 보스 전장을 만든다. `landmark-focal`은 **보이는 지형**으로, 여정의 종점에서 멀리 보이는 검은달 성과 상공의 파열된 노바 코어 잔해다. `terrain-relief`는 **보이는 지형**으로, 얼음 협곡·화산 사면·사막 능선·그림자 왕국의 황량한 고지를 구성한다. `water-body`는 **보이는 지형**으로, 심연의 바다 지역의 깊고 어두운 해수와 해저풍 지형이다. 몬스터 생성기나 보상·퀘스트 표식 같은 보이지 않는 기계 요소는 배치하지 않는다.\n\n### Layout components\n세계는 전경의 초보자의 평원에서 시작해 안개의 숲, 얼음 협곡, 용암 화산, 황금사막, 심연의 바다, 천공도시, 그림자왕국, 검은달 성으로 이어지는 **9개** 연결 지역이다. 넓은 풀 평원에서 숲길로 들어가고, 협곡 바닥길과 화산 능선길, 사막 대상로, 해안·해저풍 통로, 긴 상승교를 차례로 연결해 공중에 매달린 천공도시로 올린 뒤, 어두운 왕국을 지나 성문으로 진입한다. 프로스트 타이탄용 빙정 원형 전장, 볼케이노 드래곤용 용암 분화구 둥지, 성 내부의 아스트랄 카이저용 우주적 왕좌·요새 전장을 둔다. 각 지역에는 별도 소규모 던전 및 레이드 맵으로 이어지는 전용 입구를 한 곳의 뚜렷한 관문 군으로 배치한다. 검은 절벽과 낙하 불가 지형이 외곽 경계를 이루며, 프레임에서는 평원에서 성까지의 대각선 여정과 상공 천공도시를 함께 읽게 한다.\n\n### Render order\n`topdown`을 먼저 렌더하고 이를 권위 있는 연결 계획으로 사용한다. 아홉 지역의 도보 연결과 상승교가 끊기면 진행이 불가능하므로, 외관 우선 등각 구도보다 유효한 경로가 우선이다.\n\n### Scale, theme, and pipeline cost\n규모는 medium: 아홉 지역 모두를 담되 처음부터 끝까지 걸어갈 수 있는 압축된 세계다. 테마는 AAA급 다크 하이 판타지, 원소 생물군계, 우주적 종말 분위기다. `tiered`는 협곡·화산·사막 고저차가 하나의 지표면 위의 릴리프이기 때문에 필요하다. `P2`는 지상 위를 떠 있는 천공도시와 그 하부·상부 동시 표현이 단일 평면을 가리기 때문에 필요하다. `P4`는 지역 내부 관문이 연결하는 소규모 던전·레이드가 주 세계와 별개 맵이기 때문에 필요하다. `CHECK`는 심연의 바다의 실제 수역과 가능한 수중 높이 공간을 검토하기 위해 필요하다.",
+  "blob": "### 1. Genre\nThe dominant genre is `RPG`: the original progression, combat, boss, quest, dungeon, and raid loop makes this a character-progression fantasy RPG, not merely an exploration world.\n\n### 2. Shape and preset\nUse `world-open`, matching a single compact overworld whose nine regions are physically walkable in sequence. The preset is none: Action RPG is closest, but its `world-hub-dungeon` hub structure does not match the author’s continuous region-to-region journey; retain the separate dungeon and raid instances requested.\n\n### 3. Config requirements\nUse `hazard-aggro` for region-specific monster clearings and boss grounds set off the main travel route. Use `landmark-focal` for Black Moon Castle and the shattered Nova Core remnants as the visible end-of-world destination. Use `terrain-relief` for ice ravines, volcanic slopes, desert dunes, and elevated sky-city approaches. Use `water-body` for the Abyssal Sea region’s real water environment. Use `building-interior` for the entered Black Moon Castle and the dungeon and raid entrances that transition from overworld exterior into enclosed instance spaces.\n\n### 4. Layout requirements\nUse `spawner-npc`: place regular monster origins in dedicated encounter clearings within each of the nine regional zones, away from the main walking spine. Place one boss origin in each of the three named encounter spaces: the icy titan arena in Ice Canyon, the volcanic dragon lair in Lava Volcano, and the final cosmic throne arena inside Black Moon Castle.\n\n### 5. Layout components\nBuild nine compact, contiguous zones in this exact journey order: Beginner’s Plain, Mist Forest, Ice Canyon, Lava Volcano, Golden Desert, Abyssal Sea, Sky City, Shadow Kingdom, and Black Moon Castle. A broad, continuously walkable path changes material and character between zones: grass trail, foggy forest track, ravine pass, lava causeway, dune road, submerged or shoreline sea route, ascending sky-city bridge, shadowed kingdom avenue, and castle approach. Put dedicated dungeon and raid entrances within every regional map, each leading to separate small instance maps. Include three imposing boss spaces: a crystalline frozen arena, a black-rock lava dragon lair, and a cosmic fortress throne chamber. Bound the world with impassable cliffs, sea, void, or ruined walls, and compose the journey so the dark castle and fractured black moon dominate the far end of the progression.\n\n### 6. Render order\nUse `topdown` first and as authoritative, because all nine overworld regions must remain continuously connected on foot while their dungeon and raid transitions remain clearly placed.\n\n### 7. Scale, theme, and pipeline cost\nScale band: medium, driven by nine distinct but intentionally compact walkable regions plus small separate instances. Theme: AAA dark high fantasy, elemental biomes, celestial ruin, and cosmic finality. Pipeline modifiers: `tiered` for non-overhanging ravines, volcanoes, dunes, and elevated city approaches; `P3` for overworld-to-interior castle and dungeon transitions; `P4` for separate dungeon and raid maps; `CHECK` for the Abyssal Sea water environment.",
   "spec": {
     "genre": "RPG",
     "secondary": [],
-    "shape": "world-single",
+    "shape": "world-open",
     "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "hazard-aggro",
-        "text": "일반 몬스터 서식지와 전투가 일어날 도로 밖의 넓은 공터·둥지, 그리고 세 개의 보스 전장",
+        "text": "Region-specific monster clearings and boss grounds set off the main travel route.",
         "visible": true,
-        "count": 3
+        "count": -1
       },
       {
         "id": "landmark-focal",
-        "text": "여정의 종점에서 멀리 보이는 검은달 성과 상공의 파열된 노바 코어 잔해",
+        "text": "Black Moon Castle and the shattered Nova Core remnants as the visible end-of-world destination.",
         "visible": true,
         "count": -1
       },
       {
         "id": "terrain-relief",
-        "text": "얼음 협곡·화산 사면·사막 능선·그림자 왕국의 황량한 고지",
+        "text": "Ice ravines, volcanic slopes, desert dunes, and elevated sky-city approaches.",
         "visible": true,
         "count": -1
       },
       {
         "id": "water-body",
-        "text": "심연의 바다 지역의 깊고 어두운 해수와 해저풍 지형",
+        "text": "The Abyssal Sea region's real water environment.",
         "visible": true,
         "count": -1
+      },
+      {
+        "id": "building-interior",
+        "text": "The entered Black Moon Castle and the dungeon and raid entrances that transition from overworld exterior into enclosed instance spaces.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "spawner-npc",
+        "text": "One boss origin in each of the three named encounter spaces: the icy titan arena in Ice Canyon, the volcanic dragon lair in Lava Volcano, and the final cosmic throne arena inside Black Moon Castle.",
+        "visible": false,
+        "count": 3
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "spawner-npc",
+        "text": "One boss origin in each of the icy titan arena in Ice Canyon, the volcanic dragon lair in Lava Volcano, and the final cosmic throne arena inside Black Moon Castle.",
+        "count": 3,
+        "where": "In the icy titan arena in Ice Canyon, the volcanic dragon lair in Lava Volcano, and the final cosmic throne arena inside Black Moon Castle."
       }
     ],
     "layout": {
-      "composition": "전경의 초보자의 평원에서 검은달 성까지 이어지는 대각선 여정을 읽게 하며, 상공에는 천공도시와 그 하부·상부를 함께 보이게 한다.",
+      "composition": "A compact continuous journey progresses through nine connected regions, with the dark Black Moon Castle and fractured black moon dominating the far end of the progression.",
       "zones": [
         {
-          "name": "초보자의 평원",
-          "role": "여정의 시작인 넓은 풀 평원",
-          "where": "전경, 여정의 시작",
-          "size": ""
+          "name": "Beginner's Plain",
+          "role": "First regional zone of the progression.",
+          "where": "Start of the journey.",
+          "size": "compact"
         },
         {
-          "name": "안개의 숲",
-          "role": "평원 다음의 안개 낀 숲 지역",
-          "where": "초보자의 평원 뒤쪽",
-          "size": ""
+          "name": "Mist Forest",
+          "role": "Foggy woodland regional zone.",
+          "where": "After Beginner's Plain.",
+          "size": "compact"
         },
         {
-          "name": "얼음 협곡",
-          "role": "협곡 바닥길과 프로스트 타이탄용 빙정 원형 전장이 있는 지역",
-          "where": "안개의 숲 다음",
-          "size": ""
+          "name": "Ice Canyon",
+          "role": "Icy ravine regional zone containing the crystalline frozen icy titan arena.",
+          "where": "After Mist Forest.",
+          "size": "compact"
         },
         {
-          "name": "용암 화산",
-          "role": "화산 능선길과 볼케이노 드래곤용 용암 분화구 둥지가 있는 지역",
-          "where": "얼음 협곡 다음",
-          "size": ""
+          "name": "Lava Volcano",
+          "role": "Volcanic regional zone containing the black-rock lava dragon lair.",
+          "where": "After Ice Canyon.",
+          "size": "compact"
         },
         {
-          "name": "황금사막",
-          "role": "사막 대상로와 사막 능선이 있는 지역",
-          "where": "용암 화산 다음",
-          "size": ""
+          "name": "Golden Desert",
+          "role": "Desert regional zone.",
+          "where": "After Lava Volcano.",
+          "size": "compact"
         },
         {
-          "name": "심연의 바다",
-          "role": "깊고 어두운 해수와 해저풍 통로를 지나는 지역",
-          "where": "황금사막 다음",
-          "size": ""
+          "name": "Abyssal Sea",
+          "role": "Deep-sea-themed regional zone with a real water environment.",
+          "where": "After Golden Desert.",
+          "size": "compact"
         },
         {
-          "name": "천공도시",
-          "role": "긴 상승교로 올라가는 공중에 매달린 도시",
-          "where": "심연의 바다 뒤 상공",
-          "size": ""
+          "name": "Sky City",
+          "role": "City suspended in the sky.",
+          "where": "After Abyssal Sea.",
+          "size": "compact"
         },
         {
-          "name": "그림자왕국",
-          "role": "황량한 고지를 지나는 어두운 왕국",
-          "where": "천공도시 다음",
-          "size": ""
+          "name": "Shadow Kingdom",
+          "role": "Dark kingdom regional zone.",
+          "where": "After Sky City.",
+          "size": "compact"
         },
         {
-          "name": "검은달 성",
-          "role": "여정의 종점이며 성 내부에 아스트랄 카이저용 우주적 왕좌·요새 전장이 있는 지역",
-          "where": "배경, 그림자왕국 뒤",
-          "size": ""
+          "name": "Black Moon Castle",
+          "role": "Final castle region containing the cosmic fortress throne chamber and final cosmic throne arena.",
+          "where": "Far end of the progression, after Shadow Kingdom.",
+          "size": "compact"
         }
       ],
       "paths": [
         {
-          "from": "초보자의 평원",
-          "to": "안개의 숲",
-          "kind": "open ground"
+          "from": "Beginner's Plain",
+          "to": "Mist Forest",
+          "kind": "grass trail"
         },
         {
-          "from": "안개의 숲",
-          "to": "얼음 협곡",
-          "kind": "corridor"
+          "from": "Mist Forest",
+          "to": "Ice Canyon",
+          "kind": "foggy forest track"
         },
         {
-          "from": "얼음 협곡",
-          "to": "용암 화산",
-          "kind": "track"
+          "from": "Ice Canyon",
+          "to": "Lava Volcano",
+          "kind": "ravine pass"
         },
         {
-          "from": "용암 화산",
-          "to": "황금사막",
-          "kind": "track"
+          "from": "Lava Volcano",
+          "to": "Golden Desert",
+          "kind": "lava causeway"
         },
         {
-          "from": "황금사막",
-          "to": "심연의 바다",
-          "kind": "road"
+          "from": "Golden Desert",
+          "to": "Abyssal Sea",
+          "kind": "dune road"
         },
         {
-          "from": "심연의 바다",
-          "to": "천공도시",
-          "kind": "bridge"
+          "from": "Abyssal Sea",
+          "to": "Sky City",
+          "kind": "submerged or shoreline sea route"
         },
         {
-          "from": "천공도시",
-          "to": "그림자왕국",
-          "kind": "open ground"
+          "from": "Sky City",
+          "to": "Shadow Kingdom",
+          "kind": "ascending sky-city bridge"
         },
         {
-          "from": "그림자왕국",
-          "to": "검은달 성",
-          "kind": "corridor"
+          "from": "Shadow Kingdom",
+          "to": "Black Moon Castle",
+          "kind": "shadowed kingdom avenue and castle approach"
         }
       ],
-      "terrain": "풀 평원, 안개 낀 숲, 얼음 협곡, 화산 사면, 사막 능선, 깊고 어두운 해수와 해저풍 지형, 공중 천공도시, 황량한 고지로 이루어진 연속 지표.",
+      "terrain": "Grass plains, foggy woodland, ice ravines, volcanic slopes, desert dunes, a real Abyssal Sea water environment, elevated sky-city approaches, shadowed kingdom ground, and celestial ruin around the castle.",
       "props": [
         {
-          "name": "지역별 소규모 던전 및 레이드 맵으로 이어지는 전용 관문 군",
+          "name": "Dedicated dungeon entrances",
           "count": 9,
-          "where": "각 지역 내부"
+          "where": "Within every regional map, leading to separate small dungeon instance maps."
         },
         {
-          "name": "프로스트 타이탄용 빙정 원형 전장",
-          "count": 1,
-          "where": "얼음 협곡"
+          "name": "Dedicated raid entrances",
+          "count": 9,
+          "where": "Within every regional map, leading to separate small raid instance maps."
         },
         {
-          "name": "볼케이노 드래곤용 용암 분화구 둥지",
+          "name": "Crystalline frozen icy titan arena",
           "count": 1,
-          "where": "용암 화산"
+          "where": "Ice Canyon."
         },
         {
-          "name": "아스트랄 카이저용 우주적 왕좌·요새 전장",
+          "name": "Black-rock lava dragon lair",
           "count": 1,
-          "where": "검은달 성 내부"
+          "where": "Lava Volcano."
         },
         {
-          "name": "파열된 노바 코어 잔해",
+          "name": "Cosmic fortress throne chamber",
           "count": 1,
-          "where": "검은달 성 상공"
+          "where": "Inside Black Moon Castle."
+        },
+        {
+          "name": "Fractured black moon remnants",
+          "count": 1,
+          "where": "Dominating the far end above Black Moon Castle."
         }
       ],
-      "boundary": "검은 절벽과 낙하 불가 지형이 외곽 경계를 이룬다.",
+      "boundary": "Impassable cliffs, sea, void, or ruined walls bound the world.",
       "scale_band": "medium",
-      "theme": "AAA급 다크 하이 판타지, 원소 생물군계, 우주적 종말 분위기"
+      "theme": "AAA dark high fantasy, elemental biomes, celestial ruin, and cosmic finality."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "아홉 지역의 도보 연결과 상승교가 끊기면 진행이 불가능하므로 유효한 경로가 우선이다.",
+      "why": "all nine overworld regions must remain continuously connected on foot while their dungeon and raid transitions remain clearly placed.",
       "set_piece": false
     },
     "route": [
-      "P2",
-      "P4",
       "tiered",
+      "P3",
+      "P4",
       "CHECK"
     ],
     "notes": [],
@@ -203,12 +228,12 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
   "mapper_notes": [
-    "blob asked for topdown first; the route ['P0', 'tiered', 'CHECK'] gives isometric"
+    "blob asked for topdown first; the route ['P0', 'tiered', 'CHECK', 'P3'] gives isometric"
   ]
 }

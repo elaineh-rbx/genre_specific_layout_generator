@@ -14,112 +14,110 @@
     }
   ],
   "scene_prompt": "Create a top-down 3D soccer map with a tight, arcade-sized rectangular pitch sized for quick sphere flings and frequent ball contact. Place a goal net centered on each short end of the field, with a ball at midfield and two opposing teams of three player spheres arranged on their respective halves: one orange team and one blue team. Keep the pitch open and uncluttered for direct movement between the players, ball, and goals.",
-  "blob": "### Genre\nSports is the dominant genre: a compact 1v1 soccer match on a formal field, with two teams competing to score through opposing goals.\n\n### Shape and preset\nUse `field-bounded`, matched to the Field Sport preset. Here it is a tight arcade-sized rectangular soccer pitch rather than a regulation-scale stadium field. The prompt supports the preset’s bounded, goal-oriented field structure without requiring stadium dressing.\n\n### Config requirements\nUse visible-and-invisible `trigger-bounds`: draw the rectangular touchline perimeter and place the foul/reset detection boundary on it. Use visible-and-invisible `startpoint-play`: mark midfield as the kickoff/reset position, with the ball centered there. Use visible-and-invisible `trigger-scoring`: draw one centered goal net at each short end and place a scoring detection volume across each goal mouth. Do not render the invisible trigger planes or reset markers as separate objects.\n\n### Layout components\nMake one open rectangular pitch, tight in scale relative to the player spheres so contact is frequent. Put a centered midfield mark and ball at the exact center. Place three orange player spheres across one half and three blue player spheres across the opposite half, each team arranged with a forward sphere nearer midfield and two supporting spheres behind it. Center a goal net on each short edge, facing inward. Keep all ground between players, midfield, and goals unobstructed: no cover, buildings, terrain relief, stands, or clutter. Use a flat green turf surface with clear boundary lines and a simple center marking; the field edge is the play boundary. Frame the entire pitch clearly from directly overhead, with both nets and all six spheres visible.\n\n### Render order\nUse `topdown`: the requested top-down view and a precise, symmetric sports field make plan-first rendering authoritative; the valid playable topology is a simple bounded rectangle rather than a carveable route.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the tight arcade pitch and six total player spheres. Theme: clean, bright arcade soccer with orange-versus-blue teams. Use `P0`; this is one flat, single-surface field with no forced interior, stacked geometry, volumetric play, or procedural-validity requirement.",
+  "blob": "### Genre\nThe dominant genre is Sports: a timed 1v1 soccer match, with two teams competing to score through opposing nets. The timer, score display, and fling controls are mechanics/UI and do not enter the layout.\n\n### Shape and preset\nUse `space-bounded`, a compact rectangular soccer pitch whose marked perimeter defines the entire active field. This matches the Field Sport preset, retaining its regulated readable field structure but scaling it down to an arcade-tight play area for rapid sphere-to-ball contact.\n\n### Config requirements\nUse `trigger-bounds` as the clearly marked rectangular touchline and goal-line perimeter around the active pitch. Use `startpoint-play` as the central midfield kickoff spot holding the ball and as the symmetric reset reference for each side. Use `trigger-scoring` as visible goal mouths and nets centered on the two short ends. Do not add clutter, cover, seating, or stadium structures.\n\n### Layout requirements\nPlace two `trigger-scoring` volumes, one immediately inside each centered goal net, spanning the full mouth of that net. Place one `startpoint-play` marker at exact midfield under the ball for kickoffs and play resets. Place `trigger-bounds` continuously around the four pitch edges, with the goal-mouth scoring regions aligned to the short-end boundary openings.\n\n### Layout components\nThe single zone is a tight, arcade-sized rectangular grass or turf pitch, proportioned for six player spheres and one ball rather than a full-scale stadium field. A white center line divides equal orange and blue halves, with a small center circle or kickoff mark at midfield. Put exactly two goal nets, centered and mirrored on the short ends. Arrange exactly three orange player spheres across the orange half and exactly three blue player spheres across the blue half, facing inward toward the ball; keep their formations open enough for direct launch lines. The ball sits at midfield. The boundary is the painted rectangular field perimeter, with no obstacles or surrounding playable ground. Compose the top-down frame symmetrically, goals left and right, midfield centered, and both team formations fully visible.\n\n### Render order\nRender `topdown` first and treat it as authoritative, because the pitch must preserve exact bilateral symmetry, unobstructed player-ball-goal lines, and aligned scoring mouths.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the tight arcade pitch and six spherical players. Theme is clean, colorful arcade soccer: vivid green turf, crisp white markings, orange and blue teams, and simple nets. Use `P0`; the single flat field has no forced elevation, interior transition, separate map, or volumetric play space.",
   "spec": {
     "genre": "Sports",
     "secondary": [],
-    "shape": "field-bounded",
+    "shape": "space-bounded",
     "preset": "Field Sport",
     "axes": {},
     "options": [
       {
         "id": "trigger-bounds",
-        "text": "Draw the rectangular touchline perimeter and place the foul/reset detection boundary on it.",
+        "text": "A clearly marked rectangular touchline and goal-line perimeter around the active pitch.",
         "visible": true,
         "count": -1
       },
       {
         "id": "startpoint-play",
-        "text": "Mark midfield as the kickoff/reset position, with the ball centered there.",
+        "text": "The central midfield kickoff spot holding the ball and serving as the symmetric reset reference for each side.",
         "visible": true,
-        "count": -1
+        "count": 1
       },
       {
         "id": "trigger-scoring",
-        "text": "Draw one centered goal net at each short end and place a scoring detection volume across each goal mouth.",
+        "text": "Visible goal mouths and nets centered on the two short ends.",
         "visible": true,
         "count": 2
       }
     ],
+    "layout_placement": [
+      {
+        "id": "trigger-bounds",
+        "text": "The rectangular pitch perimeter with scoring regions aligned to the short-end openings.",
+        "count": -1,
+        "where": "Continuously around all four pitch edges, aligned with the scoring-region openings at both short ends."
+      },
+      {
+        "id": "startpoint-play",
+        "text": "A midfield marker under the ball for kickoffs and play resets.",
+        "count": 1,
+        "where": "At exact midfield under the ball."
+      },
+      {
+        "id": "trigger-scoring",
+        "text": "Scoring volumes immediately inside each centered goal net, spanning the full mouth of that net.",
+        "count": 2,
+        "where": "One inside each centered goal net on the two short ends, spanning the full goal mouth."
+      }
+    ],
     "layout": {
-      "composition": "Directly overhead view framing the entire rectangular pitch, with both short-end nets, the centered midfield mark and ball, and all six player spheres visible.",
+      "composition": "Symmetric top-down frame with the two goals on the left and right short ends, midfield centered, and both team formations fully visible.",
       "zones": [
         {
-          "name": "Open soccer pitch",
-          "role": "Tight arcade-sized 1v1 soccer play field for direct movement, sphere flings, and frequent ball contact.",
-          "where": "entire frame",
-          "size": "small, tight rectangular pitch"
-        },
-        {
-          "name": "Midfield",
-          "role": "Kickoff and reset position with the ball at the exact center.",
-          "where": "exact centre",
-          "size": ""
-        },
-        {
-          "name": "Orange half",
-          "role": "Orange team's half, with one forward nearer midfield and two supporting spheres behind.",
-          "where": "one half of the pitch",
-          "size": ""
-        },
-        {
-          "name": "Blue half",
-          "role": "Blue team's half, with one forward nearer midfield and two supporting spheres behind.",
-          "where": "opposite half of the pitch",
-          "size": ""
-        },
-        {
-          "name": "Goal ends",
-          "role": "Scoring targets centered on the short edges, facing inward.",
-          "where": "both short ends",
-          "size": ""
+          "name": "Arcade soccer pitch",
+          "role": "The complete active field for the timed 1v1 soccer match.",
+          "where": "Entire frame, divided evenly into orange and blue halves.",
+          "size": "Small, tight arcade-sized rectangular pitch proportioned for six player spheres and one ball."
         }
       ],
       "paths": [],
-      "terrain": "Flat green turf surface with clear rectangular boundary lines and a simple center marking.",
+      "terrain": "Flat vivid green grass or turf pitch with crisp white rectangular perimeter markings, a white center line, and a small center circle or kickoff mark.",
       "props": [
         {
-          "name": "goal net",
+          "name": "goal nets",
           "count": 2,
-          "where": "centered on each short edge, facing inward"
-        },
-        {
-          "name": "ball",
-          "count": 1,
-          "where": "exact center at midfield"
+          "where": "Centered and mirrored on the left and right short ends."
         },
         {
           "name": "orange player spheres",
           "count": 3,
-          "where": "across one half, with one nearer midfield and two behind"
+          "where": "Arranged openly across the orange half, facing inward toward the midfield ball."
         },
         {
           "name": "blue player spheres",
           "count": 3,
-          "where": "across the opposite half, with one nearer midfield and two behind"
+          "where": "Arranged openly across the blue half, facing inward toward the midfield ball."
+        },
+        {
+          "name": "ball",
+          "count": 1,
+          "where": "At exact midfield."
         }
       ],
-      "boundary": "The rectangular field edge and touchline perimeter are the play boundary.",
+      "boundary": "The painted rectangular field perimeter, with no obstacles or surrounding playable ground.",
       "scale_band": "small",
-      "theme": "clean, bright arcade soccer with orange-versus-blue teams"
+      "theme": "Clean, colorful arcade soccer with vivid green turf, crisp white markings, orange and blue teams, and simple nets."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the requested top-down view and precise symmetric bounded field make plan-first rendering authoritative.",
+      "why": "Exact bilateral symmetry, unobstructed player-ball-goal lines, and aligned scoring mouths must remain playable.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
-    "notes": [],
+    "notes": [
+      "visible on 'trigger-scoring' set from goes_to=both"
+    ],
     "scene_prompt": "Create a top-down 3D soccer map with a tight, arcade-sized rectangular pitch sized for quick sphere flings and frequent ball contact. Place a goal net centered on each short end of the field, with a ball at midfield and two opposing teams of three player spheres arranged on their respective halves: one orange team and one blue team. Keep the pitch open and uncluttered for direct movement between the players, ball, and goals."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

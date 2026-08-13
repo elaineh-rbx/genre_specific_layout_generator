@@ -14,82 +14,91 @@
     }
   ],
   "scene_prompt": "Create a small, dense FPS arena set in a sunflower garden, built for 8 players. Arrange tall sunflower rows as cover, with clear lanes running between the rows for movement and sightlines.",
-  "blob": "### Genre\nThe dominant genre is Shooter: a free-for-all FPS combat map, classified from the stated match mode rather than the garden setting.\n\n### Shape and preset\nUse `lane-network`, interpreted as a compact garden grid of firing lanes between dense planting rows. The closest preset is Arena Deathmatch, but retain only its cover concept: the prompt specifies no elevated firing positions or looping room network.\n\n### Config requirements\nUse `cover-los` as visible geometry: tall, dense sunflower rows form soft visual cover and repeatedly break long firing sightlines while leaving readable gaps between rows. Do not add team bases, objectives, pickups, or other unrequested gameplay geometry.\n\n### Layout components\nBuild one small, dense, roughly square outdoor arena sized for 8 players. Fill most of the play area with parallel and staggered rows of tall sunflowers, arranged in several compact blocks rather than one uninterrupted field. Straight, clear earthen garden lanes run north-south and east-west between the rows, creating multiple short firing corridors and intersections where players can cross or change direction. Keep the central crossing slightly more open as the primary clash space, with sunflower blocks immediately around it for cover. Vary row lengths and offset their ends to avoid a single dominating sightline while preserving clear traversal through every lane. Use packed soil paths, dark cultivated earth beneath the plants, and a low hedge or wooden garden fence around the perimeter as the visible boundary. Frame the full garden from an elevated isometric view, with sunflower height and lane readability both clear.\n\n### Render order\nUse `isometric`: the arena is a simple, readable single-surface combat space, so its visual garden composition should lead rather than requiring a topology-validating plan.\n\n### Scale, theme, and pipeline cost\nScale band: small, driven by the explicit 8-player free-for-all match and dense arena brief. Theme: bright rural sunflower garden, warm cultivated soil, tall golden flowers, compact arcade FPS readability. Pipeline modifier: `P0`; the arena is one exterior surface with no forced stacked layers, interiors, separate maps, or validity-by-construction route.",
+  "blob": "### Genre\n`Shooter` is the dominant genre: a free-for-all FPS for eight players, with combat organized around readable firing lanes and cover rather than a team objective.\n\n### Shape and preset\nUse `lane-network`, adapting the Arena Deathmatch family to a compact garden rather than its usual industrial arena. The preset is none: the prompt retains a lane-based combat layout but specifically calls for sunflower-row cover, not its power-up, elevation, or looping-room bundle.\n\n### Config requirements\n`cover-los` uses dense, tall sunflower rows as organic sightline breakers between firing lanes. `spawn-protected` uses screened garden-edge entry pockets so a player does not appear directly in another player’s firing lane.\n\n### Layout requirements\nPlace `spawn-protected` at eight distributed spawn markers around the outer garden edge, each behind a short offset sunflower screen and facing into a nearby lane rather than across the map. No pickups, NPC emitters, objectives, or scoring volumes are required by this free-for-all prompt.\n\n### Layout components\nBuild one small, dense rectangular sunflower garden arena. Parallel, tall sunflower rows form repeated cover bands across most of the ground, with several clear, straight-to-gently-offset dirt or grass lanes between them for movement and ranged sightlines. Keep a modest open central crossing where lanes intersect, while preserving enough rows around it to prevent uninterrupted end-to-end fire. Add narrow perimeter circulation strips behind the outer rows for flanking and for the eight protected spawn pockets. Ground is compact soil and short grass; the sunflower rows are the principal props and cover. Enclose the garden with a low hedge, fence, or dense outer planting that clearly marks the play boundary without resembling an interior. Compose the arena as a legible compact plan, with repeating golden flower rows making the lane pattern immediately readable from above.\n\n### Render order\nUse `isometric`: this is a small combat arena whose aesthetic identity depends on the dense sunflower garden dressing; a projected top-down can recover the simple lane plan.\n\n### Scale, theme, and pipeline cost\nScale band: small, driven by the stated eight-player match and dense arena intent. Theme: bright sunny sunflower garden, warm rural soil, stylized FPS combat space. Pipeline modifier: `P0`; the single-level garden has no forced overhang, interior transition, separate map, volumetric play, or topology that must be generated by construction.",
   "spec": {
     "genre": "Shooter",
     "secondary": [],
     "shape": "lane-network",
-    "preset": "Arena Deathmatch",
+    "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "cover-los",
-        "text": "Tall, dense sunflower rows form soft visual cover and repeatedly break long firing sightlines while leaving readable gaps between rows.",
+        "text": "Dense, tall sunflower rows as organic sightline breakers between firing lanes.",
         "visible": true,
         "count": -1
+      },
+      {
+        "id": "spawn-protected",
+        "text": "Screened garden-edge entry pockets so a player does not appear directly in another player's firing lane.",
+        "visible": true,
+        "count": 8
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "spawn-protected",
+        "text": "Eight distributed spawn markers around the outer garden edge, each behind a short offset sunflower screen and facing into a nearby lane rather than across the map.",
+        "count": 8,
+        "where": "Around the outer garden edge, behind short offset sunflower screens, facing into nearby lanes rather than across the map."
       }
     ],
     "layout": {
-      "composition": "Elevated isometric view framing the full compact square garden arena: parallel and staggered sunflower blocks fill most of the frame, with clear north-south and east-west earthen lanes between them. The slightly more open central crossing is the primary clash space, immediately ringed by cover blocks, while a low hedge or wooden garden fence traces the perimeter.",
+      "composition": "A legible compact plan viewed isometrically, with repeating golden flower rows making the lane pattern immediately readable from above.",
       "zones": [
         {
           "name": "Sunflower garden arena",
-          "role": "Small, dense roughly square 8-player free-for-all FPS combat space.",
-          "where": "Full outdoor play area",
-          "size": "small"
+          "role": "Free-for-all FPS combat organized around readable firing lanes and cover.",
+          "where": "Entire compact rectangular map",
+          "size": "Small and dense"
         },
         {
           "name": "Central crossing",
-          "role": "Primary clash space where players cross or change direction.",
-          "where": "centre",
-          "size": "slightly more open than the surrounding lanes"
+          "role": "Open crossing where lanes intersect while surrounding rows prevent uninterrupted end-to-end fire.",
+          "where": "Centre",
+          "size": "Modest"
         },
         {
-          "name": "Sunflower cover blocks",
-          "role": "Tall dense planting rows that break sightlines while preserving readable lane gaps.",
-          "where": "around the central crossing and throughout the arena",
-          "size": "several compact blocks"
+          "name": "Perimeter circulation strips",
+          "role": "Flanking circulation and protected spawn pockets.",
+          "where": "Behind the outer sunflower rows around the garden edge",
+          "size": "Narrow"
         }
       ],
       "paths": [
         {
-          "from": "Sunflower cover blocks",
-          "to": "Central crossing",
-          "kind": "road"
+          "from": "firing lanes",
+          "to": "central crossing",
+          "kind": "open ground"
         },
         {
-          "from": "North edge",
-          "to": "South edge",
-          "kind": "road"
-        },
-        {
-          "from": "West edge",
-          "to": "East edge",
-          "kind": "road"
+          "from": "perimeter circulation strips",
+          "to": "nearby firing lanes",
+          "kind": "open ground"
         }
       ],
-      "terrain": "Packed soil garden lanes, dark cultivated earth beneath the plants, and tall sunflower rows; row lengths vary and their ends are offset to prevent a dominating sightline.",
+      "terrain": "Compact soil and short grass, with clear straight-to-gently-offset dirt or grass lanes between tall sunflower rows.",
       "props": [
         {
-          "name": "Tall dense sunflower rows",
+          "name": "tall sunflower rows",
           "count": -1,
-          "where": "Parallel and staggered compact blocks across most of the play area, immediately around the central crossing"
+          "where": "Repeated cover bands across most of the garden ground, including around the central crossing and outer edge"
         },
         {
-          "name": "Low hedge or wooden garden fence",
+          "name": "low hedge, fence, or dense outer planting",
           "count": -1,
-          "where": "perimeter"
+          "where": "Around the garden perimeter"
         }
       ],
-      "boundary": "A low hedge or wooden garden fence visibly encloses the outdoor garden arena.",
+      "boundary": "A low hedge, fence, or dense outer planting clearly marks the play boundary without resembling an interior.",
       "scale_band": "small",
-      "theme": "Bright rural sunflower garden, warm cultivated soil, tall golden flowers, compact arcade FPS readability."
+      "theme": "Bright sunny sunflower garden, warm rural soil, stylized FPS combat space"
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "the arena is a simple, readable single-surface combat space, so the visual garden composition should lead.",
+      "why": "The small combat arena's aesthetic identity depends on dense sunflower garden dressing, while a projected top-down can recover the simple lane plan.",
       "set_piece": false
     },
     "route": [
@@ -101,7 +110,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

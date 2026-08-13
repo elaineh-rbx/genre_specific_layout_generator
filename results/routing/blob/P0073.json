@@ -19,7 +19,7 @@
     }
   ],
   "scene_prompt": "Create a 3/4-view 3D tactical board-game diorama of a small modern mansion on a compact 8x8 tile grid. Present model-like mansion rooms and corridors as a readable cutaway layout, with the target and guard pieces placed on clear tile paths; guards occupy simple fixed patrol routes through the space.",
-  "blob": "### Genre\nThe dominant genre is Strategy: a turn-based tactical board-game encounter whose spatial decisions happen on a fixed grid. There is no secondary genre.\n\n### Shape and preset\nUse `board-grid`, matched from the Board & Card Games preset. Here it is not an abstract tabletop board: it is a compact 8×8 playable tile board built as a cutaway miniature modern mansion, with each room and corridor aligned cleanly to the grid.\n\n### Config requirements\nUse `tile-grid` as visible geometry: evenly sized, clearly bounded floor tiles define every navigable mansion room, hall, and exterior edge. No additional menu options are implied. The target and guard pieces are visible model props. Their occupancy and the guards’ fixed patrol-route logic are invisible layout data, placed after the board segmentation and never rendered as UI or route overlays.\n\n### Layout components\nBuild one small square 8×8 tile diorama. Arrange a central hall and short connecting corridors between several compact, roofless cutaway modern-mansion rooms: a living room, kitchen, office, and bedroom-sized target room. Keep walls low enough for a clear three-quarter read while still visibly separating rooms. Place the target model on a clear interior tile in the target room, reached through the mansion’s tile paths. Place several guard model pieces on distinct hallway and room routes, each following a short, simple fixed patrol loop across contiguous tiles; ensure their paths visibly intersect the circulation without obscuring every approach to the target. Use clean miniature floors, thin modern walls, door openings between tiles, sparse model furniture, and a raised diorama base as the outer boundary. Compose the mansion diagonally in frame, with all eight grid rows and columns readable in a high three-quarter isometric-like view.\n\n### Render order\nUse `isometric`: render the three-quarter diorama view first as authoritative, then derive the top-down board plan from it. The board is compact and visually driven rather than a maze or racing circuit requiring procedural carving.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the stated compact 8×8 grid. Theme: polished modern mansion, literal tabletop board-game miniature, stylized Hitman Go-like presentation. Use `SET`, because this is real displayed board geometry rather than a walkable world; skip traversal and jump-gap checks.",
+  "blob": "### 1. Genre\nThe dominant genre is Strategy: turn-limited tactical movement on a compact board, with guards as opponents to route around. The move limit and takedown rule classify the game but do not alter the rendered layout.\n\n### 2. Shape and preset\nUse `board-grid`, matching the Board & Card Games preset, adapted from a generic tabletop board into a tactical stealth diorama. The entire mansion is an 8×8 playable board rather than a walkable full-scale building.\n\n### 3. Config requirements\nUse `tile-grid` as a clear, evenly divided 8×8 floor grid, with each tile readable beneath the model-like furniture and pieces. No other image configuration is implied: the mansion is a cutaway board-game set, not an enterable exterior building.\n\n### 4. Layout requirements\nNo menu-defined layout option applies. Place one target piece in a room that is reachable by more than one tile route, and place guard pieces on their visibly legible fixed patrol paths through corridors and rooms. Site each patrol as a short closed or back-and-forth tile sequence that avoids ambiguous overlap with furniture; these are authored tactical markers rather than spawned NPCs.\n\n### 5. Layout components\nBuild one small modern mansion diorama occupying the full 8×8 grid. Arrange a central corridor as the primary connection, with compact cutaway rooms branching from it: an entry/lounge zone, a living room, a kitchen or dining room, a study, and a bedroom or bathroom-sized side room. Keep walls low or removed on the camera-facing sides so every tile remains visible in the three-quarter view. Furnish rooms sparsely with model-scale sofas, tables, counters, beds, cabinets, and planter accents, always leaving clean tile paths around them. Put the target in a distinct interior room, while guards occupy clear corridor and room patrol tiles. The board has a raised rectangular plinth boundary and no surrounding traversable exterior. Compose it as an isometric tabletop miniature with the mansion centered and all tile routes readable at once.\n\n### 6. Render order\nUse `isometric`: render the three-quarter board-game presentation first and treat it as authoritative, since the compact board is a display set whose visual readability leads the plan.\n\n### 7. Scale, theme, and pipeline cost\nScale is small, driven by the explicit 8×8 tile grid. Theme is a polished modern-mansion stealth board-game diorama with clean Hitman Go-like model pieces. Use `SET` because this is a real tabletop-scale tactical set that is viewed and operated as a board rather than traversed as an avatar space.",
   "spec": {
     "genre": "Strategy",
     "secondary": [],
@@ -29,104 +29,131 @@
     "options": [
       {
         "id": "tile-grid",
-        "text": "Evenly sized, clearly bounded floor tiles define every navigable mansion room, hall, corridor, and exterior edge of the compact 8×8 playable tile board.",
+        "text": "A clear, evenly divided 8×8 floor grid with each tile readable beneath the model-like furniture and pieces.",
         "visible": true,
-        "count": 8
+        "count": 64
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "A small square mansion diorama is composed diagonally in frame in a high three-quarter isometric-like view, with all eight grid rows and columns readable. Low roofless walls separate the rooms while preserving a clear cutaway read.",
+      "composition": "Isometric three-quarter tabletop miniature, with the mansion centered on the full board and all tile routes readable at once; camera-facing room walls are low or removed.",
       "zones": [
         {
-          "name": "Central hall",
-          "role": "Main circulation space linking the mansion rooms.",
+          "name": "central corridor",
+          "role": "Primary connection between the compact mansion rooms and patrol tiles.",
           "where": "centre",
-          "size": "compact"
+          "size": ""
         },
         {
-          "name": "Living room",
-          "role": "Compact cutaway mansion room connected to the central hall.",
-          "where": "off the central hall",
-          "size": "compact"
+          "name": "entry/lounge zone",
+          "role": "Compact cutaway entry and lounge area.",
+          "where": "branching from the central corridor",
+          "size": ""
         },
         {
-          "name": "Kitchen",
-          "role": "Compact cutaway mansion room connected to the central hall.",
-          "where": "off the central hall",
-          "size": "compact"
+          "name": "living room",
+          "role": "Compact cutaway living space with sparse model-scale furniture and clean tile paths.",
+          "where": "branching from the central corridor",
+          "size": ""
         },
         {
-          "name": "Office",
-          "role": "Compact cutaway mansion room connected to the central hall.",
-          "where": "off the central hall",
-          "size": "compact"
+          "name": "kitchen or dining room",
+          "role": "Compact cutaway kitchen or dining space with sparse counters or tables and clean tile paths.",
+          "where": "branching from the central corridor",
+          "size": ""
         },
         {
-          "name": "Target room",
-          "role": "Bedroom-sized room containing the target model on a clear interior tile.",
-          "where": "connected through the mansion tile paths",
-          "size": "bedroom-sized"
+          "name": "study",
+          "role": "Compact cutaway study room.",
+          "where": "branching from the central corridor",
+          "size": ""
+        },
+        {
+          "name": "bedroom or bathroom-sized side room",
+          "role": "Distinct interior side room containing the target piece.",
+          "where": "branching from the central corridor",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Central hall",
-          "to": "Living room",
+          "from": "central corridor",
+          "to": "entry/lounge zone",
           "kind": "corridor"
         },
         {
-          "from": "Central hall",
-          "to": "Kitchen",
+          "from": "central corridor",
+          "to": "living room",
           "kind": "corridor"
         },
         {
-          "from": "Central hall",
-          "to": "Office",
+          "from": "central corridor",
+          "to": "kitchen or dining room",
           "kind": "corridor"
         },
         {
-          "from": "Central hall",
-          "to": "Target room",
+          "from": "central corridor",
+          "to": "study",
+          "kind": "corridor"
+        },
+        {
+          "from": "central corridor",
+          "to": "bedroom or bathroom-sized side room",
           "kind": "corridor"
         }
       ],
-      "terrain": "Clean miniature floors on a raised diorama base; evenly bounded tile flooring throughout the roofless cutaway mansion.",
+      "terrain": "A compact 8×8 tiled board floor beneath the cutaway modern mansion diorama.",
       "props": [
         {
-          "name": "Target model piece",
-          "count": -1,
-          "where": "on a clear interior tile in the target room"
+          "name": "target piece",
+          "count": 1,
+          "where": "In a distinct interior room reachable by more than one tile route."
         },
         {
-          "name": "Guard model pieces",
+          "name": "guard pieces",
           "count": -1,
-          "where": "on distinct hallway and room routes across contiguous tiles"
+          "where": "On clear corridor and room patrol tiles, following short closed or back-and-forth tile sequences that avoid ambiguous overlap with furniture."
         },
         {
-          "name": "Sparse model furniture",
+          "name": "model-scale sofas",
           "count": -1,
-          "where": "inside the mansion rooms"
+          "where": "Sparse furnishings in rooms, leaving clean tile paths around them."
         },
         {
-          "name": "Low thin modern walls",
+          "name": "model-scale tables",
           "count": -1,
-          "where": "separating rooms and corridors"
+          "where": "Sparse furnishings in rooms, leaving clean tile paths around them."
         },
         {
-          "name": "Door openings",
+          "name": "model-scale counters",
           "count": -1,
-          "where": "between tiles"
+          "where": "Sparse furnishings in rooms, leaving clean tile paths around them."
+        },
+        {
+          "name": "model-scale beds",
+          "count": -1,
+          "where": "Sparse furnishings in rooms, leaving clean tile paths around them."
+        },
+        {
+          "name": "model-scale cabinets",
+          "count": -1,
+          "where": "Sparse furnishings in rooms, leaving clean tile paths around them."
+        },
+        {
+          "name": "planter accents",
+          "count": -1,
+          "where": "Sparse accents in the mansion rooms."
         }
       ],
-      "boundary": "A raised diorama base forms the outer boundary.",
+      "boundary": "A raised rectangular plinth boundary surrounds the board; there is no surrounding traversable exterior.",
       "scale_band": "small",
-      "theme": "Polished modern mansion, literal tabletop board-game miniature, stylized Hitman Go-like presentation."
+      "theme": "Polished modern-mansion stealth board-game diorama with clean Hitman Go-like model pieces."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "the compact board is visually driven rather than a maze or racing circuit requiring procedural carving.",
+      "why": "the compact board is a display set whose visual readability leads the plan.",
       "set_piece": true
     },
     "route": [
@@ -138,7 +165,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

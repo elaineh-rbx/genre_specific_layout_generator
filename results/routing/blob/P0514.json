@@ -19,7 +19,7 @@
     }
   ],
   "scene_prompt": "Create a 3D obby map built as a small vertical tower of bright, colourful floating blocks and platforms against a clear sky. The climb rises roughly 12–15 platform jumps from a base at the bottom to a flag at the top, with a few checkpoint platforms spaced along the ascent; frame the full tower in one view.",
-  "blob": "### Genre\nThe dominant genre is Obby & Platformer: the authored goal is a player-paced climb through discrete platform jumps to a top flag.\n\n### Shape and preset\nUse `course-tower`, matching the Tower Obby preset. This is a compact vertical ascent of floating platforms rather than a sprawling course; retain the preset’s upward tower form, but use checkpoint landings requested by the author instead of adding timed or climbing obstacles not described.\n\n### Config requirements\nUse `path-track` as visible geometry: an ordered, continuously rising chain of bright floating blocks and platforms forming the climb. Use `checkpoint-respawn` as both visible geometry and invisible respawn markers: a few broad, safe checkpoint platforms spaced up the ascent. Use `winner-zone` as both visible geometry and an invisible completion marker: the final top platform holds the flag. No other obstacles, hazards, pickups, or hub geometry are requested.\n\n### Layout components\nPlace a small base platform at the bottom center, leading into a single vertical zigzag of roughly 12–15 individual platform jumps. Keep every platform visibly readable in the same tower silhouette, alternating lateral offsets around the central vertical axis while preserving a clear upward route. Insert a few larger, flat checkpoint platforms at natural intervals along the climb, approximately dividing the ascent into lower, middle, and upper sections. The summit is a slightly wider final platform at the tower’s top with one flag. Use only bright colourful cartoon blocks and platforms, with open clear sky surrounding the climb; there is no terrain, water, building, or enclosing boundary. Compose the tower as one compact, fully visible vertical object, with the base and flag both in frame.\n\n### Render order\nUse `topdown`: the jump chain must remain physically connected and clearable, so the plan is authoritative before the isometric dressing.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the explicitly compact 12–15-jump tower and requirement to frame the entire climb at once. Theme is a simple colourful cartoon obby: saturated floating blocks against a clear sky. Apply `P6` because the critical jump route must be valid by construction, and `P2` because the tower’s vertically stacked platforms occupy multiple overlying levels.",
+  "blob": "### 1. Genre\nThe dominant genre is Obby & Platformer: the player makes a discrete vertical sequence of platform jumps to reach the tower-top flag.\n\n### 2. Shape and preset\nUse `course-tower`, matching the Tower Obby preset. This is a compact vertical ascent with floating platforms stacked above the base; retain the preset’s climb-oriented structure but use the prompt’s small, fully frameable tower rather than an expansive tower.\n\n### 3. Config requirements\nUse `path-track` as the clearly readable, physics-legal chain of bright floating blocks and platforms from bottom to summit. Use `obstacle-jump` for varied stepped and offset jumps between those platforms. Use `checkpoint-respawn` for the visibly safe, broad checkpoint platforms placed during the climb. Use `winner-zone` as the summit platform with the flag.\n\n### 4. Layout requirements\nPlace `checkpoint-respawn` on three safe, enclosed landing platforms at roughly the one-quarter, halfway, and three-quarter heights of the 12–15-jump ascent. Place `winner-zone` once on the final top platform, centered beneath the flag. No other placed gameplay components are required.\n\n### 5. Layout components\nThe bottom zone is a small, broad floating base platform beneath the tower. Above it, build one continuous vertical platform track of roughly 12–15 jumps, using bright cartoon blocks, pads, and small floating platforms with readable lateral offsets and short stepped rises. Include three larger, flatter checkpoint platforms integrated into the ascent. The final zone is a slightly wider summit platform carrying one flag. There is no terrain, water, interior, road, or enclosing boundary: the tower floats in an open clear sky. Compose the entire tower centrally in frame from base through summit, with enough negative sky space around its silhouette to keep every platform legible.\n\n### 6. Render order\nUse `topdown`: the jump chain must be valid and continuously connected for the obby to be playable, so its plan is authoritative before the isometric dressing is produced.\n\n### 7. Scale, theme, and pipeline cost\nScale band: small, driven by the requested 12–15 platform jumps and requirement that the whole tower fit in one view. Theme: simple colourful cartoon obby, with bright floating blocks against a clear sky. Pipeline modifiers: `P2` because platforms stack directly above lower surfaces; `P6` because the critical jump path must be valid by construction.",
   "spec": {
     "genre": "Obby & Platformer",
     "secondary": [],
@@ -29,48 +29,56 @@
     "options": [
       {
         "id": "path-track",
-        "text": "An ordered, continuously rising chain of bright floating blocks and platforms forming the climb, with roughly 12–15 individual platform jumps in a vertical zigzag.",
-        "visible": true,
-        "count": 12
-      },
-      {
-        "id": "checkpoint-respawn",
-        "text": "A few broad, safe checkpoint platforms spaced up the ascent at natural intervals, approximately dividing it into lower, middle, and upper sections; each includes an invisible respawn marker.",
+        "text": "A clearly readable, physics-legal chain of bright floating blocks and platforms from the bottom to the summit.",
         "visible": true,
         "count": -1
       },
       {
+        "id": "obstacle-jump",
+        "text": "Varied stepped and offset jumps between the floating platforms.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "checkpoint-respawn",
+        "text": "Visibly safe, broad checkpoint platforms placed during the climb.",
+        "visible": true,
+        "count": 3
+      },
+      {
         "id": "winner-zone",
-        "text": "The slightly wider final platform at the tower's top holds one flag and includes an invisible completion marker.",
+        "text": "The summit platform with the flag.",
         "visible": true,
         "count": 1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "checkpoint-respawn",
+        "text": "Three safe, enclosed landing platforms.",
+        "count": 3,
+        "where": "At roughly the one-quarter, halfway, and three-quarter heights of the ascent."
+      },
+      {
+        "id": "winner-zone",
+        "text": "The summit platform with the flag.",
+        "count": 1,
+        "where": "On the final top platform, centered beneath the flag."
+      }
+    ],
     "layout": {
-      "composition": "One compact, fully visible vertical tower silhouette against open clear sky, with the small base platform at bottom centre and the flagged summit at the top in frame. Bright platforms zigzag upward with alternating lateral offsets around the central vertical axis.",
+      "composition": "The entire floating tower is centered in frame from the broad base platform through the summit, with enough negative clear-sky space around its silhouette to keep every platform legible.",
       "zones": [
         {
           "name": "Base platform",
-          "role": "Starting point for the climb.",
-          "where": "bottom centre",
-          "size": "small"
-        },
-        {
-          "name": "Vertical zigzag climb",
-          "role": "The single clear upward route of floating platform jumps.",
-          "where": "rising from the base around the central vertical axis",
-          "size": "compact"
-        },
-        {
-          "name": "Checkpoint landings",
-          "role": "Safe broad landing and respawn intervals separating lower, middle, and upper ascent sections.",
-          "where": "at natural intervals along the climb",
-          "size": "larger and flat"
+          "role": "The small, broad floating platform beneath the tower where the climb begins.",
+          "where": "Bottom of the tower.",
+          "size": "small and broad"
         },
         {
           "name": "Summit platform",
-          "role": "Completion area holding the flag.",
-          "where": "tower top",
+          "role": "The final slightly wider platform carrying the flag.",
+          "where": "Top of the tower.",
           "size": "slightly wider"
         }
       ],
@@ -81,36 +89,38 @@
           "kind": "track"
         }
       ],
-      "terrain": "No terrain or water; floating bright colourful cartoon blocks and platforms surrounded by clear sky.",
+      "terrain": "No terrain or water; the tower floats in an open clear sky.",
       "props": [
         {
           "name": "flag",
           "count": 1,
-          "where": "on the summit platform"
+          "where": "On the summit platform."
         }
       ],
-      "boundary": "Open clear sky with no enclosing boundary.",
+      "boundary": "No enclosing boundary; open clear sky surrounds the floating tower.",
       "scale_band": "small",
-      "theme": "Simple colourful cartoon obby with saturated floating blocks."
+      "theme": "Simple colourful cartoon obby with bright floating blocks against a clear sky."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the jump chain must remain physically connected and clearable.",
+      "why": "the jump chain must be valid and continuously connected for the obby to be playable.",
       "set_piece": false
     },
     "route": [
-      "P6",
-      "P2"
+      "P2",
+      "P6"
     ],
-    "notes": [],
+    "notes": [
+      "The ascent is described as roughly 12–15 jumps; this range is retained in the option text because the count field accepts only a single integer."
+    ],
     "scene_prompt": "Create a 3D obby map built as a small vertical tower of bright, colourful floating blocks and platforms against a clear sky. The climb rises roughly 12–15 platform jumps from a base at the bottom to a flag at the top, with a few checkpoint platforms spaced along the ascent; frame the full tower in one view."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

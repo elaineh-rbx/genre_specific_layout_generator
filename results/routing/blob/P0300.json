@@ -19,114 +19,135 @@
     }
   ],
   "scene_prompt": "Create a 3D third-person action roguelike map set in an abandoned underground stone temple, viewed from behind the explorer. The descent spans five procedurally arranged dungeon floors, each containing 6–10 compact 3D chambers crossed in seconds, connected by short corridors and ending at a visible downward stone stairway or lift passage to the newly generated floor below. Include small combat arenas, treasure chambers, merchant rooms, elite chambers, and rest rooms within the room network. Keep one unified temple style that grows progressively darker, more ruined, and more saturated in blue-violet tones on deeper floors, with stone walls, torchlight, and shadowed passages. The fifth and lowest floor culminates in a larger boss chamber for the Echo King, with an escape route from the temple beyond it.",
-  "blob": "### Genre\nDominant genre: Action, with RPG as a secondary genre because the core experience is room-by-room combat within a progression-driven dungeon. The Action genre owns the spatial form; RPG contributes no additional map structure here.\n\n### Shape and preset\nUse `arena-chain`: each floor is a compact linked sequence or branching network of short combat-ready chambers rather than one open arena. The closest preset is Hack & Slash, but use none as the preset name because its combat lock-ins, emitters, and breakable cover are not requested.\n\n### Config requirements\nNo additional Action options are selected. The prompt names chamber types and temple architecture, but does not require visible lock barriers, cover arrays, spectator space, pickups, or emitter geometry. There are no invisible layout-only options to place.\n\n### Layout components\nBuild five distinct procedurally arranged underground floors. Each floor contains 6–10 compact 3D stone chambers, each small enough to cross in seconds, joined by short shadowed corridors. Distribute small combat arenas, treasure chambers, merchant rooms, elite chambers, and rest rooms through each floor’s room network; make their identity legible through architecture and furnishing without adding unrequested gameplay markers. Every floor terminates in a clearly visible descending stone stairway or lift passage that leads to a newly generated floor below.\n\nThe fifth, lowest floor ends in a substantially larger circular or rectilinear boss chamber for the Echo King, followed by a clear escape route leading out from the temple. Use thick ruined stone walls as the continuous boundary, uneven flagstone floors, torch sconces, collapsed masonry, and deep recessed doorways. Keep all rooms indoors and enclosed; do not add outdoor terrain. Frame the primary render from a high behind-the-explorer third-person angle, looking through a doorway or corridor toward the next chamber, with the descent direction visually clear.\n\n### Render order\nUse `topdown`: the authoritative first render is a top-down floor plan for each generated floor, then dress it as an isometric/third-person scene. Every chamber network must retain reachable corridor connections and a visible route to its descent passage; `authored_plan` is not valid because this is neither a maze nor a racing circuit.\n\n### Scale, theme, and pipeline cost\nScale band: large, driven by five separate dungeon floors with 6–10 rooms each and a dedicated final boss chamber. Theme: dark abandoned subterranean temple, weathered stone, flickering torchlight, increasingly saturated blue-violet shadow. Pipeline modifier: `P4`, because the five descending floors load as separate generated maps rather than coexisting as one space.",
+  "blob": "### 1. Genre\nThe dominant genre is `Action`, with `Adventure` as a secondary genre: close-quarters and ranged combat through hostile dungeon rooms owns the layout, while the downward expedition supplies its directional progression.\n\n### 2. Shape and preset\nUse `world-chaptered`: five genuinely separate generated dungeon-floor maps descend in sequence, each loading after its exit stairway or lift passage. This shape is taken from outside Action’s usual set because the floors do not coexist on one surface. Preset: none; the Action Hack & Slash preset’s `rooms-sequence` describes a single room run, whereas this build is primarily a five-map chaptered descent.\n\n### 3. Config requirements\nUse `npc-population` for a visible merchant attendant and a clear service counter within each merchant chamber; do not add general ambient crowds. The abandoned temple geometry itself supplies the compact combat arenas, treasure rooms, elite rooms, rest rooms, and connecting corridors without adding unrequested visual options.\n\n### 4. Layout requirements\nUse `spawner-npc` with one or more hostile entry points per combat and elite chamber, placed against walls, behind pillars, or in recessed side niches rather than on the room entrance line. Use `npc-population` in layout as one merchant placement in every merchant room, positioned behind its counter. No other invisible pickups, scoring volumes, or respawn placements are specified.\n\n### 5. Layout components\nBuild five separate underground temple floors, each with 6–10 compact enclosed stone chambers crossed in seconds. Every floor begins at an arrival threshold and uses short shadowed corridors to form a connected room network containing small combat arenas, treasure chambers, merchant rooms, elite chambers, and rest rooms. Place a conspicuous downward stone stairway or lift passage at the progression end of floors one through four; it loads the next darker floor. The fifth floor ends in one larger Echo King boss chamber, followed by a clearly readable escape passage out of the temple. Use worn stone walls, cracked floors, sparse torch sconces, dark recesses, and blue-violet illumination that becomes stronger and more ruinous with depth. Keep the boundary fully enclosed by temple architecture. Compose each floor plan around a readable entry-to-descent path, with the boss chamber dominating the final map.\n\n### 6. Render order\nUse `topdown`: the authoritative first render must establish that every generated floor has a connected, reachable route from arrival through its chamber network to its descent exit; the dressed isometric third-person view follows from that plan.\n\n### 7. Scale, theme, and pipeline cost\nScale is large overall, driven by five distinct maps containing 30–50 compact rooms in total, though each individual floor is small. Theme: dark abandoned subterranean temple, weathered stone, torchlit shadows, increasingly saturated blue-violet ruin. Pipeline modifiers are `P4` because the five floors are separate loaded maps, and `P6` because each generated room network must be valid and connected from entry to its required downward exit.",
   "spec": {
     "genre": "Action",
     "secondary": [
-      "RPG"
+      "Adventure"
     ],
-    "shape": "arena-chain",
+    "shape": "world-chaptered",
     "preset": "none",
     "axes": {},
-    "options": [],
+    "options": [
+      {
+        "id": "npc-population",
+        "text": "A visible merchant attendant and a clear service counter within each merchant chamber; no general ambient crowds.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "spawner-npc",
+        "text": "One or more hostile entry points per combat and elite chamber, placed against walls, behind pillars, or in recessed side niches rather than on the room entrance line.",
+        "visible": false,
+        "count": -1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "npc-population",
+        "text": "One merchant placement in every merchant room, positioned behind its counter.",
+        "count": -1,
+        "where": "Behind the service counter in every merchant room."
+      },
+      {
+        "id": "spawner-npc",
+        "text": "One or more hostile entry points per combat and elite chamber, placed against walls, behind pillars, or in recessed side niches rather than on the room entrance line.",
+        "count": -1,
+        "where": "In every combat and elite chamber, against walls, behind pillars, or in recessed side niches rather than on the room entrance line."
+      }
+    ],
     "layout": {
-      "composition": "High behind-the-explorer third-person view, looking through a recessed doorway or shadowed corridor toward the next chamber, with the descent direction visibly clear.",
+      "composition": "Top-down plans establish five separate descending underground temple maps. Each floor reads from an arrival threshold through short shadowed corridors and compact chambers toward its downward exit; the fifth plan is dominated by the larger Echo King boss chamber and its escape passage.",
       "zones": [
         {
-          "name": "Dungeon floors 1–4",
-          "role": "Four distinct procedurally arranged underground room networks containing compact combat arenas, treasure chambers, merchant rooms, elite chambers, and rest rooms.",
-          "where": "Descending through the temple",
-          "size": "Each floor contains 6–10 compact 3D stone chambers."
+          "name": "Floors one through four",
+          "role": "Four separate generated dungeon-floor maps, each containing compact combat arenas, treasure chambers, merchant rooms, elite chambers, and rest rooms, with an arrival threshold and a progression exit.",
+          "where": "Sequentially descending underground, each loaded after the preceding floor's exit stairway or lift passage.",
+          "size": "Each floor contains 6–10 compact enclosed stone chambers crossed in seconds."
         },
         {
-          "name": "Fifth lowest floor",
-          "role": "Final underground room network culminating in the Echo King's boss encounter and an escape route from the temple.",
-          "where": "Lowest level of the descending temple",
-          "size": "6–10 compact 3D stone chambers, ending in a substantially larger boss chamber."
+          "name": "Fifth floor",
+          "role": "The final separate dungeon-floor map, ending in the Echo King boss encounter and an escape route out of the temple.",
+          "where": "Lowest and darkest map in the five-floor descent.",
+          "size": "6–10 compact enclosed stone chambers, with one larger boss chamber."
         },
         {
           "name": "Echo King boss chamber",
-          "role": "Final boss chamber for the Echo King, followed by the temple escape route.",
-          "where": "End of the fifth, lowest floor",
-          "size": "Substantially larger; circular or rectilinear."
+          "role": "Final boss encounter chamber followed by escape.",
+          "where": "At the progression end of the fifth floor.",
+          "size": "Larger than the compact chambers."
         }
       ],
       "paths": [
         {
-          "from": "Chambers on each dungeon floor",
-          "to": "Other chambers on the same floor",
+          "from": "Arrival threshold on each floor",
+          "to": "Compact chamber network",
           "kind": "corridor"
         },
         {
-          "from": "Each floor",
-          "to": "Newly generated floor below",
+          "from": "Compact chamber network on floors one through four",
+          "to": "Downward stone stairway or lift passage",
           "kind": "stair"
         },
         {
           "from": "Echo King boss chamber",
-          "to": "Outside the temple",
+          "to": "Escape passage out of the temple",
           "kind": "corridor"
         }
       ],
-      "terrain": "Uneven flagstone floors; no outdoor terrain.",
+      "terrain": "Underground weathered stone temple floors: worn stone walls, cracked floors, sparse torch sconces, dark recesses, and blue-violet illumination that becomes stronger and more ruinous with depth.",
       "props": [
         {
-          "name": "compact 3D stone chambers",
+          "name": "compact enclosed stone chambers",
           "count": -1,
-          "where": "6–10 on each of five underground floors"
+          "where": "6–10 on each of five separate floors, 30–50 rooms in total."
         },
         {
-          "name": "descending stone stairway or lift passage",
-          "count": -1,
-          "where": "Terminus of each dungeon floor"
+          "name": "downward stone stairways or lift passages",
+          "count": 4,
+          "where": "At the progression end of floors one through four."
         },
         {
-          "name": "thick ruined stone walls",
-          "count": -1,
-          "where": "Continuous boundary around all indoor rooms and corridors"
+          "name": "Echo King boss chamber",
+          "count": 1,
+          "where": "At the end of the fifth floor."
         },
         {
-          "name": "torch sconces",
-          "count": -1,
-          "where": "Throughout chambers and shadowed passages"
-        },
-        {
-          "name": "collapsed masonry",
-          "count": -1,
-          "where": "Throughout the ruined temple"
-        },
-        {
-          "name": "deep recessed doorways",
-          "count": -1,
-          "where": "Between chambers and corridors"
+          "name": "escape passage",
+          "count": 1,
+          "where": "Beyond the Echo King boss chamber."
         }
       ],
-      "boundary": "Thick ruined stone walls continuously enclose all indoor rooms and corridors.",
+      "boundary": "Fully enclosed by temple architecture.",
       "scale_band": "large",
-      "theme": "Dark abandoned subterranean temple; weathered stone, flickering torchlight, and increasingly saturated blue-violet shadow on deeper floors."
+      "theme": "Dark abandoned subterranean temple, weathered stone, torchlit shadows, increasingly saturated blue-violet ruin."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "reachable corridor connections and a visible route to every descent passage must remain valid.",
+      "why": "Every generated floor requires a connected, reachable route from arrival through its chamber network to its descent exit.",
       "set_piece": false
     },
     "route": [
-      "P4"
+      "P4",
+      "P6"
     ],
-    "notes": [],
+    "notes": [
+      "`world-chaptered` is taken from outside Action’s usual shape set because the five dungeon floors are separate loaded maps that do not coexist on one surface.",
+      "The blob specifies 6–10 rooms per floor and 30–50 rooms total, but the schema has no count field for zones; these ranges are retained in zone sizes and the chamber prop placement."
+    ],
     "scene_prompt": "Create a 3D third-person action roguelike map set in an abandoned underground stone temple, viewed from behind the explorer. The descent spans five procedurally arranged dungeon floors, each containing 6–10 compact 3D chambers crossed in seconds, connected by short corridors and ending at a visible downward stone stairway or lift passage to the newly generated floor below. Include small combat arenas, treasure chambers, merchant rooms, elite chambers, and rest rooms within the room network. Keep one unified temple style that grows progressively darker, more ruined, and more saturated in blue-violet tones on deeper floors, with stone walls, torchlight, and shadowed passages. The fifth and lowest floor culminates in a larger boss chamber for the Echo King, with an escape route from the temple beyond it."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
   "mapper_notes": [
-    "blob asked for topdown first; the route ['P0'] gives isometric"
+    "blob asked for topdown first; the route ['P4'] gives isometric"
   ]
 }

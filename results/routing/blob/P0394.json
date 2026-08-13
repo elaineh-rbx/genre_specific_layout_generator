@@ -14,127 +14,138 @@
     }
   ],
   "scene_prompt": "Create a compact 3D level-based speed-runner map in a bright neon-pastel style, divided into 3 separate stage areas. Each stage is a roughly 30-second running route at starting speed, lined with oversized glowing bubbles placed along the path as the key collectible terrain props. End every stage with a prominent glowing \"BIG WIN\" finish-line gateway, with a separate transition area beyond it leading to the next stage.",
-  "blob": "### Genre\nDominant genre: Simulation, with Racing as a secondary genre. The automatic speed-stat progression and repeated run-through upgrades make this a Stat Grinder; the linear stage finishes contribute racing-style finish geometry without owning the overall layout.\n\n### Shape and preset\nUse `tier-ladder`, interpreted as three successively reached speed-training routes rather than one uninterrupted ground plane. The matched preset is Stat Grinder. Its shape remains appropriate, but the prompt replaces its usual physical purchase gates and rebirth-pad emphasis with discrete completed stages and finish gateways.\n\n### Config requirements\n`path-circulation` is visible geometry: each stage has one clear, continuous running route from its arrival edge to its finish gateway. `station-training` is both visible and invisible: oversized glowing bubble runs visibly line the routes, while their step-on activation volumes are placed afterward and do not appear in the render. From secondary Racing, `trigger-finish` is both visible and invisible: every glowing BIG WIN gateway is drawn at a route terminus and carries an unseen stage-completion/transition volume.\n\n### Layout components\nBuild three separate stage areas, each a compact roughly 30-second running route at starting speed. Stage 1, Stage 2, and Stage 3 each begin at a clean arrival apron, then lead forward through a broad neon-pastel path densely lined with oversized glowing bubbles as the principal terrain props. Keep the bubble placements readable as a forward-running line with occasional wider clusters, not scattered across open terrain. End every route at a prominent glowing BIG WIN finish-line gateway. Beyond each gateway, provide a small separate transition apron; the first two hold the invisible transfer volume to the next stage, while the third is the final celebratory endpoint. Use simple flat ground with no requested water, relief, buildings, or additional settlement. Bound each stage with soft neon edge walls, pastel void, or luminous horizon barriers that keep attention on the route. Frame each stage diagonally so its start, bubble trail, and BIG WIN gateway read together.\n\n### Render order\nUse `isometric`: the three routes are simple, visually led running spaces rather than a circuit, maze, or precision obstacle topology requiring a generated plan.\n\n### Scale, theme, and pipeline cost\nScale band: medium, driven by three distinct compact 30-second stages. Theme: bright neon pastel, glossy glowing bubbles, soft luminous particle-like accents. Use `P4` because the three stages are separate mapped areas linked by transitions; no other geometry forces an additional pipeline pass.",
+  "blob": "### Genre\nThe dominant genre is Simulation, with Racing as a secondary genre for the stage-end finish gateways. The stat-growth and rebirth loop make this a Simulation `Stat Grinder`; Racing contributes only the explicit finish-line treatment.\n\n### Shape and preset\nUse `world-chaptered`: three genuinely separate stage maps, each completed before teleporting to the next. This shape is taken from outside Simulation’s usual set because the author explicitly requires isolated areas rather than one tiered shared world. The matched Simulation preset is none: the `Stat Grinder` progression concept remains, but its usual `tier-ladder` shape and most of its spatial bundle do not describe these teleported stages.\n\n### Config requirements\nUse `station-training` as oversized luminous bubbles arranged as the visible repeatable route props. Use `trigger-finish` as a prominent glowing “BIG WIN” gateway at each stage end. Use `teleporter-link` as the distinct transition area immediately beyond each gateway, visibly directing players into the following stage.\n\n### Layout requirements\nPlace `station-training` bubble interaction locations continuously along each stage’s main running line, with denser readable runs through the middle of a route and no hidden off-route clusters. Place three `trigger-finish` volumes, one precisely inside each BIG WIN gateway at the terminal end of its stage. Place two `teleporter-link` markers, one beyond the first finish and one beyond the second, each in its own short transition apron facing the next-stage departure.\n\n### Layout components\nBuild three compact, separate neon-pastel stage zones, each a roughly 30-second continuous running route at starting speed. Every zone starts with a clear entry stretch, develops into a flowing path lined by oversized glowing bubbles, and terminates at one glowing BIG WIN gateway. Beyond stages one and two, add a small uncluttered transition area containing the onward teleport marker. The third stage ends cleanly at its finish gateway without another stage connection. Keep terrain as smooth, bright synthetic ground with bubble-lit route edges and no unrelated structures. Each stage has a clear bounded endpoint; the maps do not coexist in one traversable surface. Compose each map around a legible start-to-finish diagonal or gentle curve, with the finish gateway visible as the route’s dominant terminal landmark.\n\n### Render order\nUse `isometric` first and make it authoritative, because the compact routes are visually simple and need their neon-pastel atmosphere and oversized bubble read established before plan conversion.\n\n### Scale, theme, and pipeline cost\nScale is medium: there are only three compact stages, but they are separate maps. Theme is bright neon pastel, smooth glowing bubbles, clean synthetic running paths, and soft particle-like luminosity. Pipeline modifier `P4` is required because the three stage areas are separate maps linked by transitions.",
   "spec": {
     "genre": "Simulation",
     "secondary": [
       "Racing"
     ],
-    "shape": "tier-ladder",
-    "preset": "Stat Grinder",
+    "shape": "world-chaptered",
+    "preset": "none",
     "axes": {},
     "options": [
       {
-        "id": "path-circulation",
-        "text": "Each of the three stages has one clear, continuous running route from its clean arrival apron to its glowing BIG WIN finish gateway.",
+        "id": "station-training",
+        "text": "Oversized luminous glowing bubbles arranged as visible repeatable route props along the running paths.",
         "visible": true,
-        "count": 3
-      },
+        "count": -1
+      }
+    ],
+    "layout_placement": [
       {
         "id": "station-training",
-        "text": "Oversized glowing bubble runs visibly line the broad neon-pastel routes, with step-on activation volumes placed afterward and not rendered.",
-        "visible": true,
-        "count": 3
+        "text": "Oversized luminous glowing bubble interaction locations.",
+        "count": -1,
+        "where": "Continuously along each stage's main running line, with denser readable runs through the middle of each route and no hidden off-route clusters."
       }
     ],
     "layout": {
-      "composition": "Frame each separate stage diagonally so its clean arrival apron, forward bubble trail, and BIG WIN gateway read together.",
+      "composition": "Each separate map is composed around a legible start-to-finish diagonal or gentle curve, with a clear entry stretch in the foreground or route start, glowing bubbles lining the flowing middle route, and the BIG WIN gateway visible as the dominant terminal landmark.",
       "zones": [
         {
-          "name": "Stage 1",
-          "role": "A compact roughly 30-second speed-training running route beginning at a clean arrival apron and ending at a BIG WIN finish gateway.",
-          "where": "first separate stage area",
-          "size": "compact, roughly 30 seconds at starting speed"
+          "name": "Stage One",
+          "role": "A compact continuous running route lined with oversized glowing bubbles, ending at a BIG WIN gateway.",
+          "where": "First separate stage map.",
+          "size": "Roughly a 30-second route at starting speed."
         },
         {
-          "name": "Stage 1 transition apron",
-          "role": "Small separate area beyond the Stage 1 gateway holding the invisible transfer volume to Stage 2.",
-          "where": "beyond the Stage 1 finish gateway",
-          "size": "small"
+          "name": "Transition Apron One",
+          "role": "An uncluttered transition area containing the onward teleport marker for Stage Two.",
+          "where": "Immediately beyond the Stage One finish gateway.",
+          "size": "Small."
         },
         {
-          "name": "Stage 2",
-          "role": "A compact roughly 30-second speed-training running route beginning at a clean arrival apron and ending at a BIG WIN finish gateway.",
-          "where": "second separate stage area",
-          "size": "compact, roughly 30 seconds at starting speed"
+          "name": "Stage Two",
+          "role": "A compact continuous running route lined with oversized glowing bubbles, ending at a BIG WIN gateway.",
+          "where": "Second separate stage map.",
+          "size": "Roughly a 30-second route at starting speed."
         },
         {
-          "name": "Stage 2 transition apron",
-          "role": "Small separate area beyond the Stage 2 gateway holding the invisible transfer volume to Stage 3.",
-          "where": "beyond the Stage 2 finish gateway",
-          "size": "small"
+          "name": "Transition Apron Two",
+          "role": "An uncluttered transition area containing the onward teleport marker for Stage Three.",
+          "where": "Immediately beyond the Stage Two finish gateway.",
+          "size": "Small."
         },
         {
-          "name": "Stage 3",
-          "role": "A compact roughly 30-second speed-training running route beginning at a clean arrival apron and ending at a BIG WIN finish gateway.",
-          "where": "third separate stage area",
-          "size": "compact, roughly 30 seconds at starting speed"
-        },
-        {
-          "name": "Final celebratory endpoint",
-          "role": "Small separate transition apron beyond the Stage 3 finish gateway.",
-          "where": "beyond the Stage 3 finish gateway",
-          "size": "small"
+          "name": "Stage Three",
+          "role": "A compact continuous running route lined with oversized glowing bubbles, ending cleanly at a BIG WIN gateway.",
+          "where": "Third separate stage map.",
+          "size": "Roughly a 30-second route at starting speed."
         }
       ],
       "paths": [
         {
-          "from": "Stage 1 arrival apron",
-          "to": "Stage 1 BIG WIN finish gateway",
+          "from": "Stage One entry stretch",
+          "to": "Stage One BIG WIN gateway",
           "kind": "track"
         },
         {
-          "from": "Stage 2 arrival apron",
-          "to": "Stage 2 BIG WIN finish gateway",
+          "from": "Stage One BIG WIN gateway",
+          "to": "Transition Apron One",
+          "kind": "portal"
+        },
+        {
+          "from": "Stage Two entry stretch",
+          "to": "Stage Two BIG WIN gateway",
           "kind": "track"
         },
         {
-          "from": "Stage 3 arrival apron",
-          "to": "Stage 3 BIG WIN finish gateway",
+          "from": "Stage Two BIG WIN gateway",
+          "to": "Transition Apron Two",
+          "kind": "portal"
+        },
+        {
+          "from": "Stage Three entry stretch",
+          "to": "Stage Three BIG WIN gateway",
           "kind": "track"
         }
       ],
-      "terrain": "Simple flat ground; broad neon-pastel paths densely lined with readable forward-running bubble trails and occasional wider bubble clusters. No requested water, relief, buildings, or settlement.",
+      "terrain": "Smooth, bright synthetic ground with bubble-lit route edges.",
       "props": [
         {
-          "name": "oversized glowing bubbles",
+          "name": "Oversized glowing bubbles",
           "count": -1,
-          "where": "densely lining each route in forward-running trails with occasional wider clusters"
+          "where": "Lining each stage's main running route, with denser runs through the route middles."
         },
         {
-          "name": "glowing BIG WIN finish-line gateway",
+          "name": "Glowing BIG WIN gateways",
           "count": 3,
-          "where": "at every route terminus"
+          "where": "At the terminal endpoint of each stage."
         },
         {
-          "name": "soft neon edge walls, pastel void, or luminous horizon barriers",
-          "count": -1,
-          "where": "bounding each stage and keeping attention on the route"
+          "name": "Onward teleport markers",
+          "count": 2,
+          "where": "In the separate transition aprons beyond the Stage One and Stage Two finish gateways."
         }
       ],
-      "boundary": "Each stage is bounded by soft neon edge walls, pastel void, or luminous horizon barriers.",
+      "boundary": "Each compact stage has a clear bounded endpoint; the three maps do not coexist on one traversable surface.",
       "scale_band": "medium",
-      "theme": "bright neon pastel, glossy glowing bubbles, soft luminous particle-like accents"
+      "theme": "Bright neon pastel, smooth glowing bubbles, clean synthetic running paths, soft particle-like luminosity."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "the three routes are simple, visually led running spaces rather than a circuit, maze, or precision obstacle topology requiring a generated plan.",
+      "why": "The compact routes are visually simple, so the neon-pastel atmosphere and oversized bubble read should be established before plan conversion.",
       "set_piece": false
     },
     "route": [
       "P4"
     ],
     "notes": [
-      "`trigger-finish` was named from secondary Racing but is not a canonical option ID for the dominant Simulation genre, so it was dropped. Its described finish gateways and invisible completion volumes remain represented in the layout wording."
+      "The `world-chaptered` shape is taken from outside Simulation's usual set because the stages are isolated maps linked by transitions.",
+      "The Simulation `Stat Grinder` concept is retained, but no preset is matched because its usual `tier-ladder` shape and spatial bundle do not describe the teleported stages.",
+      "dropped option 'trigger-finish': not in Simulation",
+      "dropped option 'teleporter-link': not in Simulation",
+      "dropped placement 'trigger-finish': not in Simulation",
+      "dropped placement 'teleporter-link': not in Simulation"
     ],
     "scene_prompt": "Create a compact 3D level-based speed-runner map in a bright neon-pastel style, divided into 3 separate stage areas. Each stage is a roughly 30-second running route at starting speed, lined with oversized glowing bubbles placed along the path as the key collectible terrain props. End every stage with a prominent glowing \"BIG WIN\" finish-line gateway, with a separate transition area beyond it leading to the next stage."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

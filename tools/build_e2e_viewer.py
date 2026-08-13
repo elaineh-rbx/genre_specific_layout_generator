@@ -22,11 +22,28 @@ import sys
 REPO = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
 
-from layoutgen.paths import RESULTS, ROUTING, SCENES
+from layoutgen.paths import EVAL, RESULTS, ROUTING, SCENES
 from layoutgen.pipeline.prompts import decompose
 
 E2E = ROUTING / "e2e"
 IMAGES = SCENES / "e2e"
+
+
+def checklist(scene: str) -> dict:
+    """The eval checklist, which this arm did not write.
+
+    Shown last because it is the only section on the page that is not this chain's own
+    account of itself: everything above is what the pipeline decided, and this is the
+    list the render will be marked against. It is keyed by scene rather than by arm, so
+    on most of these it was extracted from a different arm's prompt - `addendum_from`
+    says which, and it is worth reading before treating a mismatch as a failure.
+    """
+    p = EVAL / f"{scene}.json"
+    if not p.is_file():
+        return {"features": [], "excluded": [], "from": ""}
+    d = json.loads(p.read_text(encoding="utf-8"))
+    return {"features": d.get("features") or [], "excluded": d.get("excluded") or [],
+            "from": d.get("addendum_from") or ""}
 
 
 def segments(text: str, body: str, addendum: str) -> list[dict]:
@@ -78,6 +95,8 @@ def collect() -> list[dict]:
             "error": d.get("error", ""),
             "seconds": d.get("seconds", 0),
             "images": images,
+            "placements": spec.get("layout_placement") or [],
+            "checklist": checklist(scene),
         })
     return rows
 
@@ -137,6 +156,39 @@ details[open] summary{margin-bottom:8px}
 .key span b{font-weight:600}
 .key i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;
   vertical-align:baseline}
+
+/* Lifted from the pipeline viewer so a checklist reads the same on both pages: the
+   two are looked at side by side, and a second styling of the same object is a second
+   thing to learn. */
+.lane{border:1px solid var(--line);border-radius:10px;padding:8px 11px;margin:0;background:var(--panel-2)}
+.lane.lay{border-color:var(--green)}
+.lane h5{margin:0 0 5px;font-size:11px;letter-spacing:.3px;color:var(--green)}
+.lane ul{margin:0;padding-left:16px}
+.lane li{font-size:11.5px;line-height:1.5;color:var(--text)}
+.lane li i{font-style:normal;color:var(--muted)}
+.lane .none{color:var(--muted);font-size:11.5px;font-style:italic}
+.checklist{margin:0;padding:0;list-style:none}
+.checklist li{padding:7px 0;border-top:1px dashed var(--line);display:grid;
+  grid-template-columns:auto 1fr;gap:8px;align-items:baseline}
+.checklist li:first-child{border-top:none;padding-top:0}
+.checklist .tick{display:inline-block;width:14px;height:14px;border-radius:4px;
+  border:1.5px solid var(--muted);flex:0 0 14px;position:relative;top:2px}
+.checklist .tick.p{border-color:var(--accent)}
+.checklist .tick.a{border-color:var(--green)}
+.checklist .name{font-size:12px;font-weight:600;color:var(--text)}
+.checklist .origin{font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--muted);margin-left:6px;padding:1px 6px;border-radius:4px;
+  border:1px solid var(--line);background:var(--panel-2);vertical-align:middle}
+.checklist .origin.p{color:var(--accent);border-color:rgba(108,140,255,.4)}
+.checklist .origin.a{color:var(--green);border-color:rgba(53,200,139,.4)}
+.checklist .notes{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.4}
+.checklist .quote{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.4;
+  font-style:italic;padding-left:8px;border-left:2px solid var(--line)}
+.excluded{margin:0;padding:0;list-style:none;font-size:11px;color:var(--muted)}
+.excluded li{padding:3px 0;border-top:1px dotted var(--line)}
+.excluded li:first-child{border-top:none;padding-top:0}
+.excluded .name{color:#8791a8;text-decoration:line-through;text-decoration-color:rgba(135,145,168,.4)}
+.excluded .why{margin-left:6px;font-size:10.5px;color:#6f7690;font-style:italic}
 """
 
 JS = """
@@ -165,6 +217,37 @@ function key(parts, total){
   return '<div class="key">' + ['body','addendum','frame'].filter(k=>by[k]).map(k=>
     `<span><i style="background:${TINT[k]}"></i><b>${by[k]}</b> chars —
      ${LABEL[k]} (${Math.round(100*by[k]/total)}%)</span>`).join('') + '</div>';
+}
+// The pipeline viewer's markup as well as its styling, for the same reason.
+function checklistHtml(cl){
+  const feats = (cl && cl.features) || [], excl = (cl && cl.excluded) || [];
+  if (!feats.length) return '<span class="miss">no checklist for this scene \\u2014 run '
+    + '<code>tools/extract_checklist.py --arm e2e</code></span>';
+  const rows = feats.map(f => {
+    const oc = f.origin === 'prompt' ? 'p' : 'a';
+    return `<li><span class="tick ${oc}"></span><div>
+        <span class="name">${esc(f.name)}</span>
+        <span class="origin ${oc}">${esc(f.origin||'?')}</span>
+        ${f.notes ? `<div class="notes">${esc(f.notes)}</div>` : ''}
+        ${f.quote ? `<div class="quote">${esc(f.quote)}</div>` : ''}
+      </div></li>`;
+  }).join('');
+  const ex = excl.length
+    ? excl.map(x=>`<li><span class="name">${esc(x.name)}</span>
+        <span class="why">${esc(x.why||'')}</span></li>`).join('')
+    : '<li style="font-style:italic">nothing excluded</li>';
+  return `<ul class="checklist">${rows}</ul>
+    <details style="margin-top:10px"><summary>non-visual asks excluded \\u2014 ${excl.length}</summary>
+      <ul class="excluded">${ex}</ul></details>`;
+}
+function placements(ps){
+  if(!ps || !ps.length) return `<div class="lane lay"><h5>layout_placement</h5>
+    <div class="none">nothing to place after segmentation</div></div>`;
+  return `<div class="lane lay"><h5>layout_placement \\u2014 never drawn, sited after
+    segmentation</h5><ul>` + ps.map(p=>
+    `<li><b>${esc(p.id)}</b>${p.count>0?` \\u00d7${p.count}`:''}
+       <i>\\u2014 ${esc(p.where || 'no siting rule given')}</i></li>`).join('')
+    + '</ul></div>';
 }
 function stage(n, title, note, inner){
   return `<section class="stage"><h3><span>${n}. ${title}</span>${note?`<b>${esc(note)}</b>`:''}</h3>
@@ -206,6 +289,7 @@ function render(){
   + stage(5,'Decouple — the structured spec', `${r.genre} / ${r.shape||'no shape'}`,
       chips([['genre',r.genre],['shape',r.shape||'—'],['preset',r.preset],
              ['route',(r.route||[]).join(', ')||'P0'],['order',r.order]])
+      + '<div style="margin-top:10px">' + placements(r.placements) + '</div>'
       + `<details style="margin-top:10px"><summary>full spec JSON</summary>
          <pre>${esc(JSON.stringify(r.spec,null,2))}</pre></details>`)
   + stage(6,'Compose — what was sent to the image model', `${r.order}-first`,
@@ -218,7 +302,12 @@ function render(){
        </div>`)
   + stage(7,'The images', `${Object.keys(r.images).length} rendered`,
       shots ? `<div class="shots">${shots}</div>`
-            : '<span class="miss">nothing rendered for this scene</span>');
+            : '<span class="miss">nothing rendered for this scene</span>')
+  + stage(8,'Eval checklist — what the render is marked against',
+      `${(r.checklist.features||[]).length} features`
+      + (r.checklist.from && r.checklist.from !== 'e2e'
+         ? ` · read from the ${r.checklist.from} arm's prompt` : ''),
+      checklistHtml(r.checklist));
   if (location.hash.slice(1) !== r.id) location.hash = r.id;
 }
 document.getElementById('list').innerHTML = R.map(r=>
@@ -250,7 +339,9 @@ def build(rows: list[dict]) -> str:
   <p>{len(rows)} scenes, {ok} complete. Nothing here was imported: the intake questions
   were generated from the author's message, answered, and carried through uprez, blob and
   decouple into the spec the images were composed from. {n_q} questions asked
-  ({n_q / max(len(rows), 1):.1f} per scene). Every stage is shown in the order it ran.</p>
+  ({n_q / max(len(rows), 1):.1f} per scene). Every stage is shown in the order it ran,
+  and last the eval checklist \u2014 the one section this chain did not write, which is
+  what the render will be marked against.</p>
 </header>
 <div class="wrap">
   <aside class="side"><h4>{len(rows)} scenes</h4><div id="list"></div></aside>

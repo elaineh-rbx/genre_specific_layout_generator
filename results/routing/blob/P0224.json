@@ -19,150 +19,172 @@
     }
   ],
   "scene_prompt": "Create a stylized 3D haunted-school roleplay map set primarily inside a small, detailed school building. Arrange a compact network of corridors connecting a handful of classrooms and hidden secret rooms, with a dedicated VIP-only area and a shop space within the school. Use a bright, polished presentation while retaining a haunted atmosphere, with the interior designed for exploration and clear room-to-room sightlines.",
-  "blob": "### Genre\nLe genre dominant est `Survival`, car la boucle centrale est une survie en manches contre un monstre. `Roleplay & Avatar Sim` est secondaire par intention sociale, mais ne modifie ni la forme ni la route de ce petit bâtiment.\n\n### Shape et preset\nUtiliser la forme `warren-looping` : un réseau intérieur compact où les couloirs offrent des boucles de fuite plutôt qu’une suite de pièces sans issue. Le preset le plus proche est Escape, mais le preset est `none`, car il suppose une sortie de fuite, des cachettes et des abris entrables qui ne sont pas demandés ici. La forme est conservée pour que l’exploration et l’évitement restent praticables.\n\n### Config requirements\nAucune option de configuration supplémentaire n’est sélectionnée. La boutique, l’accès VIP et les renaissances ne définissent pas de géométrie supplémentaire au-delà des pièces explicitement demandées. Aucun volume invisible, marqueur, pickup ou émetteur ne doit être rendu dans l’image.\n\n### Layout components\nConstruire une petite école intérieure détaillée, d’échelle compacte, organisée autour d’un couloir principal central et de deux courtes branches qui se reconnectent en boucle. Une poignée de salles de classe borde ces couloirs, avec des portes et fenêtres intérieures assurant des sightlines lisibles de pièce en pièce. Placer une boutique comme petite salle identifiable près du couloir principal, et une zone VIP réservée comme salon ou salle latérale distincte, fermée par une entrée visible.\n\nDissimuler plusieurs pièces secrètes derrière des panneaux, bibliothèques, faux murs ou portes discrètes, mais les raccorder à des boucles ou à de très courts culs-de-sac afin de ne pas créer de pièges de navigation. Le sol est intérieur et plat, avec carrelage, bois sombre ou tapis d’école usé; les murs, plafonds, casiers, tableaux, bureaux et éclairages constituent les principaux accessoires. L’école est entièrement close par ses murs extérieurs, sans cour extérieure. Composer la vue comme une maquette isométrique à toit retiré ou en coupe, montrant clairement les corridors, salles et accès cachés.\n\n### Render order\nUtiliser `topdown` : le plan top-down est rendu en premier et fait autorité, car un réseau de fuite invalide ou des corridors scellés rendraient la survie contre le monstre injuste et impraticable.\n\n### Scale, thème et coût pipeline\nÉchelle small, dictée par une poignée de salles, de corridors et de pièces secrètes plutôt qu’un campus à plusieurs ailes. Thème : école hantée 3D stylisée, lumineuse et polie, avec détails inquiétants mais lisibles. Modificateur `P6`, car les boucles de circulation et les issues navigables doivent être valides par construction.",
+  "blob": "### 1. Genre\nThe dominant genre is Survival, specifically a round-based haunted-school survival experience; Roleplay & Avatar Sim is secondary because the school also supports social RP. Survival owns the interior chase layout and monster routing.\n\n### 2. Shape and preset\nUse `interior-single`, taken from the Survival Mascot Horror preset. The entire small school is one enclosed, connected building: players move through its classrooms, corridors, and concealed rooms without an exterior campus. Keep the preset recognisable through a compact horror interior and hiding-oriented circulation, but drop its escape-exit assumption because rounds are won by surviving rather than leaving.\n\n### 3. Config requirements\nUse `cover-los` as school-appropriate hiding geometry: lockers, storage recesses, overturned classroom furniture, and short side alcoves that break corridor sightlines. No other image config is required; the VIP area and shop are named rooms rather than additional genre-wide features.\n\n### 4. Layout requirements\nUse `spawner-npc`: place one monster origin in a concealed central service room or locked maintenance junction, with direct access to the main corridor network rather than a player-facing classroom. No additional placed gameplay elements are required from the stated scene.\n\n### 5. Layout components\nBuild a small, dense school interior with a central entrance hall as the orientation node, a compact main corridor loop, and a handful of classrooms branching from it. Put the shop in a clearly signed room near the entrance hall and make the VIP-only area a distinct side wing or upper corridor behind a visible access threshold. Hide several secret rooms behind classroom storage walls, library shelving, janitor closets, or maintenance passages; each should reconnect to the corridor network so exploration never creates a permanent trap. Include lockers and furniture clusters along selected halls for concealment while preserving clear room-to-room sightlines. Use polished bright floors, walls, ceiling lights, classroom windows, and haunted decorative details. The building shell is the hard boundary, with no outdoor grounds. Frame the map as an isometric cutaway showing the entrance core, looping corridors, classrooms, VIP wing, shop, and secret-room connections.\n\n### 6. Render order\nUse `topdown` first and treat it as authoritative, because the compact corridor and secret-room connectivity must remain navigable during the survival event before the isometric dressing is generated.\n\n### 7. Scale, theme, and pipeline cost\nScale is small, driven by the requested handful of rooms rather than a multi-wing campus. Theme: bright polished stylized 3D school with playful haunted tension. Pipeline modifier: `P0`; this is one enclosed surface with no exterior transition, stacked floors, separate maps, or geometry requiring procedural construction.",
   "spec": {
     "genre": "Survival",
     "secondary": [
       "Roleplay & Avatar Sim"
     ],
-    "shape": "warren-looping",
-    "preset": "none",
+    "shape": "interior-single",
+    "preset": "Mascot Horror",
     "axes": {},
-    "options": [],
+    "options": [
+      {
+        "id": "cover-los",
+        "text": "School-appropriate hiding geometry: lockers, storage recesses, overturned classroom furniture, and short side alcoves that break corridor sightlines.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "spawner-npc",
+        "text": "One monster origin in a concealed central service room or locked maintenance junction, with direct access to the main corridor network rather than a player-facing classroom.",
+        "visible": false,
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "spawner-npc",
+        "text": "One monster origin in a concealed central service room or locked maintenance junction.",
+        "count": 1,
+        "where": "In a concealed central service room or locked maintenance junction with direct access to the main corridor network, not in a player-facing classroom."
+      }
+    ],
     "layout": {
-      "composition": "Vue comme une maquette isométrique à toit retiré ou en coupe, montrant clairement le couloir central, les salles, les branches en boucle et les accès cachés.",
+      "composition": "Isometric cutaway showing the central entrance core, looping corridors, branching classrooms, the shop near the entrance, the distinct VIP wing or upper corridor, and secret-room connections.",
       "zones": [
         {
-          "name": "Couloir principal central",
-          "role": "Circulation principale et fuite entre les salles.",
-          "where": "centre de l’école",
-          "size": "compact"
+          "name": "Entrance Hall",
+          "role": "Central orientation node for the school interior.",
+          "where": "Centre",
+          "size": ""
         },
         {
-          "name": "Branches de couloir",
-          "role": "Courtes routes de fuite qui se reconnectent au couloir principal en boucle.",
-          "where": "de part et d’autre du couloir principal",
-          "size": "deux courtes branches"
+          "name": "Main Corridor Loop",
+          "role": "Compact circulation loop connecting classrooms, secret rooms, and the service access.",
+          "where": "Around the central entrance hall",
+          "size": ""
         },
         {
-          "name": "Salles de classe",
-          "role": "Pièces d’exploration bordant les couloirs, avec sightlines lisibles de pièce en pièce.",
-          "where": "le long des couloirs",
-          "size": "une poignée de salles"
+          "name": "Classrooms",
+          "role": "A handful of rooms branching from the corridor loop for exploration and hiding.",
+          "where": "Along the main corridor loop",
+          "size": ""
         },
         {
-          "name": "Boutique",
-          "role": "Petite salle identifiable de boutique.",
-          "where": "près du couloir principal",
-          "size": "petite"
+          "name": "Shop",
+          "role": "Clearly signed school shop room.",
+          "where": "Near the entrance hall",
+          "size": ""
         },
         {
-          "name": "Zone VIP",
-          "role": "Salon ou salle latérale réservée, fermée par une entrée visible.",
-          "where": "latérale au réseau de couloirs",
-          "size": "distincte"
+          "name": "VIP-Only Area",
+          "role": "Distinct restricted side wing or upper corridor behind a visible access threshold.",
+          "where": "Side wing or upper corridor",
+          "size": ""
         },
         {
-          "name": "Pièces secrètes",
-          "role": "Espaces cachés derrière panneaux, bibliothèques, faux murs ou portes discrètes, raccordés à des boucles ou de très courts culs-de-sac.",
-          "where": "dissimulées dans l’école",
-          "size": "plusieurs pièces"
+          "name": "Secret Rooms",
+          "role": "Concealed exploratory rooms that reconnect to the corridor network so they do not create permanent traps.",
+          "where": "Behind classroom storage walls, library shelving, janitor closets, or maintenance passages",
+          "size": ""
+        },
+        {
+          "name": "Central Service Room or Maintenance Junction",
+          "role": "Concealed monster origin with direct access to the corridor network.",
+          "where": "Central concealed service area",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Couloir principal central",
-          "to": "Branches de couloir",
+          "from": "Entrance Hall",
+          "to": "Main Corridor Loop",
           "kind": "corridor"
         },
         {
-          "from": "Branches de couloir",
-          "to": "Couloir principal central",
+          "from": "Main Corridor Loop",
+          "to": "Classrooms",
           "kind": "corridor"
         },
         {
-          "from": "Couloir principal central",
-          "to": "Salles de classe",
+          "from": "Entrance Hall",
+          "to": "Shop",
           "kind": "corridor"
         },
         {
-          "from": "Couloir principal central",
-          "to": "Boutique",
+          "from": "Main Corridor Loop",
+          "to": "VIP-Only Area",
           "kind": "corridor"
         },
         {
-          "from": "Couloir principal central",
-          "to": "Zone VIP",
+          "from": "Classrooms",
+          "to": "Secret Rooms",
           "kind": "corridor"
         },
         {
-          "from": "Salles de classe",
-          "to": "Pièces secrètes",
+          "from": "Secret Rooms",
+          "to": "Main Corridor Loop",
+          "kind": "maintenance passage"
+        },
+        {
+          "from": "Central Service Room or Maintenance Junction",
+          "to": "Main Corridor Loop",
           "kind": "corridor"
         }
       ],
-      "terrain": "Sol intérieur plat en carrelage, bois sombre ou tapis d’école usé.",
+      "terrain": "Polished bright interior floors, walls, ceiling lights, and classroom windows; no exterior grounds.",
       "props": [
         {
-          "name": "portes et fenêtres intérieures",
+          "name": "Lockers",
           "count": -1,
-          "where": "entre les salles et les couloirs"
+          "where": "Along selected halls for concealment."
         },
         {
-          "name": "panneaux, bibliothèques, faux murs et portes discrètes",
+          "name": "Storage recesses",
           "count": -1,
-          "where": "devant les accès aux pièces secrètes"
+          "where": "Along corridors and classroom edges."
         },
         {
-          "name": "murs et plafonds",
+          "name": "Overturned classroom furniture",
           "count": -1,
-          "where": "dans toute l’école"
+          "where": "In selected classrooms and halls for concealment."
         },
         {
-          "name": "casiers",
+          "name": "Haunted decorative details",
           "count": -1,
-          "where": "dans l’école"
-        },
-        {
-          "name": "tableaux",
-          "count": -1,
-          "where": "dans les salles de classe"
-        },
-        {
-          "name": "bureaux",
-          "count": -1,
-          "where": "dans les salles de classe"
-        },
-        {
-          "name": "éclairages",
-          "count": -1,
-          "where": "dans toute l’école"
+          "where": "Throughout the bright polished school interior."
         }
       ],
-      "boundary": "L’école est entièrement close par ses murs extérieurs, sans cour extérieure.",
+      "boundary": "The enclosed building shell is the hard boundary, with no outdoor grounds.",
       "scale_band": "small",
-      "theme": "école hantée 3D stylisée, lumineuse et polie, avec détails inquiétants mais lisibles"
+      "theme": "Bright polished stylized 3D school with playful haunted tension."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "un réseau de fuite invalide ou des corridors scellés rendraient la survie contre le monstre injuste et impraticable.",
+      "why": "The compact corridor and secret-room connectivity must remain navigable during the survival event.",
       "set_piece": false
     },
     "route": [
-      "P6"
+      "P0"
     ],
-    "notes": [],
+    "notes": [
+      "The Mascot Horror preset is retained as named, but its escape-exit assumption is explicitly dropped because rounds are won by surviving rather than leaving.",
+      "No axes are transcribed because the blob names the shape interior-single."
+    ],
     "scene_prompt": "Create a stylized 3D haunted-school roleplay map set primarily inside a small, detailed school building. Arrange a compact network of corridors connecting a handful of classrooms and hidden secret rooms, with a dedicated VIP-only area and a shop space within the school. Use a bright, polished presentation while retaining a haunted atmosphere, with the interior designed for exploration and clear room-to-room sightlines."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
-  "order": "p6",
-  "first": "topdown",
-  "mapper_notes": []
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P0'] gives isometric"
+  ]
 }

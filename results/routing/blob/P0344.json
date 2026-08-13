@@ -14,128 +14,115 @@
     }
   ],
   "scene_prompt": "Create a 3D zombie horror map set on a single enclosed mall floor, with dim lighting and fog. Arrange a central concourse with storefronts and interior corridors branching off it, leaving clear sightlines and walkable routes through the tense indoor space.",
-  "blob": "### Genre\nThe dominant genre is Shooter, specifically a PvE zombie encounter: the original request establishes ranged combat against hostile enemies. The mall remains a compact combat space rather than an explorable town.\n\n### Shape and preset\nUse `lane-network`, matching the PvE Shooter preset in its connected indoor combat circulation. The prompt overrides the preset’s exterior breach emphasis: this is one fully enclosed mall floor, not separate outside and inside spaces.\n\n### Config requirements\nUse visible `choke-bottleneck` geometry in the narrower interior corridors where they join the central concourse, creating readable contested transitions without blocking circulation. Do not add cover arrays, loot, enemy emitters, or enterable-building transitions unasked; the storefronts are part of the single indoor mall shell, not separate exterior-accessed structures.\n\n### Layout components\nBuild one small enclosed mall floor. A broad central concourse occupies the middle and is the primary shared combat and navigation space, with clear long views across its open floor. Storefront facades line both sides of the concourse, varying in shuttered, darkened retail detail but maintaining generous walkable frontage. Several interior corridors branch from the concourse at spaced intervals, each narrower than the main hall and returning or terminating in compact store-service areas; keep every route legible and walkable. Use tiled mall flooring, closed shop grilles, dim ceiling fixtures, emergency-lit signs, abandoned benches, planters, kiosks, and scattered retail debris as sparse props that preserve sightlines. The boundary is continuous mall walls, storefront glazing, and closed service doors; no exterior opening is visible. Frame the composition from an elevated oblique view that shows the concourse as the central spine and the branching corridors as darker side routes.\n\n### Render order\nUse `isometric`: the small, tense horror composition and foggy concourse silhouette lead the render, while the derived top-down preserves the readable circulation.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the explicit single mall floor. Theme is enclosed zombie horror: dim lighting, cold fog, abandoned retail architecture, and tense visibility. Use `P0`; the map is a single indoor surface with no stacked floors, exterior-interior transition, or geometry that requires a separate capture pass.",
+  "blob": "### Genre\nThe dominant genre is Shooter, specifically PvE Shooter: the player fights zombie enemies in an enclosed combat environment.\n\n### Shape and preset\nUse `interior-single`, taken from outside Shooter’s usual shape set, because the entire playable map is one enclosed mall floor with no exterior transition. The PvE Shooter preset remains recognisable in its enemy-emitter intent, but its lane-network shape is replaced by the explicitly requested single-floor mall; use the preset name PvE Shooter with that override.\n\n### Config requirements\nNo additional image config options are required beyond the `interior-single` shell. The requested geometry is an enclosed, tense mall interior with clear walkable sightlines rather than added cover arrays, exterior buildings, or other unrequested features.\n\n### Layout requirements\nApply `spawner-npc`: place zombie entry origins at the far ends of each branching interior corridor and just beyond selected storefront thresholds facing the central concourse, so attacks enter from readable directions without spawning directly in the player’s immediate path. The exact count follows the final number of corridor branches and storefront access points.\n\n### Layout components\nBuild one small, single enclosed mall floor. The dominant central zone is a broad central concourse, occupying the middle of the plan and providing the principal combat and circulation space. Arrange storefront facades around its perimeter, with open thresholds and some recessed shop entrances creating visual depth but retaining long, readable views across the concourse. Interior corridors branch from the concourse toward the outer edges, forming secondary combat approaches and returning walkable routes rather than isolated decorative dead ends. Use tiled mall flooring, shuttered or dark storefronts, sparse abandoned retail dressing, dim overhead fixtures, and low fog contained within the indoor space. Walls, storefront backs, and corridor ends form the map boundary. Compose the scene from an elevated isometric angle that clearly exposes the concourse as the central hub and the branching enemy approach corridors.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because the concourse-to-corridor connections and unobstructed combat sightlines must remain plainly playable before the horror dressing is added.\n\n### Scale, theme, and pipeline cost\nScale band: small, driven by the stated single mall floor. Theme: enclosed zombie-horror mall, dim lighting, fog, abandoned retail, tense visibility. Pipeline modifier: `P0`; the floor is one enclosed, single-level surface with no stacked geometry, exterior-to-interior transition, or volumetric play space.",
   "spec": {
     "genre": "Shooter",
     "secondary": [],
-    "shape": "lane-network",
+    "shape": "interior-single",
     "preset": "PvE Shooter",
     "axes": {},
     "options": [
       {
-        "id": "choke-bottleneck",
-        "text": "Narrower interior corridors where they join the central concourse, creating readable contested transitions without blocking circulation.",
-        "visible": true,
+        "id": "spawner-npc",
+        "text": "Zombie entry origins at the far ends of branching interior corridors and just beyond selected storefront thresholds facing the central concourse.",
+        "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "spawner-npc",
+        "text": "Zombie entry origins at the far ends of each branching interior corridor and just beyond selected storefront thresholds facing the central concourse, so attacks enter from readable directions without spawning directly in the player's immediate path.",
+        "count": -1,
+        "where": "At the far ends of each branching interior corridor and just beyond selected storefront thresholds facing the central concourse."
+      }
+    ],
     "layout": {
-      "composition": "Elevated oblique view showing the broad central concourse as the central spine, with darker branching corridors reading as side routes.",
+      "composition": "Elevated isometric view clearly exposing the broad central concourse as the central hub, with storefront facades around its perimeter and branching interior corridors extending toward the outer edges.",
       "zones": [
         {
           "name": "Central concourse",
-          "role": "Primary shared combat and navigation space with clear long views across its open floor.",
-          "where": "centre",
-          "size": "broad"
+          "role": "Principal combat and circulation space with long, readable sightlines.",
+          "where": "Middle of the plan",
+          "size": "Broad and dominant"
         },
         {
-          "name": "Storefront frontage",
-          "role": "Shuttered and darkened retail facades maintain generous walkable frontage along the combat space.",
-          "where": "both sides of the central concourse",
+          "name": "Storefront perimeter",
+          "role": "Storefront facades with open thresholds and some recessed shop entrances create visual depth around the concourse.",
+          "where": "Around the perimeter of the central concourse",
           "size": ""
         },
         {
-          "name": "Interior corridors",
-          "role": "Narrower side routes that create contested transitions and return or terminate in compact store-service areas.",
-          "where": "branching from the concourse at spaced intervals",
+          "name": "Branching interior corridors",
+          "role": "Secondary combat approaches and returning walkable routes.",
+          "where": "Branching from the concourse toward the outer edges",
           "size": ""
-        },
-        {
-          "name": "Store-service areas",
-          "role": "Compact terminal or returning areas at the ends of interior corridors.",
-          "where": "off the branching interior corridors",
-          "size": "compact"
         }
       ],
       "paths": [
         {
           "from": "Central concourse",
-          "to": "Storefront frontage",
-          "kind": "open ground"
-        },
-        {
-          "from": "Central concourse",
-          "to": "Interior corridors",
+          "to": "Branching interior corridors",
           "kind": "corridor"
         },
         {
-          "from": "Interior corridors",
-          "to": "Store-service areas",
+          "from": "Branching interior corridors",
+          "to": "Central concourse",
           "kind": "corridor"
         }
       ],
-      "terrain": "Tiled mall flooring in a single enclosed indoor surface, with cold fog and dim lighting.",
+      "terrain": "Single-level tiled mall flooring with low fog contained within the indoor space.",
       "props": [
         {
-          "name": "closed shop grilles",
+          "name": "Storefront facades with open thresholds and recessed shop entrances",
           "count": -1,
-          "where": "storefront facades along the concourse"
+          "where": "Around the perimeter of the central concourse"
         },
         {
-          "name": "dim ceiling fixtures",
+          "name": "Shuttered or dark storefronts",
           "count": -1,
-          "where": "across the mall floor"
+          "where": "Around the concourse and along interior corridors"
         },
         {
-          "name": "emergency-lit signs",
+          "name": "Sparse abandoned retail dressing",
           "count": -1,
-          "where": "throughout the concourse and corridors"
+          "where": "Throughout the mall interior"
         },
         {
-          "name": "abandoned benches",
+          "name": "Dim overhead fixtures",
           "count": -1,
-          "where": "central concourse"
-        },
-        {
-          "name": "planters",
-          "count": -1,
-          "where": "central concourse"
-        },
-        {
-          "name": "kiosks",
-          "count": -1,
-          "where": "central concourse"
-        },
-        {
-          "name": "scattered retail debris",
-          "count": -1,
-          "where": "throughout, kept sparse to preserve sightlines"
+          "where": "Over the concourse and corridors"
         }
       ],
-      "boundary": "Continuous mall walls, storefront glazing, and closed service doors; no exterior opening is visible.",
+      "boundary": "Walls, storefront backs, and corridor ends enclose the map boundary.",
       "scale_band": "small",
-      "theme": "Enclosed zombie horror; dim lighting, cold fog, abandoned retail architecture, tense visibility."
+      "theme": "Enclosed zombie-horror mall, dim lighting, fog, abandoned retail, tense visibility"
     },
     "render": {
-      "first": "isometric",
-      "then": "topdown",
-      "authoritative": "isometric",
-      "why": "the small, tense horror composition and foggy concourse silhouette lead the render while derived top-down preserves readable circulation.",
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "The concourse-to-corridor connections and unobstructed combat sightlines must remain plainly playable before horror dressing is added.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
-    "notes": [],
+    "notes": [
+      "The shape interior-single is taken from outside Shooter's usual shape set.",
+      "The zombie entry-origin count is unspecified and follows the final number of corridor branches and storefront access points."
+    ],
     "scene_prompt": "Create a 3D zombie horror map set on a single enclosed mall floor, with dim lighting and fog. Arrange a central concourse with storefronts and interior corridors branching off it, leaving clear sightlines and walkable routes through the tense indoor space."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
-  "mapper_notes": []
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P0'] gives isometric"
+  ]
 }

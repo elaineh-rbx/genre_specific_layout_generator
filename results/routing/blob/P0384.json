@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a 3D endless-runner map with a forward-running path that procedurally passes through original adventure environments: ancient jungle ruins, mountain temples, lava and underground caverns, ice canyons, desert ruins, floating islands, bamboo forests, waterfalls, and forgotten cities. Build each biome as a short, readable 60–90-second stretch, joined by brief blended transition segments. Arrange a clear central route with collectible trails and varied traversable hazards including gaps, broken or collapsing bridges, fallen trees, rolling boulders, rotating blades, swinging axes, spike and fire traps, crumbling floors, moving platforms, narrow ledges, climbing sections, rope swings, and zip lines. About every 20–30 seconds, split the route into branching paths that rejoin after short alternate segments. Use dramatic terrain, animated foliage, water, weather, fog, dynamic lighting, and day-to-night atmosphere, with a pursuing original creature visible behind the runner during chase sections.",
-  "blob": "### Genre\nThe dominant genre is Infinite Runner: automatic forward motion, reactive dodging, and an endless procedurally assembled route define the experience.\n\n### Shape and preset\nUse `lane-free`, a Free Lateral Steering route that lets the runner steer around hazards and choose short forks rather than snap between fixed lanes. This matches the Chase Runner preset, extended with the prompt’s collectible and biome-generation requirements.\n\n### Config requirements\nVisible geometry: `chunk-modular` builds seamless authored-looking biome chunks with aligned entry and exit pivots; `hazard-kill` supplies gaps, traps, fire, collapsing spans, and fall-away edges; `obstacle-jump` supplies bridges, logs, ledges, climbing sections, rope swings, and zip lines; `obstacle-moving` supplies boulders, blades, axes, moving platforms, and collapsing elements; `barrier-horizon` uses fog, turns, canyon walls, and dense foliage to conceal incoming chunks. `water-body` provides waterfalls, rivers, and cavern water; `terrain-relief` provides temples, canyons, cliffs, and volcanic ground; `island-cluster` provides the floating-island biome. Invisible layout: `collectible-nodes` places pickup volumes in readable trails along safe and risky lines.\n\n### Layout components\nBuild an endless central forward route from modular chunks. Each biome occupies a readable 60–90-second stretch, followed by a brief blended transition chunk: ancient jungle ruins, mountain temples, lava and underground caverns, ice canyons, desert ruins, floating islands, bamboo forests, waterfalls, and forgotten cities. About every 20–30 seconds, split the main route into two short alternate branches that visibly rejoin at a common continuation chunk. Keep every branch legible, with hazards arranged as avoidable obstacle sequences rather than clutter. Place collectible trails through central safe lines and toward riskier side routes. Use stone ruins, broken and collapsing bridges, fallen trees, trap assemblies, narrow ledges, rope rigging, zip lines, animated foliage, waterfalls, weather effects, fog, and a pursuing original creature visible behind the runner during chase sections. Bound each chunk with cliffs, canyon walls, dense vegetation, cavern walls, water, or void edges. Frame the isometric view down the forward route, with approaching hazards and the next focal biome transition readable ahead.\n\n### Render order\nUse `topdown`: the generated route, forks, rejoins, and obstacle-clearance topology must remain valid for play, while this is not a carveable maze or racing circuit eligible for `authored_plan`.\n\n### Scale, theme, and pipeline cost\nScale is huge, driven by an endless modular route spanning nine distinct biome families. Theme is AAA adventurous fantasy expedition, cinematic and perilous, with lush natural contrast, elemental caverns, and ancient architecture. Pipeline modifiers: `P6` because each emitted chunk sequence, fork, rejoin, and hazard gap must be valid by construction; `CHECK` because waterfalls, water crossings, floating islands, rope swings, and zip lines introduce localized open-volume traversal that must not self-occlude. Terrain elevation is tiered without requiring a separate pass, so no additional modifier is forced.",
+  "blob": "### 1. Genre\nThe dominant genre is `Infinite Runner`: automatic forward movement, elastic procedural chunks, reaction obstacles, and an endless route define the game.\n\n### 2. Shape and preset\nUse `lane-free`, a continuously steerable forward corridor that can widen into short split-and-rejoin branches rather than rigid lanes. Match the Chase Runner preset: its pursuit pressure, moving hazards, and horizon masking fit the visible creature and dramatic biome procession; add collectibles and the explicitly requested branching routes.\n\n### 3. Config requirements\nUse `chunk-modular` for seamless handcrafted-looking biome chunks with aligned entry and exit pivots. Use `hazard-kill` for gaps, traps, boulders, blades, fire, and fall-away edges; `obstacle-jump` for broken bridges, ledges, climbs, rope swings, zip lines, and gaps; and `obstacle-moving` for rolling, rotating, swinging, collapsing, and moving obstacles. Use `barrier-horizon` as fog, bends, waterfalls, canyon walls, and ruin gates that conceal chunk generation. Use `terrain-relief` for temples, canyons, cliffs, caverns, and mountain rises; `water-body` for waterfalls and water crossings; and `island-cluster` for the floating-island biome.\n\n### 4. Layout requirements\nPlace `collectible-nodes` as continuous coin trails on the central safe line, with occasional trails drawing runners through each short alternate fork; site rare visible treasure objects only at branch-risk rewards. Place one `trigger-despawn` cleanup volume across the full corridor, fixed behind the camera beyond the last recoverable chunk, recycling every cleared segment. No other placed marker is required; the pursuing creature's behavior is runtime logic, while its visible rear-track presence is rendered.\n\n### 5. Layout components\nBuild one endless forward path as sequential 60–90-second biome stretches, separated by brief blended transition chunks. Biomes cycle through ancient jungle ruins, mountain temples, lava and underground caverns, ice canyons, desert ruins, floating islands, bamboo forests, waterfalls, and forgotten cities. About every 20–30 seconds, divide the central route into two short parallel alternatives that visibly rejoin. Keep the primary corridor readable, with collectible trails and obstacle sets arranged before turns. Use cliffs, caves, bridges, chasms, foliage, water, fog, weather, and day-to-night lighting as boundaries. Show the original pursuing creature behind the runner in chase sections. Compose each chunk with a strong forward vanishing direction and a readable plan silhouette.\n\n### 6. Render order\nUse `topdown`: valid chunk connections, fair forks, and rejoining route topology must be established before the isometric dressing is generated.\n\n### 7. Scale, theme, and pipeline cost\nScale is huge because the map is an extensible sequence of nine biome families rather than one fixed course. Theme: AAA adventurous fantasy expedition, cinematic but original. Use `P6` for procedurally valid runner chunks and fair route continuity; `tiered` for non-overhanging terrain relief; `P3` for linked exterior-to-cavern transitions; and `CHECK` to review open-air floating-island, rope-swing, and zip-line crossings for self-occlusion.",
   "spec": {
     "genre": "Infinite Runner",
     "secondary": [],
@@ -24,185 +24,229 @@
     "options": [
       {
         "id": "chunk-modular",
-        "text": "Seamless authored-looking biome chunks with aligned entry and exit pivots build the endless central forward route.",
+        "text": "Seamless handcrafted-looking biome chunks with aligned entry and exit pivots.",
         "visible": true,
         "count": -1
       },
       {
         "id": "hazard-kill",
-        "text": "Gaps, traps, fire, collapsing spans, and fall-away edges form avoidable obstacle sequences.",
+        "text": "Gaps, traps, boulders, blades, fire, and fall-away edges.",
         "visible": true,
         "count": -1
       },
       {
         "id": "obstacle-jump",
-        "text": "Bridges, logs, ledges, climbing sections, rope swings, and zip lines provide traversable hazards.",
+        "text": "Broken bridges, ledges, climbs, rope swings, zip lines, and gaps.",
         "visible": true,
         "count": -1
       },
       {
         "id": "obstacle-moving",
-        "text": "Boulders, blades, axes, moving platforms, and collapsing elements animate the route.",
+        "text": "Rolling, rotating, swinging, collapsing, and moving obstacles.",
         "visible": true,
         "count": -1
       },
       {
         "id": "barrier-horizon",
-        "text": "Fog, turns, canyon walls, and dense foliage conceal incoming chunks.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "water-body",
-        "text": "Waterfalls, rivers, and cavern water appear across the biome route.",
+        "text": "Fog, bends, waterfalls, canyon walls, and ruin gates that conceal chunk generation.",
         "visible": true,
         "count": -1
       },
       {
         "id": "terrain-relief",
-        "text": "Temples, canyons, cliffs, and volcanic ground provide dramatic tiered terrain.",
+        "text": "Temples, canyons, cliffs, caverns, and mountain rises.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "water-body",
+        "text": "Waterfalls and water crossings.",
         "visible": true,
         "count": -1
       },
       {
         "id": "island-cluster",
-        "text": "A floating-island biome forms part of the procedural expedition.",
+        "text": "The floating-island biome.",
         "visible": true,
         "count": -1
       },
       {
         "id": "collectible-nodes",
-        "text": "Pickup volumes form readable collectible trails along central safe lines and riskier side routes.",
+        "text": "Continuous coin trails on the central safe line, with occasional trails drawing runners through each short alternate fork; rare visible treasure objects only at branch-risk rewards.",
         "visible": false,
         "count": -1
+      },
+      {
+        "id": "trigger-despawn",
+        "text": "One cleanup volume recycling every cleared segment.",
+        "visible": false,
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "collectible-nodes",
+        "text": "Continuous coin trails on the central safe line, with occasional trails drawing runners through each short alternate fork; rare visible treasure objects only at branch-risk rewards.",
+        "count": -1,
+        "where": "Along the central safe line and occasionally through each short alternate fork; rare visible treasure objects only at branch-risk rewards."
+      },
+      {
+        "id": "trigger-despawn",
+        "text": "One cleanup volume recycling every cleared segment.",
+        "count": 1,
+        "where": "Across the full corridor, fixed behind the camera beyond the last recoverable chunk."
       }
     ],
     "layout": {
-      "composition": "Frame the isometric view down the forward route, with approaching hazards in front and the next focal biome transition readable ahead; the pursuing creature is visible behind the runner during chase sections.",
+      "composition": "Each chunk has a strong forward vanishing direction and a readable plan silhouette, with the primary corridor readable and the pursuing creature visible behind the runner in chase sections.",
       "zones": [
         {
-          "name": "Endless central forward route",
-          "role": "The continuous procedurally assembled running path through modular chunks.",
-          "where": "centre, extending forward through the frame",
-          "size": "huge"
+          "name": "Ancient jungle ruins",
+          "role": "A sequential endless-runner biome stretch.",
+          "where": "Along the forward biome procession.",
+          "size": "60–90 seconds"
         },
         {
-          "name": "Biome stretches",
-          "role": "Readable adventure-environment runs: ancient jungle ruins, mountain temples, lava and underground caverns, ice canyons, desert ruins, floating islands, bamboo forests, waterfalls, and forgotten cities.",
-          "where": "successive sections along the forward route",
-          "size": "60–90 seconds each"
+          "name": "Mountain temples",
+          "role": "A sequential endless-runner biome stretch.",
+          "where": "Along the forward biome procession.",
+          "size": "60–90 seconds"
+        },
+        {
+          "name": "Lava and underground caverns",
+          "role": "A sequential endless-runner biome stretch.",
+          "where": "Along the forward biome procession.",
+          "size": "60–90 seconds"
+        },
+        {
+          "name": "Ice canyons",
+          "role": "A sequential endless-runner biome stretch.",
+          "where": "Along the forward biome procession.",
+          "size": "60–90 seconds"
+        },
+        {
+          "name": "Desert ruins",
+          "role": "A sequential endless-runner biome stretch.",
+          "where": "Along the forward biome procession.",
+          "size": "60–90 seconds"
+        },
+        {
+          "name": "Floating islands",
+          "role": "A sequential endless-runner biome stretch.",
+          "where": "Along the forward biome procession.",
+          "size": "60–90 seconds"
+        },
+        {
+          "name": "Bamboo forests",
+          "role": "A sequential endless-runner biome stretch.",
+          "where": "Along the forward biome procession.",
+          "size": "60–90 seconds"
+        },
+        {
+          "name": "Waterfalls",
+          "role": "A sequential endless-runner biome stretch.",
+          "where": "Along the forward biome procession.",
+          "size": "60–90 seconds"
+        },
+        {
+          "name": "Forgotten cities",
+          "role": "A sequential endless-runner biome stretch.",
+          "where": "Along the forward biome procession.",
+          "size": "60–90 seconds"
         },
         {
           "name": "Blended transition chunks",
-          "role": "Brief connectors between biome stretches, making the next biome readable ahead.",
-          "where": "between each biome stretch",
+          "role": "Brief transitions separating biome stretches.",
+          "where": "Between sequential biome stretches.",
           "size": "brief"
         },
         {
-          "name": "Alternate branches",
-          "role": "Short forked routes offering safe and risky collectible lines before visibly rejoining.",
-          "where": "splitting from the main route and returning to a common continuation chunk",
-          "size": "about every 20–30 seconds"
+          "name": "Short parallel alternatives",
+          "role": "Branching routes that visibly rejoin the central route.",
+          "where": "About every 20–30 seconds along the central route.",
+          "size": "short"
         }
       ],
       "paths": [
         {
-          "from": "Central forward route",
-          "to": "Biome stretches",
+          "from": "Ancient jungle ruins",
+          "to": "Mountain temples",
           "kind": "track"
         },
         {
-          "from": "Each biome stretch",
-          "to": "Blended transition chunk",
+          "from": "Mountain temples",
+          "to": "Lava and underground caverns",
           "kind": "track"
         },
         {
-          "from": "Main route fork",
-          "to": "Short alternate branches",
+          "from": "Lava and underground caverns",
+          "to": "Ice canyons",
           "kind": "track"
         },
         {
-          "from": "Short alternate branches",
-          "to": "Common continuation chunk",
+          "from": "Ice canyons",
+          "to": "Desert ruins",
+          "kind": "track"
+        },
+        {
+          "from": "Desert ruins",
+          "to": "Floating islands",
+          "kind": "track"
+        },
+        {
+          "from": "Floating islands",
+          "to": "Bamboo forests",
+          "kind": "track"
+        },
+        {
+          "from": "Bamboo forests",
+          "to": "Waterfalls",
+          "kind": "track"
+        },
+        {
+          "from": "Waterfalls",
+          "to": "Forgotten cities",
+          "kind": "track"
+        },
+        {
+          "from": "Central route",
+          "to": "Short parallel alternatives",
+          "kind": "track"
+        },
+        {
+          "from": "Short parallel alternatives",
+          "to": "Central route",
           "kind": "track"
         }
       ],
-      "terrain": "Tiered dramatic terrain with jungle ruins, mountain temples, lava and underground caverns, ice canyons, desert ruins, floating islands, bamboo forests, waterfalls, forgotten cities, rivers, cavern water, cliffs, canyon walls, dense vegetation, cavern walls, and void edges.",
+      "terrain": "Dramatic temples, canyons, cliffs, caverns, mountain rises, caves, bridges, chasms, foliage, water, fog, weather, and day-to-night lighting.",
       "props": [
         {
-          "name": "stone ruins",
+          "name": "Original pursuing creature",
           "count": -1,
-          "where": "along biome chunks"
+          "where": "Behind the runner in chase sections."
         },
         {
-          "name": "broken and collapsing bridges",
+          "name": "Rare visible treasure objects",
           "count": -1,
-          "where": "across route hazards and crossings"
-        },
-        {
-          "name": "fallen trees",
-          "count": -1,
-          "where": "along the route"
-        },
-        {
-          "name": "trap assemblies",
-          "count": -1,
-          "where": "in avoidable obstacle sequences"
-        },
-        {
-          "name": "narrow ledges",
-          "count": -1,
-          "where": "along route sections"
-        },
-        {
-          "name": "rope rigging",
-          "count": -1,
-          "where": "at rope swings and zip lines"
-        },
-        {
-          "name": "zip lines",
-          "count": -1,
-          "where": "along traversable route sections"
-        },
-        {
-          "name": "animated foliage",
-          "count": -1,
-          "where": "in jungle and bamboo biome chunks"
-        },
-        {
-          "name": "waterfalls",
-          "count": -1,
-          "where": "along waterfall biome chunks"
-        },
-        {
-          "name": "weather effects",
-          "count": -1,
-          "where": "across the route"
-        },
-        {
-          "name": "fog",
-          "count": -1,
-          "where": "at chunk horizons and transitions"
-        },
-        {
-          "name": "pursuing original creature",
-          "count": -1,
-          "where": "behind the runner during chase sections"
+          "where": "Only at branch-risk rewards."
         }
       ],
-      "boundary": "Each chunk is bounded by cliffs, canyon walls, dense vegetation, cavern walls, water, or void edges.",
+      "boundary": "Cliffs, caves, bridges, chasms, foliage, water, fog, weather, and day-to-night lighting form the boundaries.",
       "scale_band": "huge",
-      "theme": "AAA adventurous fantasy expedition, cinematic and perilous, with lush natural contrast, elemental caverns, ancient architecture, dynamic lighting, and day-to-night atmosphere."
+      "theme": "AAA adventurous fantasy expedition, cinematic but original."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the generated route, forks, rejoins, and obstacle-clearance topology must remain valid for play.",
+      "why": "Valid chunk connections, fair forks, and rejoining route topology must be established before isometric dressing.",
       "set_piece": false
     },
     "route": [
       "P6",
+      "tiered",
+      "P3",
       "CHECK"
     ],
     "notes": [],
@@ -211,7 +255,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

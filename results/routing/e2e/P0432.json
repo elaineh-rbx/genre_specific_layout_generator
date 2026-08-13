@@ -9,27 +9,36 @@
   "questions": [
     {
       "field": "theme",
-      "ask": "What visual setting should unify the world—such as a neon city, fantasy kingdom, tropical islands, space station, or something else?"
+      "ask": "What visual theme should the world use—for example neon futuristic, fantasy, city, tropical, or something else?"
     },
     {
       "field": "shape",
-      "ask": "How many distinct areas should players explore, and should they unlock in a linear path, branch from a central hub, or all be accessible from the start?"
+      "ask": "How many distinct areas should players explore, and should they unlock in a set progression or all be accessible from a central hub?"
+    },
+    {
+      "field": "goal",
+      "ask": "Should players find a fixed number of pizzas to complete the game, or should pizzas keep respawning for an ongoing collection loop?"
     }
   ],
   "answers": [
     {
       "field": "theme",
-      "ask": "What visual setting should unify the world—such as a neon city, fantasy kingdom, tropical islands, space station, or something else?",
-      "answer": "Use a colorful cartoon pizza-themed world, with cool oversized food scenery and playful environments that make the pizzas stand out."
+      "ask": "What visual theme should the world use—for example neon futuristic, fantasy, city, tropical, or something else?",
+      "answer": "Use a colorful cartoon city theme with cool distinct areas and playful 3D visuals."
     },
     {
       "field": "shape",
-      "ask": "How many distinct areas should players explore, and should they unlock in a linear path, branch from a central hub, or all be accessible from the start?",
-      "answer": "Make 3 distinct areas branching from a central hub, with all areas accessible from the start for simple exploration."
+      "ask": "How many distinct areas should players explore, and should they unlock in a set progression or all be accessible from a central hub?",
+      "answer": "Make 3 distinct areas, all accessible from a central hub so players can explore freely."
+    },
+    {
+      "field": "goal",
+      "ask": "Should players find a fixed number of pizzas to complete the game, or should pizzas keep respawning for an ongoing collection loop?",
+      "answer": "Use a fixed set of pizzas to find, with the game completed once players collect them all."
     }
   ],
-  "scene_prompt": "Create a 3D find-and-explore map set in a colorful cartoon pizza-themed world with playful oversized food scenery. A central hub opens into three distinct explorable areas branching outward, all accessible from the start. Place varied cool-looking pizza props throughout the hub and each area so they stand out clearly among the food-themed environments.",
-  "blob": "### Genre\nThe dominant genre is Adventure: players explore a world to find distributed pizza items. There is no secondary genre.\n\n### Shape and preset\nUse `world-open`, matching the Scavenger Hunt preset. Keep its open exploration character, but organize the single map around a central hub and three immediately available branches rather than a dispersed free-roam field.\n\n### Config requirements\nUse `collectible-nodes` as invisible layout placements: varied, clearly readable pizza finds are distributed through every area, tucked into distinctive food scenery rather than rendered as generic markers. No other gameplay options are required. The central hub and the three branches are visible geometry, not separate maps or locked progression.\n\n### Layout components\nBuild one contiguous, medium-sized exterior world. A broad circular central hub occupies the middle of the plan, with colorful pizza-themed paving and oversized cartoon food props that establish the setting. Three distinct explorable areas radiate outward from the hub at roughly even angles, each reached by a broad, unobstructed path and all open from the start.\n\nGive each branch a visibly different food-playground identity while retaining the shared bright cartoon palette: one can be a towering cheesy pizza plaza, one a playful pepperoni-and-sauce garden, and one an oversized bakery or snack-landscape zone. Each branch should be large enough for a short looping exploration route with pockets, overlooks, and prop clusters that make individual pizza finds stand out. Place pizza props throughout the hub and all three areas, including obvious showcase positions and a few visually sheltered corners. Use giant cheese wedges, sauce pools, breadstick rails, mushroom-like toppings, and food-shaped rocks as scenery. Keep the outer boundary natural and playful, using oversized food cliffs, dense prop walls, or distant backdrop scenery rather than hard walls. Frame the hub centrally with all three colorful branches legible around it.\n\n### Render order\nUse `topdown`: the hub must connect cleanly to all three accessible exploration areas so every pizza-placement region remains reachable.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by one hub plus three distinct exploration branches. Theme: colorful cartoon pizza world, oversized whimsical food scenery, high-contrast collectible props. Use `P0`; this is one connected exterior surface with no forced multi-map, interior, overhang, or validity-construction cost.",
+  "scene_prompt": "Create a 3D find-and-collect game map in a colorful cartoon city, with a central hub connecting three distinct, freely accessible city areas. Each area has its own playful visual identity and contains cool-looking pizza collectibles placed around the environment.",
+  "blob": "### Genre\nDominant genre: Adventure, specifically a find-and-collect exploration game with a fixed set of items to discover.\n\n### Shape and preset\nUse `world-open`: one freely explorable city map organized around a central hub and three connected districts. Match the Scavenger Hunt preset, while omitting its unrequested quest board; the hub-and-three-area composition is explicitly authored.\n\n### Config requirements\nUse `settlement-density` for a built-up, colorful cartoon city rather than isolated scenery. Use `path-trail` as clear pedestrian streets, alleys, and playful walkways radiating from the hub into each district. No other visual config is required.\n\n### Layout requirements\nUse `collectible-nodes` for one fixed collection set of cool-looking pizza pickups, distributed across all three districts rather than respawning. Site pizzas at visible landmarks, tucked into side streets, and in small environmental nooks so each district rewards exploration; the author did not state a pizza count.\n\n### Layout components\nMake a central circular plaza hub at the frame center, large enough to clearly branch into three freely accessible routes. Place three distinct cartoon city districts around it: one to the left, one to the right, and one beyond the hub, each with a clearly different playful visual identity through its building silhouettes, street dressing, color palette, and focal props. Connect every district directly to the hub with broad readable pedestrian streets, with secondary alleys and short loops inside each area for searching. Keep the ground as a single continuous city surface with curbs, sidewalks, compact buildings, storefront-like façades, signs, planters, and decorative urban props. The outer edge is a soft city limit formed by façade backdrops and streets that terminate cleanly. Compose the hub as the visual anchor, with all three district entrances legible in one isometric view.\n\n### Render order\nUse `isometric`: the city’s playful visual identity and district readability lead, while the simple hub-and-spoke circulation can be projected into top-down afterward.\n\n### Scale, theme, and pipeline cost\nScale band: medium, driven by one hub plus exactly three explorable districts. Theme: colorful cartoon city, playful stylized 3D architecture, distinctive pizza-themed collectibles. Pipeline modifier: `P0`, because this is one continuous exterior surface with no forced overhangs, interiors, separate maps, or topology that must be procedurally valid.",
   "spec": {
     "genre": "Adventure",
     "secondary": [],
@@ -38,123 +47,151 @@
     "axes": {},
     "options": [
       {
+        "id": "settlement-density",
+        "text": "A built-up, colorful cartoon city rather than isolated scenery.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "path-trail",
+        "text": "Clear pedestrian streets, alleys, and playful walkways radiating from the hub into each district.",
+        "visible": true,
+        "count": -1
+      },
+      {
         "id": "collectible-nodes",
-        "text": "Varied, clearly readable pizza finds distributed through every area, tucked into distinctive food scenery rather than rendered as generic markers.",
+        "text": "One fixed collection set of cool-looking pizza pickups, distributed across all three districts rather than respawning.",
         "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "collectible-nodes",
+        "text": "One fixed collection set of cool-looking pizza pickups, distributed across all three districts rather than respawning.",
+        "count": -1,
+        "where": "At visible landmarks, tucked into side streets, and in small environmental nooks across all three districts."
+      }
+    ],
     "layout": {
-      "composition": "A broad circular pizza-themed hub sits centrally in the plan, framed by three colorful, evenly angled branches radiating outward and all legible around it.",
+      "composition": "Isometric view centered on the central circular plaza hub as the visual anchor, with the left, right, and beyond-hub district entrances all legible in one frame.",
       "zones": [
         {
-          "name": "Central pizza hub",
-          "role": "Open starting hub and shared gathering point with showcase pizza finds.",
-          "where": "centre of the plan",
-          "size": "broad circular hub"
+          "name": "Central circular plaza hub",
+          "role": "Central gathering and branching point for the three freely accessible district routes.",
+          "where": "Frame center",
+          "size": "Large enough to clearly branch into three routes"
         },
         {
-          "name": "Cheesy pizza plaza",
-          "role": "Explorable branch with a short looping route, pockets, overlooks, prop clusters, and pizza finds.",
-          "where": "radiating outward from the central hub",
-          "size": "large enough for a short looping exploration route"
+          "name": "Left district",
+          "role": "Explorable cartoon city district with a distinct playful visual identity and pizza collection locations.",
+          "where": "Left of the hub",
+          "size": ""
         },
         {
-          "name": "Pepperoni-and-sauce garden",
-          "role": "Explorable branch with a short looping route, sheltered corners, prop clusters, and pizza finds.",
-          "where": "radiating outward from the central hub",
-          "size": "large enough for a short looping exploration route"
+          "name": "Right district",
+          "role": "Explorable cartoon city district with a distinct playful visual identity and pizza collection locations.",
+          "where": "Right of the hub",
+          "size": ""
         },
         {
-          "name": "Bakery or snack-landscape zone",
-          "role": "Explorable branch with a short looping route, pockets, overlooks, prop clusters, and pizza finds.",
-          "where": "radiating outward from the central hub",
-          "size": "large enough for a short looping exploration route"
+          "name": "Beyond-hub district",
+          "role": "Explorable cartoon city district with a distinct playful visual identity and pizza collection locations.",
+          "where": "Beyond the hub",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Central pizza hub",
-          "to": "Cheesy pizza plaza",
-          "kind": "open ground"
+          "from": "Central circular plaza hub",
+          "to": "Left district",
+          "kind": "road"
         },
         {
-          "from": "Central pizza hub",
-          "to": "Pepperoni-and-sauce garden",
-          "kind": "open ground"
+          "from": "Central circular plaza hub",
+          "to": "Right district",
+          "kind": "road"
         },
         {
-          "from": "Central pizza hub",
-          "to": "Bakery or snack-landscape zone",
-          "kind": "open ground"
+          "from": "Central circular plaza hub",
+          "to": "Beyond-hub district",
+          "kind": "road"
+        },
+        {
+          "from": "Left district",
+          "to": "Left district",
+          "kind": "corridor"
+        },
+        {
+          "from": "Right district",
+          "to": "Right district",
+          "kind": "corridor"
+        },
+        {
+          "from": "Beyond-hub district",
+          "to": "Beyond-hub district",
+          "kind": "corridor"
         }
       ],
-      "terrain": "One contiguous exterior surface with colorful pizza-themed paving in the hub and bright cartoon food-playground ground treatment throughout the branches.",
+      "terrain": "One continuous city surface with curbs and sidewalks.",
       "props": [
         {
-          "name": "Pizza props and pizza finds",
+          "name": "Compact buildings",
           "count": -1,
-          "where": "Throughout the central hub and all three exploration branches, including obvious showcase positions and visually sheltered corners"
+          "where": "Across the hub and all three districts"
         },
         {
-          "name": "Oversized cartoon food props",
+          "name": "Storefront-like façades",
           "count": -1,
-          "where": "Central hub"
+          "where": "Across the city districts and outer edge"
         },
         {
-          "name": "Giant cheese wedges",
+          "name": "Signs",
           "count": -1,
-          "where": "Throughout the hub and branches"
+          "where": "Along streets and within districts"
         },
         {
-          "name": "Sauce pools",
+          "name": "Planters",
           "count": -1,
-          "where": "Throughout the hub and branches"
+          "where": "Along streets and around the hub"
         },
         {
-          "name": "Breadstick rails",
+          "name": "Decorative urban props",
           "count": -1,
-          "where": "Throughout the hub and branches"
+          "where": "Across the hub and districts"
         },
         {
-          "name": "Mushroom-like toppings",
+          "name": "District focal props",
           "count": -1,
-          "where": "Throughout the hub and branches"
-        },
-        {
-          "name": "Food-shaped rocks",
-          "count": -1,
-          "where": "Throughout the hub and branches"
+          "where": "Within each of the three districts"
         }
       ],
-      "boundary": "Natural and playful outer boundary formed by oversized food cliffs, dense prop walls, or distant backdrop scenery rather than hard walls.",
+      "boundary": "A soft city limit formed by façade backdrops and streets that terminate cleanly.",
       "scale_band": "medium",
-      "theme": "Colorful cartoon pizza world, oversized whimsical food scenery, bright shared palette, high-contrast collectible props"
+      "theme": "Colorful cartoon city, playful stylized 3D architecture, distinctive pizza-themed collectibles."
     },
     "render": {
-      "first": "topdown",
-      "then": "isometric",
-      "authoritative": "topdown",
-      "why": "the hub must connect cleanly to all three accessible exploration areas so every pizza-placement region remains reachable.",
+      "first": "isometric",
+      "then": "topdown",
+      "authoritative": "isometric",
+      "why": "The city's playful visual identity and district readability lead, while the simple hub-and-spoke circulation can be projected into top-down afterward.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
     "notes": [],
-    "scene_prompt": "Create a 3D find-and-explore map set in a colorful cartoon pizza-themed world with playful oversized food scenery. A central hub opens into three distinct explorable areas branching outward, all accessible from the start. Place varied cool-looking pizza props throughout the hub and each area so they stand out clearly among the food-themed environments."
+    "scene_prompt": "Create a 3D find-and-collect game map in a colorful cartoon city, with a central hub connecting three distinct, freely accessible city areas. Each area has its own playful visual identity and contains cool-looking pizza collectibles placed around the environment."
   },
-  "iso_prompt": "Generate directly from this text prompt only, with no reference image: Create a 3D find-and-explore map set in a colorful cartoon pizza-themed world with playful oversized food scenery. A central hub opens into three distinct explorable areas branching outward, all accessible from the start. Place varied cool-looking pizza props throughout the hub and each area so they stand out clearly among the food-themed environments.\n\nLAYOUT FEATURES for this Adventure map. Build these as the actual structure of the space rather than as set dressing, keep them visually distinct from one another, and keep the whole layout legible in one view.\n\nSHAPE OF THE SPACE - Open World: One contiguous explorable map, found in any order the player likes. Polished square Roblox-like 3D environment concept, isometric three-quarter view, no captions or watermark.",
-  "td_prompt": "Convert the referenced scene into a TRUE overhead nadir minimap layout. Camera is straight down (90° top-down), ZERO perspective and ZERO isometric tilt. Show ONLY the tops of objects. NO building walls, NO doorways, NO awnings, NO side faces, NO vertical surfaces of any kind. Flat game-minimap / floor-plan style with clean flat color zones. Preserve the EXACT position, shape, size and orientation of every object from the reference image. Tightly crop to the occupied layout footprint; everything outside the footprint must be pure black (#000000). Square output. Scene details: Create a 3D find-and-explore map set in a colorful cartoon pizza-themed world with playful oversized food scenery. A central hub opens into three distinct explorable areas branching outward, all accessible from the start. Place varied cool-looking pizza props throughout the hub and each area so they stand out clearly among the food-themed environments.",
-  "addendum": "LAYOUT FEATURES for this Adventure map. Build these as the actual structure of the space rather than as set dressing, keep them visually distinct from one another, and keep the whole layout legible in one view.\n\nSHAPE OF THE SPACE - Open World: One contiguous explorable map, found in any order the player likes.",
+  "iso_prompt": "Generate directly from this text prompt only, with no reference image: Create a 3D find-and-collect game map in a colorful cartoon city, with a central hub connecting three distinct, freely accessible city areas. Each area has its own playful visual identity and contains cool-looking pizza collectibles placed around the environment.\n\nLAYOUT FEATURES for this Adventure map. Build these as the actual structure of the space rather than as set dressing, keep them visually distinct from one another, and keep the whole layout legible in one view.\n\nSHAPE OF THE SPACE - Open World: One contiguous explorable map, found in any order the player likes.\n\nINCLUDE:\n- Settlement: Built-up ground at a stated density — a hamlet, a town, or a dense city block grid — rather than scattered individual buildings.\n- Exploration Trail: A walkable route threading the space — a worn track, road, canyon floor, or ridge line. Polished square Roblox-like 3D environment concept, isometric three-quarter view, no captions or watermark.",
+  "td_prompt": "Convert the referenced scene into a TRUE overhead nadir minimap layout. Camera is straight down (90° top-down), ZERO perspective and ZERO isometric tilt. Show ONLY the tops of objects. NO building walls, NO doorways, NO awnings, NO side faces, NO vertical surfaces of any kind. Flat game-minimap / floor-plan style with clean flat color zones. Preserve the EXACT position, shape, size and orientation of every object from the reference image. Tightly crop to the occupied layout footprint; everything outside the footprint must be pure black (#000000). Square output. Scene details: Create a 3D find-and-collect game map in a colorful cartoon city, with a central hub connecting three distinct, freely accessible city areas. Each area has its own playful visual identity and contains cool-looking pizza collectibles placed around the environment.",
+  "addendum": "LAYOUT FEATURES for this Adventure map. Build these as the actual structure of the space rather than as set dressing, keep them visually distinct from one another, and keep the whole layout legible in one view.\n\nSHAPE OF THE SPACE - Open World: One contiguous explorable map, found in any order the player likes.\n\nINCLUDE:\n- Settlement: Built-up ground at a stated density — a hamlet, a town, or a dense city block grid — rather than scattered individual buildings.\n- Exploration Trail: A walkable route threading the space — a worn track, road, canyon floor, or ridge line.",
   "order": "std",
+  "mapper_notes": [],
   "stage": "done",
   "status": "ok",
   "error": "",
   "pipeline_version": "",
   "served_by": "",
-  "seconds": 27.0,
-  "mapper_notes": [
-    "blob asked for topdown first; the route ['P0'] gives isometric"
-  ]
+  "seconds": 30.5
 }

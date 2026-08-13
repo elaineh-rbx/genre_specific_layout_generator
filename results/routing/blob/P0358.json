@@ -14,149 +14,143 @@
     }
   ],
   "scene_prompt": "Crea un mapa 3D para un entrenador de puntería moderno, con una estética oscura e iluminación de neón azul y rojo. Un lobby central limpio contiene accesos físicos mediante botones a seis salas de entrenamiento separadas: una sala de blancos estáticos, una de blancos móviles, una para practicar contra bots humanoides, una de prueba de reacción, una de disparos rápidos a posiciones variables y una sala de seguimiento continuo. Cada sala es un espacio enfocado de práctica con líneas de tiro y zonas despejadas para objetivos; la pista de tiro más larga mide aproximadamente 60 studs. Mantén una composición interior compacta de instalación tecnológica, con el lobby como núcleo y las salas conectadas alrededor de él.",
-  "blob": "### 1. Género\nEl género dominante es Shooter: el mensaje original define un entrenador de puntería profesional con prácticas de precisión, reacción y seguimiento. No hay género secundario.\n\n### 2. Forma y preset\nUse la forma `range-directed`, con líneas de tiro orientadas y objetivos al fondo de cada sala. El preset correspondiente es Aim Trainer, adaptado: conserva las prácticas de blancos, pero se elimina `station-loadout` porque no se solicitó un banco ni selección física de armas.\n\n### 3. Requisitos de configuración\n`target-practice` es geometría visible e implementación invisible: cada sala muestra blancos claros a distancias legibles sobre su línea de tiro, mientras las zonas de registro de impactos y activación se colocan después y no se renderizan. `spawner-npc` es invisible: puntos de emisión dentro de la sala Sheriff Trainer para los bots humanoides de práctica; no deben aparecer en la imagen como marcadores técnicos.\n\n### 4. Componentes de layout\nConstruya una instalación tecnológica interior compacta. Un lobby central limpio ocupa el núcleo y contiene seis botones físicos de acceso, uno frente a cada conexión. Alrededor del lobby, seis salas independientes y cerradas se distribuyen radialmente: sala de blancos estáticos, sala de blancos móviles, sala Sheriff Trainer para bots humanoides, sala de reacción con posiciones de aparición repartidas, sala Flick Shot con blancos en posiciones laterales variables y sala Tracking con una línea despejada para desplazamiento continuo. Cada puerta o corto corredor parte directamente del lobby, sin conectar unas salas con otras.\n\nCada sala tiene una posición de tiro frontal, suelo oscuro despejado, carril o línea de referencia y pared final de objetivos. La pista de tiro más larga, en la sala destinada a distancia, mide aproximadamente 60 studs; las demás se compactan proporcionalmente. Use paredes opacas, marcos luminosos y separación acústica visual entre modalidades. No hay exterior ni paisaje: el límite es la envolvente rectangular de la instalación. Componga la vista con el lobby reconocible en el centro y las seis salas legibles como alas periféricas.\n\n### 5. Orden de render\nUse `topdown`: el plano de salas independientes conectadas al lobby debe ser autoritativo para garantizar que cada modo sea accesible y que las líneas de tiro no se crucen; después se viste la vista isométrica desde ese plano.\n\n### 6. Escala, tema y coste de pipeline\nEscala media, impulsada por seis salas especializadas y una pista máxima de aproximadamente 60 studs. Tema: instalación de entrenamiento futurista, oscura, limpia y profesional, con neón azul y rojo. Coste `P0`: es un único interior de una sola planta, sin superficies superpuestas ni transiciones exterior-interior.",
+  "blob": "### Genre\nThe dominant genre is Shooter, specifically an aim-training experience for improving ranged accuracy. There is no secondary genre.\n\n### Shape and preset\nUse `space-staged`, taken from outside Shooter’s usual shape set: a central lobby is fully isolated from six focused training rooms entered by mode buttons. The Aim Trainer preset is adapted by replacing its single `range-directed` firing range with this staged facility; its target-practice intent remains, while no loadout bench is requested.\n\n### Config requirements\nUse `target-practice` for clearly readable target fields and firing lines in every training room: static targets, moving-target lanes, humanoid bot space, brief reaction pop-up positions, flick-shot target positions, and a continuous tracking lane. Do not add a weapon bench, exterior scenery, or unrequested population.\n\n### Layout requirements\nPlace `target-practice` targets separately per room: a static target array at the end of the precision lane; moving targets along lateral paths; several humanoid-bot spawn positions across the sheriff room; distributed pop-up points in the reaction and flick rooms; and a continuously traversable target path in the tracking room. The longest firing lane is approximately 60 studs, used by the static-target room.\n\n### Layout components\nBuild a compact enclosed technology facility. The central lobby is the arrival and mode-selection core, containing six physical illuminated buttons or portals arranged around its perimeter. Each button leads to one isolated room: Static Targets, Moving Targets, Sheriff Trainer, Reaction Test, Flick Shot, and Tracking. Every room has a clean dark floor, a clear firing line, open target space, and no visual clutter that would obscure aim practice. Put the approximately 60-stud longest lane in the Static Targets room; make the other rooms shorter, purpose-shaped chambers around the lobby. Use solid interior walls and controlled door/portal thresholds to keep each mode visually separate. Compose the facility as a central hub with six evenly legible surrounding chambers, shown in a compact interior cutaway.\n\n### Render order\nUse `isometric`: the dark neon technological look and readable room identity lead, then derive linked top-down plans for the lobby and isolated training stages.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by a lobby plus six separate rooms and one approximately 60-stud lane. Theme: professional futuristic aim-training facility, matte dark materials, crisp blue and red neon accents, clean high-performance visual language. Use `P4` because the lobby and mode rooms are isolated maps/stages rather than one co-visible play surface.",
   "spec": {
     "genre": "Shooter",
     "secondary": [],
-    "shape": "range-directed",
+    "shape": "space-staged",
     "preset": "Aim Trainer",
     "axes": {},
     "options": [
       {
         "id": "target-practice",
-        "text": "Cada sala muestra blancos claros a distancias legibles sobre su línea de tiro; las zonas de registro de impactos y activación se colocan después y no se renderizan.",
+        "text": "Clearly readable target fields and firing lines in every training room: static targets, moving-target lanes, humanoid bot space, brief reaction pop-up positions, flick-shot target positions, and a continuous tracking lane.",
         "visible": true,
-        "count": -1
-      },
-      {
-        "id": "spawner-npc",
-        "text": "Puntos de emisión dentro de la sala Sheriff Trainer para los bots humanoides de práctica; no deben aparecer en la imagen como marcadores técnicos.",
-        "visible": false,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "target-practice",
+        "text": "Targets separated per room: a static target array at the end of the precision lane; moving targets along lateral paths; several humanoid-bot spawn positions across the sheriff room; distributed pop-up points in the reaction and flick rooms; and a continuously traversable target path in the tracking room.",
+        "count": -1,
+        "where": "Place separately in each focused training room; the static target array is at the end of the approximately 60-stud precision lane."
+      }
+    ],
     "layout": {
-      "composition": "Lobby reconocible en el centro, con seis salas independientes y cerradas legibles como alas periféricas alrededor de él.",
+      "composition": "Compact interior cutaway with the central lobby as the core and six evenly legible isolated training chambers arranged around its perimeter.",
       "zones": [
         {
-          "name": "Lobby central",
-          "role": "Núcleo limpio de acceso a las modalidades de entrenamiento.",
-          "where": "centro",
-          "size": "compacto"
+          "name": "Central Lobby",
+          "role": "Arrival and mode-selection core.",
+          "where": "Centre",
+          "size": "Compact central hub"
         },
         {
-          "name": "Sala de blancos estáticos",
-          "role": "Práctica de blancos estáticos con posición de tiro frontal, línea de referencia y pared final de objetivos.",
-          "where": "ala periférica conectada directamente al lobby",
-          "size": "compacta"
+          "name": "Static Targets",
+          "role": "Precision practice with the longest firing lane and a static target array.",
+          "where": "Around the central lobby",
+          "size": "Approximately 60-stud lane"
         },
         {
-          "name": "Sala de blancos móviles",
-          "role": "Práctica de blancos móviles con posición de tiro frontal, línea de referencia y pared final de objetivos.",
-          "where": "ala periférica conectada directamente al lobby",
-          "size": "compacta"
+          "name": "Moving Targets",
+          "role": "Practice against targets moving along lateral paths.",
+          "where": "Around the central lobby",
+          "size": "Shorter purpose-shaped chamber"
         },
         {
-          "name": "Sala Sheriff Trainer",
-          "role": "Práctica contra bots humanoides, con puntos de emisión colocados después de la segmentación.",
-          "where": "ala periférica conectada directamente al lobby",
-          "size": "compacta"
+          "name": "Sheriff Trainer",
+          "role": "Practice against humanoid bots.",
+          "where": "Around the central lobby",
+          "size": "Shorter purpose-shaped chamber"
         },
         {
-          "name": "Sala de reacción",
-          "role": "Prueba de reacción con posiciones de aparición repartidas.",
-          "where": "ala periférica conectada directamente al lobby",
-          "size": "compacta"
+          "name": "Reaction Test",
+          "role": "Practice with brief distributed pop-up target positions.",
+          "where": "Around the central lobby",
+          "size": "Shorter purpose-shaped chamber"
         },
         {
-          "name": "Sala Flick Shot",
-          "role": "Disparos rápidos a blancos en posiciones laterales variables.",
-          "where": "ala periférica conectada directamente al lobby",
-          "size": "compacta"
+          "name": "Flick Shot",
+          "role": "Practice rapid shots at variable flick-target positions.",
+          "where": "Around the central lobby",
+          "size": "Shorter purpose-shaped chamber"
         },
         {
-          "name": "Sala Tracking",
-          "role": "Seguimiento continuo con una línea despejada para desplazamiento continuo.",
-          "where": "ala periférica conectada directamente al lobby",
-          "size": "incluye la pista de tiro más larga, aproximadamente 60 studs"
+          "name": "Tracking",
+          "role": "Practice on a continuously traversable target path.",
+          "where": "Around the central lobby",
+          "size": "Shorter purpose-shaped chamber"
         }
       ],
       "paths": [
         {
-          "from": "Lobby central",
-          "to": "Sala de blancos estáticos",
-          "kind": "corredor"
+          "from": "Central Lobby",
+          "to": "Static Targets",
+          "kind": "portal"
         },
         {
-          "from": "Lobby central",
-          "to": "Sala de blancos móviles",
-          "kind": "corredor"
+          "from": "Central Lobby",
+          "to": "Moving Targets",
+          "kind": "portal"
         },
         {
-          "from": "Lobby central",
-          "to": "Sala Sheriff Trainer",
-          "kind": "corredor"
+          "from": "Central Lobby",
+          "to": "Sheriff Trainer",
+          "kind": "portal"
         },
         {
-          "from": "Lobby central",
-          "to": "Sala de reacción",
-          "kind": "corredor"
+          "from": "Central Lobby",
+          "to": "Reaction Test",
+          "kind": "portal"
         },
         {
-          "from": "Lobby central",
-          "to": "Sala Flick Shot",
-          "kind": "corredor"
+          "from": "Central Lobby",
+          "to": "Flick Shot",
+          "kind": "portal"
         },
         {
-          "from": "Lobby central",
-          "to": "Sala Tracking",
-          "kind": "corredor"
+          "from": "Central Lobby",
+          "to": "Tracking",
+          "kind": "portal"
         }
       ],
-      "terrain": "Suelo oscuro despejado en cada sala, con carril o línea de referencia; no hay exterior ni paisaje.",
+      "terrain": "Clean dark floors throughout the enclosed technology facility.",
       "props": [
         {
-          "name": "botones físicos de acceso",
+          "name": "Physical illuminated mode buttons or portals",
           "count": 6,
-          "where": "lobby central, uno frente a cada conexión"
-        },
-        {
-          "name": "paredes opacas",
-          "count": -1,
-          "where": "entre las salas y alrededor de la instalación"
-        },
-        {
-          "name": "marcos luminosos",
-          "count": -1,
-          "where": "salas y conexiones"
+          "where": "Arranged around the perimeter of the central lobby"
         }
       ],
-      "boundary": "Envolvente rectangular interior de la instalación, con paredes opacas y salas cerradas.",
+      "boundary": "Solid interior walls and controlled door or portal thresholds keep the lobby and each mode room visually separate.",
       "scale_band": "medium",
-      "theme": "Instalación tecnológica de entrenamiento futurista, oscura, limpia y profesional, con neón azul y rojo."
+      "theme": "Professional futuristic aim-training facility, matte dark materials, crisp blue and red neon accents, clean high-performance visual language."
     },
     "render": {
-      "first": "topdown",
-      "then": "isometric",
-      "authoritative": "topdown",
-      "why": "el plano de salas independientes conectadas al lobby debe garantizar accesibilidad y líneas de tiro que no se crucen.",
+      "first": "isometric",
+      "then": "topdown",
+      "authoritative": "isometric",
+      "why": "The dark neon technological look and readable room identity lead.",
       "set_piece": false
     },
     "route": [
-      "P0"
+      "P4"
     ],
-    "notes": [],
+    "notes": [
+      "`space-staged` is taken from outside Shooter's usual shape set.",
+      "The Aim Trainer preset is adapted by replacing its single `range-directed` firing range with the staged facility.",
+      "`station-loadout` is not included because no weapon bench is requested."
+    ],
     "scene_prompt": "Crea un mapa 3D para un entrenador de puntería moderno, con una estética oscura e iluminación de neón azul y rojo. Un lobby central limpio contiene accesos físicos mediante botones a seis salas de entrenamiento separadas: una sala de blancos estáticos, una de blancos móviles, una para practicar contra bots humanoides, una de prueba de reacción, una de disparos rápidos a posiciones variables y una sala de seguimiento continuo. Cada sala es un espacio enfocado de práctica con líneas de tiro y zonas despejadas para objetivos; la pista de tiro más larga mide aproximadamente 60 studs. Mantén una composición interior compacta de instalación tecnológica, con el lobby como núcleo y las salas conectadas alrededor de él."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
-  "mapper_notes": [
-    "blob asked for topdown first; the route ['P0'] gives isometric"
-  ]
+  "mapper_notes": []
 }

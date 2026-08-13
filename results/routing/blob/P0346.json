@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a small WWI-style shooting test area built as a short zig-zag trench line of period earthworks. The player spawn sits inside the trench, with an NPC target positioned directly ahead along the trench's forward view.",
-  "blob": "### Genre\nThis is a Shooter test range: the original request centers on firing a rifle at an NPC target, not exploration or a combat match. Use the dominant Shooter genre.\n\n### Shape and preset\nUse `range-directed`, matching the Aim Trainer preset. This scene is a compact forward-facing firing lane rather than a multi-lane combat map; the preset remains recognizable, though its target is a single NPC rather than an array of distance targets.\n\n### Config requirements\nUse `target-practice` as visible geometry: the NPC target stands directly ahead at the end of the trench’s clear forward view. Use `station-loadout` as both visible geometry and invisible interaction placement: represent it as the player’s starting firing position within the trench, with the loadout interaction located there. Do not add cover, team bases, loot, or other unrequested shooter features.\n\n### Layout components\nBuild one small, short zig-zag trench test stretch, with each angled segment wide enough for the player to stand and aim down its forward-facing final section. Place the spawn/firing position inside the rear trench segment. The trench turns once or twice in a compact zig-zag, then opens into a direct, unobstructed sightline to one NPC target at the far end ahead. Form the trench from WWI period earthworks: packed brown mud walls, sandbags along the parapet, timber revetments, duckboards underfoot, and sparse churned earth around the trench lip. Keep the target isolated in a small earthen dead-end or firing pocket, with no extra routes. The trench walls are the boundary; the surrounding ground is non-playable churned battlefield terrain. Compose the isometric view to show the zig-zag silhouette, spawn end, and target aligned along the final firing view.\n\n### Render order\nUse `isometric`: this is a small, visually led test set with no topology whose failure would make play unworkable; the top-down plan can be projected from the authoritative isometric render.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the explicitly short test stretch and one target. Theme: grounded WWI trench earthworks, muddy and utilitarian. Use `SET`, because this is a directed test-range set rather than a traversable combat map; skip traversal and jump-gap checks.",
+  "blob": "### Genre\nThe dominant genre is Shooter: the player fires a rifle at a target for a small-scale shooting test. There is no secondary genre.\n\n### Shape and preset\nUse `range-directed`, matched to the Aim Trainer preset. This is a compact firing line inside a trench: the player faces one direction toward a target, with no opposing team, combat lanes, or traversable route beyond the firing view.\n\n### Config requirements\nUse `target-practice` as a single humanoid practice target placed visibly downrange, directly in the player’s forward trench view. Do not add a loadout bench or extra targets; the rifle and the one NPC target are the requested test setup.\n\n### Layout requirements\nPlace `target-practice` once: site the humanoid NPC target directly ahead of the spawn position at the far visible end of the short trench stretch, centered in the firing line and unobstructed by trench corners. No additional placed gameplay markers are required.\n\n### Layout components\nBuild one small WWI-style shooting test area: a short zig-zag trench line of packed earth, timber revetments, sandbags, duckboards, and uneven muddy ground. The initial trench bay is the spawn zone, sized only for a player to stand and aim. It leads forward through one or two angled zig-zag turns to a final target bay, keeping the NPC target directly readable from the spawn-facing sightline. Use low parapet walls and sandbagged trench edges to bound the space; the exterior beyond the earthworks is non-playable battlefield ground. Keep the trench compact rather than a full traversable trench network. Compose the scene from a slightly elevated isometric view that clearly shows the spawn bay, zig-zag geometry, and target at the forward end.\n\n### Render order\nUse `isometric`: the compact WWI earthwork appearance is authoritative, and this simple one-direction test layout does not need plan-first validation.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the requested short test stretch and one target. Theme is muddy WWI period trench earthworks, timber, sandbags, and subdued battlefield materials. Use `P0`; the single-level trench has no forced multi-surface, interior-transition, volumetric, or validity-construction cost.",
   "spec": {
     "genre": "Shooter",
     "secondary": [],
@@ -24,92 +24,84 @@
     "options": [
       {
         "id": "target-practice",
-        "text": "The NPC target stands directly ahead at the end of the trench’s clear forward view, isolated in a small earthen dead-end or firing pocket.",
+        "text": "A single humanoid NPC practice target visibly downrange, directly in the player's forward trench view.",
         "visible": true,
         "count": 1
-      },
+      }
+    ],
+    "layout_placement": [
       {
-        "id": "station-loadout",
-        "text": "The player’s starting firing position is inside the rear trench segment, with the loadout interaction located there.",
-        "visible": true,
-        "count": -1
+        "id": "target-practice",
+        "text": "The humanoid NPC target at the far visible end of the short trench stretch.",
+        "count": 1,
+        "where": "Directly ahead of the spawn position, centered in the firing line and unobstructed by trench corners."
       }
     ],
     "layout": {
-      "composition": "Isometric view showing the compact zig-zag trench silhouette, the rear spawn end, and the target aligned along the final unobstructed firing view.",
+      "composition": "Slightly elevated isometric view clearly showing the spawn bay in the foreground, the compact zig-zag trench geometry through the middle, and the target at the forward end.",
       "zones": [
         {
-          "name": "Rear trench segment",
-          "role": "Player spawn and firing position with loadout interaction.",
-          "where": "rear end of the zig-zag trench",
-          "size": "small"
+          "name": "Spawn bay",
+          "role": "Initial trench bay where the player stands and aims.",
+          "where": "Near foreground at the start of the trench line.",
+          "size": "Sized only for one player to stand and aim."
         },
         {
-          "name": "Zig-zag trench test stretch",
-          "role": "Short stand-and-aim trench route turning once or twice before the final firing section.",
-          "where": "centre of the compact set",
-          "size": "small and short"
+          "name": "Zig-zag trench stretch",
+          "role": "Short forward firing approach through angled trench turns.",
+          "where": "Between the spawn bay and final target bay.",
+          "size": "Short and compact, with one or two angled zig-zag turns."
         },
         {
-          "name": "Target firing pocket",
-          "role": "Isolated dead-end holding the NPC target at the end of the direct sightline.",
-          "where": "far end ahead of the final trench section",
-          "size": "small"
+          "name": "Target bay",
+          "role": "Final bay holding the humanoid NPC practice target.",
+          "where": "Forward end of the trench line.",
+          "size": "Small"
         }
       ],
       "paths": [
         {
-          "from": "Rear trench segment",
-          "to": "Zig-zag trench test stretch",
-          "kind": "trench corridor"
-        },
-        {
-          "from": "Zig-zag trench test stretch",
-          "to": "Target firing pocket",
-          "kind": "trench corridor"
+          "from": "Spawn bay",
+          "to": "Target bay",
+          "kind": "corridor"
         }
       ],
-      "terrain": "Packed brown mud earthwork walls, sparse churned battlefield earth around the trench lip, and duckboards underfoot.",
+      "terrain": "Uneven muddy ground and packed-earth WWI trench earthworks; exterior beyond the earthworks is non-playable battlefield ground.",
       "props": [
         {
-          "name": "NPC target",
-          "count": 1,
-          "where": "directly ahead in the far earthen firing pocket"
+          "name": "Timber revetments",
+          "count": -1,
+          "where": "Along the trench line."
         },
         {
-          "name": "sandbags",
+          "name": "Sandbags",
           "count": -1,
-          "where": "along the trench parapet"
+          "where": "On parapets and trench edges."
         },
         {
-          "name": "timber revetments",
+          "name": "Duckboards",
           "count": -1,
-          "where": "lining the trench walls"
+          "where": "Along the trench floor."
         },
         {
-          "name": "duckboards",
+          "name": "Low parapet walls",
           "count": -1,
-          "where": "underfoot in the trench"
-        },
-        {
-          "name": "churned earth",
-          "count": -1,
-          "where": "surrounding the non-playable trench lip"
+          "where": "Bounding the trench space."
         }
       ],
-      "boundary": "The trench walls form the boundary; surrounding churned battlefield terrain is non-playable.",
+      "boundary": "Low parapet walls and sandbagged trench edges bound the compact trench; non-playable battlefield ground lies beyond the earthworks.",
       "scale_band": "small",
-      "theme": "Grounded WWI trench earthworks, muddy and utilitarian."
+      "theme": "Muddy WWI period trench earthworks, timber, sandbags, and subdued battlefield materials."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "A small visually led test set has no topology whose failure would make play unworkable.",
-      "set_piece": true
+      "why": "The simple one-direction shooting test does not need plan-first validation.",
+      "set_piece": false
     },
     "route": [
-      "SET"
+      "P0"
     ],
     "notes": [],
     "scene_prompt": "Create a small WWI-style shooting test area built as a short zig-zag trench line of period earthworks. The player spawn sits inside the trench, with an NPC target positioned directly ahead along the trench's forward view."
@@ -117,7 +109,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

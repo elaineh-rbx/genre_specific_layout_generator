@@ -19,7 +19,7 @@
     }
   ],
   "scene_prompt": "Create a 3D classic Roblox obby map: a flat, ground-level course of 50 stages, arranged as several linked segments progressing across the ground. Use one consistent bright, colorful visual style throughout, with simple platforming hazards along the route.",
-  "blob": "### Genre\nThe dominant genre is Obby & Platformer: the author specifies a 50-stage movement course with discrete platforming progression. There is no secondary genre.\n\n### Shape and preset\nUse the flat-course shape `course-flat`. It is a long ground-level sequence spread laterally across the map, rather than a vertical tower. The matched preset is Classic Obby: retain its recognizable sequential, brightly colored platform-course character, while divide the unusually long course into linked sections rather than attempting to show all 50 stages as one compact cluster.\n\n### Config requirements\nUse visible `path-track` as the ordered chain of safe platforms, jumps, and stage-to-stage landings across all 50 stages. Use visible `obstacle-jump` for the simple platforming challenges: gaps, stepped blocks, narrow beams, and short wraparound routes in the consistent classic style. Use `checkpoint-respawn`: each checkpoint has a visible broad, enclosed colored landing pad, while its respawn marker is invisible and placed in layout only. Do not use `hazard-kill`; failure should read primarily as falling away from the route, not touching lethal decorative surfaces.\n\n### Layout components\nBuild one contiguous, flat ground-level course of exactly 50 numbered stages, organized as several linked segments that progress from the near start toward the far end of the map. Each segment should contain a readable run of stages with a short reset landing at its beginning and end; connect segments directly with the same continuous platform track, not portals or separate maps. Start with an open arrival pad at the near edge, then make the route zigzag broadly across open ground so every segment remains legible in plan view. Vary the simple obstacle geometry—gaps, staggered blocks, beams, short rising steps, and small obstacle clusters—without changing the overall theme. Use bright red, blue, yellow, green, and purple platforms over a neutral base ground, with open fall-away space around the route as the boundary. Frame the course diagonally from foreground start to distant finish so its length and linked segmentation read clearly.\n\n### Render order\nUse `topdown`: the 50-stage jump chain must remain connected and physics-legal, so the plan is authoritative before the isometric dressing is produced.\n\n### Scale, theme, and pipeline cost\nScale is huge, driven by the exact 50-stage count despite the flat footprint. Theme is classic Roblox obby: clean primitive geometry, bright saturated platforms, and simple readable hazards. Use `P6` because the sequential platform route must be valid by construction; use `P0` otherwise, since the terrain remains one flat, single surface with no interior, overhang, or separate-map requirement.",
+  "blob": "### 1. Genre\nThe dominant genre is Obby & Platformer: the author requests a full 50-stage obstacle course with discrete platforming progression.\n\n### 2. Shape and preset\nUse `course-flat`, matching the Classic Obby preset. This is a long, ground-level sequence that travels horizontally rather than climbing into a tower. The preset remains recognisable: retain its sequential track, safe stage checkpoints, and jump-focused obstacles, while omitting unrequested moving obstacles.\n\n### 3. Config requirements\nUse `path-track` as a single, clearly readable chain of bright platforms and obstacle sections progressing through all 50 stages. Use `checkpoint-respawn` as flat, enclosed, visibly safe colored pads at stage boundaries. Use `obstacle-jump` for simple classic Roblox jumps, short gaps, raised blocks, wrap-arounds, and stepped platforms. Do not add `hazard-kill`: the prompt calls for simple hazards but does not specify touch-lethal surfaces.\n\n### 4. Layout requirements\nPlace `checkpoint-respawn` markers at the beginning of each of the 50 stages, each on a safe landing pad before that stage’s obstacle sequence; a fall returns the player to the current stage start. No pickups, buffs, teleports, NPC spawners, or other placed gameplay elements are required.\n\n### 5. Layout components\nBuild a flat, ground-level 50-stage obby divided into several linked, consecutive segments, with each segment continuing directly into the next rather than becoming a separate map. Every stage is a compact obstacle beat in the same ordered platform track: a safe checkpoint pad, a short run of colorful platforms and simple jump hazards, then the next checkpoint. Vary the geometry through gaps, low stepping blocks, narrow platforms, and wrap-around jumps without changing the visual theme. Keep a neutral flat base beneath and around the route, with clear lateral fall space and no dense scenery that obscures jumps. The composition should read left-to-right or foreground-to-background as one long continuous course, with segment transitions visibly aligned.\n\n### 6. Render order\nUse `topdown` first and treat it as authoritative, because the 50-stage critical route must remain continuous and every jump sequence must be physically playable; the isometric view should dress that validated plan.\n\n### 7. Scale, theme, and pipeline cost\nScale is huge, driven by 50 complete stages spread across several linked course segments. Theme: classic Roblox obby, consistently bright and colorful, with clean primitive platforms and simple readable hazards. Apply `P6` because the sequential jump path must be valid by construction. No other modifier is forced.",
   "spec": {
     "genre": "Obby & Platformer",
     "secondary": [],
@@ -29,89 +29,69 @@
     "options": [
       {
         "id": "path-track",
-        "text": "the ordered chain of safe platforms, jumps, and stage-to-stage landings across all 50 stages",
+        "text": "A single, clearly readable chain of bright platforms and obstacle sections progressing through all 50 stages.",
+        "visible": true,
+        "count": 1
+      },
+      {
+        "id": "checkpoint-respawn",
+        "text": "Flat, enclosed, visibly safe colored pads at stage boundaries.",
         "visible": true,
         "count": 50
       },
       {
         "id": "obstacle-jump",
-        "text": "simple platforming challenges: gaps, stepped blocks, narrow beams, and short wraparound routes in the consistent classic style",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "checkpoint-respawn",
-        "text": "each checkpoint has a visible broad, enclosed colored landing pad, while its respawn marker is invisible and placed in layout only",
+        "text": "Simple classic Roblox jumps, short gaps, raised blocks, wrap-arounds, and stepped platforms.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "checkpoint-respawn",
+        "text": "A fall returns the player to the current stage start.",
+        "count": 50,
+        "where": "At the beginning of each of the 50 stages, on a safe landing pad before that stage’s obstacle sequence."
+      }
+    ],
     "layout": {
-      "composition": "The course is framed diagonally from the foreground start at the near edge to the distant finish, with linked zigzagging segments spread broadly across the open ground so the full length reads clearly.",
+      "composition": "A long continuous course reading left-to-right or foreground-to-background, with linked segment transitions visibly aligned.",
       "zones": [
         {
-          "name": "Arrival pad",
-          "role": "Open starting point for the course.",
-          "where": "near foreground edge",
-          "size": ""
-        },
-        {
-          "name": "Linked course segments",
-          "role": "Several readable runs of numbered stages, each with a short reset landing at its beginning and end.",
-          "where": "zigzagging from the near start across the map toward the far end",
-          "size": "huge overall; exactly 50 stages"
-        },
-        {
-          "name": "Finish",
-          "role": "Distant end of the continuous 50-stage course.",
-          "where": "far end of the map",
-          "size": ""
+          "name": "Linked consecutive course segments",
+          "role": "Several directly connected segments containing the ordered 50-stage obstacle course.",
+          "where": "Across the ground along the continuous route.",
+          "size": "huge"
         }
       ],
       "paths": [
         {
-          "from": "Arrival pad",
-          "to": "Linked course segments",
-          "kind": "track"
-        },
-        {
-          "from": "Linked course segments",
-          "to": "Finish",
+          "from": "Course start",
+          "to": "Course end",
           "kind": "track"
         }
       ],
-      "terrain": "Flat neutral base ground with open fall-away space around the bright red, blue, yellow, green, and purple platform route.",
+      "terrain": "Neutral flat base beneath and around the route, with clear lateral fall space.",
       "props": [
         {
-          "name": "numbered stages",
-          "count": 50,
-          "where": "across the contiguous course from the near start to the distant finish"
-        },
-        {
-          "name": "broad enclosed colored checkpoint landing pads",
+          "name": "Bright colorful platforms and simple jump hazards",
           "count": -1,
-          "where": "at the beginning and end of each linked segment"
-        },
-        {
-          "name": "gaps, staggered blocks, beams, short rising steps, and small obstacle clusters",
-          "count": -1,
-          "where": "along the continuous platform track"
+          "where": "Along the ordered platform track across all 50 stages."
         }
       ],
-      "boundary": "Open fall-away space around the route.",
+      "boundary": "Open lateral fall space around the route; no dense scenery obscures jumps.",
       "scale_band": "huge",
-      "theme": "classic Roblox obby; clean primitive geometry, bright saturated platforms, simple readable hazards"
+      "theme": "Classic Roblox obby, consistently bright and colorful, with clean primitive platforms and simple readable hazards."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the 50-stage jump chain must remain connected and physics-legal.",
+      "why": "the 50-stage critical route must remain continuous and every jump sequence must be physically playable",
       "set_piece": false
     },
     "route": [
-      "P6",
-      "P0"
+      "P6"
     ],
     "notes": [],
     "scene_prompt": "Create a 3D classic Roblox obby map: a flat, ground-level course of 50 stages, arranged as several linked segments progressing across the ground. Use one consistent bright, colorful visual style throughout, with simple platforming hazards along the route."
@@ -119,7 +99,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

@@ -14,81 +14,88 @@
     }
   ],
   "scene_prompt": "Create a low-graphics 3D driving map spanning a few explorable city blocks, optimized for weak devices. Lay out connected roads through textured buildings, with traffic poles, traffic lights, and walls positioned along streets and around the block edges. Include space for drivable cars, jeeps, motorcycles, and other vehicles.",
-  "blob": "### Genre\nThe dominant genre is Simulation, specifically a vehicle-driving simulation rather than Racing: the request is for free driving and exploration, with no lap or finish condition.\n\n### Shape and preset\nUse `world-shared`, matching the Vehicle Sim preset. This is one compact, persistent drivable city area rather than a track or isolated player plots.\n\n### Config requirements\nUse visible `path-road-vehicle` for a connected network of vehicle-width streets through the blocks, with turning space for cars, jeeps, motorcycles, and similar vehicles. Do not add resource fields, task stations, pickups, interiors, or other unrequested simulation features. The traffic poles, traffic lights, and perimeter walls are visible street props, not separate gameplay-layout components.\n\n### Layout components\nBuild a few connected city blocks at medium scale. Place a central intersection with branching roads leading around and between textured, low-detail building masses. Use broad paved streets and simple corners sized for varied vehicle turning, with side streets and short loops so players can explore without reaching dead ends immediately. Arrange buildings as block-edge rows and small clusters, leaving the road grid as the primary navigable space. Put traffic lights and traffic poles at major intersections and along street edges. Place simple walls around the outer block edges and at selected roadside boundaries; they define the compact city limit. Terrain is nearly flat asphalt, sidewalks, and minimal flat ground beyond the buildings, with no water or relief requested. Frame the map in an oblique isometric view that clearly reads the connected street grid, central junction, building blocks, and enclosing edges.\n\n### Render order\nUse `isometric`: render the low-detail city view first and derive the top-down plan from it, because this is an explorable driving space whose roads do not require a generated race-valid route.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by the stated few explorable city blocks rather than a drive-for-minutes world. Theme is low-poly, low-graphics urban driving map with textured but simple building facades and sparse roadside infrastructure for weak devices. Pipeline modifier `P0`: the compact road network is a single flat exterior surface with no forced multi-layer, interior, volumetric, separate-map, or validity-by-construction requirement.",
+  "blob": "### Genre\nSimulation, specifically a vehicle-operation sandbox rather than Racing: there is no lap, finish line, or prescribed route.\n\n### Shape and preset\nUse `world-open`, matched from the Vehicle Sim preset. It is one contiguous, freely explorable low-detail city map rather than a circuit or a sequence of courses.\n\n### Config requirements\nUse `path-road-vehicle` for connected, vehicle-width streets that let cars, jeeps, motorcycles, and other vehicles circulate and turn through the blocks. Do not add enterable interiors; the requested building textures apply to exterior façades only.\n\n### Layout requirements\nNo additional placed gameplay markers are required. Collision and death behavior are mechanics; the layout supplies the roadside collision geometry but no invisible hazard volumes.\n\n### Layout components\nBuild a compact map spanning a few city blocks. Place a central intersection with branching connected roads leading around and between the blocks, including broad turning corners and roadside clearance for varied vehicle sizes. Fill each block with simple, textured, low-polygon building façades and small open paved areas to explore, avoiding dense decorative clutter. Position traffic poles and traffic lights at major junction corners, with walls along selected streets and around the outer block edges as physical roadside obstacles and map limits. Keep the city on one flat paved surface, enclosed by the outer walls and simplified building edges. Compose the isometric view around the central intersection so several connected streets and distinct blocks remain legible at once.\n\n### Render order\nUse `isometric`: the driving city’s appearance and clear street dressing lead, while its open road network does not require a computed circuit or topology-constrained route.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by the clarified few explorable city blocks rather than a drive-for-minutes world. Theme is low-graphics, lightweight urban driving: simple geometry, readable textured façades, broad asphalt roads, and sparse street furniture for weak devices. Use `P0`; this is one flat, contiguous exterior surface with no forced extra capture pass.",
   "spec": {
     "genre": "Simulation",
     "secondary": [],
-    "shape": "world-shared",
+    "shape": "world-open",
     "preset": "Vehicle Sim",
     "axes": {},
     "options": [
       {
         "id": "path-road-vehicle",
-        "text": "a connected network of vehicle-width streets through the blocks, with turning space for cars, jeeps, motorcycles, and similar vehicles",
+        "text": "Connected vehicle-width streets that let cars, jeeps, motorcycles, and other vehicles circulate and turn through the blocks.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "Oblique isometric view clearly reading the connected street grid, central junction, building blocks, and enclosing edges.",
+      "composition": "Isometric view composed around the central intersection so several connected streets and distinct city blocks remain legible at once.",
       "zones": [
         {
-          "name": "Central intersection",
-          "role": "Central junction for vehicle movement, with branching roads.",
+          "name": "central intersection",
+          "role": "Vehicle circulation and turning point connecting the city streets.",
           "where": "centre",
           "size": ""
         },
         {
-          "name": "Connected city blocks",
-          "role": "Explorable blocks with textured low-detail building masses arranged along block edges and in small clusters.",
+          "name": "city blocks",
+          "role": "Simple textured low-polygon building façades and small open paved areas for exploration.",
           "where": "around the central intersection",
-          "size": "a few blocks"
+          "size": "a few compact blocks"
+        },
+        {
+          "name": "outer block edges",
+          "role": "Physical roadside obstacles and map limits.",
+          "where": "map perimeter",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Central intersection",
-          "to": "Connected city blocks",
+          "from": "central intersection",
+          "to": "city blocks",
           "kind": "road"
         },
         {
-          "from": "Connected city blocks",
-          "to": "Connected city blocks",
+          "from": "city blocks",
+          "to": "city blocks",
           "kind": "road"
         }
       ],
-      "terrain": "Nearly flat asphalt and sidewalks, with minimal flat ground beyond the buildings; no water or relief.",
+      "terrain": "One flat paved surface with broad asphalt roads, open paved areas, roadside clearance, and simplified building edges.",
       "props": [
         {
-          "name": "Textured, low-detail building masses",
+          "name": "simple textured low-polygon building façades",
           "count": -1,
-          "where": "block-edge rows and small clusters around the road grid"
+          "where": "filling each city block"
         },
         {
-          "name": "Traffic lights",
+          "name": "traffic poles",
           "count": -1,
-          "where": "major intersections and along street edges"
+          "where": "at major junction corners"
         },
         {
-          "name": "Traffic poles",
+          "name": "traffic lights",
           "count": -1,
-          "where": "major intersections and along street edges"
+          "where": "at major junction corners"
         },
         {
-          "name": "Simple walls",
+          "name": "walls",
           "count": -1,
-          "where": "outer block edges and selected roadside boundaries"
+          "where": "along selected streets and around the outer block edges"
         }
       ],
-      "boundary": "Simple walls around the outer block edges and selected roadside boundaries define the compact city limit.",
+      "boundary": "Enclosed by outer walls and simplified building edges.",
       "scale_band": "medium",
-      "theme": "low-poly, low-graphics urban driving map with textured but simple building facades and sparse roadside infrastructure for weak devices"
+      "theme": "Low-graphics, lightweight urban driving; simple geometry, readable textured façades, broad asphalt roads, and sparse street furniture for weak devices."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "this is an explorable driving space whose roads do not require a generated race-valid route.",
+      "why": "The driving city's appearance and clear street dressing lead, while its open road network does not require a computed circuit or topology-constrained route.",
       "set_piece": false
     },
     "route": [
@@ -100,7 +107,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

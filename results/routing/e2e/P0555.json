@@ -9,121 +9,131 @@
   "questions": [
     {
       "field": "theme",
-      "ask": "What visual style should the warehouse use (for example, clean industrial test lab, gritty abandoned warehouse, or bright stylized factory)?"
+      "ask": "What visual theme should the warehouse use—for example, a clean industrial testing lab, a gritty abandoned warehouse, or a bright stylized lab?"
     },
     {
       "field": "shape",
-      "ask": "Should each level be a single open warehouse floor, or should it include internal obstacles, ramps, platforms, and partitions that shape bomb placement and crate trajectories?"
+      "ask": "Should Blast Lab use one large open warehouse floor, or several separated test chambers/levels connected by doors or a central hub?"
     },
     {
       "field": "goal",
-      "ask": "For levels with more than one crate, must every crate land on a target, or is one designated crate and target used per level?"
+      "ask": "For levels with multiple crates, must the player land every crate on a target, or is there one designated crate and target per level?"
     }
   ],
   "answers": [
     {
       "field": "theme",
-      "ask": "What visual style should the warehouse use (for example, clean industrial test lab, gritty abandoned warehouse, or bright stylized factory)?",
-      "answer": "Use a clean industrial test lab warehouse style, with simple warehouse materials and clear visibility for the crates, bombs, CrossHair, and floor target."
+      "ask": "What visual theme should the warehouse use—for example, a clean industrial testing lab, a gritty abandoned warehouse, or a bright stylized lab?",
+      "answer": "Use a clean industrial testing lab theme, with a large functional warehouse interior and clear painted floor markings."
     },
     {
       "field": "shape",
-      "ask": "Should each level be a single open warehouse floor, or should it include internal obstacles, ramps, platforms, and partitions that shape bomb placement and crate trajectories?",
-      "answer": "Each level should use a single open warehouse floor; the gameplay is focused on placing bombs to launch crates toward the target."
+      "ask": "Should Blast Lab use one large open warehouse floor, or several separated test chambers/levels connected by doors or a central hub?",
+      "answer": "Use one large open warehouse floor for the initial build; it keeps the crate, target, and bomb physics plainly playable."
     },
     {
       "field": "goal",
-      "ask": "For levels with more than one crate, must every crate land on a target, or is one designated crate and target used per level?",
-      "answer": "Use one designated crate and one target per level. Extra crates, if present, are just scattered warehouse objects and are not required for completing the level."
+      "ask": "For levels with multiple crates, must the player land every crate on a target, or is there one designated crate and target per level?",
+      "answer": "Use one designated crate and one target per level. The prompt does not call for a multi-crate objective."
     }
   ],
-  "scene_prompt": "Create a 3D game map for \"Blast Lab\" set inside a large, clean industrial test-lab warehouse. Use a single open warehouse floor with simple industrial walls, high ceiling, and clear visibility across the space. Place one designated sturdy crate on the floor and one clearly painted floor target at a separated location, with unobstructed open ground between them for launching the crate. Scatter one or more additional crates around the warehouse as nonessential objects, while keeping the central crate-to-target area open; show a movable crosshair marker positioned on the floor near the designated crate.",
-  "blob": "### Genre\nThe dominant genre is Puzzle: the player solves a spatial physics challenge by launching a crate onto a goal. There is no secondary genre.\n\n### Shape and preset\nUse `puzzle-rooms`, interpreted as one large enclosed warehouse test chamber rather than a chain of small rooms. Preset: none; the indoor physics-lab layout does not retain the recognizable option bundle of Escape Room or Open-Air Puzzle.\n\n### Config requirements\nUse `trigger-solve`: visible geometry is a clearly painted floor target that receives the designated crate; invisibly, its target area registers a successful placement. No other options are required. The movable crosshair is a visible floor marker, not an additional objective or environmental obstacle.\n\n### Layout components\nBuild one large, open, rectangular industrial test-lab warehouse. The central play zone occupies most of the floor: place one sturdy designated crate toward one side and one painted floor target at a clearly separated location, leaving a broad uninterrupted launch corridor between them. Position the visible crosshair marker on the floor near the designated crate. Scatter one or more additional nonessential crates around the outer floor area, but keep them outside the central crate-to-target corridor. Use a flat concrete floor, simple clean industrial walls, a high ceiling with even overhead lighting, and no ramps, partitions, platforms, or internal obstacles. The enclosing warehouse walls define the boundary. Compose the room in a clear three-quarter view that shows the crate, target, marker, and the full open distance between them.\n\n### Render order\nUse `isometric`: the clean industrial presentation and simple single-room topology can be authored look-first without risking an unplayable route.\n\n### Scale, theme, and pipeline cost\nScale is large, driven by the wide open floor required for visible crate-launch distances and scattered objects. Theme: clean industrial test lab, simple warehouse materials, high visibility, sparse functional props. Pipeline modifier: `P0`; this is one enclosed, flat surface with no overhangs, exterior transition, separate maps, or topology that must be procedurally validated.",
+  "scene_prompt": "Create a 3D game map inside one large, open clean industrial testing-lab warehouse. The functional warehouse interior has clear painted floor markings, with one designated crate positioned on the open floor and one distinct target painted on the ground elsewhere across the test area. Leave broad unobstructed space around and between the crate and target for bomb placement and crate movement.",
+  "blob": "### Genre\nThe dominant genre is Simulation, specifically a physics-focused test activity in which object motion is the central interaction.\n\n### Shape and preset\nUse `world-shared`: one continuous warehouse test floor rather than separated plots or levels. The matched preset is Physics Sim; its shared-world form fits, while the prompt deliberately omits its hazard and circulation features.\n\n### Config requirements\nUse `physics-rig` as a minimal physics test setup: the designated crate is the sole movable test object on a broad marked concrete floor, with no added ramps, breakable assemblies, or hazards. Clear painted floor markings define the test area and make the distant target unmistakable.\n\n### Layout requirements\nPlace one `trigger-task` completion region precisely over the painted target on the warehouse floor, aligned to the target’s visible boundary. It is the single spatial success area for the designated crate; no other placed emitters, pickups, spawns, checkpoints, or targets are required.\n\n### Layout components\nBuild one large open clean industrial testing-lab warehouse interior, dominated by a flat concrete test floor. Put one designated crate on the open floor toward one side of the test area and one distinct painted ground target elsewhere across it, leaving broad unobstructed clearance around both objects and throughout the line between them for bomb placement and airborne crate travel. Use sparse industrial walls, high ceiling structure, utility lighting, and perimeter safety markings only; do not introduce shelves, machinery, pillars, ramps, or clutter that could obstruct crate movement. The warehouse walls enclose the play space. Frame the scene in a three-quarter isometric view that clearly shows the crate, target, and generous empty test floor together.\n\n### Render order\nUse `isometric`: the clean laboratory presentation is authoritative, and the single unobstructed floor does not require plan-first topology validation.\n\n### Scale, theme, and pipeline cost\nScale band: large, driven by the broad clear launch and landing area inside the warehouse. Theme: clean industrial testing lab, functional warehouse architecture, bright utility illumination, and crisp painted floor graphics. Pipeline modifier: `P0`, because this is one enclosed but single-surface space with no overhangs, separate maps, or topology that must be generated by construction.",
   "spec": {
-    "genre": "Puzzle",
+    "genre": "Simulation",
     "secondary": [],
-    "shape": "puzzle-rooms",
-    "preset": "none",
+    "shape": "world-shared",
+    "preset": "Physics Sim",
     "axes": {},
     "options": [
       {
-        "id": "trigger-solve",
-        "text": "A clearly painted floor target receives the designated crate; its target area invisibly registers a successful placement.",
+        "id": "physics-rig",
+        "text": "A minimal physics test setup: the designated crate is the sole movable test object on a broad marked concrete floor, with no added ramps, breakable assemblies, or hazards.",
+        "visible": true,
+        "count": 1
+      },
+      {
+        "id": "trigger-task",
+        "text": "A completion region precisely over the painted target on the warehouse floor, aligned to the target’s visible boundary.",
         "visible": true,
         "count": 1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "trigger-task",
+        "text": "A completion region precisely over the painted target on the warehouse floor, aligned to the target’s visible boundary.",
+        "count": 1,
+        "where": "Precisely over the painted target on the warehouse floor, aligned to the target’s visible boundary."
+      }
+    ],
     "layout": {
-      "composition": "Clear three-quarter view of the single warehouse room, showing the designated crate, painted target, crosshair marker, and the full unobstructed open distance between crate and target.",
+      "composition": "Three-quarter isometric view clearly showing the crate toward one side of the open test area, the painted target elsewhere across the floor, and the generous unobstructed concrete floor between them.",
       "zones": [
         {
-          "name": "Central play zone",
-          "role": "Crate-launch space with the designated crate, separated painted floor target, and a broad uninterrupted launch corridor.",
-          "where": "Occupies most of the warehouse floor",
+          "name": "Warehouse test area",
+          "role": "Open physics test floor for bomb placement and airborne crate travel between the designated crate and painted target.",
+          "where": "Inside the enclosed warehouse interior",
           "size": "large"
         }
       ],
-      "paths": [
-        {
-          "from": "designated crate",
-          "to": "painted floor target",
-          "kind": "open ground"
-        }
-      ],
-      "terrain": "Flat concrete floor.",
+      "paths": [],
+      "terrain": "Flat broad concrete test floor with clear painted floor markings and perimeter safety markings.",
       "props": [
         {
-          "name": "designated sturdy crate",
+          "name": "designated crate",
           "count": 1,
-          "where": "Toward one side of the central play zone"
+          "where": "On the open floor toward one side of the test area"
         },
         {
-          "name": "painted floor target",
+          "name": "distinct painted ground target",
           "count": 1,
-          "where": "At a clearly separated location from the designated crate"
+          "where": "Elsewhere across the test area on the warehouse floor"
         },
         {
-          "name": "movable crosshair floor marker",
-          "count": 1,
-          "where": "On the floor near the designated crate"
-        },
-        {
-          "name": "additional nonessential crates",
+          "name": "industrial walls",
           "count": -1,
-          "where": "Around the outer floor area, outside the central crate-to-target corridor"
+          "where": "Sparse perimeter around the test floor"
         },
         {
-          "name": "even overhead lighting",
+          "name": "high ceiling structure",
           "count": -1,
-          "where": "High ceiling"
+          "where": "Above the warehouse interior"
+        },
+        {
+          "name": "utility lighting",
+          "count": -1,
+          "where": "Throughout the warehouse interior"
         }
       ],
-      "boundary": "Simple clean industrial warehouse walls enclosing the room.",
+      "boundary": "Warehouse walls enclose the play space.",
       "scale_band": "large",
-      "theme": "Clean industrial test lab, simple warehouse materials, high visibility, sparse functional props."
+      "theme": "Clean industrial testing lab, functional warehouse architecture, bright utility illumination, crisp painted floor graphics."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "The clean industrial presentation and simple single-room topology can be authored look-first without risking an unplayable route.",
+      "why": "The single unobstructed floor does not require plan-first topology validation.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
-    "notes": [],
-    "scene_prompt": "Create a 3D game map for \"Blast Lab\" set inside a large, clean industrial test-lab warehouse. Use a single open warehouse floor with simple industrial walls, high ceiling, and clear visibility across the space. Place one designated sturdy crate on the floor and one clearly painted floor target at a separated location, with unobstructed open ground between them for launching the crate. Scatter one or more additional crates around the warehouse as nonessential objects, while keeping the central crate-to-target area open; show a movable crosshair marker positioned on the floor near the designated crate."
+    "notes": [
+      "visible on 'trigger-task' set from goes_to=both"
+    ],
+    "scene_prompt": "Create a 3D game map inside one large, open clean industrial testing-lab warehouse. The functional warehouse interior has clear painted floor markings, with one designated crate positioned on the open floor and one distinct target painted on the ground elsewhere across the test area. Leave broad unobstructed space around and between the crate and target for bomb placement and crate movement."
   },
-  "iso_prompt": "Generate directly from this text prompt only, with no reference image: Create a 3D game map for \"Blast Lab\" set inside a large, clean industrial test-lab warehouse. Use a single open warehouse floor with simple industrial walls, high ceiling, and clear visibility across the space. Place one designated sturdy crate on the floor and one clearly painted floor target at a separated location, with unobstructed open ground between them for launching the crate. Scatter one or more additional crates around the warehouse as nonessential objects, while keeping the central crate-to-target area open; show a movable crosshair marker positioned on the floor near the designated crate.\n\nLAYOUT FEATURES for this Puzzle map. Build these as the actual structure of the space rather than as set dressing, keep them visually distinct from one another, and keep the whole layout legible in one view.\n\nSHAPE OF THE SPACE - Sealed Chambers: Fully enclosed rooms that physically hold the player until the logic criteria are met.\n\nINCLUDE:\n- Solve Input Slot: A physical receptacle for a key item - a shaped indentation, a pedestal, or a socket in a wall or table. Polished square Roblox-like 3D environment concept, isometric three-quarter view, no captions or watermark.",
-  "td_prompt": "Convert the referenced scene into a TRUE overhead nadir minimap layout. Camera is straight down (90° top-down), ZERO perspective and ZERO isometric tilt. Show ONLY the tops of objects. NO building walls, NO doorways, NO awnings, NO side faces, NO vertical surfaces of any kind. Flat game-minimap / floor-plan style with clean flat color zones. Preserve the EXACT position, shape, size and orientation of every object from the reference image. Tightly crop to the occupied layout footprint; everything outside the footprint must be pure black (#000000). Square output. Scene details: Create a 3D game map for \"Blast Lab\" set inside a large, clean industrial test-lab warehouse. Use a single open warehouse floor with simple industrial walls, high ceiling, and clear visibility across the space. Place one designated sturdy crate on the floor and one clearly painted floor target at a separated location, with unobstructed open ground between them for launching the crate. Scatter one or more additional crates around the warehouse as nonessential objects, while keeping the central crate-to-target area open; show a movable crosshair marker positioned on the floor near the designated crate.",
-  "addendum": "LAYOUT FEATURES for this Puzzle map. Build these as the actual structure of the space rather than as set dressing, keep them visually distinct from one another, and keep the whole layout legible in one view.\n\nSHAPE OF THE SPACE - Sealed Chambers: Fully enclosed rooms that physically hold the player until the logic criteria are met.\n\nINCLUDE:\n- Solve Input Slot: A physical receptacle for a key item - a shaped indentation, a pedestal, or a socket in a wall or table.",
+  "iso_prompt": "Generate directly from this text prompt only, with no reference image: Create a 3D game map inside one large, open clean industrial testing-lab warehouse. The functional warehouse interior has clear painted floor markings, with one designated crate positioned on the open floor and one distinct target painted on the ground elsewhere across the test area. Leave broad unobstructed space around and between the crate and target for bomb placement and crate movement.\n\nLAYOUT FEATURES for this Simulation map. Build these as the actual structure of the space rather than as set dressing, keep them visually distinct from one another, and keep the whole layout legible in one view.\n\nSHAPE OF THE SPACE - Shared Persistent World: No personal plot at all — one common world everybody operates in together.\n\nINCLUDE:\n- Physics Contraption: Ramps, ragdoll props, and breakable assemblies whose reactions are the entertainment.\n- Task Station: A built station in the job loop - a pickup bay, a delivery dock, a patient bed, a planting plot. Polished square Roblox-like 3D environment concept, isometric three-quarter view, no captions or watermark.",
+  "td_prompt": "Convert the referenced scene into a TRUE overhead nadir minimap layout. Camera is straight down (90° top-down), ZERO perspective and ZERO isometric tilt. Show ONLY the tops of objects. NO building walls, NO doorways, NO awnings, NO side faces, NO vertical surfaces of any kind. Flat game-minimap / floor-plan style with clean flat color zones. Preserve the EXACT position, shape, size and orientation of every object from the reference image. Tightly crop to the occupied layout footprint; everything outside the footprint must be pure black (#000000). Square output. Scene details: Create a 3D game map inside one large, open clean industrial testing-lab warehouse. The functional warehouse interior has clear painted floor markings, with one designated crate positioned on the open floor and one distinct target painted on the ground elsewhere across the test area. Leave broad unobstructed space around and between the crate and target for bomb placement and crate movement.",
+  "addendum": "LAYOUT FEATURES for this Simulation map. Build these as the actual structure of the space rather than as set dressing, keep them visually distinct from one another, and keep the whole layout legible in one view.\n\nSHAPE OF THE SPACE - Shared Persistent World: No personal plot at all — one common world everybody operates in together.\n\nINCLUDE:\n- Physics Contraption: Ramps, ragdoll props, and breakable assemblies whose reactions are the entertainment.\n- Task Station: A built station in the job loop - a pickup bay, a delivery dock, a patient bed, a planting plot.",
   "order": "std",
+  "mapper_notes": [],
   "stage": "done",
   "status": "ok",
   "error": "",
   "pipeline_version": "",
   "served_by": "",
-  "seconds": 30.9,
-  "mapper_notes": []
+  "seconds": 33.3
 }

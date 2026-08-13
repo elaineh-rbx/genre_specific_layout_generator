@@ -19,7 +19,7 @@
     }
   ],
   "scene_prompt": "Create a large 3D modern festival main stage with a spectacular, dynamic presentation. Center the immense raised stage as the dominant structure, framed by giant screens, a dynamic lighting rig, and smoke-effect fixtures. Place a simple open audience area directly in front of the stage. Position a physical interactive control console at one side of the stage.",
-  "blob": "### Genre\nLe genre dominant est Entertainment (Showcase & Hub), sous la forme d’un lieu de performance plutôt que d’un jeu à objectif. La scène de festival et son public définissent l’espace.\n\n### Forme et preset\nChoisir la forme `venue-stage`, avec le preset Performance Venue. Elle correspond directement à une scène principale frontale où toute l’orientation du site, des spectateurs et des écrans converge vers l’estrade. Le prompt conserve ce preset sans contradiction.\n\n### Exigences de configuration\nPrendre `social-hub` comme géométrie visible : une vaste zone de rassemblement ouverte constitue le parterre du public devant la scène. Aucun personnage de foule n’est demandé. Aucun élément de configuration invisible n’est requis ; la console de contrôle est un prop physique visible, pas une interface ou un volume de gameplay.\n\n### Composants de layout\nLa zone principale est une immense estrade surélevée, centrée au fond de la composition et nettement plus haute que le parterre. Elle accueille une façade de scène large, des écrans géants disposés symétriquement de part et d’autre et au-dessus de la zone de performance, ainsi qu’un grand portique technique. Une grille d’éclairage dynamique suspendue encadre et surplombe l’estrade, avec projecteurs orientés vers la scène et le public. Des appareils à fumée sont intégrés au bord avant, aux coins et derrière la scène afin de produire des panaches visibles sans obstruer entièrement les écrans.\n\nDirectement devant l’estrade, aménager un parterre simple, vaste et dégagé pour le public, sans sièges ni capacité définie. Sur un côté de la scène, légèrement en retrait de sa face avant mais lisible depuis le sol, placer une console de contrôle physique interactive sur une petite plate-forme technique ; elle doit rester accessible sans concurrencer l’estrade. Prévoir des passages latéraux de service entre le parterre et les flancs de scène. Le fond est fermé par la structure de scène et ses écrans ; les côtés peuvent être cadrés par des tours d’éclairage et des barrières basses, avec une ouverture visuelle vers le public. Composer l’image depuis une vue trois-quarts frontale montrant la scène centrale, la profondeur du parterre, les écrans et les faisceaux lumineux.\n\n### Ordre de rendu\nUtiliser `isometric` : le caractère spectaculaire, les volumes de scène, les écrans et l’éclairage priment, sans topologie de parcours critique à valider.\n\n### Échelle, thème et coût pipeline\nÉchelle large, déterminée par l’immense estrade, le large parterre et le dispositif technique monumental. Thème : scène principale de festival moderne, spectaculaire, nocturne et énergique, avec métal noir, LED brillantes, fumée et éclairage coloré. Modificateur `P0` : l’ensemble reste une surface de sol unique avec une scène surélevée, sans intérieur, surfaces superposées jouables ni géométrie procédurale obligatoire.",
+  "blob": "### 1. Genre\nThis is `Entertainment (Showcase & Hub)`, specifically a performance venue: the stage performance and audience-oriented presentation define the space.\n\n### 2. Shape and preset\nUse `venue-stage`, matching the Performance Venue preset. The immense main stage is the focal structure, with the audience floor directly in front and all major sightlines aimed toward the performance face.\n\n### 3. Config requirements\nUse `spectator-bleachers` only as a simple open audience area rather than raked seating: leave the floor unobstructed directly before the stage. Use `social-hub` for that shared audience gathering floor. Use `spawn-first-reveal` so arrival faces the complete stage façade rather than its side or backstage. No other image options are required.\n\n### 4. Layout requirements\nNo gameplay placement is required. Place one `spawn-first-reveal` arrival marker at the rear-centre of the audience area, oriented toward the stage. The physical side-stage console is drawn geometry, not a separate invisible layout marker.\n\n### 5. Layout components\nThe central zone is one immense raised festival stage spanning most of the rear edge of the venue, with a broad performance deck and a tall, symmetrical façade. Giant video screens flank and frame the stage, while a substantial overhead lighting truss spans above it. Smoke-effect fixtures sit along the stage front and side edges. A simple, wide open audience zone occupies the foreground directly in front of the stage, with clear uninterrupted sightlines to the performance deck. Put one physical interactive control console on one side of the stage, accessible from the audience-side edge but visually secondary to the main façade. Keep the venue open at the front and sides, with no enclosing building or backstage zone specified. Compose the frame front-to-back: audience foreground, console at one side, then the towering illuminated stage as the dominant centrepiece.\n\n### 6. Render order\nUse `isometric`, rendered first and authoritative, because visual spectacle and the stage-facing composition matter more than topology validation.\n\n### 7. Scale, theme, and pipeline cost\nScale is huge, driven by the immense stage, giant screens, lighting rig, and broad audience floor. Theme: spectacular modern festival main stage, dramatic concert lighting, smoke, and polished high-energy production design. Use `P0`; the venue is a single open surface with no forced interior transition, overhang-dependent play geometry, or topology constraint.",
   "spec": {
     "genre": "Entertainment (Showcase & Hub)",
     "secondary": [],
@@ -28,121 +28,95 @@
     "axes": {},
     "options": [
       {
-        "id": "social-hub",
-        "text": "une vaste zone de rassemblement ouverte constitue le parterre du public devant la scène",
+        "id": "spectator-bleachers",
+        "text": "A simple open audience area with an unobstructed floor directly before the stage, without raked seating.",
         "visible": true,
         "count": -1
+      },
+      {
+        "id": "social-hub",
+        "text": "The shared open audience gathering floor directly in front of the stage.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "spawn-first-reveal",
+        "text": "Arrival faces the complete stage façade rather than its side or backstage.",
+        "visible": true,
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "spawn-first-reveal",
+        "text": "Arrival marker oriented toward the complete stage façade.",
+        "count": 1,
+        "where": "At the rear-centre of the audience area, facing the stage."
       }
     ],
     "layout": {
-      "composition": "Vue trois-quarts frontale montrant l’estrade centrale au fond, la profondeur du vaste parterre au premier plan, les écrans géants symétriques et les faisceaux lumineux.",
+      "composition": "Front-to-back composition: the wide open audience floor fills the foreground, with the physical control console at one side; the towering illuminated stage dominates the rear centre.",
       "zones": [
         {
-          "name": "Estrade principale",
-          "role": "Zone de performance et structure dominante du festival.",
-          "where": "centrée au fond de la composition",
-          "size": "immense et nettement plus haute que le parterre"
+          "name": "Audience area",
+          "role": "Shared open gathering floor with clear uninterrupted sightlines to the performance deck.",
+          "where": "Foreground directly in front of the stage.",
+          "size": "Broad and wide."
         },
         {
-          "name": "Parterre du public",
-          "role": "Zone de rassemblement ouverte devant la scène.",
-          "where": "directement devant l’estrade",
-          "size": "vaste et dégagé"
-        },
-        {
-          "name": "Plate-forme technique",
-          "role": "Accueille une console de contrôle physique interactive accessible depuis le sol.",
-          "where": "sur un côté de la scène, légèrement en retrait de sa face avant",
-          "size": "petite"
-        },
-        {
-          "name": "Passages latéraux de service",
-          "role": "Circulation entre le parterre et les flancs de scène.",
-          "where": "de chaque côté entre le parterre et la scène",
-          "size": ""
+          "name": "Main stage",
+          "role": "Festival performance space and dominant focal structure.",
+          "where": "Centre of the rear edge of the venue.",
+          "size": "Immense, spanning most of the rear edge."
         }
       ],
-      "paths": [
-        {
-          "from": "Parterre du public",
-          "to": "Passages latéraux de service",
-          "kind": "corridor"
-        },
-        {
-          "from": "Passages latéraux de service",
-          "to": "Plate-forme technique",
-          "kind": "corridor"
-        }
-      ],
-      "terrain": "Surface de sol unique ; scène surélevée devant un parterre simple et dégagé.",
+      "paths": [],
+      "terrain": "A single open, level audience and venue surface.",
       "props": [
         {
-          "name": "façade de scène large",
+          "name": "Giant video screens",
           "count": -1,
-          "where": "sur l’estrade principale"
+          "where": "Flanking and framing the main stage."
         },
         {
-          "name": "écrans géants symétriques",
+          "name": "Overhead lighting truss",
           "count": -1,
-          "where": "de part et d’autre et au-dessus de la zone de performance"
+          "where": "Spanning above the stage."
         },
         {
-          "name": "grand portique technique",
+          "name": "Smoke-effect fixtures",
           "count": -1,
-          "where": "autour de l’estrade"
+          "where": "Along the front and side edges of the stage."
         },
         {
-          "name": "grille d’éclairage dynamique suspendue",
-          "count": -1,
-          "where": "encadrant et surplombant l’estrade"
-        },
-        {
-          "name": "projecteurs",
-          "count": -1,
-          "where": "orientés vers la scène et le public"
-        },
-        {
-          "name": "appareils à fumée",
-          "count": -1,
-          "where": "au bord avant, aux coins et derrière la scène"
-        },
-        {
-          "name": "console de contrôle physique interactive",
-          "count": -1,
-          "where": "sur la petite plate-forme technique latérale"
-        },
-        {
-          "name": "tours d’éclairage",
-          "count": -1,
-          "where": "sur les côtés du site"
-        },
-        {
-          "name": "barrières basses",
-          "count": -1,
-          "where": "sur les côtés du parterre"
+          "name": "Physical interactive control console",
+          "count": 1,
+          "where": "On one side of the stage, accessible from the audience-side edge and visually secondary to the main façade."
         }
       ],
-      "boundary": "Le fond est fermé par la structure de scène et ses écrans ; les côtés sont cadrés par des tours d’éclairage et des barrières basses, avec une ouverture visuelle vers le public.",
-      "scale_band": "large",
-      "theme": "scène principale de festival moderne, spectaculaire, nocturne et énergique ; métal noir, LED brillantes, fumée et éclairage coloré"
+      "boundary": "Open at the front and sides, with no enclosing building or backstage zone.",
+      "scale_band": "huge",
+      "theme": "Spectacular modern festival main stage, dramatic concert lighting, smoke, polished high-energy production design."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "le caractère spectaculaire, les volumes de scène, les écrans et l’éclairage priment, sans topologie de parcours critique à valider",
+      "why": "Visual spectacle and stage-facing composition matter more than topology validation.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
-    "notes": [],
+    "notes": [
+      "visible on 'spawn-first-reveal' set from goes_to=both"
+    ],
     "scene_prompt": "Create a large 3D modern festival main stage with a spectacular, dynamic presentation. Center the immense raised stage as the dominant structure, framed by giant screens, a dynamic lighting rig, and smoke-effect fixtures. Place a simple open audience area directly in front of the stage. Position a physical interactive control console at one side of the stage."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

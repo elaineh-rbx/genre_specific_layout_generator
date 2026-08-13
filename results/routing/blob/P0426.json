@@ -14,132 +14,130 @@
     }
   ],
   "scene_prompt": "Create a bright, stylized island adventure map with a simple colorful look, built as a sequence of islands that increase in challenge. Each island provides explorable terrain and scattered ingredient-gathering areas, with a cooking spot as a clear central destination before the route continues to the next island.",
-  "blob": "### Genre\nThe dominant genre is Adventure: the player explores a progressive sequence of islands, gathers ingredients, and advances through increasingly challenging destinations.\n\n### Shape and preset\nUse `world-chaptered`, treating each island as a distinct adventure chapter with its own self-contained exploration space. Match the Story preset for its ordered island-to-island progression, while omitting its unrequested one-way drops and cinematic cave exits.\n\n### Config requirements\nUse visible `path-trail` as clear footpaths that lead from each island’s arrival edge through gathering ground to its central cooking area. Use visible `landmark-focal` for the cooking spot, made readable from much of each island as the destination and orientation anchor. Use invisible `collectible-nodes` to place ingredient-gathering points across optional side areas; these placement markers must not appear in the render. Use visible `gate-chapter` as a clear dock, boat landing, or departure gateway beyond the cooking area, marking the transition to the following island. Use visible `island-cluster`: each chapter is a separate island surrounded by open water.\n\n### Layout components\nBuild a sequence of distinct islands, each with an arrival shore, a broad central cooking camp or colorful cooking station, and explorable terrain spreading outward into ingredient areas. Arrange the main trail as a readable loop or branching outward route from arrival to gathering clearings, then back toward the central cooking landmark and onward to the departure dock. Make later islands visually denser and more difficult in their terrain routing without adding unrequested hazards or structures. Surround every landmass with bright blue water and use sandy beaches, grassy slopes, colorful rock outcrops, trees, bushes, and small ingredient patches as props. Keep each island’s outer shoreline as its natural boundary. Compose the scene to show the cooking landmark centrally, trails radiating through the island, and a glimpse of adjacent island destinations across the water where possible.\n\n### Render order\nUse `isometric`: render the stylized isometric island scene first as authoritative, then derive the top-down representation. The chapter spaces do not require procedurally validated maze or circuit topology.\n\n### Scale, theme, and pipeline cost\nUse a large scale because the build spans several separately loaded island chapters with exploration ground on each. Theme: bright, stylized, simple colorful adventure-game islands. Apply `P4` because the island chapters are separate maps, and `CHECK` because water separates the island landmasses and must remain legible without obscuring traversal space.",
+  "blob": "### Genre\nThe dominant genre is Adventure, with Simulation as a secondary genre because ingredient gathering and cooking form a repeatable production loop. Adventure owns the island-to-island journey and its spatial progression; the cooking rules do not add further layout geometry.\n\n### Shape and preset\nUse `world-chaptered`, taken from the Adventure Story preset’s shape: each increasingly challenging island is a genuinely separate map rather than several islands sharing one surface. The Story preset is otherwise `none`, since its chapter gates, one-way drops, and reveal exits were not requested.\n\n### Config requirements\nUse `path-trail` as a readable exploration route from each island’s arrival area through ingredient terrain to its cooking destination. Use `landmark-focal` for the cooking spot, made visually distinct and centrally legible from the island’s main paths. Use `water-body` for the surrounding stylized sea that clearly isolates every island map.\n\n### Layout requirements\nUse `collectible-nodes` for ingredient pickups. Place several ingredient-node clusters across each island’s side areas and outer exploration paths, with at least one clear return route from every cluster to the central cooking spot. No other placed volumes or markers are required by the prompt.\n\n### Layout components\nBuild a sequential chain of separate bright islands, each functioning as one chapter map and becoming visually more challenging than the last through denser terrain and longer exploration routes. Each island has an arrival edge, a broad central cooking clearing with a colorful stove, cauldron, or kitchen camp as the focal build, and multiple peripheral ingredient-gathering areas. Winding foot trails connect the arrival point to the central clearing and branch outward into these gathering areas before returning to the cooking hub. Surround every island with open turquoise water; use sandy shores, saturated grass, simple rock outcrops, shrubs, and oversized colorful plants to create a clean adventure-game read. Keep boundaries as coastline and water rather than artificial walls. Frame each map so the cooking landmark is visually prominent while the branching terrain remains readable from an elevated isometric view.\n\n### Render order\nRender in `isometric` order, with the stylized adventure look authoritative; each separate island can then be projected into its linked top-down capture without requiring procedurally carved topology.\n\n### Scale, theme, and pipeline cost\nUse a large scale band, driven by the sequence of distinct island maps rather than one oversized landmass. The theme is bright, colorful, simple stylized island adventure. Apply `P4` because the islands are separate chapter maps that require separate linked captures.",
   "spec": {
     "genre": "Adventure",
-    "secondary": [],
+    "secondary": [
+      "Simulation"
+    ],
     "shape": "world-chaptered",
-    "preset": "Story",
+    "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "path-trail",
-        "text": "Clear footpaths that lead from each island’s arrival edge through gathering ground to its central cooking area.",
+        "text": "Readable exploration routes from each island's arrival area through ingredient terrain to its cooking destination.",
         "visible": true,
         "count": -1
       },
       {
         "id": "landmark-focal",
-        "text": "The cooking spot, readable from much of each island as the destination and orientation anchor.",
+        "text": "A visually distinct central cooking spot, legible from the island's main paths.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "water-body",
+        "text": "Surrounding stylized turquoise sea that clearly isolates every island map.",
         "visible": true,
         "count": -1
       },
       {
         "id": "collectible-nodes",
-        "text": "Ingredient-gathering points across optional side areas; these placement markers must not appear in the render.",
+        "text": "Ingredient pickups in several ingredient-node clusters across each island's side areas and outer exploration paths.",
         "visible": false,
-        "count": -1
-      },
-      {
-        "id": "gate-chapter",
-        "text": "A clear dock, boat landing, or departure gateway beyond the cooking area, marking the transition to the following island.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "island-cluster",
-        "text": "Each chapter is a separate island surrounded by open water.",
-        "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [
+      {
+        "id": "collectible-nodes",
+        "text": "Ingredient pickups in several ingredient-node clusters.",
+        "count": -1,
+        "where": "Across each island's side areas and outer exploration paths, with at least one clear return route from every cluster to the central cooking spot."
+      }
+    ],
     "layout": {
-      "composition": "Show the cooking landmark centrally, with trails radiating through the island and glimpses of adjacent island destinations across the water where possible.",
+      "composition": "Elevated isometric framing keeps the central cooking landmark visually prominent while branching island terrain remains readable; arrival edges lead inward to central clearings, with gathering areas around the periphery.",
       "zones": [
         {
-          "name": "Arrival shore",
-          "role": "Arrival edge for each island chapter.",
-          "where": "island edge",
+          "name": "Sequential island chapter maps",
+          "role": "A chain of separate adventure chapters that become visually more challenging through denser terrain and longer exploration routes.",
+          "where": "Each island is a separate map in sequence.",
           "size": ""
         },
         {
-          "name": "Gathering clearings",
-          "role": "Explorable ingredient areas and optional side areas.",
-          "where": "spreading outward from the central cooking area",
+          "name": "Arrival edge",
+          "role": "Entry point for each island chapter.",
+          "where": "At each island edge.",
           "size": ""
         },
         {
-          "name": "Central cooking camp",
-          "role": "Broad central cooking camp or colorful cooking station serving as the island destination.",
-          "where": "centre of each island",
+          "name": "Central cooking clearing",
+          "role": "The cooking destination and hub.",
+          "where": "Centre of each island.",
           "size": "broad"
         },
         {
-          "name": "Departure dock",
-          "role": "Departure gateway to the following island chapter.",
-          "where": "beyond the cooking area",
+          "name": "Ingredient-gathering areas",
+          "role": "Peripheral exploration areas containing ingredient-node clusters.",
+          "where": "Side areas and outer exploration paths of each island.",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Arrival shore",
-          "to": "Gathering clearings",
+          "from": "Arrival edge",
+          "to": "Central cooking clearing",
           "kind": "trail"
         },
         {
-          "from": "Gathering clearings",
-          "to": "Central cooking camp",
+          "from": "Central cooking clearing",
+          "to": "Ingredient-gathering areas",
           "kind": "trail"
         },
         {
-          "from": "Central cooking camp",
-          "to": "Departure dock",
+          "from": "Ingredient-gathering areas",
+          "to": "Central cooking clearing",
           "kind": "trail"
-        },
-        {
-          "from": "Departure dock",
-          "to": "following island arrival shore",
-          "kind": "boat"
         }
       ],
-      "terrain": "Separate islands surrounded by bright blue water, with sandy beaches, grassy slopes, colorful rock outcrops, and later islands visually denser and more difficult in their terrain routing.",
+      "terrain": "Sandy shores, saturated grass, simple rock outcrops, shrubs, oversized colorful plants, and open turquoise water surrounding every island.",
       "props": [
         {
-          "name": "trees",
+          "name": "Colorful stove, cauldron, or kitchen camp",
           "count": -1,
-          "where": "across each island"
+          "where": "Central cooking clearing on each island."
         },
         {
-          "name": "bushes",
+          "name": "Simple rock outcrops",
           "count": -1,
-          "where": "across each island"
+          "where": "Across the islands."
         },
         {
-          "name": "small ingredient patches",
+          "name": "Shrubs",
           "count": -1,
-          "where": "gathering areas"
+          "where": "Across the islands."
         },
         {
-          "name": "colorful rock outcrops",
+          "name": "Oversized colorful plants",
           "count": -1,
-          "where": "across each island"
+          "where": "Across the islands."
         }
       ],
-      "boundary": "Each island’s outer shoreline is its natural boundary, surrounded by open bright blue water.",
+      "boundary": "Coastline and surrounding water rather than artificial walls.",
       "scale_band": "large",
-      "theme": "bright, stylized, simple colorful adventure-game islands"
+      "theme": "Bright, colorful, simple stylized island adventure."
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "The chapter spaces do not require procedurally validated maze or circuit topology.",
+      "why": "The stylized adventure look is authoritative and the separate islands do not require procedurally carved topology.",
       "set_piece": false
     },
     "route": [
-      "P4",
-      "CHECK"
+      "P4"
     ],
     "notes": [],
     "scene_prompt": "Create a bright, stylized island adventure map with a simple colorful look, built as a sequence of islands that increase in challenge. Each island provides explorable terrain and scattered ingredient-gathering areas, with a cooking spot as a clear central destination before the route continues to the next island."
@@ -147,7 +145,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",

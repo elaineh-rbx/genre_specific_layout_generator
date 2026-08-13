@@ -14,120 +14,145 @@
     }
   ],
   "scene_prompt": "Create a compact 3D treasure-hunt map on a weathered photoreal coastal lighthouse island, small enough to cross in under a minute. A storm-damaged lighthouse stands as the central landmark, with its beacon at the top; arrange three signal parts at distinct reachable locations around the island. Show visible storm damage along the shoreline and around the lighthouse, with surrounding ocean enclosing the island.",
-  "blob": "### Genre\n`Adventure` is dominant: the avatar explores a compact island to find three parts and reach the lighthouse beacon. There is no secondary genre.\n\n### Shape and preset\nUse `world-open`, matching the Exploration preset. This is one small, freely explorable lighthouse island rather than a guided corridor; retain the preset’s exploration emphasis but omit unrequested hidden alcoves.\n\n### Config requirements\nVisible geometry: `landmark-focal` is the storm-damaged lighthouse at the island’s center, its beacon visibly at the top and readable from all shores. `path-trail` is a short network of worn coastal footpaths and rocky walkable routes connecting the lighthouse to all three part locations. `water-body` is the surrounding ocean enclosing the island. Invisible layout: `collectible-nodes` are three signal-part placements, each at a distinct reachable island location; do not render UI markers.\n\n### Layout components\nBuild a single compact island, crossable in under a minute. Place the lighthouse on slightly raised central ground, with storm damage around its base and beacon tower. Arrange one signal part on a damaged shoreline lookout, one on a rocky inland path or debris-strewn clearing, and one on an opposite coastal point; all three connect back to the lighthouse by clear walkable routes. Use weathered rock, wind-bent coastal grass, broken fencing, washed-up timber, collapsed shoreline edges, and scattered lighthouse debris to show recent storm damage. Surround every shore with ocean; use the waterline and distant sea as the open boundary. Frame the lighthouse centrally as the dominant vertical landmark, with the three collection areas radiating around it.\n\n### Render order\nUse `isometric`: the compact scenic island composition and lighthouse silhouette lead, while the simple path network can be projected afterward.\n\n### Scale, theme, and pipeline cost\nScale is small, driven by the under-one-minute crossing requirement and only three objective sites. Theme is weathered photoreal coastal storm aftermath. Use `CHECK` because the surrounding ocean is a real water feature; otherwise the island is one contiguous, single-surface exterior space.",
+  "blob": "### Genre\nDominant genre: Adventure. The collect-and-repair objective makes this a compact Scavenger Hunt rather than a passive island showcase.\n\n### Shape and preset\nUse `world-open`, a single contiguous lighthouse island that can be explored in any order. This follows the Scavenger Hunt preset, retaining its objective-item emphasis while dropping unrequested secret alcoves and quest-board dressing. The small island remains one connected exterior map, with access into the lighthouse required to reach the beacon.\n\n### Config requirements\nUse `landmark-focal` for the storm-damaged lighthouse, centrally visible from all shore sectors and crowned by the repair beacon. Use `water-body` for the enclosing ocean and visibly battered shoreline. Use `building-interior` for a climbable lighthouse interior, with stairs or a compact spiral ascent leading to the beacon chamber. The weathered coastal materials, broken shoreline details, damaged railings, and storm debris are scene dressing rather than additional config choices.\n\n### Layout requirements\nUse `collectible-nodes`: place exactly three signal-part pickups, one each at distinct reachable island locations: a damaged shore-side wreck or debris field, a sheltered rocky edge opposite it, and a storm-damaged area near the lighthouse approach. Use `checkpoint-respawn`: place one safe recovery marker at the protected lighthouse base, clear of the ocean edge, so a fall into the surrounding water returns the avatar quickly to the island’s central hub.\n\n### Layout components\nThe lighthouse occupies the island center and is the dominant vertical zone; its enclosed stair rises to the top beacon chamber. Three compact outer zones ring it: a wrecked shoreline, a rocky coastal shelf, and a damaged approach area, each holding one signal part. Keep every location linked by short, readable natural footpaths across weathered rock and grass, with no long detours; the full island must be crossable in under a minute. Surround the landmass with rough ocean water, eroded cliffs, broken shore structures, washed-up debris, and storm damage concentrated around the lighthouse base. The ocean is the outer boundary. Compose the lighthouse near frame center, with the three pickup areas distributed around it and the coastline clearly legible from above.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because all three objective locations, the lighthouse ascent, and the safe recovery route must remain physically connected and reachable; dress the resulting plan into the photoreal isometric view.\n\n### Scale, theme, and pipeline cost\nScale band: small, driven by the under-one-minute crossing requirement. Theme: weathered photoreal coastal island, storm-battered masonry, wet rock, damaged timber, and turbulent ocean. Pipeline modifier: `P3`, forced by movement between the exterior island and the enterable lighthouse interior.",
   "spec": {
     "genre": "Adventure",
     "secondary": [],
     "shape": "world-open",
-    "preset": "Exploration",
+    "preset": "Scavenger Hunt",
     "axes": {},
     "options": [
       {
         "id": "landmark-focal",
-        "text": "Storm-damaged lighthouse at the island’s center, with a beacon visibly at the top and readable from all shores.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "path-trail",
-        "text": "A short network of worn coastal footpaths and rocky walkable routes connecting the lighthouse to all three signal-part locations.",
+        "text": "Storm-damaged lighthouse centrally visible from all shore sectors and crowned by the repair beacon.",
         "visible": true,
         "count": -1
       },
       {
         "id": "water-body",
-        "text": "The surrounding ocean enclosing the island.",
+        "text": "Enclosing rough ocean with a visibly battered shoreline.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "building-interior",
+        "text": "Climbable lighthouse interior with stairs or a compact spiral ascent leading to the beacon chamber.",
         "visible": true,
         "count": -1
       },
       {
         "id": "collectible-nodes",
-        "text": "Three signal-part placements at distinct reachable island locations; do not render UI markers.",
+        "text": "Exactly three signal-part pickups at distinct reachable island locations.",
         "visible": false,
         "count": 3
+      },
+      {
+        "id": "checkpoint-respawn",
+        "text": "One safe recovery marker at the protected lighthouse base, clear of the ocean edge.",
+        "visible": false,
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "collectible-nodes",
+        "text": "Exactly three signal-part pickups: one at a damaged shore-side wreck or debris field, one at a sheltered rocky edge opposite it, and one in a storm-damaged area near the lighthouse approach.",
+        "count": 3,
+        "where": "One each at the damaged shore-side wreck or debris field, the sheltered rocky edge opposite it, and the storm-damaged area near the lighthouse approach."
+      },
+      {
+        "id": "checkpoint-respawn",
+        "text": "One safe recovery marker that quickly returns an avatar falling into the surrounding water to the island's central hub.",
+        "count": 1,
+        "where": "At the protected lighthouse base, clear of the ocean edge."
       }
     ],
     "layout": {
-      "composition": "Frame the lighthouse centrally as the dominant vertical landmark, with three collection areas radiating around it and ocean surrounding every shore.",
+      "composition": "Lighthouse near frame center, with the three pickup areas distributed around it and the coastline clearly legible from above.",
       "zones": [
         {
-          "name": "Central lighthouse ground",
-          "role": "Central landmark and return point for all three signal-part routes.",
-          "where": "center of the island",
-          "size": "slightly raised"
+          "name": "Lighthouse",
+          "role": "Central landmark and enclosed climb to the top beacon chamber.",
+          "where": "Island center",
+          "size": "Dominant vertical zone"
         },
         {
-          "name": "Damaged shoreline lookout",
-          "role": "Signal-part location.",
-          "where": "shoreline",
-          "size": ""
+          "name": "Wrecked shoreline",
+          "role": "Reachable outer pickup area holding one signal part.",
+          "where": "Around the central lighthouse",
+          "size": "Compact"
         },
         {
-          "name": "Rocky inland path or debris-strewn clearing",
-          "role": "Signal-part location.",
-          "where": "inland",
-          "size": ""
+          "name": "Rocky coastal shelf",
+          "role": "Sheltered rocky pickup area holding one signal part.",
+          "where": "Opposite the wrecked shoreline",
+          "size": "Compact"
         },
         {
-          "name": "Opposite coastal point",
-          "role": "Signal-part location.",
-          "where": "opposite coast",
-          "size": ""
+          "name": "Damaged approach area",
+          "role": "Storm-damaged pickup area holding one signal part.",
+          "where": "Near the lighthouse approach",
+          "size": "Compact"
         }
       ],
       "paths": [
         {
-          "from": "Central lighthouse ground",
-          "to": "Damaged shoreline lookout",
-          "kind": "track"
+          "from": "Wrecked shoreline",
+          "to": "Lighthouse",
+          "kind": "open ground"
         },
         {
-          "from": "Central lighthouse ground",
-          "to": "Rocky inland path or debris-strewn clearing",
-          "kind": "track"
+          "from": "Rocky coastal shelf",
+          "to": "Lighthouse",
+          "kind": "open ground"
         },
         {
-          "from": "Central lighthouse ground",
-          "to": "Opposite coastal point",
-          "kind": "track"
+          "from": "Damaged approach area",
+          "to": "Lighthouse",
+          "kind": "open ground"
+        },
+        {
+          "from": "Lighthouse base",
+          "to": "Beacon chamber",
+          "kind": "stair"
         }
       ],
-      "terrain": "Single compact island with slightly raised central ground, weathered rock, wind-bent coastal grass, collapsed shoreline edges, and surrounding ocean.",
+      "terrain": "Weathered rock and grass crossed by short natural footpaths; eroded cliffs, broken shore structures, washed-up debris, storm damage concentrated around the lighthouse base, and rough turbulent ocean surrounding the landmass.",
       "props": [
         {
-          "name": "Storm-damaged lighthouse with beacon tower",
+          "name": "Storm-damaged lighthouse",
           "count": -1,
-          "where": "island center"
+          "where": "Island center"
         },
         {
-          "name": "Broken fencing",
+          "name": "Broken shoreline structures",
           "count": -1,
-          "where": "around the island"
+          "where": "Along the shoreline"
         },
         {
-          "name": "Washed-up timber",
+          "name": "Washed-up storm debris",
           "count": -1,
-          "where": "shoreline"
+          "where": "Shoreline and around the lighthouse base"
         },
         {
-          "name": "Scattered lighthouse debris",
+          "name": "Damaged railings",
           "count": -1,
-          "where": "around the lighthouse base and island"
+          "where": "Lighthouse and storm-damaged areas"
         }
       ],
-      "boundary": "Ocean waterline and distant sea form the open boundary around every shore.",
+      "boundary": "The enclosing ocean is the outer boundary.",
       "scale_band": "small",
-      "theme": "weathered photoreal coastal storm aftermath"
+      "theme": "Weathered photoreal coastal island, storm-battered masonry, wet rock, damaged timber, and turbulent ocean."
     },
     "render": {
-      "first": "isometric",
-      "then": "topdown",
-      "authoritative": "isometric",
-      "why": "The compact scenic island composition and lighthouse silhouette lead, while the simple path network can be projected afterward.",
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "All three objective locations, the lighthouse ascent, and the safe recovery route must remain physically connected and reachable.",
       "set_piece": false
     },
     "route": [
-      "CHECK"
+      "P3"
     ],
     "notes": [],
     "scene_prompt": "Create a compact 3D treasure-hunt map on a weathered photoreal coastal lighthouse island, small enough to cross in under a minute. A storm-damaged lighthouse stands as the central landmark, with its beacon at the top; arrange three signal parts at distinct reachable locations around the island. Show visible storm damage along the shoreline and around the lighthouse, with surrounding ocean enclosing the island."
@@ -135,10 +160,12 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "std",
   "first": "isometric",
-  "mapper_notes": []
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['CHECK', 'P3'] gives isometric"
+  ]
 }

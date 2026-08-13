@@ -19,7 +19,7 @@
     }
   ],
   "scene_prompt": "Create a 3D game layout with a large separate spawn-building lobby. To the player's left is a summoning area, with an inventory area nearby for equipped units, and a teleporter sized for up to five players that leads into the match. The match is a tiny city built as one small street: a central pathway runs between the Camera Base on one side and the toilet enemy spawn side opposite it, forming a single cooperative lane. The lane supports ten advancing wave sections, ending at the far spawn end with a boss encounter area.",
-  "blob": "### Genre\nThe dominant genre is Strategy, specifically a cooperative tower-defense layout. The wave and unit mechanics establish this genre; the summoning and inventory systems do not add a second layout genre.\n\n### Shape and preset\nUse `lane-actor-track`, matching the Tower Defense preset. Here it is one compact city-street lane, not a sprawling battlefield: enemies enter from the toilet side, advance down the street, and threaten the Camera Base at the opposite end. The separate lobby map is an author-requested addition outside the preset, but the Tower Defense shape and its core placement logic remain recognisable.\n\n### Config requirements\nUse visible `buildzone-grid` as continuous or clearly segmented unit-placement sidewalks, rooftops, and curbside pads flanking the street without blocking the enemy route. Use `tracker-core`: the Camera Base is visible geometry at the defended end, with its associated tracking region invisible. Use `spawner-npc`: the toilet-side entry is visibly framed as an enemy approach or portal, while the actual enemy-emitter points are invisible and placed after segmentation. No extra combat cover, terrain, interiors, or population are requested.\n\n### Layout components\nBuild two separate maps. The lobby is a large enclosed spawn building with a broad arrival floor. Put the summoning area on the player’s left, with the inventory/equipment area immediately nearby as an adjacent counter or alcove. Place one prominent teleporter chamber on the lobby’s forward side, sized to hold exactly five players, with a clear waiting pad and a visible start-control pedestal. This teleporter transfers to the separate match map.\n\nThe match is a tiny city consisting of one small street only. Run a single straight, readable central enemy pathway from the toilet spawn at one end to the Camera Base at the other. Place the Camera Base on one side of the pathway and the toilet spawn side opposite it, as specified; use compact city façades, sidewalks, curbs, and roadside placement pads to make both sides readable. Divide the lane conceptually into ten advancing wave sections along its length, with the tenth and far spawn-end section widened slightly into a boss encounter area. Keep the route unbroken and unobstructed. Bound the street with close building fronts and end caps rather than open terrain. Compose the match in an elevated three-quarter view that reads the full base-to-spawn progression in one frame.\n\n### Render order\nUse `topdown`: render the top-down plan first and make it authoritative because the single enemy lane must remain continuously connected and playable from spawn to base; then dress it as an isometric city street.\n\n### Scale, theme, and pipeline cost\nScale band: medium, driven by a large lobby plus a separate but deliberately tiny one-street match map. Theme: stylized Roblox Skibidi Toilet urban defense, bright compact city props and camera-tech base styling. Pipeline modifiers are `P4` for the separate lobby and match maps, and `P6` because the tower-defense route must be valid by construction.",
+  "blob": "### Genre\nThe dominant genre is Strategy, specifically cooperative tower defense: players place defenders along a fixed enemy lane and hold a base through advancing waves.\n\n### Shape and preset\nUse `lane-actor-track`, taken from the Tower Defense preset. It is one continuous, unambiguous city-street lane from the toilet-side wave origin to the Camera Base, while the large lobby is a genuinely separate map reached by teleportation. The Tower Defense preset remains recognizable: retain its lane, defender placement ground, core base, and wave origin, while omitting an unrequested pinch point and adding the lobby transport.\n\n### Config requirements\nUse `buildzone-grid` as clear, flat defender-placement strips along both sides of the street without blocking the central enemy route. Use `tracker-core` for the visible Camera Base anchoring the defended end of the lane. Use `teleporter-link` for a prominent five-player teleporter inside the lobby, visually marked as the route into the city match.\n\n### Layout requirements\nUse `tracker-core` once, sited at the Camera Base at the defended end of the street. Use `spawner-npc` once, at the opposite far end of the street, with the enemy origin facing directly down the lane toward the base. Use `teleporter-link` once in the lobby, sized as one shared transport pad holding up to five players and linking to the cooperative city match.\n\n### Layout components\nThe first map is a large enclosed spawn-building lobby. Its summoning area occupies the player’s left side on entry, with a nearby inventory/equipment area; place the single five-player teleporter in a central, easy-to-find departure zone. The second map is a tiny, toy-scale city of exactly one small street. A broad central pathway runs straight between the Camera Base on one side at the defended end and the toilet enemy spawn side at the far opposite end. Keep the street edges as flat placement strips for player units, with small city façades and props framing rather than obstructing the route. Divide the readable lane progression into ten advancing wave sections, culminating in a distinct boss encounter area at the far spawn end. The lobby is enclosed; the match street is bounded by compact city buildings and street-edge barriers.\n\n### Render order\nUse `topdown` first and treat it as authoritative, because the cooperative lane must remain a valid uninterrupted route from spawn to base before the isometric city dressing is added.\n\n### Scale, theme, and pipeline cost\nUse medium scale, driven by one large lobby plus one compact five-player city-match map. The theme is colorful, exaggerated Skibidi-inspired cameramen-versus-toilets city combat. Apply `P4` because the lobby and match are separate maps, and `P6` because the tower-defense enemy lane must be valid and continuous by construction.",
   "spec": {
     "genre": "Strategy",
     "secondary": [],
@@ -29,137 +29,151 @@
     "options": [
       {
         "id": "buildzone-grid",
-        "text": "Continuous or clearly segmented unit-placement sidewalks, rooftops, and curbside pads flanking the street without blocking the enemy route.",
+        "text": "Clear, flat defender-placement strips along both sides of the street without blocking the central enemy route.",
         "visible": true,
         "count": -1
       },
       {
         "id": "tracker-core",
-        "text": "The Camera Base is visible geometry at the defended end, with its associated tracking region invisible.",
+        "text": "The visible Camera Base anchoring the defended end of the lane.",
         "visible": true,
-        "count": -1
+        "count": 1
       },
       {
         "id": "spawner-npc",
-        "text": "The toilet-side entry is visibly framed as an enemy approach or portal, while the actual enemy-emitter points are invisible and placed after segmentation.",
+        "text": "The toilet enemy spawn side at the opposite far end of the street, facing directly down the lane toward the base.",
         "visible": false,
-        "count": -1
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "tracker-core",
+        "text": "The visible Camera Base anchoring the defended end of the lane.",
+        "count": 1,
+        "where": "At the Camera Base at the defended end of the street."
+      },
+      {
+        "id": "spawner-npc",
+        "text": "The toilet enemy spawn side, facing directly down the lane toward the base.",
+        "count": 1,
+        "where": "At the opposite far end of the street."
       }
     ],
     "layout": {
-      "composition": "Two separate maps: a large enclosed lobby spawn building, then an elevated three-quarter match view reading the full straight toilet-spawn-to-Camera-Base progression in one frame.",
+      "composition": "Two genuinely separate maps: an enclosed lobby with the summoning area on the player's left on entry, inventory nearby, and a central departure teleporter; the compact city match is a straight street framed by façades and barriers, with the Camera Base at the defended end and the toilet spawn at the far end.",
       "zones": [
         {
-          "name": "Lobby spawn building",
-          "role": "Large enclosed arrival lobby for summoning, inventory/equipment, and match transfer.",
-          "where": "separate lobby map",
+          "name": "Spawn-building lobby",
+          "role": "Large enclosed spawn map containing summoning, inventory/equipment, and match departure.",
+          "where": "Separate map; summoning occupies the player's left side on entry.",
           "size": "large"
         },
         {
           "name": "Summoning area",
-          "role": "Unit summoning.",
-          "where": "player's left within the lobby",
+          "role": "Summoning area.",
+          "where": "Player's left side on entry in the lobby.",
           "size": ""
         },
         {
           "name": "Inventory/equipment area",
-          "role": "Equipment and inventory counter or alcove.",
-          "where": "immediately adjacent to the summoning area",
+          "role": "Area for equipped units.",
+          "where": "Near the summoning area in the lobby.",
           "size": ""
         },
         {
-          "name": "Teleporter chamber",
-          "role": "Transfers players from the lobby to the separate match map; includes a waiting pad and start-control pedestal.",
-          "where": "forward side of the lobby",
-          "size": "sized to hold exactly five players"
+          "name": "Departure zone",
+          "role": "Central lobby area containing the shared transport into the cooperative city match.",
+          "where": "Central, easy-to-find area of the lobby.",
+          "size": ""
         },
         {
-          "name": "Tiny city street match",
-          "role": "Cooperative tower-defense lane.",
-          "where": "separate match map",
-          "size": "tiny; one small street"
+          "name": "City match street",
+          "role": "Single cooperative tower-defense lane between enemy spawn and Camera Base.",
+          "where": "Separate map.",
+          "size": "tiny, toy-scale; exactly one small street"
         },
         {
-          "name": "Toilet spawn end",
-          "role": "Enemy entry and far boss encounter area.",
-          "where": "far end of the street opposite the Camera Base",
-          "size": "the tenth wave section is widened slightly"
+          "name": "Defender placement strips",
+          "role": "Flat ground for player defenders along the lane.",
+          "where": "Both sides of the central street pathway.",
+          "size": ""
         },
         {
           "name": "Camera Base",
-          "role": "Defended core threatened by advancing enemies.",
-          "where": "opposite end of the central pathway from the toilet spawn",
+          "role": "Visible defended core base anchoring the end of the lane.",
+          "where": "One side at the defended end of the street.",
           "size": ""
         },
         {
-          "name": "Ten advancing wave sections",
-          "role": "Conceptual divisions along the enemy lane, ending in the widened boss encounter section.",
-          "where": "along the full street length from Camera Base to toilet spawn",
-          "size": "ten sections"
+          "name": "Wave sections",
+          "role": "Ten advancing sections of readable lane progression.",
+          "where": "Along the central pathway from the Camera Base toward the spawn end.",
+          "size": "10 sections"
+        },
+        {
+          "name": "Boss encounter area",
+          "role": "Culminating boss encounter area.",
+          "where": "At the far spawn end of the street.",
+          "size": ""
+        },
+        {
+          "name": "Toilet enemy spawn side",
+          "role": "Wave origin facing directly down the lane toward the Camera Base.",
+          "where": "Far opposite end of the street from the base.",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Teleporter chamber",
-          "to": "Tiny city street match",
+          "from": "Spawn-building lobby",
+          "to": "City match street",
           "kind": "portal"
         },
         {
-          "from": "Toilet spawn end",
-          "to": "Camera Base",
+          "from": "Camera Base",
+          "to": "Toilet enemy spawn side",
           "kind": "track"
         }
       ],
-      "terrain": "Compact stylized city street with sidewalks, curbs, roadside placement pads, close façades, and no open terrain.",
+      "terrain": "A broad, straight central city-street pathway with flat defender-placement strips along both edges.",
       "props": [
         {
-          "name": "teleporter chamber",
-          "count": 1,
-          "where": "forward side of the lobby"
-        },
-        {
-          "name": "waiting pad",
-          "count": 1,
-          "where": "inside the teleporter chamber"
-        },
-        {
-          "name": "start-control pedestal",
-          "count": 1,
-          "where": "inside the teleporter chamber"
-        },
-        {
-          "name": "compact city façades",
+          "name": "Small city façades",
           "count": -1,
-          "where": "along both sides of the match street"
+          "where": "Framing the street without obstructing the route."
         },
         {
-          "name": "building fronts and end caps",
+          "name": "City props",
           "count": -1,
-          "where": "bounding the match street"
+          "where": "Framing the street without obstructing the route."
         }
       ],
-      "boundary": "The lobby is enclosed; the match street is bounded by close building fronts and end caps rather than open terrain.",
+      "boundary": "The lobby is enclosed; the match street is bounded by compact city buildings and street-edge barriers.",
       "scale_band": "medium",
-      "theme": "Stylized Roblox Skibidi Toilet urban defense; bright compact city props and camera-tech base styling."
+      "theme": "Colorful, exaggerated Skibidi-inspired cameramen-versus-toilets city combat."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "the single enemy lane must remain continuously connected and playable from spawn to base.",
+      "why": "the cooperative lane must remain a valid uninterrupted route from spawn to base before isometric city dressing is added.",
       "set_piece": false
     },
     "route": [
       "P4",
       "P6"
     ],
-    "notes": [],
+    "notes": [
+      "dropped option 'teleporter-link': not in Strategy",
+      "dropped placement 'teleporter-link': not in Strategy"
+    ],
     "scene_prompt": "Create a 3D game layout with a large separate spawn-building lobby. To the player's left is a summoning area, with an inventory area nearby for equipped units, and a teleporter sized for up to five players that leads into the match. The match is a tiny city built as one small street: a central pathway runs between the Camera Base on one side and the toilet enemy spawn side opposite it, forming a single cooperative lane. The lane supports ten advancing wave sections, ending at the far spawn end with a boss encounter area."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

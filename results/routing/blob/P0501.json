@@ -14,197 +14,307 @@
     }
   ],
   "scene_prompt": "Create a 3D Tower Defense game layout in a medieval world blended with technology. Begin with a large, polished lobby centered on a fountain, with distinct physical areas for a tutorial NPC, shop, code redemption, achievements, and a player leaderboard; surround it with detailed trees, rocks, flowers, mountains, and rivers. Place several prominent elevator portals around the lobby, one each for Easy, Normal, Hard, and Nightmare matches, with enclosed elevator interiors and animated doors. Build the first match map as a compact Forest arena with a single clearly visible enemy route winding from a spawn entrance to a defended base, leaving open ground along the route for tower placement. The forest path has its own distinct layout, while later Castle, City, Snow, Volcano, Laboratory, and Desert maps each use a different enemy path arrangement.",
-  "blob": "### Gênero\nO gênero dominante é Strategy, pois o jogo é Tower Defense com ondas de inimigos seguindo uma rota até uma base. Entertainment (Showcase & Hub) é secundário somente para o lobby social e seus acessos às partidas; Strategy determina a forma das arenas.\n\n### Forma e preset\nUse a forma `lane-actor-track`, correspondente ao preset Tower Defense. Ela representa cada partida como uma rota inimiga contínua que começa numa entrada de spawn e termina na base defendida. O lobby e os elevadores são uma zona de acesso separada; o preset continua reconhecível porque a partida central mantém a pista de inimigos, áreas de colocação e base terminal.\n\n### Requisitos de configuração\nAplicam-se `buildzone-grid` visível: faixas amplas de terreno aberto ao longo da rota da Floresta para posicionar torres. `tracker-core` é geometria visível e volume invisível: uma base tecnológica-medieval claramente legível no fim da rota. `spawner-npc` é invisível: a origem dos inimigos na entrada do caminho. `social-hub` é visível: o grande lobby de reunião centrado na fonte. `teleporter-link` é visível e invisível: quatro elevadores-portais que ligam lobby e mapas. `building-interior` é visível: interiores fechados dos elevadores. `npc-population` é visível e invisível: o NPC de tutorial no lobby. `water-body`, `terrain-relief`, `settlement-density` e `landmark-focal` são visíveis, cobrindo rios, montanhas, conjunto construído do lobby e a fonte como âncora visual.\n\n### Componentes de layout\nO lobby ocupa uma praça ampla central, com fonte no meio; tutorial NPC, loja, área de códigos, conquistas e placar formam setores periféricos distintos e legíveis. Quatro elevadores proeminentes — Fácil, Normal, Difícil e Pesadelo — ficam distribuídos ao redor da praça, cada um com portal, portas e cabine interna. Árvores, pedras, flores, rios e montanhas enquadram a borda externa; a praça mistura alvenaria medieval, metal e detalhes tecnológicos.\n\nA primeira arena é a Floresta: uma arena compacta de rota única, com entrada inimiga em uma extremidade, caminho sinuoso porém visível quase inteiro, clareiras laterais para torres e a base defendida na extremidade oposta. Castelo, Cidade, Neve, Vulcão, Laboratório e Deserto são mapas de partida separados, cada qual com sua própria rota distinta. A composição do lobby é uma vista aberta da fonte aos elevadores; a arena privilegia leitura top-down da rota inteira.\n\n### Ordem de renderização\nUse `topdown`: a planta deve estabelecer uma rota contínua, alcançável e com terreno de colocação válido antes de vestir o mapa em isométrico.\n\n### Escala, tema e custo\nEscala grande, motivada pelo lobby amplo e pelos sete mapas separados, embora cada partida seja compacta. Tema: fantasia medieval com tecnologia luminosa e polida. Use `P4` pelos mapas separados; `P3` pela passagem lobby–interior dos elevadores; `P6` porque a rota Tower Defense precisa ser válida por construção; `tiered` pelas montanhas sem sobreposições; e `CHECK` pelos rios como volume de água representável no plano.",
+  "blob": "### Genre\nThe dominant genre is Strategy, specifically Tower Defense. The wave, enemy-path, tower-placement, and defended-base loop in the original brief makes this unambiguously a Tower Defense build; UI, economy, upgrades, and wave counts do not enter the layout.\n\n### Shape and preset\nUse `lane-actor-track`, matching the Tower Defense preset. It means the first playable Forest map is built around one compact, continuous enemy lane from a visible spawn entrance to the defended core, with no branches, dead ends, or ambiguous crossings. The large lobby and the later map destinations are separate supporting spaces rather than changing the match map’s dominant shape.\n\n### Config requirements\nUse `buildzone-grid` as broad, readable open placement ground running along both sides of the Forest lane. Use `tracker-core` as a fortified medieval-tech base at the lane’s terminal end. Use `terrain-relief` for forested hills and mountains framing the lobby and Forest map without overhanging play surfaces. Use `water-body` for rivers as visible landscape features. Use `npc-population` for the tutorial NPC occupying a dedicated tutorial area in the lobby.\n\n### Layout requirements\nPlace one `spawner-npc` at the Forest route’s entrance, clearly facing down the full lane toward the base. Place one `tracker-core` volume at the terminal defended base. Place the tutorial NPC marker in the lobby tutorial zone. The drawn elevator portals need destination markers: site four arrival/transport markers, one inside each Easy, Normal, Hard, and Nightmare elevator, each leading to its corresponding match selection.\n\n### Layout components\nThe main lobby is a large polished medieval-tech plaza centered on one fountain. Arrange distinct tutorial, shop, code-redemption, achievements, and leaderboard zones around its perimeter, connected by generous stone walkways. Set four prominent enclosed elevator portals around the plaza, each with a small interior and animated doors: Easy, Normal, Hard, and Nightmare. Dress the outer lobby with trees, rocks, flowers, mountains, and rivers.\n\nBuild the first match as a compact Forest arena whose entire winding single lane is largely readable at once. The route begins at a forest spawn gate, curves through clear tower pads and woodland choke-like bends, and ends at the defended base. Use dense trees, rock outcrops, low hills, and river edges as a natural boundary, while keeping the lane and placement ground unobstructed. Reserve separate later maps—Castle, City, Snow, Volcano, Laboratory, and Desert—each for its own distinct lane arrangement.\n\n### Render order\nUse `authored_plan`: the Forest enemy lane must be valid by construction as one uninterrupted path from wave origin to core, and tower placement margins must remain legible.\n\n### Scale, theme, and pipeline cost\nScale is large overall because it includes a major lobby, four elevators, and seven map destinations, although each match map is compact. Theme: polished high-detail medieval fantasy fused with luminous technology. Apply `P4` because the lobby and the seven distinct match maps are separate map spaces. Apply `P6` because the Tower Defense lane topology must be valid by construction. Apply `tiered` for the non-overhanging hills and mountains.",
   "spec": {
     "genre": "Strategy",
-    "secondary": [
-      "Entertainment (Showcase & Hub)"
-    ],
+    "secondary": [],
     "shape": "lane-actor-track",
     "preset": "Tower Defense",
     "axes": {},
     "options": [
       {
         "id": "buildzone-grid",
-        "text": "faixas amplas de terreno aberto ao longo da rota da Floresta para posicionar torres",
+        "text": "broad, readable open placement ground running along both sides of the Forest lane",
         "visible": true,
         "count": -1
       },
       {
         "id": "tracker-core",
-        "text": "uma base tecnológica-medieval claramente legível no fim da rota, com geometria visível e volume invisível",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "spawner-npc",
-        "text": "a origem invisível dos inimigos na entrada do caminho",
-        "visible": false,
-        "count": -1
-      },
-      {
-        "id": "building-interior",
-        "text": "interiores fechados dos elevadores",
-        "visible": true,
-        "count": 4
-      },
-      {
-        "id": "npc-population",
-        "text": "o NPC de tutorial no lobby",
+        "text": "a fortified medieval-tech base at the Forest lane's terminal end",
         "visible": true,
         "count": 1
       },
       {
-        "id": "water-body",
-        "text": "rios enquadrando a borda externa",
-        "visible": true,
-        "count": -1
-      },
-      {
         "id": "terrain-relief",
-        "text": "montanhas sem sobreposições enquadrando a borda externa",
+        "text": "forested hills and mountains framing the lobby and Forest map without overhanging play surfaces",
         "visible": true,
         "count": -1
       },
       {
-        "id": "settlement-density",
-        "text": "conjunto construído do lobby",
+        "id": "water-body",
+        "text": "rivers as visible landscape features",
         "visible": true,
         "count": -1
+      },
+      {
+        "id": "npc-population",
+        "text": "the tutorial NPC occupying a dedicated tutorial area in the lobby",
+        "visible": true,
+        "count": 1
+      },
+      {
+        "id": "spawner-npc",
+        "text": "the Forest route's spawn entrance, clearly facing down the full lane toward the base",
+        "visible": false,
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "tracker-core",
+        "text": "a tracker-core volume at the terminal defended base",
+        "count": 1,
+        "where": "at the terminal end of the Forest lane"
+      },
+      {
+        "id": "npc-population",
+        "text": "the tutorial NPC marker",
+        "count": 1,
+        "where": "in the lobby tutorial zone"
+      },
+      {
+        "id": "spawner-npc",
+        "text": "the Forest route's spawn entrance, clearly facing down the full lane toward the base",
+        "count": 1,
+        "where": "at the Forest route entrance, facing down the full lane toward the defended base"
       }
     ],
     "layout": {
-      "composition": "Vista aberta do lobby, da fonte central aos elevadores distribuídos ao redor da praça; a arena da Floresta privilegia uma leitura top-down da rota inteira.",
+      "composition": "A large polished medieval-tech lobby plaza is centered on a fountain, with tutorial, shop, code-redemption, achievements, and leaderboard zones around its perimeter. Four prominent enclosed elevator portals sit around the plaza. The compact Forest match map presents its winding single lane largely readable at once, running from the forest spawn gate through tower pads and woodland bends to the defended base.",
       "zones": [
         {
-          "name": "Lobby central",
-          "role": "Praça ampla de reunião e acesso às partidas.",
-          "where": "centro",
-          "size": "amplo"
+          "name": "Main Lobby",
+          "role": "Large polished medieval-tech plaza and central arrival space.",
+          "where": "centre",
+          "size": "large"
         },
         {
-          "name": "Fonte",
-          "role": "Âncora visual do lobby.",
-          "where": "meio da praça",
+          "name": "Tutorial Zone",
+          "role": "Dedicated area occupied by the tutorial NPC.",
+          "where": "around the lobby perimeter",
           "size": ""
         },
         {
-          "name": "Setores periféricos do lobby",
-          "role": "Tutorial NPC, loja, área de códigos, conquistas e placar em setores distintos e legíveis.",
-          "where": "ao redor da praça",
+          "name": "Shop Zone",
+          "role": "Shop area.",
+          "where": "around the lobby perimeter",
           "size": ""
         },
         {
-          "name": "Elevadores-portais",
-          "role": "Acessos às partidas Fácil, Normal, Difícil e Pesadelo, com portal, portas e cabine interna.",
-          "where": "distribuídos ao redor da praça",
-          "size": "quatro elevadores"
+          "name": "Code-Redemption Zone",
+          "role": "Code redemption area.",
+          "where": "around the lobby perimeter",
+          "size": ""
         },
         {
-          "name": "Arena Floresta",
-          "role": "Partida compacta com uma rota inimiga única, entrada de spawn, terreno para torres e base defendida.",
-          "where": "mapa de partida separado",
-          "size": "compacta"
+          "name": "Achievements Zone",
+          "role": "Achievements area.",
+          "where": "around the lobby perimeter",
+          "size": ""
         },
         {
-          "name": "Castelo, Cidade, Neve, Vulcão, Laboratório e Deserto",
-          "role": "Mapas de partida separados, cada um com sua própria rota inimiga distinta.",
-          "where": "separados do lobby e da Floresta",
-          "size": "seis mapas"
+          "name": "Leaderboard Zone",
+          "role": "Player leaderboard area.",
+          "where": "around the lobby perimeter",
+          "size": ""
+        },
+        {
+          "name": "Easy Elevator",
+          "role": "Enclosed elevator portal with a small interior and animated doors, leading to Easy match selection.",
+          "where": "around the lobby plaza",
+          "size": ""
+        },
+        {
+          "name": "Normal Elevator",
+          "role": "Enclosed elevator portal with a small interior and animated doors, leading to Normal match selection.",
+          "where": "around the lobby plaza",
+          "size": ""
+        },
+        {
+          "name": "Hard Elevator",
+          "role": "Enclosed elevator portal with a small interior and animated doors, leading to Hard match selection.",
+          "where": "around the lobby plaza",
+          "size": ""
+        },
+        {
+          "name": "Nightmare Elevator",
+          "role": "Enclosed elevator portal with a small interior and animated doors, leading to Nightmare match selection.",
+          "where": "around the lobby plaza",
+          "size": ""
+        },
+        {
+          "name": "Forest Map",
+          "role": "Compact first match arena with one continuous enemy lane from spawn entrance to defended core and open tower-placement ground along both sides.",
+          "where": "separate match map space",
+          "size": "compact"
+        },
+        {
+          "name": "Castle Map",
+          "role": "Later match map with its own distinct lane arrangement.",
+          "where": "separate match map space",
+          "size": ""
+        },
+        {
+          "name": "City Map",
+          "role": "Later match map with its own distinct lane arrangement.",
+          "where": "separate match map space",
+          "size": ""
+        },
+        {
+          "name": "Snow Map",
+          "role": "Later match map with its own distinct lane arrangement.",
+          "where": "separate match map space",
+          "size": ""
+        },
+        {
+          "name": "Volcano Map",
+          "role": "Later match map with its own distinct lane arrangement.",
+          "where": "separate match map space",
+          "size": ""
+        },
+        {
+          "name": "Laboratory Map",
+          "role": "Later match map with its own distinct lane arrangement.",
+          "where": "separate match map space",
+          "size": ""
+        },
+        {
+          "name": "Desert Map",
+          "role": "Later match map with its own distinct lane arrangement.",
+          "where": "separate match map space",
+          "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Lobby central",
-          "to": "Elevadores-portais",
-          "kind": "open ground"
+          "from": "Tutorial Zone",
+          "to": "Main Lobby",
+          "kind": "road"
         },
         {
-          "from": "Elevadores-portais",
-          "to": "Mapas de partida",
-          "kind": "portal"
+          "from": "Shop Zone",
+          "to": "Main Lobby",
+          "kind": "road"
         },
         {
-          "from": "Entrada inimiga da Floresta",
-          "to": "Base defendida da Floresta",
+          "from": "Code-Redemption Zone",
+          "to": "Main Lobby",
+          "kind": "road"
+        },
+        {
+          "from": "Achievements Zone",
+          "to": "Main Lobby",
+          "kind": "road"
+        },
+        {
+          "from": "Leaderboard Zone",
+          "to": "Main Lobby",
+          "kind": "road"
+        },
+        {
+          "from": "Easy Elevator",
+          "to": "Main Lobby",
+          "kind": "road"
+        },
+        {
+          "from": "Normal Elevator",
+          "to": "Main Lobby",
+          "kind": "road"
+        },
+        {
+          "from": "Hard Elevator",
+          "to": "Main Lobby",
+          "kind": "road"
+        },
+        {
+          "from": "Nightmare Elevator",
+          "to": "Main Lobby",
+          "kind": "road"
+        },
+        {
+          "from": "Forest Spawn Gate",
+          "to": "Defended Base",
           "kind": "track"
         }
       ],
-      "terrain": "Árvores, pedras e flores nas bordas; rios e montanhas enquadram o exterior. A Floresta tem caminho sinuoso visível quase inteiro e clareiras laterais abertas para torres.",
+      "terrain": "Forested hills and mountains without overhanging play surfaces frame the lobby and Forest map. Rivers form visible landscape features; dense trees, rock outcrops, low hills, and river edges form the Forest boundary.",
       "props": [
         {
-          "name": "fonte",
+          "name": "Fountain",
           "count": 1,
-          "where": "meio do lobby"
+          "where": "centre of the main lobby plaza"
         },
         {
-          "name": "tutorial NPC",
-          "count": 1,
-          "where": "setor periférico do lobby"
-        },
-        {
-          "name": "elevadores-portais",
+          "name": "Enclosed elevator portals",
           "count": 4,
-          "where": "ao redor da praça"
+          "where": "around the lobby plaza"
         },
         {
-          "name": "árvores",
+          "name": "Trees",
           "count": -1,
-          "where": "borda externa"
+          "where": "outer lobby and Forest map"
         },
         {
-          "name": "pedras",
+          "name": "Rocks and rock outcrops",
           "count": -1,
-          "where": "borda externa"
+          "where": "outer lobby and Forest map"
         },
         {
-          "name": "flores",
+          "name": "Flowers",
           "count": -1,
-          "where": "borda externa"
+          "where": "outer lobby"
         },
         {
-          "name": "rios",
+          "name": "Mountains",
           "count": -1,
-          "where": "borda externa"
+          "where": "framing the lobby and Forest map"
         },
         {
-          "name": "montanhas",
+          "name": "Rivers",
           "count": -1,
-          "where": "borda externa"
+          "where": "outer lobby and Forest map"
+        },
+        {
+          "name": "Forest spawn gate",
+          "count": 1,
+          "where": "at the beginning of the Forest lane"
+        },
+        {
+          "name": "Fortified medieval-tech base",
+          "count": 1,
+          "where": "at the terminal end of the Forest lane"
         }
       ],
-      "boundary": "Borda externa enquadrada por árvores, pedras, flores, rios e montanhas.",
+      "boundary": "Dense trees, rock outcrops, low hills, and river edges create a natural boundary around the Forest arena while leaving the lane and tower-placement ground unobstructed.",
       "scale_band": "large",
-      "theme": "fantasia medieval com tecnologia luminosa e polida"
+      "theme": "polished high-detail medieval fantasy fused with luminous technology"
     },
     "render": {
-      "first": "topdown",
-      "then": "isometric",
-      "authoritative": "topdown",
-      "why": "a rota inimiga contínua e o terreno válido para colocação precisam estar corretos antes da decoração.",
+      "first": "authored_plan",
+      "then": "topdown",
+      "authoritative": "authored_plan",
+      "why": "the Forest enemy lane must be valid by construction as one uninterrupted path from wave origin to core, with legible tower placement margins.",
       "set_piece": false
     },
     "route": [
       "P4",
-      "P3",
       "P6",
-      "tiered",
-      "CHECK"
+      "tiered"
     ],
     "notes": [
-      "dropped option 'social-hub': not in Strategy",
-      "dropped option 'teleporter-link': not in Strategy",
-      "dropped option 'landmark-focal': not in Strategy"
+      "visible on 'npc-population' set from goes_to=both"
     ],
     "scene_prompt": "Create a 3D Tower Defense game layout in a medieval world blended with technology. Begin with a large, polished lobby centered on a fountain, with distinct physical areas for a tutorial NPC, shop, code redemption, achievements, and a player leaderboard; surround it with detailed trees, rocks, flowers, mountains, and rivers. Place several prominent elevator portals around the lobby, one each for Easy, Normal, Hard, and Nightmare matches, with enclosed elevator interiors and animated doors. Build the first match map as a compact Forest arena with a single clearly visible enemy route winding from a spawn entrance to a defended base, leaving open ground along the route for tower placement. The forest path has its own distinct layout, while later Castle, City, Snow, Volcano, Laboratory, and Desert maps each use a different enemy path arrangement."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",
   "first": "topdown",
-  "mapper_notes": []
+  "mapper_notes": [
+    "blob asked for authored_plan first; the route ['P6', 'P0', 'tiered', 'CHECK'] gives topdown"
+  ]
 }

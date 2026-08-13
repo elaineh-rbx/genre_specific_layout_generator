@@ -14,7 +14,7 @@
     }
   ],
   "scene_prompt": "Create a simple fully 3D endless runner map with a deliberately abstract, clean arcade look. Frame a few-hundred-stud visible and recycled track segment from a third-person camera behind and slightly above the runner, looking forward down the track. The track has clear parallel lanes, with obstacles and collectible coins placed ahead along the route; keep the surroundings minimal so the movement path remains readable.",
-  "blob": "### Genre\nThe dominant genre is Infinite Runner: the runner moves forward automatically, switches among fixed lanes, jumps obstacles, and survives an endless course. No secondary genre applies.\n\n### Shape and preset\nUse `lane-snap`, matching the Lane Runner preset. This is a clean three-parallel-lane abstract arcade track, with each recycled segment continuing exactly forward. The preset remains recognisable; add explicit jump obstacles and run-ending crashes requested by the author.\n\n### Config requirements\nVisible geometry: `chunk-modular` makes each few-hundred-stud track segment join precisely to the next; `obstacle-jump` provides readable barriers and gaps to clear; `hazard-kill` makes collision obstacles visually decisive; and `barrier-horizon` uses a minimal distant fade or masked endpoint so new chunks are not visible spawning. Invisible layout: `collectible-nodes` places coin pickup points in lane-readable runs ahead of the player, and `trigger-despawn` places a cleanup/recycling volume behind the framed segment. Do not add shops, hubs, upgrades, scenery districts, or extra modes.\n\n### Layout components\nBuild one narrow, straight, few-hundred-stud visible/recycled track segment, divided into three equally clear parallel lanes. The active runner position sits near the lower foreground; the route extends toward the upper centre. Arrange low, clean geometric obstacle groups ahead with clear lateral dodge choices, plus occasional jump-height barriers and gaps. Put coin trails in individual lanes and short shifted runs that lead into safe dodges or jumps. Keep the ground smooth and flat, with sparse abstract side rails or edge strips only; no terrain, buildings, water, or populated surroundings. The boundary is visually dissolved by a soft horizon fade rather than a detailed environment. Compose for a third-person view from behind and slightly above the runner, looking directly down the track.\n\n### Render order\nUse `topdown`: the three lanes, chunk joins, obstacle clearances, and coin lines must remain valid and readable before the isometric dressing is derived.\n\n### Scale, theme, and pipeline cost\nScale is small: only a few-hundred-stud active segment is ever visible, then recycled endlessly. Theme is deliberately abstract, polished, clean arcade geometry with high route readability. Pipeline modifier: `P6`, because modular segment alignment and speed-responsive obstacle spacing must be valid by construction.",
+  "blob": "### Genre\nThe dominant genre is `Infinite Runner`: automatic forward motion through an endless, three-lane obstacle route.\n\n### Shape and preset\nUse `lane-snap`, matching the Lane Runner preset. The player-facing route is a clean abstract arcade track of rigid parallel lanes; retain the preset’s lane structure and modular progression, while keeping the scene deliberately minimal.\n\n### Config requirements\nUse `chunk-modular` for visually repeatable track segments whose joins align exactly along the forward axis. Use `obstacle-jump` for readable barriers and gaps distributed across the lanes. Do not add scenery, shops, or secondary set pieces.\n\n### Layout requirements\nUse `collectible-nodes`: place coin trails in individual lanes and on riskier lane-change or jump lines within each visible chunk. Use `trigger-despawn`: site one cleanup volume a fixed distance behind the runner/camera, beyond the recycled segment boundary, to remove cleared chunks. No other placed gameplay elements are needed.\n\n### Layout components\nBuild one straight, few-hundred-stud visible/recycled segment of broad, flat track divided into three clear parallel lanes. The route continues seamlessly beyond both framed ends through aligned modular chunk joins. Place sparse abstract obstacles ahead, alternating occupied lanes to create readable dodges, with occasional low barriers or gaps requiring jumps. Run coin trails along safe central lines and more exposed alternate lanes. Keep the ground plain and the surroundings nearly empty, using only a minimal abstract void or distant non-interactive backdrop so lane readability remains dominant. Frame the composition from behind and slightly above the runner, looking forward down the track.\n\n### Render order\nUse `topdown` first and treat the plan as authoritative, because lane continuity and clear obstacle spacing must remain playable across every repeated chunk.\n\n### Scale, theme, and pipeline cost\nScale is small: only a few-hundred-stud active segment is visible at once. Theme is clean, deliberately abstract arcade 3D with high-contrast lane and obstacle readability. Apply `P6` because the modular endless route and obstacle sequence must be valid by construction.",
   "spec": {
     "genre": "Infinite Runner",
     "secondary": [],
@@ -24,107 +24,82 @@
     "options": [
       {
         "id": "chunk-modular",
-        "text": "Each few-hundred-stud recycled track segment joins precisely to the next and continues exactly forward.",
+        "text": "Visually repeatable track segments whose joins align exactly along the forward axis.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "obstacle-jump",
+        "text": "Readable barriers and gaps distributed across the lanes.",
         "visible": true,
         "count": -1
       },
       {
         "id": "collectible-nodes",
-        "text": "Coin pickup points form lane-readable runs ahead of the player, including short shifted runs leading into safe dodges or jumps.",
+        "text": "Coin trails in individual lanes and on riskier lane-change or jump lines within each visible chunk.",
         "visible": false,
-        "count": -1
-      },
-      {
-        "id": "obstacle-jump",
-        "text": "Occasional jump-height barriers and gaps are arranged ahead on the three-lane track.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "hazard-kill",
-        "text": "Collision obstacles are visually decisive run-ending crashes.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "barrier-horizon",
-        "text": "A minimal distant fade or masked endpoint hides newly spawning chunks.",
-        "visible": true,
         "count": -1
       },
       {
         "id": "trigger-despawn",
-        "text": "A cleanup and recycling volume sits behind the framed segment.",
+        "text": "One cleanup volume that removes cleared chunks.",
         "visible": false,
-        "count": -1
+        "count": 1
+      }
+    ],
+    "layout_placement": [
+      {
+        "id": "collectible-nodes",
+        "text": "Coin trails in individual lanes and on riskier lane-change or jump lines within each visible chunk.",
+        "count": -1,
+        "where": "In individual lanes and on riskier lane-change or jump lines within each visible chunk."
+      },
+      {
+        "id": "trigger-despawn",
+        "text": "One cleanup volume that removes cleared chunks.",
+        "count": 1,
+        "where": "A fixed distance behind the runner/camera, beyond the recycled segment boundary."
       }
     ],
     "layout": {
-      "composition": "Third-person view from behind and slightly above the active runner near the lower foreground, looking directly up the straight track toward the upper centre and soft horizon fade.",
+      "composition": "Frame from behind and slightly above the runner, looking forward down the track.",
       "zones": [
         {
-          "name": "Active recycled track segment",
-          "role": "Endless forward-running course with readable lane switching, dodges, jumps, crashes, and coin runs.",
-          "where": "Lower foreground extending to the upper centre",
-          "size": "One narrow, few-hundred-stud visible/recycled segment"
-        },
-        {
-          "name": "Three parallel lanes",
-          "role": "Fixed lateral movement lanes for the automatic runner.",
-          "where": "Across the track width",
-          "size": "Three equally clear lanes"
-        },
-        {
-          "name": "Horizon mask",
-          "role": "Conceals the endpoint where new track chunks spawn.",
-          "where": "Upper-centre distance",
-          "size": ""
+          "name": "Track segment",
+          "role": "Automatic forward-motion obstacle route.",
+          "where": "Extending forward through the frame and continuing beyond both framed ends.",
+          "size": "A few-hundred-stud visible and recycled segment."
         }
       ],
       "paths": [
         {
-          "from": "Active runner position",
-          "to": "Horizon mask",
+          "from": "Track segment",
+          "to": "Aligned modular chunk joins beyond both framed ends",
           "kind": "track"
         }
       ],
-      "terrain": "Smooth, flat abstract track ground with sparse side rails or edge strips only; no terrain relief, water, buildings, or populated surroundings.",
+      "terrain": "Broad, flat, plain track ground divided into three clear rigid parallel lanes, with a minimal abstract void or distant non-interactive backdrop.",
       "props": [
         {
-          "name": "Low clean geometric obstacle groups",
+          "name": "Sparse abstract obstacles",
           "count": -1,
-          "where": "Ahead of the runner across the lanes"
-        },
-        {
-          "name": "Jump-height barriers",
-          "count": -1,
-          "where": "Occasionally ahead on the track"
-        },
-        {
-          "name": "Gaps",
-          "count": -1,
-          "where": "Occasionally ahead on the track"
+          "where": "Ahead on alternating occupied lanes, with occasional low barriers or gaps requiring jumps."
         },
         {
           "name": "Coin trails",
           "count": -1,
-          "where": "Individual lanes and short shifted runs ahead of the runner"
-        },
-        {
-          "name": "Sparse abstract side rails or edge strips",
-          "count": -1,
-          "where": "Track edges"
+          "where": "Along safe central lines and more exposed alternate lanes."
         }
       ],
-      "boundary": "Visually dissolved by a soft horizon fade rather than a detailed surrounding environment.",
+      "boundary": "Open into a minimal abstract void or distant non-interactive backdrop.",
       "scale_band": "small",
-      "theme": "Deliberately abstract, polished, clean arcade geometry with high route readability."
+      "theme": "Clean, deliberately abstract arcade 3D with high-contrast lane and obstacle readability."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "The three lanes, chunk joins, obstacle clearances, and coin lines must remain valid and readable before dressing.",
+      "why": "lane continuity and clear obstacle spacing must remain playable across every repeated chunk.",
       "set_piece": false
     },
     "route": [
@@ -136,7 +111,7 @@
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
   "order": "p6",

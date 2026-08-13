@@ -14,217 +14,175 @@
     }
   ],
   "scene_prompt": "Create a fully 3D, enormous 2000x2000-stud multiplayer horror forest map at night, with an open-world feel that supports several minutes of exploration. Dense giant trees and abundant undergrowth fill the landscape, divided into visually distinct forest zones through varied terrain and atmosphere: narrow winding paths, rocky hills, fallen logs, shallow rivers, small lakes, light fog, deep moonlit shadows, sight-blocking tree cover, open clearings, enclosed thickets, and pockets of near-total darkness. Interweave branching routes, alternate trails, shortcuts, and natural hiding places rather than linear paths. Place key landmarks throughout the forest: an abandoned cabin with a small simple explorable interior, an accessible watchtower with a compact interior, an accessible cave entrance leading into a small simple cave interior, a destroyed campsite, a wooden bridge over water, and scattered abandoned vehicles. Use realistic dark nighttime lighting, moonlight, fog, and optimized Roblox-scale environmental composition.",
-  "blob": "### 1. Género\nEl género dominante es Survival: el encargo es un escenario de terror multijugador orientado a persecuciones entre jugadores. No se añaden amenazas, personajes, NPC ni sistemas al mapa.\n\n### 2. Forma y preset\nUse la forma `warren-looping`, reinterpretada como un bosque abierto pero densamente entrelazado: cada zona debe ofrecer bucles, bifurcaciones y rutas de retorno para que las persecuciones no terminen en callejones sin salida. El preset es none; conserva la topología de persecución de 1 vs All, pero no sus salidas, roles ni puntos de aparición.\n\n### 3. Requisitos de configuración\n`cover-los` es geometría visible: árboles gigantes, matorrales densos, rocas, troncos caídos, taludes y oscuridad vegetal rompen líneas de visión y forman escondites naturales. `building-interior` es geometría visible: la cabaña abandonada, la torre de vigilancia y la cueva son accesibles, con interiores pequeños, simples y optimizados. `water-body` es geometría visible: ríos poco profundos y lagos pequeños separan y caracterizan sectores. `terrain-relief` es geometría visible: colinas rocosas y depresiones cambian el terreno sin convertir las zonas en niveles de amenaza. No hay componentes invisibles.\n\n### 4. Componentes de layout\nConstruya un único bosque continuo de aproximadamente 2000x2000 studs. Distribuya sectores visualmente distintos: arboleda muy cerrada con senderos estrechos y niebla; colinas rocosas con claros lunares; humedal de río poco profundo y un puente de madera; orilla de lagos pequeños; matorrales casi cerrados con bolsillos de oscuridad total; y claros abiertos que contrasten con los corredores naturales. Una red irregular de senderos, pasos entre rocas, troncos cruzables y atajos entre vegetación conecta todos los sectores en múltiples bucles.\n\nSitúe la cabaña en un claro apartado, la torre sobre una elevación, la entrada de cueva en una ladera rocosa, el campamento destruido cerca de una ruta secundaria y vehículos abandonados dispersos junto a caminos deteriorados. La cueva, la cabaña y la torre deben tener interiores compactos, con accesos claros y salidas que no creen trampas de navegación. El límite exterior queda oculto por la espesura más densa, laderas y terreno rocoso. Componga la vista isométrica con el puente, un claro y una silueta de torre como hitos entre capas profundas de árboles.\n\n### 5. Orden de render\nUse `topdown`: primero un plano superior autoritativo para verificar que los bucles, atajos y rutas alternativas permanezcan conectados y transitables; después vístalo en isométrico. No es un laberinto ni un circuito que pueda usar `authored_plan`.\n\n### 6. Escala, tema y coste de pipeline\nEscala huge, impulsada por el terreno continuo de 2000x2000 studs y la exploración prolongada. Tema: bosque de terror realista nocturno, luz de luna fría, sombras profundas y niebla ligera. Use `P6` para validar la red de persecución sin callejones terminales; `P3` por los interiores conectados al exterior; `P2` por los niveles superpuestos de la torre; `tiered` por colinas y laderas; y `CHECK` por ríos y lagos como volúmenes de agua.",
+  "blob": "### Genre\nThe dominant genre is `Survival`, specifically a multiplayer horror-chase environment, although no threat, scoring, escape, or resource mechanics are to be added. The requested map geometry supports pursuit and hiding without implying NPCs or systems.\n\n### Shape and preset\nUse `world-open`, taken from outside Survival’s usual shape set: one vast contiguous forest rather than a bounded arena or looping indoor warren. Preset: none; the scene retains neither a Survival preset’s structure nor its gameplay-specific options.\n\n### Config requirements\nUse `cover-los` for dense giant tree trunks, brush-filled thickets, boulders, fallen logs, and dark natural hideouts that repeatedly break sightlines. Use `building-interior` for the small optimized, explorable interiors of the abandoned cabin, watchtower, and cave. Use `water-body` for shallow rivers and small lakes. Use `terrain-relief` for rocky hills and varied forest ground.\n\n### Layout requirements\nNo gameplay markers, spawn points, NPC emitters, pickups, triggers, or checkpoints are required; the author explicitly requests environment geometry only.\n\n### Layout components\nBuild an approximately 2000x2000-stud open forest with no rapid visible boundary; conceal its outer limit behind dense woodland, hills, and impassable natural terrain. Divide it into several visually distinct but continuously connected zones: a dense shadowed tree core, rocky hill country, wet river-and-lake ground, open moonlit clearings, and tightly enclosed thickets with pockets of near-total darkness. Narrow winding trails branch and reconnect across the whole map, with alternate trails, short cuts through undergrowth, log crossings, and open-versus-enclosed pursuit spaces rather than a linear route. Place the abandoned cabin, compact accessible watchtower, destroyed campsite, wooden bridge over a river, cave entrance with a small interior chamber, and scattered abandoned vehicles at separated landmarks along these interconnected routes. Use giant trees, abundant vegetation, rocks, fallen trunks, light fog, deep moonlit shadows, and realistic dark nighttime composition.\n\n### Render order\nUse `topdown` first and make it authoritative, so the large branching trail network, reconnecting shortcuts, water crossings, and landmark spacing remain coherent for exploration and player pursuits before the isometric dressing pass.\n\n### Scale, theme, and pipeline cost\nScale is huge, driven by the stated 2000x2000-stud footprint and several minutes of exploration. Theme: realistic, oppressive moonlit horror forest with fog and deep shadow. Apply `tiered` for hills and rocky relief, `P3` for the linked exterior and accessible cabin, tower, and cave interiors, and `CHECK` because rivers and lakes are real water features requiring a volume/occlusion review.",
   "spec": {
     "genre": "Survival",
     "secondary": [],
-    "shape": "warren-looping",
+    "shape": "world-open",
     "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "cover-los",
-        "text": "Árboles gigantes, matorrales densos, rocas, troncos caídos, taludes y oscuridad vegetal rompen líneas de visión y forman escondites naturales.",
+        "text": "Dense giant tree trunks, brush-filled thickets, boulders, fallen logs, and dark natural hideouts that repeatedly break sightlines.",
         "visible": true,
         "count": -1
       },
       {
         "id": "building-interior",
-        "text": "La cabaña abandonada, la torre de vigilancia y la cueva son accesibles, con interiores pequeños, simples y optimizados.",
+        "text": "Small optimized, explorable interiors of the abandoned cabin, watchtower, and cave.",
         "visible": true,
-        "count": -1
+        "count": 3
       },
       {
         "id": "water-body",
-        "text": "Ríos poco profundos y lagos pequeños separan y caracterizan sectores.",
+        "text": "Shallow rivers and small lakes.",
         "visible": true,
         "count": -1
       },
       {
         "id": "terrain-relief",
-        "text": "Colinas rocosas y depresiones cambian el terreno sin convertir las zonas en niveles de amenaza.",
+        "text": "Rocky hills and varied forest ground.",
         "visible": true,
         "count": -1
       }
     ],
+    "layout_placement": [],
     "layout": {
-      "composition": "Vista isométrica compuesta con el puente, un claro y una silueta de torre como hitos entre capas profundas de árboles.",
+      "composition": "",
       "zones": [
         {
-          "name": "Bosque continuo",
-          "role": "Espacio principal de persecución y exploración con bucles, bifurcaciones y rutas de retorno.",
-          "where": "Todo el mapa",
-          "size": "Aproximadamente 2000x2000 studs"
-        },
-        {
-          "name": "Arboleda cerrada",
-          "role": "Senderos estrechos, niebla y cobertura vegetal para romper líneas de visión.",
-          "where": "Sectores entrelazados del bosque",
+          "name": "Dense shadowed tree core",
+          "role": "Dense forest exploration and pursuit space with repeated sightline breaks.",
+          "where": "core of the forest",
           "size": ""
         },
         {
-          "name": "Colinas rocosas",
-          "role": "Claros lunares, laderas rocosas y acceso a la cueva.",
-          "where": "Zonas elevadas del bosque",
+          "name": "Rocky hill country",
+          "role": "Elevated rocky forest ground.",
+          "where": "connected across the forest",
           "size": ""
         },
         {
-          "name": "Humedal del río",
-          "role": "Sector de río poco profundo cruzado por un puente de madera.",
-          "where": "Entre sectores del bosque",
+          "name": "Wet river-and-lake ground",
+          "role": "Shallow river and small lake terrain with water crossings.",
+          "where": "connected across the forest",
           "size": ""
         },
         {
-          "name": "Orilla de lagos",
-          "role": "Sector caracterizado por lagos pequeños.",
-          "where": "Sectores del bosque",
+          "name": "Open moonlit clearings",
+          "role": "Open pursuit spaces.",
+          "where": "throughout the forest",
           "size": ""
         },
         {
-          "name": "Matorrales cerrados",
-          "role": "Vegetación casi cerrada con bolsillos de oscuridad total y escondites naturales.",
-          "where": "Sectores densos del bosque",
-          "size": ""
-        },
-        {
-          "name": "Claros abiertos",
-          "role": "Espacios abiertos que contrastan con los corredores naturales.",
-          "where": "Distribuidos por el bosque",
-          "size": ""
-        },
-        {
-          "name": "Claro apartado",
-          "role": "Ubicación de la cabaña abandonada con interior compacto.",
-          "where": "Apartado de las rutas principales",
-          "size": ""
-        },
-        {
-          "name": "Elevación de la torre",
-          "role": "Ubicación de la torre de vigilancia con interior compacto.",
-          "where": "Sobre una elevación",
-          "size": ""
-        },
-        {
-          "name": "Cueva",
-          "role": "Interior compacto con accesos claros y salida sin trampa de navegación.",
-          "where": "Ladera rocosa",
-          "size": ""
-        },
-        {
-          "name": "Campamento destruido",
-          "role": "Hito ambiental secundario.",
-          "where": "Cerca de una ruta secundaria",
+          "name": "Tightly enclosed thickets",
+          "role": "Enclosed hiding spaces with pockets of near-total darkness.",
+          "where": "throughout the forest",
           "size": ""
         }
       ],
       "paths": [
         {
-          "from": "Arboleda cerrada",
-          "to": "Colinas rocosas",
-          "kind": "sendero"
+          "from": "Dense shadowed tree core",
+          "to": "Rocky hill country",
+          "kind": "trail"
         },
         {
-          "from": "Colinas rocosas",
-          "to": "Cueva",
-          "kind": "sendero"
+          "from": "Rocky hill country",
+          "to": "Wet river-and-lake ground",
+          "kind": "trail"
         },
         {
-          "from": "Arboleda cerrada",
-          "to": "Humedal del río",
-          "kind": "sendero"
+          "from": "Wet river-and-lake ground",
+          "to": "Open moonlit clearings",
+          "kind": "trail"
         },
         {
-          "from": "Humedal del río",
-          "to": "Orilla de lagos",
-          "kind": "puente"
+          "from": "Open moonlit clearings",
+          "to": "Tightly enclosed thickets",
+          "kind": "trail"
         },
         {
-          "from": "Orilla de lagos",
-          "to": "Matorrales cerrados",
-          "kind": "sendero"
+          "from": "Forest zones",
+          "to": "Forest zones",
+          "kind": "trail"
         },
         {
-          "from": "Matorrales cerrados",
-          "to": "Claros abiertos",
-          "kind": "sendero"
+          "from": "River banks",
+          "to": "River banks",
+          "kind": "bridge"
         },
         {
-          "from": "Claros abiertos",
-          "to": "Arboleda cerrada",
-          "kind": "sendero"
-        },
-        {
-          "from": "Todos los sectores",
-          "to": "Todos los sectores",
+          "from": "Forest routes",
+          "to": "Forest routes",
           "kind": "open ground"
         }
       ],
-      "terrain": "Bosque nocturno continuo con árboles gigantes, sotobosque abundante, senderos irregulares, pasos entre rocas, troncos cruzables, colinas rocosas, depresiones, ríos poco profundos, lagos pequeños, niebla ligera y claros lunares.",
+      "terrain": "An approximately 2000x2000-stud open forest with dense giant trees, abundant vegetation, rocky hills, varied forest ground, shallow rivers, small lakes, fallen logs, light fog, and deep moonlit shadows.",
       "props": [
         {
-          "name": "Cabaña abandonada",
-          "count": -1,
-          "where": "Claro apartado"
+          "name": "Abandoned cabin with a small simple explorable interior",
+          "count": 1,
+          "where": "at a separated landmark along the interconnected routes"
         },
         {
-          "name": "Torre de vigilancia",
-          "count": -1,
-          "where": "Sobre una elevación"
+          "name": "Accessible watchtower with a compact interior",
+          "count": 1,
+          "where": "at a separated landmark along the interconnected routes"
         },
         {
-          "name": "Entrada de cueva",
-          "count": -1,
-          "where": "Ladera rocosa"
+          "name": "Destroyed campsite",
+          "count": 1,
+          "where": "at a separated landmark along the interconnected routes"
         },
         {
-          "name": "Campamento destruido",
-          "count": -1,
-          "where": "Cerca de una ruta secundaria"
+          "name": "Wooden bridge over a river",
+          "count": 1,
+          "where": "along an interconnected route"
         },
         {
-          "name": "Puente de madera",
-          "count": -1,
-          "where": "Sobre el río poco profundo"
+          "name": "Cave entrance leading into a small interior chamber",
+          "count": 1,
+          "where": "at a separated landmark along the interconnected routes"
         },
         {
-          "name": "Vehículos abandonados",
+          "name": "Scattered abandoned vehicles",
           "count": -1,
-          "where": "Dispersos junto a caminos deteriorados"
-        },
-        {
-          "name": "Troncos caídos",
-          "count": -1,
-          "where": "Entre senderos y vegetación"
+          "where": "at separated landmarks along the interconnected routes"
         }
       ],
-      "boundary": "El límite exterior queda oculto por la espesura más densa, laderas y terreno rocoso.",
+      "boundary": "No rapid visible boundary; conceal the outer limit behind dense woodland, hills, and impassable natural terrain.",
       "scale_band": "huge",
-      "theme": "Bosque de terror realista nocturno, luz de luna fría, sombras profundas y niebla ligera."
+      "theme": "Realistic, oppressive moonlit horror forest with fog and deep shadow."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "para verificar que los bucles, atajos y rutas alternativas permanezcan conectados y transitables.",
+      "why": "the large branching trail network, reconnecting shortcuts, water crossings, and landmark spacing must remain coherent for exploration and player pursuits.",
       "set_piece": false
     },
     "route": [
-      "P6",
       "P3",
-      "P2",
       "tiered",
       "CHECK"
     ],
-    "notes": [],
+    "notes": [
+      "Shape `world-open` was taken from outside Survival’s usual shape set.",
+      "No layout-placement options were requested; the author explicitly requests environment geometry only."
+    ],
     "scene_prompt": "Create a fully 3D, enormous 2000x2000-stud multiplayer horror forest map at night, with an open-world feel that supports several minutes of exploration. Dense giant trees and abundant undergrowth fill the landscape, divided into visually distinct forest zones through varied terrain and atmosphere: narrow winding paths, rocky hills, fallen logs, shallow rivers, small lakes, light fog, deep moonlit shadows, sight-blocking tree cover, open clearings, enclosed thickets, and pockets of near-total darkness. Interweave branching routes, alternate trails, shortcuts, and natural hiding places rather than linear paths. Place key landmarks throughout the forest: an abandoned cabin with a small simple explorable interior, an accessible watchtower with a compact interior, an accessible cave entrance leading into a small simple cave interior, a destroyed campsite, a wooden bridge over water, and scattered abandoned vehicles. Use realistic dark nighttime lighting, moonlight, fog, and optimized Roblox-scale environmental composition."
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "6c9ebf678e33",
+  "pipeline_version": "8f02d901fc75",
   "served_by": "gateway/production/gpt-5.6-terra",
   "reused_uprez": true,
-  "order": "p6",
-  "first": "topdown",
-  "mapper_notes": []
+  "order": "std",
+  "first": "isometric",
+  "mapper_notes": [
+    "blob asked for topdown first; the route ['P3', 'CHECK', 'P0', 'tiered'] gives isometric"
+  ]
 }

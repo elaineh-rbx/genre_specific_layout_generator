@@ -68,8 +68,8 @@ wastes a round trip. Go straight to stage B.
 
 ### Stage B — is there a space?
 
-**Two questions in this order, and do not merge them.** They used to be one,
-and collapsing them is what made this the least accurate step in the skill.
+**Two questions in this order, and do not merge them.** Merging them is the
+single most common way this step goes wrong.
 
 > **1. Is there a space at all?**
 > **No** → route **P5**, emit the block in step 6, and stop. Do not offer options.
@@ -81,8 +81,8 @@ and collapsing them is what made this the least accurate step in the skill.
 
 **Almost everything has a space.** P5 is for a prompt that is not a 3D game —
 a chat-only quiz, a 2D screen game, a bare music player with no room around it.
-Nothing else. In an evaluation of 620 real prompts **not one was a 2D game**,
-so if you are about to emit P5, you are very probably wrong.
+Nothing else, and **genuinely non-3D prompts are very rare**, so if you are
+about to emit P5 you are very probably wrong.
 
 `SET` is the answer for the large middle: a space that is real and built and
 never walked on. A floating board game, a chess table with two chairs, a
@@ -144,8 +144,8 @@ lead.
 
 **A stage A outcome of None loads `no-genre.md` and nothing else.** It has the
 same sections as a genre file, Universal Options included, and the rest of this
-skill applies to it unchanged. It was the right answer on 7% of 620 real
-prompts, so treat it as an ordinary destination rather than a last resort —
+skill applies to it unchanged. It is the right answer often enough to be an
+ordinary destination rather than a last resort —
 inventing a genre to avoid it builds a map the user never asked for.
 
 Otherwise: **load the dominant genre first, and check its presets before
@@ -165,11 +165,41 @@ words — a prompt asking to "spell the word that shows up on the screen" is the
 *Word / Quiz Puzzle* preset even though it never says puzzle or quiz. Match on
 what the preset builds, not on whether its name appears in the prompt.
 
-Each file holds a **Shape** table (pick exactly one), an **Options** table
-(combine freely), **Presets**, **Genre notes**, and a **Universal Options**
-table. The notes carry boundary rules worth checking your classification
-against, and sometimes cite Build.md Part I for the engine baseline behind a
-number — that is background, not something you need to read to execute this.
+Each file holds a **Typical shapes** line (pick exactly one shape), sometimes an
+**Its own wording** table, an **Options** table (combine freely), **Presets**,
+**Genre notes**, and a **Universal Options** table. The notes carry boundary
+rules worth checking your classification against, and sometimes cite Build.md
+Part I for the engine baseline behind a number — that is background, not
+something you need to read to execute this.
+
+### Shapes are shared; the genre's list is only the shortlist
+
+**Every shape in the system is reachable from every genre.** A genre's *Typical
+shapes* line names the handful worth putting on screen and marks one
+*(default)*. It is presentation, not a menu of what is permitted.
+
+**When none of the typical shapes fits, read `shapes.md` — the whole catalogue —
+and take any row in it.** Then say which shape you took, that it came from
+outside the genre's usual set, and what it routes.
+
+When a genre's shapes all seem to assume something your prompt is not, the
+shape you want almost always exists one genre over rather than not at all. A concert inside a roleplay town wants
+`venue-stage`; a fairground shooting gallery wants `range-directed`. Neither is
+filed where you would look.
+
+**Do not load `shapes.md` by default** — reaching for the whole catalogue when
+five rows would do is how a short menu becomes an unusable one.
+
+**A genre may reword a shape, never re-route one.** Where its wording differs
+from the catalogue's, inject the genre's sentence: same ID, same route, its own
+words, exactly as shared options work.
+
+**And if the whole catalogue misses, describe the shape** rather than forcing
+the nearest wrong answer — no ID, the five routing axes answered directly, the
+user's own words as the description. `shapes.md` carries the rules; the bar is
+one specific sentence, *name the catalogue shapes you rejected and why*, and if
+you cannot write it then a catalogue shape fits. The emit form is under **The
+three special cases** below.
 
 **Universal Options are part of every genre's menu.** The same six rows are
 appended to all fifteen files — who inhabits the space, enterable interiors,
@@ -199,19 +229,22 @@ and jump-gap checks are skipped.
 apart — only the second one costs anything, and conflating them is the most
 common classification error there is.
 
-**The dominant genre owns the shape.** Shape answers compete across genres, and
-honouring several stacks pipeline cost out of one sentence. **The dominant
-genre also owns any genre-wide route** — Obby, Racing and Infinite Runner are
-P6 whatever shape is chosen, and that P6 does not follow the genre into a mix
-it does not lead.
+**One shape, chosen once — and it may come from anywhere.** A game still has
+exactly one shape, because honouring several stacks pipeline cost out of a
+single sentence. What no longer applies is that the shape must belong to the
+dominant genre: shapes are shared, so pick whichever one actually describes the
+space and name it. An action RPG whose defining feature is the dungeon takes
+the dungeon shape without Action having to lose the argument first.
 
-Secondary genres contribute **options only**. Union them and **drop duplicate
-IDs**, presenting each concept once using the dominant genre's wording. If a
-secondary genre's shape carried something the user clearly wants, offer it as
-an ordinary option instead of a shape.
+**The dominant genre does still own the genre-wide route** — Obby, Racing and
+Infinite Runner are P6 whatever shape is chosen, and that P6 does not follow
+the genre into a mix it does not lead.
 
-A secondary genre's **preset** is available too — see step 3. Its options come
-across; its shape does not.
+**And it owns the wording.** Where two genres describe the same shape or option
+differently, inject the dominant genre's sentence.
+
+Secondary genres contribute **options** — union them and **drop duplicate
+IDs**, presenting each concept once — and their **presets**, see step 3.
 
 **But name it in `genres` regardless.** A game that is honestly two things is
 recorded as two things. Losing the shape contest does not make a genre untrue,
@@ -265,8 +298,8 @@ be added and dropped one at a time; shape is exclusive, so a preset whose mode
 fits and whose shape does not would otherwise force a choice between a
 contradicted map and no preset at all.
 
-**Swap in any other shape from the same genre's table and keep the options.**
-Then say so:
+**Swap in any other shape and keep the options** — the genre's typical list
+first, and `shapes.md` when none of those fits either. Then say so:
 
 - Tell the user, in the offer, which shape you took instead.
 - Quote the pipeline cost of **the shape you actually used**, not the preset's.
@@ -283,8 +316,7 @@ and emit `preset: null`. Keep the shape or keep most of the options, not
 neither.
 
 A **secondary genre's preset is fair game** for the same reason — taking its
-options no longer drags its shape along. The dominant genre still owns the
-shape.
+options no longer drags its shape along.
 
 If nothing fits well, skip to step 4.
 
@@ -292,7 +324,8 @@ If nothing fits well, skip to step 4.
 
 Only if the user wants to. Show, at most:
 
-- The **shape** question, if the prompt has not already answered it.
+- The **shape** question, if the prompt has not already answered it. Offer the
+  genre's *Typical shapes* — that list is sized for this cap.
 - The **`Core`** options they do not already have.
 
 **Cap it at roughly five items on screen.** Never paste a whole table.
@@ -311,16 +344,15 @@ modifier is therefore not a slower version of the same build, it is one that
 cannot be delivered now. `SET` is fine — it only removes steps from a P0 build.
 
 **When nothing in the prompt requires a modifier, take the route that stays on
-P0 or P6.** This is a tie-breaker for genuine silence, not a filter: 65% of 620
-real prompts already routed entirely on the proven pipeline, and most of the
-rest earned their modifier.
+P0 or P6.** This is a tie-breaker for genuine silence, not a filter — most
+builds already route entirely on the proven pipeline, and most of the rest
+earn their modifier from something the prompt says outright.
 
 **Read for the feature, not for the keyword.** This is where the rule goes
 wrong if you rush it. A prompt never has to say "interior" to need `P3` —
 "houses you sleep in", "shops you buy from", "temples with a boss inside" all
-require going indoors. About half of the rows that look like an assumed `P3`
-are really this. **If the game plainly has the feature, the modifier is
-required.** What you are steering is the judgement calls — *is this several
+require going indoors. Much of the `P3` that looks assumed is really this.
+**If the game plainly has the feature, the modifier is required.** What you are steering is the judgement calls — *is this several
 maps or one*, *does anything overhang*, *is the play volume 3D* — not whether a
 stated feature exists.
 
@@ -360,6 +392,29 @@ Put the override and its justification in `notes`, and tell the user:
 
 > Graded danger zones, but built as one continuous map since you asked for one
 > big world — so it's a single-pass build rather than a separate map per zone.
+
+### The run needs somewhere to end — but never ask how it is won
+
+**Do not ask the user how the game is won.** A win condition is gameplay, not
+layout: a ring-out and a bomb defusal share an identical map. It is the single
+biggest thing intake is tempted to ask and can do nothing with, and most of
+what gets asked is progression wearing a goal's clothing — where an item
+spawns, what unlocks next. None of it reaches the image model or the placement
+pass.
+
+**What layout needs is the place the run ends**, because a map with no reachable
+exit, finish, or objective fails validation — F6 in `LayoutGen - Pipeline.md`.
+That part is spatial and already has homes: the shape says whether the space
+loops or terminates, and `winner-zone` places the payoff.
+
+**So infer it from the genre and the preset.** A race ends at the finish line,
+an obby at the top, a maze at the exit. Emit the option that expresses it and
+record the assumption in `notes`.
+
+**One case earns a question**, and it is a shape question rather than a goal
+one: when the prompt leaves genuinely open whether the space terminates at all.
+*"Is there an end to this, or is it endless to roam?"* decides between a bounded
+course and a loop, and that changes the map. Ask it that way.
 
 ## 5. Ask the open question
 
@@ -417,7 +472,7 @@ Output this block. It is the handoff to the pipeline.
 | Field | Rule |
 | :---- | :---- |
 | `genres` | Slugs matching the loaded filenames, **dominant first**. `[]` for no-genre and P5. |
-| `shape` | `id`, `type`, and `name` split from the shape row's `**Type (Flavor Name)**`. A shape with no type emits `"type": null`. |
+| `shape` | `id`, `type`, and `name` split from the shape row's `**Type (Flavor Name)**`. A shape with no type emits `"type": null`. When no catalogue shape fits, emit the **described** form below instead. |
 | `preset` | The generic display name, or `null` if the user tuned from scratch. **Never the *Modelled on* text.** If you substituted a shape or dropped one of its options, keep the name and record what you changed in `notes`. |
 | `pipeline` | `["P0"]` when nothing adds cost. Otherwise **list only the modifiers** — P0 is the baseline and is dropped once anything else is present. `SET` is the exception: it is a build-mode flag rather than a cost, so it is appended to whatever route applies and keeps `P0` alongside it — `["P0", "SET"]`. |
 | `image_prompt` | One entry per `image` or `both` pick. |
@@ -441,7 +496,7 @@ crashed helicopter in the courtyard is `{ "id": null, "text": "a crashed
 helicopter in the courtyard" }` in `image_prompt`. Only put it in `notes` if it
 cannot be built at all.
 
-### The two special cases
+### The three special cases
 
 **No genre.** There is no shape row, so `id`, `type`, and `name` are all
 `null`, and the five axes carry the answer instead. Omit any axis left at its
@@ -452,12 +507,34 @@ routes `["P0"]`.
 {
   "genres": [],
   "shape": { "id": null, "type": null, "name": null,
-             "axes": { "enclosure": "transition", "verticality": "stacked" } },
+             "axes": { "axis-enclosure": "transition", "axis-verticality": "stacked" } },
   "preset": "Explorable Place",
   "pipeline": ["P3", "P2"],
   "image_prompt": [ "..." ],
   "layout_placement": [],
   "notes": []
+}
+```
+
+**A described shape**, when a genre is known but nothing in the catalogue fits.
+Same axis form, plus `text` in the user's own words and `rejected` naming the
+catalogue shapes you turned down.
+
+```json
+{
+  "genres": ["simulation"],
+  "shape": { "id": null, "type": null, "name": null,
+             "text": "a single skyscraper, played floor by floor from the lobby up",
+             "axes": { "axis-enclosure": "interior-only", "axis-verticality": "stacked" },
+             "rejected": [
+               { "id": "interior-single", "why": "one enclosed space; this is forty stacked ones" },
+               { "id": "world-underground", "why": "layers, but its whole description is below ground" }
+             ] },
+  "preset": null,
+  "pipeline": ["P2"],
+  "image_prompt": [ "..." ],
+  "layout_placement": [],
+  "notes": ["described shape: interior-only + stacked"]
 }
 ```
 
@@ -478,11 +555,6 @@ show rather than a silent stop.
 
 ## Maintenance
 
-`genres/*.md` are generated from `docs/LayoutGen - Build.md` Part II, which is
-canonical. Edit Build.md, then run:
-
-```bash
-python tools/generate_genre_skills.py
-```
-
-`--check` verifies the files are current and exits non-zero if not.
+`genres/*.md`, `shapes.md` and `no-genre.md` are generated from
+`docs/LayoutGen - Build.md`. **Never edit them directly** — edit Build.md and
+run `python tools/generate_genre_skills.py`.
