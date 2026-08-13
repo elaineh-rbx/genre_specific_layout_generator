@@ -99,10 +99,11 @@ Default text backend:
 ```text
 provider: gateway
 environment: production
-model: gpt-5.6-terra
+model: gpt-5.5
 ```
 
-The default Gateway path is unseeded.
+The default Gateway path is unseeded. Override the model with
+`LAYOUTGEN_GATEWAY_MODEL` when running comparisons or rolling back.
 
 ## Render orders
 

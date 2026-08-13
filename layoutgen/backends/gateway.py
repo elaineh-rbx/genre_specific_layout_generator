@@ -42,11 +42,10 @@ AUDIENCE = {"production": "rbx.prod.llm-gateway", "sitetest1": "rbx.st1.llm-gate
 
 ENV = os.getenv("LAYOUTGEN_GATEWAY_ENV", "production")
 
-#: The same model the Azure backend serves, deliberately. Switching transport is a change
-#: worth making on its own; switching transport *and* model at once would mean every
-#: difference from the existing results has two possible causes and no way to separate
-#: them. The gateway serves `gpt-5.6-terra` too, so the swap can be transport-only.
-MODEL = os.getenv("LAYOUTGEN_GATEWAY_MODEL", "gpt-5.6-terra")
+#: This stage transcribes an already-decided prose layout into the strict schema.
+#: `gpt-5.5` preserves the production decisions while supporting the Gateway's
+#: provider-enforced JSON Schema contract. Keep the override for evaluations and rollback.
+MODEL = os.getenv("LAYOUTGEN_GATEWAY_MODEL", "gpt-5.5")
 MAX_TOKENS = int(os.getenv("LAYOUTGEN_GATEWAY_MAX_TOKENS", "8192"))
 TOKEN_FILE = pathlib.Path(
     os.getenv("LAYOUTGEN_GATEWAY_TOKEN_FILE", "~/.cache/llm-gateway-token")).expanduser()

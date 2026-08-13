@@ -63,11 +63,9 @@ def text_part(text: str) -> dict:
 
 
 #: Which service `ask` talks to. The LLM Gateway is the supported path and the default;
-#: Azure is kept because the older results in `results/` were produced through it, and a
-#: comparison between two arms means nothing if what answered them changed unrecorded.
-#:
-#: Both serve `gpt-5.6-terra`, so switching transport does not silently switch models.
-#: Production records persist `served_by()` for provenance.
+#: Azure is kept because older results in `results/` were produced through it. The
+#: providers have independent model defaults; production records persist `served_by()`
+#: so comparisons retain model and transport provenance.
 PROVIDER = os.getenv("LAYOUTGEN_LLM_PROVIDER", "gateway").strip().lower()
 
 #: Set by the last `ask` when the provider would not enforce the schema and it had to be

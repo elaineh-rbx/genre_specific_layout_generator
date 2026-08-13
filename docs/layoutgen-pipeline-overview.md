@@ -464,13 +464,14 @@ The text abstraction is `layoutgen.backends.llm.ask(system, user, schema)`.
 | --- | --- |
 | Provider | `gateway` |
 | Gateway environment | `production` |
-| Gateway model | `gpt-5.6-terra` |
+| Gateway model | `gpt-5.5` |
 | Gateway max output tokens | 8192 |
 | Retries | 3 |
 | Timeout | 300 seconds |
 
 The production blob transcription additionally sets `require_schema=True`; it cannot use
-the degraded, locally parsed fallback.
+the degraded, locally parsed fallback. `LAYOUTGEN_GATEWAY_MODEL` can override the model
+for comparisons or rollback.
 
 The Azure alternative sends `seed=7`. The default Gateway path sends no seed, so normal
 Gateway runs are not seed-reproducible.
