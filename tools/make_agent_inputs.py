@@ -17,10 +17,12 @@ Writes `results/routing/agent_input/<scene>.json`.
 
 Usage:
     python tools/make_agent_inputs.py
+    python tools/make_agent_inputs.py --golden
 """
 
 from __future__ import annotations
 
+import argparse
 import json
 import pathlib
 import sys
@@ -38,6 +40,14 @@ KEEP = ("scene", "source", "answers")
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--golden",
+        action="store_true",
+        help="also project the original 75 curated prompts as already-fixed inputs",
+    )
+    args = parser.parse_args()
+
     OUT.mkdir(parents=True, exist_ok=True)
     written = skipped = 0
     for path in sorted(SRC.glob("*.json")):
@@ -56,6 +66,32 @@ def main() -> None:
         (OUT / path.name).write_text(json.dumps(out, indent=2, ensure_ascii=False),
                                     encoding="utf-8")
         written += 1
+
+    if args.golden:
+        for line in paths.PROMPTS.read_text(encoding="utf-8").splitlines():
+            if not line.strip():
+                continue
+            prompt = json.loads(line)
+            scene = str(prompt.get("scene") or "")
+            # The historical golden set uses four-digit IDs; the later production
+            # corpus uses P-prefixed IDs and already arrived through conversational
+            # intake. Golden prompts are curated briefs, so they need no further fixup.
+            if not (len(scene) == 4 and scene.isdigit()):
+                continue
+            source = (prompt.get("source_prompt") or "").strip()
+            if not source:
+                skipped += 1
+                continue
+            out = {
+                "scene": scene,
+                "source": source,
+                "answers": [],
+                "scene_prompt": source,
+            }
+            (OUT / f"{scene}.json").write_text(
+                json.dumps(out, indent=2, ensure_ascii=False), encoding="utf-8"
+            )
+            written += 1
 
     # Cheap and worth doing every time: the whole point of this file is an absence, and an
     # absence is exactly the kind of thing a later edit removes without anyone noticing.

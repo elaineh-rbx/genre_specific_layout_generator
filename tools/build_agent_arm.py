@@ -41,7 +41,6 @@ from layoutgen.backends import llm                                # noqa: E402
 from layoutgen.model import blob                                  # noqa: E402
 from layoutgen.model import rules as br                           # noqa: E402
 from layoutgen.pipeline import mapper                             # noqa: E402
-from layoutgen.pipeline.carve import layout_kind                  # noqa: E402
 
 IN = paths.ROUTING / "agent_blob"          # prose the subagents wrote
 OUT = paths.ROUTING / "agent_spec_gateway" # gateway-transcribed structured arm
@@ -130,18 +129,6 @@ def build_one(scene: str, prose: str, body: str, source: str,
     spec["scene_prompt"] = body
     spec = blob.normalise(spec)
 
-    # The route is the agent's decision, transcribed from prose. Order is a deterministic
-    # consequence of that route, as requested: a carveable shape is layout-first, another
-    # P6 build is top-down-first, and everything else is isometric-first. This deliberately
-    # overrides any order sentence the transcriber copied, so route and order cannot drift.
-    kind = layout_kind(spec["genre"], spec.get("shape") or "",
-                       [o["id"] for o in spec["options"]])
-    route = spec.get("route") or ["P0"]
-    order = "layout" if kind else ("p6" if "P6" in route else "std")
-    spec["render"]["first"] = mapper.FIRST[order]
-    spec["render"]["authoritative"] = mapper.FIRST[order]
-    spec = blob.normalise(spec)
-
     built = mapper.build(spec)
     return {"scene": scene, "source": source, "answers": said,
             "scene_prompt": body, "blob": prose_decision,
@@ -197,7 +184,7 @@ def main() -> None:
 
     built = skipped = failed = degraded = 0
     repairs: dict[str, int] = {}
-    inputs = [p for p in sorted(IN.glob("P*.md")) if not only or p.stem in only]
+    inputs = [p for p in sorted(IN.glob("*.md")) if not only or p.stem in only]
     print(f"transcribing {len(inputs)} prose artifacts with {args.workers} workers")
     with ThreadPoolExecutor(max_workers=args.workers) as pool:
         results = pool.map(process, inputs)

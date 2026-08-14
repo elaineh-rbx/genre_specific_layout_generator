@@ -115,7 +115,7 @@ def build(spec: dict) -> dict:
                    topdown=None)
     else:
         out.update(iso=prompts.isometric(body, set_piece=set_piece),
-                   topdown=prompts.topdown(source), plan=None)
+                   topdown=prompts.topdown(body), plan=None)
     return out
 
 

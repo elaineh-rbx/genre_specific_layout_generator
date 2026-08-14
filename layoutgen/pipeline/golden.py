@@ -152,9 +152,8 @@ def _manifest() -> dict[str, dict]:
 def agent_rows(specs: pathlib.Path = AGENT_GATEWAY) -> list[Row]:
     """Read Gateway-transcribed Cursor-agent specs and assemble their prompts.
 
-    `mapper.build` uses the fixed scene prompt and structured picks, recomputes the
-    catalogue route, and deterministically derives the executed render order. The agent's
-    stated route and order remain available as claims for audit.
+    `mapper.build` uses the agent-enriched prompt when present, recomputes the catalogue
+    route for downstream work, and executes the agent's transcribed render order.
 
     Specs come from ``tools/build_agent_arm.py``. A scene without a successful strict
     transcription is skipped rather than rendered from an incomplete contract.
@@ -251,6 +250,11 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--arm", default="agent_gateway", choices=sorted(SOURCES),
                     help="which arm's picks to generate from")
+    ap.add_argument(
+        "--output-arm",
+        default="",
+        help="isolated output namespace; defaults to the source arm name",
+    )
     ap.add_argument("--workers", type=int, default=6)
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--only", default="", help="comma-separated scene ids")
@@ -261,7 +265,8 @@ def main() -> None:
                     help="skip the eval checklists this would otherwise backfill")
     args = ap.parse_args()
 
-    ISO, TD, PLAN, RUN = dirs(args.arm)
+    output_arm = args.output_arm or args.arm
+    ISO, TD, PLAN, RUN = dirs(output_arm)
     for d in (ISO, TD, PLAN, paths.RUNS):
         d.mkdir(parents=True, exist_ok=True)
 
@@ -276,7 +281,7 @@ def main() -> None:
 
     from collections import Counter
     by_order = Counter(r.order for r in todo)
-    print(f"generating {len(todo)} {args.arm} scenes  "
+    print(f"generating {len(todo)} {args.arm} scenes into {output_arm}  "
           f"({by_order['std']} isometric-first, {by_order['p6']} plan-first, "
           f"{by_order['layout']} authored-layout-first), "
           f"{args.workers} workers", flush=True)
@@ -284,7 +289,7 @@ def main() -> None:
 
     with ThreadPoolExecutor(max_workers=args.workers) as pool:
         done = list(pool.map(
-            lambda r: run_one(r, len(todo), args.redo, args.arm), todo))
+            lambda r: run_one(r, len(todo), args.redo, output_arm), todo))
 
     done.sort(key=lambda r: r.scene)
     # Merge rather than replace: a --only or --limit run must not drop the scenes it
@@ -313,7 +318,7 @@ def main() -> None:
         # for months before anyone noticed they had none. Only the missing are written,
         # so this is free on a re-render.
         from layoutgen.evaluate import checklist
-        checklist.ensure(ok, arm=args.arm, workers=args.workers)
+        checklist.ensure(ok, arm=output_arm, workers=args.workers)
 
     print("\norder:", dict(Counter(r.order for r in done)))
     print("genres:", dict(Counter(r.genre for r in done).most_common(6)))

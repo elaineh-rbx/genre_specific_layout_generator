@@ -6,11 +6,14 @@ difference in the spec and can be diffed as one. The judgement all happened upst
 `layoutgen.model.blob`; what is left is assembly, and assembly is not a thing to ask a
 model to do.
 
-The assembly is `pipeline.spec.build`, the same function every other arm goes through:
-the scene prompt is the body and the picked options are rendered into the addendum after
-it. This arm therefore differs from the router's arms in *what it decided*, not in how a
-decision becomes a prompt, which is the only way the two can be held against each other
-and the difference attributed to anything.
+The assembly is `pipeline.spec.build`, the same deterministic function every other arm
+goes through. A current agent spec carries `initial_scene_subprompt_enriched`: the
+context-aware agent's final image-ready description, already containing the visible,
+scene-specific realization of its picks. That text becomes the body and is followed by
+the canonical Build.md shape and visible-option requirements. Keeping both is deliberate:
+the enriched prose provides scene context, while the catalogue addendum guarantees that
+no selected layout constraint disappears during enrichment. Older specs without the field
+retain the legacy scene-prompt plus catalogue-addendum assembly.
 
 That was not always so. An earlier version of this file composed the body itself out of
 the spec's zones, paths and props and never sent the scene prompt at all, which made the
@@ -20,24 +23,24 @@ The spec still carries that decomposition and it is still worth recording - it i
 the blob argued about - but roughly half of it restates the scene prompt in other words,
 and the scene prompt is now sent.
 
-The order is derived from the route the picks force, exactly as `golden._finish` derives
-it for every other arm: a shape or option carrying `P6` has a topology that must be valid
-by construction, so the plan is drawn first and the isometric is dressed from it, and a
-shape with a generator has its blueprint carved outright. The three orders are the ones
-the wrappers in `prompts` already implement:
+The context-aware agent's explicit `render.first` decision controls execution for scenes
+that this repository cannot author procedurally. A supported maze or racing route is the
+exception: its available generator always wins, because accepting an image-model plan
+would discard the topology guarantee the generator exists to provide. Route modifiers
+still describe downstream pipeline costs. The three orders are:
 
     std     text -> isometric -> top-down          the default
     p6      text -> plan -> isometric              the route carries `P6`
     layout  blueprint -> top-down -> isometric     a carveable maze or circuit
 
-The spec's own `render.first` is recorded but does not decide execution. The shared
-catalogue route is recomputed from the structured picks, and deterministic policy derives
-the order from that route. Any disagreement is retained in mapper notes for audit.
+`authored_plan` remains constrained by what this repository can actually carve. If an
+agent asks for it on a shape with no maze/track generator, execution safely degrades to an
+image-model top-down first and records the repair.
 
-Options the spec marked invisible never reach a prompt. A trigger volume or a spawn
-marker is recovered from the render by a later stage, and it cannot be recovered from a
-render that drew it, so the filter is applied here where both prompts are built rather
-than anywhere a caller could forget it.
+The skill explicitly excludes options marked invisible from the enriched paragraph. A
+trigger volume or spawn marker is recovered from the render by a later stage, and it
+cannot be recovered from a render that drew it. The structured placement rows remain on
+the mapper result for that downstream stage.
 """
 
 from __future__ import annotations
@@ -58,7 +61,8 @@ def build(spec: dict, *, crossings: int | None = None,
     """The spec's two prompts, plus everything a report needs to explain them."""
     render = spec.get("render") or {}
     wanted = render.get("first") or "isometric"
-    scene = (spec.get("scene_prompt") or "").strip()
+    enriched = (spec.get("initial_scene_subprompt_enriched") or "").strip()
+    scene = enriched or (spec.get("scene_prompt") or "").strip()
     notes: list[str] = []
     if not scene:
         # Without it there is no body, and composing one from the decomposition is what
@@ -81,23 +85,26 @@ def build(spec: dict, *, crossings: int | None = None,
                            "options": picks, "axes": spec.get("axes") or {},
                            "set": set_piece})
 
-    # One line, and deliberately the same one `golden._finish` uses, so that order is a
-    # function of the picks on every arm and cannot be a reason the images differ.
-    order = "layout" if kind else ("p6" if "P6" in route else "std")
-    if (asked := ORDER.get(wanted, "std")) != order:
-        # Kept as a note rather than obeyed. The blob argued for an order and the argument
-        # is worth having on the record - it is the one part of its reasoning the pipeline
-        # now declines to act on.
-        notes.append(f"blob asked for {wanted} first; the route "
-                     f"{route or ['P0']} gives {FIRST[order]}")
+    # A supported maze or racing route must be valid by construction. The repository's
+    # procedural capability is authoritative here: never let an agent-selected image
+    # order bypass a generator that can guarantee the topology.
+    requested_order = ORDER.get(wanted, "std")
+    if kind:
+        order = "layout"
+        if requested_order != "layout":
+            notes.append(
+                f"{kind} generator available; overriding {wanted} with authored_plan"
+            )
+    elif requested_order == "layout":
+        notes.append(
+            "authored_plan requested but no maze/track carver exists; using topdown first"
+        )
+        order = "p6"
+    else:
+        order = requested_order
     set_piece = set_piece and order != "layout"
 
-    # The shape `pipeline.spec.build` takes, so this arm's prompts come out of the same
-    # assembly as every other arm's. `edits` is left empty deliberately: the blob words
-    # each option for its own scene, but injecting its wording as well as its picks would
-    # be a second difference from the router, and only one difference at a time can be
-    # attributed. The wording is still on the spec for anyone who wants to measure it.
-    built = sp.build({
+    prompt_spec = {
         "source": scene,
         "genre": spec.get("genre", ""),
         "shape": spec.get("shape") or "",
@@ -115,18 +122,22 @@ def build(spec: dict, *, crossings: int | None = None,
         **({"crossings": crossings} if crossings is not None else {}),
         **({"closed": closed} if closed is not None else {}),
         "stageB": True,
-    })
+    }
+    built = sp.build(prompt_spec)
 
     return {"order": order, "first": FIRST[order],
             "then": {"std": "topdown", "p6": "isometric",
                      "layout": "topdown"}.get(order, "none"),
             "why": render.get("why", ""),
-            # The document's route, because it is what chose the order. The blob's own
-            # claim rides alongside rather than replacing it: the comparison tools read
-            # both off the spec, and overwriting either would hide a disagreement.
+            # Keep the catalogue-derived route and the agent's claimed route separately:
+            # order follows `render.first`, while these modifiers drive downstream work.
             "route": route, "claimed_route": list(spec.get("route") or []),
             "wanted": wanted,
             "set": set_piece, "body": scene, "addendum": built["addendum"],
+            "prompt_source": (
+                "agent_enriched_plus_catalogue"
+                if enriched else "scene_plus_catalogue"
+            ),
             "withheld": built["withheld"], "kind": built.get("kind"),
             # Carried rather than assembled. Nothing here sites anything - the stage
             # that does runs against a segmented render this function never sees - but

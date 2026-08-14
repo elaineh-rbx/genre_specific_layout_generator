@@ -149,10 +149,12 @@ normal Gateway completion.
 
 The agent contract is in `tools/agent_task.md`. The agent reads:
 
-1. `.cursor/skills/genre-choice/SKILL.md`;
-2. `.cursor/skills/genre-choice/shapes.md`;
-3. the selected genre file, or `no-genre.md`;
-4. `.cursor/skills/layout-blob/SKILL.md`.
+1. `.cursor/skills/layout-intake/SKILL.md`;
+2. `.cursor/skills/uprez-prompt/SKILL.md`;
+3. `.cursor/skills/genre-choice/SKILL.md`;
+4. `.cursor/skills/genre-choice/shapes.md`;
+5. the selected genre file, or `no-genre.md`;
+6. `.cursor/skills/layout-blob/SKILL.md`.
 
 Per scene it reads `results/routing/agent_input/<SCENE>.json`, which contains the original
 source prompt, intake answers, and fixed `scene_prompt`. It writes:
@@ -168,22 +170,29 @@ The artifact has exactly two outer sections:
 <fixed scene prompt, verbatim>
 
 # Agent decision
-<seven prose sections>
+<nine prose sections>
 ```
 
-The seven decision sections are:
+The nine decision sections are:
 
-1. Genre
-2. Shape and preset
-3. Config requirements
-4. Layout requirements
-5. Layout components
-6. Render order
-7. Scale, theme, and pipeline cost
+1. Clarifications resolved
+2. Enriched image prompt
+3. Genre
+4. Shape and preset
+5. Config requirements
+6. Layout requirements
+7. Layout components
+8. Render order
+9. Scale, theme, and pipeline cost
 
-The agent names canonical IDs in backticks and writes approximately 200–450 words of
-English prose. It must not emit JSON. The separation is deliberate: the agent decides;
-the Gateway only encodes the decision.
+The first section records every layout-changing question and answer used. Existing intake
+answers are labelled `author`; in an offline batch, necessary unanswered questions receive
+the narrowest grounded answer and are labelled `agent_inferred`. The second section is one
+or two image-ready paragraphs synthesized from the original message, those resolutions,
+the fixed scene prompt, and the visible spatial decisions the agent makes. Author answers
+override conflicting details in the original message. The agent names canonical IDs in
+backticks in the remaining sections and writes English prose rather than JSON. The
+separation is deliberate: the agent decides; the Gateway only encodes the decision.
 
 ## Stage 2 — One strict Gateway transcription call
 
@@ -206,6 +215,7 @@ spec = blob.decouple(prose_decision, scene_prompt)
 The transcriber must:
 
 - copy decisions rather than reconsider them;
+- preserve clarification provenance and never label an agent inference as author input;
 - never invent missing options, placements, or counts;
 - preserve canonical shape and option IDs;
 - keep image-visible and post-segmentation placement work separate;
@@ -218,6 +228,8 @@ parser.
 
 The output is a structured layout spec containing:
 
+- `clarifications[]`, with `author` or `agent_inferred` provenance;
+- `initial_scene_subprompt_enriched`, copied verbatim from the agent's enriched section;
 - `genre` and `secondary`;
 - one shared-catalogue `shape`, or axes for No Genre/described shapes;
 - `preset`;
@@ -251,55 +263,34 @@ This is validation and policy enforcement, not another prose parser.
 
 **Owner:** MapGen. **Model calls:** none.
 
-`mapper.build(spec)` assembles prompts from the fixed scene prompt, shared-catalogue
-shape and option wording, visible option IDs, and camera wrappers. It passes `edits={}`,
-so transcribed per-scene `options[].text` remains on the spec for audit but is not
-injected into the `agent_gateway` image addendum.
+`mapper.build(spec)` uses `initial_scene_subprompt_enriched` verbatim as the image-prompt
+body, appends the canonical Build.md shape and visible-option requirements, and then adds
+the deterministic camera/style wrapper appropriate to the selected order. The enriched
+paragraph supplies scene-specific context; the catalogue addendum is retained as a
+coverage guarantee so a selected layout rule cannot disappear during enrichment.
+
+Specs created before this contract remain readable: when the enriched field is absent or
+empty, the mapper falls back to the legacy fixed-scene-prompt plus catalogue-addendum
+assembly until the agent artifact is regenerated.
 
 Only visible geometry reaches the image prompts. Trigger volumes, spawn markers,
 checkpoints, pickups, emitters, and other post-segmentation work remain in
 `layout_placement`.
 
-The shared execution rule is:
-
-```python
-order = "layout" if kind else ("p6" if "P6" in route else "std")
-```
+Execution follows the agent's transcribed `render.first` decision unless a supported maze
+or racing-route generator exists. In that case deterministic authored-plan generation is
+mandatory and overrides an image-first selection. Route modifiers remain on the spec for
+downstream pipeline costs and validation.
 
 | Order | Trigger | Sequence |
 | --- | --- | --- |
-| Look-First (`std`) | No carver and no `P6` | Text → isometric → top-down edit |
-| Plan-First (`p6`) | Route contains `P6`, but no local carver exists | Text → top-down → isometric edit |
-| Carve-First (`layout`) | `layout_kind` finds a supported maze/track carver | Deterministic plan → top-down edit → isometric edit |
+| Look-First (`std`) | Agent writes `isometric` | Text → isometric → top-down edit |
+| Plan-First (`p6`) | Agent writes `topdown` | Text → top-down → isometric edit |
+| Carve-First (`layout`) | A supported maze/track carver exists | Deterministic plan → top-down edit → isometric edit |
 
 All three orders make two image-model calls. Carve-First additionally creates its first
-plan in code.
-
-### Current route-authority caveat
-
-The agent's prose records both a Render order decision
-(`isometric`/`topdown`/`authored_plan`) and named route modifiers (`P6`, `P4`, and so
-on). Execution does not obey the prose render-order sentence directly.
-
-`tools/build_agent_arm.py` first overwrites `render.first` and `render.authoritative`
-using the transcribed `spec.route` and local carveability: `layout` when carveable,
-otherwise `p6` when the route contains `P6`, otherwise `std`.
-
-However, `mapper.build()` then recomputes route from genre, shape, options, axes, and
-set-piece state and derives order again. Its returned record contains:
-
-- `route`: the recomputed catalogue route;
-- `claimed_route`: the route transcribed from agent prose.
-
-Therefore the final executed order follows `mapper.build()`'s catalogue-recomputed route
-and the shared `layout`/`p6`/`std` formula. The transcribed route is retained as
-`claimed_route`, while `route` records the recomputed value. Agent prose alone is not
-execution authority.
-
-For example, `P0005` asks for `topdown` in prose and names route `P4 + P3`, but executes
-as `std`/isometric-first because execution keys off `P6` and carveability, not the prose
-`topdown` request. Its claimed and recomputed routes both equal `["P4", "P3"]`;
-`build_agent_arm.py` still rewrites `render.first` to `isometric` before mapper assembly.
+plan in code. An unsupported `authored_plan` request safely degrades to image-model
+top-down first and records a mapper note.
 
 ## Stage 5 — Render the two images
 
@@ -310,6 +301,12 @@ as `std`/isometric-first because execution keys off `P6` and carveability, not t
 - The first image is generated from text, except Carve-First where it is an edit of the
   deterministic plan.
 - The second image is always a reference-conditioned edit of the first rendered view.
+- Edit prompts declare the first image immutable geometry: counts, footprints, positions,
+  orientations, adjacency, boundaries, paths, doors, and openings must not change.
+- Scene text supplied with an edit identifies objects and appearance only; it must not be
+  used to re-solve or regularize the reference layout.
+- Isometric outputs use a steep elevated oblique camera without yawing the footprint:
+  the plan stays axis-aligned rather than rotating into the usual 45-degree diamond.
 - References are padded to square and resized before upload.
 - Files are written atomically so a partial PNG is never mistaken for a completed stage.
 

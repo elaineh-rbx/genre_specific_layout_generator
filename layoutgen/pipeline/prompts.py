@@ -22,8 +22,12 @@ from __future__ import annotations
 # ---------------------------------------------------------------- text -> isometric
 
 PREFIX = "Generate directly from this text prompt only, with no reference image: "
-TAIL = (" Polished square Roblox-like 3D environment concept, isometric three-quarter "
-        "view, no captions or watermark.")
+TAIL = (
+    " Polished square Roblox-like 3D environment concept in a steep elevated oblique "
+    "view. Keep the map footprint axis-aligned in the frame: its far/top boundary stays "
+    "horizontal and its left and right boundaries stay vertical. Do not yaw the camera "
+    "or rotate the map into a 45-degree diamond orientation. No captions or watermark."
+)
 
 #: A `SET` route says there is real geometry that no avatar ever crosses - a rhythm
 #: stage with a crowd, a board on a table, a shooting gallery on rails. The image is
@@ -53,14 +57,18 @@ def isometric(source: str, addendum: str = "", set_piece: bool = False) -> str:
 
 #: The constant half of the Stage B wrapper; the scene text is appended.
 TOPDOWN = (
-    "Convert the referenced scene into a TRUE overhead nadir minimap layout. Camera is "
-    "straight down (90\u00b0 top-down), ZERO perspective and ZERO isometric tilt. Show "
-    "ONLY the tops of objects. NO building walls, NO doorways, NO awnings, NO side "
-    "faces, NO vertical surfaces of any kind. Flat game-minimap / floor-plan style with "
-    "clean flat color zones. Preserve the EXACT position, shape, size and orientation "
-    "of every object from the reference image. Tightly crop to the occupied layout "
-    "footprint; everything outside the footprint must be pure black (#000000). Square "
-    "output. Scene details: "
+    "CAMERA TRANSFORMATION ONLY - DO NOT REDESIGN THE SCENE. The reference image is the "
+    "sole authority for geometry. Preserve the exact object count, footprint, centre "
+    "point, size, orientation, adjacency, boundary, paths and openings; do not add, "
+    "remove, move, mirror, duplicate or regularize anything. Convert it into a TRUE "
+    "overhead nadir minimap. Camera is straight down (90\u00b0 top-down), ZERO perspective "
+    "and ZERO isometric tilt. Show only top-facing surfaces and wall footprints, while "
+    "keeping every doorway, gate and path opening in its original location. Show no side "
+    "faces or walls in elevation. Use a flat game-minimap / floor-plan style with clean "
+    "flat color zones. Tightly crop to the occupied layout footprint; everything outside "
+    "the footprint must be pure black (#000000). Square output. The scene details below "
+    "identify objects and appearance only; never use them to override or re-solve the "
+    "reference geometry. Scene details: "
 )
 
 
@@ -83,7 +91,13 @@ PLAN_TAIL = (
     "layout is unmistakable. Square output, no captions or watermark."
 )
 
-ISO_FROM_PLAN_PREFIX = "Build this scene from the attached top-down plan: "
+ISO_FROM_PLAN_PREFIX = (
+    "Build this scene from the attached top-down plan. LAYOUT TRANSFORMATION ONLY - DO "
+    "NOT REDESIGN THE PLAN. Treat the reference as immutable geometry: preserve every "
+    "object footprint, count, centre point, size, orientation, adjacency, boundary, path "
+    "and opening exactly. Add only height, materials, lighting and the requested visual "
+    "style. Scene details: "
+)
 ISO_FROM_PLAN_TAIL = TAIL
 
 
@@ -139,8 +153,10 @@ MAZE_ISO_FROM_TOPDOWN = (
     "wall or corridor. Keep the SAME materials, surface colours, textures, props and "
     "lighting as the reference. Keep the walls LOW and use a STEEP, high three-quarter "
     "angle so the wide corridors and the whole route from the green tile to the red "
-    "tile stay visible rather than hidden behind wall height. No characters, labels, "
-    "UI, borders or watermark."
+    "tile stay visible rather than hidden behind wall height. Keep the plan axis-aligned "
+    "in the frame: its top boundary remains horizontal and its side boundaries remain "
+    "vertical; do not rotate it into a diamond. No characters, labels, UI, borders or "
+    "watermark."
 )
 
 
@@ -162,7 +178,9 @@ def maze_isometric(scene: str) -> str:
             "near-top-down three-quarter angle, so the WIDE corridors and the whole path "
             "from the green tile to the red tile stay fully visible and generously "
             "walkable, NOT hidden behind wall height or pinched narrow by perspective. "
-            "No characters, labels, UI, borders, or watermark.")
+            "Keep the plan axis-aligned: top boundary horizontal and side boundaries "
+            "vertical, never rotated into a diamond. No characters, labels, UI, borders, "
+            "or watermark.")
 
 
 # ------------------------------------------------------------ authored track layout
@@ -277,9 +295,10 @@ def track_isometric(crossings: int = 0, closed: bool = True) -> str:
         f"{r} stays the only road in the image: no extra road, spur, shortcut or "
         "second track. Keep the SAME materials, surface colours, textures, props and "
         "lighting as the reference. CAMERA: this is the one thing that changes. The "
-        "reference looks straight down; tilt to a true three-quarter aerial view of "
-        "about 45 degrees and rotate it, so the scene reads as a 3D diorama rather "
-        "than a flat plan. Side faces MUST now be visible - tree trunks under their "
+        "reference looks straight down; tilt downward to a steep elevated oblique view "
+        "without yawing or rotating the plan. Keep its top boundary horizontal and side "
+        "boundaries vertical, never a 45-degree diamond. Side faces MUST now be visible "
+        "- tree trunks under their "
         "canopies, the walls of buildings, the face of any tunnel mouth, the thickness "
         "of the ground - and the far side of the scene sits higher in the frame than "
         f"the near side. Keep the angle steep enough that the whole {r} stays visible "

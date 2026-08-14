@@ -34,6 +34,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import pathlib
 import time
 import traceback
@@ -175,31 +176,42 @@ class Handler(BaseHTTPRequestHandler):
         path = self.path.split("?")[0]
         if path == "/" and HOME == "playground":
             return self._send(200, PAGE.encode(), "text/html; charset=utf-8")
-        # Ports that share out one analysis rewrite / to that page rather than
-        # to the viewer index, so the URL people paste around is the analysis.
-        # The page lives under results/ so the same server serves it from
-        # either place; this route just makes / redirect there.
-        if path == "/" and HOME == "shifts":
-            shifts_path = paths.RESULTS / "config_shifts.html"
-            if shifts_path.is_file():
-                return self._send(200, shifts_path.read_bytes(),
+        if path == "/" and HOME == "features":
+            if FEATURE_VIEWER.is_file():
+                return self._send(200, FEATURE_VIEWER.read_bytes(),
                                   "text/html; charset=utf-8")
             return self._send(404,
-                b"config_shifts.html not built yet - run "
-                b"tools/build_shifts_viewer.py",
+                b"feature viewer not built yet - run "
+                b"tools/build_feature_viewer.py",
                 "text/plain")
         # `/pipeline` is the per-scene pipeline flowchart, populated with the
         # answered configs and the actual images each scene produced. Built
         # by `tools/build_pipeline_viewer.py`; served here at a stable URL
         # rather than through /results/ so the link is short enough to paste.
         if path in ("/pipeline", "/pipeline/"):
-            pv_path = paths.RESULTS / "pipeline_viewer.html"
+            pv_path = PIPELINE_VIEWER
             if pv_path.is_file():
                 return self._send(200, pv_path.read_bytes(),
                                   "text/html; charset=utf-8")
             return self._send(404,
                 b"pipeline_viewer.html not built yet - run "
                 b"tools/build_pipeline_viewer.py",
+                "text/plain")
+        if path in ("/features", "/features/"):
+            if FEATURE_VIEWER.is_file():
+                return self._send(200, FEATURE_VIEWER.read_bytes(),
+                                  "text/html; charset=utf-8")
+            return self._send(404,
+                b"feature viewer not built yet - run "
+                b"tools/build_feature_viewer.py",
+                "text/plain")
+        if path in ("/comparison", "/comparison/"):
+            if COMPARISON_VIEWER.is_file():
+                return self._send(200, COMPARISON_VIEWER.read_bytes(),
+                                  "text/html; charset=utf-8")
+            return self._send(404,
+                b"comparison viewer not built yet - run "
+                b"tools/build_comparison_viewer.py",
                 "text/plain")
         if path in ("/playground", "/playground/"):
             return self._send(200, PAGE.encode(), "text/html; charset=utf-8")
@@ -333,13 +345,31 @@ PAGE = (pathlib.Path(__file__).parent / "playground.html").read_text(encoding="u
 #: shared with the viewers opens on their landing page. Every other path is identical
 #: either way, so the two can run side by side against the same files.
 HOME = "viewers"
+PIPELINE_VIEWER = pathlib.Path(
+    os.getenv(
+        "LAYOUTGEN_PIPELINE_VIEWER",
+        str(paths.RESULTS / "pipeline_viewer.html"),
+    )
+).expanduser()
+FEATURE_VIEWER = pathlib.Path(
+    os.getenv(
+        "LAYOUTGEN_FEATURE_VIEWER",
+        str(paths.RESULTS / "feature_viewer.html"),
+    )
+).expanduser()
+COMPARISON_VIEWER = pathlib.Path(
+    os.getenv(
+        "LAYOUTGEN_COMPARISON_VIEWER",
+        str(paths.RESULTS / "comparison_viewer_gpt55_golden75.html"),
+    )
+).expanduser()
 
 
 def main() -> None:
     global HOME
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--port", type=int, default=8887)
-    ap.add_argument("--home", choices=("playground", "viewers", "shifts"),
+    ap.add_argument("--home", choices=("playground", "viewers", "features"),
                     default="playground",
                     help="what / serves; every other path is the same either way")
     args = ap.parse_args()

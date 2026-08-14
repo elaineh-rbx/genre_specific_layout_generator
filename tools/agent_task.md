@@ -17,12 +17,14 @@ Repository: `/home/builder/workspace/genre_specific_layout_generator`
 
 ## Read these once, at the start — not once per scene
 
-1. `.cursor/skills/genre-choice/SKILL.md` — the workflow you are following.
-2. `.cursor/skills/genre-choice/shapes.md` — the shared shape catalogue. Every shape in
+1. `.cursor/skills/layout-intake/SKILL.md` — which layout concerns need resolution.
+2. `.cursor/skills/uprez-prompt/SKILL.md` — how context becomes image-ready spatial prose.
+3. `.cursor/skills/genre-choice/SKILL.md` — the classification workflow.
+4. `.cursor/skills/genre-choice/shapes.md` — the shared shape catalogue. Every shape in
    it is reachable from every genre. A genre's typical list is presentation, not a
    restriction.
-3. `.cursor/skills/layout-blob/SKILL.md` — the prose handoff contract. In particular,
-   follow its seven-section order, canonical IDs in backticks, and 200–450 word target.
+5. `.cursor/skills/layout-blob/SKILL.md` — the prose handoff contract. In particular,
+   follow its nine-section order, canonical IDs in backticks, and prose targets.
 
 Then, per scene, read the one file under `.cursor/skills/genre-choice/genres/` for the
 genre you land on, and `.cursor/skills/genre-choice/no-genre.md` if you conclude the
@@ -40,22 +42,29 @@ write each result to disk before starting the next so partial progress survives.
    systems' configs, including the label this arm is scored against, are deliberately not
    in it, so there is nothing here to avoid. Do not go looking for them in
    `results/routing/answered/`.
-2. Decide the configuration by following `genre-choice`, then express the complete
-   decision by following `layout-blob`.
-3. There is no user to interview. Treat the prompt plus its answers as the complete
-   brief and decide anything the skill would have asked about.
-4. Write `results/routing/agent_blob/<SCENE>.md` as prose, with this exact outer shape:
+2. Use `layout-intake` to identify layout-changing questions. Preserve supplied intake
+   answers as `author`; for any necessary unanswered question, choose the narrowest
+   grounded answer and mark it `agent_inferred`.
+3. Decide the configuration by following `genre-choice`, then express the complete
+   decision by following `layout-blob`. The enriched image prompt incorporates both kinds
+   of resolved answers.
+4. There is no user to interview. Never imply that an agent-inferred answer came from the
+   author.
+5. Write `results/routing/agent_blob/<SCENE>.md` as prose, with this exact outer shape:
 
    - `# Scene prompt` followed by the `scene_prompt` text verbatim.
-   - `# Agent decision` followed by the seven short sections required by
-     `layout-blob/SKILL.md`: Genre; Shape and preset; Config requirements; Layout
-     requirements; Layout components; Render order; Scale, theme, and pipeline cost.
+   - `# Agent decision` followed by the nine sections required by
+     `layout-blob/SKILL.md`: Clarifications resolved; Enriched image prompt; Genre; Shape
+     and preset; Config requirements; Layout requirements; Layout components; Render
+     order; Scale, theme, and pipeline cost.
 
 The scene-prompt section makes the prose artifact self-contained. The decision section is
 what the gateway transcribes. Name canonical shape, option, order, and route IDs in
 backticks. Spell genre and preset names exactly as the genre file does. Include every
 scene-specific layout component and count the later JSON needs; the gateway may transcribe
-what you wrote but may not invent what you omitted.
+what you wrote but may not invent what you omitted. The enriched image prompt must combine
+the original message and intake answers into the final image-ready spatial description;
+answers override conflicting details from the original message.
 
 ## Do not
 

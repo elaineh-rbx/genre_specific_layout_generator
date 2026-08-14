@@ -31,6 +31,10 @@ from layoutgen import paths
 #: Where the golden set's images live when they are not on this machine. Overridable,
 #: because the bucket is one team's and the code is not.
 BUCKET_URI = os.getenv("LAYOUTGEN_S3", "s3://3dfm-data/users/elaineh/layoutgen/results")
+COMPARISON_BUCKET_URI = os.getenv(
+    "LAYOUTGEN_COMPARISON_S3",
+    "s3://3dfm-data/users/elaineh/layoutgen_genre_images_260806",
+)
 PROFILE = os.getenv("LAYOUTGEN_S3_PROFILE", "3dfm")
 CACHE = paths.RUN / "cache"
 
@@ -82,8 +86,13 @@ def fetch(rel: str) -> pathlib.Path | None:
     if cached.is_file():
         return cached
 
-    bucket, prefix = _split(BUCKET_URI)
-    key = f"{prefix}/{rel}" if prefix else rel
+    uri = BUCKET_URI
+    remote_rel = rel
+    if rel.startswith("comparison/"):
+        uri = COMPARISON_BUCKET_URI
+        remote_rel = rel.removeprefix("comparison/")
+    bucket, prefix = _split(uri)
+    key = f"{prefix}/{remote_rel}" if prefix else remote_rel
     tmp = cached.with_suffix(cached.suffix + f".part{os.getpid()}")
     try:
         with _lock:

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -11,12 +12,16 @@ import boto3
 
 REPO = Path(__file__).resolve().parent.parent
 BUCKET = "3dfm-data"
-SOURCE_PREFIX = "users/elaineh/layoutgen/results/scenes/agent_gateway_260813"
+SOURCE_PREFIX = os.getenv(
+    "LAYOUTGEN_I2L_SOURCE_PREFIX",
+    "users/elaineh/layoutgen/results/scenes/agent_gateway_260813",
+).strip("/")
 PREFIX = f"{SOURCE_PREFIX}/i2l"
-RUN = REPO / "results" / "runs" / "agent_gateway.jsonl"
+RUN_NAME = os.getenv("LAYOUTGEN_I2L_RUN_NAME", "agent_gateway")
+RUN = REPO / "results" / "runs" / f"{RUN_NAME}.jsonl"
 SPECS = REPO / "results" / "routing" / "agent_spec_gateway"
-OUT = REPO / "results" / "runs" / "agent_gateway_segmentation_manifest.jsonl"
-SUMMARY = REPO / "results" / "runs" / "agent_gateway_segmentation_summary.json"
+OUT = REPO / "results" / "runs" / f"{RUN_NAME}_segmentation_manifest.jsonl"
+SUMMARY = REPO / "results" / "runs" / f"{RUN_NAME}_segmentation_summary.json"
 
 
 def uri(key: str) -> str:

@@ -21,8 +21,8 @@ from layoutgen.paths import OUT
 
 #: Where a maze can be authored outright instead of drawn. Build.md routes these
 #: P6 - the topology is the game, so it is generated procedurally first and dressed
-#: after. Only the maze generator exists today; the track, lane, course and chunk
-#: generators the other P6 routes call for are unbuilt.
+#: after. Maze and supported racing-route generators exist; arbitrary lanes, courses,
+#: and chunks still fall back to an image-model plan.
 #: Keyed by shape alone, because a shape means the same thing in every genre now that
 #: they share one catalogue: `puzzle-maze` is "a maze whose solvable topology *is* the
 #: puzzle" whoever picks it, and a Survival prompt reaching for it wants the same carve a

@@ -55,6 +55,16 @@ def unescape_nl(s: str) -> str:
     return s.replace("\\r\\n", "\n").replace("\\n", "\n").replace("\\t", "    ")
 
 
+def catalogue_option(genre, oid: str):
+    """Resolve an option from the dominant genre or the shared catalogue."""
+    if genre and (option := genre.option(oid)):
+        return option
+    for candidate in [*br.GENRES.values(), br.NO_GENRE]:
+        if option := candidate.option(oid):
+            return option
+    return None
+
+
 def option_split(cfg: dict) -> tuple[list[dict], list[dict]]:
     """Split picks into the two handoff streams. `image_prompt` is the visible
     geometry that ends up in the isometric render; `layout_placement` is the
@@ -63,18 +73,28 @@ def option_split(cfg: dict) -> tuple[list[dict], list[dict]]:
     The document's rule is `Option.drawn` (goes_to ∈ {image, both}); we mirror
     it verbatim so both places agree on which stream a pick belongs to.
     """
-    g = br.GENRES.get(cfg.get("genre", ""))
+    g = br.genre(cfg.get("genre", ""))
     img, lay = [], []
     placements = {o.get("id"): o for o in cfg.get("layout_placement") or []}
     seen_lay = set()
     for pick in cfg.get("options") or []:
         oid = pick.get("id", "")
-        o = g.option(oid) if g else None
+        o = catalogue_option(g, oid)
         entry = {
             "id": oid,
             "label": o.label if o else oid,
             "what": pick.get("text") or (o.what if o else ""),
+            "injected_what": (
+                br.visible_text(g.name, o) if g and o and o.drawn else ""
+            ),
             "goes": o.goes_to if o else ("image" if pick.get("visible") else "layout"),
+            "type": o.type if o else "",
+            "pipeline": o.pipeline if o else "",
+            "core": bool(o.core) if o else False,
+            "universal": bool(o.universal) if o else False,
+            "count": pick.get("count", -1),
+            "visible": bool(pick.get("visible", True)),
+            "catalogue_what": o.what if o else "",
         }
         if pick.get("visible", True):
             img.append(entry)
@@ -84,37 +104,51 @@ def option_split(cfg: dict) -> tuple[list[dict], list[dict]]:
     for oid, pick in placements.items():
         if oid in seen_lay:
             continue
-        o = g.option(oid) if g else None
+        o = catalogue_option(g, oid)
         lay.append({
             "id": oid,
             "label": o.label if o else oid,
             "what": pick.get("text") or pick.get("where") or (o.what if o else ""),
+            "injected_what": (
+                br.visible_text(g.name, o) if g and o and o.drawn else ""
+            ),
             "goes": o.goes_to if o else "layout",
+            "type": o.type if o else "",
+            "pipeline": o.pipeline if o else "",
+            "core": bool(o.core) if o else False,
+            "universal": bool(o.universal) if o else False,
+            "count": pick.get("count", -1),
+            "visible": False,
+            "catalogue_what": o.what if o else "",
         })
     return img, lay
 
 
-def sent_prompts() -> dict[str, dict]:
+def sent_prompts(run_name: str = "agent_gateway") -> dict[str, dict]:
     """The prompts each scene was actually rendered from, out of the arm's run file.
 
     A separate file from the routing because they are separate facts: the routing is
     what was decided, the run is what was sent. The viewer needs both, and only the
     second one is evidence about the image.
     """
-    path = RESULTS / "runs" / "agent_gateway.jsonl"
+    path = RESULTS / "runs" / f"{run_name}.jsonl"
     if not path.is_file():
         return {}
     return {r["scene"]: r for line in path.open()
             if line.strip() for r in [json.loads(line)]}
 
 
-def collect() -> list[dict]:
+def collect(run_name: str = "agent_gateway", image_arm: str = "agent_gateway_260813",
+            *, only_sent: bool = False,
+            checklist_dir: pathlib.Path = EVAL) -> list[dict]:
     rows: list[dict] = []
-    sent = sent_prompts()
+    sent = sent_prompts(run_name)
     for p in sorted(AGENT.glob("*.json")):
         d = json.loads(p.read_text(encoding="utf-8"))
         cfg = d.get("spec") or {}
         scene = d["scene"]
+        if only_sent and scene not in sent:
+            continue
         route = list(cfg.get("route") or [])
         mods = [m for m in route if m in FLOWCHART_MODIFIERS]
         tiered = "tiered" in route
@@ -122,6 +156,29 @@ def collect() -> list[dict]:
         set_piece = "SET" in route
 
         img_opts, lay_opts = option_split(cfg)
+        genre = br.genre(cfg.get("genre", ""))
+        shape = genre.shape(cfg.get("shape") or "") if genre else None
+        axes = []
+        for key, value in (cfg.get("axes") or {}).items():
+            axis = genre.axis(key) if genre else None
+            axes.append({
+                "id": axis.id if axis else key,
+                "label": axis.name if axis else key,
+                "value": value,
+                "default": axis.default if axis else "",
+                "pipeline": (axis.routes.get(value, "") if axis else ""),
+                "what": axis.what if axis else "",
+                "clause": (
+                    axis.clauses.get(value, "")
+                    if axis and value != axis.default
+                    and axis.id not in br.ROUTING_ONLY_AXES
+                    else ""
+                ),
+                "routing_only": bool(
+                    axis and value != axis.default
+                    and axis.id in br.ROUTING_ONLY_AXES
+                ),
+            })
 
         images = {}
         run = sent.get(scene, {})
@@ -129,11 +186,11 @@ def collect() -> list[dict]:
             for kind in ("iso", "td", "plan"):
                 if run.get(kind):
                     images[kind] = (
-                        f"/results/scenes/agent_gateway_260813/{kind}/{scene}.png"
+                        f"/results/scenes/{image_arm}/{kind}/{scene}.png"
                     )
 
         checklist = {"features": [], "excluded": []}
-        ev = EVAL / f"{scene}.json"
+        ev = checklist_dir / f"{scene}.json"
         if ev.is_file():
             ec = json.loads(ev.read_text(encoding="utf-8"))
             checklist["features"] = ec.get("features") or []
@@ -153,17 +210,33 @@ def collect() -> list[dict]:
             "td_prompt": run.get("td_prompt", ""),
             "order": run.get("order", ""),
             "genre": cfg.get("genre", ""),
+            "genre_route": genre.route if genre else "",
             "shape": cfg.get("shape") or "",
-            "shape_label": cfg.get("shape_label") or "",
+            "shape_label": shape.label if shape else "",
+            "shape_selection": ({
+                "id": shape.id,
+                "label": shape.label,
+                "type": shape.type,
+                "what": shape.what,
+                "pipeline": shape.pipeline,
+            } if shape else {}),
+            "axes_selection": axes,
             "preset": cfg.get("preset") or "none",
             "confidence": cfg.get("confidence", ""),
             "evidence": cfg.get("evidence", ""),
             "genre_evidence": cfg.get("genre_evidence", ""),
             "answers": answers,
+            "clarifications": cfg.get("clarifications") or [],
             "agent_blob": d.get("blob", ""),
             "structured_json": json.dumps(cfg, indent=2, ensure_ascii=False),
             "options_img": img_opts,
             "options_lay": lay_opts,
+            "options_all": img_opts + [
+                option for option in lay_opts
+                if option["id"] not in {picked["id"] for picked in img_opts}
+            ],
+            "layout_placement": cfg.get("layout_placement") or [],
+            "layout": cfg.get("layout") or {},
             "modifiers": mods,
             "tiered": tiered,
             "check": check,
@@ -338,8 +411,10 @@ HEADER_HTML = """
   the scene onto a new path. Handoff streams are dashed; they run identically
   on every route, but the option lists change per scene.</p>
   <div class="nav">
-    <a href="/">Config shifts</a>
+    <a href="/features">Features + renders</a>
     <a href="/pipeline" class="active">Pipeline (per-scene)</a>
+    <a href="/comparison">Golden comparison</a>
+    <a href="/playground">Playground</a>
   </div>
 </header>
 """
@@ -454,7 +529,7 @@ const NODES = {
   json:     { x:980,  y:385, tag:"1 Gateway call",    title:"Structured JSON",  sub:"strict layout_spec schema" },
   img:      { x:1160, y:80,  tag:"Spec stream 1",     title:"image_prompt",     sub:"visible geometry" },
   lay:      { x:1370, y:80,  tag:"Spec stream 2",     title:"layout_placement", sub:"triggers, spawns" },
-  route:    { x:1160, y:385, tag:"Deterministic",     title:"Route + order",    sub:"catalogue-derived execution" },
+  route:    { x:1160, y:385, tag:"Deterministic",     title:"Route + order",    sub:"agent order · catalogue route" },
   p4:       { x:1330, y:385, tag:"P4 \u00b7 Multi-Zone", title:"Zone graph",    sub:"multi-zone" },
   iso:      { x:1500, y:235, tag:"Image call",        title:"Isometric image",  sub:"whole game" },
   top:      { x:1670, y:235, tag:"Image call",        title:"Top-down",         sub:"projection" },
@@ -644,18 +719,20 @@ function render(idx){
   // Q&A
   const qaEl = document.getElementById("qa");
   qaEl.innerHTML = "";
-  if (s.answers && s.answers.length){
-    s.answers.forEach(a => {
+  const resolved=(s.clarifications&&s.clarifications.length)?s.clarifications:
+    (s.answers||[]).map(a=>({...a,source:"author"}));
+  if (resolved.length){
+    resolved.forEach(a => {
       const div = document.createElement("div");
       div.className = "qi";
-      div.innerHTML = `<span class="field">[${esc(a.field||"?")}]</span>` +
+      div.innerHTML = `<span class="field">[${esc(a.source||"author")} · ${esc(a.field||"?")}]</span>` +
                       `<span class="q">${esc(a.ask||"")}</span>` +
                       `<div class="a">${esc(a.answer||"(empty)")}</div>`;
       qaEl.appendChild(div);
     });
   } else {
     qaEl.innerHTML = '<div class="qi" style="color:var(--muted);font-style:italic">' +
-                     'no open questions on this scene &mdash; the router saw the prompt alone</div>';
+                     'no layout-changing clarification was needed</div>';
   }
 
   // Handoff option lanes
@@ -853,8 +930,21 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--out", type=pathlib.Path,
                     default=RESULTS / "pipeline_viewer.html")
+    ap.add_argument("--run-name", default="agent_gateway",
+                    help="results/runs/<name>.jsonl to visualize")
+    ap.add_argument("--image-arm", default="agent_gateway_260813",
+                    help="results/scenes/<arm> containing rendered images")
+    ap.add_argument("--only-sent", action="store_true",
+                    help="show only scenes present in the selected run")
+    ap.add_argument("--checklist-dir", type=pathlib.Path, default=EVAL,
+                    help="directory containing per-scene eval checklists")
     args = ap.parse_args()
-    rows = collect()
+    rows = collect(
+        args.run_name,
+        args.image_arm,
+        only_sent=args.only_sent,
+        checklist_dir=args.checklist_dir,
+    )
     text = build_page(rows)
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(text, encoding="utf-8")

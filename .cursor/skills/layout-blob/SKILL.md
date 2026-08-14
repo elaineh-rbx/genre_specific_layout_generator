@@ -47,9 +47,61 @@ where the scene-specific detail goes.
 
 ## What the blob must cover
 
-Cover all seven, in this order, as flowing prose with a short heading per section.
+Cover all nine, in this order, as flowing prose with a short heading per section.
 
-### 1. Genre
+### 1. Clarifications resolved
+
+Use the exact heading `## Clarifications resolved`. Start with any real intake
+questions and answers supplied in the input, marking each one `[author]`.
+
+Then use `layout-intake` and the loaded genre material to identify only unanswered
+ambiguities whose resolution materially changes the generated space: counts,
+scale, boundaries, zones, connectivity, elevation, enterability, or which image
+must be authoritative. Do not ask about rules, scoring, economy, UI, or code.
+
+This is an offline build with no user to interview. Resolve each necessary
+question yourself using the narrowest, least inventive answer consistent with
+the original message and existing author answers, and mark it
+`[agent_inferred]`. Never disguise an inference as an author answer. If no
+question is necessary, write `None`.
+
+Write each resolution on one line:
+
+```text
+- [author] scale — Q: ... A: ...
+- [agent_inferred] boundary — Q: ... A: ...
+```
+
+These answers become part of the context for the next section.
+
+### 2. Enriched image prompt
+
+Write one paragraph, or two short paragraphs, under the exact heading
+`## Enriched image prompt`. This is the final scene description the image model
+will receive, before the deterministic camera/style wrapper.
+
+Synthesize the author's original message, every clarification answer, and the
+spatial decisions below into a concise description of the 3D map. Treat answers
+as the author continuing the original message; when an answer conflicts with an
+earlier detail, the answer wins.
+
+Translate mechanics into their smallest directly implied physical footprint:
+bosses need boss encounter areas, minions need surrounding encounter ground,
+progression between islands needs an ordered visible route, and physical
+training needs a training space. This is not permission to invent unrelated
+assets or genre decoration.
+
+Include zones, paths, terrain, buildings, key props, counts, and camera-facing
+composition. Include the visible, scene-specific form of chosen config options.
+Exclude scoring, economy, UI, scripts, and every layout-only placement from
+section 6. Write in English, present tense, normally 80–250 words when the
+source is rich and shorter when it is not. Do not write catalogue prose: bend
+every applicable concept to this scene.
+
+The later transcriber copies this paragraph verbatim into
+`initial_scene_subprompt_enriched`; prompt assembly uses that field verbatim.
+
+### 3. Genre
 
 The dominant genre, by canonical name. Name a secondary genre if the prompt is
 honestly two things — but **the dominant genre owns the shape and any
@@ -73,7 +125,7 @@ actually decides and say so by name — `enclosure`, `verticality`, `zone-count`
 leaving all five alone is a complete answer, and the menu marks which non-default
 answers force a pipeline pass.
 
-### 2. Shape, and the preset it came from
+### 4. Shape, and the preset it came from
 
 **Exactly one shape**, by ID, from the shared catalogue. Say what that shape
 means *for this scene* — not the catalogue's generic wording.
@@ -113,7 +165,7 @@ shape *and* dropped most of its options, so no honest name is left. Keep the
 shape or keep most of the options, not neither. `none` is a real answer, and a
 wrong name is worse than none at all.
 
-### 3. Config requirements
+### 5. Config requirements
 
 Which options apply, by ID, each with one clause saying **what it looks like in
 this scene**. Bend the generic wording to the prompt's subject: `safezone-town`
@@ -129,9 +181,9 @@ almost anywhere — interiors, water, relief, NPCs — which is exactly why they
 picked unasked. Take one only when the author named the thing it stands for.
 
 **This section is the image config only** — geometry the model draws. Anything
-recovered after segmentation belongs in section 4 instead.
+recovered after segmentation belongs in section 6 instead.
 
-### 4. Layout requirements
+### 6. Layout requirements
 
 What the layout stage must **place** once the image comes back. Trigger volumes,
 spawn markers, checkpoints, pickups and emitters are sited against the segmented
@@ -158,10 +210,10 @@ get, plus the two things a drawn option does not need:
 
 The menu marks every option with `goes_to`. A `layout` option belongs here and
 nowhere else. A `both` option belongs in both places — its drawn form in
-section 3, its siting rule here. Say so plainly when the scene genuinely needs
+section 5, its siting rule here. Say so plainly when the scene genuinely needs
 nothing placed.
 
-### 5. Layout components
+### 7. Layout components
 
 The concrete build. This is the part the image model ultimately renders, so be
 specific and spatial:
@@ -177,7 +229,7 @@ specific and spatial:
 **Carry every number the prompt stated.** "Five islands", "three floors", "about
 twenty houses", "20 studs wide". Nothing downstream can recover a count you drop.
 
-### 6. Render order
+### 8. Render order
 
 State which image is rendered **first**, and which is authoritative. Exactly
 three orders exist. **Write the order's name in backticks, exactly as spelled
@@ -188,24 +240,28 @@ recover a fourth spelling.
 | :---- | :---- | :---- | :---- |
 | `isometric` | isometric drawn from text | top-down converted from the isometric | **Default.** The look leads and the plan is projected from it. |
 | `topdown` | a top-down plan drawn from text by the image model | isometric dressed from that plan | The topology must be valid to play, and an isometric drawn look-first cannot guarantee it. |
-| `authored_plan` | a blueprint **this repo generates in code** — no image model involved | top-down, then isometric, both built from that blueprint | **Only** a maze or a racing circuit. Nothing else can be carved. |
+| `authored_plan` | a blueprint **this repo generates in code** — no image model involved | top-down, then isometric, both built from that blueprint | **Required** for a supported maze or racing route. Nothing else can be carved. |
 
 **`topdown` and `authored_plan` are not two strengths of the same thing.** With
 `topdown` the image model still draws the plan, and it is trusted to. With
-`authored_plan` the geometry is computed — a maze solver, a circuit generator —
+`authored_plan` the geometry is computed — a maze solver, a track generator —
 and the image model is only allowed to dress it. Asking for `authored_plan` on
-anything but a maze or a circuit asks for a blueprint that cannot be produced.
+anything but a supported maze or racing route asks for a blueprint that cannot
+be produced.
 
 So: an RPG whose biomes must stay connected is `topdown`, **not**
-`authored_plan`. A hedge maze is `authored_plan`. A kart circuit is
-`authored_plan`. Everything else that needs valid topology is `topdown`.
+`authored_plan`. A hedge maze is `authored_plan`. A kart circuit or
+point-to-point race track is `authored_plan`. Everything else that needs valid
+topology is `topdown`. The deterministic mapper enforces this for
+`puzzle-maze`, `route-circuit`, `route-multitier`, and
+`route-point-to-point`, even if this section accidentally selects another order.
 
 Say **why** in one clause. The test is not "is it complex" — it is **"would an
 invalid layout make the game unplayable?"** A maze with a sealed corridor, a
 circuit that does not close, an obby whose jump chain has an impossible gap.
 Those need a plan first. A town that is merely intricate does not.
 
-### 7. Scale, theme, and pipeline cost
+### 9. Scale, theme, and pipeline cost
 
 - **Scale band** — small / medium / large / huge, and what drove it
 - **Theme** — the visual register, in a few words

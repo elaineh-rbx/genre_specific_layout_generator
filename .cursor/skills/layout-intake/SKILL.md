@@ -118,6 +118,15 @@ Emit the `genre-choice` block with the other concerns added alongside it:
   key it would fill. `genre_choice.notes` is for the **pipeline** — things a
   later automated step must account for. When unsure, it is a note.
 
+### Offline resolution
+
+Some batch runs have no human available. In that mode, do not silently drop an
+open question and do not pretend an automated answer came from the author.
+Return the same question; the context-aware layout agent chooses the narrowest
+answer grounded in the prompt, records it as `agent_inferred`, and uses it when
+writing the enriched image prompt. Real answers already present in the intake
+remain `author` and always outrank an inferred default.
+
 ## Extension point
 
 Add a concern by giving it a row in the table in step 1, a section in step 2,

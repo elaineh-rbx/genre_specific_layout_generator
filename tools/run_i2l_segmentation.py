@@ -20,11 +20,22 @@ from pathlib import Path
 import boto3
 
 BUCKET = "3dfm-data"
-SOURCE_PREFIX = "users/elaineh/layoutgen/results/scenes/agent_gateway_260813"
+SOURCE_PREFIX = os.getenv(
+    "LAYOUTGEN_I2L_SOURCE_PREFIX",
+    "users/elaineh/layoutgen/results/scenes/agent_gateway_260813",
+).strip("/")
 OUTPUT_PREFIX = f"{SOURCE_PREFIX}/i2l"
 I2L_REPO = Path("/home/builder/workspace/image-to-layout")
-MANIFEST = (
-    Path(__file__).resolve().parent.parent / "results" / "runs" / "agent_gateway.jsonl"
+MANIFEST = Path(
+    os.getenv(
+        "LAYOUTGEN_I2L_MANIFEST",
+        str(
+            Path(__file__).resolve().parent.parent
+            / "results"
+            / "runs"
+            / "agent_gateway.jsonl"
+        ),
+    )
 )
 
 _local = threading.local()

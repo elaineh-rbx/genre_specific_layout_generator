@@ -322,6 +322,32 @@ def _placement() -> dict:
     }
 
 
+def _clarification() -> dict:
+    """One layout-changing question resolved before the enriched prompt was written."""
+    return {
+        "type": "object",
+        "properties": {
+            "field": {
+                "type": "string",
+                "description": "Short concern key such as scale, shape, theme, or route.",
+            },
+            "ask": {"type": "string", "description": "The question that was considered."},
+            "answer": {
+                "type": "string",
+                "description": "The answer used to construct the enriched scene prompt.",
+            },
+            "source": {
+                "type": "string",
+                "enum": ["author", "agent_inferred"],
+                "description": "Whether the author supplied the answer or the offline "
+                "agent chose a conservative spatial default.",
+            },
+        },
+        "required": ["field", "ask", "answer", "source"],
+        "additionalProperties": False,
+    }
+
+
 def _axes() -> dict:
     """What a spec carries in place of a shape, on the two paths that have no shape ID.
 
@@ -359,6 +385,18 @@ LAYOUT_SPEC_SCHEMA = {
     "schema": {
         "type": "object",
         "properties": {
+            "clarifications": {
+                "type": "array",
+                "items": _clarification(),
+                "description": "Layout-changing questions and the answers actually used, "
+                "including clearly labelled offline agent inferences.",
+            },
+            "initial_scene_subprompt_enriched": {
+                "type": "string",
+                "description": "The final image-ready scene paragraph under "
+                "'Enriched image prompt', copied verbatim from the blob. "
+                "Empty only when the blob contains no buildable space.",
+            },
             "genre": {"type": "string", "enum": list(br.GENRES) + ["No Genre"]},
             "secondary": {
                 "type": "array",
@@ -458,6 +496,8 @@ LAYOUT_SPEC_SCHEMA = {
             "notes": {"type": "array", "items": {"type": "string"}},
         },
         "required": [
+            "clarifications",
+            "initial_scene_subprompt_enriched",
             "genre",
             "secondary",
             "shape",
@@ -487,54 +527,60 @@ only job is to move those decisions into fields without changing them.
 1. **Never contradict the blob.** If it names `world-hub-dungeon`, the shape is
    `world-hub-dungeon`. If it says the isometric is drawn first, `render.first` is
    `isometric`. A field you would rather fill differently is still the blob's call.
-2. **Never invent.** Do not add a zone, prop, path or option the blob does not contain.
+   Copy the paragraph under `Enriched image prompt` verbatim into
+   `initial_scene_subprompt_enriched`; do not summarize it, replace it with the scene
+   prompt, or append catalogue wording.
+2. **Copy every row under `Clarifications resolved` into `clarifications`.** Preserve
+   whether it is labelled `author` or `agent_inferred`; never report an inferred answer
+   as the author's. If the section says none, emit an empty array.
+3. **Never invent.** Do not add a zone, prop, path or option the blob does not contain.
    An empty array is correct when the blob gave you nothing for it.
-3. **Take every canonical ID the blob names in backticks**, provided it appears in the
+4. **Take every canonical ID the blob names in backticks**, provided it appears in the
    menu below. Options belong to the dominant genre; shapes come from the shared
    catalogue and are not restricted by genre. Silently drop an ID that is in neither, and
    say so in `notes`.
-4. **`text` on an option comes from the blob's wording for this scene**, not from the
+5. **`text` on an option comes from the blob's wording for this scene**, not from the
    menu's generic description. That scene-specific phrasing is the whole point of the
    blob and copying the table over it discards it. Put it in **English**: a blob written
    in the prompt's own language still yields English `text`, because these strings are
    appended to the image prompt verbatim and this is the last stage that can keep a
    language the image model cannot read out of the render. Translating is not
    contradicting - hold the meaning exactly and change only the language.
-5. **`visible` is the image/layout split.** Geometry the model should draw is `true`.
+6. **`visible` is the image/layout split.** Geometry the model should draw is `true`.
    Trigger volumes, spawn markers, pickups, emitters and anything else recovered after
    segmentation is `false`. Use the menu's `goes_to` when the blob is silent: `image` is
    true, `layout` is false, `both` is true.
-6. **`layout_placement` is the blob's layout-requirements section, transcribed.** Every
+7. **`layout_placement` is the blob's layout-requirements section, transcribed.** Every
    option the blob put there gets a row, and a row also stays in `options` so the picks
    remain one list - the two are the same decision seen from either end, not two
    decisions. `where` is the siting rule the blob gave; leave it an empty string rather
    than inventing one, and say so in `notes`. An option whose menu `goes_to` is `image`
    never belongs here however useful it would be to place.
-7. **Carry every number.** A count stated anywhere in the blob goes in the matching
+8. **Carry every number.** A count stated anywhere in the blob goes in the matching
    `count` field. Use `-1` when no number was stated. Never normalise "a few" into a
    number - leave `-1` and keep the words in the text.
-8. **`render.authoritative` always equals `render.first`.** The image generated first is
+9. **`render.authoritative` always equals `render.first`.** The image generated first is
    the one the second is derived from.
-9. **`route` holds the modifiers the blob named.** `["P0"]` when it named none.
-10. **`render.first` is whichever of the three words the blob wrote, taken literally.**
+10. **`route` holds the modifiers the blob named.** `["P0"]` when it named none.
+11. **`render.first` is whichever of the three words the blob wrote, taken literally.**
     The blob writes `isometric`, `topdown` or `authored_plan`. Copy it across. In
     particular `authored_plan` means a blueprint generated in code, which only a maze or
     a racing circuit can be - a blob asking for a **top-down drawn first by the image
     model** is `topdown`, never `authored_plan`, however much its reasoning is about
     getting the plan right first.
-11. **`set_piece` and a `SET` in `route` are the same fact.** If the blob argues for
+12. **`set_piece` and a `SET` in `route` are the same fact.** If the blob argues for
     either, emit both.
-12. **`preset` is the name the blob matched**, spelled as the menu spells it, or `none`.
+13. **`preset` is the name the blob matched**, spelled as the menu spells it, or `none`.
     It is a display name rather than an ID, so it will not be in backticks - take it from
     the prose. Do not infer one from the shape and options when the blob named none: a
     preset the blob did not claim is a decision you would be making, not transcribing.
-13. **`axes` carries meaning only when `shape` is empty.** Two builds have no shape ID:
+14. **`axes` carries meaning only when `shape` is empty.** Two builds have no shape ID:
     `No Genre`, and a **described shape** on one of the fifteen, where the blob says the
     catalogue had nothing and describes the space instead. Both answer the five axis
     questions in place of picking a shape, so take each answer the blob stated and leave
     the rest at the default the schema names. Whenever the blob did name a shape, leave
     all five at their defaults: the shape already said what they would say.
-14. **A shape ID may come from any genre's usual set.** The catalogue is shared and every
+15. **A shape ID may come from any genre's usual set.** The catalogue is shared and every
     row is reachable from every genre, so `interior-single` on a Simulation build is not
     an error to correct - take the ID the blob named. Only drop one that is in no genre.
 
@@ -642,6 +688,11 @@ def normalise(spec: dict) -> dict:
     would be worse than none - the notes are what make a bad stage-3 call visible.
     """
     notes = list(spec.get("notes") or [])
+    # Specs produced before the enriched-prompt contract remain readable. They keep the
+    # legacy prompt assembly until their agent artifact is regenerated with the new
+    # section; Python must not pretend it can author the missing prose.
+    spec.setdefault("clarifications", [])
+    spec.setdefault("initial_scene_subprompt_enriched", "")
     # Defaulted rather than required so a spec written before this block existed can be
     # renormalised in place: its picks still say what has to be placed.
     spec.setdefault("layout_placement", [])
