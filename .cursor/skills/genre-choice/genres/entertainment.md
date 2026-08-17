@@ -6,7 +6,9 @@
 
 **Shape — pick one.**
 
-**Typical shapes.** `route-guided` *(default)* · `world-open` · `hub-portals` · `venue-stage` · `interior-single` · `set-display`
+**Typical shapes.** `route-guided` **Path (Guided Route)** `P0` *(default)* · `world-open` **Zone (Free-Roam Space)** `P0` · `hub-portals` **Zone (Portal Hub)** `P4` · `venue-stage` **Zone (Stage and Audience)** `P0` · `interior-single` **Zone (Single Interior)** `P0` · `set-display` **Zone (Display Set)** `SET`
+
+**The bold name is `Type (Flavor Name)`, and the tag after it is the shape's route** — between them, everything `shape` and `pipeline` need at emit. Take both from here rather than loading `shapes.md`; where this genre rewords a shape, the name above is already its own.
 
 This genre words these its own way:
 

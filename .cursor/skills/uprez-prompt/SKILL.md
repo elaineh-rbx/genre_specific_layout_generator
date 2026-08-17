@@ -1,19 +1,21 @@
 ---
 name: uprez-prompt
-description: Turns a Roblox Build Agent initial user message into a LayoutGen-ready scene prompt describing the 3D map/level layout to build - spaces, props, terrain, camera-facing composition - with game rules, UI and code stripped out. Use as the first stage of the layout pipeline, before genre and shape are chosen.
+description: Guides the context-aware layout agent in writing the sole enriched image-ready scene body from the raw author message, intake answers, and spatial decisions, with game rules, UI, and code stripped out.
 disable-model-invocation: true
 ---
 
 # Uprez Prompt
 
-You turn a Roblox Build Agent **initial user message** into a **LayoutGen-ready
-scene prompt**: a concise description of the **3D map / level layout** to build
-(spaces, props, terrain, camera-facing composition) — not game rules, UI, or
-code.
+You turn a Roblox Build Agent **initial user message**, its **intake answers**,
+and the agent's spatial decisions into the sole **enriched image-ready scene
+body**: a concise description of the **3D map / level layout** to build (spaces,
+props, terrain, camera-facing composition) — not game rules, UI, or code.
 
-This is stage 1 of the layout pipeline. Its output is the only thing the later
-stages see, so anything spatial that gets dropped here is gone: the genre and
-shape stage cannot recover a courtyard the uprez never mentioned.
+This guidance is applied while writing `## Enriched image prompt` inside the
+self-contained layout decision. It does not produce a separate intermediate
+brief. Anything spatial dropped from the enriched body is gone when prompts are
+assembled, so preserve every grounded layout fact and let intake answers
+override conflicting details in the original message.
 
 ## Goal
 
@@ -23,8 +25,9 @@ showing…" or "Build a 3D layout with…" when natural.
 
 ## Rules
 
-1. **Ground everything in the user message.** Do not invent genres, assets, or
-   mechanics they did not imply. You may **infer reasonable spatial defaults**
+1. **Ground everything in the user message and intake answers.** Do not invent
+   genres, assets, or mechanics they did not imply. Answers override conflicting
+   source details. You may **infer reasonable spatial defaults**
    only when the user clearly wants a place but omits detail (e.g. "a small
    arena", "a single lane track") — and an inferred default is the **plainest**
    instance in a clause, never an elaborated one. See **§ Do not do the
@@ -129,11 +132,12 @@ stages have nowhere else to get them. A number dropped here cannot be recovered.
 
 ## Do not do the addendum's job
 
-**Your paragraph is not the whole prompt.** After you, a later stage picks the
-genre, one shape and a few options from the layout rules, and the document's own
-wording for each is appended underneath what you wrote. Genre-typical furniture
-therefore arrives anyway — chosen deliberately, from the tables, by a stage that
-knows which shape this scene is.
+**Your paragraph is not the whole prompt.** The surrounding layout decision has
+already picked the genre, one shape and a few options from the layout rules. A
+later deterministic assembly stage appends the document's own wording for those
+picks underneath what you write. Genre-typical furniture therefore arrives
+anyway — chosen deliberately, from the tables, with the scene's shape already
+known.
 
 So when you write what "an obby usually has", you are not adding information. You
 are guessing at the addendum's content, unconditionally, without the tables, and
@@ -235,12 +239,9 @@ Ask yourself: **could someone draw this?** "Three floors with a puzzle room on
 each" can be drawn. "Toggle the music" cannot. When some part can be drawn,
 describe that part and drop the rest.
 
-## Output format (STRICT)
+## Output contract
 
-Return a single JSON object on one line:
-
-```json
-{"initial_scene_subprompt_enriched":"<your layout scene prompt, or empty string>"}
-```
-
-No other keys. Escape newlines inside the JSON string as `\n`.
+Write only the image-ready prose for the `## Enriched image prompt` section of
+the layout decision. Do not emit JSON or a separate intermediate brief. The
+strict transcriber later copies this prose verbatim into
+`initial_scene_subprompt_enriched`.

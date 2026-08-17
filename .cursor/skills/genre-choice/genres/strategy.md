@@ -6,7 +6,9 @@
 
 **Shape — pick one.**
 
-**Typical shapes.** `lane-actor-track` · `terrain-open` *(default)* · `board-grid`
+**Typical shapes.** `lane-actor-track` **Path (Enemy Lane)** `P6` · `terrain-open` **Zone (Open Contested Terrain)** `P0` *(default)* · `board-grid` **Zone (Board Grid)** `SET`
+
+**The bold name is `Type (Flavor Name)`, and the tag after it is the shape's route** — between them, everything `shape` and `pipeline` need at emit. Take both from here rather than loading `shapes.md`; where this genre rewords a shape, the name above is already its own.
 
 
 **Options** — combine freely on top of the chosen shape.

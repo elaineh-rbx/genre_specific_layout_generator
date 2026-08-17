@@ -1,6 +1,6 @@
 {
   "scene": "P0410",
-  "source": "Create a complete Roblox simulator game inspired by the progression style of +1 Keyboard Escape, but with a completely original theme.\n\nTheme: +1 Volcano Escape\n\nThe player starts at the bottom of a giant active volcano. Instead of running across keyboard keys, the player jumps across lava rocks, broken bridges, volcano platforms, giant crystals, and floating magma islands.\n\nFeatures:\n- +1 Speed every second.\n- Speed is also increased by collecting glowing lava crystals.\n- Reach the summit of the volcano to earn Wins.\n- Wins can be spent on permanent upgrades.\n- Rebirth system that multiplies speed gain.\n- Pets that increase speed and crystal collection.\n- Egg hatching system with common, rare, epic, legendary, and mythical pets.\n- Daily rewards.\n- Playtime rewards.\n- Global leaderboard for Wins and Rebirths.\n- Checkpoints throughout the volcano.\n- Multiple worlds:\n 1. Volcano\n 2. Ice Mountain\n 3. Sky Islands\n 4. Crystal Caverns\n 5. Space Volcano\n- Teleport portals between worlds.\n- Gamepasses:\n - 2x Speed\n - 2x Wins\n - Auto Collect\n - VIP\n- Clean modern UI with animations.\n- Sound effects, particles, lava effects, glowing crystals, and polished lighting.\n- Mobile, PC, and console support.\n- Anti-lag optimization.\n- Save all player progress with DataStore.\n- Organized folder structure and clean scripts.\n- Use Roblox best practices and scalable code.\n\nThe game should feel satisfying, addictive, colorful, polished, and highly replayable, while being completely original and not copying assets from any existing game.",
+  "source": "Create a complete Roblox simulator game inspired by the progression style of +1 Keyboard Escape, but with a completely original theme.\\n\\nTheme: +1 Volcano Escape\\n\\nThe player starts at the bottom of a giant active volcano. Instead of running across keyboard keys, the player jumps across lava rocks, broken bridges, volcano platforms, giant crystals, and floating magma islands.\\n\\nFeatures:\\n- +1 Speed every second.\\n- Speed is also increased by collecting glowing lava crystals.\\n- Reach the summit of the volcano to earn Wins.\\n- Wins can be spent on permanent upgrades.\\n- Rebirth system that multiplies speed gain.\\n- Pets that increase speed and crystal collection.\\n- Egg hatching system with common, rare, epic, legendary, and mythical pets.\\n- Daily rewards.\\n- Playtime rewards.\\n- Global leaderboard for Wins and Rebirths.\\n- Checkpoints throughout the volcano.\\n- Multiple worlds:\\n 1. Volcano\\n 2. Ice Mountain\\n 3. Sky Islands\\n 4. Crystal Caverns\\n 5. Space Volcano\\n- Teleport portals between worlds.\\n- Gamepasses:\\n - 2x Speed\\n - 2x Wins\\n - Auto Collect\\n - VIP\\n- Clean modern UI with animations.\\n- Sound effects, particles, lava effects, glowing crystals, and polished lighting.\\n- Mobile, PC, and console support.\\n- Anti-lag optimization.\\n- Save all player progress with DataStore.\\n- Organized folder structure and clean scripts.\\n- Use Roblox best practices and scalable code.\\n\\nThe game should feel satisfying, addictive, colorful, polished, and highly replayable, while being completely original and not copying assets from any existing game.",
   "answers": [
     {
       "field": "scale",
@@ -18,189 +18,284 @@
       "answer": "No; falling is the only failure state, and checkpoints should respawn the player at their latest reached checkpoint."
     }
   ],
-  "scene_prompt": "Create a 3D vertical escape-course map beginning at the bottom of a giant active volcano and rising to its summit as a compact, roughly two-minute climb. The Volcano course ascends through lava rocks, broken bridges, volcanic platforms, giant glowing crystals, and floating magma islands, with checkpoints spaced along the route and lava-filled drops below. Place teleport portals connecting this starting world to four separate themed courses: Ice Mountain, Sky Islands, Crystal Caverns, and Space Volcano, each with its own distinct obstacle layout. Use vivid lava, glowing crystals, particles, and polished volcanic lighting.",
-  "blob": "## Genre\n\nThe dominant genre is Simulation because this is explicitly a “+1” stat grinder whose rising speed, upgrades, and rebirth loop drive progression. Obby & Platformer is secondary because progress is earned on player-paced jumping courses.\n\n## Shape and preset\n\nUse `world-chaptered`, outside Simulation’s usual set, because the Volcano and four destination worlds are five genuinely separate maps reached by portals. The closest preset is Classic Obby, with its flat-course shape replaced by the chaptered world structure while retaining its sequential track, jumps, and checkpoints.\n\n## Config requirements\n\nApply `path-track` as a physics-valid ascending chain of lava rocks, broken bridges, volcanic platforms, and magma islands. Apply `obstacle-jump` to the discrete gaps, `checkpoint-respawn` to visible safe pads, `hazard-kill` to the lava filling failed drops, `winner-zone` to the summit payoff, and `teleporter-link` to visible world portals. Apply `island-cluster` to the separated floating magma landings. Giant glowing crystals are both landmark props and pickup cues.\n\n## Layout requirements\n\nPlace `checkpoint-respawn` pads at regular progress breaks along the roughly two-minute Volcano climb, each on a broad safe landing and respawning at the latest reached pad. Place `collectible-nodes` as glowing lava crystals along the main route and slightly riskier side lines. Place one `winner-zone` at the summit. Place four `teleporter-link` destinations, each clearly labeled and linked to exactly one separate course: Ice Mountain, Sky Islands, Crystal Caverns, or Space Volcano.\n\n## Layout components\n\nThe starting world runs from a lava-filled volcanic basin to a summit, using a single readable upward route of rock steps, broken bridge spans, glowing crystal ledges, platforms, and floating magma islands. Below the critical path, lava visually fills the fall volume. Safe checkpoint shelves divide the climb. A summit platform holds the payoff and four destination portals. Build five separate courses total, each with a distinct obstacle layout and theme. Keep the Volcano compact enough for about two minutes of successful traversal. Frame the Volcano vertically so the summit remains an obvious destination.\n\n## Render order\n\nRender `topdown` first and treat it as authoritative, then dress the isometric image from it, because every jump chain and portal connection must be valid; this is not a maze or racing circuit, so `authored_plan` is unavailable.\n\n## Scale, theme, and pipeline cost\n\nUse a huge scale because there are five separate course maps, although the starting Volcano itself is compact. The theme is vivid polished volcanic fantasy with emissive crystals, magma particles, and dramatic hot lighting. Use `P4` for separate worlds, `P6` for valid obstacle structure, `P2` for vertically overhanging platforms, and `CHECK` for the floating-island play envelope.",
-  "agent_artifact": "# Scene prompt\n\nCreate a 3D vertical escape-course map beginning at the bottom of a giant active volcano and rising to its summit as a compact, roughly two-minute climb. The Volcano course ascends through lava rocks, broken bridges, volcanic platforms, giant glowing crystals, and floating magma islands, with checkpoints spaced along the route and lava-filled drops below. Place teleport portals connecting this starting world to four separate themed courses: Ice Mountain, Sky Islands, Crystal Caverns, and Space Volcano, each with its own distinct obstacle layout. Use vivid lava, glowing crystals, particles, and polished volcanic lighting.\n\n# Agent decision\n\n## Genre\n\nThe dominant genre is Simulation because this is explicitly a “+1” stat grinder whose rising speed, upgrades, and rebirth loop drive progression. Obby & Platformer is secondary because progress is earned on player-paced jumping courses.\n\n## Shape and preset\n\nUse `world-chaptered`, outside Simulation’s usual set, because the Volcano and four destination worlds are five genuinely separate maps reached by portals. The closest preset is Classic Obby, with its flat-course shape replaced by the chaptered world structure while retaining its sequential track, jumps, and checkpoints.\n\n## Config requirements\n\nApply `path-track` as a physics-valid ascending chain of lava rocks, broken bridges, volcanic platforms, and magma islands. Apply `obstacle-jump` to the discrete gaps, `checkpoint-respawn` to visible safe pads, `hazard-kill` to the lava filling failed drops, `winner-zone` to the summit payoff, and `teleporter-link` to visible world portals. Apply `island-cluster` to the separated floating magma landings. Giant glowing crystals are both landmark props and pickup cues.\n\n## Layout requirements\n\nPlace `checkpoint-respawn` pads at regular progress breaks along the roughly two-minute Volcano climb, each on a broad safe landing and respawning at the latest reached pad. Place `collectible-nodes` as glowing lava crystals along the main route and slightly riskier side lines. Place one `winner-zone` at the summit. Place four `teleporter-link` destinations, each clearly labeled and linked to exactly one separate course: Ice Mountain, Sky Islands, Crystal Caverns, or Space Volcano.\n\n## Layout components\n\nThe starting world runs from a lava-filled volcanic basin to a summit, using a single readable upward route of rock steps, broken bridge spans, glowing crystal ledges, platforms, and floating magma islands. Below the critical path, lava visually fills the fall volume. Safe checkpoint shelves divide the climb. A summit platform holds the payoff and four destination portals. Build five separate courses total, each with a distinct obstacle layout and theme. Keep the Volcano compact enough for about two minutes of successful traversal. Frame the Volcano vertically so the summit remains an obvious destination.\n\n## Render order\n\nRender `topdown` first and treat it as authoritative, then dress the isometric image from it, because every jump chain and portal connection must be valid; this is not a maze or racing circuit, so `authored_plan` is unavailable.\n\n## Scale, theme, and pipeline cost\n\nUse a huge scale because there are five separate course maps, although the starting Volcano itself is compact. The theme is vivid polished volcanic fantasy with emissive crystals, magma particles, and dramatic hot lighting. Use `P4` for separate worlds, `P6` for valid obstacle structure, `P2` for vertically overhanging platforms, and `CHECK` for the floating-island play envelope.\n",
-  "agent_notes": "## Genre\n\nThe dominant genre is Simulation because this is explicitly a “+1” stat grinder whose rising speed, upgrades, and rebirth loop drive progression. Obby & Platformer is secondary because progress is earned on player-paced jumping courses.\n\n## Shape and preset\n\nUse `world-chaptered`, outside Simulation’s usual set, because the Volcano and four destination worlds are five genuinely separate maps reached by portals. The closest preset is Classic Obby, with its flat-course shape replaced by the chaptered world structure while retaining its sequential track, jumps, and checkpoints.\n\n## Config requirements\n\nApply `path-track` as a physics-valid ascending chain of lava rocks, broken bridges, volcanic platforms, and magma islands. Apply `obstacle-jump` to the discrete gaps, `checkpoint-respawn` to visible safe pads, `hazard-kill` to the lava filling failed drops, `winner-zone` to the summit payoff, and `teleporter-link` to visible world portals. Apply `island-cluster` to the separated floating magma landings. Giant glowing crystals are both landmark props and pickup cues.\n\n## Layout requirements\n\nPlace `checkpoint-respawn` pads at regular progress breaks along the roughly two-minute Volcano climb, each on a broad safe landing and respawning at the latest reached pad. Place `collectible-nodes` as glowing lava crystals along the main route and slightly riskier side lines. Place one `winner-zone` at the summit. Place four `teleporter-link` destinations, each clearly labeled and linked to exactly one separate course: Ice Mountain, Sky Islands, Crystal Caverns, or Space Volcano.\n\n## Layout components\n\nThe starting world runs from a lava-filled volcanic basin to a summit, using a single readable upward route of rock steps, broken bridge spans, glowing crystal ledges, platforms, and floating magma islands. Below the critical path, lava visually fills the fall volume. Safe checkpoint shelves divide the climb. A summit platform holds the payoff and four destination portals. Build five separate courses total, each with a distinct obstacle layout and theme. Keep the Volcano compact enough for about two minutes of successful traversal. Frame the Volcano vertically so the summit remains an obvious destination.\n\n## Render order\n\nRender `topdown` first and treat it as authoritative, then dress the isometric image from it, because every jump chain and portal connection must be valid; this is not a maze or racing circuit, so `authored_plan` is unavailable.\n\n## Scale, theme, and pipeline cost\n\nUse a huge scale because there are five separate course maps, although the starting Volcano itself is compact. The theme is vivid polished volcanic fantasy with emissive crystals, magma particles, and dramatic hot lighting. Use `P4` for separate worlds, `P6` for valid obstacle structure, `P2` for vertically overhanging platforms, and `CHECK` for the floating-island play envelope.",
+  "blob": "## Clarifications resolved\n- [author] scale — Q: How tall is the volcano - a two-minute climb or a twenty-minute one? A: Make the starting Volcano a compact, roughly two-minute climb so the progression loop is quick and replayable.\n- [author] shape — Q: Are the other four worlds separate courses, or the same climb re-skinned? A: The other worlds should be separate courses with their own themed obstacle layouts, reached through teleport portals.\n- [author] goal — Q: Is there any failure state other than falling? A: No; falling is the only failure state, and checkpoints should respawn the player at their latest reached checkpoint.\n- [agent_inferred] portal topology — Q: How should the five separate worlds connect? A: Link them in the listed progression order with four paired portal connections, each course leading onward to the next world.\n- [agent_inferred] other-world scale — Q: How large should the four later courses be? A: Keep each comparably compact to the starting two-minute Volcano loop unless a later build specifies otherwise.\n\n## Enriched image prompt\nCreate five separate compact, colorful progression courses connected in sequence by glowing portals: Volcano, Ice Mountain, Sky Islands, Crystal Caverns, and Space Volcano. Make the starting Volcano a roughly two-minute climb from the base to the summit, using lava rocks, broken bridges, volcanic platforms, giant glowing crystals, and floating magma islands above lethal lava. Place clear checkpoint pads throughout and a distinct summit reward area. At the Volcano base, include one compact progression hub with egg and upgrade displays, a rebirth pad, a global leaderboard wall, and the first portal.\n\nGive each later world its own simple themed obstacle layout rather than reskinning the same climb: icy mountain surfaces, floating sky landmasses, crystal-cavern passages, and a cosmic volcano course. Keep geometry and effects sparse enough for low lag while retaining polished lighting, particles, lava glow, and crystal readability. Do not depict UI, gamepasses, pets as menus, save systems, scripts, or controls.\n\n## Genre\nThe dominant genre is Simulation, specifically the +1 stat-grinder family, with Obby & Platformer secondary because the courses use jumps and obstacles.\n\n## Shape and preset\nUse `world-chaptered`, Chaptered Journey, as a container for five genuinely separate course maps. The matching preset is Stat Grinder, with its tier-ladder progression repeated per world and expanded through the requested portal-linked map sequence.\n\n## Config requirements\nUse `social-hub` for the Volcano-base egg, upgrade, rebirth, leaderboard, and portal area; `path-circulation` for the route from that hub into the climb; `hazard-kill` for lava; `obstacle-jump` for rocks, broken bridges, platforms, crystals, and floating landings; `terrain-relief` for each ascending course; `island-cluster` for the floating magma and sky-island sections; and the drawn forms of `checkpoint-respawn`, `winner-zone`, `teleporter-link`, and `tracker-leaderboard`. Use `collectible-nodes` only as layout placement for glowing lava crystals.\n\n## Layout requirements\nPlace `collectible-nodes` Collectibles along the Volcano route, with no invented count. Place `checkpoint-respawn` Checkpoints at safe intervals through each of the five courses and one `winner-zone` WinnerZone at each course endpoint. Place four paired `teleporter-link` connections linking the five worlds in order. Place one `trigger-rebirth` TriggerZone and one `tracker-leaderboard` Tracker in the Volcano-base hub. Falling returns the player to the latest checkpoint; all other progression, rewards, pets, and purchases are mechanics.\n\n## Layout components\nThe top-level container has five map segments, all compact progression courses: Volcano, Ice Mountain, Sky Islands, Crystal Caverns, and Space Volcano. Each uses `tier-ladder` with its own themed obstacle layout. Volcano includes a base hub, a two-minute lava-and-crystal climb, checkpoints, and a summit. Sky Islands and Volcano include discrete floating landings. Four portal pairs connect adjacent maps in the listed order. Each map has its own boundary and endpoint.\n\n## Render order\nUse `topdown`: each compact tier route, checkpoint sequence, endpoint, and portal connection must be readable before the five themed isometric maps are dressed.\n\n## Scale, theme, and pipeline cost\nThe scale is medium per map because each course is compact but must preserve individual obstacles, crystals, checkpoints, and hub stations. The theme is colorful, polished elemental fantasy with a volcanic starting world. Modifier `P4` is required for five separate maps, `tiered` for the ascending terrain, and `CHECK` for floating-island play volumes. The dominant Simulation classification does not add genre-wide `P6`; the obstacles serve stat progression rather than defining an obby-first game.",
+  "agent_artifact": "# Agent decision\n\n## Clarifications resolved\n- [author] scale — Q: How tall is the volcano - a two-minute climb or a twenty-minute one? A: Make the starting Volcano a compact, roughly two-minute climb so the progression loop is quick and replayable.\n- [author] shape — Q: Are the other four worlds separate courses, or the same climb re-skinned? A: The other worlds should be separate courses with their own themed obstacle layouts, reached through teleport portals.\n- [author] goal — Q: Is there any failure state other than falling? A: No; falling is the only failure state, and checkpoints should respawn the player at their latest reached checkpoint.\n- [agent_inferred] portal topology — Q: How should the five separate worlds connect? A: Link them in the listed progression order with four paired portal connections, each course leading onward to the next world.\n- [agent_inferred] other-world scale — Q: How large should the four later courses be? A: Keep each comparably compact to the starting two-minute Volcano loop unless a later build specifies otherwise.\n\n## Enriched image prompt\nCreate five separate compact, colorful progression courses connected in sequence by glowing portals: Volcano, Ice Mountain, Sky Islands, Crystal Caverns, and Space Volcano. Make the starting Volcano a roughly two-minute climb from the base to the summit, using lava rocks, broken bridges, volcanic platforms, giant glowing crystals, and floating magma islands above lethal lava. Place clear checkpoint pads throughout and a distinct summit reward area. At the Volcano base, include one compact progression hub with egg and upgrade displays, a rebirth pad, a global leaderboard wall, and the first portal.\n\nGive each later world its own simple themed obstacle layout rather than reskinning the same climb: icy mountain surfaces, floating sky landmasses, crystal-cavern passages, and a cosmic volcano course. Keep geometry and effects sparse enough for low lag while retaining polished lighting, particles, lava glow, and crystal readability. Do not depict UI, gamepasses, pets as menus, save systems, scripts, or controls.\n\n## Genre\nThe dominant genre is Simulation, specifically the +1 stat-grinder family, with Obby & Platformer secondary because the courses use jumps and obstacles.\n\n## Shape and preset\nUse `world-chaptered`, Chaptered Journey, as a container for five genuinely separate course maps. The matching preset is Stat Grinder, with its tier-ladder progression repeated per world and expanded through the requested portal-linked map sequence.\n\n## Config requirements\nUse `social-hub` for the Volcano-base egg, upgrade, rebirth, leaderboard, and portal area; `path-circulation` for the route from that hub into the climb; `hazard-kill` for lava; `obstacle-jump` for rocks, broken bridges, platforms, crystals, and floating landings; `terrain-relief` for each ascending course; `island-cluster` for the floating magma and sky-island sections; and the drawn forms of `checkpoint-respawn`, `winner-zone`, `teleporter-link`, and `tracker-leaderboard`. Use `collectible-nodes` only as layout placement for glowing lava crystals.\n\n## Layout requirements\nPlace `collectible-nodes` Collectibles along the Volcano route, with no invented count. Place `checkpoint-respawn` Checkpoints at safe intervals through each of the five courses and one `winner-zone` WinnerZone at each course endpoint. Place four paired `teleporter-link` connections linking the five worlds in order. Place one `trigger-rebirth` TriggerZone and one `tracker-leaderboard` Tracker in the Volcano-base hub. Falling returns the player to the latest checkpoint; all other progression, rewards, pets, and purchases are mechanics.\n\n## Layout components\nThe top-level container has five map segments, all compact progression courses: Volcano, Ice Mountain, Sky Islands, Crystal Caverns, and Space Volcano. Each uses `tier-ladder` with its own themed obstacle layout. Volcano includes a base hub, a two-minute lava-and-crystal climb, checkpoints, and a summit. Sky Islands and Volcano include discrete floating landings. Four portal pairs connect adjacent maps in the listed order. Each map has its own boundary and endpoint.\n\n## Render order\nUse `topdown`: each compact tier route, checkpoint sequence, endpoint, and portal connection must be readable before the five themed isometric maps are dressed.\n\n## Scale, theme, and pipeline cost\nThe scale is medium per map because each course is compact but must preserve individual obstacles, crystals, checkpoints, and hub stations. The theme is colorful, polished elemental fantasy with a volcanic starting world. Modifier `P4` is required for five separate maps, `tiered` for the ascending terrain, and `CHECK` for floating-island play volumes. The dominant Simulation classification does not add genre-wide `P6`; the obstacles serve stat progression rather than defining an obby-first game.\n",
+  "agent_notes": "## Clarifications resolved\n- [author] scale — Q: How tall is the volcano - a two-minute climb or a twenty-minute one? A: Make the starting Volcano a compact, roughly two-minute climb so the progression loop is quick and replayable.\n- [author] shape — Q: Are the other four worlds separate courses, or the same climb re-skinned? A: The other worlds should be separate courses with their own themed obstacle layouts, reached through teleport portals.\n- [author] goal — Q: Is there any failure state other than falling? A: No; falling is the only failure state, and checkpoints should respawn the player at their latest reached checkpoint.\n- [agent_inferred] portal topology — Q: How should the five separate worlds connect? A: Link them in the listed progression order with four paired portal connections, each course leading onward to the next world.\n- [agent_inferred] other-world scale — Q: How large should the four later courses be? A: Keep each comparably compact to the starting two-minute Volcano loop unless a later build specifies otherwise.\n\n## Enriched image prompt\nCreate five separate compact, colorful progression courses connected in sequence by glowing portals: Volcano, Ice Mountain, Sky Islands, Crystal Caverns, and Space Volcano. Make the starting Volcano a roughly two-minute climb from the base to the summit, using lava rocks, broken bridges, volcanic platforms, giant glowing crystals, and floating magma islands above lethal lava. Place clear checkpoint pads throughout and a distinct summit reward area. At the Volcano base, include one compact progression hub with egg and upgrade displays, a rebirth pad, a global leaderboard wall, and the first portal.\n\nGive each later world its own simple themed obstacle layout rather than reskinning the same climb: icy mountain surfaces, floating sky landmasses, crystal-cavern passages, and a cosmic volcano course. Keep geometry and effects sparse enough for low lag while retaining polished lighting, particles, lava glow, and crystal readability. Do not depict UI, gamepasses, pets as menus, save systems, scripts, or controls.\n\n## Genre\nThe dominant genre is Simulation, specifically the +1 stat-grinder family, with Obby & Platformer secondary because the courses use jumps and obstacles.\n\n## Shape and preset\nUse `world-chaptered`, Chaptered Journey, as a container for five genuinely separate course maps. The matching preset is Stat Grinder, with its tier-ladder progression repeated per world and expanded through the requested portal-linked map sequence.\n\n## Config requirements\nUse `social-hub` for the Volcano-base egg, upgrade, rebirth, leaderboard, and portal area; `path-circulation` for the route from that hub into the climb; `hazard-kill` for lava; `obstacle-jump` for rocks, broken bridges, platforms, crystals, and floating landings; `terrain-relief` for each ascending course; `island-cluster` for the floating magma and sky-island sections; and the drawn forms of `checkpoint-respawn`, `winner-zone`, `teleporter-link`, and `tracker-leaderboard`. Use `collectible-nodes` only as layout placement for glowing lava crystals.\n\n## Layout requirements\nPlace `collectible-nodes` Collectibles along the Volcano route, with no invented count. Place `checkpoint-respawn` Checkpoints at safe intervals through each of the five courses and one `winner-zone` WinnerZone at each course endpoint. Place four paired `teleporter-link` connections linking the five worlds in order. Place one `trigger-rebirth` TriggerZone and one `tracker-leaderboard` Tracker in the Volcano-base hub. Falling returns the player to the latest checkpoint; all other progression, rewards, pets, and purchases are mechanics.\n\n## Layout components\nThe top-level container has five map segments, all compact progression courses: Volcano, Ice Mountain, Sky Islands, Crystal Caverns, and Space Volcano. Each uses `tier-ladder` with its own themed obstacle layout. Volcano includes a base hub, a two-minute lava-and-crystal climb, checkpoints, and a summit. Sky Islands and Volcano include discrete floating landings. Four portal pairs connect adjacent maps in the listed order. Each map has its own boundary and endpoint.\n\n## Render order\nUse `topdown`: each compact tier route, checkpoint sequence, endpoint, and portal connection must be readable before the five themed isometric maps are dressed.\n\n## Scale, theme, and pipeline cost\nThe scale is medium per map because each course is compact but must preserve individual obstacles, crystals, checkpoints, and hub stations. The theme is colorful, polished elemental fantasy with a volcanic starting world. Modifier `P4` is required for five separate maps, `tiered` for the ascending terrain, and `CHECK` for floating-island play volumes. The dominant Simulation classification does not add genre-wide `P6`; the obstacles serve stat progression rather than defining an obby-first game.",
   "secondary": [
     "Obby & Platformer"
   ],
   "spec": {
+    "clarifications": [
+      {
+        "field": "scale",
+        "ask": "How tall is the volcano - a two-minute climb or a twenty-minute one?",
+        "answer": "Make the starting Volcano a compact, roughly two-minute climb so the progression loop is quick and replayable.",
+        "source": "author"
+      },
+      {
+        "field": "shape",
+        "ask": "Are the other four worlds separate courses, or the same climb re-skinned?",
+        "answer": "The other worlds should be separate courses with their own themed obstacle layouts, reached through teleport portals.",
+        "source": "author"
+      },
+      {
+        "field": "goal",
+        "ask": "Is there any failure state other than falling?",
+        "answer": "No; falling is the only failure state, and checkpoints should respawn the player at their latest reached checkpoint.",
+        "source": "author"
+      },
+      {
+        "field": "portal topology",
+        "ask": "How should the five separate worlds connect?",
+        "answer": "Link them in the listed progression order with four paired portal connections, each course leading onward to the next world.",
+        "source": "agent_inferred"
+      },
+      {
+        "field": "other-world scale",
+        "ask": "How large should the four later courses be?",
+        "answer": "Keep each comparably compact to the starting two-minute Volcano loop unless a later build specifies otherwise.",
+        "source": "agent_inferred"
+      }
+    ],
+    "initial_scene_subprompt_enriched": "Create five separate compact, colorful progression courses connected in sequence by glowing portals: Volcano, Ice Mountain, Sky Islands, Crystal Caverns, and Space Volcano. Make the starting Volcano a roughly two-minute climb from the base to the summit, using lava rocks, broken bridges, volcanic platforms, giant glowing crystals, and floating magma islands above lethal lava. Place clear checkpoint pads throughout and a distinct summit reward area. At the Volcano base, include one compact progression hub with egg and upgrade displays, a rebirth pad, a global leaderboard wall, and the first portal.\n\nGive each later world its own simple themed obstacle layout rather than reskinning the same climb: icy mountain surfaces, floating sky landmasses, crystal-cavern passages, and a cosmic volcano course. Keep geometry and effects sparse enough for low lag while retaining polished lighting, particles, lava glow, and crystal readability. Do not depict UI, gamepasses, pets as menus, save systems, scripts, or controls.",
     "genre": "Simulation",
     "secondary": [
       "Obby & Platformer"
     ],
     "shape": "world-chaptered",
-    "preset": "none",
+    "preset": "Stat Grinder",
     "axes": {},
     "options": [
       {
+        "id": "social-hub",
+        "text": "A compact Volcano-base progression hub with egg and upgrade displays, a rebirth pad, a global leaderboard wall, and the first portal.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "path-circulation",
+        "text": "A clear circulation route from the Volcano-base hub into the climb and through each course.",
+        "visible": true,
+        "count": -1
+      },
+      {
         "id": "hazard-kill",
-        "text": "Lava filling the failed drops below the critical path.",
+        "text": "Lethal lava below the Volcano course, punishing falls off the route.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "obstacle-jump",
+        "text": "Jumpable obstacle geometry: lava rocks, broken bridges, volcanic platforms, giant glowing crystals as landings, and floating platforms; plus themed obstacles in later worlds.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "terrain-relief",
+        "text": "Ascending terrain relief shaping each compact course climb (Volcano, Ice Mountain, Crystal Caverns, Space Volcano).",
         "visible": true,
         "count": -1
       },
       {
         "id": "island-cluster",
-        "text": "Separated floating magma landings.",
+        "text": "Discrete floating landings for the floating magma islands and the Sky Islands sections.",
         "visible": true,
         "count": -1
       },
       {
-        "id": "collectible-nodes",
-        "text": "Glowing lava crystals along the main route and slightly riskier side lines.",
+        "id": "checkpoint-respawn",
+        "text": "Clear checkpoint pads placed throughout each course to respawn the player at the latest reached checkpoint after falling.",
         "visible": false,
         "count": -1
+      },
+      {
+        "id": "winner-zone",
+        "text": "A distinct endpoint reward area at the end of each course.",
+        "visible": true,
+        "count": 5
+      },
+      {
+        "id": "teleporter-link",
+        "text": "Glowing portal connections linking the five worlds in listed progression order.",
+        "visible": true,
+        "count": 8
+      },
+      {
+        "id": "tracker-leaderboard",
+        "text": "A global leaderboard wall in the Volcano-base hub.",
+        "visible": true,
+        "count": 1
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "Glowing lava crystals placed as collectibles along the Volcano route.",
+        "visible": false,
+        "count": -1
+      },
+      {
+        "id": "trigger-rebirth",
+        "text": "A rebirth pad trigger zone in the Volcano-base hub.",
+        "visible": false,
+        "count": 1
       }
     ],
     "layout_placement": [
       {
-        "id": "collectible-nodes",
-        "text": "Glowing lava crystals along the main route and slightly riskier side lines.",
+        "id": "checkpoint-respawn",
+        "text": "Checkpoint pads at safe intervals through each of the five courses.",
         "count": -1,
-        "where": "Along the main Volcano route and on slightly riskier side lines."
+        "where": "At safe intervals through each course"
+      },
+      {
+        "id": "winner-zone",
+        "text": "One WinnerZone at each course endpoint.",
+        "count": 5,
+        "where": "At each course endpoint"
+      },
+      {
+        "id": "teleporter-link",
+        "text": "Four paired portal connections linking the five worlds in order.",
+        "count": 8,
+        "where": "Between adjacent maps in the listed sequence"
+      },
+      {
+        "id": "tracker-leaderboard",
+        "text": "One leaderboard tracker in the Volcano-base hub.",
+        "count": 1,
+        "where": "In the Volcano-base hub"
+      },
+      {
+        "id": "collectible-nodes",
+        "text": "Glowing lava crystals placed as collectibles along the Volcano route.",
+        "count": -1,
+        "where": "Along the Volcano route"
+      },
+      {
+        "id": "trigger-rebirth",
+        "text": "One rebirth trigger zone in the Volcano-base hub.",
+        "count": 1,
+        "where": "In the Volcano-base hub"
       }
     ],
     "layout": {
-      "composition": "Frame the Volcano vertically, from the lava-filled basin in the foreground and lower frame up through the ascending route to the summit in the upper frame, keeping the summit an obvious destination.",
+      "composition": "Five separate compact map segments presented as a chaptered sequence: Volcano first (with a base hub and ascent), then Ice Mountain, Sky Islands, Crystal Caverns, and Space Volcano, each connected onward by glowing portals and ending in its own endpoint reward area.",
       "zones": [
         {
           "name": "Volcano",
-          "role": "Starting world and compact, roughly two-minute vertical escape course from the lava basin to the summit payoff.",
-          "where": "Vertical course rising from the bottom basin to the summit.",
-          "size": "Compact"
+          "role": "Starting world: base progression hub, then a compact two-minute lava-and-crystal climb with checkpoints and a summit reward area.",
+          "where": "",
+          "size": "compact"
         },
         {
           "name": "Ice Mountain",
-          "role": "Separate destination course with its own distinct obstacle layout and theme.",
-          "where": "Separate map reached through one summit portal.",
-          "size": ""
+          "role": "Separate compact themed obstacle course with checkpoints and an endpoint reward area.",
+          "where": "",
+          "size": "compact"
         },
         {
           "name": "Sky Islands",
-          "role": "Separate destination course with its own distinct obstacle layout and theme.",
-          "where": "Separate map reached through one summit portal.",
-          "size": ""
+          "role": "Separate compact themed obstacle course across floating sky landmasses, with checkpoints and an endpoint reward area.",
+          "where": "",
+          "size": "compact"
         },
         {
           "name": "Crystal Caverns",
-          "role": "Separate destination course with its own distinct obstacle layout and theme.",
-          "where": "Separate map reached through one summit portal.",
-          "size": ""
+          "role": "Separate compact themed obstacle course through crystal-cavern passages, with checkpoints and an endpoint reward area.",
+          "where": "",
+          "size": "compact"
         },
         {
           "name": "Space Volcano",
-          "role": "Separate destination course with its own distinct obstacle layout and theme.",
-          "where": "Separate map reached through one summit portal.",
-          "size": ""
+          "role": "Separate compact cosmic volcano themed obstacle course with checkpoints and an endpoint reward area.",
+          "where": "",
+          "size": "compact"
         }
       ],
       "paths": [
         {
-          "from": "Lava-filled volcanic basin",
-          "to": "Volcano summit",
-          "kind": "track"
-        },
-        {
-          "from": "Volcano summit",
+          "from": "Volcano",
           "to": "Ice Mountain",
           "kind": "portal"
         },
         {
-          "from": "Volcano summit",
+          "from": "Ice Mountain",
           "to": "Sky Islands",
           "kind": "portal"
         },
         {
-          "from": "Volcano summit",
+          "from": "Sky Islands",
           "to": "Crystal Caverns",
           "kind": "portal"
         },
         {
-          "from": "Volcano summit",
+          "from": "Crystal Caverns",
           "to": "Space Volcano",
           "kind": "portal"
         }
       ],
-      "terrain": "A lava-filled volcanic basin rises through lava rocks, broken bridge spans, volcanic platforms, glowing crystal ledges, and floating magma islands. Lava visually fills the fall volume below the critical path.",
+      "terrain": "Tiered/ascending terrain relief per map; lethal lava under Volcano; floating magma islands and floating sky landmasses for the island sections.",
       "props": [
         {
-          "name": "Lava rocks",
+          "name": "lava rocks",
           "count": -1,
-          "where": "Along the ascending Volcano route."
+          "where": "Volcano course"
         },
         {
-          "name": "Broken bridge spans",
+          "name": "broken bridges",
           "count": -1,
-          "where": "Along the ascending Volcano route."
+          "where": "Volcano course"
         },
         {
-          "name": "Volcanic platforms",
+          "name": "volcanic platforms",
           "count": -1,
-          "where": "Along the ascending Volcano route."
+          "where": "Volcano course"
         },
         {
-          "name": "Giant glowing crystals",
+          "name": "giant glowing crystals",
           "count": -1,
-          "where": "Along the route as landmark props and pickup cues."
+          "where": "Volcano course (also used as readable landings/obstacles)"
         },
         {
-          "name": "Floating magma islands",
+          "name": "floating magma islands",
           "count": -1,
-          "where": "Along the ascending Volcano route."
+          "where": "Volcano floating sections"
         },
         {
-          "name": "Safe checkpoint shelves",
+          "name": "egg and upgrade displays",
           "count": -1,
-          "where": "Dividing the Volcano climb at regular progress breaks."
-        },
-        {
-          "name": "Destination portals",
-          "count": 4,
-          "where": "On the summit platform."
+          "where": "Volcano-base hub"
         }
       ],
-      "boundary": "",
-      "scale_band": "huge",
-      "theme": "Vivid polished volcanic fantasy with emissive crystals, magma particles, and dramatic hot lighting."
+      "boundary": "Each map has its own boundary and endpoint.",
+      "scale_band": "medium",
+      "theme": "Colorful, polished elemental fantasy with a volcanic starting world; sparse geometry/effects for low lag while keeping polished lighting, particles, lava glow, and crystal readability."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "every jump chain and portal connection must be valid.",
+      "why": "Each compact tier route, checkpoint sequence, endpoint, and portal connection must be readable before dressing the five themed isometric maps.",
       "set_piece": false
     },
     "route": [
       "P4",
-      "P6",
-      "P2",
+      "tiered",
       "CHECK"
     ],
     "notes": [
-      "`world-chaptered` is used outside Simulation’s usual shape set, as specified in the blob.",
-      "dropped option 'path-track': not in Simulation",
-      "dropped option 'obstacle-jump': not in Simulation",
-      "dropped option 'checkpoint-respawn': not in Simulation",
-      "dropped option 'winner-zone': not in Simulation",
-      "dropped option 'teleporter-link': not in Simulation",
-      "dropped placement 'checkpoint-respawn': not in Simulation",
-      "dropped placement 'winner-zone': not in Simulation",
-      "dropped placement 'teleporter-link': not in Simulation",
-      "unknown preset 'Classic Obby'"
-    ],
-    "scene_prompt": "Create a 3D vertical escape-course map beginning at the bottom of a giant active volcano and rising to its summit as a compact, roughly two-minute climb. The Volcano course ascends through lava rocks, broken bridges, volcanic platforms, giant glowing crystals, and floating magma islands, with checkpoints spaced along the route and lava-filled drops below. Place teleport portals connecting this starting world to four separate themed courses: Ice Mountain, Sky Islands, Crystal Caverns, and Space Volcano, each with its own distinct obstacle layout. Use vivid lava, glowing crystals, particles, and polished volcanic lighting."
+      "Option 'winner-zone' count set to 5 because the blob specifies one at each course endpoint across five courses.",
+      "Option 'teleporter-link' count set to 8 because the blob specifies four paired portal connections (two portals per pair).",
+      "Some layout_placement 'where' strings are kept generic because the blob does not specify more precise siting rules per zone beyond 'along the route', 'at safe intervals', 'at endpoints', and 'between adjacent maps'.",
+      "visible on 'checkpoint-respawn' set from goes_to=layout"
+    ]
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "1986e1975066",
-  "served_by": "subagent/genre-choice -> gateway/production/gpt-5.6-terra",
+  "pipeline_version": "48d4ff51304c",
+  "served_by": "subagent/genre-choice -> azure/gpt-5.2",
   "schema_degraded": false,
-  "reused_uprez": true,
-  "order": "std",
-  "first": "isometric",
-  "mapper_notes": [
-    "blob asked for topdown first; the route ['P4', 'CHECK'] gives isometric"
-  ]
+  "order": "p6",
+  "first": "topdown",
+  "mapper_notes": []
 }

@@ -8,7 +8,9 @@
 
 **Shape — pick one.**
 
-**Typical shapes.** `course-flat` *(default)* · `course-terraced` · `course-tower`
+**Typical shapes.** `course-flat` **Path (Flat Course)** `P6` *(default)* · `course-terraced` **Path (Ascending Terraces)** `P6` + `tiered` · `course-tower` **Path (Tower / Spiral Ascent)** `P6` + `P2`
+
+**The bold name is `Type (Flavor Name)`, and the tag after it is the shape's route** — between them, everything `shape` and `pipeline` need at emit. Take both from here rather than loading `shapes.md`; where this genre rewords a shape, the name above is already its own.
 
 
 **Options** — combine freely on top of the chosen shape.

@@ -7,11 +7,10 @@ arm at that file and instructing it to use only the first two fields does not wo
 a file read returns the whole file: the instruction asks for something the tool cannot do.
 Roughly twenty subagents reported exactly that, having seen the answer before deciding.
 
-Withholding it is the only reliable way. This writes a projection carrying the prompt,
-the answers, and the already-fixed uprezzed scene prompt. The latter is model output, but
-not another arm's classification: both agent and gateway arms deliberately use the same
-body so their config decisions are the only variable. An agent reading this projection
-cannot see what it is being compared to no matter how it reads.
+Withholding it is the only reliable way. This writes a projection carrying only the raw
+author prompt and their answers. The context-aware agent turns those directly into the
+single enriched image-ready scene body while deciding the layout. An agent reading this
+projection cannot see what it is being compared to no matter how it reads.
 
 Writes `results/routing/agent_input/<scene>.json`.
 
@@ -32,7 +31,6 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
 from layoutgen import paths                                       # noqa: E402
 
 SRC = paths.ROUTING / "answered"
-BLOB = paths.ROUTING / "blob"
 OUT = paths.ROUTING / "agent_input"
 
 #: Everything else in the record is another system's answer and must not travel.
@@ -60,9 +58,6 @@ def main() -> None:
                            "answer": a.get("answer", "")}
                           for a in (d.get("answers") or [])
                           if (a.get("answer") or "").strip()]
-        body_path = BLOB / path.name
-        body = json.loads(body_path.read_text(encoding="utf-8")) if body_path.is_file() else {}
-        out["scene_prompt"] = (body.get("scene_prompt") or "").strip()
         (OUT / path.name).write_text(json.dumps(out, indent=2, ensure_ascii=False),
                                     encoding="utf-8")
         written += 1
@@ -86,7 +81,6 @@ def main() -> None:
                 "scene": scene,
                 "source": source,
                 "answers": [],
-                "scene_prompt": source,
             }
             (OUT / f"{scene}.json").write_text(
                 json.dumps(out, indent=2, ensure_ascii=False), encoding="utf-8"

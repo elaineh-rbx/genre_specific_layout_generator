@@ -13,12 +13,38 @@
       "answer": "Score is based on distance travelled through the obstacles, with no pickups."
     }
   ],
-  "scene_prompt": "Create a 3D outer-space flight course viewed from the side, with gameplay confined to a single vertical plane. A small flying bird character passes through a forward sequence of space-themed obstacles against an open cosmic backdrop.",
-  "blob": "## Genre\n\nThe dominant and sole genre is Infinite Runner. Forward progress is endless, score derives from distance, and the player reacts to a scrolling obstacle sequence.\n\n## Shape and preset\n\nUse `lane-free` as the single shape, interpreted as continuous vertical steering within one narrow side-view plane rather than snapping among fixed lanes. Match the Free Runner preset: modular course chunks, clearable obstacle gaps, and collision hazards all describe this 3D Flappy-style run.\n\n## Config requirements\n\nUse `chunk-modular` for side-scrolling space segments whose forward entry and exit pivots align exactly. Use `obstacle-jump` for repeated paired space obstacles with one traversable vertical gap between them. Use `hazard-kill` for the solid obstacle bodies that end a run on contact. Dress the corridor with three-dimensional cosmic rocks, structures, or energy formations against an open starfield while keeping gameplay on a single plane.\n\n## Layout requirements\n\nPlace one `trigger-despawn` cleanup volume a fixed distance behind the side-view camera and active segment queue. For every obstacle pair, place the clear gap at a reachable vertical offset and preserve speed-dependent reaction spacing between successive pairs. No `collectible-nodes`, power-ups, checkpoints, lap regions, or terminal finish trigger are needed.\n\n## Layout components\n\nBuild a repeating horizontal queue of compact course chunks in one narrow vertical gameplay plane. Each chunk contains open flight space and a readable pair of upper and lower space-themed obstacles framing one gap. Vary gap height without introducing depth-layer routes, intersections, or dead ends. Keep the bird’s silhouette and upcoming opening clear against stars and distant cosmic scenery. The frame should read from the side, with forward travel moving consistently across it.\n\n## Render order\n\nUse `topdown`: establish the deterministic chunk and obstacle sequence first, then dress it as the authoritative side-presented 3D space course. Structural validity leads because every generated gap and interval must remain clearable.\n\n## Scale, theme, and pipeline cost\n\nThe scale band is small per chunk, with an endless assembled course. The theme is bright 3D outer-space arcade flight. Use `P6` for exact chunk alignment and valid speed-aware obstacle spacing. No `CHECK` is required because movement is confined to a single plane rather than a self-occluding volume.",
-  "agent_artifact": "# Scene prompt\n\nCreate a 3D outer-space flight course viewed from the side, with gameplay confined to a single vertical plane. A small flying bird character passes through a forward sequence of space-themed obstacles against an open cosmic backdrop.\n\n# Agent decision\n\n## Genre\n\nThe dominant and sole genre is Infinite Runner. Forward progress is endless, score derives from distance, and the player reacts to a scrolling obstacle sequence.\n\n## Shape and preset\n\nUse `lane-free` as the single shape, interpreted as continuous vertical steering within one narrow side-view plane rather than snapping among fixed lanes. Match the Free Runner preset: modular course chunks, clearable obstacle gaps, and collision hazards all describe this 3D Flappy-style run.\n\n## Config requirements\n\nUse `chunk-modular` for side-scrolling space segments whose forward entry and exit pivots align exactly. Use `obstacle-jump` for repeated paired space obstacles with one traversable vertical gap between them. Use `hazard-kill` for the solid obstacle bodies that end a run on contact. Dress the corridor with three-dimensional cosmic rocks, structures, or energy formations against an open starfield while keeping gameplay on a single plane.\n\n## Layout requirements\n\nPlace one `trigger-despawn` cleanup volume a fixed distance behind the side-view camera and active segment queue. For every obstacle pair, place the clear gap at a reachable vertical offset and preserve speed-dependent reaction spacing between successive pairs. No `collectible-nodes`, power-ups, checkpoints, lap regions, or terminal finish trigger are needed.\n\n## Layout components\n\nBuild a repeating horizontal queue of compact course chunks in one narrow vertical gameplay plane. Each chunk contains open flight space and a readable pair of upper and lower space-themed obstacles framing one gap. Vary gap height without introducing depth-layer routes, intersections, or dead ends. Keep the bird’s silhouette and upcoming opening clear against stars and distant cosmic scenery. The frame should read from the side, with forward travel moving consistently across it.\n\n## Render order\n\nUse `topdown`: establish the deterministic chunk and obstacle sequence first, then dress it as the authoritative side-presented 3D space course. Structural validity leads because every generated gap and interval must remain clearable.\n\n## Scale, theme, and pipeline cost\n\nThe scale band is small per chunk, with an endless assembled course. The theme is bright 3D outer-space arcade flight. Use `P6` for exact chunk alignment and valid speed-aware obstacle spacing. No `CHECK` is required because movement is confined to a single plane rather than a self-occluding volume.\n",
-  "agent_notes": "## Genre\n\nThe dominant and sole genre is Infinite Runner. Forward progress is endless, score derives from distance, and the player reacts to a scrolling obstacle sequence.\n\n## Shape and preset\n\nUse `lane-free` as the single shape, interpreted as continuous vertical steering within one narrow side-view plane rather than snapping among fixed lanes. Match the Free Runner preset: modular course chunks, clearable obstacle gaps, and collision hazards all describe this 3D Flappy-style run.\n\n## Config requirements\n\nUse `chunk-modular` for side-scrolling space segments whose forward entry and exit pivots align exactly. Use `obstacle-jump` for repeated paired space obstacles with one traversable vertical gap between them. Use `hazard-kill` for the solid obstacle bodies that end a run on contact. Dress the corridor with three-dimensional cosmic rocks, structures, or energy formations against an open starfield while keeping gameplay on a single plane.\n\n## Layout requirements\n\nPlace one `trigger-despawn` cleanup volume a fixed distance behind the side-view camera and active segment queue. For every obstacle pair, place the clear gap at a reachable vertical offset and preserve speed-dependent reaction spacing between successive pairs. No `collectible-nodes`, power-ups, checkpoints, lap regions, or terminal finish trigger are needed.\n\n## Layout components\n\nBuild a repeating horizontal queue of compact course chunks in one narrow vertical gameplay plane. Each chunk contains open flight space and a readable pair of upper and lower space-themed obstacles framing one gap. Vary gap height without introducing depth-layer routes, intersections, or dead ends. Keep the bird’s silhouette and upcoming opening clear against stars and distant cosmic scenery. The frame should read from the side, with forward travel moving consistently across it.\n\n## Render order\n\nUse `topdown`: establish the deterministic chunk and obstacle sequence first, then dress it as the authoritative side-presented 3D space course. Structural validity leads because every generated gap and interval must remain clearable.\n\n## Scale, theme, and pipeline cost\n\nThe scale band is small per chunk, with an endless assembled course. The theme is bright 3D outer-space arcade flight. Use `P6` for exact chunk alignment and valid speed-aware obstacle spacing. No `CHECK` is required because movement is confined to a single plane rather than a self-occluding volume.",
+  "blob": "## Clarifications resolved\n- [author] shape — Q: Making it 3D — does the bird stay on a single vertical plane like the original, or can it steer left and right through the obstacle field too? A: Keep it on a single vertical plane like the original; the 3D treatment is for the space setting, models, and camera presentation.\n- [author] goal — Q: Is the score just distance travelled, or are there pickups along the way? A: Score is based on distance travelled through the obstacles, with no pickups.\n- [agent_inferred] obstacle form — Q: What physical obstacle should replace the unspecified reference-game barriers in outer space? A: Use simple paired asteroid or sci-fi barrier columns with one clear vertical gap between each pair.\n- [agent_inferred] visible extent — Q: How should an endless game fit in one rendered scene? A: Show a short representative queue of modular segments that continues procedurally beyond the visible frame.\n\n## Enriched image prompt\nCreate a 3D outer-space endless-runner scene constrained to one vertical movement plane. Arrange a short visible queue of repeating forward segments, each containing a pair of simple asteroid or sci-fi barrier columns with one clear vertical gap to fly through. Vary the gap height from segment to segment while keeping the route on the same depth plane and leaving no left-or-right steering space. Present dimensional models, lighting, stars, and space scenery around the plane without turning movement into free 3D flight. Do not add pickups; the visible challenge is continuous travel through obstacle gaps.\n\n## Genre\nThe dominant genre is Infinite Runner, canonical slug `infinite-runner`, because forward travel is endless, obstacle timing drives play, and score comes from distance.\n\n## Shape and preset\nUse `lane-free`, spelled Free Lateral Steering in Infinite Runner, with its continuous cross-corridor axis rotated vertically and depth locked; this is the closest shared shape to free up-and-down steering on one plane. Match the Free Runner preset and omit collectibles.\n\n## Config requirements\nUse `chunk-modular` for deterministic forward segments whose pivots remain aligned on one axis. Use `obstacle-jump` for the paired barriers and vertical openings, expressed as flight gaps rather than ground jumps. Use `hazard-kill` for collision with the obstacle columns. No `collectible-nodes` applies.\n\n## Layout requirements\nPlace one `trigger-despawn` TriggerZone two full modular chunks behind the camera so cleared space can be recycled. Keep all generated obstacle centers on one depth plane and derive gap spacing from current forward speed with the Infinite Runner reaction-time rule. No pickup placement is required.\n\n## Layout components\nBuild one narrow side-view flight corridor in open space, a short visible sequence of modular chunks, one paired obstacle gate per chunk, vertically offset gaps, a fixed depth plane, and star-field or nebula surroundings that do not obstruct the route. The segment queue continues beyond the frame and has no finish.\n\n## Render order\nUse `topdown`: establish the aligned procedural chunk sequence first and then dress it as a dimensional outer-space scene; the plan is authoritative because segment pivots and clearable sequencing must remain valid, while this non-racing runner has no supported authored-plan generator.\n\n## Scale, theme, and pipeline cost\nUse medium scale for a representative visible run of several obstacle chunks with legible gaps. The theme is dimensional outer-space arcade flight. Use `P6` because endless segment alignment and obstacle spacing must be valid by construction; no `CHECK` is needed because movement is constrained to one non-self-occluding plane.",
+  "agent_artifact": "# Agent decision\n\n## Clarifications resolved\n- [author] shape — Q: Making it 3D — does the bird stay on a single vertical plane like the original, or can it steer left and right through the obstacle field too? A: Keep it on a single vertical plane like the original; the 3D treatment is for the space setting, models, and camera presentation.\n- [author] goal — Q: Is the score just distance travelled, or are there pickups along the way? A: Score is based on distance travelled through the obstacles, with no pickups.\n- [agent_inferred] obstacle form — Q: What physical obstacle should replace the unspecified reference-game barriers in outer space? A: Use simple paired asteroid or sci-fi barrier columns with one clear vertical gap between each pair.\n- [agent_inferred] visible extent — Q: How should an endless game fit in one rendered scene? A: Show a short representative queue of modular segments that continues procedurally beyond the visible frame.\n\n## Enriched image prompt\nCreate a 3D outer-space endless-runner scene constrained to one vertical movement plane. Arrange a short visible queue of repeating forward segments, each containing a pair of simple asteroid or sci-fi barrier columns with one clear vertical gap to fly through. Vary the gap height from segment to segment while keeping the route on the same depth plane and leaving no left-or-right steering space. Present dimensional models, lighting, stars, and space scenery around the plane without turning movement into free 3D flight. Do not add pickups; the visible challenge is continuous travel through obstacle gaps.\n\n## Genre\nThe dominant genre is Infinite Runner, canonical slug `infinite-runner`, because forward travel is endless, obstacle timing drives play, and score comes from distance.\n\n## Shape and preset\nUse `lane-free`, spelled Free Lateral Steering in Infinite Runner, with its continuous cross-corridor axis rotated vertically and depth locked; this is the closest shared shape to free up-and-down steering on one plane. Match the Free Runner preset and omit collectibles.\n\n## Config requirements\nUse `chunk-modular` for deterministic forward segments whose pivots remain aligned on one axis. Use `obstacle-jump` for the paired barriers and vertical openings, expressed as flight gaps rather than ground jumps. Use `hazard-kill` for collision with the obstacle columns. No `collectible-nodes` applies.\n\n## Layout requirements\nPlace one `trigger-despawn` TriggerZone two full modular chunks behind the camera so cleared space can be recycled. Keep all generated obstacle centers on one depth plane and derive gap spacing from current forward speed with the Infinite Runner reaction-time rule. No pickup placement is required.\n\n## Layout components\nBuild one narrow side-view flight corridor in open space, a short visible sequence of modular chunks, one paired obstacle gate per chunk, vertically offset gaps, a fixed depth plane, and star-field or nebula surroundings that do not obstruct the route. The segment queue continues beyond the frame and has no finish.\n\n## Render order\nUse `topdown`: establish the aligned procedural chunk sequence first and then dress it as a dimensional outer-space scene; the plan is authoritative because segment pivots and clearable sequencing must remain valid, while this non-racing runner has no supported authored-plan generator.\n\n## Scale, theme, and pipeline cost\nUse medium scale for a representative visible run of several obstacle chunks with legible gaps. The theme is dimensional outer-space arcade flight. Use `P6` because endless segment alignment and obstacle spacing must be valid by construction; no `CHECK` is needed because movement is constrained to one non-self-occluding plane.\n",
+  "agent_notes": "## Clarifications resolved\n- [author] shape — Q: Making it 3D — does the bird stay on a single vertical plane like the original, or can it steer left and right through the obstacle field too? A: Keep it on a single vertical plane like the original; the 3D treatment is for the space setting, models, and camera presentation.\n- [author] goal — Q: Is the score just distance travelled, or are there pickups along the way? A: Score is based on distance travelled through the obstacles, with no pickups.\n- [agent_inferred] obstacle form — Q: What physical obstacle should replace the unspecified reference-game barriers in outer space? A: Use simple paired asteroid or sci-fi barrier columns with one clear vertical gap between each pair.\n- [agent_inferred] visible extent — Q: How should an endless game fit in one rendered scene? A: Show a short representative queue of modular segments that continues procedurally beyond the visible frame.\n\n## Enriched image prompt\nCreate a 3D outer-space endless-runner scene constrained to one vertical movement plane. Arrange a short visible queue of repeating forward segments, each containing a pair of simple asteroid or sci-fi barrier columns with one clear vertical gap to fly through. Vary the gap height from segment to segment while keeping the route on the same depth plane and leaving no left-or-right steering space. Present dimensional models, lighting, stars, and space scenery around the plane without turning movement into free 3D flight. Do not add pickups; the visible challenge is continuous travel through obstacle gaps.\n\n## Genre\nThe dominant genre is Infinite Runner, canonical slug `infinite-runner`, because forward travel is endless, obstacle timing drives play, and score comes from distance.\n\n## Shape and preset\nUse `lane-free`, spelled Free Lateral Steering in Infinite Runner, with its continuous cross-corridor axis rotated vertically and depth locked; this is the closest shared shape to free up-and-down steering on one plane. Match the Free Runner preset and omit collectibles.\n\n## Config requirements\nUse `chunk-modular` for deterministic forward segments whose pivots remain aligned on one axis. Use `obstacle-jump` for the paired barriers and vertical openings, expressed as flight gaps rather than ground jumps. Use `hazard-kill` for collision with the obstacle columns. No `collectible-nodes` applies.\n\n## Layout requirements\nPlace one `trigger-despawn` TriggerZone two full modular chunks behind the camera so cleared space can be recycled. Keep all generated obstacle centers on one depth plane and derive gap spacing from current forward speed with the Infinite Runner reaction-time rule. No pickup placement is required.\n\n## Layout components\nBuild one narrow side-view flight corridor in open space, a short visible sequence of modular chunks, one paired obstacle gate per chunk, vertically offset gaps, a fixed depth plane, and star-field or nebula surroundings that do not obstruct the route. The segment queue continues beyond the frame and has no finish.\n\n## Render order\nUse `topdown`: establish the aligned procedural chunk sequence first and then dress it as a dimensional outer-space scene; the plan is authoritative because segment pivots and clearable sequencing must remain valid, while this non-racing runner has no supported authored-plan generator.\n\n## Scale, theme, and pipeline cost\nUse medium scale for a representative visible run of several obstacle chunks with legible gaps. The theme is dimensional outer-space arcade flight. Use `P6` because endless segment alignment and obstacle spacing must be valid by construction; no `CHECK` is needed because movement is constrained to one non-self-occluding plane.",
   "secondary": [],
   "spec": {
+    "clarifications": [
+      {
+        "field": "shape",
+        "ask": "Making it 3D — does the bird stay on a single vertical plane like the original, or can it steer left and right through the obstacle field too?",
+        "answer": "Keep it on a single vertical plane like the original; the 3D treatment is for the space setting, models, and camera presentation.",
+        "source": "author"
+      },
+      {
+        "field": "goal",
+        "ask": "Is the score just distance travelled, or are there pickups along the way?",
+        "answer": "Score is based on distance travelled through the obstacles, with no pickups.",
+        "source": "author"
+      },
+      {
+        "field": "obstacle form",
+        "ask": "What physical obstacle should replace the unspecified reference-game barriers in outer space?",
+        "answer": "Use simple paired asteroid or sci-fi barrier columns with one clear vertical gap between each pair.",
+        "source": "agent_inferred"
+      },
+      {
+        "field": "visible extent",
+        "ask": "How should an endless game fit in one rendered scene?",
+        "answer": "Show a short representative queue of modular segments that continues procedurally beyond the visible frame.",
+        "source": "agent_inferred"
+      }
+    ],
+    "initial_scene_subprompt_enriched": "Create a 3D outer-space endless-runner scene constrained to one vertical movement plane. Arrange a short visible queue of repeating forward segments, each containing a pair of simple asteroid or sci-fi barrier columns with one clear vertical gap to fly through. Vary the gap height from segment to segment while keeping the route on the same depth plane and leaving no left-or-right steering space. Present dimensional models, lighting, stars, and space scenery around the plane without turning movement into free 3D flight. Do not add pickups; the visible challenge is continuous travel through obstacle gaps.",
     "genre": "Infinite Runner",
     "secondary": [],
     "shape": "lane-free",
@@ -27,25 +53,25 @@
     "options": [
       {
         "id": "chunk-modular",
-        "text": "Side-scrolling space segments whose forward entry and exit pivots align exactly.",
+        "text": "Deterministic forward modular segments in a short visible queue, with pivots aligned so the sequence continues procedurally beyond the frame without drift.",
         "visible": true,
         "count": -1
       },
       {
         "id": "obstacle-jump",
-        "text": "Repeated paired space obstacles with one traversable vertical gap between them.",
+        "text": "One paired obstacle gate per chunk: two simple asteroid or sci-fi barrier columns with a single clear vertical gap to fly through, with the gap height varying per segment while staying on one fixed depth plane and offering no left-right steering space.",
         "visible": true,
         "count": -1
       },
       {
         "id": "hazard-kill",
-        "text": "Solid obstacle bodies that end a run on contact.",
+        "text": "Collision with the obstacle columns is run-ending / lethal.",
         "visible": true,
         "count": -1
       },
       {
         "id": "trigger-despawn",
-        "text": "Cleanup volume behind the side-view camera and active segment queue.",
+        "text": "A cleanup/despawn TriggerZone placed behind the camera so cleared chunks can be recycled.",
         "visible": false,
         "count": 1
       }
@@ -53,77 +79,39 @@
     "layout_placement": [
       {
         "id": "trigger-despawn",
-        "text": "Cleanup volume behind the side-view camera and active segment queue.",
+        "text": "A cleanup/despawn TriggerZone placed behind the camera so cleared chunks can be recycled.",
         "count": 1,
-        "where": "A fixed distance behind the side-view camera and active segment queue."
+        "where": "Two full modular chunks behind the camera."
       }
     ],
     "layout": {
-      "composition": "Side-view frame with consistent forward travel across the image; the bird silhouette and upcoming opening remain clear against stars and distant cosmic scenery.",
-      "zones": [
-        {
-          "name": "Repeating course chunk queue",
-          "role": "Endless forward sequence of compact chunks containing open flight space and obstacle pairs.",
-          "where": "Across the side-view frame in the direction of travel.",
-          "size": "Small per chunk; endless assembled course."
-        },
-        {
-          "name": "Narrow vertical gameplay plane",
-          "role": "Confines continuous vertical steering and all traversable gaps to one plane.",
-          "where": "Centre of the side-view course.",
-          "size": "Narrow."
-        },
-        {
-          "name": "Cosmic backdrop",
-          "role": "Open starfield and distant cosmic scenery behind the gameplay plane.",
-          "where": "Background.",
-          "size": ""
-        }
-      ],
-      "paths": [
-        {
-          "from": "Repeating course chunk queue",
-          "to": "Repeating course chunk queue",
-          "kind": "track"
-        }
-      ],
-      "terrain": "Open starfield with distant cosmic scenery; no depth-layer routes, intersections, or dead ends.",
-      "props": [
-        {
-          "name": "Upper and lower space-themed obstacle pairs",
-          "count": -1,
-          "where": "Within every compact course chunk, framing one traversable vertical gap."
-        },
-        {
-          "name": "Three-dimensional cosmic rocks, structures, or energy formations",
-          "count": -1,
-          "where": "Dressing the corridor against the open starfield while gameplay remains on a single plane."
-        }
-      ],
-      "boundary": "Open cosmic space; gameplay is confined to one narrow vertical plane.",
-      "scale_band": "small",
-      "theme": "Bright 3D outer-space arcade flight."
+      "composition": "Side-view, narrow flight corridor presented in open space; a short visible sequence/queue of modular chunks extends forward and continues beyond the frame; star-field/nebula scenery surrounds the corridor but does not obstruct the route.",
+      "zones": [],
+      "paths": [],
+      "terrain": "",
+      "props": [],
+      "boundary": "Open outer space; no finish (endless continuation beyond the frame).",
+      "scale_band": "medium",
+      "theme": "Dimensional outer-space arcade flight endless runner constrained to a single vertical movement plane."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "Every generated gap and interval must remain clearable.",
+      "why": "Segment pivots and clearable sequencing/spacing must remain valid by construction (endless runner P6).",
       "set_piece": false
     },
     "route": [
       "P6"
     ],
-    "notes": [],
-    "scene_prompt": "Create a 3D outer-space flight course viewed from the side, with gameplay confined to a single vertical plane. A small flying bird character passes through a forward sequence of space-themed obstacles against an open cosmic backdrop."
+    "notes": []
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "1986e1975066",
-  "served_by": "subagent/genre-choice -> gateway/production/gpt-5.6-terra",
+  "pipeline_version": "48d4ff51304c",
+  "served_by": "subagent/genre-choice -> azure/gpt-5.2",
   "schema_degraded": false,
-  "reused_uprez": true,
   "order": "p6",
   "first": "topdown",
   "mapper_notes": []

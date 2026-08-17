@@ -6,7 +6,9 @@
 
 **Shape — pick one.**
 
-**Typical shapes.** `world-open` *(default)* · `world-hub-dungeon` · `world-open-biomes`
+**Typical shapes.** `world-open` **Single Contiguous Map** `P0` *(default)* · `world-hub-dungeon` **Hub and Dungeons** `P4` + `P3` · `world-open-biomes` **Open World with Biomes** `P4`
+
+**The bold name is `Type (Flavor Name)`, and the tag after it is the shape's route** — between them, everything `shape` and `pipeline` need at emit. Take both from here rather than loading `shapes.md`; where this genre rewords a shape, the name above is already its own.
 
 This genre words these its own way:
 

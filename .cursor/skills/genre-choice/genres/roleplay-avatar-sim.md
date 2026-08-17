@@ -6,7 +6,9 @@
 
 **Shape — pick one.** This is the housing model, and it is the single highest-cost decision in the genre.
 
-**Typical shapes.** `settlement-static` · `settlement-claimable` *(default)* · `settlement-buildable` · `wilderness-open` · `stage-runway` · `interior-single`
+**Typical shapes.** `settlement-static` **Zone (Static Settlement)** `P0` · `settlement-claimable` **Zone (Claimable Houses)** `P3` *(default)* · `settlement-buildable` **BuildZone (Personalized Plots)** `P3` · `wilderness-open` **Zone (Open Natural World)** `P0` · `stage-runway` **Zone (Stage and Dressing Rooms)** `P0` · `interior-single` **Zone (Single Interior)** `P0`
+
+**The bold name is `Type (Flavor Name)`, and the tag after it is the shape's route** — between them, everything `shape` and `pipeline` need at emit. Take both from here rather than loading `shapes.md`; where this genre rewords a shape, the name above is already its own.
 
 
 **Options** — combine freely on top of the chosen shape.

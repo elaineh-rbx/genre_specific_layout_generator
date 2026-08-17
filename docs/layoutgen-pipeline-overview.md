@@ -9,21 +9,21 @@ they are not the production workflow described here.
 
 ## One-paragraph version
 
-The Build Agent talks to the author, fixes the scene prompt, and runs a real Cursor agent
-that reads the full LayoutGen skills and decides the layout in prose. MapGen receives that
-fixed scene prompt and prose decision, then makes exactly **one text-model call** through
-Roblox LLM Gateway to transcribe the already-made decision into strict JSON. Python
-deterministically normalises the spec, derives execution policy, and assembles the image
-prompts. GPT Image 2 makes two image calls to produce an isometric and a top-down view.
-Image-to-layout later segments those images and stores the mask plus its JSON provenance.
+The Build Agent talks to the author and runs a real Cursor agent that reads the full
+LayoutGen skills. That agent combines the raw author prompt and intake answers into one
+enriched image-ready scene body while deciding the layout in prose. MapGen receives only
+that self-contained prose decision, then makes exactly **one text-model call** through
+Roblox LLM Gateway to transcribe it into strict JSON. Python deterministically normalises
+the spec, derives execution policy, and assembles the image prompts. GPT Image 2 makes two
+image calls to produce an isometric and a top-down view. Image-to-layout later segments
+those images and stores the mask plus its JSON provenance.
 
 The core contract is:
 
 ```text
 author
   -> Build Agent intake
-  -> fixed scene prompt
-  -> Cursor agent decision in prose
+  -> Cursor agent decision in prose with one enriched scene body
   -> one strict Gateway transcription call
   -> deterministic Python
   -> two GPT Image 2 calls
@@ -34,19 +34,14 @@ author
 
 | Owner | Responsibilities | Output |
 | --- | --- | --- |
-| Build Agent | Conversational intake, clarification, scene extraction, and the real Cursor-agent reasoning stage | Fixed scene prompt plus prose agent decision |
+| Build Agent | Conversational intake, clarification, and the real Cursor-agent reasoning stage | Raw author input and answers become one self-contained prose decision |
 | MapGen | One strict prose-to-spec call, deterministic normalisation, route/order policy, prompt assembly, and two image calls | Structured spec, prompts, isometric PNG, top-down PNG |
 | Downstream image-to-layout | Semantic planning, mask generation, segmentation provenance, and later layout reconstruction | Segmentation mask and JSON artifacts |
 
-The handoff is **not only a raw PRD** and it is **not only a scene-prompt string**. The
-production handoff must carry:
-
-1. the fixed scene prompt;
-2. the Cursor agent's prose decision.
-
-The Cursor agent may read the original author prompt and intake answers while reasoning.
-The Gateway transcription call does not need them as a separate deciding input: it
-receives the prose decision and its fixed scene prompt.
+The production handoff is the Cursor agent's self-contained prose decision. The Cursor
+agent reads the original author prompt and intake answers while reasoning, and writes one
+enriched image-ready scene body into that decision. The Gateway transcription call does
+not receive a second scene-description input.
 
 ## Model-call budget
 
@@ -57,7 +52,7 @@ receives the prose decision and its fixed scene prompt.
 | Text model | **1** | Strict prose-to-layout-spec transcription |
 | Image model | **2** | First view, then reference-conditioned second view |
 
-The one text call is `blob.decouple(agent_prose, scene_prompt)`.
+The one text call is `blob.decouple(agent_prose)`.
 
 It requires provider-enforced JSON Schema. If the Gateway does not support the schema,
 the call fails closed. This production handoff does not retry with unconstrained prose
@@ -85,10 +80,9 @@ flowchart TD
 
     subgraph BA["BUILD AGENT"]
         I["Conversational intake<br/>ask only layout-changing questions"]
-        S["Fix the scene prompt<br/>space only"]
-        A["Real Cursor agent<br/>reads genre, shape, and layout-blob skills"]
-        P[/"Prose agent decision<br/>never JSON"/]
-        I --> S --> A --> P
+        A["Real Cursor agent<br/>reads uprez, genre, shape,<br/>and layout-blob skills"]
+        P[/"Prose agent decision<br/>with enriched image-ready body<br/>never JSON"/]
+        I --> A --> P
     end
 
     U --> I
@@ -107,7 +101,6 @@ flowchart TD
         O --> LAY
     end
 
-    S --> T
     P --> T
 
     STD --> R([Isometric + top-down PNGs])
@@ -119,26 +112,19 @@ flowchart TD
     SEG --> BUILD
 ```
 
-## Stage 0 — Build Agent intake and fixed scene prompt
+## Stage 0 — Build Agent intake
 
 **Owner:** Build Agent.
 
 The Build Agent is the only component that talks to the author. It uses
-`.cursor/skills/layout-intake/` for dispatch,
-`.cursor/skills/uprez-prompt/` for the fixed scene prompt, and
-`.cursor/skills/genre-choice/` when intake routes a layout concern there. Goal or win
-condition is not collected unless it changes spatial shape; gameplay rules do not belong
-in the scene prompt.
+`.cursor/skills/layout-intake/` for dispatch and `.cursor/skills/genre-choice/` when
+intake routes a layout concern there. Goal or win condition is not collected unless it
+changes spatial shape.
 
-The Build Agent produces a fixed scene prompt describing spaces, paths, terrain, visible
-props, scale, and composition. Rules, UI, economy, and non-spatial mechanics are removed.
-
-The corrected corpus inputs were seeded by `tools/make_agent_inputs.py`, which projected
-`results/routing/answered/` and copied fixed `scene_prompt` values from historical
-`results/routing/blob/` records into `results/routing/agent_input/`. The self-contained
-`agent_blob/*.md` artifacts are now authoritative: `build_agent_arm.py` reads their
-`# Scene prompt` sections directly and verifies them against `agent_input/*.json`. It
-does not read or rerun a historical arm.
+The corrected corpus inputs are seeded by `tools/make_agent_inputs.py`, which projects
+only the raw `source` and author `answers` from `results/routing/answered/` into
+`results/routing/agent_input/`. It does not copy a model-written intermediate or expose
+another arm's classification.
 
 ## Stage 1 — Cursor agent decides in prose
 
@@ -157,18 +143,15 @@ The agent contract is in `tools/agent_task.md`. The agent reads:
 6. `.cursor/skills/layout-blob/SKILL.md`.
 
 Per scene it reads `results/routing/agent_input/<SCENE>.json`, which contains the original
-source prompt, intake answers, and fixed `scene_prompt`. It writes:
+source prompt and intake answers. It writes:
 
 ```text
 results/routing/agent_blob/<SCENE>.md
 ```
 
-The artifact has exactly two outer sections:
+The artifact has one outer section:
 
 ```markdown
-# Scene prompt
-<fixed scene prompt, verbatim>
-
 # Agent decision
 <nine prose sections>
 ```
@@ -189,10 +172,11 @@ The first section records every layout-changing question and answer used. Existi
 answers are labelled `author`; in an offline batch, necessary unanswered questions receive
 the narrowest grounded answer and are labelled `agent_inferred`. The second section is one
 or two image-ready paragraphs synthesized from the original message, those resolutions,
-the fixed scene prompt, and the visible spatial decisions the agent makes. Author answers
-override conflicting details in the original message. The agent names canonical IDs in
-backticks in the remaining sections and writes English prose rather than JSON. The
-separation is deliberate: the agent decides; the Gateway only encodes the decision.
+and the visible spatial decisions the agent makes. This enriched prompt is the sole scene
+body accepted by rendering. Author answers override conflicting details in the original
+message. The agent names canonical IDs in backticks in the remaining sections and writes
+English prose rather than JSON. The separation is deliberate: the agent decides; the
+Gateway only encodes the decision.
 
 ## Stage 2 — One strict Gateway transcription call
 
@@ -201,7 +185,7 @@ separation is deliberate: the agent decides; the Gateway only encodes the decisi
 `tools/build_agent_arm.py` extracts only the `# Agent decision` section and calls:
 
 ```python
-spec = blob.decouple(prose_decision, scene_prompt)
+spec = blob.decouple(prose_decision)
 ```
 
 `blob.decouple` sends:
@@ -209,7 +193,6 @@ spec = blob.decouple(prose_decision, scene_prompt)
 - the transcription-only system instruction;
 - the canonical menu;
 - the prose decision;
-- the fixed scene prompt for context;
 - `LAYOUT_SPEC_SCHEMA` as a required strict response schema.
 
 The transcriber must:
@@ -269,9 +252,8 @@ the deterministic camera/style wrapper appropriate to the selected order. The en
 paragraph supplies scene-specific context; the catalogue addendum is retained as a
 coverage guarantee so a selected layout rule cannot disappear during enrichment.
 
-Specs created before this contract remain readable: when the enriched field is absent or
-empty, the mapper falls back to the legacy fixed-scene-prompt plus catalogue-addendum
-assembly until the agent artifact is regenerated.
+The enriched field is mandatory. If it is absent or empty, the mapper fails closed rather
+than silently substituting a different scene description.
 
 Only visible geometry reaches the image prompts. Trigger volumes, spawn markers,
 checkpoints, pickups, emitters, and other post-segmentation work remain in
@@ -490,8 +472,8 @@ The intended Cube/MapGen boundary is:
 
 ```text
 Build Agent supplies:
-  fixed scene prompt
-  + Cursor-agent prose decision
+  Cursor-agent prose decision
+  including the enriched image-ready scene body
 
 MapGen performs:
   one strict prose-to-spec activity

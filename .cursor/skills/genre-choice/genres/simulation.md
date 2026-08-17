@@ -6,7 +6,9 @@
 
 **Shape — pick one.**
 
-**Typical shapes.** `plot-isolated` · `plot-shared` · `world-open` *(default)* · `world-underground` · `tier-ladder` · `vehicle-deck`
+**Typical shapes.** `plot-isolated` **BuildZone (Isolated Per-Player Plots)** `P0` · `plot-shared` **BuildZone (Shared Team Plot)** `P0` · `world-open` **Zone (Shared Persistent World)** `P0` *(default)* · `world-underground` **Zone (Surface and Underground Layers)** `P2` + `P3` · `tier-ladder` **Zone (Tiered Training Grounds)** `P0` · `vehicle-deck` **Zone (Vehicle Deck)** `P0`
+
+**The bold name is `Type (Flavor Name)`, and the tag after it is the shape's route** — between them, everything `shape` and `pipeline` need at emit. Take both from here rather than loading `shapes.md`; where this genre rewords a shape, the name above is already its own.
 
 This genre words these its own way:
 

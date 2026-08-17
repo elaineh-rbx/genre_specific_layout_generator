@@ -125,7 +125,7 @@ function render(id){const s=SCENES.find(x=>x.id===id);if(!s)return;
  $("meta").innerHTML=[["Scene",s.id],["August 6 genre",old.genre||"—"],
  ["August 13 genre",s.genre||"No Genre"]].map(([k,v])=>
  `<span class="chip"><strong>${esc(k)}:</strong> ${esc(v)}</span>`).join("");
- $("prompt").textContent=s.prompt||s.scene_prompt||"";
+ $("prompt").textContent=s.prompt||"";
  const oldSelections=[
   {name:"Genre",id:old.genre||"unknown",notes:old.variation||"No subgenre recorded",
     quote:old.implied?`Inferred template: ${old.implied}`:""},

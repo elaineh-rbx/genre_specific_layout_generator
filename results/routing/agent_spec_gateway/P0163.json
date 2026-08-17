@@ -13,130 +13,90 @@
       "answer": "The player is running through the endless hallway to see how far they can get before the monsters catch them."
     }
   ],
-  "scene_prompt": "Create a 3D horror game map showing an endless, cramped hallway packed with genuinely frightening monsters, with a continuous forward-running path through the corridor.",
-  "blob": "## Genre\nThe dominant genre is Infinite Runner, with Survival secondary. Continuous forward running and distance reached define the game, while frightening monsters provide the pursuing and contact threats.\n\n## Shape and preset\nUse `lane-free` for continuous lateral steering within one cramped forward corridor rather than rigid snap lanes. The preset is Chase Runner, augmented with deterministic hallway chunks because the route is explicitly endless.\n\n## Config requirements\nDraw `chunk-modular` as reusable hallway segments whose entry and exit pivots align on one forward axis without drift. Use `hazard-kill` for frightening monsters that end the run when they catch or touch the player. Draw `obstacle-moving` as monsters crossing, lunging into, or partially blocking the forward route, with spacing based on current speed and at least half a second of reaction time. Use `barrier-horizon` as darkness, haze, and occasional corridor bends that conceal newly appearing chunks. Add `marker-distance` as grim wall markings or numbered maintenance signs showing forward progress.\n\n## Layout requirements\nPlace `spawner-npc` origins for hostile monsters within repeated hallway chunks, offset beyond the immediate visible horizon and never creating an impossible full-width blockade. Place `trigger-despawn` as a cleanup volume a fixed safe distance behind the camera and player. Keep monster emergence rules and moving-obstacle positions tied to chunk sockets so each generated sequence remains clearable. No exit, winner zone, collectible, checkpoint, or final destination is required because the run ends only when a monster catches the player.\n\n## Layout components\nBuild a library of cramped enclosed hallway chunks with a continuous forward floor, tight walls, low ceiling, occasional shallow side recesses, and no branching destination. Populate the chunk set with frightening monster silhouettes, crossing points, partial obstructions, dark bends, and repeated distance markings. Every segment must connect cleanly to the next while preserving avatar clearance and an evasive lateral line. The hallway shell is the boundary, and composition should force a narrow forward vanishing point swallowed by darkness.\n\n## Render order\nRender `topdown` first and make it authoritative, then derive the isometric dressing; invalid chunk alignment or an unclearable monster arrangement would break the endless run.\n\n## Scale, theme, and pipeline cost\nUse a huge scale in experienced distance because the hallway generates endlessly, although each authored chunk is small. The theme is claustrophobic, genuinely frightening corridor horror. Route with `P6`, forced both by the Infinite Runner genre and by deterministic clearable chunk construction.",
-  "agent_artifact": "# Scene prompt\nCreate a 3D horror game map showing an endless, cramped hallway packed with genuinely frightening monsters, with a continuous forward-running path through the corridor.\n\n# Agent decision\n## Genre\nThe dominant genre is Infinite Runner, with Survival secondary. Continuous forward running and distance reached define the game, while frightening monsters provide the pursuing and contact threats.\n\n## Shape and preset\nUse `lane-free` for continuous lateral steering within one cramped forward corridor rather than rigid snap lanes. The preset is Chase Runner, augmented with deterministic hallway chunks because the route is explicitly endless.\n\n## Config requirements\nDraw `chunk-modular` as reusable hallway segments whose entry and exit pivots align on one forward axis without drift. Use `hazard-kill` for frightening monsters that end the run when they catch or touch the player. Draw `obstacle-moving` as monsters crossing, lunging into, or partially blocking the forward route, with spacing based on current speed and at least half a second of reaction time. Use `barrier-horizon` as darkness, haze, and occasional corridor bends that conceal newly appearing chunks. Add `marker-distance` as grim wall markings or numbered maintenance signs showing forward progress.\n\n## Layout requirements\nPlace `spawner-npc` origins for hostile monsters within repeated hallway chunks, offset beyond the immediate visible horizon and never creating an impossible full-width blockade. Place `trigger-despawn` as a cleanup volume a fixed safe distance behind the camera and player. Keep monster emergence rules and moving-obstacle positions tied to chunk sockets so each generated sequence remains clearable. No exit, winner zone, collectible, checkpoint, or final destination is required because the run ends only when a monster catches the player.\n\n## Layout components\nBuild a library of cramped enclosed hallway chunks with a continuous forward floor, tight walls, low ceiling, occasional shallow side recesses, and no branching destination. Populate the chunk set with frightening monster silhouettes, crossing points, partial obstructions, dark bends, and repeated distance markings. Every segment must connect cleanly to the next while preserving avatar clearance and an evasive lateral line. The hallway shell is the boundary, and composition should force a narrow forward vanishing point swallowed by darkness.\n\n## Render order\nRender `topdown` first and make it authoritative, then derive the isometric dressing; invalid chunk alignment or an unclearable monster arrangement would break the endless run.\n\n## Scale, theme, and pipeline cost\nUse a huge scale in experienced distance because the hallway generates endlessly, although each authored chunk is small. The theme is claustrophobic, genuinely frightening corridor horror. Route with `P6`, forced both by the Infinite Runner genre and by deterministic clearable chunk construction.\n",
-  "agent_notes": "## Genre\nThe dominant genre is Infinite Runner, with Survival secondary. Continuous forward running and distance reached define the game, while frightening monsters provide the pursuing and contact threats.\n\n## Shape and preset\nUse `lane-free` for continuous lateral steering within one cramped forward corridor rather than rigid snap lanes. The preset is Chase Runner, augmented with deterministic hallway chunks because the route is explicitly endless.\n\n## Config requirements\nDraw `chunk-modular` as reusable hallway segments whose entry and exit pivots align on one forward axis without drift. Use `hazard-kill` for frightening monsters that end the run when they catch or touch the player. Draw `obstacle-moving` as monsters crossing, lunging into, or partially blocking the forward route, with spacing based on current speed and at least half a second of reaction time. Use `barrier-horizon` as darkness, haze, and occasional corridor bends that conceal newly appearing chunks. Add `marker-distance` as grim wall markings or numbered maintenance signs showing forward progress.\n\n## Layout requirements\nPlace `spawner-npc` origins for hostile monsters within repeated hallway chunks, offset beyond the immediate visible horizon and never creating an impossible full-width blockade. Place `trigger-despawn` as a cleanup volume a fixed safe distance behind the camera and player. Keep monster emergence rules and moving-obstacle positions tied to chunk sockets so each generated sequence remains clearable. No exit, winner zone, collectible, checkpoint, or final destination is required because the run ends only when a monster catches the player.\n\n## Layout components\nBuild a library of cramped enclosed hallway chunks with a continuous forward floor, tight walls, low ceiling, occasional shallow side recesses, and no branching destination. Populate the chunk set with frightening monster silhouettes, crossing points, partial obstructions, dark bends, and repeated distance markings. Every segment must connect cleanly to the next while preserving avatar clearance and an evasive lateral line. The hallway shell is the boundary, and composition should force a narrow forward vanishing point swallowed by darkness.\n\n## Render order\nRender `topdown` first and make it authoritative, then derive the isometric dressing; invalid chunk alignment or an unclearable monster arrangement would break the endless run.\n\n## Scale, theme, and pipeline cost\nUse a huge scale in experienced distance because the hallway generates endlessly, although each authored chunk is small. The theme is claustrophobic, genuinely frightening corridor horror. Route with `P6`, forced both by the Infinite Runner genre and by deterministic clearable chunk construction.",
-  "secondary": [
-    "Survival"
-  ],
+  "blob": "## Clarifications resolved\n- [author] theme — Q: Horror was inferred from the cramped monster hallway - should the monsters be genuinely frightening, or goofy and cartoonish? A: Make them genuinely frightening; this is a horror hallway.\n- [author] goal — Q: What is the player doing in the hallway - running from the monsters, fighting through them, or seeing how far they get? A: The player is running through the endless hallway to see how far they can get before the monsters catch them.\n- [agent_inferred] scale — Q: How should an endless hallway fit into one generated scene? A: Build one small, cramped, repeatable hallway section that continues seamlessly in both the visual framing and the runtime chunk sequence.\n\n## Enriched image prompt\nCreate a genuinely frightening horror hallway as a small, cramped interior segment designed to continue endlessly. Keep the corridor narrow and oppressive, with repeating structural bays, no visible final exit, and a forward path that remains clear enough to run while allowing frightening monsters to crowd the pursuit space. Frame the far end so the hallway visibly continues beyond the current section, and make both ends align cleanly for seamless repetition. Avoid side rooms or an invented destination; the entire map is the unending corridor.\n\n## Genre\nSurvival is the sole genre, specifically endless chase horror.\n\n## Shape and preset\nUse `interior-endless`, named Endless Interior, for a corridor sequence with no final boundary or exit. This uses the Liminal Horror preset's shape while dropping its unrequested collectibles and hiding spaces.\n\n## Config requirements\nUse shared `chunk-modular`, taken from outside Survival's shortlist, for repeatable hallway sections whose entrance and exit pivots align into one seamless endless route. The visible corridor should remain cramped but should not contain unrelated scenery or rooms.\n\n## Layout requirements\nPlace `spawner-npc` Spawners at controlled intervals behind and within newly activated hallway sections so multiple frightening monsters create sustained pursuit without blocking the forward route at the moment a chunk appears. No collectibles, checkpoints, or escape gate are requested.\n\n## Layout components\nThe build is one narrow enclosed hallway chunk composed of repeating structural bays. Its entrance and exit share the same centreline, width, floor height, and clear running envelope so copies can extend indefinitely. The foreground reads as the traversed section, the midground as the active chase space, and the background as the continuing corridor. Solid walls and ceiling enclose the entire play space; there are no dead-end branches, final room, or exterior.\n\n## Render order\nUse `topdown`: establish the continuous, aligned corridor plan before dressing the isometric view, because a disconnected or blocked chunk would make endless running unplayable and this is not a supported maze or racing route for `authored_plan`.\n\n## Scale, theme, and pipeline cost\nScale is small, driven by the cramped hallway and the legibility of one repeatable active chunk rather than the runtime's infinite extent. The theme is genuinely frightening enclosed horror. Use `P6` because the endless chunk connections and traversable corridor must remain valid by construction.",
+  "agent_artifact": "# Agent decision\n\n## Clarifications resolved\n- [author] theme — Q: Horror was inferred from the cramped monster hallway - should the monsters be genuinely frightening, or goofy and cartoonish? A: Make them genuinely frightening; this is a horror hallway.\n- [author] goal — Q: What is the player doing in the hallway - running from the monsters, fighting through them, or seeing how far they get? A: The player is running through the endless hallway to see how far they can get before the monsters catch them.\n- [agent_inferred] scale — Q: How should an endless hallway fit into one generated scene? A: Build one small, cramped, repeatable hallway section that continues seamlessly in both the visual framing and the runtime chunk sequence.\n\n## Enriched image prompt\nCreate a genuinely frightening horror hallway as a small, cramped interior segment designed to continue endlessly. Keep the corridor narrow and oppressive, with repeating structural bays, no visible final exit, and a forward path that remains clear enough to run while allowing frightening monsters to crowd the pursuit space. Frame the far end so the hallway visibly continues beyond the current section, and make both ends align cleanly for seamless repetition. Avoid side rooms or an invented destination; the entire map is the unending corridor.\n\n## Genre\nSurvival is the sole genre, specifically endless chase horror.\n\n## Shape and preset\nUse `interior-endless`, named Endless Interior, for a corridor sequence with no final boundary or exit. This uses the Liminal Horror preset's shape while dropping its unrequested collectibles and hiding spaces.\n\n## Config requirements\nUse shared `chunk-modular`, taken from outside Survival's shortlist, for repeatable hallway sections whose entrance and exit pivots align into one seamless endless route. The visible corridor should remain cramped but should not contain unrelated scenery or rooms.\n\n## Layout requirements\nPlace `spawner-npc` Spawners at controlled intervals behind and within newly activated hallway sections so multiple frightening monsters create sustained pursuit without blocking the forward route at the moment a chunk appears. No collectibles, checkpoints, or escape gate are requested.\n\n## Layout components\nThe build is one narrow enclosed hallway chunk composed of repeating structural bays. Its entrance and exit share the same centreline, width, floor height, and clear running envelope so copies can extend indefinitely. The foreground reads as the traversed section, the midground as the active chase space, and the background as the continuing corridor. Solid walls and ceiling enclose the entire play space; there are no dead-end branches, final room, or exterior.\n\n## Render order\nUse `topdown`: establish the continuous, aligned corridor plan before dressing the isometric view, because a disconnected or blocked chunk would make endless running unplayable and this is not a supported maze or racing route for `authored_plan`.\n\n## Scale, theme, and pipeline cost\nScale is small, driven by the cramped hallway and the legibility of one repeatable active chunk rather than the runtime's infinite extent. The theme is genuinely frightening enclosed horror. Use `P6` because the endless chunk connections and traversable corridor must remain valid by construction.\n",
+  "agent_notes": "## Clarifications resolved\n- [author] theme — Q: Horror was inferred from the cramped monster hallway - should the monsters be genuinely frightening, or goofy and cartoonish? A: Make them genuinely frightening; this is a horror hallway.\n- [author] goal — Q: What is the player doing in the hallway - running from the monsters, fighting through them, or seeing how far they get? A: The player is running through the endless hallway to see how far they can get before the monsters catch them.\n- [agent_inferred] scale — Q: How should an endless hallway fit into one generated scene? A: Build one small, cramped, repeatable hallway section that continues seamlessly in both the visual framing and the runtime chunk sequence.\n\n## Enriched image prompt\nCreate a genuinely frightening horror hallway as a small, cramped interior segment designed to continue endlessly. Keep the corridor narrow and oppressive, with repeating structural bays, no visible final exit, and a forward path that remains clear enough to run while allowing frightening monsters to crowd the pursuit space. Frame the far end so the hallway visibly continues beyond the current section, and make both ends align cleanly for seamless repetition. Avoid side rooms or an invented destination; the entire map is the unending corridor.\n\n## Genre\nSurvival is the sole genre, specifically endless chase horror.\n\n## Shape and preset\nUse `interior-endless`, named Endless Interior, for a corridor sequence with no final boundary or exit. This uses the Liminal Horror preset's shape while dropping its unrequested collectibles and hiding spaces.\n\n## Config requirements\nUse shared `chunk-modular`, taken from outside Survival's shortlist, for repeatable hallway sections whose entrance and exit pivots align into one seamless endless route. The visible corridor should remain cramped but should not contain unrelated scenery or rooms.\n\n## Layout requirements\nPlace `spawner-npc` Spawners at controlled intervals behind and within newly activated hallway sections so multiple frightening monsters create sustained pursuit without blocking the forward route at the moment a chunk appears. No collectibles, checkpoints, or escape gate are requested.\n\n## Layout components\nThe build is one narrow enclosed hallway chunk composed of repeating structural bays. Its entrance and exit share the same centreline, width, floor height, and clear running envelope so copies can extend indefinitely. The foreground reads as the traversed section, the midground as the active chase space, and the background as the continuing corridor. Solid walls and ceiling enclose the entire play space; there are no dead-end branches, final room, or exterior.\n\n## Render order\nUse `topdown`: establish the continuous, aligned corridor plan before dressing the isometric view, because a disconnected or blocked chunk would make endless running unplayable and this is not a supported maze or racing route for `authored_plan`.\n\n## Scale, theme, and pipeline cost\nScale is small, driven by the cramped hallway and the legibility of one repeatable active chunk rather than the runtime's infinite extent. The theme is genuinely frightening enclosed horror. Use `P6` because the endless chunk connections and traversable corridor must remain valid by construction.",
+  "secondary": [],
   "spec": {
-    "genre": "Infinite Runner",
-    "secondary": [
-      "Survival"
+    "clarifications": [
+      {
+        "field": "theme",
+        "ask": "Horror was inferred from the cramped monster hallway - should the monsters be genuinely frightening, or goofy and cartoonish?",
+        "answer": "Make them genuinely frightening; this is a horror hallway.",
+        "source": "author"
+      },
+      {
+        "field": "goal",
+        "ask": "What is the player doing in the hallway - running from the monsters, fighting through them, or seeing how far they get?",
+        "answer": "The player is running through the endless hallway to see how far they can get before the monsters catch them.",
+        "source": "author"
+      },
+      {
+        "field": "scale",
+        "ask": "How should an endless hallway fit into one generated scene?",
+        "answer": "Build one small, cramped, repeatable hallway section that continues seamlessly in both the visual framing and the runtime chunk sequence.",
+        "source": "agent_inferred"
+      }
     ],
-    "shape": "lane-free",
-    "preset": "Chase Runner",
+    "initial_scene_subprompt_enriched": "Create a genuinely frightening horror hallway as a small, cramped interior segment designed to continue endlessly. Keep the corridor narrow and oppressive, with repeating structural bays, no visible final exit, and a forward path that remains clear enough to run while allowing frightening monsters to crowd the pursuit space. Frame the far end so the hallway visibly continues beyond the current section, and make both ends align cleanly for seamless repetition. Avoid side rooms or an invented destination; the entire map is the unending corridor.",
+    "genre": "Survival",
+    "secondary": [],
+    "shape": "interior-endless",
+    "preset": "none",
     "axes": {},
     "options": [
       {
         "id": "chunk-modular",
-        "text": "Reusable hallway segments whose entry and exit pivots align on one forward axis without drift.",
+        "text": "Repeatable hallway chunks with entrance/exit pivots aligned so the corridor can extend seamlessly as an endless route.",
         "visible": true,
         "count": -1
       },
       {
-        "id": "hazard-kill",
-        "text": "Frightening monsters that end the run when they catch or touch the player.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "obstacle-moving",
-        "text": "Monsters crossing, lunging into, or partially blocking the forward route, with spacing based on current speed and at least half a second of reaction time.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "barrier-horizon",
-        "text": "Darkness, haze, and occasional corridor bends that conceal newly appearing chunks.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "marker-distance",
-        "text": "Grim wall markings or numbered maintenance signs showing forward progress.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "trigger-despawn",
-        "text": "A cleanup volume a fixed safe distance behind the camera and player.",
+        "id": "spawner-npc",
+        "text": "Spawners placed at controlled intervals behind and within newly activated hallway sections so multiple frightening monsters sustain pursuit without blocking the forward route at chunk spawn.",
         "visible": false,
         "count": -1
       }
     ],
     "layout_placement": [
       {
-        "id": "trigger-despawn",
-        "text": "A cleanup volume a fixed safe distance behind the camera and player.",
+        "id": "spawner-npc",
+        "text": "Spawners placed at controlled intervals behind and within newly activated hallway sections so multiple frightening monsters sustain pursuit without blocking the forward route at chunk spawn.",
         "count": -1,
-        "where": "A fixed safe distance behind the camera and player."
+        "where": "behind and within newly activated hallway sections, at controlled intervals"
       }
     ],
     "layout": {
-      "composition": "A narrow forward vanishing point swallowed by darkness.",
-      "zones": [
-        {
-          "name": "Repeated hallway chunks",
-          "role": "Endless forward-running corridor segments containing monster silhouettes, crossing points, partial obstructions, dark bends, and distance markings.",
-          "where": "Along the continuous forward route.",
-          "size": "Each authored chunk is small; the experienced distance is huge."
-        },
-        {
-          "name": "Shallow side recesses",
-          "role": "Occasional recesses within the hallway shell.",
-          "where": "Along the hallway chunks.",
-          "size": ""
-        }
-      ],
-      "paths": [
-        {
-          "from": "Repeated hallway chunks",
-          "to": "Repeated hallway chunks",
-          "kind": "corridor"
-        }
-      ],
-      "terrain": "A continuous forward floor inside cramped enclosed hallways, with tight walls, a low ceiling, occasional shallow side recesses, dark bends, and preserved avatar clearance with an evasive lateral line.",
-      "props": [
-        {
-          "name": "Frightening monster silhouettes",
-          "count": -1,
-          "where": "Within the chunk set, at crossing points and partial obstructions."
-        },
-        {
-          "name": "Grim wall markings or numbered maintenance signs",
-          "count": -1,
-          "where": "Repeated along the hallway chunks."
-        }
-      ],
-      "boundary": "The hallway shell is the boundary, with no branching destination.",
-      "scale_band": "huge",
-      "theme": "Claustrophobic, genuinely frightening corridor horror."
+      "composition": "Foreground reads as the traversed hallway section; midground reads as the active chase space; background frames the continuing corridor beyond the current chunk with no visible final exit.",
+      "zones": [],
+      "paths": [],
+      "terrain": "",
+      "props": [],
+      "boundary": "Solid walls and ceiling enclose the entire play space; no exterior, no dead-end branches, and no final room or exit.",
+      "scale_band": "small",
+      "theme": "genuinely frightening enclosed horror hallway"
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "invalid chunk alignment or an unclearable monster arrangement would break the endless run.",
+      "why": "a disconnected or blocked chunk would make endless running unplayable",
       "set_piece": false
     },
     "route": [
       "P6"
     ],
     "notes": [
-      "`spawner-npc` was named in the layout requirements but is not an option in the dominant Infinite Runner menu, so it was dropped.",
-      "No exit, winner zone, collectible, checkpoint, or final destination was required."
-    ],
-    "scene_prompt": "Create a 3D horror game map showing an endless, cramped hallway packed with genuinely frightening monsters, with a continuous forward-running path through the corridor."
+      "Preset was not named explicitly; blob says it uses the Liminal Horror preset's shape while dropping other elements, so preset recorded as 'none'.",
+      "The blob references monsters in the corridor, but no canonical option for monsters-as-geometry was specified; only spawners were specified for layout."
+    ]
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "1986e1975066",
-  "served_by": "subagent/genre-choice -> gateway/production/gpt-5.6-terra",
+  "pipeline_version": "48d4ff51304c",
+  "served_by": "subagent/genre-choice -> azure/gpt-5.2",
   "schema_degraded": false,
-  "reused_uprez": true,
   "order": "p6",
   "first": "topdown",
   "mapper_notes": []

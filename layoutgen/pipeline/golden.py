@@ -1,8 +1,9 @@
 """Render the production ``agent_gateway`` specs.
 
-The Build Agent and Cursor agents have already fixed the scene prompt and decided each
-layout in prose. ``tools/build_agent_arm.py`` transcribes those decisions once through
-the Gateway; this runner performs deterministic assembly and the two image calls.
+The Cursor agents have already combined author input, intake answers, and layout choices
+into self-contained prose decisions with enriched image-ready bodies.
+``tools/build_agent_arm.py`` transcribes those decisions once through the Gateway; this
+runner performs deterministic assembly and the two image calls.
 
 Usage:
     python -m layoutgen.pipeline.golden
@@ -67,12 +68,12 @@ class Row:
     addendum: str
     iso_prompt: str
     td_prompt: str
+    prompt_profile: str = "default"
     #: Per-scene option wording and axis answers retained for provenance.
     edits: dict = field(default_factory=dict)
     axes: dict = field(default_factory=dict)
     #: Cursor-agent reasoning and post-segmentation placement requirements.
     placements: list[dict] = field(default_factory=list)
-    scene_prompt: str = ""
     blob: str = ""
     why: str = ""
     iso: str = ""
@@ -134,8 +135,8 @@ def _manifest() -> dict[str, dict]:
     prompt that describes the map in a language the rest of it does not use.
 
     The translation is literal - see `tools/translate_sources.py`. Production rendering
-    uses the fixed `scene_prompt` carried by the structured agent spec; this manifest
-    remains the source of scene titles and original-prompt provenance.
+    uses the enriched image-ready field carried by the structured agent spec; this
+    manifest remains the source of scene titles and original-prompt provenance.
     """
     english = _english()
     out = {}
@@ -181,11 +182,12 @@ def agent_rows(specs: pathlib.Path = AGENT_GATEWAY) -> list[Row]:
             genre=spec.get("genre", ""), preset=spec.get("preset") or "none",
             shape=spec.get("shape") or "", shape_label=shape.label if shape else "",
             options=[o["id"] for o in spec.get("options") or []],
+            edits={o["id"]: o.get("text", "") for o in spec.get("options") or []
+                   if (o.get("text") or "").strip()},
             held=built["withheld"], placements=built["placements"],
-            # No extras: every pick this arm makes has a row in the tables, and the
-            # per-scene wording it wrote for them is not sent, so recording it here -
-            # where the pages read `extras` as text that was injected - would claim
-            # something reached the image that did not. It stays on the spec.
+            # No extras: every pick this arm makes has a row in the tables. Scene-specific
+            # option wording is recorded in `edits` and injected through the canonical
+            # addendum, while `extras` remains reserved for uncatalogued freeform picks.
             extras=[],
             confidence="", evidence=built["why"],
             route=built["route"], order=built["order"],
@@ -193,8 +195,8 @@ def agent_rows(specs: pathlib.Path = AGENT_GATEWAY) -> list[Row]:
             iso_prompt=built["iso"] or "",
             td_prompt=(built["plan"] if built["order"] == "p6"
                        else built["topdown"]) or "",
-            scene_prompt=d.get("scene_prompt", ""), blob=d.get("blob", ""),
-            why=built["why"],
+            prompt_profile=built["prompt_profile"],
+            blob=d.get("blob", ""), why=built["why"],
             _spec={**spec, "mode": built["order"], "kind": built["kind"] or "maze",
                    **cv.track_params(spec.get("genre", ""), spec.get("shape") or ""),
                    "stageB": True}))

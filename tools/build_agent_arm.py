@@ -7,9 +7,9 @@ through the LLM Gateway transcribes the already-made decisions into structured J
 then derives render order and assembles the image prompts through the same mapper every
 other arm uses.
 
-The prose artifact is self-contained: its ``# Scene prompt`` section is the fixed Build
-Agent handoff, and its ``# Agent decision`` section is the Cursor agent's reasoning. This
-builder does not read or rerun any historical arm.
+The prose artifact is self-contained: its ``# Agent decision`` combines the raw author
+prompt, intake answers, and layout choices into the nine-section handoff. This builder
+does not read or rerun any historical arm.
 
 The agent records its requested order and route in prose. The transcriber copies both,
 then deterministic policy derives the executed order so an arbitrary prose sentence
@@ -48,6 +48,10 @@ INPUT = paths.ROUTING / "agent_input"       # source + answers used by the agent
 
 SKILL = pathlib.Path(__file__).resolve().parent.parent / ".cursor" / "skills" / "genre-choice"
 TASK = pathlib.Path(__file__).resolve().parent / "agent_task.md"
+INTAKE_SKILL = pathlib.Path(__file__).resolve().parent.parent / \
+    ".cursor" / "skills" / "layout-intake" / "SKILL.md"
+UPREZ_SKILL = pathlib.Path(__file__).resolve().parent.parent / \
+    ".cursor" / "skills" / "uprez-prompt" / "SKILL.md"
 LAYOUT_SKILL = pathlib.Path(__file__).resolve().parent.parent / \
     ".cursor" / "skills" / "layout-blob" / "SKILL.md"
 
@@ -88,58 +92,53 @@ def version() -> str:
     """
     h = hashlib.sha256()
     h.update(TASK.read_bytes())
+    h.update(INTAKE_SKILL.read_bytes())
+    h.update(UPREZ_SKILL.read_bytes())
     h.update(LAYOUT_SKILL.read_bytes())
     h.update(blob.DECOUPLE_SYSTEM.encode())
     h.update(json.dumps(blob.LAYOUT_SPEC_SCHEMA, sort_keys=True).encode())
-    for path in [SKILL / "SKILL.md", SKILL / "shapes.md", SKILL / "no-genre.md",
-                 *sorted((SKILL / "genres").glob("*.md"))]:
+    for path in [SKILL / "SKILL.md", SKILL / "shapes.md", SKILL / "options.md",
+                 SKILL / "no-genre.md", *sorted((SKILL / "genres").glob("*.md"))]:
         h.update(path.read_bytes())
     return h.hexdigest()[:12]
 
 
-def artifact(text: str) -> tuple[str, str]:
-    """Return the fixed scene prompt and prose decision from one agent artifact."""
-    scene_marker = "# Scene prompt"
+def artifact(text: str) -> str:
+    """Return the prose decision from one agent artifact."""
     decision_marker = "# Agent decision"
-    if scene_marker not in text or decision_marker not in text:
-        raise ValueError(
-            f"prose artifact requires {scene_marker!r} and {decision_marker!r} sections"
-        )
-    before, out = text.split(decision_marker, 1)
-    body = before.split(scene_marker, 1)[1].strip()
-    out = out.strip()
+    text = text.strip()
+    if not text.startswith(decision_marker):
+        raise ValueError(f"prose artifact must begin with {decision_marker!r}")
+    out = text[len(decision_marker):].strip()
     if not out:
         raise ValueError("agent decision section is empty")
-    return body, out
+    return out
 
 
-def build_one(scene: str, prose: str, body: str, source: str,
-              said: list[dict]) -> dict:
+def build_one(scene: str, prose: str, source: str, said: list[dict]) -> dict:
     """Transcribe one agent's prose and assemble its prompts."""
-    artifact_body, prose_decision = artifact(prose)
-    if not artifact_body:
-        raise ValueError("scene prompt section is empty")
-    if artifact_body != body.strip():
-        raise ValueError("agent artifact scene prompt differs from its input record")
-    spec = blob.decouple(prose_decision, body)
+    prose_decision = artifact(prose)
+    spec = blob.decouple(prose_decision)
     schema_degraded = llm.schema_degraded()
     # The provider-enforced schema pins the shape; canonicalisation resolves harmless
     # genre spelling variants without asking another model to reinterpret the decision.
-    spec["genre"] = canon_genre(spec.get("genre", ""))
-    spec["scene_prompt"] = body
-    spec = blob.normalise(spec)
+    canonical_genre = canon_genre(spec.get("genre", ""))
+    if canonical_genre != spec.get("genre", ""):
+        # ``decouple`` already normalised the provider response. Run the relational
+        # checks again only when canonicalising the genre makes catalogue rows newly
+        # resolvable; normalising every spec twice duplicated persistent repair notes.
+        spec["genre"] = canonical_genre
+        spec = blob.normalise(spec)
 
     built = mapper.build(spec)
     return {"scene": scene, "source": source, "answers": said,
-            "scene_prompt": body, "blob": prose_decision,
-            "agent_artifact": prose,
+            "blob": prose_decision, "agent_artifact": prose,
             "agent_notes": prose_decision,
             "secondary": spec.get("secondary") or [],
             "spec": spec, "stage": "done", "status": "ok", "error": "",
             "pipeline_version": version(),
             "served_by": f"subagent/genre-choice -> {llm.served_by()}",
             "schema_degraded": schema_degraded,
-            "scene_prompt_source": "agent_artifact",
             "order": built["order"], "first": built["first"],
             "mapper_notes": built["notes"]}
 
@@ -153,18 +152,16 @@ def process(path: pathlib.Path) -> tuple[str, str, dict | None, str]:
         return scene, "error", None, f"unreadable: {exc}"
 
     try:
-        body, _ = artifact(prose)
-        if not body:
-            return scene, "skip", None, "agent artifact has no buildable scene prompt"
+        artifact(prose)
         input_path = INPUT / f"{scene}.json"
         inp = json.loads(input_path.read_text(encoding="utf-8")) \
             if input_path.is_file() else {}
-        input_body = (inp.get("scene_prompt") or "").strip()
-        if input_body and input_body != body:
-            return scene, "error", None, "artifact scene prompt differs from agent input"
+        source = (inp.get("source") or "").strip()
+        if not source:
+            return scene, "error", None, "agent input has no author source prompt"
         said = [a for a in (inp.get("answers") or [])
                 if (a.get("answer") or "").strip()]
-        out = build_one(scene, prose, body, inp.get("source", ""), said)
+        out = build_one(scene, prose, source, said)
     except Exception as exc:                                      # noqa: BLE001
         return scene, "error", None, f"{type(exc).__name__}: {exc}"
     return scene, "ok", out, ""

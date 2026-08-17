@@ -6,7 +6,9 @@
 
 **Shape — pick one.** How the map organises movement between the shooting.
 
-**Typical shapes.** `lane-network` *(default)* · `rooms-sequence` · `open-battlefield` · `range-directed`
+**Typical shapes.** `lane-network` **Lane (Lane Network)** `P0` *(default)* · `rooms-sequence` **Path (Breach Sequence)** `P0` · `open-battlefield` **Zone (Open Battlefield)** `P0` · `range-directed` **Lane (Directed Practice Range)** `P0`
+
+**The bold name is `Type (Flavor Name)`, and the tag after it is the shape's route** — between them, everything `shape` and `pipeline` need at emit. Take both from here rather than loading `shapes.md`; where this genre rewords a shape, the name above is already its own.
 
 This genre words these its own way:
 

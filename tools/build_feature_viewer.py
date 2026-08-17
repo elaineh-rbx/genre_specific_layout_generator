@@ -69,9 +69,9 @@ BODY = """
 <header><div class="head">
   <div><h1>Essential features + renders</h1>
   <div class="sub">Input brief, flagged requirements, and generated views</div>
-  <nav class="nav"><a class="active" href="/features">Features + renders</a>
-    <a href="/pipeline">Pipeline</a><a href="/comparison">Golden comparison</a>
-    <a href="/playground">Playground</a></nav></div>
+  <nav class="nav"><a class="active" href="/features">Original viewer</a>
+    <a href="/pipeline">Pipeline</a>
+    <a href="/comparison">GPT Image 2 vs Gemini</a></nav></div>
   <div class="controls">
     <input id="search" placeholder="Filter scene, genre, shape…">
     <select id="picker"></select>
@@ -134,7 +134,7 @@ function render(id){
     ["Scene",s.id],["Genre",s.genre||"No Genre"],["Shape",s.shape||"described"],
     ["Preset",s.preset||"none"],["Order",s.order||"—"],["Route",(s.route||[]).join(" + ")||"P0"]
   ].map(([k,v])=>`<span class="chip"><strong>${esc(k)}:</strong> ${esc(v)}</span>`).join("");
-  $("prompt").textContent=s.prompt||s.scene_prompt||"";
+  $("prompt").textContent=s.prompt||"";
   for(const [id,key] of [["iso","iso"],["td","td"]]){
     const img=$(id),src=s.images?.[key]||"";img.src=src;img.dataset.full=src;
     img.style.display=src?"block":"none";

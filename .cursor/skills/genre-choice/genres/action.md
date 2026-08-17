@@ -6,7 +6,9 @@
 
 **Shape — pick one.** Every Action map is a bounded, collision-clean clash space with readable geometry for reliable hitbox math. The question is what form it takes.
 
-**Typical shapes.** `space-bounded` *(default)* · `arena-tiered` · `arena-stacked` · `rooms-sequence` · `traversal-city`
+**Typical shapes.** `space-bounded` **CombatZone (Flat Arena)** `P0` *(default)* · `arena-tiered` **CombatZone (Terraced Arena)** `P0` + `tiered` · `arena-stacked` **CombatZone (Multi-Level Arena)** `P2` · `rooms-sequence` **CombatZone (Arena Chain)** `P0` · `traversal-city` **Zone (Traversal City)** `P2`
+
+**The bold name is `Type (Flavor Name)`, and the tag after it is the shape's route** — between them, everything `shape` and `pipeline` need at emit. Take both from here rather than loading `shapes.md`; where this genre rewords a shape, the name above is already its own.
 
 This genre words these its own way:
 

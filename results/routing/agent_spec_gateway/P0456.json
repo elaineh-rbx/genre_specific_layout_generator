@@ -1,6 +1,6 @@
 {
   "scene": "P0456",
-  "source": "Create a complete playable Roblox game called **Global Cup: Penalty Pressure**.\n\nThis is an original international soccer penalty-shootout game. Do not use FIFA, World Cup, real teams, real players, sponsor logos, official kits, or protected tournament branding. Use fictional teams, players, badges, uniforms, and stadium graphics.\n\nBuild a polished vertical slice focused only on penalty shootouts. Do not add a full soccer match, progression, currency, shops, quests, or monetization.\n\n## Game modes\n\n### Solo vs AI\n\nThe human controls both striker and goalkeeper for one team. The opposing team is controlled by fair AI.\n\nInclude three difficulties:\n\n* Casual: easier timing and slower AI reactions.\n* Competitive: intended default balance.\n* Expert: harder timing and better AI prediction, but no cheating.\n\n### Two Player Match\n\nTwo players compete in the same server and alternate between striker and goalkeeper.\n\nThe server must control the official match state, score, timers, player order, goalkeeper input, shot trajectory, and final result.\n\nThe goalkeeper must not receive the striker's aim, power, accuracy, or uncertainty before the ball is kicked.\n\n## Shootout rules\n\nImplement a reliable state machine for the complete match.\n\n* Randomly decide which team shoots first.\n* Teams alternate penalties.\n* Each team initially takes five kicks.\n* End early when the trailing team can no longer equal the opponent using its remaining kicks.\n* If tied after five kicks each, enter sudden death.\n* In sudden death, end only after both teams have taken the same number of kicks and one scores while the other misses.\n* Every eligible player must kick before anyone takes a second penalty.\n* Each team has eleven players, with the goalkeeper normally kicking eleventh.\n* After all eleven kick, restart the order.\n* Prevent the striker from touching a rebound.\n* Resolve a kick only when the ball crosses the line, goes out, is securely saved, or stops moving.\n* Prevent the goalkeeper from moving forward before contact.\n* Use turn timers. A striker timeout is a miss. A goalkeeper timeout leaves the keeper standing centrally.\n* Support rematches without leaving old balls, UI, cameras, or match state behind.\n\n## Teams and ratings\n\nCreate two balanced fictional teams with eleven players each.\n\nEvery player has ratings from 1 to 100:\n\n* Penalty Skill\n* Power\n* Technique\n* Composure\n* Chip Skill\n\nGoalkeepers also have:\n\n* Reaction\n* Reach\n* Handling\n* Anticipation\n\nUse approximately this penalty-skill order:\n\n88, 85, 82, 79, 76, 70, 66, 62, 58, 53, and 42 for the goalkeeper.\n\nGive the teams different strengths without making one clearly better. For example, one team can favor power while the other favors composure and goalkeeping.\n\n## Pressure\n\nPressure increases for:\n\n* Later players in the order.\n* The fifth penalty.\n* Must-score kicks.\n* Match-winning opportunities.\n* Sudden death.\n* A goalkeeper taking a penalty.\n\nPressure makes the player-controlled timing windows smaller. High Composure reduces this effect.\n\nPressure must never secretly force a miss.\n\nShow pressure using a heartbeat, crowd hush, subtle camera tightening, and labels such as **MUST SCORE**, **MATCH POINT**, and **SUDDEN DEATH**.\n\n## Striker gameplay\n\nThe striker completes four stages.\n\n### 1. Select shot type\n\nProvide three choices:\n\n**Power**\n\n* Fastest shot.\n* Narrow timing windows.\n* Large error after poor input.\n* A perfect far-corner power shot is too fast for a waiting goalkeeper, but can be saved by a correct early guess.\n\n**Placed**\n\n* Most accurate.\n* Widest timing windows.\n* Lower speed, so the goalkeeper usually has time to react.\n\n**Chip**\n\n* Arcing shot.\n* Strong against an early-diving goalkeeper.\n* Weak against a patient central goalkeeper.\n* Too much power can send it over the crossbar.\n\n### 2. Aim\n\nShow a continuous target over the goal.\n\n* Touch or mouse drags the target.\n* Gamepad uses the thumbstick.\n* A faint 3-by-3 guide may be shown, but aiming must not be restricted to nine zones.\n* Allow aiming slightly outside the goal.\n* Never automatically clamp shots between the posts.\n* Hide the target from the goalkeeper.\n\n### 3. Power minigame\n\nShow a moving marker and an ideal timing region.\n\nThe player taps, clicks, or presses an action button to lock power.\n\nShot type, player ratings, pressure, and difficulty affect the size and speed of the timing window.\n\n### 4. Contact minigame\n\nUse a second timing challenge, such as a shrinking ring or moving marker, to determine contact accuracy.\n\nAfter both inputs, show only the striker a translucent uncertainty ellipse around the intended destination:\n\n* Excellent input: tiny green ellipse.\n* Good input: moderate yellow ellipse.\n* Poor input: large orange ellipse.\n* Terrible input: massive red ellipse extending outside the goal.\n\nChoose the actual shot destination from this region. Do not use a simple hidden goal-percentage roll.\n\nConceptually:\n\nfinal destination =\nselected aim\n\n* player-skill error\n* power-timing error\n* contact error\n* pressure error\n\nPoor power input should increase vertical error. Poor contact may pull the ball sideways.\n\nBall speed depends on shot type, locked power, player Power, and contact quality.\n\n## Ball behavior\n\nCreate an actual visible trajectory shared consistently by all players.\n\nSupport:\n\n* Goals.\n* Shots wide or over.\n* Clean catches.\n* Parried saves.\n* Post and crossbar impacts.\n* Keeper deflections that still enter.\n* Frame impacts that remain out.\n\nA goal counts only when the whole ball crosses the line between the posts and below the crossbar.\n\nDo not let unpredictable client physics or network ownership decide the official result. Use a server-approved trajectory and goal result.\n\n## Goalkeeper gameplay\n\nUse a goalkeeper-facing camera.\n\nProvide six save regions:\n\n* High left\n* Low left\n* High center\n* Low center\n* High right\n* Low right\n\nThe goalkeeper has two strategies.\n\n### Guess early\n\nBefore contact, the goalkeeper selects a region.\n\nThe dive is queued but visibly begins at ball contact.\n\nA correct guess gives maximum reach and can save perfect power shots. A wrong guess prevents changing direction. Chips should punish early dives.\n\n### Wait and react\n\nThe goalkeeper stays central until contact, then reacts to the visible trajectory.\n\n* Slow placed shots and chips allow more reaction time.\n* Poor power shots are reactable.\n* Perfect far-corner power shots are too fast to save reactively.\n* Near-center shots may be blocked without a full dive.\n\nSave success depends on direction, high or low selection, input timing, goalkeeper ratings, ball speed, and whether the gloves can reach the trajectory.\n\nInclude high dives, low dives, standing blocks, catches, and parries where practical.\n\n## AI\n\nThe AI goalkeeper must not read private striker inputs.\n\nBefore contact, it may guess using:\n\n* Difficulty.\n* Anticipation rating.\n* Normal shot-location tendencies.\n* The human's previous shots during that match.\n\nRepeated behavior may influence its probabilities, but it must still guess before seeing the result.\n\nIf it waits, apply a real reaction delay. Never teleport it to the ball.\n\nThe AI striker independently chooses shot type, aim, power, and simulated minigame quality. Ratings, difficulty, and pressure determine execution quality.\n\nLow-rated late kickers and goalkeepers should sometimes miss the entire goal.\n\n## Multiplayer security\n\nThe server owns:\n\n* Match state and turn.\n* Scores and timers.\n* Player order.\n* Pressure.\n* Validated striker and goalkeeper inputs.\n* Randomness.\n* Shot trajectory.\n* Goal detection.\n* Match result.\n\nValidate that inputs:\n\n* Occur during the correct state.\n* Are inside allowed numeric ranges.\n* Come from the player currently controlling that role.\n* Cannot be changed after being locked.\n* Cannot be duplicated or submitted late.\n\nKeep striker data private until contact.\n\nUse a server-synchronized contact timestamp to distinguish early guesses from reactions. A small capped latency allowance is acceptable, but it must not allow an unfair late save.\n\nIf a player disconnects, allow a short reconnect period and then award a forfeit.\n\n## Controls and UI\n\nDesign mobile-first while supporting mouse, keyboard, and gamepad.\n\nStriker controls:\n\n* Select shot type.\n* Drag or move aim.\n* Press once to lock power.\n* Press again to lock contact.\n\nGoalkeeper controls:\n\n* Tap, click, swipe, use directional keys, or move the gamepad stick toward a save region.\n* Neutral input means remain central and wait.\n\nUse large touch targets and show context-specific instructions before the first kick.\n\nAlways display:\n\n* Fictional team names and colors.\n* Current score.\n* Goal and miss markers for every kick.\n* Current round.\n* Current striker, position, and penalty rating.\n* Turn timer.\n* Sudden-death, must-score, and match-point states.\n\nThe scoreboard must expand beyond five kicks during sudden death.\n\nInclude a main menu, mode selection, difficulty selection, brief tutorial, result screen, rematch, and return-to-menu options.\n\n## Presentation\n\nCreate one stylized nighttime stadium with:\n\n* Floodlights.\n* Pitch markings.\n* Penalty spot.\n* Goal and animated net.\n* Crowd.\n* Benches and tunnel.\n* Large scoreboard.\n* Fictional banners and flags.\n\nUse:\n\n* Stadium establishing shots.\n* Behind-the-striker shooting camera.\n* Goalkeeper camera while defending.\n* Short replay for decisive goals or saves.\n* Team celebration after victory.\n\nAdd whistle, crowd ambience, crowd hush, kick impact, net sound, glove impact, post sound, cheers, groans, heartbeat, and celebration audio.\n\n## Code organization\n\nKeep balance values in one configuration module.\n\nUse separate components or modules for:\n\n* Match and shootout rules.\n* Team and player data.\n* Pressure.\n* Shot calculation.\n* Ball trajectory and goal detection.\n* Striker and goalkeeper controllers.\n* AI.\n* Multiplayer validation.\n* UI, cameras, and audio.\n\nPrioritize reliability over complicated custom assets.\n\n## Balance targets\n\nOn Competitive difficulty:\n\n* Competent players should score roughly 70-80% of penalties.\n* Perfect placed shots should be accurate but reactable.\n* Perfect far-corner power shots should require a goalkeeper guess.\n* Bad input should sometimes miss the entire goal.\n* Chips should punish early dives but lose to patient goalkeepers.\n* Early kickers should feel more reliable than late kickers.\n* A full match should usually last 5-8 minutes.\n\n## Required tests\n\nVerify that:\n\n1. Solo and Two Player matches can be completed without soft locks.\n2. Early shootout termination works.\n3. A tie after five kicks enters sudden death.\n4. Sudden death waits for both teams to kick.\n5. All eleven players kick before anyone repeats.\n6. The goalkeeper kicks eleventh.\n7. Bad shots can miss the goal.\n8. Posts, saves, and deflections resolve correctly.\n9. The goalkeeper cannot see private striker input.\n10. Perfect power shots require an early guess.\n11. Chips punish early dives.\n12. AI opponents do not cheat.\n13. Server validation rejects invalid inputs.\n14. Mobile, desktop, and gamepad controls work.\n15. Rematches fully reset the game.\n\nAfter playtesting, report what is complete, what is partial or omitted, any known bugs, and which balance values should be adjusted first.",
+  "source": "Create a complete playable Roblox game called **Global Cup: Penalty Pressure**.\\n\\nThis is an original international soccer penalty-shootout game. Do not use FIFA, World Cup, real teams, real players, sponsor logos, official kits, or protected tournament branding. Use fictional teams, players, badges, uniforms, and stadium graphics.\\n\\nBuild a polished vertical slice focused only on penalty shootouts. Do not add a full soccer match, progression, currency, shops, quests, or monetization.\\n\\n## Game modes\\n\\n### Solo vs AI\\n\\nThe human controls both striker and goalkeeper for one team. The opposing team is controlled by fair AI.\\n\\nInclude three difficulties:\\n\\n* Casual: easier timing and slower AI reactions.\\n* Competitive: intended default balance.\\n* Expert: harder timing and better AI prediction, but no cheating.\\n\\n### Two Player Match\\n\\nTwo players compete in the same server and alternate between striker and goalkeeper.\\n\\nThe server must control the official match state, score, timers, player order, goalkeeper input, shot trajectory, and final result.\\n\\nThe goalkeeper must not receive the striker's aim, power, accuracy, or uncertainty before the ball is kicked.\\n\\n## Shootout rules\\n\\nImplement a reliable state machine for the complete match.\\n\\n* Randomly decide which team shoots first.\\n* Teams alternate penalties.\\n* Each team initially takes five kicks.\\n* End early when the trailing team can no longer equal the opponent using its remaining kicks.\\n* If tied after five kicks each, enter sudden death.\\n* In sudden death, end only after both teams have taken the same number of kicks and one scores while the other misses.\\n* Every eligible player must kick before anyone takes a second penalty.\\n* Each team has eleven players, with the goalkeeper normally kicking eleventh.\\n* After all eleven kick, restart the order.\\n* Prevent the striker from touching a rebound.\\n* Resolve a kick only when the ball crosses the line, goes out, is securely saved, or stops moving.\\n* Prevent the goalkeeper from moving forward before contact.\\n* Use turn timers. A striker timeout is a miss. A goalkeeper timeout leaves the keeper standing centrally.\\n* Support rematches without leaving old balls, UI, cameras, or match state behind.\\n\\n## Teams and ratings\\n\\nCreate two balanced fictional teams with eleven players each.\\n\\nEvery player has ratings from 1 to 100:\\n\\n* Penalty Skill\\n* Power\\n* Technique\\n* Composure\\n* Chip Skill\\n\\nGoalkeepers also have:\\n\\n* Reaction\\n* Reach\\n* Handling\\n* Anticipation\\n\\nUse approximately this penalty-skill order:\\n\\n88, 85, 82, 79, 76, 70, 66, 62, 58, 53, and 42 for the goalkeeper.\\n\\nGive the teams different strengths without making one clearly better. For example, one team can favor power while the other favors composure and goalkeeping.\\n\\n## Pressure\\n\\nPressure increases for:\\n\\n* Later players in the order.\\n* The fifth penalty.\\n* Must-score kicks.\\n* Match-winning opportunities.\\n* Sudden death.\\n* A goalkeeper taking a penalty.\\n\\nPressure makes the player-controlled timing windows smaller. High Composure reduces this effect.\\n\\nPressure must never secretly force a miss.\\n\\nShow pressure using a heartbeat, crowd hush, subtle camera tightening, and labels such as **MUST SCORE**, **MATCH POINT**, and **SUDDEN DEATH**.\\n\\n## Striker gameplay\\n\\nThe striker completes four stages.\\n\\n### 1. Select shot type\\n\\nProvide three choices:\\n\\n**Power**\\n\\n* Fastest shot.\\n* Narrow timing windows.\\n* Large error after poor input.\\n* A perfect far-corner power shot is too fast for a waiting goalkeeper, but can be saved by a correct early guess.\\n\\n**Placed**\\n\\n* Most accurate.\\n* Widest timing windows.\\n* Lower speed, so the goalkeeper usually has time to react.\\n\\n**Chip**\\n\\n* Arcing shot.\\n* Strong against an early-diving goalkeeper.\\n* Weak against a patient central goalkeeper.\\n* Too much power can send it over the crossbar.\\n\\n### 2. Aim\\n\\nShow a continuous target over the goal.\\n\\n* Touch or mouse drags the target.\\n* Gamepad uses the thumbstick.\\n* A faint 3-by-3 guide may be shown, but aiming must not be restricted to nine zones.\\n* Allow aiming slightly outside the goal.\\n* Never automatically clamp shots between the posts.\\n* Hide the target from the goalkeeper.\\n\\n### 3. Power minigame\\n\\nShow a moving marker and an ideal timing region.\\n\\nThe player taps, clicks, or presses an action button to lock power.\\n\\nShot type, player ratings, pressure, and difficulty affect the size and speed of the timing window.\\n\\n### 4. Contact minigame\\n\\nUse a second timing challenge, such as a shrinking ring or moving marker, to determine contact accuracy.\\n\\nAfter both inputs, show only the striker a translucent uncertainty ellipse around the intended destination:\\n\\n* Excellent input: tiny green ellipse.\\n* Good input: moderate yellow ellipse.\\n* Poor input: large orange ellipse.\\n* Terrible input: massive red ellipse extending outside the goal.\\n\\nChoose the actual shot destination from this region. Do not use a simple hidden goal-percentage roll.\\n\\nConceptually:\\n\\nfinal destination =\\nselected aim\\n\\n* player-skill error\\n* power-timing error\\n* contact error\\n* pressure error\\n\\nPoor power input should increase vertical error. Poor contact may pull the ball sideways.\\n\\nBall speed depends on shot type, locked power, player Power, and contact quality.\\n\\n## Ball behavior\\n\\nCreate an actual visible trajectory shared consistently by all players.\\n\\nSupport:\\n\\n* Goals.\\n* Shots wide or over.\\n* Clean catches.\\n* Parried saves.\\n* Post and crossbar impacts.\\n* Keeper deflections that still enter.\\n* Frame impacts that remain out.\\n\\nA goal counts only when the whole ball crosses the line between the posts and below the crossbar.\\n\\nDo not let unpredictable client physics or network ownership decide the official result. Use a server-approved trajectory and goal result.\\n\\n## Goalkeeper gameplay\\n\\nUse a goalkeeper-facing camera.\\n\\nProvide six save regions:\\n\\n* High left\\n* Low left\\n* High center\\n* Low center\\n* High right\\n* Low right\\n\\nThe goalkeeper has two strategies.\\n\\n### Guess early\\n\\nBefore contact, the goalkeeper selects a region.\\n\\nThe dive is queued but visibly begins at ball contact.\\n\\nA correct guess gives maximum reach and can save perfect power shots. A wrong guess prevents changing direction. Chips should punish early dives.\\n\\n### Wait and react\\n\\nThe goalkeeper stays central until contact, then reacts to the visible trajectory.\\n\\n* Slow placed shots and chips allow more reaction time.\\n* Poor power shots are reactable.\\n* Perfect far-corner power shots are too fast to save reactively.\\n* Near-center shots may be blocked without a full dive.\\n\\nSave success depends on direction, high or low selection, input timing, goalkeeper ratings, ball speed, and whether the gloves can reach the trajectory.\\n\\nInclude high dives, low dives, standing blocks, catches, and parries where practical.\\n\\n## AI\\n\\nThe AI goalkeeper must not read private striker inputs.\\n\\nBefore contact, it may guess using:\\n\\n* Difficulty.\\n* Anticipation rating.\\n* Normal shot-location tendencies.\\n* The human's previous shots during that match.\\n\\nRepeated behavior may influence its probabilities, but it must still guess before seeing the result.\\n\\nIf it waits, apply a real reaction delay. Never teleport it to the ball.\\n\\nThe AI striker independently chooses shot type, aim, power, and simulated minigame quality. Ratings, difficulty, and pressure determine execution quality.\\n\\nLow-rated late kickers and goalkeepers should sometimes miss the entire goal.\\n\\n## Multiplayer security\\n\\nThe server owns:\\n\\n* Match state and turn.\\n* Scores and timers.\\n* Player order.\\n* Pressure.\\n* Validated striker and goalkeeper inputs.\\n* Randomness.\\n* Shot trajectory.\\n* Goal detection.\\n* Match result.\\n\\nValidate that inputs:\\n\\n* Occur during the correct state.\\n* Are inside allowed numeric ranges.\\n* Come from the player currently controlling that role.\\n* Cannot be changed after being locked.\\n* Cannot be duplicated or submitted late.\\n\\nKeep striker data private until contact.\\n\\nUse a server-synchronized contact timestamp to distinguish early guesses from reactions. A small capped latency allowance is acceptable, but it must not allow an unfair late save.\\n\\nIf a player disconnects, allow a short reconnect period and then award a forfeit.\\n\\n## Controls and UI\\n\\nDesign mobile-first while supporting mouse, keyboard, and gamepad.\\n\\nStriker controls:\\n\\n* Select shot type.\\n* Drag or move aim.\\n* Press once to lock power.\\n* Press again to lock contact.\\n\\nGoalkeeper controls:\\n\\n* Tap, click, swipe, use directional keys, or move the gamepad stick toward a save region.\\n* Neutral input means remain central and wait.\\n\\nUse large touch targets and show context-specific instructions before the first kick.\\n\\nAlways display:\\n\\n* Fictional team names and colors.\\n* Current score.\\n* Goal and miss markers for every kick.\\n* Current round.\\n* Current striker, position, and penalty rating.\\n* Turn timer.\\n* Sudden-death, must-score, and match-point states.\\n\\nThe scoreboard must expand beyond five kicks during sudden death.\\n\\nInclude a main menu, mode selection, difficulty selection, brief tutorial, result screen, rematch, and return-to-menu options.\\n\\n## Presentation\\n\\nCreate one stylized nighttime stadium with:\\n\\n* Floodlights.\\n* Pitch markings.\\n* Penalty spot.\\n* Goal and animated net.\\n* Crowd.\\n* Benches and tunnel.\\n* Large scoreboard.\\n* Fictional banners and flags.\\n\\nUse:\\n\\n* Stadium establishing shots.\\n* Behind-the-striker shooting camera.\\n* Goalkeeper camera while defending.\\n* Short replay for decisive goals or saves.\\n* Team celebration after victory.\\n\\nAdd whistle, crowd ambience, crowd hush, kick impact, net sound, glove impact, post sound, cheers, groans, heartbeat, and celebration audio.\\n\\n## Code organization\\n\\nKeep balance values in one configuration module.\\n\\nUse separate components or modules for:\\n\\n* Match and shootout rules.\\n* Team and player data.\\n* Pressure.\\n* Shot calculation.\\n* Ball trajectory and goal detection.\\n* Striker and goalkeeper controllers.\\n* AI.\\n* Multiplayer validation.\\n* UI, cameras, and audio.\\n\\nPrioritize reliability over complicated custom assets.\\n\\n## Balance targets\\n\\nOn Competitive difficulty:\\n\\n* Competent players should score roughly 70-80% of penalties.\\n* Perfect placed shots should be accurate but reactable.\\n* Perfect far-corner power shots should require a goalkeeper guess.\\n* Bad input should sometimes miss the entire goal.\\n* Chips should punish early dives but lose to patient goalkeepers.\\n* Early kickers should feel more reliable than late kickers.\\n* A full match should usually last 5-8 minutes.\\n\\n## Required tests\\n\\nVerify that:\\n\\n1. Solo and Two Player matches can be completed without soft locks.\\n2. Early shootout termination works.\\n3. A tie after five kicks enters sudden death.\\n4. Sudden death waits for both teams to kick.\\n5. All eleven players kick before anyone repeats.\\n6. The goalkeeper kicks eleventh.\\n7. Bad shots can miss the goal.\\n8. Posts, saves, and deflections resolve correctly.\\n9. The goalkeeper cannot see private striker input.\\n10. Perfect power shots require an early guess.\\n11. Chips punish early dives.\\n12. AI opponents do not cheat.\\n13. Server validation rejects invalid inputs.\\n14. Mobile, desktop, and gamepad controls work.\\n15. Rematches fully reset the game.\\n\\nAfter playtesting, report what is complete, what is partial or omitted, any known bugs, and which balance values should be adjusted first.",
   "answers": [
     {
       "field": "scale",
@@ -13,171 +13,197 @@
       "answer": "Use a clear night sky under bright floodlights."
     }
   ],
-  "scene_prompt": "Create a 3D penalty-shootout stadium map focused on one polished penalty end, dressed to suggest a full international stadium bowl. A marked grass pitch runs from the foreground penalty spot to a full-size goal at the far end, with animated netting, posts, and crossbar. Surround the goal end with packed crowd stands, fictional team banners and flags, bright floodlights beneath a clear night sky, a large stadium scoreboard, benches, and a player tunnel. Compose clear behind-the-striker and goalkeeper-facing sightlines across the penalty area, with stadium-scale establishing views framing the goal and crowd.",
-  "blob": "## Genre\nThe dominant genre is Sports because the entire experience is a competitive soccer penalty shootout scored against one goal.\n\n## Shape and preset\nUse `range-directed` for the single directed run from penalty spot to goal, replacing a full bounded soccer field. Match the Target Sport preset, with the goal as the discrete scoring target.\n\n## Config requirements\nUse `trigger-scoring` for the one full-size goal mouth and its visible posts, crossbar, and animated net. Use `marker-distance` for the penalty spot, goal line, penalty-area markings, and short marked pitch. Add `startpoint-play` for the fixed striker and goalkeeper positions. Use `spectator-bleachers` for packed stands framing the goal and `spectator-zone` for the benches. Use `npc-population` for the crowd. Draw fictional banners and flags, bright floodlights, the large scoreboard, and a player-tunnel façade.\n\n## Layout requirements\nPlace one `trigger-scoring` plane across the goal line, bounded precisely between the two posts and below the crossbar. Place two `startpoint-play` markers: the striker at the single penalty spot and the goalkeeper centrally on the goal line. Place crowd `npc-population` anchors throughout the stands while keeping both behind-the-striker and goalkeeper-facing camera corridors unobstructed.\n\n## Layout components\nBuild one grass penalty end extending from a foreground penalty spot to one full-size goal. Mark the goal line and penalty area clearly, with sufficient run-up and camera space behind the striker. Wrap the far end and sides in tightly framed crowd stands, benches, fictional flags and banners, floodlight towers, one prominent scoreboard, and a tunnel façade that suggests the rest of a stadium without building a full pitch. Use a clear night sky and compose the goal, crowd, and lights for both low gameplay views and broad establishing shots.\n\n## Render order\nUse `topdown`: the exact spot-to-goal alignment, scoring plane, keeper line, and two opposing camera corridors must be established before stadium dressing.\n\n## Scale, theme, and pipeline cost\nScale is medium because only one penalty end is playable, though its dressing implies an international stadium. The theme is polished fictional international soccer under a clear floodlit night. Use `tiered` for raised crowd stands; no interior transition or overlapping playable floor is required.",
-  "agent_artifact": "# Scene prompt\nCreate a 3D penalty-shootout stadium map focused on one polished penalty end, dressed to suggest a full international stadium bowl. A marked grass pitch runs from the foreground penalty spot to a full-size goal at the far end, with animated netting, posts, and crossbar. Surround the goal end with packed crowd stands, fictional team banners and flags, bright floodlights beneath a clear night sky, a large stadium scoreboard, benches, and a player tunnel. Compose clear behind-the-striker and goalkeeper-facing sightlines across the penalty area, with stadium-scale establishing views framing the goal and crowd.\n\n# Agent decision\n\n## Genre\nThe dominant genre is Sports because the entire experience is a competitive soccer penalty shootout scored against one goal.\n\n## Shape and preset\nUse `range-directed` for the single directed run from penalty spot to goal, replacing a full bounded soccer field. Match the Target Sport preset, with the goal as the discrete scoring target.\n\n## Config requirements\nUse `trigger-scoring` for the one full-size goal mouth and its visible posts, crossbar, and animated net. Use `marker-distance` for the penalty spot, goal line, penalty-area markings, and short marked pitch. Add `startpoint-play` for the fixed striker and goalkeeper positions. Use `spectator-bleachers` for packed stands framing the goal and `spectator-zone` for the benches. Use `npc-population` for the crowd. Draw fictional banners and flags, bright floodlights, the large scoreboard, and a player-tunnel façade.\n\n## Layout requirements\nPlace one `trigger-scoring` plane across the goal line, bounded precisely between the two posts and below the crossbar. Place two `startpoint-play` markers: the striker at the single penalty spot and the goalkeeper centrally on the goal line. Place crowd `npc-population` anchors throughout the stands while keeping both behind-the-striker and goalkeeper-facing camera corridors unobstructed.\n\n## Layout components\nBuild one grass penalty end extending from a foreground penalty spot to one full-size goal. Mark the goal line and penalty area clearly, with sufficient run-up and camera space behind the striker. Wrap the far end and sides in tightly framed crowd stands, benches, fictional flags and banners, floodlight towers, one prominent scoreboard, and a tunnel façade that suggests the rest of a stadium without building a full pitch. Use a clear night sky and compose the goal, crowd, and lights for both low gameplay views and broad establishing shots.\n\n## Render order\nUse `topdown`: the exact spot-to-goal alignment, scoring plane, keeper line, and two opposing camera corridors must be established before stadium dressing.\n\n## Scale, theme, and pipeline cost\nScale is medium because only one penalty end is playable, though its dressing implies an international stadium. The theme is polished fictional international soccer under a clear floodlit night. Use `tiered` for raised crowd stands; no interior transition or overlapping playable floor is required.\n",
-  "agent_notes": "## Genre\nThe dominant genre is Sports because the entire experience is a competitive soccer penalty shootout scored against one goal.\n\n## Shape and preset\nUse `range-directed` for the single directed run from penalty spot to goal, replacing a full bounded soccer field. Match the Target Sport preset, with the goal as the discrete scoring target.\n\n## Config requirements\nUse `trigger-scoring` for the one full-size goal mouth and its visible posts, crossbar, and animated net. Use `marker-distance` for the penalty spot, goal line, penalty-area markings, and short marked pitch. Add `startpoint-play` for the fixed striker and goalkeeper positions. Use `spectator-bleachers` for packed stands framing the goal and `spectator-zone` for the benches. Use `npc-population` for the crowd. Draw fictional banners and flags, bright floodlights, the large scoreboard, and a player-tunnel façade.\n\n## Layout requirements\nPlace one `trigger-scoring` plane across the goal line, bounded precisely between the two posts and below the crossbar. Place two `startpoint-play` markers: the striker at the single penalty spot and the goalkeeper centrally on the goal line. Place crowd `npc-population` anchors throughout the stands while keeping both behind-the-striker and goalkeeper-facing camera corridors unobstructed.\n\n## Layout components\nBuild one grass penalty end extending from a foreground penalty spot to one full-size goal. Mark the goal line and penalty area clearly, with sufficient run-up and camera space behind the striker. Wrap the far end and sides in tightly framed crowd stands, benches, fictional flags and banners, floodlight towers, one prominent scoreboard, and a tunnel façade that suggests the rest of a stadium without building a full pitch. Use a clear night sky and compose the goal, crowd, and lights for both low gameplay views and broad establishing shots.\n\n## Render order\nUse `topdown`: the exact spot-to-goal alignment, scoring plane, keeper line, and two opposing camera corridors must be established before stadium dressing.\n\n## Scale, theme, and pipeline cost\nScale is medium because only one penalty end is playable, though its dressing implies an international stadium. The theme is polished fictional international soccer under a clear floodlit night. Use `tiered` for raised crowd stands; no interior transition or overlapping playable floor is required.",
+  "blob": "## Clarifications resolved\n- [author] scale — Q: Should the build be a full stadium bowl, or just the penalty end dressed to look like one? A: Build just the penalty end, dressed to look like a polished international stadium bowl; this is a focused penalty-shootout vertical slice.\n- [author] sky — Q: Night under floodlights is stated - should the sky be clear, or overcast for atmosphere? A: Use a clear night sky under bright floodlights.\n\n## Enriched image prompt\nCreate one stylized nighttime soccer penalty end, dressed to read as a polished international stadium bowl without building the full pitch. Align a regulation-looking goal with animated netting, goal line, penalty area markings, and one clear penalty spot on a pristine grass surface. Place bright floodlights around the clipped stadium view, tiered crowd seating behind and beside the goal, two team benches with 11 positions each, a visible player tunnel, and one large match scoreboard. Use only fictional team colors, badges, banners, flags, and uniforms, with no real tournament, team, player, sponsor, or kit branding. Compose the penalty spot in the foreground, the goal centrally, and the crowd bowl and scoreboard behind it under a clear night sky.\n\n## Genre\nThe dominant genre is Sports because this is a formal soccer penalty-shootout field with fixed player positions and goal scoring.\n\n## Shape and preset\nUse `range-directed`, Lane (Directed Range), because the entire playable layout is one directed penalty lane from spot to goal rather than a full field. The closest preset is Full Stadium, with its bounded-field shape replaced by the focused range while retaining tiered crowd dressing, perimeter enclosure, and team-side seating.\n\n## Config requirements\nUse the drawn forms of `startpoint-play` for the penalty spot and goalkeeper line, `trigger-scoring` for the goal mouth and net, and `trigger-bounds` for the marked penalty-end play area and out-of-play edges. Use `spectator-bleachers` for the tiered crowd bowl, `spectator-zone` for the two 11-position benches, and `barrier-perimeter` for the clipped stadium enclosure. The tunnel, floodlights, fictional banners, and large match scoreboard are scene-specific image geometry.\n\n## Layout requirements\nPlace two `startpoint-play` StartPoints: one at the penalty spot for the ball and striker, and one centred on the goal line for the goalkeeper. Place one `trigger-scoring` TriggerZone as a full-ball crossing plane inside the goal mouth, and one `trigger-bounds` TriggerZone around the penalty-end surface and behind the frame to resolve wide or over shots. Place one free-text Tracker on the large scoreboard. No shops, quests, progression, or monetization placements are allowed.\n\n## Layout components\nThe build contains one penalty-end grass zone, one marked penalty area, one penalty spot, one goal with posts, crossbar, and net, two fixed player positions, two team benches with 11 places each, one tunnel, tiered crowd seating, bright floodlights, one scoreboard, and fictional banners and flags. The clipped stadium shell forms the boundary and all composition faces the goal.\n\n## Render order\nUse `topdown`: the penalty spot, goalkeeper line, goal mouth, crossing plane, and out-of-play boundaries must align exactly before the nighttime stadium isometric dressing.\n\n## Scale, theme, and pipeline cost\nThe scale is medium because the focused penalty end, benches, tunnel, and convincing crowd bowl must fit while goal and spot details remain legible. The theme is a stylized polished international stadium at clear night under floodlights, using wholly fictional branding. Modifier `tiered` is required for the raked crowd seating; no other pipeline modifier is forced.",
+  "agent_artifact": "# Agent decision\n\n## Clarifications resolved\n- [author] scale — Q: Should the build be a full stadium bowl, or just the penalty end dressed to look like one? A: Build just the penalty end, dressed to look like a polished international stadium bowl; this is a focused penalty-shootout vertical slice.\n- [author] sky — Q: Night under floodlights is stated - should the sky be clear, or overcast for atmosphere? A: Use a clear night sky under bright floodlights.\n\n## Enriched image prompt\nCreate one stylized nighttime soccer penalty end, dressed to read as a polished international stadium bowl without building the full pitch. Align a regulation-looking goal with animated netting, goal line, penalty area markings, and one clear penalty spot on a pristine grass surface. Place bright floodlights around the clipped stadium view, tiered crowd seating behind and beside the goal, two team benches with 11 positions each, a visible player tunnel, and one large match scoreboard. Use only fictional team colors, badges, banners, flags, and uniforms, with no real tournament, team, player, sponsor, or kit branding. Compose the penalty spot in the foreground, the goal centrally, and the crowd bowl and scoreboard behind it under a clear night sky.\n\n## Genre\nThe dominant genre is Sports because this is a formal soccer penalty-shootout field with fixed player positions and goal scoring.\n\n## Shape and preset\nUse `range-directed`, Lane (Directed Range), because the entire playable layout is one directed penalty lane from spot to goal rather than a full field. The closest preset is Full Stadium, with its bounded-field shape replaced by the focused range while retaining tiered crowd dressing, perimeter enclosure, and team-side seating.\n\n## Config requirements\nUse the drawn forms of `startpoint-play` for the penalty spot and goalkeeper line, `trigger-scoring` for the goal mouth and net, and `trigger-bounds` for the marked penalty-end play area and out-of-play edges. Use `spectator-bleachers` for the tiered crowd bowl, `spectator-zone` for the two 11-position benches, and `barrier-perimeter` for the clipped stadium enclosure. The tunnel, floodlights, fictional banners, and large match scoreboard are scene-specific image geometry.\n\n## Layout requirements\nPlace two `startpoint-play` StartPoints: one at the penalty spot for the ball and striker, and one centred on the goal line for the goalkeeper. Place one `trigger-scoring` TriggerZone as a full-ball crossing plane inside the goal mouth, and one `trigger-bounds` TriggerZone around the penalty-end surface and behind the frame to resolve wide or over shots. Place one free-text Tracker on the large scoreboard. No shops, quests, progression, or monetization placements are allowed.\n\n## Layout components\nThe build contains one penalty-end grass zone, one marked penalty area, one penalty spot, one goal with posts, crossbar, and net, two fixed player positions, two team benches with 11 places each, one tunnel, tiered crowd seating, bright floodlights, one scoreboard, and fictional banners and flags. The clipped stadium shell forms the boundary and all composition faces the goal.\n\n## Render order\nUse `topdown`: the penalty spot, goalkeeper line, goal mouth, crossing plane, and out-of-play boundaries must align exactly before the nighttime stadium isometric dressing.\n\n## Scale, theme, and pipeline cost\nThe scale is medium because the focused penalty end, benches, tunnel, and convincing crowd bowl must fit while goal and spot details remain legible. The theme is a stylized polished international stadium at clear night under floodlights, using wholly fictional branding. Modifier `tiered` is required for the raked crowd seating; no other pipeline modifier is forced.\n",
+  "agent_notes": "## Clarifications resolved\n- [author] scale — Q: Should the build be a full stadium bowl, or just the penalty end dressed to look like one? A: Build just the penalty end, dressed to look like a polished international stadium bowl; this is a focused penalty-shootout vertical slice.\n- [author] sky — Q: Night under floodlights is stated - should the sky be clear, or overcast for atmosphere? A: Use a clear night sky under bright floodlights.\n\n## Enriched image prompt\nCreate one stylized nighttime soccer penalty end, dressed to read as a polished international stadium bowl without building the full pitch. Align a regulation-looking goal with animated netting, goal line, penalty area markings, and one clear penalty spot on a pristine grass surface. Place bright floodlights around the clipped stadium view, tiered crowd seating behind and beside the goal, two team benches with 11 positions each, a visible player tunnel, and one large match scoreboard. Use only fictional team colors, badges, banners, flags, and uniforms, with no real tournament, team, player, sponsor, or kit branding. Compose the penalty spot in the foreground, the goal centrally, and the crowd bowl and scoreboard behind it under a clear night sky.\n\n## Genre\nThe dominant genre is Sports because this is a formal soccer penalty-shootout field with fixed player positions and goal scoring.\n\n## Shape and preset\nUse `range-directed`, Lane (Directed Range), because the entire playable layout is one directed penalty lane from spot to goal rather than a full field. The closest preset is Full Stadium, with its bounded-field shape replaced by the focused range while retaining tiered crowd dressing, perimeter enclosure, and team-side seating.\n\n## Config requirements\nUse the drawn forms of `startpoint-play` for the penalty spot and goalkeeper line, `trigger-scoring` for the goal mouth and net, and `trigger-bounds` for the marked penalty-end play area and out-of-play edges. Use `spectator-bleachers` for the tiered crowd bowl, `spectator-zone` for the two 11-position benches, and `barrier-perimeter` for the clipped stadium enclosure. The tunnel, floodlights, fictional banners, and large match scoreboard are scene-specific image geometry.\n\n## Layout requirements\nPlace two `startpoint-play` StartPoints: one at the penalty spot for the ball and striker, and one centred on the goal line for the goalkeeper. Place one `trigger-scoring` TriggerZone as a full-ball crossing plane inside the goal mouth, and one `trigger-bounds` TriggerZone around the penalty-end surface and behind the frame to resolve wide or over shots. Place one free-text Tracker on the large scoreboard. No shops, quests, progression, or monetization placements are allowed.\n\n## Layout components\nThe build contains one penalty-end grass zone, one marked penalty area, one penalty spot, one goal with posts, crossbar, and net, two fixed player positions, two team benches with 11 places each, one tunnel, tiered crowd seating, bright floodlights, one scoreboard, and fictional banners and flags. The clipped stadium shell forms the boundary and all composition faces the goal.\n\n## Render order\nUse `topdown`: the penalty spot, goalkeeper line, goal mouth, crossing plane, and out-of-play boundaries must align exactly before the nighttime stadium isometric dressing.\n\n## Scale, theme, and pipeline cost\nThe scale is medium because the focused penalty end, benches, tunnel, and convincing crowd bowl must fit while goal and spot details remain legible. The theme is a stylized polished international stadium at clear night under floodlights, using wholly fictional branding. Modifier `tiered` is required for the raked crowd seating; no other pipeline modifier is forced.",
   "secondary": [],
   "spec": {
+    "clarifications": [
+      {
+        "field": "scale",
+        "ask": "Should the build be a full stadium bowl, or just the penalty end dressed to look like one?",
+        "answer": "Build just the penalty end, dressed to look like a polished international stadium bowl; this is a focused penalty-shootout vertical slice.",
+        "source": "author"
+      },
+      {
+        "field": "sky",
+        "ask": "Night under floodlights is stated - should the sky be clear, or overcast for atmosphere?",
+        "answer": "Use a clear night sky under bright floodlights.",
+        "source": "author"
+      }
+    ],
+    "initial_scene_subprompt_enriched": "Create one stylized nighttime soccer penalty end, dressed to read as a polished international stadium bowl without building the full pitch. Align a regulation-looking goal with animated netting, goal line, penalty area markings, and one clear penalty spot on a pristine grass surface. Place bright floodlights around the clipped stadium view, tiered crowd seating behind and beside the goal, two team benches with 11 positions each, a visible player tunnel, and one large match scoreboard. Use only fictional team colors, badges, banners, flags, and uniforms, with no real tournament, team, player, sponsor, or kit branding. Compose the penalty spot in the foreground, the goal centrally, and the crowd bowl and scoreboard behind it under a clear night sky.",
     "genre": "Sports",
     "secondary": [],
     "shape": "range-directed",
-    "preset": "Target Sport",
+    "preset": "Full Stadium",
     "axes": {},
     "options": [
       {
-        "id": "trigger-scoring",
-        "text": "One full-size goal mouth with visible posts, crossbar, and animated netting.",
-        "visible": true,
-        "count": 1
-      },
-      {
-        "id": "marker-distance",
-        "text": "A penalty spot, goal line, penalty-area markings, and a short marked grass pitch.",
-        "visible": true,
-        "count": -1
-      },
-      {
         "id": "startpoint-play",
-        "text": "Fixed striker and goalkeeper positions for the penalty shootout.",
+        "text": "Penalty shootout start points: one at the penalty spot for the ball and striker, and one centered on the goal line for the goalkeeper.",
         "visible": true,
         "count": 2
       },
       {
+        "id": "trigger-scoring",
+        "text": "Goal scoring trigger as a full-ball crossing plane inside the goal mouth (with goal mouth and net aligned to it).",
+        "visible": true,
+        "count": 1
+      },
+      {
+        "id": "trigger-bounds",
+        "text": "Play / foul boundary trigger around the penalty-end surface plus an out-of-play/behind-frame region to resolve wide or over shots.",
+        "visible": true,
+        "count": 1
+      },
+      {
         "id": "spectator-bleachers",
-        "text": "Packed raised crowd stands framing the goal end and sides.",
+        "text": "Tiered crowd seating forming a clipped stadium bowl behind and beside the goal.",
         "visible": true,
         "count": -1
       },
       {
         "id": "spectator-zone",
-        "text": "Benches beside the penalty end for inactive players and team assets.",
+        "text": "Two team benches on the sidelines, each with 11 positions.",
         "visible": true,
-        "count": -1
+        "count": 2
       },
       {
-        "id": "npc-population",
-        "text": "A packed stadium crowd occupying the raised stands around the goal.",
+        "id": "barrier-perimeter",
+        "text": "Clipped stadium enclosure/shell forming the perimeter around the penalty-end view.",
         "visible": true,
-        "count": -1
+        "count": 1
       }
     ],
     "layout_placement": [
       {
-        "id": "trigger-scoring",
-        "text": "One scoring plane across the goal line, precisely bounded between the posts and below the crossbar.",
-        "count": 1,
-        "where": "Across the far-end goal line, between the two posts and beneath the crossbar."
-      },
-      {
         "id": "startpoint-play",
-        "text": "Fixed striker and goalkeeper position markers.",
+        "text": "Penalty shootout start points: one at the penalty spot for the ball and striker, and one centered on the goal line for the goalkeeper.",
         "count": 2,
-        "where": "Place the striker at the single foreground penalty spot and the goalkeeper centrally on the goal line."
+        "where": "One at the penalty spot; one centered on the goal line."
       },
       {
-        "id": "npc-population",
-        "text": "Crowd anchors for the packed stadium stands.",
-        "count": -1,
-        "where": "Throughout the stands, while keeping the behind-the-striker and goalkeeper-facing camera corridors unobstructed."
+        "id": "trigger-scoring",
+        "text": "Goal scoring trigger as a full-ball crossing plane inside the goal mouth (with goal mouth and net aligned to it).",
+        "count": 1,
+        "where": "Inside the goal mouth as a full-ball crossing plane."
+      },
+      {
+        "id": "trigger-bounds",
+        "text": "Play / foul boundary trigger around the penalty-end surface plus an out-of-play/behind-frame region to resolve wide or over shots.",
+        "count": 1,
+        "where": "Around the penalty-end play surface and behind the frame for out-of-play shots."
       }
     ],
     "layout": {
-      "composition": "A marked grass penalty end runs from the foreground penalty spot to the full-size goal at the far end. The goal, crowd stands, floodlights, and scoreboard frame both low gameplay views across the penalty area and broad establishing shots.",
+      "composition": "Penalty spot in the foreground; goal centered; tiered crowd bowl and large scoreboard behind the goal; clipped stadium shell and floodlights framing the view; all composition faces the goal.",
       "zones": [
         {
-          "name": "Penalty spot and run-up",
-          "role": "The striker starts here and takes the penalty kick with sufficient camera space behind them.",
-          "where": "Foreground",
+          "name": "Penalty-end grass zone",
+          "role": "Playable penalty shootout lane surface from spot to goal.",
+          "where": "Foreground to midground, leading toward the goal.",
           "size": ""
         },
         {
-          "name": "Marked penalty area",
-          "role": "The playable grass approach between the penalty spot and goal, with clear penalty-area and goal-line markings.",
-          "where": "Centre",
+          "name": "Penalty area (marked)",
+          "role": "Marked penalty area and goal line region supporting the penalty end.",
+          "where": "Midground around the goal.",
           "size": ""
         },
         {
-          "name": "Goal and keeper line",
-          "role": "The goalkeeper position and the single scoring target.",
-          "where": "Far end",
+          "name": "Crowd seating bowl",
+          "role": "Stadium dressing: tiered crowd seating behind and beside the goal.",
+          "where": "Background behind and to the sides of the goal.",
           "size": ""
         },
         {
-          "name": "Crowd stands and stadium dressing",
-          "role": "Raised packed stands, benches, banners, flags, lights, scoreboard, and tunnel façade suggest an international stadium without a full pitch.",
-          "where": "Far end and sides",
+          "name": "Team benches",
+          "role": "Two sideline bench areas with 11 positions each.",
+          "where": "To the sides of the penalty lane near the goal area.",
+          "size": ""
+        },
+        {
+          "name": "Player tunnel",
+          "role": "Visible stadium tunnel entrance/exit dressing.",
+          "where": "Behind the goal within the clipped stadium view.",
+          "size": ""
+        },
+        {
+          "name": "Scoreboard area",
+          "role": "Large match scoreboard with a free-text tracker display.",
+          "where": "Background behind the goal, readable in frame.",
           "size": ""
         }
       ],
-      "paths": [
-        {
-          "from": "Penalty spot and run-up",
-          "to": "Goal and keeper line",
-          "kind": "open ground"
-        }
-      ],
-      "terrain": "A short, marked grass pitch under a clear night sky, with the penalty spot, penalty-area markings, and goal line clearly visible.",
+      "paths": [],
+      "terrain": "Pristine grass surface with goal line and penalty area markings, including a single clear penalty spot; clear night sky under bright floodlights.",
       "props": [
         {
-          "name": "full-size goal with animated netting, posts, and crossbar",
+          "name": "Regulation-looking goal with posts, crossbar, and animated netting",
           "count": 1,
-          "where": "Far end on the goal line"
+          "where": "Centered in the midground on the goal line."
         },
         {
-          "name": "fictional team banners and flags",
-          "count": -1,
-          "where": "Around the crowd stands"
-        },
-        {
-          "name": "bright floodlight towers",
-          "count": -1,
-          "where": "Framing the goal end and stands"
-        },
-        {
-          "name": "large stadium scoreboard",
+          "name": "Penalty spot",
           "count": 1,
-          "where": "Prominent above or behind the far-end crowd"
+          "where": "Foreground, aligned to the goal."
         },
         {
-          "name": "benches",
-          "count": -1,
-          "where": "Beside the penalty end"
-        },
-        {
-          "name": "player-tunnel façade",
+          "name": "Match scoreboard (large)",
           "count": 1,
-          "where": "At the stadium end behind the goal"
+          "where": "Behind the goal in the background."
+        },
+        {
+          "name": "Player tunnel",
+          "count": 1,
+          "where": "Behind the goal within the stadium shell."
+        },
+        {
+          "name": "Floodlights",
+          "count": -1,
+          "where": "Around the clipped stadium view."
+        },
+        {
+          "name": "Team benches (11 positions each)",
+          "count": 2,
+          "where": "To either side of the penalty end."
+        },
+        {
+          "name": "Fictional banners and flags",
+          "count": -1,
+          "where": "Around the crowd bowl and stadium dressing."
         }
       ],
-      "boundary": "Tightly framed raised crowd stands wrap the far end and sides; the stadium dressing implies the remaining bowl without building a full pitch.",
+      "boundary": "A clipped stadium shell/enclosure forming the perimeter around the penalty-end view.",
       "scale_band": "medium",
-      "theme": "Polished fictional international soccer under a clear floodlit night."
+      "theme": "Stylized, polished international stadium at clear night under bright floodlights, using wholly fictional team colors and branding."
     },
     "render": {
-      "first": "isometric",
-      "then": "topdown",
-      "authoritative": "isometric",
-      "why": "The exact penalty-spot-to-goal alignment, scoring plane, keeper line, and opposing camera corridors must be valid before stadium dressing.",
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "The penalty spot, goalkeeper line, goal mouth, crossing plane, and out-of-play boundaries must align exactly before the nighttime stadium isometric dressing.",
       "set_piece": false
     },
     "route": [
+      "P0",
       "tiered"
     ],
     "notes": [
+      "The blob specifies a free-text Tracker on the scoreboard, but no canonical option ID for that tracker is available in the provided menu, so it is not represented as an option/layout_placement row.",
+      "The blob requires excluding shops/quests/progression/monetization; there are no corresponding positive canonical IDs to encode as options.",
       "visible on 'trigger-scoring' set from goes_to=both",
-      "visible on 'startpoint-play' set from goes_to=both"
-    ],
-    "scene_prompt": "Create a 3D penalty-shootout stadium map focused on one polished penalty end, dressed to suggest a full international stadium bowl. A marked grass pitch runs from the foreground penalty spot to a full-size goal at the far end, with animated netting, posts, and crossbar. Surround the goal end with packed crowd stands, fictional team banners and flags, bright floodlights beneath a clear night sky, a large stadium scoreboard, benches, and a player tunnel. Compose clear behind-the-striker and goalkeeper-facing sightlines across the penalty area, with stadium-scale establishing views framing the goal and crowd."
+      "visible on 'trigger-bounds' set from goes_to=both"
+    ]
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "1986e1975066",
-  "served_by": "subagent/genre-choice -> gateway/production/gpt-5.6-terra",
+  "pipeline_version": "48d4ff51304c",
+  "served_by": "subagent/genre-choice -> azure/gpt-5.2",
   "schema_degraded": false,
-  "reused_uprez": true,
-  "order": "std",
-  "first": "isometric",
+  "order": "p6",
+  "first": "topdown",
   "mapper_notes": []
 }

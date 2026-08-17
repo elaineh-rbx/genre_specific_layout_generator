@@ -20,10 +20,11 @@ When nothing in the catalogue fits, a build may carry no shape at all and answer
 routing axes directly - the document's *described shape*. That is the same mechanism
 `No Genre` uses, which is why `Genre.axis` falls back to the axis table No Genre holds.
 
-Six of the options belong to every genre rather than to one - who inhabits the space,
-water, terrain relief - and live in their own table. They are merged into each genre
-here, so nothing downstream has to know they arrived differently, except that they
-carry `universal` and are never `core`.
+Options use the same shared-catalogue rule as shapes: a genre's table is its shortlist
+and its wording, not a fence. `OPTION_CATALOG` holds one structural row per ID so an
+option requested outside its usual genre still survives normalization and routing. The
+genre's own row always wins when present. Six options live in a universal table and are
+merged into every genre; they carry `universal` and are never `core`.
 
 A sixteenth destination has no genre at all. A prompt describing a place rather than a
 game - a lobby, a swamp, a farm scene - routes to `No Genre`, which the document calls
@@ -46,7 +47,7 @@ from __future__ import annotations
 
 import json
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 
 from layoutgen.paths import BUILD_DOC as DOC
 from layoutgen.paths import SHAPE_MIGRATION as MIGRATION_DOC
@@ -224,7 +225,12 @@ class Genre:
         return next((a for a in NO_GENRE.axes if key in (a.id, a.key)), None)
 
     def option(self, oid: str) -> Option | None:
-        return next((o for o in self.options if o.id == oid), None)
+        own = next((o for o in self.options if o.id == oid), None)
+        if own is not None:
+            return own
+        # Build.md now gives options the same reachability rule as shapes. The module
+        # catalogue is populated after parsing; method lookup happens only afterwards.
+        return OPTION_CATALOG.get(oid)
 
     def preset(self, name: str) -> Preset | None:
         return next((p for p in self.presets if p.name == name), None)
@@ -467,6 +473,58 @@ NO_GENRE_NAME = "No Genre"
 
 GENRES, GENRE_DESCS, UNIVERSAL, NO_GENRE, SHAPES = _parse()
 
+#: Every option ID in the system, independent of which section words it. No Genre is
+#: included because its rows obey the same shared-catalogue rule as numbered genres.
+#:
+#: The current genre's own row still wins in ``Genre.option``. This fallback is for the
+#: new cross-genre path: take the ID and structural metadata from the catalogue, while
+#: the spec's contextual ``text`` supplies the prompt-specific realization.
+OPTION_SOURCES: dict[str, list[tuple[str, Option]]] = {}
+for _g in [*GENRES.values(), NO_GENRE]:
+    for _o in _g.options:
+        sources = OPTION_SOURCES.setdefault(_o.id, [])
+        if not any(existing_genre == _g.name for existing_genre, _ in sources):
+            sources.append((_g.name, _o))
+
+
+def _catalog_option(sources: list[tuple[str, Option]]) -> Option:
+    """One neutral fallback row without flattening genuine metadata differences."""
+    base = sources[0][1]
+    destinations = {option.goes_to for _, option in sources}
+    pipelines = {option.pipeline for _, option in sources}
+    return replace(
+        base,
+        goes_to=next(iter(destinations)) if len(destinations) == 1 else "varies",
+        pipeline=next(iter(pipelines)) if len(pipelines) == 1 else "varies",
+        core=False,
+    )
+
+
+OPTION_CATALOG: dict[str, Option] = {
+    option_id: _catalog_option(sources)
+    for option_id, sources in OPTION_SOURCES.items()
+}
+
+
+def option_variants(genre: Genre, option_id: str) -> list[Option]:
+    """Applicable structural rows for an option in ``genre``.
+
+    A row owned by the current genre is authoritative. Otherwise all source rows
+    remain candidates so callers can use the spec's explicit route and destination
+    decision instead of silently borrowing the first genre's interpretation.
+    """
+    sources = OPTION_SOURCES.get(option_id, [])
+    own = [option for source, option in sources if source == genre.name]
+    return own or [option for _, option in sources]
+
+
+def option_destinations(genre: Genre, option_id: str) -> set[str]:
+    return {option.goes_to for option in option_variants(genre, option_id)}
+
+
+def option_pipelines(genre: Genre, option_id: str) -> set[str]:
+    return {option.pipeline for option in option_variants(genre, option_id)}
+
 #: Retired shape id -> the catalogue row that absorbed it, vendored from the upstream
 #: rules repo beside the documents it belongs to.
 #:
@@ -495,7 +553,7 @@ def genre(name: str) -> Genre | None:
 #: Universal options are excluded: they are in all fifteen by construction, so listing
 #: them here would say nothing and drown the IDs that are genuinely shared.
 SHARED_IDS: dict[str, list[str]] = {}
-for _g in GENRES.values():
+for _g in [*GENRES.values(), NO_GENRE]:
     for _o in _g.options:
         if not _o.universal:
             SHARED_IDS.setdefault(_o.id, []).append(_g.name)

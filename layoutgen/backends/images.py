@@ -21,9 +21,15 @@ from dataclasses import dataclass
 import httpx
 from PIL import Image
 
+from layoutgen.backends import gateway as llm_gateway
+
 ENDPOINT = os.getenv("LAYOUTGEN_IMAGE_ENDPOINT",
                      "https://rbx-mlp-east-us-2.openai.azure.com")
 DEPLOYMENT = os.getenv("LAYOUTGEN_IMAGE_DEPLOYMENT", "gpt-image-2")
+BACKEND = os.getenv("LAYOUTGEN_IMAGE_BACKEND", "azure").strip().lower()
+GATEWAY_MODEL = os.getenv(
+    "LAYOUTGEN_IMAGE_MODEL", "gemini-3.1-flash-image"
+).strip()
 API_VERSION = os.getenv("LAYOUTGEN_IMAGE_API_VERSION", "2025-04-01-preview")
 TOKEN_FILE = pathlib.Path(
     os.getenv("LAYOUTGEN_IMAGE_TOKEN", "~/.cache/i2l/gpt-image-2-token")).expanduser()
@@ -161,14 +167,115 @@ class Provider:
                          f"{type(last).__name__}: {last}")
 
 
-_provider: Provider | None = None
+class LLMGatewayProvider:
+    """Gemini image generation through the Gateway's OpenAI-compatible chat route."""
+
+    def __init__(self, size: int = SIZE, model: str = GATEWAY_MODEL):
+        self.size, self.model = size, model
+
+    @staticmethod
+    def _part(path: pathlib.Path) -> dict:
+        import base64
+
+        mime = "image/jpeg" if path.suffix.lower() in {".jpg", ".jpeg"} else "image/png"
+        data = base64.b64encode(path.read_bytes()).decode("ascii")
+        return {
+            "type": "image_url",
+            "image_url": {"url": f"data:{mime};base64,{data}"},
+        }
+
+    @staticmethod
+    def _decode(raw: str) -> Image.Image:
+        import base64
+        import io
+
+        payload = raw.partition(",")[2] if raw.startswith("data:") else raw
+        with Image.open(io.BytesIO(base64.b64decode(payload))) as image:
+            return image.convert("RGB").copy()
+
+    def generate(self, prompt: str, references: list[pathlib.Path] | None = None,
+                 retries: int = 8) -> Answer:
+        # Gemini's native image-editing examples put the instruction before the image.
+        # Preserve that ordering through the OpenAI-compatible Gateway route: camera and
+        # exclusion rules must be established before the model conditions on a plan.
+        content = [{"type": "text", "text": prompt}]
+        content.extend(self._part(path) for path in references or [])
+        body = {
+            "model": self.model,
+            "messages": [{"role": "user", "content": content}],
+            "modalities": ["text", "image"],
+        }
+        url = f"{llm_gateway.base().rstrip('/')}/v1/chat/completions"
+        last: Exception | None = None
+        for attempt in range(1, retries + 1):
+            try:
+                with httpx.Client(timeout=TIMEOUT_S) as client:
+                    response = client.post(
+                        url,
+                        json=body,
+                        headers={
+                            "Authorization": f"Bearer {llm_gateway.token()}",
+                            "Content-Type": "application/json",
+                        },
+                    )
+                    response.raise_for_status()
+                    data = response.json()
+                choices = data.get("choices") or []
+                message = choices[0].get("message") or {} if choices else {}
+                image_data = ""
+                for item in message.get("images") or []:
+                    image_url = item.get("image_url") if isinstance(item, dict) else item
+                    image_data = (
+                        image_url.get("url", "")
+                        if isinstance(image_url, dict)
+                        else str(image_url or "")
+                    )
+                    if image_data:
+                        break
+                if not image_data:
+                    last = ImageError(f"{self.model} returned text but no image")
+                    if attempt < retries:
+                        time.sleep(_hold(None, attempt))
+                        continue
+                    raise last
+                return Answer(self._decode(image_data), self.model)
+            except httpx.HTTPStatusError as exc:
+                if exc.response.status_code not in RETRYABLE:
+                    raise ImageError(
+                        f"HTTP {exc.response.status_code}: {exc.response.text[:200]}"
+                    ) from exc
+                last = exc
+                if attempt < retries:
+                    time.sleep(_hold(exc.response, attempt))
+            except (httpx.HTTPError, KeyError, IndexError, ValueError, OSError) as exc:
+                last = exc
+                if attempt < retries:
+                    time.sleep(_hold(None, attempt))
+        raise ImageError(
+            f"gave up after {retries} attempts, {type(last).__name__}: {last}"
+        )
 
 
-def provider() -> Provider:
+_provider: Provider | LLMGatewayProvider | None = None
+
+
+def model_name() -> str:
+    """The image model selected for this process."""
+    return GATEWAY_MODEL if BACKEND == "llm-gateway" else DEPLOYMENT
+
+
+def provider() -> Provider | LLMGatewayProvider:
     """The shared provider, built on first use so importing costs no key lookup."""
     global _provider
     if _provider is None:
-        _provider = Provider()
+        if BACKEND == "azure":
+            _provider = Provider()
+        elif BACKEND == "llm-gateway":
+            _provider = LLMGatewayProvider()
+        else:
+            raise ImageError(
+                f"unknown LAYOUTGEN_IMAGE_BACKEND {BACKEND!r}; use azure or llm-gateway"
+            )
     return _provider
 
 

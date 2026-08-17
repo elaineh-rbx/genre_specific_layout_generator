@@ -19,6 +19,215 @@ image, and the model's job is to dress it without moving it.
 
 from __future__ import annotations
 
+import functools
+import json
+import os
+import pathlib
+
+
+# ---------------------------------------------------------------- model profiles
+
+_GEMINI_PREFIX = (
+    "Create one polished, richly detailed Roblox-like 3D game-environment render. "
+    "Preserve every requested gameplay structure, object count, route, opening, and "
+    "distinctive obstacle type; do not simplify the scene into generic tiles or blocks. "
+)
+
+_GEMINI_SUFFIX = (
+    " Render only the environment, never an infographic, annotated diagram, board, "
+    "poster, instruction sheet, screenshot, or user interface. Do not add headings, "
+    "captions, legends, UI panels, written labels, or watermarks. Physical arrows, "
+    "flags, lane markings, and gameplay symbols are allowed. Fill the square canvas "
+    "edge to edge with no border, matte, or letterboxing."
+)
+
+
+_GEMINI_V2_OUTPUT_RULES = (
+    " Render only the game environment. Never return an infographic, annotated diagram, "
+    "poster, instruction sheet, screenshot, UI, heading, caption, legend, written label, "
+    "border, matte, letterbox, or watermark. Fill the square canvas edge to edge. "
+    "Do not merge, replace, or omit named structures merely to simplify the composition."
+)
+
+
+def with_instruction(text: str, stage: str, instruction: str) -> str:
+    """Keep the canonical prompt immutable and append one optimized model policy.
+
+    GEPA is allowed to rewrite ``instruction`` only. The scene contract remains a
+    byte-for-byte input to every candidate, which prevents prompt optimization from
+    silently changing the selected shape, options, or render order.
+    """
+    if stage not in {"iso", "topdown", "plan"}:
+        raise ValueError(f"unknown image stage {stage!r}")
+    policy = instruction.strip()
+    if not policy:
+        raise ValueError(f"empty optimized instruction for {stage}")
+    return (
+        "CANONICAL SCENE CONTRACT — every requirement in this block is mandatory:\n"
+        f"{text.strip()}\n"
+        "END CANONICAL SCENE CONTRACT.\n\n"
+        f"MODEL-SPECIFIC EXECUTION POLICY FOR {stage.upper()}:\n{policy}\n\n"
+        "FINAL INVARIANT: the execution policy may improve how the model follows the "
+        "contract, but it may not remove, replace, merge, or contradict any canonical "
+        "scene requirement."
+    )
+
+
+@functools.lru_cache(maxsize=8)
+def _gepa_candidate(path: str) -> dict[str, str]:
+    candidate_path = pathlib.Path(path).expanduser()
+    try:
+        value = json.loads(candidate_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ValueError(f"cannot read GEPA candidate {candidate_path}: {exc}") from exc
+    if not isinstance(value, dict):
+        raise ValueError(f"GEPA candidate {candidate_path} must be a JSON object")
+    return {str(k): str(v) for k, v in value.items()}
+
+
+def _for_gemini_v2(text: str, stage: str, requirements: str) -> str:
+    """A stage-specific Gemini contract that prioritises literal coverage.
+
+    Flash often copied a reference camera instead of transforming it, while the shared
+    quality prefix asked even top-down stages for a generic "3D render". This profile
+    removes that conflict and repeats the canonical shape/options as a final checklist.
+    """
+    has_reference = (
+        "reference" in text.lower()
+        or "attached top-down plan" in text.lower()
+    )
+    if stage == "iso":
+        lead = (
+            "IMAGE-EDIT TASK. Rebuild the attached layout as a new oblique 3D view; "
+            "the reference controls geometry but absolutely not the camera. "
+            if has_reference
+            else
+            "TEXT-TO-IMAGE TASK. Render the complete game environment described below. "
+        )
+        camera = (
+            " FINAL CAMERA TEST: the camera optical axis must be 30-to-35 degrees away "
+            "from vertical nadir (55-to-60 degrees downward from horizontal). Show clear "
+            "front and side faces, substantial vertical height, depth, and cast shadows. "
+            "Keep the footprint axis-aligned. If the result could be mistaken for a "
+            "straight-down plan, it is wrong."
+        )
+    elif stage == "topdown":
+        lead = (
+            "CAMERA-CONVERSION IMAGE EDIT. Preserve the attached scene's exact geometry "
+            "and content, but replace its camera completely. "
+        )
+        camera = (
+            " FINAL CAMERA TEST: optical axis exactly vertical, 90-degree straight-down "
+            "orthographic nadir. Zero perspective, horizon, side faces, or visible wall "
+            "height. If any vertical face is visible, it is wrong."
+        )
+    elif stage == "plan":
+        lead = (
+            "TEXT-TO-IMAGE OVERHEAD LAYOUT TASK. Draw every requested structure and "
+            "connection in one complete physical game environment. "
+        )
+        camera = (
+            " FINAL CAMERA TEST: optical axis exactly vertical, 90-degree straight-down "
+            "orthographic nadir. Zero perspective, horizon, side faces, or visible wall "
+            "height. Connectivity and exact counts must be unambiguous."
+        )
+    else:
+        raise ValueError(f"unknown image stage {stage!r}")
+
+    checklist = requirements.strip()
+    audit = (
+        "\n\nFINAL MUST-SHOW CHECKLIST — silently verify every line before returning the "
+        "image:\n" + checklist
+        if checklist
+        else
+        "\n\nFINAL MUST-SHOW CHECKLIST: silently verify every named structure, exact "
+        "count, route, opening, and distinctive obstacle from the scene contract."
+    )
+    return f"{lead}{text.strip()}{audit}{_GEMINI_V2_OUTPUT_RULES}{camera}"
+
+
+def profile_name() -> str:
+    """The image-prompt dialect selected for this process.
+
+    Gemini image models are unusually capable typography and infographic renderers.
+    The default wrappers predate that capability and contain map/plan terminology that
+    can make Gemini draw labels and UI. Select its dialect automatically for a Gemini
+    model on the Gateway, while retaining an explicit override for controlled A/B runs.
+    """
+    explicit = os.getenv("LAYOUTGEN_IMAGE_PROMPT_PROFILE", "").strip().lower()
+    if explicit:
+        return explicit
+    backend = os.getenv("LAYOUTGEN_IMAGE_BACKEND", "azure").strip().lower()
+    # Keep this default aligned with ``backends.images.GATEWAY_MODEL``. Otherwise
+    # selecting the Gateway alone renders with Gemini while silently retaining the
+    # Azure/GPT prompt dialect.
+    default_model = "gemini-3.1-flash-image" if backend == "llm-gateway" else ""
+    model = os.getenv("LAYOUTGEN_IMAGE_MODEL", default_model).strip().lower()
+    return "gemini" if backend == "llm-gateway" and "gemini" in model else "default"
+
+
+def for_model(text: str, stage: str, profile: str | None = None,
+              requirements: str = "") -> str:
+    """Adapt one completed prompt without changing its scene/layout requirements."""
+    selected = profile or profile_name()
+    if selected == "default":
+        return text
+    if selected == "gemini-v2":
+        return _for_gemini_v2(text, stage, requirements)
+    if selected == "gemini-gepa":
+        path = os.getenv("LAYOUTGEN_GEPA_CANDIDATE", "").strip()
+        if not path:
+            raise ValueError(
+                "gemini-gepa requires LAYOUTGEN_GEPA_CANDIDATE=/path/to/"
+                "best_candidate.json"
+            )
+        candidate = _gepa_candidate(path)
+        if stage not in candidate:
+            raise ValueError(f"GEPA candidate {path} has no {stage!r} instruction")
+        return with_instruction(text, stage, candidate[stage])
+    if selected != "gemini":
+        raise ValueError(
+            f"unknown image prompt profile {selected!r}; "
+            "use default, gemini, gemini-v2, or gemini-gepa"
+        )
+
+    adapted = text
+
+    if stage == "topdown":
+        view = (
+            " FINAL CAMERA REQUIREMENT: re-render the attached scene from an exactly "
+            "90-degree straight-down orthographic nadir camera. Do not return, crop, or "
+            "trace the reference at its existing angle. Rotate the camera, not the "
+            "layout. The result must have zero perspective, zero horizon, zero side "
+            "faces, and zero visible wall height."
+        )
+    elif stage == "plan":
+        view = (
+            " FINAL CAMERA REQUIREMENT: render the physical game environment from an "
+            "exactly 90-degree straight-down orthographic nadir camera, with zero "
+            "perspective, zero horizon, zero side faces, and zero visible wall height."
+        )
+    elif stage == "iso":
+        if "reference" in adapted.lower() or "attached top-down plan" in adapted.lower():
+            view = (
+                " FINAL CAMERA REQUIREMENT: re-render the reference layout from a steep "
+                "55-to-65-degree elevated oblique camera, visibly below nadir. Do not "
+                "return, crop, trace, or lightly extrude the overhead reference. The "
+                "reference controls the footprint, not the camera. Show substantial "
+                "side faces, vertical height, depth, and cast shadows while preserving "
+                "the same layout coordinates."
+            )
+        else:
+            view = (
+                " FINAL CAMERA REQUIREMENT: use a steep 55-to-65-degree elevated oblique "
+                "camera, visibly below nadir, with substantial side faces, vertical "
+                "height, believable depth, scale, and cast shadows."
+            )
+    else:
+        raise ValueError(f"unknown image stage {stage!r}")
+    return f"{_GEMINI_PREFIX}{adapted}{_GEMINI_SUFFIX}{view}"
+
+
 # ---------------------------------------------------------------- text -> isometric
 
 PREFIX = "Generate directly from this text prompt only, with no reference image: "

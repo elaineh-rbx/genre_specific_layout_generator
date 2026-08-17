@@ -1,6 +1,6 @@
 {
   "scene": "P0275",
-  "source": "Mapa: Crea un pueblo abandonado de noche con casas, callejones, una escuela, una iglesia, una estación de servicio, una tienda, una comisaría, un parque, alcantarillas, edificios explorables, múltiples rutas, atajos, ventanas, puertas y escondites. El mapa debe estar optimizado para partidas multijugador.\nRoles: Crea dos equipos: Runner y Chaser. Los jugadores son asignados aleatoriamente al comenzar cada ronda.\nRunner: Debe ser más ágil, girar más rápido, saltar mejor y moverse con mayor fluidez. Utiliza animaciones del catálogo oficial de Roblox (R15) para caminar, correr, saltar, caer e inactivo. No dejes al personaje sin animaciones.\nChaser: Debe verse más intimidante y tener una habilidad que aumente su velocidad durante 10 segundos, seguida de un tiempo de recarga. Utiliza también animaciones oficiales del catálogo de Roblox para caminar, correr, saltar e inactivo. No dejes al personaje estático.\nPanel de administrador: Agrega un panel para pruebas que permita cambiar el rol de cualquier jugador entre Runner y Chaser, iniciar o finalizar rondas, reiniciar la partida y forzar el cambio de roles.\nJugabilidad: Las rondas comienzan desde un lobby interactivo. Los jugadores pueden caminar por el lobby y la partida inicia automáticamente. Durante la partida, los Chasers deben eliminar a los Runners antes de que termine el tiempo. Al finalizar una ronda, los roles pueden cambiar aleatoriamente para la siguiente.\nAtmósfera: No agregues música de fondo. Utiliza solo sonidos ambientales como viento, puertas, pasos y luces parpadeantes.\nÚltimo minuto: Cuando quede un minuto, el mapa debe volverse mucho más oscuro y los Chasers deben emitir un brillo visible para aumentar la tensión.\nCalidad: Utiliza únicamente recursos oficiales de Roblox cuando sea posible. Si no puedes crear animaciones personalizadas, utiliza las animaciones oficiales del catálogo. No dejes personajes sin animaciones. El juego debe ser funcional, organizado y fácil de ampliar con nuevas mecánicas en el futuro.",
+  "source": "Mapa: Crea un pueblo abandonado de noche con casas, callejones, una escuela, una iglesia, una estación de servicio, una tienda, una comisaría, un parque, alcantarillas, edificios explorables, múltiples rutas, atajos, ventanas, puertas y escondites. El mapa debe estar optimizado para partidas multijugador.\\nRoles: Crea dos equipos: Runner y Chaser. Los jugadores son asignados aleatoriamente al comenzar cada ronda.\\nRunner: Debe ser más ágil, girar más rápido, saltar mejor y moverse con mayor fluidez. Utiliza animaciones del catálogo oficial de Roblox (R15) para caminar, correr, saltar, caer e inactivo. No dejes al personaje sin animaciones.\\nChaser: Debe verse más intimidante y tener una habilidad que aumente su velocidad durante 10 segundos, seguida de un tiempo de recarga. Utiliza también animaciones oficiales del catálogo de Roblox para caminar, correr, saltar e inactivo. No dejes al personaje estático.\\nPanel de administrador: Agrega un panel para pruebas que permita cambiar el rol de cualquier jugador entre Runner y Chaser, iniciar o finalizar rondas, reiniciar la partida y forzar el cambio de roles.\\nJugabilidad: Las rondas comienzan desde un lobby interactivo. Los jugadores pueden caminar por el lobby y la partida inicia automáticamente. Durante la partida, los Chasers deben eliminar a los Runners antes de que termine el tiempo. Al finalizar una ronda, los roles pueden cambiar aleatoriamente para la siguiente.\\nAtmósfera: No agregues música de fondo. Utiliza solo sonidos ambientales como viento, puertas, pasos y luces parpadeantes.\\nÚltimo minuto: Cuando quede un minuto, el mapa debe volverse mucho más oscuro y los Chasers deben emitir un brillo visible para aumentar la tensión.\\nCalidad: Utiliza únicamente recursos oficiales de Roblox cuando sea posible. Si no puedes crear animaciones personalizadas, utiliza las animaciones oficiales del catálogo. No dejes personajes sin animaciones. El juego debe ser funcional, organizado y fácil de ampliar con nuevas mecánicas en el futuro.",
   "answers": [
     {
       "field": "scale",
@@ -18,181 +18,164 @@
       "answer": "Las alcantarillas deben ser una red subterránea transitable y compacta, con accesos por algunas alcantarillas y conexiones útiles como atajos."
     }
   ],
-  "scene_prompt": "Crea un mapa 3D de un pueblo abandonado nocturno, compacto y de unas pocas manzanas, cruzable en alrededor de medio minuto. Organiza casas y callejones conectados por calles con rutas múltiples, atajos, ventanas, puertas y escondites; incluye edificios explorables como una escuela, una iglesia, una estación de servicio, una tienda y una comisaría, además de un parque. Bajo el pueblo, construye una red de alcantarillas transitable y compacta, accesible desde varias tapas de alcantarilla y conectada con zonas útiles del pueblo como atajo. Añade un lobby físico separado para el inicio de las partidas. La composición debe sentirse oscura y tensa, con iluminación nocturna tenue, luces parpadeantes y un oscurecimiento aún mayor hacia el final de la ronda.",
-  "blob": "### Genre\nThe dominant genre is Survival: an asymmetric Chaser-versus-Runner pursuit game where surviving the timer matters more than reaching an exit.\n\n### Shape and preset\nUse `warren-looping`, making streets, alleys, interiors, and sewer shortcuts form interconnected loops with no trapping dead ends. The closest preset is 1 vs All, retaining its pursuit topology, hiding cover, and separated role starts but dropping its escape gate because the brief explicitly has no extraction.\n\n### Config requirements\nUse `cover-los` for windows, doorways, alleys, and compact hiding recesses that break Chaser sightlines. Use `building-interior` for the explorable school, church, gas station, shop, police station, and houses. Use `settlement-density` for a compact abandoned village of a few blocks. The walkable sewer network and its manhole entrances must also be drawn as scene-specific geometry, as must the physically separate lobby.\n\n### Layout requirements\nPlace `spawn-protected` role starts in separated positions: Runner starts distributed through safe village locations and Chaser starts screened far enough away to prevent immediate contact. No `gate-escape` or winner zone is needed because surviving Runners win in place when time expires.\n\n### Layout components\nThe main zone is a compact village crossed in roughly thirty seconds, with streets connecting dense houses, narrow alleys, a central park, and the five named civic or commercial buildings. Doors and windows provide alternate passages. A compact underground sewer layer links several useful surface areas through multiple manholes. The lobby is isolated from the active round. Bound the town with dark, impassable ruined edges and frame it as a readable few-block plan despite low nighttime light.\n\n### Render order\nUse `topdown`: the looping chase network, multiple shortcuts, and sewer access connectivity must be valid before the isometric image dresses the plan.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by a few dense blocks rather than a full town. The theme is abandoned nocturnal civic horror with dim, flickering light. Use `P6` for guaranteed loop connectivity, `P2` because the sewer layer lies beneath the surface, `P3` for exterior-to-interior transitions, and `P4` for the isolated lobby map.",
-  "agent_artifact": "# Scene prompt\nCrea un mapa 3D de un pueblo abandonado nocturno, compacto y de unas pocas manzanas, cruzable en alrededor de medio minuto. Organiza casas y callejones conectados por calles con rutas múltiples, atajos, ventanas, puertas y escondites; incluye edificios explorables como una escuela, una iglesia, una estación de servicio, una tienda y una comisaría, además de un parque. Bajo el pueblo, construye una red de alcantarillas transitable y compacta, accesible desde varias tapas de alcantarilla y conectada con zonas útiles del pueblo como atajo. Añade un lobby físico separado para el inicio de las partidas. La composición debe sentirse oscura y tensa, con iluminación nocturna tenue, luces parpadeantes y un oscurecimiento aún mayor hacia el final de la ronda.\n\n# Agent decision\n### Genre\nThe dominant genre is Survival: an asymmetric Chaser-versus-Runner pursuit game where surviving the timer matters more than reaching an exit.\n\n### Shape and preset\nUse `warren-looping`, making streets, alleys, interiors, and sewer shortcuts form interconnected loops with no trapping dead ends. The closest preset is 1 vs All, retaining its pursuit topology, hiding cover, and separated role starts but dropping its escape gate because the brief explicitly has no extraction.\n\n### Config requirements\nUse `cover-los` for windows, doorways, alleys, and compact hiding recesses that break Chaser sightlines. Use `building-interior` for the explorable school, church, gas station, shop, police station, and houses. Use `settlement-density` for a compact abandoned village of a few blocks. The walkable sewer network and its manhole entrances must also be drawn as scene-specific geometry, as must the physically separate lobby.\n\n### Layout requirements\nPlace `spawn-protected` role starts in separated positions: Runner starts distributed through safe village locations and Chaser starts screened far enough away to prevent immediate contact. No `gate-escape` or winner zone is needed because surviving Runners win in place when time expires.\n\n### Layout components\nThe main zone is a compact village crossed in roughly thirty seconds, with streets connecting dense houses, narrow alleys, a central park, and the five named civic or commercial buildings. Doors and windows provide alternate passages. A compact underground sewer layer links several useful surface areas through multiple manholes. The lobby is isolated from the active round. Bound the town with dark, impassable ruined edges and frame it as a readable few-block plan despite low nighttime light.\n\n### Render order\nUse `topdown`: the looping chase network, multiple shortcuts, and sewer access connectivity must be valid before the isometric image dresses the plan.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by a few dense blocks rather than a full town. The theme is abandoned nocturnal civic horror with dim, flickering light. Use `P6` for guaranteed loop connectivity, `P2` because the sewer layer lies beneath the surface, `P3` for exterior-to-interior transitions, and `P4` for the isolated lobby map.\n",
-  "agent_notes": "### Genre\nThe dominant genre is Survival: an asymmetric Chaser-versus-Runner pursuit game where surviving the timer matters more than reaching an exit.\n\n### Shape and preset\nUse `warren-looping`, making streets, alleys, interiors, and sewer shortcuts form interconnected loops with no trapping dead ends. The closest preset is 1 vs All, retaining its pursuit topology, hiding cover, and separated role starts but dropping its escape gate because the brief explicitly has no extraction.\n\n### Config requirements\nUse `cover-los` for windows, doorways, alleys, and compact hiding recesses that break Chaser sightlines. Use `building-interior` for the explorable school, church, gas station, shop, police station, and houses. Use `settlement-density` for a compact abandoned village of a few blocks. The walkable sewer network and its manhole entrances must also be drawn as scene-specific geometry, as must the physically separate lobby.\n\n### Layout requirements\nPlace `spawn-protected` role starts in separated positions: Runner starts distributed through safe village locations and Chaser starts screened far enough away to prevent immediate contact. No `gate-escape` or winner zone is needed because surviving Runners win in place when time expires.\n\n### Layout components\nThe main zone is a compact village crossed in roughly thirty seconds, with streets connecting dense houses, narrow alleys, a central park, and the five named civic or commercial buildings. Doors and windows provide alternate passages. A compact underground sewer layer links several useful surface areas through multiple manholes. The lobby is isolated from the active round. Bound the town with dark, impassable ruined edges and frame it as a readable few-block plan despite low nighttime light.\n\n### Render order\nUse `topdown`: the looping chase network, multiple shortcuts, and sewer access connectivity must be valid before the isometric image dresses the plan.\n\n### Scale, theme, and pipeline cost\nScale is medium, driven by a few dense blocks rather than a full town. The theme is abandoned nocturnal civic horror with dim, flickering light. Use `P6` for guaranteed loop connectivity, `P2` because the sewer layer lies beneath the surface, `P3` for exterior-to-interior transitions, and `P4` for the isolated lobby map.",
+  "blob": "## Clarifications resolved\n- [author] scale — Q: How big should the village be - a few blocks a Runner can cross in half a minute, or a full town? A: Un pueblo compacto de unas pocas manzanas, que un Runner pueda cruzar en alrededor de medio minuto; debe priorizar rutas, atajos y edificios explorables sobre tamaño.\n- [author] goal — Q: If no Runner is caught before the timer runs out, do the Runners simply win, or is there somewhere they have to reach? A: Si termina el tiempo y queda al menos un Runner sin eliminar, los Runners ganan; no hace falta una zona de extracción.\n- [author] sewers — Q: Should the sewers be a walkable underground network, or just short connector tunnels between two manholes? A: Las alcantarillas deben ser una red subterránea transitable y compacta, con accesos por algunas alcantarillas y conexiones útiles como atajos.\n\n## Enriched image prompt\nCreate a compact abandoned village at night, only a few blocks across and traversable in about half a minute. Build a looping network of streets, alleys, multiple routes, and shortcuts around houses, one school, one church, one gas station, one shop, one police station, and one park. Make the named buildings enterable through readable doors and windows, with interior hiding spots and exterior cover. Beneath the streets, add a compact walkable sewer network reached through several manholes and reconnecting distant parts of the village as useful shortcuts. Keep every chase route connected with no trapping dead ends. Add a separate small interactive lobby for waiting players. Use wind-swept, flickering-light nighttime atmosphere without background-music imagery.\n\n## Genre\nThe genre is Survival.\n\n## Shape and preset\nUse `space-staged`, taken from outside Survival's usual set, as the top-level Lobby and Isolated Stage container. The village match segment uses `warren-looping` for fair zero-dead-end chase circulation. The matching preset is 1 vs All, with its escape gate removed because surviving the timer requires no extraction zone.\n\n## Config requirements\nUse `social-hub` for the interactive lobby; `settlement-density` for the compact abandoned village; `cover-los` for interior and exterior hiding spots; `building-interior` for the school, church, gas station, shop, police station, and houses; `path-flank-tunnel` from Shooter for the sewer shortcuts; and `teleporter-link` for the lobby-to-match transition.\n\n## Layout requirements\nPlace the layout half of `teleporter-link` between the lobby and village. Place `spawn-protected` as separated Runner and Chaser start areas with no immediate sightline between roles. Do not place `gate-escape`. Sewer entrances must align with manholes and connect back to useful street locations.\n\n## Layout components\nThere are two map segments: a Lobby shaped as `interior-single`, and the Abandoned Village match shaped as `warren-looping`. The village contains a few blocks, houses, one school, church, gas station, shop, police station, park, looping streets and alleys, doors, windows, hiding places, several manholes, and a compact underground sewer network. Every above- and below-ground route reconnects.\n\n## Render order\nUse `topdown`: establish the village, building, shortcut, and sewer connectivity first, then dress the authoritative plans as a nighttime abandoned settlement.\n\n## Scale, theme, and pipeline cost\nThe scale band is medium, preserving individual interiors and hiding spots across a half-minute village. The theme is an abandoned nighttime town with flickering practical lights. `P4` is required for lobby and match maps, `P6` for zero-dead-end chase topology, `P2` for the underground sewer layer, and `P3` for outside-to-building and street-to-sewer transitions.",
+  "agent_artifact": "# Agent decision\n\n## Clarifications resolved\n- [author] scale — Q: How big should the village be - a few blocks a Runner can cross in half a minute, or a full town? A: Un pueblo compacto de unas pocas manzanas, que un Runner pueda cruzar en alrededor de medio minuto; debe priorizar rutas, atajos y edificios explorables sobre tamaño.\n- [author] goal — Q: If no Runner is caught before the timer runs out, do the Runners simply win, or is there somewhere they have to reach? A: Si termina el tiempo y queda al menos un Runner sin eliminar, los Runners ganan; no hace falta una zona de extracción.\n- [author] sewers — Q: Should the sewers be a walkable underground network, or just short connector tunnels between two manholes? A: Las alcantarillas deben ser una red subterránea transitable y compacta, con accesos por algunas alcantarillas y conexiones útiles como atajos.\n\n## Enriched image prompt\nCreate a compact abandoned village at night, only a few blocks across and traversable in about half a minute. Build a looping network of streets, alleys, multiple routes, and shortcuts around houses, one school, one church, one gas station, one shop, one police station, and one park. Make the named buildings enterable through readable doors and windows, with interior hiding spots and exterior cover. Beneath the streets, add a compact walkable sewer network reached through several manholes and reconnecting distant parts of the village as useful shortcuts. Keep every chase route connected with no trapping dead ends. Add a separate small interactive lobby for waiting players. Use wind-swept, flickering-light nighttime atmosphere without background-music imagery.\n\n## Genre\nThe genre is Survival.\n\n## Shape and preset\nUse `space-staged`, taken from outside Survival's usual set, as the top-level Lobby and Isolated Stage container. The village match segment uses `warren-looping` for fair zero-dead-end chase circulation. The matching preset is 1 vs All, with its escape gate removed because surviving the timer requires no extraction zone.\n\n## Config requirements\nUse `social-hub` for the interactive lobby; `settlement-density` for the compact abandoned village; `cover-los` for interior and exterior hiding spots; `building-interior` for the school, church, gas station, shop, police station, and houses; `path-flank-tunnel` from Shooter for the sewer shortcuts; and `teleporter-link` for the lobby-to-match transition.\n\n## Layout requirements\nPlace the layout half of `teleporter-link` between the lobby and village. Place `spawn-protected` as separated Runner and Chaser start areas with no immediate sightline between roles. Do not place `gate-escape`. Sewer entrances must align with manholes and connect back to useful street locations.\n\n## Layout components\nThere are two map segments: a Lobby shaped as `interior-single`, and the Abandoned Village match shaped as `warren-looping`. The village contains a few blocks, houses, one school, church, gas station, shop, police station, park, looping streets and alleys, doors, windows, hiding places, several manholes, and a compact underground sewer network. Every above- and below-ground route reconnects.\n\n## Render order\nUse `topdown`: establish the village, building, shortcut, and sewer connectivity first, then dress the authoritative plans as a nighttime abandoned settlement.\n\n## Scale, theme, and pipeline cost\nThe scale band is medium, preserving individual interiors and hiding spots across a half-minute village. The theme is an abandoned nighttime town with flickering practical lights. `P4` is required for lobby and match maps, `P6` for zero-dead-end chase topology, `P2` for the underground sewer layer, and `P3` for outside-to-building and street-to-sewer transitions.\n",
+  "agent_notes": "## Clarifications resolved\n- [author] scale — Q: How big should the village be - a few blocks a Runner can cross in half a minute, or a full town? A: Un pueblo compacto de unas pocas manzanas, que un Runner pueda cruzar en alrededor de medio minuto; debe priorizar rutas, atajos y edificios explorables sobre tamaño.\n- [author] goal — Q: If no Runner is caught before the timer runs out, do the Runners simply win, or is there somewhere they have to reach? A: Si termina el tiempo y queda al menos un Runner sin eliminar, los Runners ganan; no hace falta una zona de extracción.\n- [author] sewers — Q: Should the sewers be a walkable underground network, or just short connector tunnels between two manholes? A: Las alcantarillas deben ser una red subterránea transitable y compacta, con accesos por algunas alcantarillas y conexiones útiles como atajos.\n\n## Enriched image prompt\nCreate a compact abandoned village at night, only a few blocks across and traversable in about half a minute. Build a looping network of streets, alleys, multiple routes, and shortcuts around houses, one school, one church, one gas station, one shop, one police station, and one park. Make the named buildings enterable through readable doors and windows, with interior hiding spots and exterior cover. Beneath the streets, add a compact walkable sewer network reached through several manholes and reconnecting distant parts of the village as useful shortcuts. Keep every chase route connected with no trapping dead ends. Add a separate small interactive lobby for waiting players. Use wind-swept, flickering-light nighttime atmosphere without background-music imagery.\n\n## Genre\nThe genre is Survival.\n\n## Shape and preset\nUse `space-staged`, taken from outside Survival's usual set, as the top-level Lobby and Isolated Stage container. The village match segment uses `warren-looping` for fair zero-dead-end chase circulation. The matching preset is 1 vs All, with its escape gate removed because surviving the timer requires no extraction zone.\n\n## Config requirements\nUse `social-hub` for the interactive lobby; `settlement-density` for the compact abandoned village; `cover-los` for interior and exterior hiding spots; `building-interior` for the school, church, gas station, shop, police station, and houses; `path-flank-tunnel` from Shooter for the sewer shortcuts; and `teleporter-link` for the lobby-to-match transition.\n\n## Layout requirements\nPlace the layout half of `teleporter-link` between the lobby and village. Place `spawn-protected` as separated Runner and Chaser start areas with no immediate sightline between roles. Do not place `gate-escape`. Sewer entrances must align with manholes and connect back to useful street locations.\n\n## Layout components\nThere are two map segments: a Lobby shaped as `interior-single`, and the Abandoned Village match shaped as `warren-looping`. The village contains a few blocks, houses, one school, church, gas station, shop, police station, park, looping streets and alleys, doors, windows, hiding places, several manholes, and a compact underground sewer network. Every above- and below-ground route reconnects.\n\n## Render order\nUse `topdown`: establish the village, building, shortcut, and sewer connectivity first, then dress the authoritative plans as a nighttime abandoned settlement.\n\n## Scale, theme, and pipeline cost\nThe scale band is medium, preserving individual interiors and hiding spots across a half-minute village. The theme is an abandoned nighttime town with flickering practical lights. `P4` is required for lobby and match maps, `P6` for zero-dead-end chase topology, `P2` for the underground sewer layer, and `P3` for outside-to-building and street-to-sewer transitions.",
   "secondary": [],
   "spec": {
+    "clarifications": [
+      {
+        "field": "scale",
+        "ask": "How big should the village be - a few blocks a Runner can cross in half a minute, or a full town?",
+        "answer": "Un pueblo compacto de unas pocas manzanas, que un Runner pueda cruzar en alrededor de medio minuto; debe priorizar rutas, atajos y edificios explorables sobre tamaño.",
+        "source": "author"
+      },
+      {
+        "field": "goal",
+        "ask": "If no Runner is caught before the timer runs out, do the Runners simply win, or is there somewhere they have to reach?",
+        "answer": "Si termina el tiempo y queda al menos un Runner sin eliminar, los Runners ganan; no hace falta una zona de extracción.",
+        "source": "author"
+      },
+      {
+        "field": "sewers",
+        "ask": "Should the sewers be a walkable underground network, or just short connector tunnels between two manholes?",
+        "answer": "Las alcantarillas deben ser una red subterránea transitable y compacta, con accesos por algunas alcantarillas y conexiones útiles como atajos.",
+        "source": "author"
+      }
+    ],
+    "initial_scene_subprompt_enriched": "Create a compact abandoned village at night, only a few blocks across and traversable in about half a minute. Build a looping network of streets, alleys, multiple routes, and shortcuts around houses, one school, one church, one gas station, one shop, one police station, and one park. Make the named buildings enterable through readable doors and windows, with interior hiding spots and exterior cover. Beneath the streets, add a compact walkable sewer network reached through several manholes and reconnecting distant parts of the village as useful shortcuts. Keep every chase route connected with no trapping dead ends. Add a separate small interactive lobby for waiting players. Use wind-swept, flickering-light nighttime atmosphere without background-music imagery.",
     "genre": "Survival",
     "secondary": [],
-    "shape": "warren-looping",
+    "shape": "space-staged",
     "preset": "1 vs All",
     "axes": {},
     "options": [
       {
+        "id": "social-hub",
+        "text": "A separate small interactive lobby for waiting players.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "settlement-density",
+        "text": "A compact abandoned village at night, only a few blocks across, with looping streets and alleys around houses, one school, one church, one gas station, one shop, one police station, and one park.",
+        "visible": true,
+        "count": -1
+      },
+      {
         "id": "cover-los",
-        "text": "Windows, doorways, alleys, and compact hiding recesses that break Chaser sightlines.",
+        "text": "Interior hiding spots and exterior cover throughout the village and inside the enterable buildings.",
         "visible": true,
         "count": -1
       },
       {
         "id": "building-interior",
-        "text": "Explorable school, church, gas station, shop, police station, and houses.",
+        "text": "Enterable houses, plus one school, one church, one gas station, one shop, and one police station, with readable doors and windows.",
         "visible": true,
-        "count": 5
+        "count": -1
       },
       {
-        "id": "settlement-density",
-        "text": "A compact abandoned village of a few blocks.",
+        "id": "path-flank-tunnel",
+        "text": "A compact, walkable underground sewer network beneath the streets, accessed through several manholes and reconnecting distant parts of the village as useful shortcuts.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "teleporter-link",
+        "text": "A lobby-to-match transition using teleport markers between the lobby and the village match segment.",
         "visible": true,
         "count": -1
       },
       {
         "id": "spawn-protected",
-        "text": "Separated role starts for Runners and the Chaser, preventing immediate contact.",
+        "text": "Separated Runner and Chaser start areas with no immediate sightline between roles.",
         "visible": false,
         "count": -1
       }
     ],
     "layout_placement": [
       {
-        "id": "spawn-protected",
-        "text": "Runner starts distributed through safe village locations and Chaser starts screened far enough away to prevent immediate contact.",
+        "id": "teleporter-link",
+        "text": "The lobby-to-match transition teleport markers between the lobby and the village (layout side).",
         "count": -1,
-        "where": "Runners are distributed through safe village locations; Chaser starts are screened far enough away."
+        "where": "Between the lobby and village."
+      },
+      {
+        "id": "spawn-protected",
+        "text": "Separated Runner and Chaser start areas with no immediate sightline between roles.",
+        "count": -1,
+        "where": ""
       }
     ],
     "layout": {
-      "composition": "A readable few-block town plan in low nighttime light, with the compact village as the main surface layer and sewer access points connecting down to the underground layer; dark ruined edges frame the town.",
+      "composition": "",
       "zones": [
         {
-          "name": "Compact abandoned village",
-          "role": "Main Chaser-versus-Runner pursuit area with looping streets, alleys, hiding cover, buildings, and a central park.",
-          "where": "Main surface map",
-          "size": "Crossable in roughly thirty seconds; a few dense blocks"
-        },
-        {
-          "name": "Central park",
-          "role": "Open village landmark within the pursuit network.",
-          "where": "Centre of the village",
-          "size": ""
-        },
-        {
-          "name": "Civic and commercial buildings",
-          "role": "Explorable alternate passages through the school, church, gas station, shop, and police station.",
-          "where": "Across the village",
-          "size": "5 named buildings"
-        },
-        {
-          "name": "Underground sewer layer",
-          "role": "Compact walkable shortcut network linking useful surface areas.",
-          "where": "Beneath the village",
-          "size": "Compact"
-        },
-        {
           "name": "Lobby",
-          "role": "Physical start-of-match lobby kept separate from the active round.",
-          "where": "Isolated from the active round",
+          "role": "Interactive lobby for waiting players.",
+          "where": "",
+          "size": "small"
+        },
+        {
+          "name": "Abandoned Village match",
+          "role": "Looping chase space with multiple routes, shortcuts, enterable buildings, hiding spots, and sewers as traversal shortcuts; no trapping dead ends.",
+          "where": "",
           "size": ""
+        },
+        {
+          "name": "Sewer network",
+          "role": "Compact walkable underground network accessed by several manholes; reconnects distant street locations as useful shortcuts.",
+          "where": "Beneath the streets",
+          "size": "compact"
         }
       ],
       "paths": [
         {
-          "from": "Village streets",
-          "to": "Dense houses, narrow alleys, central park, and civic/commercial buildings",
-          "kind": "road"
+          "from": "Lobby",
+          "to": "Abandoned Village match",
+          "kind": "portal"
         },
         {
-          "from": "Buildings",
-          "to": "Village streets and alleys",
-          "kind": "corridor"
-        },
-        {
-          "from": "Village surface",
-          "to": "Underground sewer layer",
-          "kind": "tunnel"
-        },
-        {
-          "from": "Manhole entrances",
-          "to": "Useful surface areas",
+          "from": "Village streets/alleys",
+          "to": "Sewer network",
           "kind": "tunnel"
         }
       ],
-      "terrain": "Compact village ground with an underground sewer layer beneath it; dark, impassable ruined edges surround the town.",
-      "props": [
-        {
-          "name": "Dense houses",
-          "count": -1,
-          "where": "Throughout the compact village blocks"
-        },
-        {
-          "name": "School",
-          "count": 1,
-          "where": "Village"
-        },
-        {
-          "name": "Church",
-          "count": 1,
-          "where": "Village"
-        },
-        {
-          "name": "Gas station",
-          "count": 1,
-          "where": "Village"
-        },
-        {
-          "name": "Shop",
-          "count": 1,
-          "where": "Village"
-        },
-        {
-          "name": "Police station",
-          "count": 1,
-          "where": "Village"
-        },
-        {
-          "name": "Manhole entrances",
-          "count": -1,
-          "where": "Several useful surface areas"
-        },
-        {
-          "name": "Doors and windows",
-          "count": -1,
-          "where": "Throughout explorable buildings and village passages"
-        }
-      ],
-      "boundary": "Dark, impassable ruined edges bound the town.",
+      "terrain": "Nighttime village streets and alleys; compact underground sewer layer beneath the streets.",
+      "props": [],
+      "boundary": "",
       "scale_band": "medium",
-      "theme": "Abandoned nocturnal civic horror, dim flickering light, tense and darkening toward the end of the round."
+      "theme": "Abandoned nighttime town with wind-swept, flickering practical lights."
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "The looping chase network, multiple shortcuts, and sewer access connectivity must be valid before the isometric image dresses the plan.",
+      "why": "establish the village, building, shortcut, and sewer connectivity first",
       "set_piece": false
     },
     "route": [
+      "P4",
       "P6",
       "P2",
-      "P3",
-      "P4"
+      "P3"
     ],
     "notes": [
-      "The blob explicitly drops `gate-escape` because surviving Runners win in place when time expires; no winner zone is included.",
-      "The physically separate lobby and walkable sewer geometry are represented as layout zones and paths because the blob names no canonical option IDs for them.",
-      "`building-interior` has count 5 from the five named civic or commercial buildings; houses are also explorable but their number is unstated."
-    ],
-    "scene_prompt": "Crea un mapa 3D de un pueblo abandonado nocturno, compacto y de unas pocas manzanas, cruzable en alrededor de medio minuto. Organiza casas y callejones conectados por calles con rutas múltiples, atajos, ventanas, puertas y escondites; incluye edificios explorables como una escuela, una iglesia, una estación de servicio, una tienda y una comisaría, además de un parque. Bajo el pueblo, construye una red de alcantarillas transitable y compacta, accesible desde varias tapas de alcantarilla y conectada con zonas útiles del pueblo como atajo. Añade un lobby físico separado para el inicio de las partidas. La composición debe sentirse oscura y tensa, con iluminación nocturna tenue, luces parpadeantes y un oscurecimiento aún mayor hacia el final de la ronda."
+      "Blob specifies two sub-segments (Lobby `interior-single`, match `warren-looping`) inside top-level `space-staged`; schema allows only one `shape`, so `space-staged` was placed in `shape` and the sub-segment shapes were captured only in `layout.zones` text.",
+      "`spawn-protected` appears in layout requirements but was not listed in Config requirements; it was kept because the blob explicitly requires it.",
+      "`gate-escape` was explicitly excluded; it was not added.",
+      "No explicit siting rule text was provided for `spawn-protected`, so `layout_placement.where` is an empty string.",
+      "No explicit frame composition, boundary description, or prop counts were stated; left empty / -1 accordingly.",
+      "placement 'spawn-protected' carries no siting rule",
+      "placement 'spawn-protected' carries no siting rule"
+    ]
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "1986e1975066",
-  "served_by": "subagent/genre-choice -> gateway/production/gpt-5.6-terra",
+  "pipeline_version": "48d4ff51304c",
+  "served_by": "subagent/genre-choice -> azure/gpt-5.2",
   "schema_degraded": false,
-  "reused_uprez": true,
   "order": "p6",
   "first": "topdown",
   "mapper_notes": []

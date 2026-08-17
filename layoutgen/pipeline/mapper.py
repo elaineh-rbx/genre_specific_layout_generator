@@ -9,19 +9,18 @@ model to do.
 The assembly is `pipeline.spec.build`, the same deterministic function every other arm
 goes through. A current agent spec carries `initial_scene_subprompt_enriched`: the
 context-aware agent's final image-ready description, already containing the visible,
-scene-specific realization of its picks. That text becomes the body and is followed by
-the canonical Build.md shape and visible-option requirements. Keeping both is deliberate:
-the enriched prose provides scene context, while the catalogue addendum guarantees that
-no selected layout constraint disappears during enrichment. Older specs without the field
-retain the legacy scene-prompt plus catalogue-addendum assembly.
+scene-specific realization of its picks. That text is the only scene body and is followed
+by the canonical Build.md shape and visible-option requirements. Keeping both ingredients
+is deliberate: the enriched prose provides scene context, while the catalogue addendum
+guarantees that no selected layout constraint disappears during enrichment.
 
 That was not always so. An earlier version of this file composed the body itself out of
-the spec's zones, paths and props and never sent the scene prompt at all, which made the
-comparison unreadable: the new arm was writing a differently-shaped prompt as well as
-choosing differently, so a gap in the images had two causes and no way to separate them.
+the spec's zones, paths and props instead of sending the agent's final enriched body,
+which made the comparison unreadable: the new arm was writing a differently-shaped
+prompt as well as choosing differently, so a gap in the images had two causes and no way
+to separate them.
 The spec still carries that decomposition and it is still worth recording - it is what
-the blob argued about - but roughly half of it restates the scene prompt in other words,
-and the scene prompt is now sent.
+the blob argued about - but the final enriched field is the sole prose body sent.
 
 The context-aware agent's explicit `render.first` decision controls execution for scenes
 that this repository cannot author procedurally. A supported maze or racing route is the
@@ -61,18 +60,26 @@ def build(spec: dict, *, crossings: int | None = None,
     """The spec's two prompts, plus everything a report needs to explain them."""
     render = spec.get("render") or {}
     wanted = render.get("first") or "isometric"
-    enriched = (spec.get("initial_scene_subprompt_enriched") or "").strip()
-    scene = enriched or (spec.get("scene_prompt") or "").strip()
-    notes: list[str] = []
+    scene = (spec.get("initial_scene_subprompt_enriched") or "").strip()
     if not scene:
-        # Without it there is no body, and composing one from the decomposition is what
-        # this stage stopped doing. Better to say so than to emit a prompt made only of
-        # an addendum and a style tail, which renders as a generic scene and looks like
-        # a layout failure rather than a missing field.
-        notes.append("spec carries no scene_prompt: rebuild it from the self-contained "
-                     "agent artifact with `tools/build_agent_arm.py`")
+        raise ValueError(
+            "spec carries no initial_scene_subprompt_enriched; rendering requires the "
+            "agent's final image-ready scene body"
+        )
+    notes: list[str] = []
 
-    picks = [o["id"] for o in spec.get("options") or []]
+    options = spec.get("options") or []
+    picks = [o["id"] for o in options]
+    # Keep Build.md authoritative for the section, selected option identity and
+    # visibility policy, but use the transcribed scene-specific realization instead of
+    # the catalogue's generic example. Otherwise a valid mountain-road choice such as
+    # `path-road-vehicle` is sent as an extraction/processing hauling route and can
+    # contradict the enriched scene directly above it.
+    edits = {
+        o["id"]: o["text"].strip()
+        for o in options
+        if (o.get("id") or "").strip() and (o.get("text") or "").strip()
+    }
     # Whether a blueprint can be generated is this repo's fact, not the spec's.
     kind = layout_kind(spec.get("genre", ""), spec.get("shape") or "", picks)
 
@@ -81,9 +88,17 @@ def build(spec: dict, *, crossings: int | None = None,
     # anybody walks through the space, which is a reading of the prompt rather than a
     # property of a picked row - and it is the same exception `model.handoff` makes.
     set_piece = bool(render.get("set_piece"))
-    route = sp.route_from({"genre": spec.get("genre", ""), "shape": spec.get("shape") or "",
-                           "options": picks, "axes": spec.get("axes") or {},
-                           "set": set_piece})
+    option_visible = {o["id"]: bool(o.get("visible")) for o in options}
+    route_input = {
+        "genre": spec.get("genre", ""),
+        "shape": spec.get("shape") or "",
+        "options": picks,
+        "axes": spec.get("axes") or {},
+        "option_visible": option_visible,
+        "claimed_route": list(spec.get("route") or []),
+        "set": set_piece,
+    }
+    route = sp.route_from(route_input)
 
     # A supported maze or racing route must be valid by construction. The repository's
     # procedural capability is authoritative here: never let an agent-selected image
@@ -112,8 +127,10 @@ def build(spec: dict, *, crossings: int | None = None,
         # would have said. `spec.build` already reads them; withholding them here left
         # those scenes with a body and no layout instruction at all.
         "axes": spec.get("axes") or {},
-        "options": [o["id"] for o in spec.get("options") or []],
-        "edits": {},
+        "options": picks,
+        "edits": edits,
+        "option_visible": option_visible,
+        "claimed_route": list(spec.get("route") or []),
         "custom": [],
         "mode": order,
         "kind": kind or "maze",
@@ -134,10 +151,8 @@ def build(spec: dict, *, crossings: int | None = None,
             "route": route, "claimed_route": list(spec.get("route") or []),
             "wanted": wanted,
             "set": set_piece, "body": scene, "addendum": built["addendum"],
-            "prompt_source": (
-                "agent_enriched_plus_catalogue"
-                if enriched else "scene_plus_catalogue"
-            ),
+            "prompt_source": "agent_enriched_plus_catalogue",
+            "prompt_profile": built["prompt_profile"],
             "withheld": built["withheld"], "kind": built.get("kind"),
             # Carried rather than assembled. Nothing here sites anything - the stage
             # that does runs against a segmented render this function never sees - but

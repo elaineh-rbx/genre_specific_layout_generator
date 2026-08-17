@@ -1,6 +1,6 @@
 {
   "scene": "P0457",
-  "source": "Build a Roblox 3D arcade tennis game inspired by Nintendo Switch Sports Tennis (original assets only, do not copy Nintendo content).\n\nGoal\n\nCreate a fast, accessible tennis game that feels fun rather than realistic. The focus is on positioning, timing, and shot placement.\n\nCamera\n\n* Third-person camera behind the player.\n* Elevated broadcast angle showing both players and most of the court.\n* Camera smoothly follows the player horizontally.\n* Never rotate freely or switch sides during a rally.\n\nControls\n\nPC\n\n* WASD: Move\n* Space / Left Click: Hit\n* Hold to charge power\n* Release to swing\n\nMobile\n\n* Left virtual joystick: Move\n* Right hit button: Hit\n* Hold to charge\n* Release to swing\n\nMovement\n\n* Player moves manually.\n* Character automatically turns to face the incoming ball.\n* Add slight auto-positioning when close to the ball, but never teleport or fully auto-play.\n\nHitting\n\nA player can hit only when the ball is inside a hit radius.\n\nShot quality depends on timing:\n\n* Perfect → fast, accurate\n* Good → normal\n* Early/Late → less accurate\n* Miss → no contact\n\nShot Direction\n\nAim is determined by movement input at contact:\n\n* Left = left side\n* Right = right side\n* Up = deeper shot\n* Down = shorter shot\n\nPerfect timing produces more accurate placement.\n\nBall\n\nUse custom scripted ball physics instead of Roblox physics.\n\nSupport:\n\n* Bounce\n* Net collision\n* Out detection\n* Groundstrokes\n* Charged shots\n* Later add lobs and slice.\n\nMatch Rules\n\n* Singles only.\n* Standard tennis scoring.\n* Reset players after each point.\n* Server controls score and ball state.\n\nMultiplayer\n\nServer-authoritative:\n\n* Ball physics\n* Score\n* Hit validation\n\nClient:\n\n* Movement\n* Camera\n* Input\n* Animations\n\nDevelopment Order\n\n1. Court\n2. Camera\n3. Player movement\n4. Ball physics\n5. Hitting\n6. Shot direction\n7. Scoring\n8. Multiplayer\n9. Mobile UI\n10. Polish",
+  "source": "Build a Roblox 3D arcade tennis game inspired by Nintendo Switch Sports Tennis (original assets only, do not copy Nintendo content).\\n\\nGoal\\n\\nCreate a fast, accessible tennis game that feels fun rather than realistic. The focus is on positioning, timing, and shot placement.\\n\\nCamera\\n\\n* Third-person camera behind the player.\\n* Elevated broadcast angle showing both players and most of the court.\\n* Camera smoothly follows the player horizontally.\\n* Never rotate freely or switch sides during a rally.\\n\\nControls\\n\\nPC\\n\\n* WASD: Move\\n* Space / Left Click: Hit\\n* Hold to charge power\\n* Release to swing\\n\\nMobile\\n\\n* Left virtual joystick: Move\\n* Right hit button: Hit\\n* Hold to charge\\n* Release to swing\\n\\nMovement\\n\\n* Player moves manually.\\n* Character automatically turns to face the incoming ball.\\n* Add slight auto-positioning when close to the ball, but never teleport or fully auto-play.\\n\\nHitting\\n\\nA player can hit only when the ball is inside a hit radius.\\n\\nShot quality depends on timing:\\n\\n* Perfect → fast, accurate\\n* Good → normal\\n* Early/Late → less accurate\\n* Miss → no contact\\n\\nShot Direction\\n\\nAim is determined by movement input at contact:\\n\\n* Left = left side\\n* Right = right side\\n* Up = deeper shot\\n* Down = shorter shot\\n\\nPerfect timing produces more accurate placement.\\n\\nBall\\n\\nUse custom scripted ball physics instead of Roblox physics.\\n\\nSupport:\\n\\n* Bounce\\n* Net collision\\n* Out detection\\n* Groundstrokes\\n* Charged shots\\n* Later add lobs and slice.\\n\\nMatch Rules\\n\\n* Singles only.\\n* Standard tennis scoring.\\n* Reset players after each point.\\n* Server controls score and ball state.\\n\\nMultiplayer\\n\\nServer-authoritative:\\n\\n* Ball physics\\n* Score\\n* Hit validation\\n\\nClient:\\n\\n* Movement\\n* Camera\\n* Input\\n* Animations\\n\\nDevelopment Order\\n\\n1. Court\\n2. Camera\\n3. Player movement\\n4. Ball physics\\n5. Hitting\\n6. Shot direction\\n7. Scoring\\n8. Multiplayer\\n9. Mobile UI\\n10. Polish",
   "answers": [
     {
       "field": "scale",
@@ -8,12 +8,20 @@
       "answer": "Use an open bright backdrop with nothing around the court; keep the first build focused on the playable tennis space rather than stadium scenery."
     }
   ],
-  "scene_prompt": "Create a 3D arcade tennis map centered on a single standard singles court, with clear boundary lines, service boxes, a central net, and open run-off space around all sides. Use a bright, empty backdrop with no stadium seating or surrounding scenery, keeping the court as the sole focal point. Compose the view from an elevated third-person broadcast angle behind one baseline, showing both player positions across the net and most of the full court.",
-  "blob": "## Genre\nThe dominant and only genre is Sports, because singles tennis scoring and player-versus-player court play define the experience.\n\n## Shape and preset\nUse the single `space-bounded` shape as a rigid singles-court perimeter with open run-off surrounding it. The matching preset is Court Sport, retained without stadium dressing.\n\n## Config requirements\nDraw `trigger-bounds` as the full visible court perimeter, including baselines, sidelines, service boxes, and generous clear run-off. Draw `startpoint-play` as the two opposing baseline serve positions and their court-side reset marks. The `trigger-scoring` option appears visibly as the central net and the in-bounds court regions used to judge valid tennis shots.\n\n## Layout requirements\nPlace the functional half of `trigger-bounds` as one precise out-detection perimeter aligned to the singles lines. Place two `startpoint-play` reset positions, one centered behind each baseline, plus ball serve origins aligned to the active server. Place `trigger-scoring` coordinate regions across both court halves to detect legal bounces, net contact, and shots landing outside the boundary.\n\n## Layout components\nBuild one regulation-proportioned singles court as the sole zone, centered in a bright empty plane. It has two equal court halves divided by one taut central net, crisp singles sidelines, two baselines, center service line, and four service boxes. Leave broad, unobstructed run-off on every side. Use a clean hard-court surface and a minimal open boundary fading into the bright backdrop, with no seating, buildings, terrain, or decorative scenery. Frame the full court symmetrically from an elevated position behind one baseline.\n\n## Render order\nUse `topdown`: render the plan first and treat it as authoritative, because exact court symmetry, line placement, and trigger alignment are necessary for playable tennis; dress the elevated isometric view from that plan.\n\n## Scale, theme, and pipeline cost\nThe scale is small, driven by one singles court and its run-off. The theme is bright, clean, arcade-sport minimalism. Route through `P0`; the bounded single-level surface introduces no overhang, interior transition, separate map, or volumetric traversal cost.",
-  "agent_artifact": "# Scene prompt\nCreate a 3D arcade tennis map centered on a single standard singles court, with clear boundary lines, service boxes, a central net, and open run-off space around all sides. Use a bright, empty backdrop with no stadium seating or surrounding scenery, keeping the court as the sole focal point. Compose the view from an elevated third-person broadcast angle behind one baseline, showing both player positions across the net and most of the full court.\n\n# Agent decision\n## Genre\nThe dominant and only genre is Sports, because singles tennis scoring and player-versus-player court play define the experience.\n\n## Shape and preset\nUse the single `space-bounded` shape as a rigid singles-court perimeter with open run-off surrounding it. The matching preset is Court Sport, retained without stadium dressing.\n\n## Config requirements\nDraw `trigger-bounds` as the full visible court perimeter, including baselines, sidelines, service boxes, and generous clear run-off. Draw `startpoint-play` as the two opposing baseline serve positions and their court-side reset marks. The `trigger-scoring` option appears visibly as the central net and the in-bounds court regions used to judge valid tennis shots.\n\n## Layout requirements\nPlace the functional half of `trigger-bounds` as one precise out-detection perimeter aligned to the singles lines. Place two `startpoint-play` reset positions, one centered behind each baseline, plus ball serve origins aligned to the active server. Place `trigger-scoring` coordinate regions across both court halves to detect legal bounces, net contact, and shots landing outside the boundary.\n\n## Layout components\nBuild one regulation-proportioned singles court as the sole zone, centered in a bright empty plane. It has two equal court halves divided by one taut central net, crisp singles sidelines, two baselines, center service line, and four service boxes. Leave broad, unobstructed run-off on every side. Use a clean hard-court surface and a minimal open boundary fading into the bright backdrop, with no seating, buildings, terrain, or decorative scenery. Frame the full court symmetrically from an elevated position behind one baseline.\n\n## Render order\nUse `topdown`: render the plan first and treat it as authoritative, because exact court symmetry, line placement, and trigger alignment are necessary for playable tennis; dress the elevated isometric view from that plan.\n\n## Scale, theme, and pipeline cost\nThe scale is small, driven by one singles court and its run-off. The theme is bright, clean, arcade-sport minimalism. Route through `P0`; the bounded single-level surface introduces no overhang, interior transition, separate map, or volumetric traversal cost.\n",
-  "agent_notes": "## Genre\nThe dominant and only genre is Sports, because singles tennis scoring and player-versus-player court play define the experience.\n\n## Shape and preset\nUse the single `space-bounded` shape as a rigid singles-court perimeter with open run-off surrounding it. The matching preset is Court Sport, retained without stadium dressing.\n\n## Config requirements\nDraw `trigger-bounds` as the full visible court perimeter, including baselines, sidelines, service boxes, and generous clear run-off. Draw `startpoint-play` as the two opposing baseline serve positions and their court-side reset marks. The `trigger-scoring` option appears visibly as the central net and the in-bounds court regions used to judge valid tennis shots.\n\n## Layout requirements\nPlace the functional half of `trigger-bounds` as one precise out-detection perimeter aligned to the singles lines. Place two `startpoint-play` reset positions, one centered behind each baseline, plus ball serve origins aligned to the active server. Place `trigger-scoring` coordinate regions across both court halves to detect legal bounces, net contact, and shots landing outside the boundary.\n\n## Layout components\nBuild one regulation-proportioned singles court as the sole zone, centered in a bright empty plane. It has two equal court halves divided by one taut central net, crisp singles sidelines, two baselines, center service line, and four service boxes. Leave broad, unobstructed run-off on every side. Use a clean hard-court surface and a minimal open boundary fading into the bright backdrop, with no seating, buildings, terrain, or decorative scenery. Frame the full court symmetrically from an elevated position behind one baseline.\n\n## Render order\nUse `topdown`: render the plan first and treat it as authoritative, because exact court symmetry, line placement, and trigger alignment are necessary for playable tennis; dress the elevated isometric view from that plan.\n\n## Scale, theme, and pipeline cost\nThe scale is small, driven by one singles court and its run-off. The theme is bright, clean, arcade-sport minimalism. Route through `P0`; the bounded single-level surface introduces no overhang, interior transition, separate map, or volumetric traversal cost.",
+  "blob": "## Clarifications resolved\n- [author] scale — Q: Should the court sit in a stadium with seating, or on an open bright backdrop with nothing around it? A: Use an open bright backdrop with nothing around the court; keep the first build focused on the playable tennis space rather than stadium scenery.\n\n## Enriched image prompt\nCreate one bright, accessible arcade-tennis court for singles play, using original assets and no copied franchise content. Build a clearly proportioned rectangular court with singles sidelines, baselines, service lines, center marks, and a low net dividing the two halves. Leave open run-off space behind both baselines and outside both sidelines so players can position for shots. Surround the court with a simple bright backdrop and nothing else: no stadium, bleachers, crowd, dugouts, or decorative venue scenery. Keep every line, court half, net edge, and out-of-bounds area immediately readable from an elevated view.\n\n## Genre\nThe dominant genre is Sports, canonical slug `sports`.\n\n## Shape and preset\nUse `space-bounded`, the Bounded Field or Court shape, for one rigid singles-tennis perimeter. The matched preset is Court Sport, retaining play bounds, scoring regions, and reset positions.\n\n## Config requirements\nUse `trigger-bounds` for the visible singles sidelines and baselines, `startpoint-play` for marked serve and receive positions, and `trigger-scoring` for visible court regions aligned to in-bounds and service-box detection. The net, center marks, line work, and open run-off area are required scene-specific geometry. Do not add spectator or stadium options.\n\n## Layout requirements\nPlace one `trigger-bounds` TriggerZone around the playable singles court, aligned exactly to the sidelines and baselines. Place `startpoint-play` StartPoints for two players on opposite halves and one ball-reset point at the active service position. Place `trigger-scoring` TriggerZones over the court halves and service boxes so bounce, serve, and out detection agree with the painted geometry.\n\n## Layout components\nThe build contains one tennis court, one central net, two mirrored player halves, marked service boxes, singles boundaries, and clear run-off space on all sides. The backdrop is open and bright, with no surrounding structures. Use a fixed tennis-court template so proportions and mirrored markings remain exact.\n\n## Render order\nUse `topdown`; the court template, mirrored markings, and detection boundaries must be authoritative before the arcade color treatment is applied.\n\n## Scale, theme, and pipeline cost\nScale is small because one court and its line detail fill the frame. The theme is bright, clean, original arcade sports presentation. Use `P0`; the court is one flat bounded surface, with its known sports template handled parametrically without another routing modifier.",
+  "agent_artifact": "# Agent decision\n\n## Clarifications resolved\n- [author] scale — Q: Should the court sit in a stadium with seating, or on an open bright backdrop with nothing around it? A: Use an open bright backdrop with nothing around the court; keep the first build focused on the playable tennis space rather than stadium scenery.\n\n## Enriched image prompt\nCreate one bright, accessible arcade-tennis court for singles play, using original assets and no copied franchise content. Build a clearly proportioned rectangular court with singles sidelines, baselines, service lines, center marks, and a low net dividing the two halves. Leave open run-off space behind both baselines and outside both sidelines so players can position for shots. Surround the court with a simple bright backdrop and nothing else: no stadium, bleachers, crowd, dugouts, or decorative venue scenery. Keep every line, court half, net edge, and out-of-bounds area immediately readable from an elevated view.\n\n## Genre\nThe dominant genre is Sports, canonical slug `sports`.\n\n## Shape and preset\nUse `space-bounded`, the Bounded Field or Court shape, for one rigid singles-tennis perimeter. The matched preset is Court Sport, retaining play bounds, scoring regions, and reset positions.\n\n## Config requirements\nUse `trigger-bounds` for the visible singles sidelines and baselines, `startpoint-play` for marked serve and receive positions, and `trigger-scoring` for visible court regions aligned to in-bounds and service-box detection. The net, center marks, line work, and open run-off area are required scene-specific geometry. Do not add spectator or stadium options.\n\n## Layout requirements\nPlace one `trigger-bounds` TriggerZone around the playable singles court, aligned exactly to the sidelines and baselines. Place `startpoint-play` StartPoints for two players on opposite halves and one ball-reset point at the active service position. Place `trigger-scoring` TriggerZones over the court halves and service boxes so bounce, serve, and out detection agree with the painted geometry.\n\n## Layout components\nThe build contains one tennis court, one central net, two mirrored player halves, marked service boxes, singles boundaries, and clear run-off space on all sides. The backdrop is open and bright, with no surrounding structures. Use a fixed tennis-court template so proportions and mirrored markings remain exact.\n\n## Render order\nUse `topdown`; the court template, mirrored markings, and detection boundaries must be authoritative before the arcade color treatment is applied.\n\n## Scale, theme, and pipeline cost\nScale is small because one court and its line detail fill the frame. The theme is bright, clean, original arcade sports presentation. Use `P0`; the court is one flat bounded surface, with its known sports template handled parametrically without another routing modifier.\n",
+  "agent_notes": "## Clarifications resolved\n- [author] scale — Q: Should the court sit in a stadium with seating, or on an open bright backdrop with nothing around it? A: Use an open bright backdrop with nothing around the court; keep the first build focused on the playable tennis space rather than stadium scenery.\n\n## Enriched image prompt\nCreate one bright, accessible arcade-tennis court for singles play, using original assets and no copied franchise content. Build a clearly proportioned rectangular court with singles sidelines, baselines, service lines, center marks, and a low net dividing the two halves. Leave open run-off space behind both baselines and outside both sidelines so players can position for shots. Surround the court with a simple bright backdrop and nothing else: no stadium, bleachers, crowd, dugouts, or decorative venue scenery. Keep every line, court half, net edge, and out-of-bounds area immediately readable from an elevated view.\n\n## Genre\nThe dominant genre is Sports, canonical slug `sports`.\n\n## Shape and preset\nUse `space-bounded`, the Bounded Field or Court shape, for one rigid singles-tennis perimeter. The matched preset is Court Sport, retaining play bounds, scoring regions, and reset positions.\n\n## Config requirements\nUse `trigger-bounds` for the visible singles sidelines and baselines, `startpoint-play` for marked serve and receive positions, and `trigger-scoring` for visible court regions aligned to in-bounds and service-box detection. The net, center marks, line work, and open run-off area are required scene-specific geometry. Do not add spectator or stadium options.\n\n## Layout requirements\nPlace one `trigger-bounds` TriggerZone around the playable singles court, aligned exactly to the sidelines and baselines. Place `startpoint-play` StartPoints for two players on opposite halves and one ball-reset point at the active service position. Place `trigger-scoring` TriggerZones over the court halves and service boxes so bounce, serve, and out detection agree with the painted geometry.\n\n## Layout components\nThe build contains one tennis court, one central net, two mirrored player halves, marked service boxes, singles boundaries, and clear run-off space on all sides. The backdrop is open and bright, with no surrounding structures. Use a fixed tennis-court template so proportions and mirrored markings remain exact.\n\n## Render order\nUse `topdown`; the court template, mirrored markings, and detection boundaries must be authoritative before the arcade color treatment is applied.\n\n## Scale, theme, and pipeline cost\nScale is small because one court and its line detail fill the frame. The theme is bright, clean, original arcade sports presentation. Use `P0`; the court is one flat bounded surface, with its known sports template handled parametrically without another routing modifier.",
   "secondary": [],
   "spec": {
+    "clarifications": [
+      {
+        "field": "scale",
+        "ask": "Should the court sit in a stadium with seating, or on an open bright backdrop with nothing around it?",
+        "answer": "Use an open bright backdrop with nothing around the court; keep the first build focused on the playable tennis space rather than stadium scenery.",
+        "source": "author"
+      }
+    ],
+    "initial_scene_subprompt_enriched": "Create one bright, accessible arcade-tennis court for singles play, using original assets and no copied franchise content. Build a clearly proportioned rectangular court with singles sidelines, baselines, service lines, center marks, and a low net dividing the two halves. Leave open run-off space behind both baselines and outside both sidelines so players can position for shots. Surround the court with a simple bright backdrop and nothing else: no stadium, bleachers, crowd, dugouts, or decorative venue scenery. Keep every line, court half, net edge, and out-of-bounds area immediately readable from an elevated view.",
     "genre": "Sports",
     "secondary": [],
     "shape": "space-bounded",
@@ -22,92 +30,106 @@
     "options": [
       {
         "id": "trigger-bounds",
-        "text": "The full visible court perimeter, including baselines, sidelines, service boxes, and generous clear run-off.",
+        "text": "Visible singles sidelines and baselines forming one rigid singles-tennis perimeter (bounds aligned exactly to the painted lines).",
         "visible": true,
         "count": -1
       },
       {
         "id": "startpoint-play",
-        "text": "Two opposing baseline serve positions and their court-side reset marks.",
+        "text": "Marked serve and receive positions for two players on opposite halves, plus one ball-reset point at the active service position.",
         "visible": true,
-        "count": 2
+        "count": -1
       },
       {
         "id": "trigger-scoring",
-        "text": "The central net and the in-bounds court regions used to judge valid tennis shots.",
+        "text": "Visible court regions aligned to in-bounds and service-box detection (TriggerZones over court halves and service boxes so bounce/serve/out detection matches painted geometry).",
         "visible": true,
-        "count": 2
+        "count": -1
       }
     ],
     "layout_placement": [
       {
         "id": "trigger-bounds",
-        "text": "One precise out-detection perimeter aligned to the singles lines.",
+        "text": "One TriggerZone around the playable singles court, aligned exactly to the sidelines and baselines.",
         "count": 1,
-        "where": "Aligned to the singles lines around the functional court half."
+        "where": "Around the playable singles court perimeter, aligned to painted singles sidelines and baselines."
       },
       {
         "id": "startpoint-play",
-        "text": "Two reset positions centered behind each baseline, plus ball serve origins aligned to the active server.",
-        "count": 2,
-        "where": "One centered behind each baseline; ball serve origins align to the active server."
+        "text": "StartPoints for two players on opposite halves and one ball-reset point at the active service position.",
+        "count": 3,
+        "where": "Two on opposite court halves at serve/receive positions; one at the active service position for ball reset."
       },
       {
         "id": "trigger-scoring",
-        "text": "Coordinate regions across both court halves to detect legal bounces, net contact, and shots landing outside the boundary.",
-        "count": 2,
-        "where": "Across both court halves, aligned with the central net and court boundary."
+        "text": "TriggerZones over the court halves and service boxes so bounce, serve, and out detection agree with the painted geometry.",
+        "count": -1,
+        "where": "Over each court half and each service box, aligned to the painted regions."
       }
     ],
     "layout": {
-      "composition": "The full court is framed symmetrically from an elevated position behind one baseline, showing both player positions across the central net and most of the court.",
+      "composition": "One centered rectangular singles tennis court filling the frame, mirrored halves split by a central net; clear run-off space surrounding the court on all sides; simple bright open backdrop with nothing else.",
       "zones": [
         {
-          "name": "Regulation-proportioned singles court",
-          "role": "The sole tennis play zone, with two equal halves for singles court play.",
-          "where": "Centered in the bright empty plane.",
-          "size": "One small singles court with broad unobstructed run-off on every side."
+          "name": "Tennis court (singles)",
+          "role": "Primary playable bounded court surface with exact tennis markings and net.",
+          "where": "Center of frame.",
+          "size": "Fills the frame (single court)."
+        },
+        {
+          "name": "Run-off space",
+          "role": "Open out-of-bounds space for player positioning beyond baselines and sidelines.",
+          "where": "Surrounding the court on all sides.",
+          "size": "Clear run-off space (relative size not stated)."
+        },
+        {
+          "name": "Backdrop",
+          "role": "Simple bright open background; no stadium/bleachers/scenery.",
+          "where": "Behind/around the court.",
+          "size": "Unstated."
         }
       ],
       "paths": [],
-      "terrain": "A clean hard-court surface set in a bright empty plane; no terrain or water.",
+      "terrain": "Flat court surface; bright clean arcade presentation; no additional terrain relief or water.",
       "props": [
         {
-          "name": "Taut central net",
+          "name": "Central tennis net",
           "count": 1,
-          "where": "Dividing the two equal court halves at the center."
+          "where": "Across the center of the court dividing the two halves."
         },
         {
-          "name": "Singles court markings",
+          "name": "Court line work (singles sidelines, baselines, service lines, center marks, service boxes)",
           "count": -1,
-          "where": "Across the court: crisp singles sidelines, two baselines, a center service line, and four service boxes."
+          "where": "Painted/marked on the court surface in correct tennis proportions."
         }
       ],
-      "boundary": "A rigid visible singles-court perimeter with open run-off on all sides; the minimal open boundary fades into the bright backdrop.",
+      "boundary": "Rigid singles-tennis perimeter defined by painted lines and the bounds TriggerZone; otherwise open bright backdrop with no enclosing stadium structures.",
       "scale_band": "small",
-      "theme": "Bright, clean, arcade-sport minimalism."
+      "theme": "Bright, clean, original arcade sports presentation."
     },
     "render": {
-      "first": "isometric",
-      "then": "topdown",
-      "authoritative": "isometric",
-      "why": "Exact court symmetry, line placement, and trigger alignment are necessary for playable tennis.",
+      "first": "topdown",
+      "then": "isometric",
+      "authoritative": "topdown",
+      "why": "The court template, mirrored markings, and detection boundaries must be authoritative before the arcade color treatment is applied.",
       "set_piece": false
     },
     "route": [
       "P0"
     ],
-    "notes": [],
-    "scene_prompt": "Create a 3D arcade tennis map centered on a single standard singles court, with clear boundary lines, service boxes, a central net, and open run-off space around all sides. Use a bright, empty backdrop with no stadium seating or surrounding scenery, keeping the court as the sole focal point. Compose the view from an elevated third-person broadcast angle behind one baseline, showing both player positions across the net and most of the full court."
+    "notes": [
+      "Option `trigger-bounds` is specified as visible in the blob even though its catalogue destination is both; kept as stated.",
+      "Option `trigger-scoring` is specified as visible in the blob even though its catalogue destination is both; kept as stated.",
+      "visible on 'startpoint-play' set from goes_to=both"
+    ]
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "1986e1975066",
-  "served_by": "subagent/genre-choice -> gateway/production/gpt-5.6-terra",
+  "pipeline_version": "48d4ff51304c",
+  "served_by": "subagent/genre-choice -> azure/gpt-5.2",
   "schema_degraded": false,
-  "reused_uprez": true,
-  "order": "std",
-  "first": "isometric",
+  "order": "p6",
+  "first": "topdown",
   "mapper_notes": []
 }

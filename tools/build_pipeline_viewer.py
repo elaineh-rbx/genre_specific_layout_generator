@@ -8,8 +8,7 @@ graph with THAT scene's actual data lit up on each node:
     classify   which genre the router picked
     ask        the intake questions the agent answered (count + list below)
     genre      the picked genre / shape / preset
-    handoff    the fixed scene prompt handed to the Cursor agent
-    blob       the Cursor agent's prose layout decision
+    blob       the Cursor agent's prose layout decision and enriched scene body
     json       the strict structured JSON transcribed by the Gateway
     streams    options split by `Goes to`: image_prompt vs layout_placement
     route      P0/P2/P3/P4/P6/tiered - what routes the scene off the happy path
@@ -30,7 +29,6 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import html
 import json
 import pathlib
 import sys
@@ -38,8 +36,8 @@ import sys
 REPO = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
 
-from layoutgen.model import rules as br
-from layoutgen.paths import RESULTS, ROUTING
+from layoutgen.model import rules as br  # noqa: E402
+from layoutgen.paths import RESULTS, ROUTING  # noqa: E402
 
 AGENT = ROUTING / "agent_spec_gateway"
 EVAL = RESULTS / "eval"
@@ -200,15 +198,14 @@ def collect(run_name: str = "agent_gateway", image_arm: str = "agent_gateway_260
         rows.append({
             "id": scene,
             "prompt": unescape_nl(d.get("source", "")),
-            "scene_prompt": d.get("scene_prompt", ""),
             # What actually reached the image model, assembled. The source prompt and
-            # the addendum are both only ingredients of it: the wrapper, the style tail
-            # and the whole top-down instruction appear nowhere else on the page, and
-            # the top-down is a different prompt entirely rather than a variant of the
-            # isometric one.
+            # addendum are provenance; the enriched JSON field, wrapper, style tail, and
+            # top-down transformation are represented by the exact final prompts here.
             "iso_prompt": run.get("iso_prompt", ""),
             "td_prompt": run.get("td_prompt", ""),
             "order": run.get("order", ""),
+            "run_route": run.get("route") or [],
+            "why": run.get("why", ""),
             "genre": cfg.get("genre", ""),
             "genre_route": genre.route if genre else "",
             "shape": cfg.get("shape") or "",
@@ -227,6 +224,7 @@ def collect(run_name: str = "agent_gateway", image_arm: str = "agent_gateway_260
             "genre_evidence": cfg.get("genre_evidence", ""),
             "answers": answers,
             "clarifications": cfg.get("clarifications") or [],
+            "enriched": cfg.get("initial_scene_subprompt_enriched", ""),
             "agent_blob": d.get("blob", ""),
             "structured_json": json.dumps(cfg, indent=2, ensure_ascii=False),
             "options_img": img_opts,
@@ -242,7 +240,7 @@ def collect(run_name: str = "agent_gateway", image_arm: str = "agent_gateway_260
             "check": check,
             "set_piece": set_piece,
             "route": route,
-            "addendum": cfg.get("addendum", ""),
+            "addendum": run.get("addendum", ""),
             "images": images,
             "checklist": checklist,
         })
@@ -374,6 +372,18 @@ header .nav a.active{border-color:var(--accent);background:var(--panel-2)}
   border:1px solid rgba(255,255,255,.08)}
 .node .thumb img{display:block;width:100%;height:auto;cursor:zoom-in}
 .node .brief{font-size:10.5px;color:var(--text);line-height:1.35;max-height:3.2em;overflow:hidden}
+.node:hover,.node:focus{z-index:60;outline:none}
+.node .hover-detail{display:none;position:absolute;left:50%;bottom:calc(100% + 11px);
+  transform:translateX(-50%);width:560px;max-width:min(560px,80vw);
+  max-height:min(560px,70vh);overflow:auto;z-index:80;padding:12px 14px;
+  border:1px solid var(--accent);border-radius:10px;background:#090c15;
+  box-shadow:0 12px 36px rgba(0,0,0,.65);color:var(--text);cursor:text}
+.node:hover .hover-detail,.node:focus .hover-detail{display:block}
+.hover-detail .hover-head{position:sticky;top:0;margin:0 0 9px;
+  padding:9px 10px;background:#111728;border-bottom:1px solid var(--line);
+  color:var(--accent);font-size:11px;font-weight:750;letter-spacing:.04em}
+.hover-detail pre{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;
+  font:11.5px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--text)}
 
 .legend{max-width:1180px;margin:18px 0 4px;padding:12px 15px;border-radius:12px;
   background:var(--panel);border:1px solid var(--line);color:var(--muted);font-size:12px;line-height:1.55}
@@ -411,10 +421,9 @@ HEADER_HTML = """
   the scene onto a new path. Handoff streams are dashed; they run identically
   on every route, but the option lists change per scene.</p>
   <div class="nav">
-    <a href="/features">Features + renders</a>
-    <a href="/pipeline" class="active">Pipeline (per-scene)</a>
-    <a href="/comparison">Golden comparison</a>
-    <a href="/playground">Playground</a>
+    <a href="/features">Original viewer</a>
+    <a href="/pipeline" class="active">Pipeline</a>
+    <a href="/comparison">GPT Image 2 vs Gemini</a>
   </div>
 </header>
 """
@@ -524,7 +533,6 @@ const NODES = {
   classify: { x:275,  y:385, tag:"Skill \u00b7 router", title:"Classify",       sub:"genre \u00b7 shape \u00b7 options" },
   ask:      { x:275,  y:220, tag:"Round trip",        title:"Ask the user",     sub:"open questions" },
   genre:    { x:455,  y:385, tag:"Choice",            title:"Genre + shape",    sub:"selected picks" },
-  handoff:  { x:625,  y:385, tag:"Build Agent out",   title:"Fixed scene prompt", sub:"space-only handoff" },
   blob:     { x:800,  y:385, tag:"Cursor agent",      title:"Prose decision",   sub:"layout blob \u00b7 never JSON" },
   json:     { x:980,  y:385, tag:"1 Gateway call",    title:"Structured JSON",  sub:"strict layout_spec schema" },
   img:      { x:1160, y:80,  tag:"Spec stream 1",     title:"image_prompt",     sub:"visible geometry" },
@@ -544,8 +552,8 @@ const NODES = {
 };
 
 const BANDS = [
-  { x:15,   y:160, w:875, h:320, label:"Build Agent \u2014 intake, fixed prompt, Cursor agent prose",
-    holds:["prompt","classify","ask","genre","handoff","blob"] },
+  { x:15,   y:160, w:875, h:320, label:"Build Agent \u2014 intake and Cursor agent prose",
+    holds:["prompt","classify","ask","genre","blob"] },
   { x:900,  y:160, w:850, h:455, label:"MapGen \u2014 one strict text call, deterministic assembly, two image calls",
     holds:["json","route","p4","iso","top","elev","params","proc"] },
   { x:1760, y:160, w:720, h:455, label:"Downstream \u2014 segmentation, placement & build",
@@ -555,8 +563,7 @@ const BANDS = [
 const MASTER_EDGES = [
   ["prompt","classify"],
   ["classify","ask"],["ask","classify"],
-  ["ask","genre"],["genre","handoff"],
-  ["handoff","blob"],["blob","json"],
+  ["ask","genre"],["genre","blob"],["blob","json"],
   ["json","img"],["json","lay"],["json","route"],
   ["img","iso"],["lay","p45"],
   ["route","p4"],["route","iso"],["route","params"],
@@ -572,7 +579,7 @@ const MASTER_EDGES = [
 const STREAM_EDGES = ["json>img","img>iso","json>lay","lay>p45"];
 
 const CAT = {
-  prompt:"base", classify:"base", ask:"base", genre:"base", handoff:"base",
+  prompt:"base", classify:"base", ask:"base", genre:"base",
   blob:"base", json:"base",
   img:"base", lay:"base", route:"base", iso:"base", top:"base",
   seg:"base", p45:"base", build:"base", out:"base",
@@ -592,7 +599,7 @@ const MODIFIER_NAMES = {
 
 function pathFor(s) {
   const has = id => s.modifiers.includes(id);
-  const p = ["prompt","classify","ask","genre","handoff","blob","json","route"];
+  const p = ["prompt","classify","ask","genre","blob","json","route"];
   if (has("P4")) p.push("p4");
   const struct = has("P2") ? "elev" : "top";
   if (has("P6")) p.push("params","proc",struct,"iso","seg");
@@ -674,6 +681,125 @@ function defs(){
 
 function esc(x){ return String(x==null?"":x).replace(/[&<>"']/g,
   c => ({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[c])); }
+
+function optionDetails(list){
+  if (!list || !list.length) return "(none)";
+  return list.map(o => {
+    const meta = [o.id, o.type, o.goes, o.pipeline].filter(Boolean).join(" · ");
+    const count = o.count >= 0 ? ` · count ${o.count}` : "";
+    const contextual = o.what || "(no scene-specific wording)";
+    const catalogue = o.catalogue_what && o.catalogue_what !== contextual
+      ? `\n  Catalogue fallback: ${o.catalogue_what}` : "";
+    return `${o.label || o.id} (${meta}${count})\n  ${contextual}${catalogue}`;
+  }).join("\n\n");
+}
+
+function clarificationDetails(s){
+  const rows=(s.clarifications&&s.clarifications.length)?s.clarifications:
+    (s.answers||[]).map(a=>({...a,source:"author"}));
+  if (!rows.length) return "No layout-changing clarification was needed.";
+  return rows.map((a,i) =>
+    `${i+1}. [${a.source||"author"} · ${a.field||"?"}]\nQ: ${a.ask||""}\nA: ${a.answer||"(empty)"}`
+  ).join("\n\n");
+}
+
+function axisDetails(s){
+  const axes=s.axes_selection||[];
+  if (!axes.length) return "(canonical shape supplies the axes)";
+  return axes.map(a => {
+    const route = a.pipeline ? ` · route ${a.pipeline}` : "";
+    const clause = a.clause ? `\n  Prompt clause: ${a.clause}` : "";
+    return `${a.label||a.id}: ${a.value}${route}${clause}`;
+  }).join("\n");
+}
+
+function nodeDetails(id,s){
+  const shape=s.shape_selection||{};
+  const layout=JSON.stringify(s.layout||{},null,2);
+  const placements=JSON.stringify(s.layout_placement||[],null,2);
+  const summary=[
+    `Genre: ${s.genre||"(none)"}`,
+    `Shape: ${shape.label||s.shape_label||s.shape||"described shape"}`,
+    `Preset: ${s.preset||"none"}`,
+    `Order: ${s.order||"(not recorded)"}`,
+    `Route: ${(s.run_route&&s.run_route.length?s.run_route:s.route||[]).join(" + ")||"P0 default"}`
+  ].join("\n");
+  switch(id){
+    case "prompt":
+      return s.prompt||"(empty source prompt)";
+    case "classify":
+      return `${summary}\n\nVisible option picks:\n${optionDetails(s.options_img)}\n\nLayout-only picks:\n${optionDetails(s.options_lay)}`;
+    case "ask":
+      return clarificationDetails(s);
+    case "genre":
+      return `${summary}\n\nShape definition:\n${shape.what||"(described directly in the prose decision)"}\n\nAxes:\n${axisDetails(s)}`;
+    case "blob":
+      return `${s.agent_blob||"(no prose decision recorded)"}\n\nENRICHED IMAGE BODY\n${s.enriched||"(none)"}`;
+    case "json":
+      return s.structured_json||"(no structured spec recorded)";
+    case "img":
+      return `VISIBLE IMAGE-PROMPT OPTIONS\n${optionDetails(s.options_img)}\n\nEXACT INJECTED ADDENDUM\n${s.addendum||"(no addendum)"}`;
+    case "lay":
+      return `LAYOUT-PLACEMENT OPTIONS\n${optionDetails(s.options_lay)}\n\nEXACT PLACEMENT RECORDS\n${placements}`;
+    case "route":
+      return `${summary}\n\nWhy this order:\n${s.why||s.evidence||"(no rationale recorded)"}\n\nGenre default route: ${s.genre_route||"P0"}`;
+    case "p4":
+      return `P4 multi-zone layout graph for this scene:\n${layout}`;
+    case "iso":
+      return s.iso_prompt||"(no isometric prompt recorded)";
+    case "top":
+      return s.td_prompt||"(no top-down prompt recorded)";
+    case "elev":
+      return `Elevation-relevant axes:\n${axisDetails(s)}\n\nLayout structure:\n${layout}`;
+    case "params":
+      return `Parameters are derived deterministically from this selected structure:\n${summary}\n\nShape:\n${JSON.stringify(shape,null,2)}`;
+    case "proc":
+      return `Authored-plan input for the procedural-first path:\n${summary}\n\nLayout contract:\n${layout}`;
+    case "seg":
+      return `Segmentation receives the generated image plus this layout contract:\n${layout}`;
+    case "p3":
+      return `P3 interior-transition inputs:\n${axisDetails(s)}\n\nLayout contract:\n${layout}`;
+    case "p45":
+      return `Post-segmentation placements:\n${optionDetails(s.options_lay)}\n\nExact records:\n${placements}`;
+    case "build":
+      return `${summary}\n\nVisible geometry:\n${optionDetails(s.options_img)}\n\nPlaced after segmentation:\n${optionDetails(s.options_lay)}\n\nLayout:\n${layout}`;
+    case "out":
+      return `${summary}\n\nGenerated artifacts:\n${JSON.stringify(s.images||{},null,2)}`;
+    default:
+      return summary;
+  }
+}
+
+function positionHoverDetail(node,detail){
+  const margin=12, gap=11;
+  detail.style.display="block";
+  detail.scrollTop=0;
+  detail.style.left="50%";
+  detail.style.right="auto";
+  detail.style.transform="translateX(-50%)";
+
+  const nodeRect=node.getBoundingClientRect();
+  const mainRect=node.closest(".main").getBoundingClientRect();
+  const topEdge=Math.max(margin,mainRect.top+margin);
+  const bottomEdge=Math.min(window.innerHeight-margin,mainRect.bottom-margin);
+  const leftEdge=Math.max(margin,mainRect.left+margin);
+  const rightEdge=Math.min(window.innerWidth-margin,mainRect.right-margin);
+  const above=Math.max(0,nodeRect.top-topEdge-gap);
+  const below=Math.max(0,bottomEdge-nodeRect.bottom-gap);
+  const putBelow=below>above;
+  detail.style.top=putBelow?`calc(100% + ${gap}px)`:"auto";
+  detail.style.bottom=putBelow?"auto":`calc(100% + ${gap}px)`;
+  detail.style.maxHeight=`${Math.max(120,putBelow?below:above)}px`;
+
+  const rect=detail.getBoundingClientRect();
+  let shift=0;
+  if (rect.left<leftEdge) shift=leftEdge-rect.left;
+  else if (rect.right>rightEdge) {
+    shift=rightEdge-rect.right;
+  }
+  detail.style.transform=`translateX(calc(-50% + ${shift}px))`;
+  detail.style.removeProperty("display");
+}
 
 function render(idx){
   const s = SCENES[idx];
@@ -833,6 +959,7 @@ function render(idx){
     const isStream = id === "img" || id === "lay";
     div.className = "node " + (isStream ? "n-green n-stream"
                               : onPath.has(id) ? ("n-"+col+" on") : "n-dim");
+    div.tabIndex = 0;
     div.style.left = N.x + "px"; div.style.top = N.y + "px";
 
     // Per-scene subtitle: for the nodes that carry this scene's actual input.
@@ -851,10 +978,6 @@ function render(idx){
       const preset = (s.preset && s.preset !== "none") ? ` \u00b7 ${s.preset}` : "";
       sub = `${s.genre}${preset}`;
       if (s.shape_label) extra = `<div class="brief">shape: ${esc(s.shape_label)}</div>`;
-    } else if (id === "handoff"){
-      const preview = (s.scene_prompt||"").replace(/\s+/g," ").slice(0,90);
-      sub = "fixed before MapGen";
-      if (preview) extra = `<div class="brief">${esc(preview + ((s.scene_prompt||"").length>90?"\u2026":""))}</div>`;
     } else if (id === "blob"){
       const n = (s.agent_blob||"").length;
       sub = `${n.toLocaleString()} chars \u00b7 prose`;
@@ -887,6 +1010,18 @@ function render(idx){
                     `<span class="tag">${N.tag}</span>` +
                     `<span class="title">${N.title}</span>` +
                     `<span class="sub">${sub}</span>` + extra;
+    const detail = document.createElement("div");
+    detail.className = "hover-detail";
+    const head = document.createElement("div");
+    head.className = "hover-head";
+    head.textContent = `${onPath.has(id)||isStream?"Active":"Not used"} · ${N.title} · full relevant text`;
+    const body = document.createElement("pre");
+    body.textContent = nodeDetails(id,s);
+    detail.appendChild(head);
+    detail.appendChild(body);
+    div.appendChild(detail);
+    div.addEventListener("mouseenter",()=>positionHoverDetail(div,detail));
+    div.addEventListener("focus",()=>positionHoverDetail(div,detail));
     chart.appendChild(div);
   });
 }

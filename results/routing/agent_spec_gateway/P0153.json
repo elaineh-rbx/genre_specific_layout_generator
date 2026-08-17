@@ -1,6 +1,6 @@
 {
   "scene": "P0153",
-  "source": "Game Title: Echoes of Silence\nGenre: Horror / Multiplayer Survival / Echolocation Puzzle\nCore Concept:\nA pitch-black horror puzzle game where players are entirely blind and must rely on sound-based vision (Echolocation). Every action that generates noise-footsteps, clapping, or throwing objects-sends out a visible wave of light that temporarily reveals the surrounding environment and map geometry.\nKey Gameplay Features:\nVisual Echolocation: Walking or using a pulse ability emits expanding sound rings that highlight nearby walls, obstacles, and doors for a brief second before returning to total darkness.\nSound Hierarchy:\nSprinting: High visibility for the player, but instantly alerts the monster and nearby enemies.\nCrouching: Zero noise and 0% visibility, making navigation dangerous but safe from enemies.\nThe Blind Monster: An AI entity (or player-controlled monster) that is completely attracted to noise sources.\nDecoy Mechanics: Players can collect items like alarm clocks or rocks to throw across the room, creating false sound pulses to distract the monster or trick other players.\nEnvironment: A shifting, claustrophobic underground facility or labyrinth filled with traps that can only be spotted right before stepping on them.",
+  "source": "Game Title: Echoes of Silence\\nGenre: Horror / Multiplayer Survival / Echolocation Puzzle\\nCore Concept:\\nA pitch-black horror puzzle game where players are entirely blind and must rely on sound-based vision (Echolocation). Every action that generates noise-footsteps, clapping, or throwing objects-sends out a visible wave of light that temporarily reveals the surrounding environment and map geometry.\\nKey Gameplay Features:\\nVisual Echolocation: Walking or using a pulse ability emits expanding sound rings that highlight nearby walls, obstacles, and doors for a brief second before returning to total darkness.\\nSound Hierarchy:\\nSprinting: High visibility for the player, but instantly alerts the monster and nearby enemies.\\nCrouching: Zero noise and 0% visibility, making navigation dangerous but safe from enemies.\\nThe Blind Monster: An AI entity (or player-controlled monster) that is completely attracted to noise sources.\\nDecoy Mechanics: Players can collect items like alarm clocks or rocks to throw across the room, creating false sound pulses to distract the monster or trick other players.\\nEnvironment: A shifting, claustrophobic underground facility or labyrinth filled with traps that can only be spotted right before stepping on them.",
   "answers": [
     {
       "field": "goal",
@@ -18,158 +18,145 @@
       "answer": "Yes, the facility geometry rearranges during a round, keeping routes unreliable and reinforcing the labyrinth feel."
     }
   ],
-  "scene_prompt": "Create a 3D horror survival map set in a pitch-black, claustrophobic underground facility on one compact floor. Build a labyrinth of narrow corridors, small connecting rooms, walls, doors, obstacles, and floor traps, with routes able to rearrange during a round. Scatter throwable decoy objects such as rocks and alarm clocks through rooms and corridors. Place a distinct exit at the far end of the facility, reached through the unreliable maze.",
-  "blob": "## Genre\n\nSurvival is dominant because players evade a noise-seeking blind monster while escaping. Puzzle is secondary because echolocation is used to navigate a shifting labyrinth and its traps.\n\n## Shape and preset\n\nUse `puzzle-maze`, taken from outside Survival’s usual set, because a compact labyrinth with a reachable exit needs authored solvable topology even while routes rearrange. Use the Puzzle genre’s Maze / Labyrinth preset, retaining its loop corridors and collectible-object intent, then add the Survival exit and hostile origin.\n\n## Config requirements\n\nUse `path-loop` for narrow facility corridors that reconnect through small rooms; `hazard-kill` for floor traps embedded in the route; and the visible half of `gate-escape` for a distinct exit structure at the far end. Draw modular walls, doors, and obstacles with clear echolocation-readable silhouettes and interchangeable corridor segments that support rearrangement. Keep the facility pitch-black in presentation, but do not encode sound-wave effects as geometry.\n\n## Layout requirements\n\nPlace `collectible-nodes` as throwable rocks and alarm clocks scattered across multiple rooms and corridor branches; no count is stated. Place one `spawner-npc` for the blind monster on connected patrol ground away from the survivor arrival. Place the functional half of `gate-escape` at the far-end exit. Place one survivor start marker at the opposite side. Register each movable wall or door segment with valid alternate connections so every rearranged state preserves a route to the exit.\n\n## Layout components\n\nBuild one compact single-floor underground facility bounded by hard walls. A survivor start area feeds a dense maze of narrow corridors, small connector rooms, doors, obstacle pinch points, and several loops. Distribute traps and decoys across side branches without blocking circulation. The exit occupies a distinct terminal room across the facility from the start. Use modular junctions and sliding wall or door assemblies for shifting routes, but keep fixed safety paths and patrol clearances. Compose the plan as a dense irregular rectangle with no exterior.\n\n## Render order\n\nUse `authored_plan`: code generates the maze and its valid rearrangement states first, and that blueprint remains authoritative so every state keeps the exit reachable.\n\n## Scale, theme, and pipeline cost\n\nScale is small, fixed to one compact floor. The theme is pitch-black industrial claustrophobia revealed in momentary echolocation outlines. Use `P6` because both the initial maze and every rearranged route state must be valid by construction; no stacked surface or exterior transition is present.",
-  "agent_artifact": "# Scene prompt\n\nCreate a 3D horror survival map set in a pitch-black, claustrophobic underground facility on one compact floor. Build a labyrinth of narrow corridors, small connecting rooms, walls, doors, obstacles, and floor traps, with routes able to rearrange during a round. Scatter throwable decoy objects such as rocks and alarm clocks through rooms and corridors. Place a distinct exit at the far end of the facility, reached through the unreliable maze.\n\n# Agent decision\n\n## Genre\n\nSurvival is dominant because players evade a noise-seeking blind monster while escaping. Puzzle is secondary because echolocation is used to navigate a shifting labyrinth and its traps.\n\n## Shape and preset\n\nUse `puzzle-maze`, taken from outside Survival’s usual set, because a compact labyrinth with a reachable exit needs authored solvable topology even while routes rearrange. Use the Puzzle genre’s Maze / Labyrinth preset, retaining its loop corridors and collectible-object intent, then add the Survival exit and hostile origin.\n\n## Config requirements\n\nUse `path-loop` for narrow facility corridors that reconnect through small rooms; `hazard-kill` for floor traps embedded in the route; and the visible half of `gate-escape` for a distinct exit structure at the far end. Draw modular walls, doors, and obstacles with clear echolocation-readable silhouettes and interchangeable corridor segments that support rearrangement. Keep the facility pitch-black in presentation, but do not encode sound-wave effects as geometry.\n\n## Layout requirements\n\nPlace `collectible-nodes` as throwable rocks and alarm clocks scattered across multiple rooms and corridor branches; no count is stated. Place one `spawner-npc` for the blind monster on connected patrol ground away from the survivor arrival. Place the functional half of `gate-escape` at the far-end exit. Place one survivor start marker at the opposite side. Register each movable wall or door segment with valid alternate connections so every rearranged state preserves a route to the exit.\n\n## Layout components\n\nBuild one compact single-floor underground facility bounded by hard walls. A survivor start area feeds a dense maze of narrow corridors, small connector rooms, doors, obstacle pinch points, and several loops. Distribute traps and decoys across side branches without blocking circulation. The exit occupies a distinct terminal room across the facility from the start. Use modular junctions and sliding wall or door assemblies for shifting routes, but keep fixed safety paths and patrol clearances. Compose the plan as a dense irregular rectangle with no exterior.\n\n## Render order\n\nUse `authored_plan`: code generates the maze and its valid rearrangement states first, and that blueprint remains authoritative so every state keeps the exit reachable.\n\n## Scale, theme, and pipeline cost\n\nScale is small, fixed to one compact floor. The theme is pitch-black industrial claustrophobia revealed in momentary echolocation outlines. Use `P6` because both the initial maze and every rearranged route state must be valid by construction; no stacked surface or exterior transition is present.\n",
-  "agent_notes": "## Genre\n\nSurvival is dominant because players evade a noise-seeking blind monster while escaping. Puzzle is secondary because echolocation is used to navigate a shifting labyrinth and its traps.\n\n## Shape and preset\n\nUse `puzzle-maze`, taken from outside Survival’s usual set, because a compact labyrinth with a reachable exit needs authored solvable topology even while routes rearrange. Use the Puzzle genre’s Maze / Labyrinth preset, retaining its loop corridors and collectible-object intent, then add the Survival exit and hostile origin.\n\n## Config requirements\n\nUse `path-loop` for narrow facility corridors that reconnect through small rooms; `hazard-kill` for floor traps embedded in the route; and the visible half of `gate-escape` for a distinct exit structure at the far end. Draw modular walls, doors, and obstacles with clear echolocation-readable silhouettes and interchangeable corridor segments that support rearrangement. Keep the facility pitch-black in presentation, but do not encode sound-wave effects as geometry.\n\n## Layout requirements\n\nPlace `collectible-nodes` as throwable rocks and alarm clocks scattered across multiple rooms and corridor branches; no count is stated. Place one `spawner-npc` for the blind monster on connected patrol ground away from the survivor arrival. Place the functional half of `gate-escape` at the far-end exit. Place one survivor start marker at the opposite side. Register each movable wall or door segment with valid alternate connections so every rearranged state preserves a route to the exit.\n\n## Layout components\n\nBuild one compact single-floor underground facility bounded by hard walls. A survivor start area feeds a dense maze of narrow corridors, small connector rooms, doors, obstacle pinch points, and several loops. Distribute traps and decoys across side branches without blocking circulation. The exit occupies a distinct terminal room across the facility from the start. Use modular junctions and sliding wall or door assemblies for shifting routes, but keep fixed safety paths and patrol clearances. Compose the plan as a dense irregular rectangle with no exterior.\n\n## Render order\n\nUse `authored_plan`: code generates the maze and its valid rearrangement states first, and that blueprint remains authoritative so every state keeps the exit reachable.\n\n## Scale, theme, and pipeline cost\n\nScale is small, fixed to one compact floor. The theme is pitch-black industrial claustrophobia revealed in momentary echolocation outlines. Use `P6` because both the initial maze and every rearranged route state must be valid by construction; no stacked surface or exterior transition is present.",
+  "blob": "## Clarifications resolved\n- [author] goal — Q: Do survivors escape through an exit, or outlast a timer? The preset assumed an exit. A: Survivors escape through an exit; reaching it is the round objective.\n- [author] scale — Q: How large is the facility - one floor of corridors, or several levels? A: Use one compact floor of claustrophobic corridors for the initial build.\n- [author] shape — Q: The labyrinth is described as shifting - does the geometry actually rearrange during a round? A: Yes, the facility geometry rearranges during a round, keeping routes unreliable and reinforcing the labyrinth feel.\n- [agent_inferred] monster control — Q: Should the initial build use an AI monster or a player-controlled monster? A: Use one AI monster, the first mode stated, while preserving separated survivor and hostile starts.\n\n## Enriched image prompt\nCreate one compact floor of a pitch-black, claustrophobic underground facility built as a shifting labyrinth. Narrow corridors, doors, obstacles, movable wall sections, and floor traps form the maze; rearranged wall modules keep routes unreliable while every valid state still leads to one structural escape exit. Show the environment almost entirely black, with brief luminous echolocation rings outlining nearby walls, obstacles, doors, traps, and scattered throwable alarm clocks and rocks.\n\n## Genre\nThe dominant genre is Survival because noise-sensitive monster evasion drives the round, with Puzzle secondary because navigating the rearranging labyrinth and finding its exit is the spatial challenge.\n\n## Shape and preset\nUse `puzzle-maze`, contributed by Puzzle, because solvable labyrinth topology is the defining space. The matched Survival preset is Escape, substituting the explicit maze shape while retaining the structural exit and dropping unneeded outside-to-inside shelter assumptions.\n\n## Config requirements\nUse `gate-escape` for the single structural exit. Use `hazard-kill` for traps embedded in corridor floors. Use `obstacle-moving`, taken from Obby & Platformer, for wall modules that rearrange corridor routes during a round. The echolocation edge-lighting is a whole-scene visual constraint, not extra geometry.\n\n## Layout requirements\nPlace `gate-escape` at one reachable maze boundary. Use `collectible-nodes` for throwable alarm clocks and rocks distributed in corridor alcoves. Place one `spawner-npc` hostile origin away from the survivor start, and use `spawn-protected` for survivor starts screened from that initial monster position.\n\n## Layout components\nOne enclosed floor contains the maze, movable wall modules, narrow passages, doors, obstacle pockets, trap tiles, decoy-item alcoves, separated starts, and one exit. Every rearrangement must preserve a connected start-to-exit route. No exterior or second level is built.\n\n## Render order\nUse `authored_plan`: `puzzle-maze` is a supported generated topology, and every initial or rearranged state must remain solvable before the image model dresses it.\n\n## Scale, theme, and pipeline cost\nScale is small, driven by one compact floor and readable corridor hazards. The theme is pitch-black underground industrial horror revealed by luminous sound rings. Use `P6` because maze validity must be constructed, not inferred from an image.",
+  "agent_artifact": "# Agent decision\n## Clarifications resolved\n- [author] goal — Q: Do survivors escape through an exit, or outlast a timer? The preset assumed an exit. A: Survivors escape through an exit; reaching it is the round objective.\n- [author] scale — Q: How large is the facility - one floor of corridors, or several levels? A: Use one compact floor of claustrophobic corridors for the initial build.\n- [author] shape — Q: The labyrinth is described as shifting - does the geometry actually rearrange during a round? A: Yes, the facility geometry rearranges during a round, keeping routes unreliable and reinforcing the labyrinth feel.\n- [agent_inferred] monster control — Q: Should the initial build use an AI monster or a player-controlled monster? A: Use one AI monster, the first mode stated, while preserving separated survivor and hostile starts.\n\n## Enriched image prompt\nCreate one compact floor of a pitch-black, claustrophobic underground facility built as a shifting labyrinth. Narrow corridors, doors, obstacles, movable wall sections, and floor traps form the maze; rearranged wall modules keep routes unreliable while every valid state still leads to one structural escape exit. Show the environment almost entirely black, with brief luminous echolocation rings outlining nearby walls, obstacles, doors, traps, and scattered throwable alarm clocks and rocks.\n\n## Genre\nThe dominant genre is Survival because noise-sensitive monster evasion drives the round, with Puzzle secondary because navigating the rearranging labyrinth and finding its exit is the spatial challenge.\n\n## Shape and preset\nUse `puzzle-maze`, contributed by Puzzle, because solvable labyrinth topology is the defining space. The matched Survival preset is Escape, substituting the explicit maze shape while retaining the structural exit and dropping unneeded outside-to-inside shelter assumptions.\n\n## Config requirements\nUse `gate-escape` for the single structural exit. Use `hazard-kill` for traps embedded in corridor floors. Use `obstacle-moving`, taken from Obby & Platformer, for wall modules that rearrange corridor routes during a round. The echolocation edge-lighting is a whole-scene visual constraint, not extra geometry.\n\n## Layout requirements\nPlace `gate-escape` at one reachable maze boundary. Use `collectible-nodes` for throwable alarm clocks and rocks distributed in corridor alcoves. Place one `spawner-npc` hostile origin away from the survivor start, and use `spawn-protected` for survivor starts screened from that initial monster position.\n\n## Layout components\nOne enclosed floor contains the maze, movable wall modules, narrow passages, doors, obstacle pockets, trap tiles, decoy-item alcoves, separated starts, and one exit. Every rearrangement must preserve a connected start-to-exit route. No exterior or second level is built.\n\n## Render order\nUse `authored_plan`: `puzzle-maze` is a supported generated topology, and every initial or rearranged state must remain solvable before the image model dresses it.\n\n## Scale, theme, and pipeline cost\nScale is small, driven by one compact floor and readable corridor hazards. The theme is pitch-black underground industrial horror revealed by luminous sound rings. Use `P6` because maze validity must be constructed, not inferred from an image.\n",
+  "agent_notes": "## Clarifications resolved\n- [author] goal — Q: Do survivors escape through an exit, or outlast a timer? The preset assumed an exit. A: Survivors escape through an exit; reaching it is the round objective.\n- [author] scale — Q: How large is the facility - one floor of corridors, or several levels? A: Use one compact floor of claustrophobic corridors for the initial build.\n- [author] shape — Q: The labyrinth is described as shifting - does the geometry actually rearrange during a round? A: Yes, the facility geometry rearranges during a round, keeping routes unreliable and reinforcing the labyrinth feel.\n- [agent_inferred] monster control — Q: Should the initial build use an AI monster or a player-controlled monster? A: Use one AI monster, the first mode stated, while preserving separated survivor and hostile starts.\n\n## Enriched image prompt\nCreate one compact floor of a pitch-black, claustrophobic underground facility built as a shifting labyrinth. Narrow corridors, doors, obstacles, movable wall sections, and floor traps form the maze; rearranged wall modules keep routes unreliable while every valid state still leads to one structural escape exit. Show the environment almost entirely black, with brief luminous echolocation rings outlining nearby walls, obstacles, doors, traps, and scattered throwable alarm clocks and rocks.\n\n## Genre\nThe dominant genre is Survival because noise-sensitive monster evasion drives the round, with Puzzle secondary because navigating the rearranging labyrinth and finding its exit is the spatial challenge.\n\n## Shape and preset\nUse `puzzle-maze`, contributed by Puzzle, because solvable labyrinth topology is the defining space. The matched Survival preset is Escape, substituting the explicit maze shape while retaining the structural exit and dropping unneeded outside-to-inside shelter assumptions.\n\n## Config requirements\nUse `gate-escape` for the single structural exit. Use `hazard-kill` for traps embedded in corridor floors. Use `obstacle-moving`, taken from Obby & Platformer, for wall modules that rearrange corridor routes during a round. The echolocation edge-lighting is a whole-scene visual constraint, not extra geometry.\n\n## Layout requirements\nPlace `gate-escape` at one reachable maze boundary. Use `collectible-nodes` for throwable alarm clocks and rocks distributed in corridor alcoves. Place one `spawner-npc` hostile origin away from the survivor start, and use `spawn-protected` for survivor starts screened from that initial monster position.\n\n## Layout components\nOne enclosed floor contains the maze, movable wall modules, narrow passages, doors, obstacle pockets, trap tiles, decoy-item alcoves, separated starts, and one exit. Every rearrangement must preserve a connected start-to-exit route. No exterior or second level is built.\n\n## Render order\nUse `authored_plan`: `puzzle-maze` is a supported generated topology, and every initial or rearranged state must remain solvable before the image model dresses it.\n\n## Scale, theme, and pipeline cost\nScale is small, driven by one compact floor and readable corridor hazards. The theme is pitch-black underground industrial horror revealed by luminous sound rings. Use `P6` because maze validity must be constructed, not inferred from an image.",
   "secondary": [
     "Puzzle"
   ],
   "spec": {
+    "clarifications": [
+      {
+        "field": "goal",
+        "ask": "Do survivors escape through an exit, or outlast a timer? The preset assumed an exit.",
+        "answer": "Survivors escape through an exit; reaching it is the round objective.",
+        "source": "author"
+      },
+      {
+        "field": "scale",
+        "ask": "How large is the facility - one floor of corridors, or several levels?",
+        "answer": "Use one compact floor of claustrophobic corridors for the initial build.",
+        "source": "author"
+      },
+      {
+        "field": "shape",
+        "ask": "The labyrinth is described as shifting - does the geometry actually rearrange during a round?",
+        "answer": "Yes, the facility geometry rearranges during a round, keeping routes unreliable and reinforcing the labyrinth feel.",
+        "source": "author"
+      },
+      {
+        "field": "monster control",
+        "ask": "Should the initial build use an AI monster or a player-controlled monster?",
+        "answer": "Use one AI monster, the first mode stated, while preserving separated survivor and hostile starts.",
+        "source": "agent_inferred"
+      }
+    ],
+    "initial_scene_subprompt_enriched": "Create one compact floor of a pitch-black, claustrophobic underground facility built as a shifting labyrinth. Narrow corridors, doors, obstacles, movable wall sections, and floor traps form the maze; rearranged wall modules keep routes unreliable while every valid state still leads to one structural escape exit. Show the environment almost entirely black, with brief luminous echolocation rings outlining nearby walls, obstacles, doors, traps, and scattered throwable alarm clocks and rocks.",
     "genre": "Survival",
     "secondary": [
       "Puzzle"
     ],
     "shape": "puzzle-maze",
-    "preset": "none",
+    "preset": "Escape",
     "axes": {},
     "options": [
       {
+        "id": "gate-escape",
+        "text": "A single structural escape exit that survivors must reach to win, placed on the maze boundary and reachable in every rearranged state.",
+        "visible": true,
+        "count": 1
+      },
+      {
         "id": "hazard-kill",
-        "text": "Floor traps embedded in the route and distributed across side branches without blocking circulation.",
+        "text": "Traps embedded in corridor floors that act as lethal hazards within the maze.",
         "visible": true,
         "count": -1
       },
       {
-        "id": "gate-escape",
-        "text": "A distinct exit structure in the terminal room at the far end of the facility.",
+        "id": "obstacle-moving",
+        "text": "Movable wall modules that rearrange corridor routes during a round, shifting the labyrinth while preserving a valid path from start to exit.",
         "visible": true,
         "count": -1
       },
       {
         "id": "collectible-nodes",
-        "text": "Throwable rocks and alarm clocks scattered across multiple rooms and corridor branches.",
+        "text": "Throwable alarm clocks and rocks distributed in corridor alcoves as decoy items.",
         "visible": false,
         "count": -1
       },
       {
         "id": "spawner-npc",
-        "text": "One blind monster hostile origin on connected patrol ground away from the survivor arrival.",
+        "text": "One hostile origin placed away from the survivor start (AI monster origin point).",
         "visible": false,
         "count": 1
+      },
+      {
+        "id": "spawn-protected",
+        "text": "Survivor start points screened from the initial monster position, with separated survivor and hostile starts.",
+        "visible": false,
+        "count": -1
       }
     ],
     "layout_placement": [
       {
         "id": "gate-escape",
-        "text": "The functional exit at the far end of the facility.",
-        "count": -1,
-        "where": "At the far-end exit in the distinct terminal room, across the facility from the survivor start."
+        "text": "A single structural escape exit that survivors must reach to win, placed on the maze boundary and reachable in every rearranged state.",
+        "count": 1,
+        "where": ""
       },
       {
         "id": "collectible-nodes",
-        "text": "Throwable rocks and alarm clocks scattered across multiple rooms and corridor branches.",
+        "text": "Throwable alarm clocks and rocks distributed in corridor alcoves as decoy items.",
         "count": -1,
-        "where": "Across multiple rooms and corridor branches."
+        "where": "in corridor alcoves"
       },
       {
         "id": "spawner-npc",
-        "text": "One blind monster hostile origin.",
+        "text": "One hostile origin placed away from the survivor start (AI monster origin point).",
         "count": 1,
-        "where": "On connected patrol ground away from the survivor arrival."
+        "where": "away from the survivor start"
+      },
+      {
+        "id": "spawn-protected",
+        "text": "Survivor start points screened from the initial monster position, with separated survivor and hostile starts.",
+        "count": -1,
+        "where": "screened from that initial monster position"
       }
     ],
     "layout": {
-      "composition": "A dense irregular rectangular plan with the survivor start on one side, a dense central maze of narrow corridors and connector rooms, and the distinct terminal exit room across the facility at the far end; there is no exterior.",
-      "zones": [
-        {
-          "name": "Survivor start area",
-          "role": "Survivor arrival feeding into the maze.",
-          "where": "One side of the facility, opposite the exit.",
-          "size": ""
-        },
-        {
-          "name": "Shifting maze",
-          "role": "Narrow corridors, small connector rooms, doors, obstacle pinch points, traps, decoys, several loops, fixed safety paths, and patrol clearances.",
-          "where": "Centre of the facility between the start and terminal exit.",
-          "size": "dense"
-        },
-        {
-          "name": "Terminal exit room",
-          "role": "Houses the distinct escape exit.",
-          "where": "Far end of the facility across from the survivor start.",
-          "size": ""
-        }
-      ],
-      "paths": [
-        {
-          "from": "Survivor start area",
-          "to": "Shifting maze",
-          "kind": "corridor"
-        },
-        {
-          "from": "Shifting maze",
-          "to": "Terminal exit room",
-          "kind": "corridor"
-        }
-      ],
-      "terrain": "One compact single-floor underground industrial facility floor.",
-      "props": [
-        {
-          "name": "Modular walls",
-          "count": -1,
-          "where": "Throughout the maze, using modular junctions with valid alternate connections."
-        },
-        {
-          "name": "Doors and sliding wall or door assemblies",
-          "count": -1,
-          "where": "Along shifting corridor routes and connector rooms."
-        },
-        {
-          "name": "Obstacles and obstacle pinch points",
-          "count": -1,
-          "where": "In the dense maze corridors and side branches."
-        },
-        {
-          "name": "Floor traps",
-          "count": -1,
-          "where": "Embedded in routes and distributed across side branches without blocking circulation."
-        },
-        {
-          "name": "Throwable rocks and alarm clocks",
-          "count": -1,
-          "where": "Scattered through rooms and corridor branches."
-        }
-      ],
-      "boundary": "Hard walls bound the compact underground facility; no exterior.",
+      "composition": "",
+      "zones": [],
+      "paths": [],
+      "terrain": "",
+      "props": [],
+      "boundary": "",
       "scale_band": "small",
-      "theme": "Pitch-black industrial claustrophobia, revealed in momentary echolocation outlines."
+      "theme": "pitch-black underground industrial horror revealed by luminous sound rings"
     },
     "render": {
       "first": "authored_plan",
       "then": "topdown",
       "authoritative": "authored_plan",
-      "why": "The initial maze and every rearranged route state must preserve a reachable exit.",
+      "why": "maze validity must be constructed, not inferred from an image",
       "set_piece": false
     },
     "route": [
       "P6"
     ],
     "notes": [
-      "The shared-catalogue shape `puzzle-maze` is taken from outside Survival’s usual set.",
-      "Sound-wave effects are not encoded as geometry.",
-      "dropped option 'path-loop': not in Survival",
-      "unknown preset 'Maze / Labyrinth'"
-    ],
-    "scene_prompt": "Create a 3D horror survival map set in a pitch-black, claustrophobic underground facility on one compact floor. Build a labyrinth of narrow corridors, small connecting rooms, walls, doors, obstacles, and floor traps, with routes able to rearrange during a round. Scatter throwable decoy objects such as rocks and alarm clocks through rooms and corridors. Place a distinct exit at the far end of the facility, reached through the unreliable maze."
+      "layout.composition was not specified in the blob, left as empty string.",
+      "No explicit zones/paths/terrain/props/boundary descriptions beyond the option placements were provided in the blob; corresponding arrays/strings left empty.",
+      "render.then is not part of the provided schema menu description; set to the same value as render.first only because the schema requires every field (if this field is unintended, remove it upstream).",
+      "placement mirrored from option 'gate-escape': no siting rule given",
+      "placement 'gate-escape' carries no siting rule"
+    ]
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "1986e1975066",
-  "served_by": "subagent/genre-choice -> gateway/production/gpt-5.6-terra",
+  "pipeline_version": "48d4ff51304c",
+  "served_by": "subagent/genre-choice -> azure/gpt-5.2",
   "schema_degraded": false,
-  "reused_uprez": true,
   "order": "layout",
   "first": "authored_plan",
   "mapper_notes": []

@@ -25,13 +25,14 @@ Everything upstream of the image model is handled by two skills before the pipel
 ```mermaid
 flowchart TD
     P([User prompt, free text]) --> DISPATCH["<b>layout-intake</b><br/>which concerns does this touch?<br/>genre · theme · scale"]
-    DISPATCH --> A["<b>genre-choice</b> stage A<br/>match a genre<br/>Genre · Mixed · Unrecognised · None"]
+    DISPATCH --> T["<b>genre-choice</b> step 0 — triage<br/>scene stated · scene implied by a rule · not scene<br/>not-scene → <code>mechanics</code>, never dropped"]
+    T --> A["<b>genre-choice</b> stage A<br/>match a genre<br/>Genre · Mixed · Unrecognised · None"]
     A --> B{"stage B<br/>is there a space at all?"}
     B -- No --> P5[["P5 — not a 3D game.<br/>Emit and stop.<br/>No options offered."]]
     B -- Yes --> WALK{"does anyone<br/>walk through it?"}
     WALK -- No --> SET["append <code>SET</code><br/>build the set, skip<br/>reachability checks"]
     WALK -- Yes --> LOAD
-    SET --> LOAD["Load the genre file<br/>shape · options · presets<br/>+ Universal Options"]
+    SET --> LOAD["Load the genre file<br/>shape · options · presets<br/>+ Universal Options<br/><i>shapes.md / options.md when its own table misses</i>"]
     LOAD --> OFFER["Offer the closest <b>preset</b><br/>one decision, not a dozen"]
     OFFER --> ASK[["<b>ASK THE USER</b><br/>only what cannot be safely inferred<br/>and would change the build"]]
     ASK --> ANS([User answers])
@@ -46,9 +47,10 @@ flowchart TD
 | Stage | Owner | What it decides |
 | :---- | :---- | :---- |
 | **Ingest & dispatch** | `layout-intake` | Which *concerns* the prompt touches: genre, visual theme and spatial scale. **Goal / win-condition is deliberately not a concern** — see below. |
+| **Triage** | `genre-choice` step 0 | Sorts the prompt into scene stated outright, scene implied by a stated rule, and not scene. The middle pile is the one that gets missed: *"reaching the exit wins"* is a win condition and also means there is an exit. The third goes to `mechanics` intact and is **not** a coverage failure. |
 | **Classify** | `genre-choice` stage A | Genre, Mixed, Unrecognised, or None. Two genres is normal and both are named, dominant first. |
 | **Route** | `genre-choice` stage B | *Is there a space?* — no routes **P5** and stops. Then *does anyone walk through it?* — no appends **`SET`**. This answers Part IV's `Q0` before that tree runs. |
-| **Load & offer** | `genre-choice` | Loads the genre file, offers the closest **preset** as a single decision, and adds anything the prompt asked for that the preset lacks. |
+| **Load & offer** | `genre-choice` | Loads the genre file, offers the closest **preset** as a single decision, and adds anything the prompt asked for that the preset lacks. The genre's own tables are a shortlist, so a request they have no row for is looked up in `shapes.md` and `options.md` before it becomes free text. |
 | **Ask back** | both | The clarifying round. Nothing is generated until it resolves. |
 | **Forward pass** | `genre-choice` | Emits the handoff, **split into two streams** by each pick's `Goes to` tag. |
 
@@ -56,7 +58,7 @@ flowchart TD
 
 This step is not incidental: **almost every prompt leaves intake wanting to ask about something.** A prompt specific enough to need nothing is the exception, not the rule.
 
-The budget is small and the shape of it is consistent — **two or three questions is what the work actually needs**, and four fields account for nearly all of them:
+The budget is small and the shape of it is consistent — **four questions is the ceiling, and most prompts need two or three**, with four fields accounting for nearly all of them:
 
 | Field | Who owns it |
 | :---- | :---- |
@@ -71,7 +73,7 @@ The budget is small and the shape of it is consistent — **two or three questio
 
 **Three rules govern the round trip:**
 
-**Ask only what changes the build.** Anything inferable from the genre, the named reference game, or a default is filled and *recorded as an assumption* rather than asked. Part V's Decision Tree B is the full policy, and its cap is three questions.
+**Ask only what changes the build.** Anything inferable from the genre, the named reference game, or a default is filled and *recorded as an assumption* rather than asked. Part V's Decision Tree B is the full policy, and its cap is four questions including the final open "Anything else?" question.
 
 **Ask in the user's terms, never the schema's.** "Does the player go inside buildings?" not "what is your enclosure value?" The fields above are internal names for routing, not question text.
 
@@ -100,6 +102,7 @@ This matters to the pipeline for two reasons. It is what keeps the image prompt 
   "image_prompt": [ { "id": "cover-los", "text": "Waist-high and full-body cover distributed evenly across every lane" },
                     { "id": "island-cluster", "text": "Five rocky islets ringing the harbour", "count": 5 } ],
   "layout_placement": [ { "id": "spawn-teambase", "type": "SpawnZone", "text": "Balanced bases at opposite ends" } ],
+  "mechanics": ["Rounds are best of thirty", "Buy menu between rounds"],
   "notes": ["Preset shape swapped to open-battlefield: prompt described dispersed points of interest, not lanes."] }
 ```
 
@@ -114,11 +117,13 @@ This matters to the pipeline for two reasons. It is what keeps the image prompt 
 
 `axes` omits any axis left at its default, so `"axes": {}` is legal and means a plain `P0`. `rejected` records which catalogue shapes were turned down and why — the skill may not emit this form without it. **A described shape recurring with the same axis bundle is how the catalogue earns its next row**, so anything aggregating these should key on `axes` rather than `text`.
 
-**Three more fields the pipeline should not ignore.**
+**Four more fields the pipeline should not ignore.**
 
 `count` is optional and appears on any pick whose quantity the prompt stated — "five islands," "three floors," "about twenty houses." It exists because nothing else in the handoff can hold a number; the scale band is a four-value enum, so a stated quantity dropped here is gone. It is the number the user gave, not a normalised one.
 
 `notes` carries what the skill decided but could not encode: a close shape call, a `CHECK` to look at, a request no option covered, a preset whose shape was substituted, and any route the prompt required that is **not yet buildable** and was therefore deferred. Anything downstream that reports back to the user should read it.
+
+`mechanics` carries everything the prompt asked for that is not the scene — scoring, currency, rounds, progression, controls, camera, UI, audio, player and team counts. **This pipeline does not consume it and must not try to.** It exists because most prompts are largely gameplay, and intake needs somewhere to put that which is neither the layout stream nor a record of failure: a prompt three-quarters full of mechanics is served completely by a correct map, and entries here mean triage worked rather than that something was dropped. Kept apart from `notes` because the two are addressed to different readers — `notes` to this pipeline, `mechanics` to the stream that builds the game.
 
 `genres` may hold **two entries, dominant first**, which is a normal outcome rather than an edge case. Only the dominant one's shape and genre-wide route are in force; the second is there because the pipeline and any later concern need to know what the game actually is.
 
@@ -141,7 +146,7 @@ The current pipeline is a linear, single-pass flow:
 ```mermaid
 flowchart LR
     A[1. Prompt intake] --> S[Part 0. Intake skills<br/>genre, shape, route]
-    S -.->|"clarify: ~2-3 questions"| A
+    S -.->|"clarify: up to 4 questions"| A
     S --> B[2. Isometric image<br/>+ image_prompt stream]
     B --> C[3. Top-down projection]
     B --> D[4. Segmentation]
@@ -454,9 +459,17 @@ A prompt naming no game type loads `no-genre.md`, which has no genre prior to in
 
 Read the axes as the decomposition behind the table above: every shape is a named bundle of these five answers plus a description of the space. That is also why the catalogue is not generated *from* the axes — many shapes share the all-defaults bundle, and what separates them is entirely their description.
 
-### **Universal Options add a route to any genre**
+### **Options add a route to any genre**
 
-Build.md's **Universal Options** are inherited by all fifteen genres, so they cannot be listed in the per-genre column above. Four of the six carry a route:
+**Every option is reachable from every genre, exactly as every shape is** — a genre's table is its shortlist and its wording, not the limit of what it can offer. So an option's route cannot be filed per-genre either, and **any of the twenty-one route-carrying options can land its route on any of the fifteen genres.**
+
+Seventeen of those are filed under a genre but reachable from all of them: `teleporter-link` **P4**; `path-flank-tunnel` **P2**; `backstage-support` and `reveal-exit` **P3**; `chunk-modular`, `lane-corridor`, `obstacle-maze`, `path-road-vehicle`, `path-track`, `startpoint-line` and `trigger-finish` **P6**; `buildzone-plateau`, `cover-elevated`, `spectator-bleachers`, `spectator-zone` and `terrain-tiered` `P0 + tiered`; `volume-open` `CHECK`.
+
+**This widens the readiness gate rather than the catalogue.** `CHECK`, P2, P3 and P4 are not production-ready, and a Puzzle or Sports build that previously had no way to reach them now does. The gate is unchanged — prefer the route that stays on P0 or P6, state the deferral rather than downgrading silently — but it now has to be applied to options a genre does not list.
+
+Three of the seventeen route differently depending on what the prompt meant rather than which ID it is, and `options.md` marks them *varies*: `spectator-zone` is `P0 + tiered` as raked stands and P0 as a dugout, `teleporter-link` is `P4` as a portal to a separate place and P0 as fast travel inside one map, and `path-road-vehicle` is `P6` where the road *is* the course and P0 where it is a street.
+
+The remaining four are the **Universal Options**, inherited by every genre outright:
 
 | Option | Route | Note |
 | :---- | :---- | :---- |
@@ -465,7 +478,7 @@ Build.md's **Universal Options** are inherited by all fifteen genres, so they ca
 | `water-body` | `CHECK` | Swimming is volumetric: fine as a play-height envelope over a representable surface, a problem only when the volume self-occludes. |
 | `island-cluster` | `CHECK` | Same reasoning, for flight and boat crossings between landmasses. |
 
-The other two — `npc-population` and `settlement-density` — are P0. Because these apply everywhere, **a route can arrive on a genre whose own shapes are all P0**; a flat arena shooter with a lake is `CHECK`, and nothing in the per-genre row above predicts it.
+The other two — `npc-population` and `settlement-density` — are P0. Because options reach everywhere, **a route can arrive on a genre whose own shapes are all P0**; a flat arena shooter with a lake is `CHECK`, and nothing in the per-genre row above predicts it.
 
 > **Reminder:** a **P3** means an **outside→inside transition** (2 linked top-downs). Interior-**only** games are *not* P3 — they route as P0 (single roofless top-down). Note that `rooms-sequence` is P0 for exactly this reason: a sealed run of rooms is interior-only.
 
@@ -600,6 +613,6 @@ Verdict legend: ✅ **Fits current pipeline (P0)** — incl. interior-only (roof
 * **P3 door/link registration:** how are the exterior and interior top-downs joined — a shared door marker present in both, a portal/`Teleporter`, or a stitched seam? Define the link contract so the two passes reconcile at the entrance.
 * **P3 vs P4 boundary:** an interior top-down is effectively a P4 zone. Decide when an interior is modeled as its own **zone (P4)** vs an attached **interior top-down (P3)**, so the same space isn't double-modeled.
 * **Borderline single-vs-multi zone:** `isometric_i` (racing islands) reads as one map but is spatially fragmented — decide whether fragmented-but-contiguous counts as P0 or P4.
-* **Multi-map requests have no carrier.** A prompt asking for ten sequentially unlocked worlds, a lobby plus seven match maps, or a five-map rotation has nowhere to say so: the handoff holds exactly one shape, one theme and one scale. `P4` routes the *build* when a shape happens to carry it, but nothing carries the *request*. This is the largest remaining hole, and it is a schema change rather than a catalogue one.
+* **Multi-map is a readiness gap, not an intake one.** A prompt asking for ten sequentially unlocked worlds, a lobby plus seven match maps, or a five-map rotation **can be expressed**: six shapes carry exactly that request — `world-chaptered`, `world-biomes`, `world-open-biomes`, `space-staged`, `hub-portals`, `world-hub-dungeon` — and intake should pick the right one and route `P4` whether or not `P4` can be built today. What is missing is the build, not the carrier, so it belongs to the readiness gate above rather than to the schema. The residual schema gap is narrower than it looks and worth stating on its own terms: the handoff holds **one theme and one scale**, so a rotation whose maps differ in either cannot say so.
 * **Phase 4.5 placement semantics:** the `layout_placement` stream says *what* to place and its type, but not *where* relative to the segmented geometry. Spawn volumes and checkpoints have obvious anchors; scattered pickups and NPC emitters need a placement policy (density, spacing, avoid-zones). Define it per Shared Vocabulary type rather than per genre.
 * **P6 generator params come from the prompt, not the shape.** Part IV's P6 flow extracts maze size, track length, and obby spacing at generation time, but the shape that routes to P6 is chosen in Part 0. Decide whether those params should be collected during intake — where the user is already answering questions — or inferred later from the scale band.

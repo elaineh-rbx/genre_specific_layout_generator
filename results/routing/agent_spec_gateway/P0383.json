@@ -13,12 +13,32 @@
       "answer": "Use a normal city street setting."
     }
   ],
-  "scene_prompt": "Create a 3D endless-runner map set on a normal city street: a long straight road extending into the distance, with oncoming cars traveling toward the player along the roadway. Frame the street with simple urban roadside surroundings.",
-  "blob": "## Genre\n\nThe dominant and sole genre is Infinite Runner. The player runs forward endlessly for distance while reacting to approaching traffic.\n\n## Shape and preset\n\nUse `lane-free` as the single shape: the player moves continuously across the width of a city roadway rather than snapping among stated lane slots. Match the Free Runner preset, whose modular path, jump obstacles, and run-ending collisions fit directly, and add the explicitly moving oncoming traffic.\n\n## Config requirements\n\nUse `chunk-modular` for straight road segments whose exit and origin pivots align perfectly along one axis. Use `obstacle-jump` for cars the runner can hurdle, `obstacle-moving` for those cars traveling toward the player, and `hazard-kill` for a vehicle collision that ends the run. Use `settlement-density` for simple built-up city-street edges with sidewalks and modest urban facades, kept visually secondary to the roadway.\n\n## Layout requirements\n\nPlace one `trigger-despawn` cleanup volume a fixed distance behind the camera and active road queue. Oncoming-car patterns must leave clear lateral and jump responses, with their spawn spacing derived from current speed and at least half a second of reaction time. No collectibles, power-ups, checkpoints, lap regions, or terminal finish trigger are required.\n\n## Layout components\n\nBuild a repeating queue of straight, level city-road chunks extending toward one vanishing point. Each chunk includes a broad asphalt roadway, curb and sidewalk strips, and simple low-rise urban facades along both sides. Arrange oncoming cars in readable forward patterns with enough open road to dodge or jump each one, never creating a full-width unavoidable wall. Keep roadside props outside the running corridor. The street canyon forms the boundary and composition, with no endpoint.\n\n## Render order\n\nUse `topdown`: draw the modular road and valid traffic-clearance plan first, then dress it as an isometric city street. The plan is authoritative because chunk drift or an unavoidable traffic pattern would break the endless run.\n\n## Scale, theme, and pipeline cost\n\nThe scale band is small per reusable chunk, assembling into an endless road. The theme is a straightforward contemporary city street. Use `P6` because chunk alignment and speed-aware obstacle spacing must be valid by construction.",
-  "agent_artifact": "# Scene prompt\n\nCreate a 3D endless-runner map set on a normal city street: a long straight road extending into the distance, with oncoming cars traveling toward the player along the roadway. Frame the street with simple urban roadside surroundings.\n\n# Agent decision\n\n## Genre\n\nThe dominant and sole genre is Infinite Runner. The player runs forward endlessly for distance while reacting to approaching traffic.\n\n## Shape and preset\n\nUse `lane-free` as the single shape: the player moves continuously across the width of a city roadway rather than snapping among stated lane slots. Match the Free Runner preset, whose modular path, jump obstacles, and run-ending collisions fit directly, and add the explicitly moving oncoming traffic.\n\n## Config requirements\n\nUse `chunk-modular` for straight road segments whose exit and origin pivots align perfectly along one axis. Use `obstacle-jump` for cars the runner can hurdle, `obstacle-moving` for those cars traveling toward the player, and `hazard-kill` for a vehicle collision that ends the run. Use `settlement-density` for simple built-up city-street edges with sidewalks and modest urban facades, kept visually secondary to the roadway.\n\n## Layout requirements\n\nPlace one `trigger-despawn` cleanup volume a fixed distance behind the camera and active road queue. Oncoming-car patterns must leave clear lateral and jump responses, with their spawn spacing derived from current speed and at least half a second of reaction time. No collectibles, power-ups, checkpoints, lap regions, or terminal finish trigger are required.\n\n## Layout components\n\nBuild a repeating queue of straight, level city-road chunks extending toward one vanishing point. Each chunk includes a broad asphalt roadway, curb and sidewalk strips, and simple low-rise urban facades along both sides. Arrange oncoming cars in readable forward patterns with enough open road to dodge or jump each one, never creating a full-width unavoidable wall. Keep roadside props outside the running corridor. The street canyon forms the boundary and composition, with no endpoint.\n\n## Render order\n\nUse `topdown`: draw the modular road and valid traffic-clearance plan first, then dress it as an isometric city street. The plan is authoritative because chunk drift or an unavoidable traffic pattern would break the endless run.\n\n## Scale, theme, and pipeline cost\n\nThe scale band is small per reusable chunk, assembling into an endless road. The theme is a straightforward contemporary city street. Use `P6` because chunk alignment and speed-aware obstacle spacing must be valid by construction.\n",
-  "agent_notes": "## Genre\n\nThe dominant and sole genre is Infinite Runner. The player runs forward endlessly for distance while reacting to approaching traffic.\n\n## Shape and preset\n\nUse `lane-free` as the single shape: the player moves continuously across the width of a city roadway rather than snapping among stated lane slots. Match the Free Runner preset, whose modular path, jump obstacles, and run-ending collisions fit directly, and add the explicitly moving oncoming traffic.\n\n## Config requirements\n\nUse `chunk-modular` for straight road segments whose exit and origin pivots align perfectly along one axis. Use `obstacle-jump` for cars the runner can hurdle, `obstacle-moving` for those cars traveling toward the player, and `hazard-kill` for a vehicle collision that ends the run. Use `settlement-density` for simple built-up city-street edges with sidewalks and modest urban facades, kept visually secondary to the roadway.\n\n## Layout requirements\n\nPlace one `trigger-despawn` cleanup volume a fixed distance behind the camera and active road queue. Oncoming-car patterns must leave clear lateral and jump responses, with their spawn spacing derived from current speed and at least half a second of reaction time. No collectibles, power-ups, checkpoints, lap regions, or terminal finish trigger are required.\n\n## Layout components\n\nBuild a repeating queue of straight, level city-road chunks extending toward one vanishing point. Each chunk includes a broad asphalt roadway, curb and sidewalk strips, and simple low-rise urban facades along both sides. Arrange oncoming cars in readable forward patterns with enough open road to dodge or jump each one, never creating a full-width unavoidable wall. Keep roadside props outside the running corridor. The street canyon forms the boundary and composition, with no endpoint.\n\n## Render order\n\nUse `topdown`: draw the modular road and valid traffic-clearance plan first, then dress it as an isometric city street. The plan is authoritative because chunk drift or an unavoidable traffic pattern would break the endless run.\n\n## Scale, theme, and pipeline cost\n\nThe scale band is small per reusable chunk, assembling into an endless road. The theme is a straightforward contemporary city street. Use `P6` because chunk alignment and speed-aware obstacle spacing must be valid by construction.",
+  "blob": "## Clarifications resolved\n- [author] goal — Q: Does the road end somewhere, or is it endless with a distance score? A: Make it an endless road with a distance score; the goal is to run as far as possible while jumping over oncoming cars.\n- [author] theme — Q: Is this a normal city street, a highway, or something stylized? A: Use a normal city street setting.\n- [agent_inferred] movement — Q: Does the runner snap between fixed lanes or steer freely across the road? A: Use free lateral steering because the prompt describes running down a normal road rather than switching among fixed lane slots.\n\n## Enriched image prompt\nCreate an endless-runner map made from repeating normal city-street segments. The player runs forward along a continuous asphalt road with free lateral space while oncoming cars travel toward them as moving jump obstacles. Use ordinary curbs, sidewalks, street markings, and simple urban facades to frame the road without blocking the forward view. Keep each generated segment aligned to the next and leave clear, speed-appropriate gaps between cars so the road remains readable and jumpable as it extends toward the horizon.\n\n## Genre\nThe dominant genre is Infinite Runner, canonical slug `infinite-runner`.\n\n## Shape and preset\nUse `lane-free`, Free Lateral Steering across the street rather than fixed snap lanes. The matched preset is Free Runner, retaining deterministic chunks, jump obstacles, and run-ending hazards.\n\n## Config requirements\nUse `chunk-modular` for aligned repeating street segments, `obstacle-jump` for the car-clearing jumps, `obstacle-moving` for oncoming traffic, and `hazard-kill` for collisions that end the run. Use `path-road-vehicle`, taken from the shared catalogue and routed as `P6` because the roadway is the course rather than an ordinary city street.\n\n## Layout requirements\nPlace one `trigger-despawn` TriggerZone a fixed distance behind the camera to recycle cleared street and traffic segments. No finish trigger is required because the author specified an endless distance run.\n\n## Layout components\nEach reusable chunk contains a straight city roadway, curbs, sidewalks, simple street-edge facades, and one or more valid traffic-obstacle arrangements. Chunk exits and origins share one axis with no drift. The visible boundary is the urban street wall, while the route continues indefinitely beyond the horizon.\n\n## Render order\nUse `topdown`; modular alignment and speed-valid obstacle spacing must be authoritative before city dressing.\n\n## Scale, theme, and pipeline cost\nScale is medium per rendered chunk so cars and jump spacing remain legible even though the generated route is endless. The theme is a normal modern city street. Use `P6` because chunk joins and elastic obstacle spacing must be valid by construction.",
+  "agent_artifact": "# Agent decision\n\n## Clarifications resolved\n- [author] goal — Q: Does the road end somewhere, or is it endless with a distance score? A: Make it an endless road with a distance score; the goal is to run as far as possible while jumping over oncoming cars.\n- [author] theme — Q: Is this a normal city street, a highway, or something stylized? A: Use a normal city street setting.\n- [agent_inferred] movement — Q: Does the runner snap between fixed lanes or steer freely across the road? A: Use free lateral steering because the prompt describes running down a normal road rather than switching among fixed lane slots.\n\n## Enriched image prompt\nCreate an endless-runner map made from repeating normal city-street segments. The player runs forward along a continuous asphalt road with free lateral space while oncoming cars travel toward them as moving jump obstacles. Use ordinary curbs, sidewalks, street markings, and simple urban facades to frame the road without blocking the forward view. Keep each generated segment aligned to the next and leave clear, speed-appropriate gaps between cars so the road remains readable and jumpable as it extends toward the horizon.\n\n## Genre\nThe dominant genre is Infinite Runner, canonical slug `infinite-runner`.\n\n## Shape and preset\nUse `lane-free`, Free Lateral Steering across the street rather than fixed snap lanes. The matched preset is Free Runner, retaining deterministic chunks, jump obstacles, and run-ending hazards.\n\n## Config requirements\nUse `chunk-modular` for aligned repeating street segments, `obstacle-jump` for the car-clearing jumps, `obstacle-moving` for oncoming traffic, and `hazard-kill` for collisions that end the run. Use `path-road-vehicle`, taken from the shared catalogue and routed as `P6` because the roadway is the course rather than an ordinary city street.\n\n## Layout requirements\nPlace one `trigger-despawn` TriggerZone a fixed distance behind the camera to recycle cleared street and traffic segments. No finish trigger is required because the author specified an endless distance run.\n\n## Layout components\nEach reusable chunk contains a straight city roadway, curbs, sidewalks, simple street-edge facades, and one or more valid traffic-obstacle arrangements. Chunk exits and origins share one axis with no drift. The visible boundary is the urban street wall, while the route continues indefinitely beyond the horizon.\n\n## Render order\nUse `topdown`; modular alignment and speed-valid obstacle spacing must be authoritative before city dressing.\n\n## Scale, theme, and pipeline cost\nScale is medium per rendered chunk so cars and jump spacing remain legible even though the generated route is endless. The theme is a normal modern city street. Use `P6` because chunk joins and elastic obstacle spacing must be valid by construction.\n",
+  "agent_notes": "## Clarifications resolved\n- [author] goal — Q: Does the road end somewhere, or is it endless with a distance score? A: Make it an endless road with a distance score; the goal is to run as far as possible while jumping over oncoming cars.\n- [author] theme — Q: Is this a normal city street, a highway, or something stylized? A: Use a normal city street setting.\n- [agent_inferred] movement — Q: Does the runner snap between fixed lanes or steer freely across the road? A: Use free lateral steering because the prompt describes running down a normal road rather than switching among fixed lane slots.\n\n## Enriched image prompt\nCreate an endless-runner map made from repeating normal city-street segments. The player runs forward along a continuous asphalt road with free lateral space while oncoming cars travel toward them as moving jump obstacles. Use ordinary curbs, sidewalks, street markings, and simple urban facades to frame the road without blocking the forward view. Keep each generated segment aligned to the next and leave clear, speed-appropriate gaps between cars so the road remains readable and jumpable as it extends toward the horizon.\n\n## Genre\nThe dominant genre is Infinite Runner, canonical slug `infinite-runner`.\n\n## Shape and preset\nUse `lane-free`, Free Lateral Steering across the street rather than fixed snap lanes. The matched preset is Free Runner, retaining deterministic chunks, jump obstacles, and run-ending hazards.\n\n## Config requirements\nUse `chunk-modular` for aligned repeating street segments, `obstacle-jump` for the car-clearing jumps, `obstacle-moving` for oncoming traffic, and `hazard-kill` for collisions that end the run. Use `path-road-vehicle`, taken from the shared catalogue and routed as `P6` because the roadway is the course rather than an ordinary city street.\n\n## Layout requirements\nPlace one `trigger-despawn` TriggerZone a fixed distance behind the camera to recycle cleared street and traffic segments. No finish trigger is required because the author specified an endless distance run.\n\n## Layout components\nEach reusable chunk contains a straight city roadway, curbs, sidewalks, simple street-edge facades, and one or more valid traffic-obstacle arrangements. Chunk exits and origins share one axis with no drift. The visible boundary is the urban street wall, while the route continues indefinitely beyond the horizon.\n\n## Render order\nUse `topdown`; modular alignment and speed-valid obstacle spacing must be authoritative before city dressing.\n\n## Scale, theme, and pipeline cost\nScale is medium per rendered chunk so cars and jump spacing remain legible even though the generated route is endless. The theme is a normal modern city street. Use `P6` because chunk joins and elastic obstacle spacing must be valid by construction.",
   "secondary": [],
   "spec": {
+    "clarifications": [
+      {
+        "field": "goal",
+        "ask": "Does the road end somewhere, or is it endless with a distance score?",
+        "answer": "Make it an endless road with a distance score; the goal is to run as far as possible while jumping over oncoming cars.",
+        "source": "author"
+      },
+      {
+        "field": "theme",
+        "ask": "Is this a normal city street, a highway, or something stylized?",
+        "answer": "Use a normal city street setting.",
+        "source": "author"
+      },
+      {
+        "field": "movement",
+        "ask": "Does the runner snap between fixed lanes or steer freely across the road?",
+        "answer": "Use free lateral steering because the prompt describes running down a normal road rather than switching among fixed lane slots.",
+        "source": "agent_inferred"
+      }
+    ],
+    "initial_scene_subprompt_enriched": "Create an endless-runner map made from repeating normal city-street segments. The player runs forward along a continuous asphalt road with free lateral space while oncoming cars travel toward them as moving jump obstacles. Use ordinary curbs, sidewalks, street markings, and simple urban facades to frame the road without blocking the forward view. Keep each generated segment aligned to the next and leave clear, speed-appropriate gaps between cars so the road remains readable and jumpable as it extends toward the horizon.",
     "genre": "Infinite Runner",
     "secondary": [],
     "shape": "lane-free",
@@ -27,37 +47,37 @@
     "options": [
       {
         "id": "chunk-modular",
-        "text": "Straight road segments whose exit and origin pivots align perfectly along one axis.",
+        "text": "Deterministic repeating normal city-street segments that align cleanly from chunk to chunk with no drift.",
         "visible": true,
         "count": -1
       },
       {
         "id": "obstacle-jump",
-        "text": "Cars the runner can hurdle.",
-        "visible": true,
-        "count": -1
-      },
-      {
-        "id": "hazard-kill",
-        "text": "A vehicle collision that ends the run.",
+        "text": "Car-clearing jumps over oncoming cars placed as jumpable obstacles along the road.",
         "visible": true,
         "count": -1
       },
       {
         "id": "obstacle-moving",
-        "text": "Cars traveling toward the player.",
+        "text": "Oncoming traffic cars moving toward the player as timed obstacles.",
         "visible": true,
         "count": -1
       },
       {
-        "id": "settlement-density",
-        "text": "Simple built-up city-street edges with sidewalks and modest urban facades, kept visually secondary to the roadway.",
+        "id": "hazard-kill",
+        "text": "Collisions with oncoming cars end the run.",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "path-road-vehicle",
+        "text": "A continuous asphalt roadway that is the course itself, extending endlessly forward.",
         "visible": true,
         "count": -1
       },
       {
         "id": "trigger-despawn",
-        "text": "Cleanup volume a fixed distance behind the camera and active road queue.",
+        "text": "A cleanup/despawn trigger zone behind the camera that recycles cleared street and traffic segments.",
         "visible": false,
         "count": 1
       }
@@ -65,76 +85,42 @@
     "layout_placement": [
       {
         "id": "trigger-despawn",
-        "text": "Cleanup volume a fixed distance behind the camera and active road queue.",
+        "text": "A cleanup/despawn trigger zone behind the camera that recycles cleared street and traffic segments.",
         "count": 1,
-        "where": "A fixed distance behind the camera and active road queue."
+        "where": "A fixed distance behind the camera."
       }
     ],
     "layout": {
-      "composition": "A long straight city street runs toward one vanishing point, with the broad roadway centered, curb and sidewalk strips on both sides, and low-rise urban facades framing the street canyon.",
-      "zones": [
-        {
-          "name": "Repeating road queue",
-          "role": "Endless forward running route with readable oncoming-car patterns and clear lateral and jump responses.",
-          "where": "Extending forward toward the vanishing point.",
-          "size": "Small per reusable chunk; assembled into an endless road."
-        },
-        {
-          "name": "Roadside city edges",
-          "role": "Visually secondary built-up street surroundings outside the running corridor.",
-          "where": "Along both sides of the roadway.",
-          "size": ""
-        }
-      ],
-      "paths": [
-        {
-          "from": "Active road queue",
-          "to": "Vanishing point",
-          "kind": "road"
-        }
-      ],
-      "terrain": "Straight, level broad asphalt roadway with curb and sidewalk strips.",
-      "props": [
-        {
-          "name": "Oncoming cars",
-          "count": -1,
-          "where": "In readable forward patterns on the roadway, leaving open road to dodge or jump and never forming a full-width unavoidable wall."
-        },
-        {
-          "name": "Simple low-rise urban facades",
-          "count": -1,
-          "where": "Along both sides of each road chunk."
-        },
-        {
-          "name": "Roadside props",
-          "count": -1,
-          "where": "Outside the running corridor."
-        }
-      ],
-      "boundary": "The street canyon of urban facades forms the boundary and composition; there is no endpoint.",
-      "scale_band": "small",
-      "theme": "Straightforward contemporary city street"
+      "composition": "Endless straight city roadway receding toward the horizon; road centered in frame, with curbs/sidewalks and simple urban facades framing both sides without blocking the forward view.",
+      "zones": [],
+      "paths": [],
+      "terrain": "Flat asphalt road surface with ordinary curbs, sidewalks, and street markings.",
+      "props": [],
+      "boundary": "Visible boundary formed by the street-edge urban facades and streetscape walls; the route continues indefinitely beyond the horizon.",
+      "scale_band": "medium",
+      "theme": "Normal modern city street"
     },
     "render": {
       "first": "topdown",
       "then": "isometric",
       "authoritative": "topdown",
-      "why": "Chunk drift or an unavoidable traffic pattern would break the endless run.",
+      "why": "Modular alignment and speed-valid obstacle spacing must be authoritative before city dressing.",
       "set_piece": false
     },
     "route": [
       "P6"
     ],
-    "notes": [],
-    "scene_prompt": "Create a 3D endless-runner map set on a normal city street: a long straight road extending into the distance, with oncoming cars traveling toward the player along the roadway. Frame the street with simple urban roadside surroundings."
+    "notes": [
+      "The blob requested `path-road-vehicle` as a shared-catalogue option routed as P6; the menu marks `path-road-vehicle` as image-only (no explicit P6 tag) under Roleplay/Obby/Simulation. Kept the option ID as requested; route includes P6 per blob.",
+      "No explicit zone list, path list, or prop counts were provided in the blob; corresponding arrays left empty."
+    ]
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "1986e1975066",
-  "served_by": "subagent/genre-choice -> gateway/production/gpt-5.6-terra",
+  "pipeline_version": "48d4ff51304c",
+  "served_by": "subagent/genre-choice -> azure/gpt-5.2",
   "schema_degraded": false,
-  "reused_uprez": true,
   "order": "p6",
   "first": "topdown",
   "mapper_notes": []

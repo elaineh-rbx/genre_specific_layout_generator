@@ -1,6 +1,6 @@
 {
   "scene": "P0294",
-  "source": "Create a complete, cross-platform Cyberpunk Vector Superpower game that is fully compatible with Mobile, PC, and Console.\n\n1. INPUT WRAPPER SYSTEM (Cross-Platform mapping):\n- Map Skill 1 (Tectonic Rip) to: Mobile On-Screen Button / PC Key [E] / Console [ButtonX / X].\n- Map Skill 2 (Momentum Steal) to: Mobile On-Screen Button / PC Key [Q] / Console [ButtonY / Triangle].\n- Map Skill 3 (Friction Zero) to: Mobile On-Screen Button / PC Key [LeftShift] / Console [LeftTrigger / L2].\n- Map Skill 4 (Gravity Flip) to: Mobile On-Screen Button / PC Key [R] / Console [RightTrigger / R2].\n- Map Movement Skill (Slide) to: Mobile On-Screen Button / PC Key [C] / Console [RightStickClick / R3].\n- Arrange all custom mobile buttons compactly in an ergonomic arc around the default Jump button.\n\n2. ADVANCED POWERS & PHYSICS BACKEND:\n- \"Tectonic Rip\": Raycast down. Instance a 12x12x2 stud asphalt part welded to the player's front as a shield. Second press: Unweld and apply a LinearVelocity of 250 studs/sec forward. Use .Touched to deal 100 damage and shatter obstacles.\n- \"Momentum Steal & Fling\": Fire a 100-stud touch/mouse Raycast. If it hits an unanchored Part, store its AssemblyLinearVelocity into a 'StoredVelocity' variable, set the target's velocity to zero, and increase a visual 'Vector Battery' UI bar. Tapping again releases the force into a massive 50-stud radius radial shockwave punch.\n- \"Friction Zero\": When toggled, alter CustomPhysicalProperties of feet/root parts to Friction = 0 and FrictionWeight = 100. Emit neon beam particles from heels. Let the player slide endlessly and maintain forward momentum up slanted skyscraper walls.\n- \"Gravitational Vector Flip\": Fire a targeting beam. Clear the hit object's global gravity and apply an internal VectorForce constraint pointing 180 degrees opposite of Workspace.Gravity to violently launch it into the sky.\n\n3. CROSS-PLATFORM MOVEMENT CODE:\n- Air Dash Vector Correction: On air dash, instantly set falling Y-velocity to 0 right before applying the forward horizontal LinearVelocity thrust.\n- Directional Slide: Lower Humanoid.HipHeight by 50%, trigger a slide animation, and apply a 0.5-second physics impulse of 45 studs/sec in the camera's face direction. Emit spark particles.\n- Multi-Surface Wall Running: Raycast 3 studs left/right in mid-air. If a skyscraper wall is detected, disable gravity, lock Y-axis height, and apply forward velocity along the wall surface vector. Space/Jump button cancels it into a horizontal outward leap force.\n- Kinetic Retention: Gradually decay high-speed velocity states over 2 seconds rather than snapping instantly to default walk speed.\n\n4. THE MAP ENVIRONMENT:\n- Generate a massive, vertical Cyberpunk concrete metropolis at night with heavy rain particle effects and wet, highly reflective rooftop surfaces.\n- Fill the city with unanchored, physics-active traffic cars, loose street elements, glowing neon billboards, and grindable neon pipes connecting the buildings.",
+  "source": "Create a complete, cross-platform Cyberpunk Vector Superpower game that is fully compatible with Mobile, PC, and Console.\\n\\n1. INPUT WRAPPER SYSTEM (Cross-Platform mapping):\\n- Map Skill 1 (Tectonic Rip) to: Mobile On-Screen Button / PC Key [E] / Console [ButtonX / X].\\n- Map Skill 2 (Momentum Steal) to: Mobile On-Screen Button / PC Key [Q] / Console [ButtonY / Triangle].\\n- Map Skill 3 (Friction Zero) to: Mobile On-Screen Button / PC Key [LeftShift] / Console [LeftTrigger / L2].\\n- Map Skill 4 (Gravity Flip) to: Mobile On-Screen Button / PC Key [R] / Console [RightTrigger / R2].\\n- Map Movement Skill (Slide) to: Mobile On-Screen Button / PC Key [C] / Console [RightStickClick / R3].\\n- Arrange all custom mobile buttons compactly in an ergonomic arc around the default Jump button.\\n\\n2. ADVANCED POWERS & PHYSICS BACKEND:\\n- \"Tectonic Rip\": Raycast down. Instance a 12x12x2 stud asphalt part welded to the player's front as a shield. Second press: Unweld and apply a LinearVelocity of 250 studs/sec forward. Use .Touched to deal 100 damage and shatter obstacles.\\n- \"Momentum Steal & Fling\": Fire a 100-stud touch/mouse Raycast. If it hits an unanchored Part, store its AssemblyLinearVelocity into a 'StoredVelocity' variable, set the target's velocity to zero, and increase a visual 'Vector Battery' UI bar. Tapping again releases the force into a massive 50-stud radius radial shockwave punch.\\n- \"Friction Zero\": When toggled, alter CustomPhysicalProperties of feet/root parts to Friction = 0 and FrictionWeight = 100. Emit neon beam particles from heels. Let the player slide endlessly and maintain forward momentum up slanted skyscraper walls.\\n- \"Gravitational Vector Flip\": Fire a targeting beam. Clear the hit object's global gravity and apply an internal VectorForce constraint pointing 180 degrees opposite of Workspace.Gravity to violently launch it into the sky.\\n\\n3. CROSS-PLATFORM MOVEMENT CODE:\\n- Air Dash Vector Correction: On air dash, instantly set falling Y-velocity to 0 right before applying the forward horizontal LinearVelocity thrust.\\n- Directional Slide: Lower Humanoid.HipHeight by 50%, trigger a slide animation, and apply a 0.5-second physics impulse of 45 studs/sec in the camera's face direction. Emit spark particles.\\n- Multi-Surface Wall Running: Raycast 3 studs left/right in mid-air. If a skyscraper wall is detected, disable gravity, lock Y-axis height, and apply forward velocity along the wall surface vector. Space/Jump button cancels it into a horizontal outward leap force.\\n- Kinetic Retention: Gradually decay high-speed velocity states over 2 seconds rather than snapping instantly to default walk speed.\\n\\n4. THE MAP ENVIRONMENT:\\n- Generate a massive, vertical Cyberpunk concrete metropolis at night with heavy rain particle effects and wet, highly reflective rooftop surfaces.\\n- Fill the city with unanchored, physics-active traffic cars, loose street elements, glowing neon billboards, and grindable neon pipes connecting the buildings.",
   "answers": [
     {
       "field": "goal",
@@ -13,12 +13,32 @@
       "answer": "Use a compact 3-by-3 city-block vertical map, with dense skyscrapers, rooftops, streets, and neon pipe connections."
     }
   ],
-  "scene_prompt": "Create a 3D game map showing a compact 3-by-3-block vertical cyberpunk concrete metropolis at night, designed as a physics-driven superpower playground with no NPC areas or combat-objective spaces. Dense skyscrapers rise around street canyons, with accessible wet, highly reflective rooftops at varied heights and neon grind pipes spanning between buildings. Streets below contain physics-active traffic cars and loose street elements, while glowing neon billboards cover building faces; heavy rain falls throughout the city.",
-  "blob": "## Genre\nSimulation is the sole genre because manipulating momentum, gravity, friction, vehicles, and loose environment pieces is the central sandbox loop. The rooftop movement supports that physics play but does not establish a scored or terminating obby.\n\n## Shape and preset\nUse `traversal-city`, outside Simulation’s usual shapes: the 3-by-3 metropolis is built to be crossed over roofs, walls, ledges, and pipes, with streets remaining a lower fallback layer. The preset is Physics Sim, replacing its open-world shape while retaining the physics contraptions and circulation; omit its environmental hazard because none was requested.\n\n## Config requirements\nUse `physics-rig` for unanchored traffic cars, loose street elements, and breakable or launchable urban props. Use `path-circulation` for connected street, rooftop, wall-running, and grind-pipe movement routes through the nine blocks. Dense concrete skyscrapers, reflective wet rooftops at varied heights, neon billboards, heavy rain, street canyons, and inter-building neon pipes are explicit scene geometry. Add no NPC population, enemy spawners, combat objectives, or lethal regions.\n\n## Layout requirements\nAfter segmentation, assign uncatalogued physics-active properties to every authored traffic car and loose street element so powers can steal, reverse, or impart velocity; keep structural buildings, streets, and rooftop surfaces anchored. Mark each intended neon connector as grindable and align its usable path between safe roof-edge access points. No exact car, prop, or pipe count was supplied, so do not invent one.\n\n## Layout components\nLay out exactly nine blocks in a compact 3-by-3 street grid. Dense skyscrapers form deep street canyons, with accessible wet roofs stepping through varied elevations. Neon grind pipes span selected gaps between neighboring buildings, while suitable walls and ledges support vertical movement. Physics-active cars and loose urban elements populate the streets without blocking all circulation. Neon billboards cover facade focal zones, and rain reads across reflective concrete and rooftop surfaces. Dense towers hide the outer map edge. Compose the view to reveal the nine-block grid, low streets, several rooftop tiers, and cross-building pipe links together.\n\n## Render order\nRender `isometric` first and treat it as authoritative, because the vertical cyberpunk atmosphere, reflective surfaces, and readable layering lead this non-terminating sandbox; the circulation plan can be derived from that composition.\n\n## Scale, theme, and pipeline cost\nScale is medium, fixed by the compact 3-by-3 block footprint but amplified vertically. The theme is rain-soaked concrete cyberpunk at night with saturated neon. Use `P2` because rooftops, facade routes, and grind pipes overhang the streets below.",
-  "agent_artifact": "# Scene prompt\nCreate a 3D game map showing a compact 3-by-3-block vertical cyberpunk concrete metropolis at night, designed as a physics-driven superpower playground with no NPC areas or combat-objective spaces. Dense skyscrapers rise around street canyons, with accessible wet, highly reflective rooftops at varied heights and neon grind pipes spanning between buildings. Streets below contain physics-active traffic cars and loose street elements, while glowing neon billboards cover building faces; heavy rain falls throughout the city.\n\n# Agent decision\n\n## Genre\nSimulation is the sole genre because manipulating momentum, gravity, friction, vehicles, and loose environment pieces is the central sandbox loop. The rooftop movement supports that physics play but does not establish a scored or terminating obby.\n\n## Shape and preset\nUse `traversal-city`, outside Simulation’s usual shapes: the 3-by-3 metropolis is built to be crossed over roofs, walls, ledges, and pipes, with streets remaining a lower fallback layer. The preset is Physics Sim, replacing its open-world shape while retaining the physics contraptions and circulation; omit its environmental hazard because none was requested.\n\n## Config requirements\nUse `physics-rig` for unanchored traffic cars, loose street elements, and breakable or launchable urban props. Use `path-circulation` for connected street, rooftop, wall-running, and grind-pipe movement routes through the nine blocks. Dense concrete skyscrapers, reflective wet rooftops at varied heights, neon billboards, heavy rain, street canyons, and inter-building neon pipes are explicit scene geometry. Add no NPC population, enemy spawners, combat objectives, or lethal regions.\n\n## Layout requirements\nAfter segmentation, assign uncatalogued physics-active properties to every authored traffic car and loose street element so powers can steal, reverse, or impart velocity; keep structural buildings, streets, and rooftop surfaces anchored. Mark each intended neon connector as grindable and align its usable path between safe roof-edge access points. No exact car, prop, or pipe count was supplied, so do not invent one.\n\n## Layout components\nLay out exactly nine blocks in a compact 3-by-3 street grid. Dense skyscrapers form deep street canyons, with accessible wet roofs stepping through varied elevations. Neon grind pipes span selected gaps between neighboring buildings, while suitable walls and ledges support vertical movement. Physics-active cars and loose urban elements populate the streets without blocking all circulation. Neon billboards cover facade focal zones, and rain reads across reflective concrete and rooftop surfaces. Dense towers hide the outer map edge. Compose the view to reveal the nine-block grid, low streets, several rooftop tiers, and cross-building pipe links together.\n\n## Render order\nRender `isometric` first and treat it as authoritative, because the vertical cyberpunk atmosphere, reflective surfaces, and readable layering lead this non-terminating sandbox; the circulation plan can be derived from that composition.\n\n## Scale, theme, and pipeline cost\nScale is medium, fixed by the compact 3-by-3 block footprint but amplified vertically. The theme is rain-soaked concrete cyberpunk at night with saturated neon. Use `P2` because rooftops, facade routes, and grind pipes overhang the streets below.\n",
-  "agent_notes": "## Genre\nSimulation is the sole genre because manipulating momentum, gravity, friction, vehicles, and loose environment pieces is the central sandbox loop. The rooftop movement supports that physics play but does not establish a scored or terminating obby.\n\n## Shape and preset\nUse `traversal-city`, outside Simulation’s usual shapes: the 3-by-3 metropolis is built to be crossed over roofs, walls, ledges, and pipes, with streets remaining a lower fallback layer. The preset is Physics Sim, replacing its open-world shape while retaining the physics contraptions and circulation; omit its environmental hazard because none was requested.\n\n## Config requirements\nUse `physics-rig` for unanchored traffic cars, loose street elements, and breakable or launchable urban props. Use `path-circulation` for connected street, rooftop, wall-running, and grind-pipe movement routes through the nine blocks. Dense concrete skyscrapers, reflective wet rooftops at varied heights, neon billboards, heavy rain, street canyons, and inter-building neon pipes are explicit scene geometry. Add no NPC population, enemy spawners, combat objectives, or lethal regions.\n\n## Layout requirements\nAfter segmentation, assign uncatalogued physics-active properties to every authored traffic car and loose street element so powers can steal, reverse, or impart velocity; keep structural buildings, streets, and rooftop surfaces anchored. Mark each intended neon connector as grindable and align its usable path between safe roof-edge access points. No exact car, prop, or pipe count was supplied, so do not invent one.\n\n## Layout components\nLay out exactly nine blocks in a compact 3-by-3 street grid. Dense skyscrapers form deep street canyons, with accessible wet roofs stepping through varied elevations. Neon grind pipes span selected gaps between neighboring buildings, while suitable walls and ledges support vertical movement. Physics-active cars and loose urban elements populate the streets without blocking all circulation. Neon billboards cover facade focal zones, and rain reads across reflective concrete and rooftop surfaces. Dense towers hide the outer map edge. Compose the view to reveal the nine-block grid, low streets, several rooftop tiers, and cross-building pipe links together.\n\n## Render order\nRender `isometric` first and treat it as authoritative, because the vertical cyberpunk atmosphere, reflective surfaces, and readable layering lead this non-terminating sandbox; the circulation plan can be derived from that composition.\n\n## Scale, theme, and pipeline cost\nScale is medium, fixed by the compact 3-by-3 block footprint but amplified vertically. The theme is rain-soaked concrete cyberpunk at night with saturated neon. Use `P2` because rooftops, facade routes, and grind pipes overhang the streets below.",
+  "blob": "## Clarifications resolved\n- [author] goal — Q: Is there anything to fight - other players, NPCs - or is the city purely a playground for the powers? A: The city is a physics-driven superpower playground; do not add NPC enemies or combat objectives. Players can use powers on other players and the physics-active environment.\n- [author] scale — Q: How many blocks should the city cover before it hits an edge? A: Use a compact 3-by-3 city-block vertical map, with dense skyscrapers, rooftops, streets, and neon pipe connections.\n- [agent_inferred] interiors — Q: Does play enter the skyscrapers? A: Keep play on streets, walls, rooftops, and connecting pipes; no interiors were requested.\n\n## Enriched image prompt\nCreate a compact 3-by-3-block vertical cyberpunk concrete metropolis at night, built as a physics-driven superpower playground without NPC enemies or combat objectives. Pack the grid with dense skyscrapers, reachable wet reflective rooftops, broad wall-running faces, slanted exterior surfaces, and streets below. Connect buildings with grindable neon pipes and readable rooftop routes. Fill the streets with unanchored traffic cars and loose physics-active street elements, add glowing neon billboards, and include breakable asphalt and obstacle assemblies. Use heavy rain, reflective surfaces, and strong neon wayfinding while keeping the complete nine-block city readable.\n\n## Genre\nSimulation is dominant because the city is an open physics sandbox in which interacting with movable and breakable objects is the activity.\n\n## Shape and preset\nUse `traversal-city`, Zone (Traversal City), from outside Simulation's usual set because streets, walls, rooftops, ledges, and gaps are the traversal surface. The preset is Physics Sim, replacing its plain open-world shape with the authored vertical city while retaining physics contraptions and circulation.\n\n## Config requirements\nUse `physics-rig` for unanchored cars, loose street pieces, breakable asphalt shields, and destructible obstacle assemblies; `path-circulation` for connected streets and rooftops; `path-road-vehicle` as ordinary P0 city streets rather than a race course; `settlement-density` for the dense nine-block metropolis; and `destructible-cluster` for structures meant to shatter. Preserve neon grind pipes and billboard landmarks as scene-specific drawn geometry.\n\n## Layout requirements\nAfter segmentation, mark every authored car and loose street element as physics-active rather than anchored. Add free-text Destructible placement metadata to breakable asphalt and obstacle clusters. Add free-text Path metadata along each neon pipe so its visible route is also recognized as grindable. No NPC spawners, objectives, or interior transitions are needed.\n\n## Layout components\nOne bounded 3-by-3 street grid contains dense skyscrapers, connected rooftops, traversable wall faces, streets, cars, loose props, billboards, and neon pipes bridging buildings. Rooftops and street level form vertically separated play surfaces, with the street as fallback beneath aerial routes. The city edge stops after nine blocks.\n\n## Render order\nUse `isometric`: establish the authoritative vertical relationship among streets, walls, rooftops, and neon pipe connections first, then derive top-down captures for the overlapping levels.\n\n## Scale, theme, and pipeline cost\nUse medium scale so all nine blocks fit while cars, pipes, and rooftop routes remain legible. The theme is rainy neon cyberpunk concrete at night. Route `P2` because rooftop routes and pipes overhang streets and lower surfaces.",
+  "agent_artifact": "# Agent decision\n## Clarifications resolved\n- [author] goal — Q: Is there anything to fight - other players, NPCs - or is the city purely a playground for the powers? A: The city is a physics-driven superpower playground; do not add NPC enemies or combat objectives. Players can use powers on other players and the physics-active environment.\n- [author] scale — Q: How many blocks should the city cover before it hits an edge? A: Use a compact 3-by-3 city-block vertical map, with dense skyscrapers, rooftops, streets, and neon pipe connections.\n- [agent_inferred] interiors — Q: Does play enter the skyscrapers? A: Keep play on streets, walls, rooftops, and connecting pipes; no interiors were requested.\n\n## Enriched image prompt\nCreate a compact 3-by-3-block vertical cyberpunk concrete metropolis at night, built as a physics-driven superpower playground without NPC enemies or combat objectives. Pack the grid with dense skyscrapers, reachable wet reflective rooftops, broad wall-running faces, slanted exterior surfaces, and streets below. Connect buildings with grindable neon pipes and readable rooftop routes. Fill the streets with unanchored traffic cars and loose physics-active street elements, add glowing neon billboards, and include breakable asphalt and obstacle assemblies. Use heavy rain, reflective surfaces, and strong neon wayfinding while keeping the complete nine-block city readable.\n\n## Genre\nSimulation is dominant because the city is an open physics sandbox in which interacting with movable and breakable objects is the activity.\n\n## Shape and preset\nUse `traversal-city`, Zone (Traversal City), from outside Simulation's usual set because streets, walls, rooftops, ledges, and gaps are the traversal surface. The preset is Physics Sim, replacing its plain open-world shape with the authored vertical city while retaining physics contraptions and circulation.\n\n## Config requirements\nUse `physics-rig` for unanchored cars, loose street pieces, breakable asphalt shields, and destructible obstacle assemblies; `path-circulation` for connected streets and rooftops; `path-road-vehicle` as ordinary P0 city streets rather than a race course; `settlement-density` for the dense nine-block metropolis; and `destructible-cluster` for structures meant to shatter. Preserve neon grind pipes and billboard landmarks as scene-specific drawn geometry.\n\n## Layout requirements\nAfter segmentation, mark every authored car and loose street element as physics-active rather than anchored. Add free-text Destructible placement metadata to breakable asphalt and obstacle clusters. Add free-text Path metadata along each neon pipe so its visible route is also recognized as grindable. No NPC spawners, objectives, or interior transitions are needed.\n\n## Layout components\nOne bounded 3-by-3 street grid contains dense skyscrapers, connected rooftops, traversable wall faces, streets, cars, loose props, billboards, and neon pipes bridging buildings. Rooftops and street level form vertically separated play surfaces, with the street as fallback beneath aerial routes. The city edge stops after nine blocks.\n\n## Render order\nUse `isometric`: establish the authoritative vertical relationship among streets, walls, rooftops, and neon pipe connections first, then derive top-down captures for the overlapping levels.\n\n## Scale, theme, and pipeline cost\nUse medium scale so all nine blocks fit while cars, pipes, and rooftop routes remain legible. The theme is rainy neon cyberpunk concrete at night. Route `P2` because rooftop routes and pipes overhang streets and lower surfaces.\n",
+  "agent_notes": "## Clarifications resolved\n- [author] goal — Q: Is there anything to fight - other players, NPCs - or is the city purely a playground for the powers? A: The city is a physics-driven superpower playground; do not add NPC enemies or combat objectives. Players can use powers on other players and the physics-active environment.\n- [author] scale — Q: How many blocks should the city cover before it hits an edge? A: Use a compact 3-by-3 city-block vertical map, with dense skyscrapers, rooftops, streets, and neon pipe connections.\n- [agent_inferred] interiors — Q: Does play enter the skyscrapers? A: Keep play on streets, walls, rooftops, and connecting pipes; no interiors were requested.\n\n## Enriched image prompt\nCreate a compact 3-by-3-block vertical cyberpunk concrete metropolis at night, built as a physics-driven superpower playground without NPC enemies or combat objectives. Pack the grid with dense skyscrapers, reachable wet reflective rooftops, broad wall-running faces, slanted exterior surfaces, and streets below. Connect buildings with grindable neon pipes and readable rooftop routes. Fill the streets with unanchored traffic cars and loose physics-active street elements, add glowing neon billboards, and include breakable asphalt and obstacle assemblies. Use heavy rain, reflective surfaces, and strong neon wayfinding while keeping the complete nine-block city readable.\n\n## Genre\nSimulation is dominant because the city is an open physics sandbox in which interacting with movable and breakable objects is the activity.\n\n## Shape and preset\nUse `traversal-city`, Zone (Traversal City), from outside Simulation's usual set because streets, walls, rooftops, ledges, and gaps are the traversal surface. The preset is Physics Sim, replacing its plain open-world shape with the authored vertical city while retaining physics contraptions and circulation.\n\n## Config requirements\nUse `physics-rig` for unanchored cars, loose street pieces, breakable asphalt shields, and destructible obstacle assemblies; `path-circulation` for connected streets and rooftops; `path-road-vehicle` as ordinary P0 city streets rather than a race course; `settlement-density` for the dense nine-block metropolis; and `destructible-cluster` for structures meant to shatter. Preserve neon grind pipes and billboard landmarks as scene-specific drawn geometry.\n\n## Layout requirements\nAfter segmentation, mark every authored car and loose street element as physics-active rather than anchored. Add free-text Destructible placement metadata to breakable asphalt and obstacle clusters. Add free-text Path metadata along each neon pipe so its visible route is also recognized as grindable. No NPC spawners, objectives, or interior transitions are needed.\n\n## Layout components\nOne bounded 3-by-3 street grid contains dense skyscrapers, connected rooftops, traversable wall faces, streets, cars, loose props, billboards, and neon pipes bridging buildings. Rooftops and street level form vertically separated play surfaces, with the street as fallback beneath aerial routes. The city edge stops after nine blocks.\n\n## Render order\nUse `isometric`: establish the authoritative vertical relationship among streets, walls, rooftops, and neon pipe connections first, then derive top-down captures for the overlapping levels.\n\n## Scale, theme, and pipeline cost\nUse medium scale so all nine blocks fit while cars, pipes, and rooftop routes remain legible. The theme is rainy neon cyberpunk concrete at night. Route `P2` because rooftop routes and pipes overhang streets and lower surfaces.",
   "secondary": [],
   "spec": {
+    "clarifications": [
+      {
+        "field": "goal",
+        "ask": "Is there anything to fight - other players, NPCs - or is the city purely a playground for the powers?",
+        "answer": "The city is a physics-driven superpower playground; do not add NPC enemies or combat objectives. Players can use powers on other players and the physics-active environment.",
+        "source": "author"
+      },
+      {
+        "field": "scale",
+        "ask": "How many blocks should the city cover before it hits an edge?",
+        "answer": "Use a compact 3-by-3 city-block vertical map, with dense skyscrapers, rooftops, streets, and neon pipe connections.",
+        "source": "author"
+      },
+      {
+        "field": "interiors",
+        "ask": "Does play enter the skyscrapers?",
+        "answer": "Keep play on streets, walls, rooftops, and connecting pipes; no interiors were requested.",
+        "source": "agent_inferred"
+      }
+    ],
+    "initial_scene_subprompt_enriched": "Create a compact 3-by-3-block vertical cyberpunk concrete metropolis at night, built as a physics-driven superpower playground without NPC enemies or combat objectives. Pack the grid with dense skyscrapers, reachable wet reflective rooftops, broad wall-running faces, slanted exterior surfaces, and streets below. Connect buildings with grindable neon pipes and readable rooftop routes. Fill the streets with unanchored traffic cars and loose physics-active street elements, add glowing neon billboards, and include breakable asphalt and obstacle assemblies. Use heavy rain, reflective surfaces, and strong neon wayfinding while keeping the complete nine-block city readable.",
     "genre": "Simulation",
     "secondary": [],
     "shape": "traversal-city",
@@ -27,119 +47,128 @@
     "options": [
       {
         "id": "physics-rig",
-        "text": "Unanchored traffic cars, loose street elements, and breakable or launchable urban props.",
+        "text": "Physics-driven street setpieces: unanchored traffic cars, loose street debris, breakable asphalt shields, and breakable obstacle assemblies",
         "visible": true,
         "count": -1
       },
       {
         "id": "path-circulation",
-        "text": "Connected street, rooftop, wall-running, and grind-pipe movement routes through the nine blocks.",
+        "text": "Connected circulation across streets and rooftops, with readable rooftop routes that link the nine blocks",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "path-road-vehicle",
+        "text": "Ordinary city streets laid out as vehicle-width roads (not a race course)",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "settlement-density",
+        "text": "A dense nine-block metropolis packed with skyscrapers and neon cyberpunk streetscapes",
+        "visible": true,
+        "count": -1
+      },
+      {
+        "id": "destructible-cluster",
+        "text": "Clusters of structures intended to shatter: breakable asphalt sections and destructible obstacle assemblies",
         "visible": true,
         "count": -1
       }
     ],
     "layout_placement": [],
     "layout": {
-      "composition": "An isometric view revealing the compact nine-block grid together: low streets in the lower layer, several rooftop tiers above, dense tower facades, and cross-building neon pipe links spanning the street canyons.",
+      "composition": "A compact, readable 3-by-3 street grid filled edge-to-edge with dense skyscrapers; streets at ground level with rooftops above as the primary traversal layer; neon pipes bridging buildings across gaps and over streets; billboards used as readable neon landmarks across the nine-block frame.",
       "zones": [
         {
-          "name": "Nine-block metropolis grid",
-          "role": "Compact physics-driven urban sandbox crossed through streets, rooftops, walls, ledges, and pipes.",
-          "where": "centre",
-          "size": "3-by-3 blocks"
+          "name": "3-by-3 city block grid",
+          "role": "Single bounded physics-driven superpower playground made of streets, skyscrapers, rooftops, wall-running faces, neon pipes, cars, loose props, and billboards.",
+          "where": "Entire map footprint; edge stops after nine blocks.",
+          "size": "Compact 3-by-3 blocks"
         },
         {
-          "name": "Street canyons",
-          "role": "Lower fallback circulation layer containing physics-active traffic cars and loose urban elements.",
-          "where": "between the skyscraper blocks",
+          "name": "Street level",
+          "role": "Fallback traversal surface beneath aerial routes; contains unanchored traffic cars and loose physics-active street elements; includes breakable asphalt and obstacle assemblies.",
+          "where": "Below rooftops throughout the grid.",
           "size": ""
         },
         {
-          "name": "Accessible rooftop tiers",
-          "role": "Wet reflective roof surfaces at varied elevations supporting rooftop movement.",
-          "where": "above the streets across all blocks",
+          "name": "Rooftops",
+          "role": "Primary traversable layer: wet reflective rooftops, readable rooftop routes, slanted exterior surfaces, and wall-running faces connecting across the city.",
+          "where": "Above street level on the dense skyscrapers across the grid.",
           "size": ""
         },
         {
-          "name": "Neon connector gaps",
-          "role": "Selected inter-building gaps crossed by usable grind pipes between safe roof-edge access points.",
-          "where": "between neighboring buildings",
-          "size": ""
-        },
-        {
-          "name": "Facade focal zones",
-          "role": "Skyscraper faces covered by glowing neon billboards.",
-          "where": "throughout the blocks",
+          "name": "Neon pipe connections",
+          "role": "Grindable bridging routes between buildings that overhang streets and link rooftop paths.",
+          "where": "Spanning gaps between buildings across the grid, above streets.",
           "size": ""
         }
       ],
-      "paths": [
-        {
-          "from": "streets",
-          "to": "rooftops",
-          "kind": "open ground"
-        },
-        {
-          "from": "rooftops",
-          "to": "neighboring buildings",
-          "kind": "bridge"
-        },
-        {
-          "from": "rooftops",
-          "to": "walls and ledges",
-          "kind": "open ground"
-        }
-      ],
-      "terrain": "Reflective wet concrete streets and rooftops under heavy rain, with dense skyscrapers rising through deep street canyons.",
+      "paths": [],
+      "terrain": "Concrete cyberpunk city surfaces at night with heavy rain and wet reflective streets/rooftops.",
       "props": [
         {
-          "name": "physics-active traffic cars",
+          "name": "dense skyscrapers",
           "count": -1,
-          "where": "streets"
+          "where": "Packed across all nine blocks"
         },
         {
-          "name": "loose urban street elements",
+          "name": "glowing neon billboards",
           "count": -1,
-          "where": "streets"
+          "where": "Mounted on building faces and rooftops as readable landmarks"
         },
         {
-          "name": "neon grind pipes",
+          "name": "grindable neon pipes",
           "count": -1,
-          "where": "selected gaps between neighboring buildings"
+          "where": "Bridging between buildings over streets and gaps"
         },
         {
-          "name": "neon billboards",
+          "name": "unanchored traffic cars",
           "count": -1,
-          "where": "building facade focal zones"
+          "where": "On streets throughout the grid"
+        },
+        {
+          "name": "loose physics-active street elements",
+          "count": -1,
+          "where": "Scattered on streets throughout the grid"
+        },
+        {
+          "name": "breakable asphalt",
+          "count": -1,
+          "where": "On streets as breakable patches/shields"
+        },
+        {
+          "name": "destructible obstacle assemblies",
+          "count": -1,
+          "where": "On streets and/or along traversal lines as breakable assemblies"
         }
       ],
-      "boundary": "Dense outer towers hide the outer map edge.",
+      "boundary": "City edge stops after the 3-by-3 blocks (bounded after nine blocks).",
       "scale_band": "medium",
-      "theme": "Rain-soaked concrete cyberpunk at night with saturated neon."
+      "theme": "Rainy neon cyberpunk concrete metropolis at night"
     },
     "render": {
       "first": "isometric",
       "then": "topdown",
       "authoritative": "isometric",
-      "why": "the vertical cyberpunk atmosphere, reflective surfaces, and readable layering lead this non-terminating sandbox.",
+      "why": "Establish the authoritative vertical relationship among streets, walls, rooftops, and neon pipe connections first.",
       "set_piece": false
     },
     "route": [
       "P2"
     ],
     "notes": [
-      "`traversal-city` is used from outside Simulation’s usual shape set.",
-      "No exact car, loose-prop, or neon-pipe count was supplied."
-    ],
-    "scene_prompt": "Create a 3D game map showing a compact 3-by-3-block vertical cyberpunk concrete metropolis at night, designed as a physics-driven superpower playground with no NPC areas or combat-objective spaces. Dense skyscrapers rise around street canyons, with accessible wet, highly reflective rooftops at varied heights and neon grind pipes spanning between buildings. Streets below contain physics-active traffic cars and loose street elements, while glowing neon billboards cover building faces; heavy rain falls throughout the city."
+      "Blob requested top-down captures be derived after isometric, but the schema only supports render.first/authoritative; no separate field exists to record the secondary capture step.",
+      "Layout requirements mention adding free-text metadata (physics-active, Destructible placement metadata, Path metadata along pipes); schema has no dedicated metadata fields, and no layout-goes_to options were named in backticks for placement, so layout_placement is empty."
+    ]
   },
   "stage": "done",
   "status": "ok",
   "error": "",
-  "pipeline_version": "1986e1975066",
-  "served_by": "subagent/genre-choice -> gateway/production/gpt-5.6-terra",
+  "pipeline_version": "48d4ff51304c",
+  "served_by": "subagent/genre-choice -> azure/gpt-5.2",
   "schema_degraded": false,
-  "reused_uprez": true,
   "order": "std",
   "first": "isometric",
   "mapper_notes": []

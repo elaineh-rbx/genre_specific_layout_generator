@@ -8,7 +8,9 @@
 
 **Shape — pick one.** This is the genre's real fork, and it changes the chunk geometry.
 
-**Typical shapes.** `lane-snap` · `lane-free` *(default)*
+**Typical shapes.** `lane-snap` **Lane (Fixed Lane Snap)** `P6` · `lane-free` **Lane (Free Lateral Steering)** `P6` *(default)*
+
+**The bold name is `Type (Flavor Name)`, and the tag after it is the shape's route** — between them, everything `shape` and `pipeline` need at emit. Take both from here rather than loading `shapes.md`; where this genre rewords a shape, the name above is already its own.
 
 
 **Options** — combine freely on top of the chosen shape.

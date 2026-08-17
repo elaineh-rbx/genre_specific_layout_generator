@@ -1,38 +1,44 @@
 ---
 name: layout-blob
-description: Turns a LayoutGen-ready scene prompt into a prose word blob that states the genre, the one shape, the config requirements, what the layout stage must place after segmentation, the concrete layout components, and which image must be rendered first. Use as stage 2 of the layout pipeline, after uprez-prompt and before the decoupler that structures the blob into JSON.
+description: Turns a raw author message and intake answers into a self-contained prose decision containing the enriched image-ready scene body, genre, shape, config requirements, placement requirements, layout components, and render order. Use before the decoupler that structures the decision into JSON.
 disable-model-invocation: true
 ---
 
 # Layout Blob
 
-You read a **LayoutGen-ready scene prompt** and write a **word blob**: prose that
-states everything the pipeline needs to decide, in the order it needs to decide
-it. This is stage 2 of the layout pipeline.
+You read the **author's original message** and their **intake answers**, then write
+a **word blob**: prose that states everything the pipeline needs to decide, in
+the order it needs to decide it.
 
-## The two inputs
+## Inputs
 
-You are usually given both the **author's original message** and the **scene
-prompt** derived from it. They are for different questions and mixing them up is
-the main way this step goes wrong.
+The original message and intake answers are the only scene inputs. Do not expect
+or create a separate cleaned brief before this decision.
 
 | Read this | For |
 | :---- | :---- |
-| The author's original message | **Genre**, intent, and any stated numbers. Its rules, economy and scoring are the strongest genre signal there is. |
-| The scene prompt | **The space** — zones, paths, terrain, props, composition. |
+| The author's original message | **Genre**, intent, stated numbers, and the raw spatial request. Its rules, economy, and scoring are strong genre signals. |
+| Intake answers | Authoritative resolutions of layout-changing ambiguities. They override conflicting details in the original message. |
 
-**Classify from the original message; describe from the scene prompt.** The scene
-prompt deliberately has rules, scoring and economy stripped out, and those are
-exactly what distinguishes a tycoon from a town or an RPG from an explorable
-world. Judging genre from the scene prompt alone reliably lands on whatever the
-place physically resembles, which is not the same question.
+**Classify and extract the space from the original message, then apply the
+answers.** Use `uprez-prompt` as guidance while writing section 2 inside this
+same decision; it is not a separate generated input.
 
-**But never let the mechanics into the layout.** The original message is there to
-tell you *what kind of game this is*, not to add content. Nothing that is a rule,
-a score, a currency, a UI flow or a script belongs in your layout components —
-only geometry does.
+**But never let the mechanics into the layout.** The original message tells you
+both what kind of game this is and what space the author requested. Nothing that
+is only a rule, score, currency, UI flow, or script belongs in your layout
+components — only geometry does.
 
-If you were given only a scene prompt, work from that alone.
+Triage twice: first separate geometry stated outright, geometry implied by a
+rule, and non-scene mechanics; then repeat after choosing the genre. "Reach the
+exit to win" is a mechanic whose exit is still geometry. Currency and scoring
+remain outside the layout unless they require a physical place.
+
+Keep whole-build constraints active while writing the scene. Fidelity requests,
+hard build rules and reference/adaptation requirements are not layout options,
+but visible constraints such as "no baseplate" or "photorealistic" must still
+govern the enriched image prompt. Preserve prohibitions instead of turning them
+into extra objects.
 
 **Write prose, not JSON.** A later stage decouples this blob into structured
 JSON, and it does that job better than you would do it inline. Your job is to
@@ -52,7 +58,9 @@ Cover all nine, in this order, as flowing prose with a short heading per section
 ### 1. Clarifications resolved
 
 Use the exact heading `## Clarifications resolved`. Start with any real intake
-questions and answers supplied in the input, marking each one `[author]`.
+questions and answers supplied in the input, marking each one `[author]`. Copy
+their `field`, `ask`, and `answer` text verbatim, without translating,
+paraphrasing, shortening, or renaming it.
 
 Then use `layout-intake` and the loaded genre material to identify only unanswered
 ambiguities whose resolution materially changes the generated space: counts,
@@ -165,6 +173,14 @@ shape *and* dropped most of its options, so no honest name is left. Keep the
 shape or keep most of the options, not neither. `none` is a real answer, and a
 wrong name is worse than none at all.
 
+When the prompt names several distinct spaces, keep them all. Choose one
+top-level shape: the largest containing shape when one contains the others, or
+the dominant space otherwise. In section 7, name each subordinate map or zone,
+its own spatial form and any distinct theme. Separate maps force `P4`; regions
+inside one map do not. Never flatten a lobby plus match map, or differently
+shaped floors, into one generic zone merely because the strict spec has one
+top-level shape field.
+
 ### 5. Config requirements
 
 Which options apply, by ID, each with one clause saying **what it looks like in
@@ -179,6 +195,14 @@ mentioned, and do not withhold what it plainly asked for.
 that rule.** They are shared across every genre and they read as reasonable
 almost anywhere — interiors, water, relief, NPCs — which is exactly why they get
 picked unasked. Take one only when the author named the thing it stands for.
+
+**Every option is reachable from every genre.** A genre's options are its
+shortlist and preferred wording, not a fence. Look in this order: the dominant
+genre, the six universal options, then the other genres' rows in the menu. Only
+use free text when no canonical ID fits. When reaching outside the genre, take
+the ID and structural metadata but write the clause from this prompt; never
+inject the other genre's example sentence. If destination or route varies,
+follow the physical thing this prompt describes and state that choice.
 
 **This section is the image config only** — geometry the model draws. Anything
 recovered after segmentation belongs in section 6 instead.
@@ -263,7 +287,11 @@ Those need a plan first. A town that is merely intricate does not.
 
 ### 9. Scale, theme, and pipeline cost
 
-- **Scale band** — small / medium / large / huge, and what drove it
+- **Scale band** — small / medium / large / huge, and what drove it. This is the
+  strict-spec spelling of intake's Room / Block / District / Region bands,
+  respectively. Choose from the smallest detail that must remain legible in one
+  isometric frame, not from the grandest stated world extent; when extent and
+  detail cannot both fit, preserve the detailed build and state the map split.
 - **Theme** — the visual register, in a few words
 - **Pipeline modifiers** the picks force, by code, each with a clause:
 
@@ -286,7 +314,7 @@ nothing, which is a finding, not a blank.
 
 ## The empty case
 
-If the scene prompt is empty, or describes no buildable space at all (a chat-only
+If the author input is empty, or describes no buildable space at all (a chat-only
 quiz, a bare 2D screen game, pure UI), say so plainly in one line and emit
 `P5` as the only modifier. Do not invent a space to fill the blob.
 

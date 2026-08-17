@@ -1,8 +1,9 @@
 """Transcribe a Cursor agent's prose decision into the structured layout contract.
 
-The Build Agent already fixed the scene prompt and the Cursor agent already decided the
-layout in prose. This module owns the one strict Gateway transcription call plus
-deterministic normalisation. It does not rewrite the prompt or decide the layout.
+The Cursor agent already combined the raw author prompt, intake answers, and layout
+decisions into one self-contained prose decision. This module owns the one strict Gateway
+transcription call plus deterministic normalisation. It does not rewrite the enriched
+prompt or decide the layout.
 
 The option menu is generated from Build.md through ``rules``, so it cannot drift from
 the tables used by deterministic prompt assembly.
@@ -334,7 +335,7 @@ def _clarification() -> dict:
             "ask": {"type": "string", "description": "The question that was considered."},
             "answer": {
                 "type": "string",
-                "description": "The answer used to construct the enriched scene prompt.",
+                "description": "The answer used to construct the enriched image-ready body.",
             },
             "source": {
                 "type": "string",
@@ -536,9 +537,9 @@ only job is to move those decisions into fields without changing them.
 3. **Never invent.** Do not add a zone, prop, path or option the blob does not contain.
    An empty array is correct when the blob gave you nothing for it.
 4. **Take every canonical ID the blob names in backticks**, provided it appears in the
-   menu below. Options belong to the dominant genre; shapes come from the shared
-   catalogue and are not restricted by genre. Silently drop an ID that is in neither, and
-   say so in `notes`.
+   menu below. Both shapes and options are shared catalogues: a row remains valid when
+   the dominant genre does not list it in its own shortlist. Silently drop an ID that is
+   absent from the whole menu, and say so in `notes`.
 5. **`text` on an option comes from the blob's wording for this scene**, not from the
    menu's generic description. That scene-specific phrasing is the whole point of the
    blob and copying the table over it discards it. Put it in **English**: a blob written
@@ -554,8 +555,10 @@ only job is to move those decisions into fields without changing them.
    option the blob put there gets a row, and a row also stays in `options` so the picks
    remain one list - the two are the same decision seen from either end, not two
    decisions. `where` is the siting rule the blob gave; leave it an empty string rather
-   than inventing one, and say so in `notes`. An option whose menu `goes_to` is `image`
-   never belongs here however useful it would be to place.
+   than inventing one, and say so in `notes`. An option whose applicable menu row
+   `goes_to` is `image` never belongs here however useful it would be to place. Where the
+   catalogue says the destination varies, follow the blob's explicit config/layout
+   decision instead of borrowing another genre's destination.
 8. **Carry every number.** A count stated anywhere in the blob goes in the matching
    `count` field. Use `-1` when no number was stated. Never normalise "a few" into a
    number - leave `-1` and keep the words in the text.
@@ -583,6 +586,9 @@ only job is to move those decisions into fields without changing them.
 15. **A shape ID may come from any genre's usual set.** The catalogue is shared and every
     row is reachable from every genre, so `interior-single` on a Simulation build is not
     an error to correct - take the ID the blob named. Only drop one that is in no genre.
+16. **An option ID may also come from any genre's usual set.** Keep the blob's
+    scene-specific `text`; the source row supplies identity, type, destination and route,
+    not prose to inject into the image prompt.
 
 # Output
 
@@ -591,7 +597,7 @@ blob genuinely has nothing.
 """
 
 
-def decouple(blob: str, scene: str = "") -> dict:
+def decouple(blob: str) -> dict:
     """The blob as the pipeline's structured contract.
 
     A transcription rather than a judgement, so a mismatch between this and the prose it
@@ -601,8 +607,6 @@ def decouple(blob: str, scene: str = "") -> dict:
         raise ValueError("nothing to decouple: blob is empty")
     system = f"{DECOUPLE_SYSTEM}\n\n# The menu\n\n{vocabulary()}"
     user = f"# The word blob\n\n{blob.strip()}"
-    if scene.strip():
-        user = f"{user}\n\n# The scene prompt it was written from\n\n{scene.strip()}"
     # This production handoff must be one schema-enforced call. Do not fall back to
     # extracting JSON from unconstrained prose: a gateway without structured-output
     # support is a hard failure, not a weaker transcription path.
@@ -623,8 +627,9 @@ def _reconcile_placements(g: br.Genre, spec: dict, notes: list[str]) -> list[dic
     Three facts have to line up: what the document says a pick is for, whether it is in
     `options`, and whether it has a placement row. Stage 3 can write any two without the
     third, and a missing placement is the one error no render reveals - nothing about a
-    picture shows that the checkpoints nobody placed are absent. So the document decides,
-    both lists are brought to it, and every correction is a note.
+    picture shows that the checkpoints nobody placed are absent. A genre-owned or
+    structurally invariant row decides. For a cross-genre ID whose destination genuinely
+    varies, the spec's explicit ``visible`` flag and placement row decide instead.
     """
     picks = {o["id"]: o for o in spec.get("options") or []}
     rows: dict[str, dict] = {}
@@ -634,7 +639,8 @@ def _reconcile_placements(g: br.Genre, spec: dict, notes: list[str]) -> list[dic
         if o is None:
             notes.append(f"dropped placement {oid!r}: not in {g.name}")
             continue
-        if o.goes_to not in _PLACED:
+        destinations = br.option_destinations(g, oid)
+        if len(destinations) == 1 and o.goes_to not in _PLACED:
             notes.append(
                 f"dropped placement {oid!r}: the document draws it "
                 f"(goes_to={o.goes_to}) rather than placing it"
@@ -650,13 +656,21 @@ def _reconcile_placements(g: br.Genre, spec: dict, notes: list[str]) -> list[dic
             picks[oid] = {
                 "id": oid,
                 "text": p.get("text", ""),
-                "visible": o.goes_to == "both",
+                "visible": o.goes_to == "both" if len(destinations) == 1 else False,
                 "count": p.get("count", -1),
             }
 
     for oid in list(picks):
         o = g.option(oid)
-        if o is None or o.goes_to not in _PLACED or oid in rows:
+        if o is None or oid in rows:
+            continue
+        destinations = br.option_destinations(g, oid)
+        must_place = (
+            o.goes_to in _PLACED
+            if len(destinations) == 1
+            else not picks[oid].get("visible", False)
+        )
+        if not must_place:
             continue
         # Something that has to be placed was picked with nothing said about siting it.
         # Mirrored rather than dropped: the requirement is real either way, and a row
@@ -671,7 +685,11 @@ def _reconcile_placements(g: br.Genre, spec: dict, notes: list[str]) -> list[dic
 
     for oid, pick in picks.items():
         o = g.option(oid)
-        if o is not None and pick.get("visible") != (drawn := o.goes_to != "layout"):
+        if (
+            o is not None
+            and len(br.option_destinations(g, oid)) == 1
+            and pick.get("visible") != (drawn := o.goes_to != "layout")
+        ):
             notes.append(f"visible on {oid!r} set from goes_to={o.goes_to}")
             pick["visible"] = drawn
 
@@ -778,5 +796,8 @@ def normalise(spec: dict) -> dict:
     if not route:
         route = ["P0"]
     spec["route"] = route
-    spec["notes"] = notes
+    # Normalisation is intentionally safe to repeat after a genre spelling is
+    # canonicalised. Persistent warnings (for example an empty placement siting rule)
+    # must not multiply each time an existing spec is loaded.
+    spec["notes"] = list(dict.fromkeys(notes))
     return spec

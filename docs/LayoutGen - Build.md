@@ -355,7 +355,13 @@ Every genre's options table has the same six columns, and each one is defined he
 
 That split is also what keeps the image prompt from saturating: roughly half of a genre's options never reach the image model, so the user's freedom to pick is not limited by the image model's tolerance for instructions.
 
-**A shared ID means two genres want the same concept, not that they describe it the same way.** `hazard-kill` is "bottomless pits wrapping the arena" in Action and "a spreading disaster volume" in Survival — same dedupe key, different words, and the genre-specific words are what get injected. Generic phrasing is useless to an image model, so each genre's table stands alone and is readable without the shared-ID index below.
+**A shared ID means two genres want the same concept, not that they describe it the same way.** `hazard-kill` is "bottomless pits wrapping the arena" in Action and "a spreading disaster volume" in Survival — same dedupe key, different words, and the genre-specific words are what get injected. Generic phrasing is useless to an image model, so each genre writes its own sentence and the tables are readable without the shared-ID index below. That is about wording, not scope — what a genre may *offer* is settled by the next paragraph.
+
+**Every option is reachable from every genre, exactly as every shape is.** A genre's table is its **shortlist and its wording**, never the limit of what it can offer — the same relationship a *Typical shapes* line has to the Shape Catalog. When a prompt asks for something the genre's own table has no row for, take the row from wherever it lives and say that you did. Two thirds of the options sit in exactly one genre's table, so a genre that treats its table as a fence reaches about a fifth of what the system can express, and the concept the prompt wanted is usually one genre over: a soccer prompt wanting a lobby needs `social-hub`, which Sports does not list; a temple filling with lava needs `hazard-kill`, which Puzzle does not list.
+
+**Reaching outside the genre does not mean borrowing its sentence. Write the `text` from the prompt.** The ID is the dedupe key and the route; the words are always the user's. Puzzle taking `hazard-kill` ships "lava rising through the temple floor," not Action's bottomless pits. This is the universal-option rule — *bend the wording to the prompt* — applied to the whole table.
+
+**A route can belong to the genre's reading rather than to the option.** Three rows differ across genres, and in each case the route follows what that genre means by it, not the ID: `spectator-zone` is `P0 + tiered` where it is raked stands and plain P0 where it is a dugout; `teleporter-link` is `P4` where it is a portal to a separate place and P0 where it is fast travel inside one map; `path-road-vehicle` is `P6` where the road *is* the course and P0 where it is a street. Take the route that matches the thing the prompt described, the way the shape rule above works, and say so when you have.
 
 ## **Universal Options**
 
@@ -402,12 +408,12 @@ Which IDs appear in more than one genre, so dedupe is a set union. **This is an 
 | `settlement-density` | Built-up ground at a stated density | **Universal** |
 | `terrain-relief` | Natural landform relief | **Universal** |
 | `island-cluster` | Separate landmasses with gaps between | **Universal** |
-| `collectible-nodes` | Scattered pickups | Adventure, Obby, Puzzle, RPG, Simulation, Survival, Infinite Runner, Entertainment |
+| `collectible-nodes` | Scattered pickups | Adventure, Obby, Puzzle, RPG, Simulation, Strategy, Survival, Infinite Runner, Entertainment |
 | `hazard-kill` | A region that damages or kills | Action, Adventure, Obby, Simulation, Survival, Racing, Infinite Runner |
 | `teleporter-link` | Paired point-to-point transport | Adventure, Obby, Party, RPG, Roleplay, Entertainment |
 | `cover-los` | Geometry that breaks line of sight | Action, Party, Shooter, Strategy, Survival |
 | `gate-progression` | A blockade that opens on purchase, level, or solve | Adventure, Puzzle, RPG, Simulation, Strategy |
-| `social-hub` | A shared space sized for crowds | Party, RPG, Roleplay, Simulation, Entertainment |
+| `social-hub` | A shared space sized for crowds | Obby, Party, RPG, Roleplay, Simulation, Entertainment |
 | `spawner-npc` | Where NPCs enter the space | Action, RPG, Shooter, Strategy, Survival |
 | `spectator-zone` | A non-play area to watch from | Action, Obby, Party, Sports, Racing |
 | `landmark-focal` | A large orienting structure visible from distance | Adventure, RPG, Roleplay, Entertainment |
@@ -422,7 +428,7 @@ Which IDs appear in more than one genre, so dedupe is a set union. **This is an 
 | `obstacle-maze` | A maze the player routes through | Obby, Party |
 | `obstacle-moving` | Moving or rotating obstacles | Obby, Infinite Runner |
 | `path-loop` | Routes that circle back, no dead ends | Puzzle, Shooter |
-| `path-road-vehicle` | Vehicle-width road network | Roleplay, Simulation |
+| `path-road-vehicle` | Vehicle-width road network | Obby, Roleplay, Simulation |
 | `range-directed` | A directed lane facing a target, no route through *(shape)* | Shooter, Sports |
 | `spectator-bleachers` | Raked seating framing a space | Sports, Entertainment |
 | `trigger-scoring` | A detection region registering a point | Party, Sports |

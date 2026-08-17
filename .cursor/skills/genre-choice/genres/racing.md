@@ -8,7 +8,9 @@
 
 **Shape — pick one.**
 
-**Typical shapes.** `route-point-to-point` *(default)* · `route-circuit` · `route-multitier`
+**Typical shapes.** `route-point-to-point` **Path (Point to Point)** `P6` *(default)* · `route-circuit` **Path (Lap Circuit)** `P6` · `route-multitier` **Path (Multi-Tier Circuit)** `P6` + `P2`
+
+**The bold name is `Type (Flavor Name)`, and the tag after it is the shape's route** — between them, everything `shape` and `pipeline` need at emit. Take both from here rather than loading `shapes.md`; where this genre rewords a shape, the name above is already its own.
 
 
 **Options** — combine freely on top of the chosen shape.

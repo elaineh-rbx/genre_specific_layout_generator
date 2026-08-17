@@ -11,7 +11,7 @@ so the list cannot drift. Each resolves to:
                same style applied as replacements
   fragments    prompt text contributed by non-default layout attribute tags
   structural   attribute deviations that change the run rather than the prompt
-  addendum     the assembled text appended to the scene prompt at Stage A
+  addendum     the assembled text appended to the enriched image-ready body at Stage A
 """
 
 from __future__ import annotations

@@ -10,9 +10,8 @@ The canonical architecture and current corpus are documented in
 
 ```text
 Build Agent intake
-  -> fixed scene prompt
   -> real Cursor agent reads the full layout skills
-  -> prose layout decision
+  -> prose layout decision with one enriched scene body
   -> one strict Gateway prose-to-JSON call
   -> deterministic normalisation and prompt assembly
   -> two GPT Image 2 calls
@@ -36,8 +35,8 @@ downstream call budgets.
 | --- | --- |
 | `tools/agent_task.md` | Cursor-agent prose contract |
 | `.cursor/skills/genre-choice/` | Genre, shape, option, and route decision workflow |
-| `.cursor/skills/layout-blob/SKILL.md` | Seven-section prose handoff |
-| `results/routing/agent_blob/` | Self-contained scene prompt + prose decision artifacts |
+| `.cursor/skills/layout-blob/SKILL.md` | Nine-section prose handoff |
+| `results/routing/agent_blob/` | Self-contained prose decisions with enriched image-ready bodies |
 | `tools/build_agent_arm.py` | One strict Gateway transcription per artifact |
 | `layoutgen/model/blob.py` | Layout schema, strict transcription, and normalisation |
 | `layoutgen/pipeline/mapper.py` | Deterministic spec-to-prompt mapping |
@@ -86,8 +85,8 @@ python -m layoutgen.pipeline.golden --only P0005 --no-checklists
 
 ## Strict transcription contract
 
-`blob.decouple(prose, scene_prompt)` sends `LAYOUT_SPEC_SCHEMA` through Roblox LLM
-Gateway with `require_schema=True`.
+`blob.decouple(prose)` sends `LAYOUT_SPEC_SCHEMA` through Roblox LLM Gateway with
+`require_schema=True`.
 
 - Provider-enforced structured output is required.
 - A Gateway that cannot enforce the schema is a hard failure.
@@ -156,8 +155,9 @@ https://8889--standard--elaineh-dev--elainehuang.devspaces.rbx.com/pipeline
 
 It shows, per scene:
 
-- source and fixed scene prompt;
+- raw author source and intake answers;
 - Cursor-agent prose blob;
+- its single enriched image-ready scene body;
 - strict structured JSON;
 - deterministic route/order and addendum;
 - exact image prompts;

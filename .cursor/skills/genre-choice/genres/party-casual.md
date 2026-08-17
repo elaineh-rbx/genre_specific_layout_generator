@@ -6,7 +6,9 @@
 
 **Shape — pick one.**
 
-**Typical shapes.** `space-bounded` *(default)* · `space-staged`
+**Typical shapes.** `space-bounded` **SocialZone (Continuous Play Space)** `P0` *(default)* · `space-staged` **Zone (Lobby and Isolated Stage)** `P4`
+
+**The bold name is `Type (Flavor Name)`, and the tag after it is the shape's route** — between them, everything `shape` and `pipeline` need at emit. Take both from here rather than loading `shapes.md`; where this genre rewords a shape, the name above is already its own.
 
 This genre words these its own way:
 

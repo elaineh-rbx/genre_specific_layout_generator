@@ -269,8 +269,7 @@ ARMS: dict[str, Arm] = {
               "are never sent.",
         sub="a spec, composed in code",
         run="blob", asks=_blob_asks, chips=_blob_chips,
-        sent=(("scene prompt", "scene_prompt"), ("isometric", "iso_prompt"),
-              ("top-down", "td_prompt")),
+        sent=(("isometric", "iso_prompt"), ("top-down", "td_prompt")),
         group=lambda row: (row.get("preset", "") if row.get("preset", "none") != "none"
                            else row.get("genre", "")),
     ),
