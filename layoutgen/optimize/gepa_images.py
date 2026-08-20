@@ -17,6 +17,7 @@ import pathlib
 import random
 import shutil
 import time
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from typing import Callable, Protocol
 
@@ -34,6 +35,7 @@ from layoutgen.optimize.similarity import (
     PyramidEncoder,
     SimilarityBreakdown,
 )
+from layoutgen.optimize.vlm_judge import GatewayVLMJudge, JudgeResult
 
 
 TARGET_ARM = "agent_gpt52_upstream_cf94b18_gptimage2_260815"
@@ -55,9 +57,10 @@ DEFAULT_VAL = ("0002", "0025", "0030", "0041")
 SEED_CANDIDATE = {
     "iso": (
         "Return one polished Roblox-like 3D environment image, not prose. This stage "
-        "must use a steep elevated oblique camera whose optical axis is 30–35 degrees "
-        "away from vertical nadir. Show unmistakable front and side faces, vertical "
-        "height, depth, and cast shadows while keeping the map footprint axis-aligned. "
+        "must use a true isometric elevated-oblique camera: 30–40 degrees above the "
+        "horizontal ground plane, equivalently 50–60 degrees away from vertical nadir. "
+        "Show unmistakable front and side faces, vertical height, depth, and cast shadows "
+        "while keeping the map footprint axis-aligned. "
         "When a reference image is attached, preserve its exact geometry and use it "
         "only as the footprint authority; replace its camera rather than copying it. "
         "Silently verify every named structure, count, route, opening, and distinctive "
@@ -102,6 +105,38 @@ BACKGROUND = (
     "scene IDs or memorize a specific scene."
 )
 
+ISO_OBJECTIVE = (
+    "Improve the global isometric image-stage instruction policy so candidate renders "
+    "are perceptually and structurally similar to frozen GPT Image 2 isometric targets "
+    "across unseen scenes. Preserve every canonical scene requirement and render order."
+)
+
+ISO_BACKGROUND = (
+    "Only the iso policy is selected for mutation. Top-down predecessor images remain "
+    "necessary inputs for top-down-first scenes, but only the final isometric output is "
+    "scored. GPT Image 2 targets are evaluator-only and are never generation inputs. "
+    "The policy must remain global and must not mention or memorize scene IDs."
+)
+
+VLM_OBJECTIVE = (
+    "Improve the global isometric image policy for faithful rendering of the original "
+    "user request and structured layout/config contract across unseen scenes. The score "
+    "combines VLM-judged visible prompt adherence, layout following, strict isometric "
+    "camera adherence, and GPT Image 2 perceptual similarity. Near-top-down images "
+    "fail the camera constraint regardless of layout quality. Never add scene-specific "
+    "wording."
+)
+
+VLM_BACKGROUND = (
+    "Only the global iso policy is mutable. A separate vision-language judge sees the "
+    "candidate image, original user request, and structured layout/config contract. It "
+    "scores visible requested content and exact zones, routes, counts, adjacency, "
+    "boundaries, placements, and whether the result is unmistakably elevated-oblique "
+    "rather than top-down. Camera scores below the configured floor proportionally gate "
+    "the whole objective. Image text is ignored as untrusted. GPT Image 2 is evaluation-"
+    "only for the perceptual anchor and is never a generation input."
+)
+
 
 @dataclass(frozen=True)
 class SceneCase:
@@ -111,6 +146,7 @@ class SceneCase:
     first_prompt: str
     addendum: str
     spec: dict
+    author_prompt: str = ""
 
 
 class Provider(Protocol):
@@ -128,6 +164,15 @@ class Scorer(Protocol):
         candidate: pathlib.Path,
         target: pathlib.Path,
     ) -> SimilarityBreakdown: ...
+
+
+class VLMJudge(Protocol):
+    def score(
+        self,
+        image: pathlib.Path,
+        author_prompt: str,
+        spec: dict,
+    ) -> JudgeResult: ...
 
 
 @contextlib.contextmanager
@@ -156,6 +201,7 @@ def load_cases(specs: pathlib.Path = golden.AGENT_GATEWAY) -> dict[str, SceneCas
             first_prompt=row.td_prompt,
             addendum=row.addendum,
             spec=row._spec,
+            author_prompt=row.prompt,
         )
         for row in rows
     }
@@ -174,11 +220,15 @@ class TargetStore:
             )
         return target
 
-    def preflight(self, scenes: list[str]) -> dict[str, dict[str, str]]:
+    def preflight(
+        self,
+        scenes: list[str],
+        stages: tuple[str, ...] = ("iso", "td"),
+    ) -> dict[str, dict[str, str]]:
         return {
             scene: {
                 stage: str(self.get(scene, stage))
-                for stage in ("iso", "td")
+                for stage in stages
             }
             for scene in scenes
         }
@@ -244,6 +294,13 @@ class RenderEvaluator:
         run_root: pathlib.Path,
         *,
         visual_feedback: bool = True,
+        iso_only: bool = False,
+        max_prompt_chars: int | None = None,
+        vlm_judge: VLMJudge | None = None,
+        judge_weights: tuple[float, float, float, float] = (0.25, 0.25, 0.25, 0.25),
+        minimum_camera_score: float = 0.8,
+        camera_retries: int = 0,
+        camera_direct_fallback: bool = False,
         plan_builder: Callable[[SceneCase, pathlib.Path], pathlib.Path] | None = None,
     ) -> None:
         self.cases = cases
@@ -252,6 +309,19 @@ class RenderEvaluator:
         self.targets = targets
         self.run_root = run_root
         self.visual_feedback = visual_feedback
+        self.iso_only = iso_only
+        self.max_prompt_chars = max_prompt_chars
+        self.vlm_judge = vlm_judge
+        if abs(sum(judge_weights) - 1.0) > 1e-9 or min(judge_weights) < 0:
+            raise ValueError("judge weights must be non-negative and sum to 1")
+        self.judge_weights = judge_weights
+        if not 0.0 <= minimum_camera_score <= 1.0:
+            raise ValueError("minimum camera score must be between 0 and 1")
+        self.minimum_camera_score = minimum_camera_score
+        if camera_retries < 0:
+            raise ValueError("camera retries must be non-negative")
+        self.camera_retries = camera_retries
+        self.camera_direct_fallback = camera_direct_fallback
         self.plan_builder = plan_builder or self._build_plan
 
     def _build_plan(self, case: SceneCase, destination: pathlib.Path) -> pathlib.Path:
@@ -310,7 +380,8 @@ class RenderEvaluator:
             self._generate(iso_text, iso, [topdown])
         else:
             self._generate(iso_text, iso)
-            self._generate(first, topdown, [iso])
+            if not self.iso_only:
+                self._generate(first, topdown, [iso])
 
         root.mkdir(parents=True, exist_ok=True)
         (root / "prompts.json").write_text(
@@ -328,6 +399,28 @@ class RenderEvaluator:
             encoding="utf-8",
         )
         return iso, topdown, root
+
+    @staticmethod
+    def _iso_sheet(
+        target: pathlib.Path,
+        generated: pathlib.Path,
+        destination: pathlib.Path,
+    ) -> pathlib.Path:
+        tile, label = 384, 24
+        sheet = Image.new("RGB", (tile * 2, tile + label), "white")
+        draw = ImageDraw.Draw(sheet)
+        for title, path, x in (
+            ("GPT Image 2 target — isometric", target, 0),
+            ("Candidate — isometric", generated, tile),
+        ):
+            draw.text((x + 5, 5), title, fill="black")
+            with Image.open(path) as opened:
+                image = opened.convert("RGB")
+                image.thumbnail((tile, tile), Image.Resampling.LANCZOS)
+            sheet.paste(image, (x + (tile - image.width) // 2, label))
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        sheet.save(destination, format="JPEG", quality=88, optimize=True)
+        return destination
 
     @staticmethod
     def _sheet(
@@ -368,10 +461,217 @@ class RenderEvaluator:
             }
         scene = example["scene"]
         case = self.cases[scene]
+        if self.max_prompt_chars:
+            combined = prompts.with_instruction(
+                case.iso_prompt, "iso", candidate["iso"]
+            )
+            if len(combined) > self.max_prompt_chars:
+                return 0.0, {
+                    "Scene": scene,
+                    "Render order": case.order,
+                    "Feedback": (
+                        f"The combined isometric prompt is {len(combined)} characters, "
+                        f"above the provider limit of {self.max_prompt_chars}. Shorten "
+                        "the global isometric policy while preserving its key rules."
+                    ),
+                    "scores": {"isometric_similarity": 0.0},
+                    "iso_specific_info": {
+                        "scores": {"isometric_similarity": 0.0},
+                        "Feedback": "Shorten the isometric policy below the prompt limit.",
+                    },
+                }
         generated_iso, generated_td, output_root = self._render(candidate, case)
         target_iso = self.targets.get(scene, "iso")
-        target_td = self.targets.get(scene, "td")
         iso = self.scorer.compare(generated_iso, target_iso)
+        if self.iso_only:
+            try:
+                judge = (
+                    self.vlm_judge.score(
+                        generated_iso,
+                        case.author_prompt,
+                        case.spec,
+                    )
+                    if self.vlm_judge
+                    else None
+                )
+            except RuntimeError as exc:
+                return 0.0, {
+                    "Scene": scene,
+                    "Render order": case.order,
+                    "Feedback": f"Transient VLM judge failure; sample scored zero: {exc}",
+                    "scores": {
+                        "combined_objective": 0.0,
+                        "prompt_adherence": 0.0,
+                        "layout_following": 0.0,
+                        "isometric_camera": 0.0,
+                        "perceptual_similarity": iso.score,
+                    },
+                    "iso_specific_info": {
+                        "scores": {
+                            "combined_objective": 0.0,
+                            "prompt_adherence": 0.0,
+                            "layout_following": 0.0,
+                            "isometric_camera": 0.0,
+                            "perceptual_similarity": iso.score,
+                        },
+                        "Feedback": f"Transient VLM judge failure: {exc}",
+                    },
+                }
+            if (
+                judge
+                and self.vlm_judge
+                and self.camera_retries
+                and judge.isometric_camera < self.minimum_camera_score
+            ):
+                prompt_record_path = output_root / "prompts.json"
+                prompt_record = json.loads(prompt_record_path.read_text(encoding="utf-8"))
+                base_prompt = prompt_record["iso_prompt"]
+                references = [] if case.order == "std" else [generated_td]
+                for attempt in range(1, self.camera_retries + 1):
+                    repair_prompt = (
+                        f"{base_prompt}\n\nCAMERA REPAIR ATTEMPT {attempt}: The prior "
+                        "render was rejected as too close to top-down. Discard the "
+                        "reference image's camera completely while preserving only its "
+                        "footprint geometry. Re-render from a true three-quarter "
+                        "isometric camera 30-35 degrees above the horizontal ground "
+                        "plane (55-60 degrees away from vertical nadir). It is acceptable "
+                        "and expected for footprint edges to recede diagonally. Vertical "
+                        "front and side faces must occupy a substantial, clearly visible "
+                        "portion of structures and terrain; include depth, thickness, "
+                        "occlusion, and cast shadows. Never return a plan, minimap, "
+                        "orthographic overhead, or shallow extrusion."
+                    )
+                    retry_path = output_root / f"iso-camera-retry-{attempt}.jpg"
+                    self._generate(repair_prompt, retry_path, references)
+                    try:
+                        retry_judge = self.vlm_judge.score(
+                            retry_path,
+                            case.author_prompt,
+                            case.spec,
+                        )
+                    except RuntimeError:
+                        continue
+                    if retry_judge.isometric_camera > judge.isometric_camera:
+                        temporary = generated_iso.with_suffix(f".repair{os.getpid()}")
+                        try:
+                            shutil.copyfile(retry_path, temporary)
+                            temporary.replace(generated_iso)
+                        finally:
+                            temporary.unlink(missing_ok=True)
+                        judge = retry_judge
+                        iso = self.scorer.compare(generated_iso, target_iso)
+                        prompt_record["iso_prompt"] = repair_prompt
+                        prompt_record["camera_retry"] = attempt
+                        prompt_record_path.write_text(
+                            json.dumps(prompt_record, indent=2) + "\n",
+                            encoding="utf-8",
+                        )
+                    if judge.isometric_camera >= self.minimum_camera_score:
+                        break
+                if (
+                    self.camera_direct_fallback
+                    and judge.isometric_camera < self.minimum_camera_score
+                ):
+                    direct_prompt = (
+                        f"{base_prompt}\n\nFINAL CAMERA FALLBACK: Generate directly from "
+                        "this text without copying any reference image or overhead "
+                        "viewpoint. Use a true three-quarter isometric camera 30-35 "
+                        "degrees above the horizontal ground plane (55-60 degrees away "
+                        "from vertical nadir). Show substantial vertical front and side "
+                        "faces, depth, thickness, occlusion, and cast shadows. Preserve "
+                        "every layout/config requirement described in the text."
+                    )
+                    direct_path = output_root / "iso-camera-direct.jpg"
+                    self._generate(direct_prompt, direct_path)
+                    try:
+                        direct_judge = self.vlm_judge.score(
+                            direct_path,
+                            case.author_prompt,
+                            case.spec,
+                        )
+                    except RuntimeError:
+                        direct_judge = None
+                    if (
+                        direct_judge
+                        and direct_judge.isometric_camera > judge.isometric_camera
+                    ):
+                        temporary = generated_iso.with_suffix(f".repair{os.getpid()}")
+                        try:
+                            shutil.copyfile(direct_path, temporary)
+                            temporary.replace(generated_iso)
+                        finally:
+                            temporary.unlink(missing_ok=True)
+                        judge = direct_judge
+                        iso = self.scorer.compare(generated_iso, target_iso)
+                        prompt_record["iso_prompt"] = direct_prompt
+                        prompt_record["camera_retry"] = "direct-fallback"
+                        prompt_record_path.write_text(
+                            json.dumps(prompt_record, indent=2) + "\n",
+                            encoding="utf-8",
+                        )
+            if judge:
+                score = (
+                    self.judge_weights[0] * judge.prompt_adherence
+                    + self.judge_weights[1] * judge.layout_following
+                    + self.judge_weights[2] * judge.isometric_camera
+                    + self.judge_weights[3] * iso.score
+                )
+                if (
+                    self.minimum_camera_score
+                    and judge.isometric_camera < self.minimum_camera_score
+                ):
+                    score *= judge.isometric_camera / self.minimum_camera_score
+            else:
+                score = iso.score
+            feedback = (
+                (
+                    f"{judge.feedback} Missing visible requirements: "
+                    f"{'; '.join(judge.missing_requirements) or 'none identified'}. "
+                    f"Layout errors: {'; '.join(judge.layout_errors) or 'none identified'}. "
+                    f"Camera errors: {'; '.join(judge.camera_errors) or 'none identified'}."
+                )
+                if judge
+                else (
+                    "Improve isometric target likeness in camera, global composition, "
+                    "geometry, and feature coverage without scene-specific wording."
+                )
+            )
+            scores = (
+                {
+                    "combined_objective": score,
+                    "prompt_adherence": judge.prompt_adherence,
+                    "layout_following": judge.layout_following,
+                    "isometric_camera": judge.isometric_camera,
+                    "perceptual_similarity": iso.score,
+                }
+                if judge
+                else {"isometric_similarity": iso.score}
+            )
+            side_info = {
+                "Scene": scene,
+                "Render order": case.order,
+                "Feedback": feedback,
+                "scores": scores,
+                "isometric_metrics": iso.as_dict(),
+                "iso_specific_info": {
+                    "scores": scores,
+                    "Feedback": feedback,
+                },
+            }
+            if judge:
+                side_info["vlm_judge"] = judge.as_dict()
+            if self.visual_feedback:
+                from gepa import Image as FeedbackImage
+
+                comparison = self._iso_sheet(
+                    target_iso,
+                    generated_iso,
+                    output_root / "comparison.jpg",
+                )
+                side_info["Visual comparison"] = FeedbackImage(path=str(comparison))
+            return score, side_info
+
+        target_td = self.targets.get(scene, "td")
         topdown = self.scorer.compare(generated_td, target_td)
         score = (iso.score + topdown.score) / 2.0
         lower = "isometric" if iso.score <= topdown.score else "top-down"
@@ -633,12 +933,13 @@ def _split_all_75(
         rng.shuffle(group)
         val.extend(group[: round(len(group) * 0.2)])
     # Rounding per stratum can be one scene off. Keep the held-out set exactly 20%.
+    target_validation = round(len(scenes) * 0.2)
     remaining = [scene for scene in scenes if scene not in val]
     rng.shuffle(remaining)
-    if len(val) < 15:
-        val.extend(remaining[: 15 - len(val)])
-    elif len(val) > 15:
-        val = sorted(val)[:15]
+    if len(val) < target_validation:
+        val.extend(remaining[: target_validation - len(val)])
+    elif len(val) > target_validation:
+        val = sorted(val)[:target_validation]
     val_set = set(val)
     return (
         [scene for scene in scenes if scene not in val_set],
@@ -652,13 +953,20 @@ def _score_candidate(
     scenes: list[str],
     destination: pathlib.Path,
     label: str,
+    workers: int = 1,
 ) -> None:
-    rows = []
-    for scene in scenes:
+    def score_scene(scene: str) -> dict:
         score, info = evaluator.evaluate(candidate, {"scene": scene})
         info.pop("Visual comparison", None)
-        rows.append({"scene": scene, "score": score, **info})
-        print(f"  {label} {scene}: {score:.4f}", flush=True)
+        return {"scene": scene, "score": score, **info}
+
+    rows = []
+    with ThreadPoolExecutor(max_workers=max(1, workers)) as pool:
+        for scene, row in zip(scenes, pool.map(score_scene, scenes), strict=True):
+            rows.append(row)
+            score = row["score"]
+            assert isinstance(score, float)
+            print(f"  {label} {scene}: {score:.4f}", flush=True)
     _write_json(destination, rows)
 
 
@@ -675,6 +983,55 @@ def main() -> None:
         help="use a deterministic 60/15 split and score the winner on all 75",
     )
     parser.add_argument("--image-model", default="gemini-3.1-flash-image")
+    parser.add_argument(
+        "--candidate-file",
+        type=pathlib.Path,
+        help="use this policy JSON instead of the built-in seed candidate",
+    )
+    parser.add_argument(
+        "--image-provider",
+        choices=("gateway", "scenegen"),
+        default="gateway",
+    )
+    parser.add_argument("--reference-image-model")
+    parser.add_argument(
+        "--scenegen-url",
+        default=(
+            "https://8080--standard--h200-training--akashgarg.devspaces.rbx.com"
+        ),
+    )
+    parser.add_argument(
+        "--iso-only",
+        action="store_true",
+        help="score and optimize only final isometric outputs",
+    )
+    parser.add_argument(
+        "--vlm-judge",
+        action="store_true",
+        help="add Gateway VLM prompt-adherence and layout-following scores",
+    )
+    parser.add_argument("--judge-model", default="gpt-5.5")
+    parser.add_argument("--prompt-adherence-weight", type=float, default=0.25)
+    parser.add_argument("--layout-following-weight", type=float, default=0.25)
+    parser.add_argument("--camera-weight", type=float, default=0.25)
+    parser.add_argument("--perceptual-weight", type=float, default=0.25)
+    parser.add_argument("--minimum-camera-score", type=float, default=0.8)
+    parser.add_argument(
+        "--camera-retries",
+        type=int,
+        default=0,
+        help="selectively regenerate images below the minimum camera score",
+    )
+    parser.add_argument(
+        "--camera-direct-fallback",
+        action="store_true",
+        help="use text-only isometric generation if reference-conditioned retries fail",
+    )
+    parser.add_argument(
+        "--orders",
+        default="std,p6,layout",
+        help="comma-separated eligible render orders",
+    )
     parser.add_argument(
         "--reflection-provider",
         choices=("gateway", "azure"),
@@ -716,20 +1073,53 @@ def main() -> None:
         help="score the seed candidate without asking GEPA for mutations",
     )
     args = parser.parse_args()
+    seed_candidate = (
+        json.loads(args.candidate_file.read_text(encoding="utf-8"))
+        if args.candidate_file
+        else SEED_CANDIDATE
+    )
+    if error := _candidate_error(seed_candidate):
+        raise ValueError(f"invalid --candidate-file: {error}")
+    if args.vlm_judge and not args.iso_only:
+        raise ValueError("--vlm-judge currently requires --iso-only")
+    judge_weights = (
+        args.prompt_adherence_weight,
+        args.layout_following_weight,
+        args.camera_weight,
+        args.perceptual_weight,
+    )
+    if min(judge_weights) < 0 or abs(sum(judge_weights) - 1.0) > 1e-9:
+        raise ValueError("judge weights must be non-negative and sum to 1")
+    if not 0.0 <= args.minimum_camera_score <= 1.0:
+        raise ValueError("--minimum-camera-score must be between 0 and 1")
+    if args.camera_retries < 0:
+        raise ValueError("--camera-retries must be non-negative")
 
     cases = load_cases(args.specs)
+    orders = {value.strip() for value in args.orders.split(",") if value.strip()}
+    unknown_orders = orders - {"std", "p6", "layout"}
+    if unknown_orders:
+        raise ValueError(f"unknown render orders: {', '.join(sorted(unknown_orders))}")
     all_scenes: list[str] = []
     if args.all_75:
-        all_scenes = _all_75(cases)
+        all_scenes = [
+            scene for scene in _all_75(cases) if cases[scene].order in orders
+        ]
         train, val = _split_all_75(cases, all_scenes, args.seed)
     else:
         train = _scene_list(args.train_scenes)
         val = _scene_list(args.val_scenes)
+        ineligible = [
+            scene for scene in train + val if cases.get(scene) and cases[scene].order not in orders
+        ]
+        if ineligible:
+            raise ValueError(f"scenes excluded by --orders: {', '.join(ineligible)}")
     _selected_cases(cases, train, val)
     run_root = paths.RUN / "gepa" / args.run_name
     run_root.mkdir(parents=True, exist_ok=True)
     targets = TargetStore(args.target_arm)
-    target_paths = targets.preflight(train + val)
+    target_stages = ("iso",) if args.iso_only else ("iso", "td")
+    target_paths = targets.preflight(train + val, target_stages)
     manifest = {
         "run_name": args.run_name,
         "target_arm": args.target_arm,
@@ -739,6 +1129,23 @@ def main() -> None:
         "val_scenes": val,
         "all_scenes": all_scenes,
         "image_model": args.image_model,
+        "image_provider": args.image_provider,
+        "reference_image_model": args.reference_image_model,
+        "iso_only": args.iso_only,
+        "vlm_judge": {
+            "enabled": args.vlm_judge,
+            "model": args.judge_model if args.vlm_judge else None,
+            "weights": {
+                "prompt_adherence": args.prompt_adherence_weight,
+                "layout_following": args.layout_following_weight,
+                "isometric_camera": args.camera_weight,
+                "perceptual_similarity": args.perceptual_weight,
+            },
+            "minimum_camera_score": args.minimum_camera_score,
+            "camera_retries": args.camera_retries,
+            "camera_direct_fallback": args.camera_direct_fallback,
+        },
+        "orders": sorted(orders),
         "reflection_provider": args.reflection_provider,
         "reflection_model": (
             args.reflection_model
@@ -750,23 +1157,33 @@ def main() -> None:
             "encoder": args.encoder,
             "model": args.dino_model,
             "weights": {"semantic": 0.55, "spatial": 0.30, "structure": 0.15},
-            "stage_weights": {"iso": 0.5, "td": 0.5},
+            "stage_weights": (
+                {"iso": 1.0} if args.iso_only else {"iso": 0.5, "td": 0.5}
+            ),
         },
         "max_metric_calls": args.max_metric_calls,
         "patience": args.patience,
         "targets": target_paths,
-        "seed_candidate": SEED_CANDIDATE,
+        "seed_candidate": seed_candidate,
+        "candidate_file": str(args.candidate_file) if args.candidate_file else None,
     }
     _write_json(run_root / "manifest.json", manifest)
     if args.dry_run:
         print(
             f"GEPA preflight ok: {len(train)} train + {len(val)} validation scenes; "
-            f"{2 * (len(train) + len(val))} frozen targets available\n"
+            f"{len(target_stages) * (len(train) + len(val))} frozen targets available\n"
             f"{run_root / 'manifest.json'}"
         )
         return
 
-    provider = images.LLMGatewayProvider(model=args.image_model)
+    if args.image_provider == "gateway":
+        provider = images.LLMGatewayProvider(model=args.image_model)
+    else:
+        provider = images.SceneGenProvider(
+            model=args.image_model,
+            reference_model=args.reference_image_model,
+            base_url=args.scenegen_url,
+        )
     if args.encoder == "dino":
         encoder = DinoEncoder(model=args.dino_model, device=args.device)
     elif args.encoder == "pyramid":
@@ -774,6 +1191,14 @@ def main() -> None:
     else:
         encoder = AutoEncoder(model=args.dino_model, device=args.device)
     scorer = CompositeImageSimilarity(encoder)
+    vlm_judge = (
+        GatewayVLMJudge(
+            model=args.judge_model,
+            cache_root=run_root / "judge_cache",
+        )
+        if args.vlm_judge
+        else None
+    )
     evaluator = RenderEvaluator(
         cases,
         provider,
@@ -781,15 +1206,30 @@ def main() -> None:
         targets,
         run_root,
         visual_feedback=not args.no_visual_feedback,
+        iso_only=args.iso_only,
+        max_prompt_chars=8000 if args.image_provider == "scenegen" else None,
+        vlm_judge=vlm_judge,
+        judge_weights=judge_weights,
+        minimum_camera_score=args.minimum_camera_score,
+        camera_retries=args.camera_retries,
+        camera_direct_fallback=args.camera_direct_fallback,
     )
     if args.baseline_only:
+        destination = (
+            run_root / "final_all75_scores.json"
+            if all_scenes
+            else run_root / "baseline.json"
+        )
         _score_candidate(
             evaluator,
-            SEED_CANDIDATE,
+            seed_candidate,
             train + val,
-            run_root / "baseline.json",
+            destination,
             "baseline",
+            args.workers,
         )
+        if all_scenes:
+            _write_json(run_root / "best_candidate.json", seed_candidate)
         return
 
     from gepa.optimize_anything import (
@@ -829,12 +1269,20 @@ def main() -> None:
         ),
     )
     result = optimize_anything(
-        seed_candidate=SEED_CANDIDATE,
+        seed_candidate=seed_candidate,
         evaluator=evaluator.evaluate,
         dataset=[{"scene": scene} for scene in train],
         valset=[{"scene": scene} for scene in val],
-        objective=OBJECTIVE,
-        background=BACKGROUND,
+        objective=(
+            VLM_OBJECTIVE
+            if args.vlm_judge
+            else ISO_OBJECTIVE if args.iso_only else OBJECTIVE
+        ),
+        background=(
+            VLM_BACKGROUND
+            if args.vlm_judge
+            else ISO_BACKGROUND if args.iso_only else BACKGROUND
+        ),
         config=config,
     )
     best = result.best_candidate
@@ -848,6 +1296,7 @@ def main() -> None:
             all_scenes,
             run_root / "final_all75_scores.json",
             "final",
+            args.workers,
         )
     print(
         f"best validation similarity: {result.val_aggregate_scores[result.best_idx]:.4f}\n"

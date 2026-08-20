@@ -1,15 +1,15 @@
 """Transcribe the subagents' prose blobs into specs through the LLM Gateway.
 
 The subagents write prose per scene into `results/routing/agent_blob/` by reading
-`genre-choice`, the selected genre file and `layout-blob`. They are deliberately forbidden
-to emit JSON. This script gives that prose to `blob.decouple`, whose strict-schema call
-through the LLM Gateway transcribes the already-made decisions into structured JSON. It
-then derives render order and assembles the image prompts through the same mapper every
-other arm uses.
+`genre-choice`, the selected genre file, `scope-reduce-default`, and `layout-blob`. They
+are deliberately forbidden to emit JSON. This script gives that prose to `blob.decouple`,
+whose strict-schema call through the LLM Gateway transcribes the already-made decisions
+into structured JSON. It then derives render order and assembles the image prompts through
+the same mapper every other arm uses.
 
 The prose artifact is self-contained: its ``# Agent decision`` combines the raw author
-prompt, intake answers, and layout choices into the nine-section handoff. This builder
-does not read or rerun any historical arm.
+prompt, intake answers, full-request choices, end-of-decision scope result, and final
+scoped image prompt. This builder does not read or rerun any historical arm.
 
 The agent records its requested order and route in prose. The transcriber copies both,
 then deterministic policy derives the executed order so an arbitrary prose sentence
@@ -22,6 +22,9 @@ baseline.
 Usage:
     python tools/build_agent_arm.py
     python tools/build_agent_arm.py --only P0003,P0013
+    python tools/build_agent_arm.py \
+        --prose-dir results/routing/agent_blob_scope_reduce_RUN \
+        --out-dir results/routing/agent_spec_gateway_scope_reduce_RUN
 """
 
 from __future__ import annotations
@@ -52,8 +55,11 @@ INTAKE_SKILL = pathlib.Path(__file__).resolve().parent.parent / \
     ".cursor" / "skills" / "layout-intake" / "SKILL.md"
 UPREZ_SKILL = pathlib.Path(__file__).resolve().parent.parent / \
     ".cursor" / "skills" / "uprez-prompt" / "SKILL.md"
+SCOPE_SKILL = pathlib.Path(__file__).resolve().parent.parent / \
+    ".cursor" / "skills" / "scope-reduce-default" / "SKILL.md"
 LAYOUT_SKILL = pathlib.Path(__file__).resolve().parent.parent / \
     ".cursor" / "skills" / "layout-blob" / "SKILL.md"
+FINAL_PROMPT_HEADING = "## Final scoped image prompt"
 
 def _slug(name: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", (name or "").lower()).strip("-")
@@ -94,6 +100,7 @@ def version() -> str:
     h.update(TASK.read_bytes())
     h.update(INTAKE_SKILL.read_bytes())
     h.update(UPREZ_SKILL.read_bytes())
+    h.update(SCOPE_SKILL.read_bytes())
     h.update(LAYOUT_SKILL.read_bytes())
     h.update(blob.DECOUPLE_SYSTEM.encode())
     h.update(json.dumps(blob.LAYOUT_SPEC_SCHEMA, sort_keys=True).encode())
@@ -115,9 +122,23 @@ def artifact(text: str) -> str:
     return out
 
 
+def final_scoped_prompt(prose_decision: str) -> str:
+    """Extract the sole scene body allowed to reach image prompt assembly."""
+    if prose_decision.count(FINAL_PROMPT_HEADING) != 1:
+        raise ValueError(
+            f"prose decision must contain exactly one {FINAL_PROMPT_HEADING!r}"
+        )
+    body = prose_decision.split(FINAL_PROMPT_HEADING, 1)[1]
+    body = body.split("\n## ", 1)[0].strip()
+    if not body:
+        raise ValueError("final scoped image prompt is empty")
+    return body
+
+
 def build_one(scene: str, prose: str, source: str, said: list[dict]) -> dict:
     """Transcribe one agent's prose and assemble its prompts."""
     prose_decision = artifact(prose)
+    scoped_prompt = final_scoped_prompt(prose_decision)
     spec = blob.decouple(prose_decision)
     schema_degraded = llm.schema_degraded()
     # The provider-enforced schema pins the shape; canonicalisation resolves harmless
@@ -130,6 +151,11 @@ def build_one(scene: str, prose: str, source: str, said: list[dict]) -> dict:
         spec["genre"] = canonical_genre
         spec = blob.normalise(spec)
 
+    # The Gateway transcribes the executable configuration, but a supposedly verbatim
+    # scene body should not rely on model obedience. Pin it deterministically from the
+    # final post-scope section after all normalisation and before either image prompt is
+    # assembled.
+    spec["initial_scene_subprompt_enriched"] = scoped_prompt
     built = mapper.build(spec)
     return {"scene": scene, "source": source, "answers": said,
             "blob": prose_decision, "agent_artifact": prose,
@@ -137,13 +163,17 @@ def build_one(scene: str, prose: str, source: str, said: list[dict]) -> dict:
             "secondary": spec.get("secondary") or [],
             "spec": spec, "stage": "done", "status": "ok", "error": "",
             "pipeline_version": version(),
-            "served_by": f"subagent/genre-choice -> {llm.served_by()}",
+            "served_by": f"subagent/genre-choice+scope-reduce-default -> "
+            f"{llm.served_by()}",
+            "prompt_boundary": "final_scoped_image_prompt",
             "schema_degraded": schema_degraded,
             "order": built["order"], "first": built["first"],
             "mapper_notes": built["notes"]}
 
 
-def process(path: pathlib.Path) -> tuple[str, str, dict | None, str]:
+def process(
+    path: pathlib.Path, input_dir: pathlib.Path = INPUT
+) -> tuple[str, str, dict | None, str]:
     """Read and transcribe one artifact; safe to run in a worker thread."""
     scene = path.stem
     try:
@@ -153,7 +183,7 @@ def process(path: pathlib.Path) -> tuple[str, str, dict | None, str]:
 
     try:
         artifact(prose)
-        input_path = INPUT / f"{scene}.json"
+        input_path = input_dir / f"{scene}.json"
         inp = json.loads(input_path.read_text(encoding="utf-8")) \
             if input_path.is_file() else {}
         source = (inp.get("source") or "").strip()
@@ -172,19 +202,35 @@ def main() -> None:
     ap.add_argument("--only", default="", help="comma-separated scene ids")
     ap.add_argument("--workers", type=int, default=12,
                     help="concurrent Gateway transcription calls")
+    ap.add_argument("--prose-dir", type=pathlib.Path, default=IN,
+                    help="directory containing prose decision .md files")
+    ap.add_argument("--out-dir", type=pathlib.Path, default=OUT,
+                    help="directory for transcribed structured specs")
+    ap.add_argument("--agent-input-dir", type=pathlib.Path, default=INPUT,
+                    help="directory containing source prompt and answer JSON")
+    ap.add_argument("--skip-existing", action="store_true",
+                    help="resume by leaving existing output specs untouched")
     args = ap.parse_args()
 
-    OUT.mkdir(parents=True, exist_ok=True)
+    args.out_dir.mkdir(parents=True, exist_ok=True)
     only = {s.strip() for s in args.only.split(",") if s.strip()}
     stamp = version()
     print(f"agent-arm instruction version {stamp}")
 
     built = skipped = failed = degraded = 0
     repairs: dict[str, int] = {}
-    inputs = [p for p in sorted(IN.glob("*.md")) if not only or p.stem in only]
+    inputs = [
+        p for p in sorted(args.prose_dir.glob("*.md"))
+        if (not only or p.stem in only)
+        and not (
+            args.skip_existing and (args.out_dir / f"{p.stem}.json").is_file()
+        )
+    ]
     print(f"transcribing {len(inputs)} prose artifacts with {args.workers} workers")
     with ThreadPoolExecutor(max_workers=args.workers) as pool:
-        results = pool.map(process, inputs)
+        results = pool.map(
+            lambda path: process(path, input_dir=args.agent_input_dir), inputs
+        )
         for scene, status, out, detail in results:
             if status == "skip":
                 skipped += 1
@@ -197,7 +243,7 @@ def main() -> None:
                 repairs[n.split(":")[0].split("'")[0].strip()] = \
                     repairs.get(n.split(":")[0].split("'")[0].strip(), 0) + 1
             degraded += int(out["schema_degraded"])
-            (OUT / f"{scene}.json").write_text(
+            (args.out_dir / f"{scene}.json").write_text(
                 json.dumps(out, indent=2, ensure_ascii=False), encoding="utf-8")
             built += 1
             if built % 25 == 0 or built == len(inputs):
@@ -210,7 +256,7 @@ def main() -> None:
         print("repairs applied (each is in that spec's notes):")
         for k, n in sorted(repairs.items(), key=lambda kv: -kv[1]):
             print(f"  {n:4}  {k}")
-    print(f"specs in {OUT}")
+    print(f"specs in {args.out_dir}")
 
 
 if __name__ == "__main__":

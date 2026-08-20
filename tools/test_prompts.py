@@ -45,7 +45,7 @@ class PromptProfileTests(unittest.TestCase):
             self.assertIn("bank and gas station", prompt)
             self.assertIn("Roblox-like", prompt)
             self.assertIn("Physical arrows", prompt)
-        self.assertIn("55-to-65-degree elevated oblique camera", built["iso"])
+        self.assertIn("50-to-60 degrees away from vertical nadir", built["iso"])
         self.assertIn("exactly 90-degree straight-down", built["topdown"])
         self.assertGreater(
             built["iso"].find("FINAL CAMERA REQUIREMENT"),

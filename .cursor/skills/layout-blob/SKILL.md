@@ -6,9 +6,10 @@ disable-model-invocation: true
 
 # Layout Blob
 
-You read the **author's original message** and their **intake answers**, then write
-a **word blob**: prose that states everything the pipeline needs to decide, in
-the order it needs to decide it.
+You read the **author's original message** and their **intake answers**, decide
+the full request, then apply any required scope reduction **at the final handoff
+boundary**. Write a **word blob** that first records the full request and ends
+with the one scoped prompt image generation will actually receive.
 
 ## Inputs
 
@@ -19,10 +20,13 @@ or create a separate cleaned brief before this decision.
 | :---- | :---- |
 | The author's original message | **Genre**, intent, stated numbers, and the raw spatial request. Its rules, economy, and scoring are strong genre signals. |
 | Intake answers | Authoritative resolutions of layout-changing ambiguities. They override conflicting details in the original message. |
+| `scope-reduce-default` decision | Applied after the full-request decision; selects the single buildable zone that becomes the executable scene when more than one frame is needed. |
 
 **Classify and extract the space from the original message, then apply the
-answers.** Use `uprez-prompt` as guidance while writing section 2 inside this
-same decision; it is not a separate generated input.
+answers.** Complete and record the full-request genre, shape, options, theme,
+scale, route, and concrete layout first. Only after that record is complete,
+follow `scope-reduce-default`, record its result, and use `uprez-prompt` to write
+the final scoped image prompt. It is not a separate generated input.
 
 **But never let the mechanics into the layout.** The original message tells you
 both what kind of game this is and what space the author requested. Nothing that
@@ -53,7 +57,10 @@ where the scene-specific detail goes.
 
 ## What the blob must cover
 
-Cover all nine, in this order, as flowing prose with a short heading per section.
+Cover all ten, in this order, as flowing prose with a short heading per section:
+Clarifications resolved; Genre; Shape and preset; Config requirements; Layout
+requirements; Layout components; Render order; Scale, theme, and pipeline cost;
+Scope reduction result; Final scoped image prompt.
 
 ### 1. Clarifications resolved
 
@@ -82,34 +89,7 @@ Write each resolution on one line:
 
 These answers become part of the context for the next section.
 
-### 2. Enriched image prompt
-
-Write one paragraph, or two short paragraphs, under the exact heading
-`## Enriched image prompt`. This is the final scene description the image model
-will receive, before the deterministic camera/style wrapper.
-
-Synthesize the author's original message, every clarification answer, and the
-spatial decisions below into a concise description of the 3D map. Treat answers
-as the author continuing the original message; when an answer conflicts with an
-earlier detail, the answer wins.
-
-Translate mechanics into their smallest directly implied physical footprint:
-bosses need boss encounter areas, minions need surrounding encounter ground,
-progression between islands needs an ordered visible route, and physical
-training needs a training space. This is not permission to invent unrelated
-assets or genre decoration.
-
-Include zones, paths, terrain, buildings, key props, counts, and camera-facing
-composition. Include the visible, scene-specific form of chosen config options.
-Exclude scoring, economy, UI, scripts, and every layout-only placement from
-section 6. Write in English, present tense, normally 80–250 words when the
-source is rich and shorter when it is not. Do not write catalogue prose: bend
-every applicable concept to this scene.
-
-The later transcriber copies this paragraph verbatim into
-`initial_scene_subprompt_enriched`; prompt assembly uses that field verbatim.
-
-### 3. Genre
+### 2. Genre
 
 The dominant genre, by canonical name. Name a secondary genre if the prompt is
 honestly two things — but **the dominant genre owns the shape and any
@@ -133,10 +113,15 @@ actually decides and say so by name — `enclosure`, `verticality`, `zone-count`
 leaving all five alone is a complete answer, and the menu marks which non-default
 answers force a pipeline pass.
 
-### 4. Shape, and the preset it came from
+### 3. Shape, and the preset it came from
 
 **Exactly one shape**, by ID, from the shared catalogue. Say what that shape
 means *for this scene* — not the catalogue's generic wording.
+
+This section records the **full request's containing shape**. Do not pre-emptively
+replace it with a smaller buildable shape. If scope reduction later fires,
+section 9 records the active zone's executable shape and the transcriber uses
+that final active value instead.
 
 **Every shape is reachable from every genre.** Each genre publishes a short list
 of typical shapes with a default, and that list is presentation, not a
@@ -175,17 +160,22 @@ wrong name is worse than none at all.
 
 When the prompt names several distinct spaces, keep them all. Choose one
 top-level shape: the largest containing shape when one contains the others, or
-the dominant space otherwise. In section 7, name each subordinate map or zone,
+the dominant space otherwise. In section 6, name each subordinate map or zone,
 its own spatial form and any distinct theme. Separate maps force `P4`; regions
 inside one map do not. Never flatten a lobby plus match map, or differently
 shaped floors, into one generic zone merely because the strict spec has one
 top-level shape field.
 
-### 5. Config requirements
+### 4. Config requirements
 
 Which options apply, by ID, each with one clause saying **what it looks like in
 this scene**. Bend the generic wording to the prompt's subject: `safezone-town`
 in a pirate prompt is a harbour town, not "a settlement".
+
+Record all visible options belonging to the full request here. If scope
+reduction later fires, section 9 repeats only the active zone's executable
+options. Deferred options remain provenance and must not reach the final scoped
+image prompt or its generated addendum.
 
 **What the prompt asks for is already chosen.** A prompt naming a shop row has
 picked the shop row. Do not pad with plausible extras the prompt never
@@ -205,9 +195,9 @@ inject the other genre's example sentence. If destination or route varies,
 follow the physical thing this prompt describes and state that choice.
 
 **This section is the image config only** — geometry the model draws. Anything
-recovered after segmentation belongs in section 6 instead.
+recovered after segmentation belongs in section 5 instead.
 
-### 6. Layout requirements
+### 5. Layout requirements
 
 What the layout stage must **place** once the image comes back. Trigger volumes,
 spawn markers, checkpoints, pickups and emitters are sited against the segmented
@@ -234,10 +224,10 @@ get, plus the two things a drawn option does not need:
 
 The menu marks every option with `goes_to`. A `layout` option belongs here and
 nowhere else. A `both` option belongs in both places — its drawn form in
-section 5, its siting rule here. Say so plainly when the scene genuinely needs
+section 4, its siting rule here. Say so plainly when the scene genuinely needs
 nothing placed.
 
-### 7. Layout components
+### 6. Layout components
 
 The concrete build. This is the part the image model ultimately renders, so be
 specific and spatial:
@@ -250,10 +240,15 @@ specific and spatial:
 - **Boundary** — what encloses the play space, or that it is open
 - **Composition** — how it should sit in frame
 
+Record the full request's concrete build here, including all of its maps and
+zones. This section is input to the scope decision, not the image model. If
+scope reduction later fires, section 9 repeats the active zone's concrete build
+and section 10 is the only scene body sent to rendering.
+
 **Carry every number the prompt stated.** "Five islands", "three floors", "about
 twenty houses", "20 studs wide". Nothing downstream can recover a count you drop.
 
-### 8. Render order
+### 7. Render order
 
 State which image is rendered **first**, and which is authoritative. Exactly
 three orders exist. **Write the order's name in backticks, exactly as spelled
@@ -285,7 +280,7 @@ invalid layout make the game unplayable?"** A maze with a sealed corridor, a
 circuit that does not close, an obby whose jump chain has an impossible gap.
 Those need a plan first. A town that is merely intricate does not.
 
-### 9. Scale, theme, and pipeline cost
+### 8. Scale, theme, and pipeline cost
 
 - **Scale band** — small / medium / large / huge, and what drove it. This is the
   strict-spec spelling of intake's Room / Block / District / Region bands,
@@ -312,6 +307,65 @@ test is whether a single top-down of a single surface would actually lose
 information, not whether the scene is elaborate. `P0` means the geometry forced
 nothing, which is a finding, not a blank.
 
+### 9. Scope reduction result
+
+Use the exact heading `## Scope reduction result`. **Only now**, after sections
+1–8 have recorded all available information about the full request, follow
+`scope-reduce-default`. Give it that completed full-request handoff. Do not
+silently rewrite the earlier sections; they are the provenance of what the user
+asked for.
+
+If the skill does not fire, say that the full request is the executable build
+and that it fits one frame. Include `route_cleared` when the skill emitted it;
+the cleared modifier stays provenance and is not executable.
+
+If the skill fires, record its complete result in prose:
+
+- the unchanged full-request genre, containing shape, preset, options, theme,
+  scale, layout, render order, and full route;
+- every top-level zone, with its shape, route, theme, scale, visible options,
+  layout placements, concrete components, `buildable_now` status, transition,
+  and `cut_hint` when present;
+- the active zone and why it was selected, including its complete executable
+  shape, preset, options, placements, components, render order, scale, theme,
+  and route;
+- `active_selection`, `questions_asked`, any `reduced_from` and what the
+  step-down gave up, and `core_deferred` when the active zone is not the
+  requested core.
+
+This final result, not the full-request fields above it, is authoritative for
+the executable spec. The Gateway transcribes the active zone when one exists;
+otherwise it transcribes the unchanged full request.
+
+### 10. Final scoped image prompt
+
+Use the exact heading `## Final scoped image prompt`. Write one paragraph, or
+two short paragraphs. This is the final scene description that **both the
+isometric and top-down image paths receive**, before their deterministic
+camera/style wrappers.
+
+When scope reduction did not fire, describe the full request. When it fired,
+describe only the selected `active` zone using the active zone's shape, visible
+options, theme, scale, and concrete components. Keep every deferred zone out of
+this paragraph.
+
+**Do not mention deferred content negatively.** “Do not show the other maps,”
+“without the upper floors,” and “leave the interior out” all leak deferred
+content into the image request. Remove the whole clause; a positive description
+of the active zone is already a complete boundary.
+
+Synthesize the original message, every clarification answer, and the final
+scope result into concise image-ready prose. Translate mechanics into only
+their smallest directly implied physical footprint. Include zones, paths,
+terrain, buildings, key props, counts, camera-facing composition, and the
+visible scene-specific form of active config options. Exclude scoring, economy,
+UI, scripts, and layout-only placements. Write in English, present tense,
+normally 80–250 words when the source is rich and shorter when it is not.
+
+The builder copies this section verbatim into
+`initial_scene_subprompt_enriched` after Gateway transcription. Prompt assembly
+then uses that exact field as the scene body for both image views.
+
 ## The empty case
 
 If the author input is empty, or describes no buildable space at all (a chat-only
@@ -328,7 +382,9 @@ window — is `P5`.
 
 Plain declarative prose. Short headings. No bullet-point dumps of the whole
 option table, no restating these instructions, no hedging. Roughly 200–450
-words: enough to be specific, short enough that every sentence is load-bearing.
+words for a request that fits one frame: enough to be specific, short enough
+that every sentence is load-bearing. A reduced request may exceed that only by
+the complete scope result required in section 9.
 
 **Write in English, whatever language the prompt was written in.** About one
 prompt in ten arrives in Spanish, Portuguese, Arabic or Korean, often with its

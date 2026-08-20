@@ -1,0 +1,79 @@
+---
+description: How to scope, budget, and monitor lane subagents. Hard limits, no open-ended tasks.
+alwaysApply: true
+---
+
+# Subagent Supervision
+
+Two failures cost hours of wall-clock on this project: an open-ended research
+task that ran 5+ hours before it was killed by hand, and a code lane that
+finished its file and then hung for 48 minutes without reporting. Both were
+preventable at launch. **We do not have time to sit waiting on agents.**
+
+## A brief is not valid without all four
+
+Refuse to launch without these. If a task cannot be expressed this way, it is
+scoped wrong — split it or do it in the parent.
+
+1. **Named output files.** "Findings", "an audit", "an investigation" are not
+   deliverables. A task that writes a file has a definition of done; a task that
+   produces understanding runs until something stops it. If the output really is
+   analysis, name the questions — numbered, answerable, finite — and cap the
+   report length in words.
+2. **A time budget stated inside the brief**, addressed to the agent: *"Budget:
+   N minutes. If you are not done, report what you have. A partial answer
+   delivered beats a complete one that never arrives."*
+3. **A read scope.** For anything research-shaped, whitelist the files it may
+   read and tell it not to explore beyond them. Unbounded codebase exploration
+   is where the hours go.
+4. **A DO NOT TOUCH list** naming files other in-flight lanes own, plus
+   `UITokens.lua` and any shared doc.
+
+## Budgets
+
+Against measured Phase 3 / 3.5 lanes:
+
+| Shape | Budget |
+|---|---|
+| Single-file mechanical change | 20 min |
+| Helper rewrite / multi-file retrofit | 30–45 min |
+| Bounded read-only review, whitelisted files, N questions | 15 min |
+
+Anything you would estimate above an hour is scoped wrong. Split it.
+
+State the deliverable and the expected duration **to the user** in the message
+that launches the lane, so "too long" is defined before it happens.
+
+## Monitoring
+
+Report at the 15-minute mark. Do not wait silently for completion.
+
+A lane's transcript only flushes when a turn completes, so intermediate
+reasoning is unreadable while it runs. Liveness comes from file activity:
+`git status --short` for which owned files it has touched, and `LastWriteTime`
+for whether it is still writing. Working vs. hung is knowable; percent-complete
+is not — say which you know.
+
+**Ten minutes with no writes on a code task means it is stuck.** Then:
+
+- If its named output files look complete — read them, check they lint and
+  terminate properly — **take the work and drop the agent.** A finished file
+  from a hung agent is still a finished file. Review it yourself in place of the
+  report you never got, and say in the commit that it landed unreviewed by its
+  author.
+- If the output is incomplete, report to the user with what exists and let them
+  decide. Do not kill a lane unilaterally.
+
+## Lanes do not commit
+
+Every brief ends with "do not run `git commit`, `git add`, or `git push`." The
+parent commits, so shared-doc conflicts (`SKILL.md`, `widget_metadata.json`,
+`WIDGET_SUMMARY.md`) are resolved once, by the agent that can see every lane.
+Phase 3 learned this the hard way.
+
+## Reviewing lane output
+
+A lane's own report is evidence, not a verdict. The `UIAudit` follow-up round
+passed its author's self-assessment and a 15-minute bounded review then found
+the central feature was nearly inert. When a lane lands a rule, a gate, or a
+threshold, have something check that it can actually fire.

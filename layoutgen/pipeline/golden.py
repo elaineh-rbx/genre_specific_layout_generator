@@ -9,6 +9,9 @@ Usage:
     python -m layoutgen.pipeline.golden
     python -m layoutgen.pipeline.golden --limit 4
     python -m layoutgen.pipeline.golden --only P0005,P0013
+    python -m layoutgen.pipeline.golden \
+        --spec-dir results/routing/agent_spec_gateway_scope_reduce_RUN \
+        --output-arm agent_gateway_scope_reduce_RUN
 """
 
 from __future__ import annotations
@@ -253,6 +256,12 @@ def main() -> None:
     ap.add_argument("--arm", default="agent_gateway", choices=sorted(SOURCES),
                     help="which arm's picks to generate from")
     ap.add_argument(
+        "--spec-dir",
+        type=pathlib.Path,
+        default=AGENT_GATEWAY,
+        help="Gateway-transcribed spec directory for the agent_gateway arm",
+    )
+    ap.add_argument(
         "--output-arm",
         default="",
         help="isolated output namespace; defaults to the source arm name",
@@ -272,7 +281,11 @@ def main() -> None:
     for d in (ISO, TD, PLAN, paths.RUNS):
         d.mkdir(parents=True, exist_ok=True)
 
-    todo = SOURCES[args.arm]()
+    todo = (
+        agent_rows(args.spec_dir)
+        if args.arm == "agent_gateway"
+        else SOURCES[args.arm]()
+    )
     if args.only:
         keep = {s.strip() for s in args.only.split(",")}
         todo = [r for r in todo if r.scene in keep]

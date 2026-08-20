@@ -49,10 +49,11 @@ Every shape in the system, and the **route lives here and only here**. The wordi
 | `interior-endless` | **Zone (Endless Interior)** | An interior of corridors and rooms that continues without a boundary — dead ends, repeating architecture, and no exit to reach. | `P6` |
 | `volume-open-air` | **Zone (Open Airspace)** | Open air is the play space, with discrete surfaces to touch down on — rooftops, platforms, landing pads — instead of one continuous ground plane. | `CHECK` |
 | `vehicle-deck` | **Zone (Vehicle Deck)** | The walkable surface is a vehicle — a ship's deck, a train, an aircraft cabin — and the world moves past it rather than the player moving through the world. |  |
-| `traversal-city` | **Zone (Traversal City)** | A city built to be crossed over rather than fought in: rooftops, ledges and gaps sized for a moving player, with the streets below as the fallback route. | `P2` |
+| `traversal-city-tiered` | **Zone (Rooftop City)** | The same city crossed over the top, built so nothing hangs over anything: flat-topped buildings at varied heights, rooftops as the play surface, and streets that are the gaps between footprints and the fall if you miss. No skybridges, cantilevers or awnings over the road. | `P0 + tiered` |
+| `traversal-city` | **Zone (Traversal City)** | A city built to be crossed over rather than fought in: rooftops, ledges and gaps sized for a moving player, with the streets below as the fallback route. Take `traversal-city-tiered` unless the crossings over the road are the point — a skybridge network, ledges cantilevered above traffic — because those are the whole of the difference and they are what costs `P2`. | `P2` |
 | `set-display` | **Zone (Display Set)** | The build is a set arranged around one subject — a vehicle, a machine, a diorama city — framed to be looked at and operated from outside rather than walked through. | `SET` |
 
-**45 shapes, and the catalogue is the whole answer.**
+**46 shapes, and the catalogue is the whole answer.**
 
 **`set-display` is the one shape whose route the shape does not decide.** Stage B already asks *does anyone walk through it?* and appends `SET` on a no, so this row does not introduce a second rule — it gives that answer somewhere to live on the shape axis. `board-grid` is Strategy's special case of it; this is the general one. Reach for it when the subject *is* the deliverable and the surroundings are its setting: a modelled vehicle, a pinball machine, a city looked down on and zoomed into. If the player walks anywhere in the build, this is the wrong shape.
 
@@ -81,9 +82,13 @@ The clearest case: Survival's `world-biomes` is the only shape in the genre expr
 | Kind | Shapes | Overridable |
 | :---- | :---- | :---- |
 | **A structural law.** Validity *is* the game — a maze must be solvable, a tower-defense lane must be one continuous route, a warren must have no dead ends. An image cannot guarantee any of them. | Every `P6` shape, and the genre-wide `P6` on Obby, Racing and Infinite Runner | **No.** Dropping it produces a broken game, not a cheaper one. |
-| **A consequence of a feature that is actually present.** Claimable houses have interiors, so `P3`. Stacked surfaces overhang, so `P2`. | `settlement-claimable`, `settlement-buildable`, `arena-stacked`, `world-underground`, `route-multitier` | **Only if the feature is absent.** A claimable house nobody enters is not `P3`. Say so when you drop it. |
+| **A consequence of a feature that is actually present.** Claimable houses have interiors, so `P3`. Stacked surfaces overhang, so `P2`. | `settlement-claimable`, `settlement-buildable`, `arena-stacked`, `world-underground`, `route-multitier`, `traversal-city` | **Only if the feature is absent.** A claimable house nobody enters is not `P3`. Say so when you drop it. |
 | **An estimate about scale.** `P4` claims several zones cannot share one surface. That is a judgement about size, and the prompt frequently settles it. | `world-biomes`, `world-open-biomes`, `world-chaptered`, `space-staged`, `world-hub-dungeon`, `hub-portals` | **Yes.** When the prompt says one continuous map, keep the shape and route `P0`. |
 
 **Keep the shape, change the route** — the shape was never wrong about the space. Record the override and what in the prompt justified it.
+
+**Every `stacked` shape has a `tiered` twin, and the twin is where you go when the overhang is not the point.** `arena-stacked` pairs with `arena-tiered`, `course-tower` with `course-terraced`, `route-multitier` with `route-circuit`, `traversal-city` with `traversal-city-tiered`. The pairs are not alternatives of equal standing: the tiered one is the same place doing the same thing, keeping all of its elevation, and giving up only the geometry that hangs over other geometry. Reach for the stacked row when a player has to be *underneath* something another player is standing on — a skybridge over traffic, a catwalk above the floor, a mine below the town. Reach for the tiered row otherwise, which is most of the time.
+
+This matters more than a tie-break, because the difference is `P2`: overhang is the single most common way a prompt that could be built today becomes one that cannot. A rooftop is not an overhang — it sits above its own building, not above the street — so a city crossed roof to roof is `tiered` and buildable, and only the bridges across the road make it `stacked`.
 
 **This is a rule for a rare case.** Nearly every prompt that describes one continuous map is already routed correctly without it, so it must never become a reason to second-guess a route the prompt did not mention — **silence is not a contradiction.** When the prompt says nothing, take the default.

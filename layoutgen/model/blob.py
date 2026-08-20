@@ -55,10 +55,10 @@ shape's, wherever it is used from."""
 
 
 def _catalog_lines() -> list[str]:
-    """The 45 shapes, once. Emitted before the genres rather than inside each one.
+    """The 46 shapes, once. Emitted before the genres rather than inside each one.
 
     They were per-genre until the document made them shared, and rendering them per genre
-    afterwards cost 675 lines to say what 45 say - it tripled the menu and, worse, implied
+    afterwards cost 675 lines to say what 46 say - it tripled the menu and, worse, implied
     fifteen separate catalogues at the exact moment the document had merged them into one.
     """
     out = [
@@ -81,7 +81,7 @@ def _catalog_lines() -> list[str]:
 
 
 def vocabulary(notes: bool = False) -> str:
-    """The whole menu - 45 shapes, 15 genres, their options and presets.
+    """The whole menu - 46 shapes, 15 genres, their options and presets.
 
     Small enough to hand over in full, which removes the classify-then-load round trip
     the interactive skill needs: a genre cannot be picked here and then have its own
@@ -395,7 +395,7 @@ LAYOUT_SPEC_SCHEMA = {
             "initial_scene_subprompt_enriched": {
                 "type": "string",
                 "description": "The final image-ready scene paragraph under "
-                "'Enriched image prompt', copied verbatim from the blob. "
+                "'Final scoped image prompt', copied verbatim from the blob. "
                 "Empty only when the blob contains no buildable space.",
             },
             "genre": {"type": "string", "enum": list(br.GENRES) + ["No Genre"]},
@@ -406,7 +406,7 @@ LAYOUT_SPEC_SCHEMA = {
             "shape": {
                 "type": "string",
                 "description": "Exactly one shape ID from the shared catalogue - "
-                "any of the 45, not only the genre's typical ones. "
+                "any of the 46, not only the genre's typical ones. "
                 "Empty string for No Genre, and for a described "
                 "shape, where the axes answer instead.",
             },
@@ -525,10 +525,10 @@ only job is to move those decisions into fields without changing them.
 
 # Rules
 
-1. **Never contradict the blob.** If it names `world-hub-dungeon`, the shape is
-   `world-hub-dungeon`. If it says the isometric is drawn first, `render.first` is
-   `isometric`. A field you would rather fill differently is still the blob's call.
-   Copy the paragraph under `Enriched image prompt` verbatim into
+1. **Never contradict the blob.** The full-request sections are the input to the final
+   scope pass. When `Scope reduction result` names an active zone, its executable values
+   override the earlier full-request values without rewriting that provenance. Copy the
+   paragraph under `Final scoped image prompt` verbatim into
    `initial_scene_subprompt_enriched`; do not summarize it, replace it with the scene
    prompt, or append catalogue wording.
 2. **Copy every row under `Clarifications resolved` into `clarifications`.** Preserve
@@ -536,10 +536,14 @@ only job is to move those decisions into fields without changing them.
    as the author's. If the section says none, emit an empty array.
 3. **Never invent.** Do not add a zone, prop, path or option the blob does not contain.
    An empty array is correct when the blob gave you nothing for it.
-4. **Take every canonical ID the blob names in backticks**, provided it appears in the
-   menu below. Both shapes and options are shared catalogues: a row remains valid when
-   the dominant genre does not list it in its own shortlist. Silently drop an ID that is
-   absent from the whole menu, and say so in `notes`.
+4. **Take every executable canonical ID the blob names in backticks**, provided it
+   appears in the menu below. Both shapes and options are shared catalogues: a row remains
+   valid when the dominant genre does not list it in its own shortlist. When scope
+   reduction fired, only IDs belonging to the active zone in `Scope reduction result`
+   are executable; IDs in the earlier full-request sections or deferred zones are
+   provenance. Keep those in `notes`, but do not put them in `shape`, `options`,
+   `layout_placement`, or `route`. Silently drop an executable ID that is absent from the
+   whole menu, and say so in `notes`.
 5. **`text` on an option comes from the blob's wording for this scene**, not from the
    menu's generic description. That scene-specific phrasing is the whole point of the
    blob and copying the table over it discards it. Put it in **English**: a blob written
@@ -551,20 +555,24 @@ only job is to move those decisions into fields without changing them.
    Trigger volumes, spawn markers, pickups, emitters and anything else recovered after
    segmentation is `false`. Use the menu's `goes_to` when the blob is silent: `image` is
    true, `layout` is false, `both` is true.
-7. **`layout_placement` is the blob's layout-requirements section, transcribed.** Every
-   option the blob put there gets a row, and a row also stays in `options` so the picks
-   remain one list - the two are the same decision seen from either end, not two
-   decisions. `where` is the siting rule the blob gave; leave it an empty string rather
-   than inventing one, and say so in `notes`. An option whose applicable menu row
-   `goes_to` is `image` never belongs here however useful it would be to place. Where the
-   catalogue says the destination varies, follow the blob's explicit config/layout
-   decision instead of borrowing another genre's destination.
+7. **`layout_placement` is the executable layout-requirements decision transcribed.**
+   When scope reduction fired, take only the active zone's placements in `Scope reduction
+   result`; otherwise take the full-request layout-requirements section. Every selected
+   placement gets a row, and a row also stays in `options` so the picks remain one list -
+   the two are the same decision seen from either end, not two decisions. `where` is the
+   siting rule the blob gave; leave it an empty string rather than inventing one, and say
+   so in `notes`. An option whose applicable menu row `goes_to` is `image` never belongs
+   here however useful it would be to place. Where the catalogue says the destination
+   varies, follow the blob's explicit config/layout decision instead of borrowing another
+   genre's destination.
 8. **Carry every number.** A count stated anywhere in the blob goes in the matching
    `count` field. Use `-1` when no number was stated. Never normalise "a few" into a
    number - leave `-1` and keep the words in the text.
 9. **`render.authoritative` always equals `render.first`.** The image generated first is
    the one the second is derived from.
-10. **`route` holds the modifiers the blob named.** `["P0"]` when it named none.
+10. **`route` holds the final executable scene's modifiers.** When scope reduction fired,
+    take the active zone's route from `Scope reduction result`; ignore the full-request
+    route and deferred-zone routes. Use `["P0"]` when the executable scene named none.
 11. **`render.first` is whichever of the three words the blob wrote, taken literally.**
     The blob writes `isometric`, `topdown` or `authored_plan`. Copy it across. In
     particular `authored_plan` means a blueprint generated in code, which only a maze or
@@ -589,6 +597,12 @@ only job is to move those decisions into fields without changing them.
 16. **An option ID may also come from any genre's usual set.** Keep the blob's
     scene-specific `text`; the source row supplies identity, type, destination and route,
     not prose to inject into the image prompt.
+17. **`Scope reduction result` is the final executable boundary.** If it names an active
+    zone, transcribe the shape, options, layout, render order, scale, theme, and route for
+    that active zone only. If it says the skill did not fire, transcribe the unchanged
+    full-request values. Carry a concise account of deferred zones, active-zone rationale,
+    `route_cleared`, `reduced_from`, and `core_deferred` into `notes`; never merge
+    deferred or earlier full-request geometry into the executable spec.
 
 # Output
 

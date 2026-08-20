@@ -1,0 +1,90 @@
+{
+  "item_id": "P0124",
+  "bucket": "oversized-scale",
+  "handoff": {
+    "genre_choice": {
+      "genres": ["shooter"],
+      "shape": { "id": "lane-network", "type": "Lane", "name": "Lane Network" },
+      "preset": "Team Deathmatch",
+      "pipeline": ["P4"],
+      "image_prompt": [
+        { "id": "spawn-teambase", "text": "Two team bases at opposite ends of the map, screened from the other team's sniper sightlines" },
+        { "id": "cover-los", "text": "Waist-high and full-body cover spread evenly along every lane, dense enough to break sniper lines and give somewhere to duck from grenades" },
+        { "id": "choke-bottleneck", "text": "Narrow pinch points where the lanes meet, concentrating the two teams into contested ground" },
+        { "id": "social-hub", "text": "A pre-match staging area sized for the whole server, where the three maps are put to a vote before the round starts" },
+        { "id": "teleporter-link", "text": "A departure point in the staging area that sends every player into whichever of the three maps won the vote" }
+      ],
+      "layout_placement": [
+        { "id": "spawn-teambase", "type": "SpawnZone", "text": "Balanced bases at opposite ends for the two teams, out of each other's sniper lines" },
+        { "id": "teleporter-link", "type": null, "text": "Paired transport from the staging area to the winning map, one pair per votable map" }
+      ],
+      "mechanics": [
+        "three maps offered at the start and the one with the most votes is played",
+        "all players are teleported to the winning map together",
+        "players are separated into 2 teams",
+        "each player carries 1 sniper",
+        "infinite grenades",
+        "1 normal gun",
+        "a mini gun that can only be used for 30 secs",
+        "a 130 second match timer",
+        "whichever team has the most kills when the timer runs out wins"
+      ],
+      "notes": [
+        "Preset Team Deathmatch taken whole, on the preset's own lane-network shape; nothing in the prompt contradicts any of its options.",
+        "Three votable maps force P4 (separate maps), which genre-choice step 4 says is not deliverable today. Offering the split per layout-intake: one full map now, the other two deferred as separate maps.",
+        "teleporter-link routed P4 rather than P0 because it is a portal to a separate place, not fast travel inside one map (options.md 'varies' rule).",
+        "lane-network's route is not stated anywhere in shooter.md, which gives routes for options but not for shapes; assumed P0, so the whole route rests on teleporter-link and the multi-map ask.",
+        "No winner-zone and no terminating place: the run ends on a 130-second timer and a kill count, so there is nothing spatial for the ending to occupy. Recorded so F6 validation does not look for an exit.",
+        "The pre-match staging area is inferred, not stated — the prompt says players teleport at the start, which needs somewhere to teleport from. Drop social-hub and teleporter-link if the vote is a screen menu.",
+        "Scale band 'block' assumed; the prompt states no extent. A sniper in the loadout argues for long sightlines within that band rather than a wider one."
+      ]
+    },
+    "theme": null,
+    "scale": { "band": "block", "assumed": true },
+    "open_questions": [
+      { "field": "map count", "ask": "Three maps is more than one build can frame — would you rather I build the strongest one now as a full map and note the other two for later, or build all three at a smaller, simpler size?" },
+      { "field": "shape", "ask": "Should all three votable maps be the same kind of map — two bases with lanes and cover between them — or play differently from each other, say one lane network, one wide open battlefield, and one tight sequence of rooms to breach?" },
+      { "field": "option", "ask": "Where does the map vote happen — in a lobby the players stand around in before the round starts, or on a screen menu with no room to build?" },
+      { "field": "theme", "ask": "How should these maps look — modern military, sci-fi and neon, run-down post-apocalyptic, or bright and cartoony?" }
+    ]
+  },
+  "coverage": {
+    "verdict": "partial",
+    "captured": [
+      "gun game classified Shooter",
+      "two teams",
+      "most kills on a timer, so team deathmatch rather than an objective mode",
+      "three maps chosen by vote",
+      "everyone teleported to the winning map",
+      "a start location to teleport from",
+      "sniper sightlines and grenade cover shaping the lanes"
+    ],
+    "preset_derived": ["cover-los", "choke-bottleneck"],
+    "preset_rejected": [],
+    "missing": [
+      { "field": "map count", "ask": "Three maps is more than one build can frame — would you rather I build the strongest one now as a full map and note the other two for later, or build all three at a smaller, simpler size?" },
+      { "field": "shape", "ask": "Should all three votable maps be the same kind of map — two bases with lanes and cover between them — or play differently from each other, say one lane network, one wide open battlefield, and one tight sequence of rooms to breach?" },
+      { "field": "option", "ask": "Where does the map vote happen — in a lobby the players stand around in before the round starts, or on a screen menu with no room to build?" },
+      { "field": "theme", "ask": "How should these maps look — modern military, sci-fi and neon, run-down post-apocalyptic, or bright and cartoony?" }
+    ],
+    "enriched_invented": []
+  },
+  "gaps": {
+    "unmatched_options": [
+      { "canonical": "map roster", "text": "three separate maps that all exist in the game, only one of which is played per round", "destination": "layout", "suggest_id": null, "quantity": "three maps" },
+      { "canonical": "map vote", "text": "at the start the three maps are put to a vote and whichever has the most votes is the one everyone plays", "destination": "ui", "suggest_id": null, "quantity": "three maps" }
+    ],
+    "genre_gap": null,
+    "skill_gap": {
+      "name": "multi-map handoff",
+      "why": "The prompt asks for three maps. P4 names that as a route, but the emit block carries exactly one shape, one option list, one theme and one scale band, so maps two and three can only be described in prose in notes. The stated number 'three' has nowhere to live either: count attaches to a pick, and no pick is the map."
+    }
+  },
+  "notes_for_us": [
+    "shooter.md gives a Pipeline column for options but no route for shapes — the Typical shapes line is bare IDs — so lane-network's route cannot be determined without shapes.md, which the read scope only permits when the typical shapes miss. I assumed P0.",
+    "An option taken from options.md cannot fill layout_placement.type: that file has no option-name column, so teleporter-link (a both row) emitted type: null. Shooter also has no lobby or staging row, and a match-based shooter with a pre-round lobby is the common case rather than the exception.",
+    "Step 4 says P4 is not ready and also says a plainly-stated feature makes its modifier required. Three votable maps trigger both at once, so the emitted route is simultaneously mandatory and undeliverable, and notes is the only place the deferred remainder can go.",
+    "Nothing sets a threshold between 'never inject an option the user did not choose' and step 0's 'read past the rule to the place the rule needs'. Vote-then-teleport implies somewhere to teleport from, but the prompt never names it; I took social-hub and teleporter-link, and another lane would defensibly emit neither.",
+    "This item is bucketed oversized-scale, yet layout-intake forbids a scale question unless the prompt names an extent without naming its contents. This prompt names neither, so the band is guessed silently with no question recorded — the oversizing here is four spaces asked for in one build, which the scale rule has no way to see."
+  ]
+}

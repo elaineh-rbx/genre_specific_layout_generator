@@ -1,0 +1,98 @@
+{
+  "item_id": "P0047",
+  "bucket": "mechanics-heavy",
+  "handoff": {
+    "genre_choice": {
+      "genres": ["shooter"],
+      "shape": { "id": "open-battlefield", "type": "Zone", "name": "Open Battlefield" },
+      "preset": "Battle Royale",
+      "pipeline": ["P3"],
+      "image_prompt": [
+        { "id": "building-interior", "text": "Buildings scattered across the battlefield that players can breach and fight inside" },
+        { "id": "social-hub", "text": "A lobby big enough to hold the whole server while the one-minute countdown before the battle runs" },
+        { "id": "spawn-protected", "text": "The lobby spawn players land on when they join, walled off from the fighting until the match starts" },
+        { "id": "teleporter-link", "text": "The way out of the lobby into the battlefield, taken by everyone at once when the minute is up" }
+      ],
+      "layout_placement": [
+        { "id": "boundary-shrinking", "type": "BoundaryZone", "text": "A play boundary that closes in over the match, squeezing survivors together until one is left standing" },
+        { "id": "collectible-loot", "type": "Collectible", "text": "Guns and equipment placed around the battlefield so players can arm themselves from the world" },
+        { "id": "spawn-protected", "type": "SpawnZone", "text": "Join spawn inside the lobby, out of reach of combat for the first minute" },
+        { "id": "teleporter-link", "type": null, "text": "Paired transport from the lobby to the battlefield, fired for everyone when the one-minute timer ends" }
+      ],
+      "mechanics": [
+        "You have a grenade launcher",
+        "You are in first person mode",
+        "You spawn in the lobby, then in 1 min you go to battle",
+        "Try to be last standing",
+        "If you win you get Isaac balloons",
+        "You buy better guns with Isaac balloons",
+        "Admin for the owner account TUATARA_12 only, who can get as many balloons as he wants",
+        "Only the owner has the chat title 'imowner'"
+      ],
+      "notes": [
+        "Battle Royale preset taken whole. `collectible-loot` is kept but sits awkwardly with the prompt, which says better guns are bought with Isaac balloons rather than found on the ground.",
+        "`building-interior` comes from the preset, not from the prompt, and it is what puts P3 on this build. Nothing the user wrote requires going indoors, so this is the cheapest thing to drop if P3 is unavailable.",
+        "`social-hub` and `teleporter-link` taken from `options.md` (worded by 6 genres each); Shooter's own table has no lobby row and no lobby-to-arena transition row.",
+        "`teleporter-link` is one of the *varies* rows. Routed P0 — one map with the lobby in it — because the prompt never says the lobby is a separate place. P4 if it is.",
+        "`options.md` does not carry the `Type (Flavor Name)` form, so `layout_placement.type` for `teleporter-link` could not be filled and is null.",
+        "The run's end is 'be last standing', which has no place attached to it. No `winner-zone` emitted; `boundary-shrinking` is what terminates the round spatially.",
+        "Scale set from the detail rule rather than the extent: the finest thing that matters is a breachable building, which is the Block band, even though battle royale is listed as typical of Region."
+      ]
+    },
+    "theme": null,
+    "scale": { "band": "block", "assumed": true },
+    "open_questions": [
+      { "field": "option", "ask": "Is the lobby a part of the same map as the battlefield, or a separate place players get teleported out of when the minute is up?" },
+      { "field": "scale", "ask": "What's the smallest thing you want to be able to make out on the battlefield — furniture inside rooms, individual buildings and doorways, city blocks and main roads, or coastlines and forests?" },
+      { "field": "option", "ask": "Where do players buy the better guns — at a shop or armoury they walk up to in the lobby, or from a menu on screen?" },
+      { "field": "theme", "ask": "How should this look — modern military, sci-fi and neon, post-apocalyptic ruins, or bright and cartoony?" }
+    ]
+  },
+  "coverage": {
+    "verdict": "partial",
+    "captured": [
+      "last-man-standing battle",
+      "lobby you spawn into",
+      "one-minute wait before the battle starts",
+      "transition from lobby to battlefield",
+      "gun combat with a grenade launcher",
+      "better guns bought with a currency",
+      "owner-only admin and chat title"
+    ],
+    "preset_derived": ["boundary-shrinking", "collectible-loot", "building-interior"],
+    "preset_rejected": [
+      { "id": "collectible-loot", "why": "the prompt says you buy better guns with Isaac balloons, which puts weapon acquisition in a shop rather than scattered across the map" }
+    ],
+    "missing": [
+      { "field": "option", "ask": "Is the lobby a part of the same map as the battlefield, or a separate place players get teleported out of when the minute is up?" },
+      { "field": "scale", "ask": "What's the smallest thing you want to be able to make out on the battlefield — furniture inside rooms, individual buildings and doorways, city blocks and main roads, or coastlines and forests?" },
+      { "field": "option", "ask": "Where do players buy the better guns — at a shop or armoury they walk up to in the lobby, or from a menu on screen?" },
+      { "field": "theme", "ask": "How should this look — modern military, sci-fi and neon, post-apocalyptic ruins, or bright and cartoony?" }
+    ],
+    "enriched_invented": []
+  },
+  "gaps": {
+    "unmatched_options": [
+      { "canonical": "weapon shop", "text": "you buy better guns with Isaac balloons", "destination": "ui", "suggest_id": null, "quantity": null },
+      { "canonical": "soft currency", "text": "Isaac balloons, paid out for winning a round and spent on guns", "destination": "progression", "suggest_id": null, "quantity": null },
+      { "canonical": "round timer", "text": "you spawn in the lobby then in 1min you go to battle", "destination": "mechanics", "suggest_id": null, "quantity": "1min" },
+      { "canonical": "first person camera", "text": "you are in first person mode", "destination": "mechanics", "suggest_id": null, "quantity": null },
+      { "canonical": "starting weapon", "text": "you have a grenade launcher", "destination": "mechanics", "suggest_id": null, "quantity": null },
+      { "canonical": "admin permission", "text": "only the account TUATARA_12 has admin and can grant himself unlimited balloons", "destination": "mechanics", "suggest_id": null, "quantity": null },
+      { "canonical": "chat title", "text": "only the owner has the chat title 'imowner'", "destination": "ui", "suggest_id": null, "quantity": null }
+    ],
+    "genre_gap": null,
+    "skill_gap": {
+      "name": "emit fields the reference files do not carry",
+      "why": "The emit format wants `type` and `name` for the shape and a Shared Vocabulary `type` for every layout placement, but a genre file lists shapes as bare IDs and `options.md` has no name column at all. Getting `open-battlefield`'s `Zone (Open Battlefield)` needed `shapes.md`, which step 2 says not to load by default, and `teleporter-link`'s type could not be filled from any file in scope."
+    }
+  },
+  "notes_for_us": [
+    "A genre file's Typical shapes line gives bare IDs, but emit needs `type` and `name` — so every shape outside the genre's 'Its own wording' table forces the shapes.md load step 2 tells you to avoid.",
+    "options.md has no `Type (Flavor Name)` column, so any option taken from the catalogue cannot fill layout_placement.type.",
+    "'Take the whole preset' collides with step 4's 'prefer P0/P6': Battle Royale's building-interior put P3 on a prompt that never mentions going indoors.",
+    "Intake says to ask about scale only when an extent is named without contents; it gives no rule for a prompt silent on both, and the band table's 'typical of battle royale = Region' fights its own 'detail wins' rule.",
+    "Step 4 says to infer the place the run ends from the genre, but battle royale's ending has no place — last standing happens wherever the boundary closes. No rule covers that."
+  ],
+  "incomplete": false
+}

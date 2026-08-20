@@ -210,8 +210,9 @@ def for_model(text: str, stage: str, profile: str | None = None,
     elif stage == "iso":
         if "reference" in adapted.lower() or "attached top-down plan" in adapted.lower():
             view = (
-                " FINAL CAMERA REQUIREMENT: re-render the reference layout from a steep "
-                "55-to-65-degree elevated oblique camera, visibly below nadir. Do not "
+                " FINAL CAMERA REQUIREMENT: re-render the reference layout from a true "
+                "isometric elevated-oblique camera, 30-to-40 degrees above the horizontal "
+                "ground plane (50-to-60 degrees away from vertical nadir). Do not "
                 "return, crop, trace, or lightly extrude the overhead reference. The "
                 "reference controls the footprint, not the camera. Show substantial "
                 "side faces, vertical height, depth, and cast shadows while preserving "
@@ -219,8 +220,9 @@ def for_model(text: str, stage: str, profile: str | None = None,
             )
         else:
             view = (
-                " FINAL CAMERA REQUIREMENT: use a steep 55-to-65-degree elevated oblique "
-                "camera, visibly below nadir, with substantial side faces, vertical "
+                " FINAL CAMERA REQUIREMENT: use a true isometric elevated-oblique camera, "
+                "30-to-40 degrees above the horizontal ground plane (50-to-60 degrees "
+                "away from vertical nadir), with substantial side faces, vertical "
                 "height, believable depth, scale, and cast shadows."
             )
     else:
@@ -232,7 +234,8 @@ def for_model(text: str, stage: str, profile: str | None = None,
 
 PREFIX = "Generate directly from this text prompt only, with no reference image: "
 TAIL = (
-    " Polished square Roblox-like 3D environment concept in a steep elevated oblique "
+    " Polished square Roblox-like 3D environment concept in a true isometric elevated-"
+    "oblique "
     "view. Keep the map footprint axis-aligned in the frame: its far/top boundary stays "
     "horizontal and its left and right boundaries stay vertical. Do not yaw the camera "
     "or rotate the map into a 45-degree diamond orientation. No captions or watermark."
@@ -504,13 +507,14 @@ def track_isometric(crossings: int = 0, closed: bool = True) -> str:
         f"{r} stays the only road in the image: no extra road, spur, shortcut or "
         "second track. Keep the SAME materials, surface colours, textures, props and "
         "lighting as the reference. CAMERA: this is the one thing that changes. The "
-        "reference looks straight down; tilt downward to a steep elevated oblique view "
+        "reference looks straight down; use a true isometric elevated-oblique camera "
+        "30-to-40 degrees above the horizontal ground plane "
         "without yawing or rotating the plan. Keep its top boundary horizontal and side "
         "boundaries vertical, never a 45-degree diamond. Side faces MUST now be visible "
         "- tree trunks under their "
         "canopies, the walls of buildings, the face of any tunnel mouth, the thickness "
         "of the ground - and the far side of the scene sits higher in the frame than "
-        f"the near side. Keep the angle steep enough that the whole {r} stays visible "
+        f"the near side. Keep the camera high enough that the whole {r} stays visible "
         "end to end rather than hidden behind scenery. No characters, labels, UI, "
         "borders or watermark.")
 

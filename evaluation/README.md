@@ -23,6 +23,7 @@ evaluation/
 | File | What it is |
 |---|---|
 | `LayoutGen - Golden Set Evaluation.md` | The main report. Read this first. |
+| `ask-audit.md` | Audit A — grades the 1,494 questions intake asks back. Adding one `goal` field takes clear-path rows from 37% to 77% |
 | `ask-merge-layout.md` | 942 ask clusters merged to 70 layout concepts |
 | `ask-merge-context.md` | 632 clusters merged to 71 context-file concepts |
 | `ask-merge-systems.md` | 757 clusters merged to ~150 mechanics/constraint concepts |
@@ -63,6 +64,8 @@ python evaluation/tools/test_eval_grade.py           # unit tests for the verdic
 | `eval_cluster.py`, `eval_split_clusters.py` | Mechanical ask clustering, split by destination |
 | `eval_verify_concepts.py`, `eval_verify_systems.py` | Independent re-derivation of merge claims |
 | `eval_check_49.py`, `eval_split_49.py` | The batch-49 duplicate incident |
+| `eval_questions.py` | What intake asks users back. `--pre` for the pre-forward-pass round trip, `--show <field>` for prompt-and-question pairs |
+| `eval_ask_audit.py` | Grades those questions: does the answer have a home, was any gap left unasked, is the question closed or open-ended. `--pre`, `--landing <none\|partial>`, `--residual` |
 | `eval_peek.py`, `eval_show.py`, `eval_families.py` | Ad-hoc inspection |
 
 ## Reading the numbers honestly

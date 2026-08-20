@@ -56,6 +56,26 @@ class MapperProceduralDispatchTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "initial_scene_subprompt_enriched"):
             mapper.build(spec)
 
+    def test_final_scoped_body_reaches_both_views_for_every_order(self) -> None:
+        cases = (
+            ("Action", "space-bounded", "isometric"),
+            ("Action", "space-bounded", "topdown"),
+            ("Racing", "route-circuit", "authored_plan"),
+        )
+        scoped = "ONLY THE SELECTED ACTIVE HARBOUR."
+        for genre, shape, first in cases:
+            with self.subTest(first=first):
+                spec = _spec(genre, shape, first)
+                spec["initial_scene_subprompt_enriched"] = scoped
+                built = mapper.build(spec)
+                second = (
+                    built["topdown"]
+                    if built["order"] in {"std", "layout"}
+                    else built["plan"]
+                )
+                self.assertIn(scoped, built["iso"])
+                self.assertIn(scoped, second)
+
     def test_supported_track_forces_track_generator(self) -> None:
         built = mapper.build(_spec("Racing", "route-circuit", "topdown"))
 

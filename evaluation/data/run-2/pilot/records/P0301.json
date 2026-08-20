@@ -1,0 +1,85 @@
+{
+  "item_id": "P0301",
+  "bucket": "free-text-heavy",
+  "handoff": {
+    "genre_choice": {
+      "genres": ["action"],
+      "shape": { "id": "traversal-city", "type": "Zone", "name": "Traversal City" },
+      "preset": "Parkour Traversal",
+      "pipeline": ["P2"],
+      "image_prompt": [
+        { "id": "cover-los", "text": "Rooftop clutter across the skyline — water towers, billboards, stair housings and AC blocks — big enough to break line of sight and drop out of a fight behind" },
+        { "id": "hazard-kill", "text": "Open drops at every roof edge and unbridged street canyons between blocks, so a missed landing costs the player" },
+        { "id": "choke-bottleneck", "text": "Narrow crossings between blocks — skybridges, alley mouths, single-file ledges — where a chase or a fight is forced together" },
+        { "id": null, "text": "buildings tall enough and close enough together that you can shoot webs and swing between them, with a fairly even roofline spacing across the whole city" }
+      ],
+      "layout_placement": [
+        { "id": "spawner-npc", "type": "Spawner", "text": "Street-level flashpoints where a crime kicks off and hostile NPCs enter the city mid-play" }
+      ],
+      "mechanics": [
+        "you play as Spider-Man",
+        "you shoot webs",
+        "web-swinging is the movement system",
+        "crimes occur periodically as events",
+        "stopping the crimes is what the player does"
+      ],
+      "notes": [
+        "Preset Parkour Traversal taken whole, shape unchanged (traversal-city); spawner-npc added on top for the crime events, which the preset does not carry.",
+        "traversal-city carries P2 (rooftops overhanging streets). Step 4 prefers routes that are delivered and P2 is not, but the override table does not list traversal-city and the overhang is the point of the shape, so P2 stands rather than being downgraded.",
+        "Close shape call: volume-open-air (rooftops and landing pads with no continuous ground) was rejected because the prompt implies streets below where the crimes happen.",
+        "Extent vs detail: 'the city' is a district-or-larger extent, but swinging between individual buildings needs building-level detail, so the band was set to block and the build is one dense district. Extending to further districts would be P4 separate maps, which is deferred.",
+        "The run's ending is not a place here: crime events recur and the city loops, so no winner-zone was emitted."
+      ]
+    },
+    "theme": "Modern Urban",
+    "scale": { "band": "block", "assumed": true },
+    "open_questions": [
+      { "field": "scale", "ask": "What's the smallest thing you want to be able to make out in the city — furniture inside rooms, individual buildings and street lights, city blocks and main roads, or coastlines and skyline silhouettes?" },
+      { "field": "option", "ask": "What kind of city should this be to swing through — a dense downtown of tall towers packed close, a mid-rise grid with a few skyscrapers, or low blocks with wide streets between them?" },
+      { "field": "option", "ask": "When a crime kicks off, where should it happen — down at street level, up on the rooftops, or both?" },
+      { "field": "theme", "ask": "How should the city look — bright comic-book colours, or grittier realistic modern city?" }
+    ]
+  },
+  "coverage": {
+    "verdict": "partial",
+    "captured": [
+      "a city as the play space",
+      "web-swinging between buildings as the way you move",
+      "rooftops and the gaps between them",
+      "crimes appearing in the city as recurring events",
+      "the player fights the criminals"
+    ],
+    "preset_derived": ["cover-los", "hazard-kill", "choke-bottleneck"],
+    "preset_rejected": [],
+    "missing": [
+      { "field": "scale", "ask": "What's the smallest thing you want to be able to make out in the city — furniture inside rooms, individual buildings and street lights, city blocks and main roads, or coastlines and skyline silhouettes?" },
+      { "field": "option", "ask": "What kind of city should this be to swing through — a dense downtown of tall towers packed close, a mid-rise grid with a few skyscrapers, or low blocks with wide streets between them?" },
+      { "field": "option", "ask": "When a crime kicks off, where should it happen — down at street level, up on the rooftops, or both?" },
+      { "field": "theme", "ask": "How should the city look — bright comic-book colours, or grittier realistic modern city?" }
+    ],
+    "enriched_invented": []
+  },
+  "gaps": {
+    "unmatched_options": [
+      {
+        "canonical": "swing anchor",
+        "text": "buildings tall enough and close enough together that you can shoot webs and swing between them",
+        "destination": "image",
+        "suggest_id": null,
+        "quantity": null
+      }
+    ],
+    "genre_gap": null,
+    "skill_gap": {
+      "name": "no geometry rule for a traversal ability",
+      "why": "The whole prompt turns on web-swinging, which is a hard constraint on the geometry — building heights and the spacing between them have to be inside swing range or the game does not work. traversal-city gets close with 'gaps sized for a moving player', but nothing in the network lets the prompt's specific movement ability parameterise that, so the requirement had to ship as an id:null free-text image entry with no route behind it."
+    }
+  },
+  "notes_for_us": [
+    "The genre file lists typical shapes as bare IDs with no type, flavour name or route, so emitting `shape` and `pipeline` at all was impossible from the files the read scope allows. I had to open shapes.md even though the typical shapes did not miss.",
+    "Step 4 says prefer routes that are delivered because P2 is not ready, but the preset that matches this prompt exactly routes to traversal-city, which is P2, and the override table does not list it. The skill gives no instruction for a preset whose only shape cannot be built today.",
+    "The theme rule contradicts itself for prompts like this: 'infer it where possible' versus 'if the prompt is silent, emit null'. 'The city' names a setting but not a look, and two lanes would reasonably emit Modern Urban and null.",
+    "Nothing tests whether a preset option suits the prompt's movement. hazard-kill (bottomless ring-out edges) on a hero who catches himself with a web is neither contradicted nor plainly right, and the rules push toward keeping it silently.",
+    "The scale table splits 'individual buildings' (block) from 'blocks and main roads' (district), but a swingable city genuinely needs both, and detail-wins shrinks 'the city' to a few blocks with no guidance on whether that is an acceptable answer or a refusal to state."
+  ]
+}

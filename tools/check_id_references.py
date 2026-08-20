@@ -32,7 +32,8 @@ ID_LIKE = re.compile(r"`([a-z][a-z0-9]*(?:-[a-z0-9]+)+)`")
 # names, pipeline vocabulary, filenames, CSS/JS, and Roblox API names.
 ALLOW = {
     # handoff / schema
-    "layout-intake", "genre-choice", "uprez-prompt", "no-genre",
+    "layout-intake", "genre-choice", "uprez-prompt", "scope-reduce-default",
+    "no-genre",
     "layout_placement",
     "axis-enclosure", "axis-verticality", "axis-zone-count",
     "axis-structure", "axis-play-space",

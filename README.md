@@ -11,6 +11,7 @@ The canonical architecture and current corpus are documented in
 ```text
 Build Agent intake
   -> real Cursor agent reads the full layout skills
+  -> oversized requests reduce to one buildable active zone
   -> prose layout decision with one enriched scene body
   -> one strict Gateway prose-to-JSON call
   -> deterministic normalisation and prompt assembly
@@ -35,6 +36,7 @@ downstream call budgets.
 | --- | --- |
 | `tools/agent_task.md` | Cursor-agent prose contract |
 | `.cursor/skills/genre-choice/` | Genre, shape, option, and route decision workflow |
+| `.cursor/skills/scope-reduce-default/SKILL.md` | No-question reduction to one buildable active zone |
 | `.cursor/skills/layout-blob/SKILL.md` | Nine-section prose handoff |
 | `results/routing/agent_blob/` | Self-contained prose decisions with enriched image-ready bodies |
 | `tools/build_agent_arm.py` | One strict Gateway transcription per artifact |
@@ -46,7 +48,7 @@ downstream call budgets.
 | `tools/build_pipeline_viewer.py` | Per-scene production pipeline viewer |
 
 `docs/LayoutGen - Build.md` is the source catalogue. `layoutgen/model/rules.py` parses it
-at import, so the shared 45-shape and option model cannot drift from the document.
+at import, so the shared 46-shape and option model cannot drift from the document.
 
 ## Run the production flow
 

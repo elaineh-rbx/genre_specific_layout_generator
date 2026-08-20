@@ -7,9 +7,10 @@ difference in the spec and can be diffed as one. The judgement all happened upst
 model to do.
 
 The assembly is `pipeline.spec.build`, the same deterministic function every other arm
-goes through. A current agent spec carries `initial_scene_subprompt_enriched`: the
-context-aware agent's final image-ready description, already containing the visible,
-scene-specific realization of its picks. That text is the only scene body and is followed
+goes through. A current agent spec carries `initial_scene_subprompt_enriched`: the exact
+text extracted from the agent decision's final post-scope section, already containing the
+visible, scene-specific realization of only the executable scope. That text is the only
+scene body and is followed
 by the canonical Build.md shape and visible-option requirements. Keeping both ingredients
 is deliberate: the enriched prose provides scene context, while the catalogue addendum
 guarantees that no selected layout constraint disappears during enrichment.

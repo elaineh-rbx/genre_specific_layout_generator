@@ -80,7 +80,7 @@ flowchart TD
 
     subgraph BA["BUILD AGENT"]
         I["Conversational intake<br/>ask only layout-changing questions"]
-        A["Real Cursor agent<br/>reads uprez, genre, shape,<br/>and layout-blob skills"]
+        A["Real Cursor agent<br/>reads uprez, genre, shape,<br/>scope-reduce, and layout-blob skills"]
         P[/"Prose agent decision<br/>with enriched image-ready body<br/>never JSON"/]
         I --> A --> P
     end
@@ -118,8 +118,10 @@ flowchart TD
 
 The Build Agent is the only component that talks to the author. It uses
 `.cursor/skills/layout-intake/` for dispatch and `.cursor/skills/genre-choice/` when
-intake routes a layout concern there. Goal or win condition is not collected unless it
-changes spatial shape.
+intake routes a layout concern there. Once the full request is known,
+`.cursor/skills/scope-reduce-default/` reduces genuine multi-frame requests to one
+buildable active zone without another user question. Goal or win condition is not
+collected unless it changes spatial shape.
 
 The corrected corpus inputs are seeded by `tools/make_agent_inputs.py`, which projects
 only the raw `source` and author `answers` from `results/routing/answered/` into
@@ -140,7 +142,8 @@ The agent contract is in `tools/agent_task.md`. The agent reads:
 3. `.cursor/skills/genre-choice/SKILL.md`;
 4. `.cursor/skills/genre-choice/shapes.md`;
 5. the selected genre file, or `no-genre.md`;
-6. `.cursor/skills/layout-blob/SKILL.md`.
+6. `.cursor/skills/scope-reduce-default/SKILL.md`;
+7. `.cursor/skills/layout-blob/SKILL.md`.
 
 Per scene it reads `results/routing/agent_input/<SCENE>.json`, which contains the original
 source prompt and intake answers. It writes:
@@ -153,30 +156,34 @@ The artifact has one outer section:
 
 ```markdown
 # Agent decision
-<nine prose sections>
+<ten prose sections>
 ```
 
-The nine decision sections are:
+The ten decision sections are:
 
 1. Clarifications resolved
-2. Enriched image prompt
-3. Genre
-4. Shape and preset
-5. Config requirements
-6. Layout requirements
-7. Layout components
-8. Render order
-9. Scale, theme, and pipeline cost
+2. Genre
+3. Shape and preset
+4. Config requirements
+5. Layout requirements
+6. Layout components
+7. Render order
+8. Scale, theme, and pipeline cost
+9. Scope reduction result
+10. Final scoped image prompt
 
 The first section records every layout-changing question and answer used. Existing intake
 answers are labelled `author`; in an offline batch, necessary unanswered questions receive
-the narrowest grounded answer and are labelled `agent_inferred`. The second section is one
-or two image-ready paragraphs synthesized from the original message, those resolutions,
-and the visible spatial decisions the agent makes. This enriched prompt is the sole scene
-body accepted by rendering. Author answers override conflicting details in the original
-message. The agent names canonical IDs in backticks in the remaining sections and writes
-English prose rather than JSON. The separation is deliberate: the agent decides; the
-Gateway only encodes the decision.
+the narrowest grounded answer and are labelled `agent_inferred`. Sections 2–8 record the
+complete full-request handoff before any scope is removed. Section 9 then applies
+`scope-reduce-default` to that completed handoff, preserving the full request and adding
+zones plus one executable active zone when reduction fires. Section 10 is one or two
+image-ready paragraphs synthesized **after that final scope decision**. It describes only
+the active zone when one exists, otherwise the whole request, and is the sole scene body
+accepted by both image paths. Author answers override conflicting details in the original
+message. The agent names canonical IDs in backticks and writes English prose rather than
+JSON. The separation is deliberate: the agent decides; the Gateway only encodes the
+decision.
 
 ## Stage 2 — One strict Gateway transcription call
 
@@ -212,7 +219,8 @@ parser.
 The output is a structured layout spec containing:
 
 - `clarifications[]`, with `author` or `agent_inferred` provenance;
-- `initial_scene_subprompt_enriched`, copied verbatim from the agent's enriched section;
+- `initial_scene_subprompt_enriched`, deterministically pinned from the agent's final
+  scoped image-prompt section after transcription;
 - `genre` and `secondary`;
 - one shared-catalogue `shape`, or axes for No Genre/described shapes;
 - `preset`;

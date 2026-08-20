@@ -7,15 +7,17 @@ disable-model-invocation: true
 # Uprez Prompt
 
 You turn a Roblox Build Agent **initial user message**, its **intake answers**,
-and the agent's spatial decisions into the sole **enriched image-ready scene
-body**: a concise description of the **3D map / level layout** to build (spaces,
-props, terrain, camera-facing composition) — not game rules, UI, or code.
+the agent's spatial decisions, and any active zone selected by
+`scope-reduce-default` into the sole **enriched image-ready scene body**: a
+concise description of the **3D map / level layout** to build (spaces, props,
+terrain, camera-facing composition) — not game rules, UI, or code.
 
-This guidance is applied while writing `## Enriched image prompt` inside the
-self-contained layout decision. It does not produce a separate intermediate
-brief. Anything spatial dropped from the enriched body is gone when prompts are
-assembled, so preserve every grounded layout fact and let intake answers
-override conflicting details in the original message.
+This guidance is applied while writing `## Final scoped image prompt` at the
+end of the self-contained layout decision, after the full-request handoff and
+`scope-reduce-default` result are complete. It does not produce a separate
+intermediate brief. Anything spatial dropped from this final body is gone when
+prompts are assembled, so preserve every grounded fact belonging to the
+executable scope and let intake answers override conflicting details.
 
 ## Goal
 
@@ -63,6 +65,15 @@ showing…" or "Build a 3D layout with…" when natural.
    This constrains what you **add**. It is never a reason to drop something the
    author did say — a spatial fact in the message survives at any length, and a
    long brief still gets every room and every count.
+7. **Write this paragraph only after scope reduction has run on the completed
+   full-request handoff.** When `scope-reduce-default` does not fire, the scene
+   body covers the whole request. When it fires, the scene body covers only the
+   selected `active` zone, using that zone's shape, visible options, theme,
+   scale, and components. Do not fold deferred zones into the background or
+   mention them as things the image should show. Do not mention them negatively
+   either: “do not show the other maps” still sends those maps to the model.
+   Delete that clause and describe the active zone positively. Deferred content
+   remains in `## Scope reduction result`, outside this prompt.
 
 ## Example
 
@@ -241,7 +252,7 @@ describe that part and drop the rest.
 
 ## Output contract
 
-Write only the image-ready prose for the `## Enriched image prompt` section of
-the layout decision. Do not emit JSON or a separate intermediate brief. The
-strict transcriber later copies this prose verbatim into
+Write only the image-ready prose for the `## Final scoped image prompt` section
+of the layout decision. Do not emit JSON or a separate intermediate brief. The
+builder later copies this prose verbatim into
 `initial_scene_subprompt_enriched`.

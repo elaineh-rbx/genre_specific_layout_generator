@@ -1,0 +1,81 @@
+{
+  "item_id": "P0081",
+  "bucket": "unreachable-option",
+  "handoff": {
+    "genre_choice": {
+      "genres": ["party-casual"],
+      "shape": { "id": "space-bounded", "type": "SocialZone", "name": "Continuous Play Space" },
+      "preset": "Childhood Game",
+      "pipeline": ["P6"],
+      "image_prompt": [
+        { "id": "cover-los", "text": "Large arrays of repeating everyday props all around the map — crates, barrels, bins, furniture, bushes — each one roughly player-sized and duplicated often enough that a hider standing among them passes for one of them, and arranged so sightlines are broken" },
+        { "id": "obstacle-maze", "text": "A warren of small rooms and connecting corridors to hide in and be hunted through" },
+        { "id": "social-hub", "text": "A lobby where everyone gathers before and between rounds, sized for the whole server without bottlenecking at the exits" }
+      ],
+      "layout_placement": [
+        { "id": "spawn-protected", "type": "SpawnZone", "text": "Round start points spread through the hiding space so no hider begins the round already in the grandma's line of sight" },
+        { "id": "spawner-npc", "type": "Spawner", "text": "Where the grandma enters the space and begins hunting from, set apart from the hiders' start points" },
+        { "id": "trigger-scoring", "type": "TriggerZone", "text": "Detection regions that register a hider being caught and the round being completed" }
+      ],
+      "mechanics": [
+        "you can be as the stuff around the map — turn into a prop so the seeker does not spot you",
+        "a grandma is the one hunting you, and getting caught by her is how you lose",
+        "hide and seek rounds: hiders versus a seeker"
+      ],
+      "notes": [
+        "Preset Childhood Game taken whole. `obstacle-maze` came from the preset rather than the prompt, and it is the only thing putting this build on P6 — the prompt never asked for a maze, only for 'stuff around'.",
+        "The prompt does not say whether the grandma is an NPC or a player. Read as an NPC seeker (indefinite 'a grandma', Granny-style), so `spawner-npc` was placed for where she starts. If she is a player, drop it and the round-start points cover both sides.",
+        "`spawner-npc` taken from options.md (worded by Action, RPG, Shooter, Strategy, Survival). Its catalogue concept is 'where NPCs enter the space', written for hostile waves entering a fight; here it is carrying a single roaming hunter, which is a stretch of the row.",
+        "`spawner-npc` type emitted as \"Spawner\" by inference: options.md carries the concept only, not the `**Type (Flavor Name)**` string, and the genre files that word it were not loaded.",
+        "`spawn-protected` and `trigger-scoring` were reasoned forward from the genre (step 0), not stated by the prompt: hide-and-seek presupposes start points apart from the seeker, and a place where being caught registers, which is the only spatial part of 'so you won't get caught'.",
+        "Extent and detail disagree here. The band was set by the smallest thing that matters — the props a hider disguises as, which have to be individually recognisable — so Room. A hide-and-seek map with a lobby and a warren would ordinarily be Block extent; detail wins per the rule, and the consequence is a small map.",
+        "Survival was considered as a second genre (killer, chase) and rejected: the Childhood Game preset already covers hide-and-seek, so Survival was doing no real work beyond the one option borrowed from its table."
+      ]
+    },
+    "theme": null,
+    "scale": { "band": "room", "assumed": true },
+    "open_questions": [
+      { "field": "option", "ask": "Is the hiding space a maze of small rooms and corridors — the inside of a house — or one open area filled with clutter to hide among?" },
+      { "field": "option", "ask": "Is the grandma controlled by the game, with her own spot in the map that she starts hunting from, or is she one of the players, picked as the seeker each round?" },
+      { "field": "theme", "ask": "Nothing here says how it should look — bright and cartoony, a cosy suburban house, or dim and creepy?" },
+      { "field": "option", "ask": "What kind of stuff should players be able to turn into — household furniture, boxes and barrels, garden plants and bins, or a mix of all of them?" }
+    ]
+  },
+  "coverage": {
+    "verdict": "partial",
+    "captured": [
+      "hide and seek",
+      "props scattered all around the map that a hider can pass for",
+      "clutter dense enough to break sightlines",
+      "a seeker to avoid (the grandma)",
+      "3D, so a real walkable space rather than a screen game"
+    ],
+    "preset_derived": ["obstacle-maze", "social-hub"],
+    "preset_rejected": [],
+    "missing": [
+      { "field": "option", "ask": "Is the hiding space a maze of small rooms and corridors — the inside of a house — or one open area filled with clutter to hide among?" },
+      { "field": "option", "ask": "Is the grandma controlled by the game, with her own spot in the map that she starts hunting from, or is she one of the players, picked as the seeker each round?" },
+      { "field": "option", "ask": "What kind of stuff should players be able to turn into — household furniture, boxes and barrels, garden plants and bins, or a mix of all of them?" },
+      { "field": "theme", "ask": "Nothing here says how it should look — bright and cartoony, a cosy suburban house, or dim and creepy?" }
+    ],
+    "enriched_invented": []
+  },
+  "gaps": {
+    "unmatched_options": [
+      { "canonical": "prop disguise", "text": "stuff around the map that you can be as, so the grandma will not spot you — the player becomes one of the props", "destination": "mechanics", "suggest_id": null, "quantity": null },
+      { "canonical": "npc seeker", "text": "a grandma who hunts the hiders — a single roaming antagonist NPC, not a wave of them", "destination": "layout", "suggest_id": "hunter-roaming", "quantity": null }
+    ],
+    "genre_gap": null,
+    "skill_gap": {
+      "name": "no home for a single roaming hunter",
+      "why": "The seeker's place in the map is the scene's to carry, and no row holds it. `npc-population` explicitly excludes hostiles, `spawner-npc` is an emitter written for waves entering a fight, and `spawn-protected` is the hiders' side. The grandma was filed as `spawner-npc` for want of anything closer, which will read to the image model as a monster spawn mouth rather than one character starting somewhere."
+    }
+  },
+  "notes_for_us": [
+    "`coverage.enriched_invented` is required by LANE-BRIEF but the pilot prompts.json has no `enriched` key, so it is empty by necessity rather than by finding.",
+    "Taking the whole preset put `obstacle-maze` in, and that one preset-derived option is what routes the entire build P6. Nothing in the skill flags that accepting a preset can change the pipeline route.",
+    "The scale rule ('detail wins') forces Room for a prop-hunt map that plainly needs Block extent, and there is no field that can hold both — only a note.",
+    "Picks reasoned forward from the genre (step 0) have no label. `preset_derived` covers presets only, so genre-inferred options are indistinguishable in the record from ones the prompt actually asked for.",
+    "options.md gives concepts but not the `**Type (Flavor Name)**` strings, so an option borrowed from an unloaded genre cannot supply the `type` that `layout_placement` requires without guessing."
+  ]
+}

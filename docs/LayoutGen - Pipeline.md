@@ -245,6 +245,8 @@ The **five routing axes** defined in `LayoutGen - Build.md` are the router's inp
 
 **Most builds already route entirely on the proven pipeline**, and most modifiers that do appear are required by something the prompt says rather than inherited from a default — so this rule moves few builds. Two guards, both in Build.md's *Pipeline costs*: it steers judgements about scale and structure, never the presence of a feature the game obviously has (interiors are the common trap — "houses you sleep in" needs `P3` without saying so), and the deferral is always stated to the user rather than applied silently.
 
+**The no-user agent arm applies `scope-reduce-default` after recording that honest full-request route.** It keeps the full request in a scope ledger, cuts genuine P3/P4 or multi-frame requests into zones, and auto-selects one buildable P0/P6 active zone before writing the final enriched image prompt. P2 is stepped down only through a named tiered twin with `reduced_from`; when no honest twin exists, `core_deferred` says that the core is waiting. The original request is therefore neither erased nor sent whole to a pipeline that cannot build it.
+
 > **Support status — designed versus running.** **P2** (elevation), **P4** (multi-zone) and **P6** (procedural-first) are all *designable* phases: none needs a capability the pipeline cannot have. Only **P6** is running today. See the readiness gate later in this Part for what can actually be delivered, and prefer P0 or P6 whenever the prompt does not require otherwise. **Interior-only games are fully supported** — they are generated **roofless as a single top-down** and route as P0 (no special handling). **P3** covers only the harder **outside → inside transition**, which needs a **second, linked top-down** for the interior; this is a genuine deviation from the single-top-down current pipeline (a P4-style extra pass), not an impossible capability. The remaining open question is only how the exterior and interior top-downs are *linked* (door registration), not whether the interior can be generated.
 
 ### **The routing tree**
@@ -389,7 +391,7 @@ flowchart TD
 
 **Keyed on shape, and there is exactly one table to key on.** Build.md's **Shape Catalog** holds every shape in the system and **every one is reachable from every genre**, so this is a flat lookup rather than a per-genre grid. A genre may reword a shape; it cannot re-route one. That is why the route lives in the catalogue and is restated here once.
 
-One row per shape, so a shape cannot disagree with itself across genres. 45 shapes, 45 rows, no duplicates.
+One row per shape, so a shape cannot disagree with itself across genres. 46 shapes, 46 rows, no duplicates.
 
 Read a build's route as **genre route ∪ shape route ∪ every picked option's route.**
 
@@ -417,6 +419,7 @@ Read a build's route as **genre route ∪ shape route ∪ every picked option's 
 | `settlement-claimable` | **P3** | **Only if the interiors are real.** A claimable house nobody enters is P0. |
 | `settlement-buildable` | **P3** | **Only if the interiors are real.** |
 | `arena-stacked` | **P2** | Surfaces overhang: per-elevation slices plus a vertical connectivity graph. |
+| `traversal-city-tiered` | P0 + tiered | A roof sits above its own building, not above the road, so a city crossed roof to roof is one surface per ground position. The height must be captured or it builds flat. |
 | `traversal-city` | **P2** | Rooftops over streets is overhang by definition, and both levels are played on. |
 | `set-display` | `SET` | Real geometry that nobody crosses. Build and light it; skip traversal segmentation and reachability, because there is no route to check. Stage B reaches the same verdict from the other direction. |
 | `world-underground` | **P2 + P3** | The layers overhang and the descent is a transition. |
@@ -509,6 +512,8 @@ Each pipeline phase (Part I) fails for a specific reason. Triage is really "whic
 **Every row above assumes an avatar moves through the result. Some games have no such avatar.** A board on a table, an idle screen, a rhythm stage, a gallery shooter on rails — real geometry that nobody walks on. Those carry **`SET`**, and it is the one flag that *removes* work: phases 2 through 5 run as normal, but traversal segmentation, path connectivity, and jump-gap validation are skipped, because nothing has to be reachable. It therefore cannot trip **F3** or **F6** — an unsolvable maze is not a defect in a maze nobody walks. Frame the camera on the whole set rather than over a spawn point, since there is no spawn point.
 
 **Readiness gate before acting on any of this.** P0 and P6 are built and running; **P2, P3, P4 and `CHECK` are not production-ready.** So a modifier is not a slower build of the same game, it is one that cannot be delivered today. Intake therefore prefers the route that stays on P0 or P6 whenever nothing in the prompt requires otherwise, states the deferral to the user rather than downgrading silently, and records it in `notes`. Most builds are already there, so **this settles ties rather than filtering work.** The guard is that it steers judgements about *scale and structure* — one map or several, does anything overhang — and never the presence of a feature the game obviously has. **Interiors are the trap:** "houses you sleep in" and "shops you buy from" both require `P3` without using the word.
+
+For the offline/no-question agent arm, the scope ledger and `reduced_from` / `core_deferred` records are how the same "never silently" rule is satisfied; the active zone alone becomes the executable prompt.
 
 **Two further guards on that preference.**
 

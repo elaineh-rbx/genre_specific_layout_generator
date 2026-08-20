@@ -1,0 +1,83 @@
+{
+  "item_id": "P0462",
+  "bucket": "unreachable-option",
+  "handoff": {
+    "genre_choice": {
+      "genres": ["sports"],
+      "shape": { "id": "space-bounded", "type": "Zone", "name": "Bounded Field or Court" },
+      "preset": "Court Sport",
+      "pipeline": ["P0"],
+      "image_prompt": [
+        { "id": "trigger-bounds", "text": "Painted sidelines and baselines marking the edge of the blacktop court" },
+        { "id": "startpoint-play", "text": "A centre circle at midcourt and free-throw spots the ball is put back into play from" },
+        { "id": "trigger-scoring", "text": "A backboard, rim and net on a pole at each end of the court" },
+        { "id": "marker-distance", "text": "Painted three-point arc, key and free-throw line on the asphalt" },
+        { "id": "barrier-perimeter", "text": "Chain-link fencing enclosing the court so the ball stays in" },
+        { "id": "social-hub", "text": "An open blacktop area around the court where players gather between games" },
+        { "id": null, "text": "the city park the court sits in — grass, trees, benches and street lamps around the blacktop" }
+      ],
+      "layout_placement": [
+        { "id": "trigger-bounds", "type": "TriggerZone", "text": "A detection perimeter on the court lines so play stops the moment the ball or a player crosses out" },
+        { "id": "startpoint-play", "type": "StartPoint", "text": "Fixed reset positions at midcourt and the free-throw line for restarting play" },
+        { "id": "trigger-scoring", "type": "TriggerZone", "text": "An invisible cylinder through each hoop that registers a made basket" }
+      ],
+      "mechanics": [],
+      "notes": [
+        "Preset Court Sport taken whole; added barrier-perimeter, marker-distance and social-hub for the street-court and park half of the reference.",
+        "social-hub taken from options.md, where it is listed as worded by '6 genres' and no genre is named — text written from the prompt instead of a genre's wording.",
+        "trigger-scoring emitted as `both` per Sports' own table; options.md lists the same ID as `layout` only.",
+        "marker-distance is not in the Court Sport preset; added because a basketball court's three-point arc and key are constitutive markings rather than decoration.",
+        "Built as one court. NBA 2K's Park is several adjacent courts; the prompt says 'court' singular, so the multi-court reading is an open question.",
+        "The run ends at the hoop — inferred from the genre per step 4, not asked."
+      ]
+    },
+    "theme": "Modern Urban",
+    "scale": { "band": "block", "assumed": true },
+    "open_questions": [
+      { "field": "shape", "ask": "NBA 2K's Park is several courts side by side rather than one — do you want the whole park with multiple courts and open ground between them, or just the single full-size court?" },
+      { "field": "option", "ask": "Around the court, would you rather have tiered bleachers to sit and watch from, or just an open blacktop edge where waiting players stand?" },
+      { "field": "theme", "ask": "Should it read as a gritty real-world city park — cracked asphalt, chain-link, graffiti — or as a bright stylized Roblox look with clean saturated colours?" }
+    ]
+  },
+  "coverage": {
+    "verdict": "partial",
+    "captured": [
+      "basketball court",
+      "NBA 2K Park reference — outdoor street court rather than an indoor arena",
+      "fenced blacktop with an open gathering area around it",
+      "hoops, court markings and out-of-bounds implied by the sport"
+    ],
+    "preset_derived": ["trigger-bounds", "startpoint-play", "trigger-scoring"],
+    "preset_rejected": [],
+    "missing": [
+      { "field": "shape", "ask": "NBA 2K's Park is several courts side by side rather than one — do you want the whole park with multiple courts and open ground between them, or just the single full-size court?" },
+      { "field": "option", "ask": "Around the court, would you rather have tiered bleachers to sit and watch from, or just an open blacktop edge where waiting players stand?" },
+      { "field": "theme", "ask": "Should it read as a gritty real-world city park — cracked asphalt, chain-link, graffiti — or as a bright stylized Roblox look with clean saturated colours?" }
+    ],
+    "enriched_invented": []
+  },
+  "gaps": {
+    "unmatched_options": [
+      {
+        "canonical": "park",
+        "text": "the city park the court sits in — grass, trees, benches and street lamps around the blacktop, which is what 'the park' means in the reference",
+        "destination": "image",
+        "suggest_id": null,
+        "quantity": null
+      }
+    ],
+    "genre_gap": null,
+    "skill_gap": {
+      "name": "no rule for expanding a named reference",
+      "why": "the entire prompt is a reference to a commercial game's mode, and how much of it to build — one court, or the multi-court social park it names — changes the shape, the scale band and half the options. The only guidance anywhere in the skills is a single example row ('an exact replica of the Blox Fruits first sea') in the mixing table, which shows a reference being read for genre but says nothing about how far to expand one into geometry."
+    }
+  },
+  "notes_for_us": [
+    "options.md gives `social-hub` as worded by '6 genres' and names none, so step 2's instruction to 'say which genre you took it from' cannot be followed and there is no genre wording to inject.",
+    "`trigger-scoring` is `both` in sports.md but `layout` in options.md, while options.md states the route and Goes to 'come with the row' — the two files contradict on a Core option.",
+    "layout-intake gives `scale` an `assumed` flag but theme none, so a theme inferred from a reference is indistinguishable downstream from one the user stated.",
+    "Sports has no row for the grounds a facility sits in: `space-bounded` is the court perimeter and `barrier-perimeter` is the fence, so the surrounding park had nowhere to go but free text.",
+    "prompts.json for this run has no `enriched` field, so `coverage.enriched_invented` could not be filled as LANE-BRIEF describes."
+  ],
+  "incomplete": false
+}

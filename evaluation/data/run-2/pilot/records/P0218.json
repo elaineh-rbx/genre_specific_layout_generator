@@ -1,0 +1,104 @@
+{
+  "item_id": "P0218",
+  "bucket": "free-text-heavy",
+  "handoff": {
+    "genre_choice": {
+      "genres": ["roleplay-avatar-sim", "shooter"],
+      "shape": { "id": "settlement-static", "type": "Zone", "name": "Static Settlement" },
+      "preset": "Morph Roleplay",
+      "pipeline": ["P3", "P0 + tiered"],
+      "image_prompt": [
+        { "id": "building-interior", "text": "Cell blocks, the mess hall and the guard offices as buildings players actually go inside, not facades seen from the yard" },
+        { "id": "social-hub", "text": "The exercise yard as the oversized central gathering ground, sized to hold the whole prisoner population at once without jamming" },
+        { "id": "vignette-photo", "text": "A detailed corner of the yard — bleachers, a basketball half-court — built as a backdrop for roleplay scenes" },
+        { "id": "landmark-focal", "text": "The main cell-block tower standing above everything else, visible from anywhere inside the walls so players can orient by sight" },
+        { "id": "cover-elevated", "text": "Guard towers along the wall line overlooking the yard, reached only by exposed external stairs" },
+        { "id": "spawn-teambase", "text": "Two separate spawn areas at opposite ends of the compound — prisoners inside the cell block, guards at the front gate station — with no sightline between them" },
+        { "id": "station-loadout", "text": "The armoury: a weapon rack behind the guard station where guards take out and swap their equipment" },
+        { "id": null, "text": "A high perimeter wall with fencing, floodlights and a vehicle gate ringing the whole compound — the thing prisoners are trying to get over or through" }
+      ],
+      "layout_placement": [
+        { "id": "spawn-teambase", "type": "SpawnZone", "text": "Prisoner spawns inside the cell block and guard spawns at the gate station, at opposite ends and shielded from each other" },
+        { "id": "station-loadout", "type": "TriggerZone", "text": "The armoury rack, triggered to hand a guard their equipment" },
+        { "id": null, "text": "The cells as lockable containment volumes — prisoners are confined inside them and returned here when re-arrested" }
+      ],
+      "mechanics": [
+        "Prisoner and guard teams, taken from the game being copied",
+        "Prisoners are arrested and returned to a cell rather than eliminated",
+        "Guards draw weapons from the armoury; prisoners have to find their own"
+      ],
+      "notes": [
+        "The whole handoff is reasoned forward from the named reference. The prompt is eight words and states no geometry at all.",
+        "Preset Morph Roleplay taken with its own shape kept. vignette-photo and landmark-focal came from the preset rather than from anything the user said.",
+        "Close shape call: settlement-static taken over space-bounded and open-battlefield. A prison compound is a fixed pre-built place with no personal property, which is what the row describes, but none of the three carries the walled perimeter that defines the space, so the wall ships as free text.",
+        "P3 is required rather than assumed: cells and the mess hall are entered, not looked at.",
+        "cover-elevated is P0 + tiered here — the guard towers stand on the wall line and overhang nothing.",
+        "Where the run ends is not inferable. A prison roleplay may terminate at an escape over the perimeter or loop open-endedly with no end at all, so no winner-zone was emitted."
+      ]
+    },
+    "theme": null,
+    "scale": { "band": "block", "assumed": true },
+    "open_questions": [
+      { "field": "reference", "ask": "When you say prison life, do you mean the Roblox game Prison Life specifically — so I copy its cell block, yard, armoury and criminal base — or a prison roleplay of your own design?" },
+      { "field": "shape", "ask": "Is the map just the walled prison compound, or does it also include the outside: a criminal hideout across the road, or a whole town with the prison in it?" },
+      { "field": "option", "ask": "Should players be able to walk inside the buildings — cells, mess hall, guard offices — or are the interiors just facades? Going inside is a slower build." },
+      { "field": "theme", "ask": "Nothing was said about how it should look. Grim modern concrete and razor wire, run-down and rusted, or bright blocky and stylized?" }
+    ]
+  },
+  "coverage": {
+    "verdict": "insufficient",
+    "captured": [
+      "a prison as the place",
+      "a copy of a specific named Roblox game rather than an original design",
+      "prisoner-versus-guard roleplay implied by the reference",
+      "guns and an armoury implied by the reference",
+      "escape from confinement implied by the reference"
+    ],
+    "preset_derived": ["social-hub", "vignette-photo", "landmark-focal"],
+    "preset_rejected": [],
+    "missing": [
+      { "field": "reference", "ask": "When you say prison life, do you mean the Roblox game Prison Life specifically — so I copy its cell block, yard, armoury and criminal base — or a prison roleplay of your own design?" },
+      { "field": "shape", "ask": "Is the map just the walled prison compound, or does it also include the outside: a criminal hideout across the road, or a whole town with the prison in it?" },
+      { "field": "option", "ask": "Should players be able to walk inside the buildings — cells, mess hall, guard offices — or are the interiors just facades? Going inside is a slower build." },
+      { "field": "theme", "ask": "Nothing was said about how it should look. Grim modern concrete and razor wire, run-down and rusted, or bright blocky and stylized?" }
+    ],
+    "enriched_invented": []
+  },
+  "gaps": {
+    "unmatched_options": [
+      {
+        "canonical": "perimeter wall",
+        "text": "the prison's outer wall and fenced perimeter with floodlights and a vehicle gate, which is the barrier prisoners are trying to get over or through",
+        "destination": "image",
+        "suggest_id": "barrier-perimeter",
+        "quantity": null
+      },
+      {
+        "canonical": "holding cell",
+        "text": "individual lockable cells that prisoners are confined inside and returned to when re-arrested",
+        "destination": "layout",
+        "suggest_id": "zone-containment",
+        "quantity": null
+      },
+      {
+        "canonical": "criminal hideout",
+        "text": "the base outside the prison that escaped prisoners run to, opposed to the prison itself",
+        "destination": "image",
+        "suggest_id": null,
+        "quantity": null
+      }
+    ],
+    "genre_gap": null,
+    "skill_gap": {
+      "name": "no shape for an enclosed compound",
+      "why": "Roleplay's typical shapes are all housing models and the catalogue's nearest rows all miss the defining feature. settlement-static describes a fixed pre-built place but says nothing about enclosure; space-bounded bounds the space but reads as one single-level activity area; open-battlefield loses the wall entirely. A prison is a walled compound whose perimeter is the point of the game, and that had to ship as free text with no route attached."
+    }
+  },
+  "notes_for_us": [
+    "Nothing tells you how much of a named reference game you may import. genre-choice cites 'an exact replica of the Blox Fruits first sea' as a classification example but sets no bound, so on an eight-word prompt almost the entire handoff is inference the user never wrote, and no field marks it as such.",
+    "layout-intake orders theme null on silence, which discards a theme the reference makes obvious. The rule is right for vague prompts and wrong for named-reference ones.",
+    "The keep-the-whole-preset rule plus Morph Roleplay ships vignette-photo and landmark-focal into a jail. Neither is contradicted by an eight-word prompt, so neither can be rejected, and the preset pads the build unopposed.",
+    "There is no option for a confining or excluding boundary anywhere in the two genres loaded plus the universal six — only boundary-shrinking, which is a battle-royale ring. Walls, fences and gates are the subject of an entire family of games.",
+    "coverage.verdict has no value for 'the prompt is a reference and everything hangs on resolving it'. It is buildable if the reference is right and worthless if it is wrong, which is not the same as partial or insufficient."
+  ]
+}

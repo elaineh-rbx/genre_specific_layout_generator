@@ -1,0 +1,87 @@
+{
+  "item_id": "P0238",
+  "bucket": "free-text-heavy",
+  "handoff": {
+    "genre_choice": {
+      "genres": ["shooter"],
+      "shape": { "id": "route-guided", "type": "Path", "name": "Guided Route" },
+      "preset": "Aim Trainer",
+      "pipeline": ["CHECK"],
+      "image_prompt": [
+        { "id": "water-body", "text": "A river wide enough for a group to float down together, flowing between two low shores that run alongside it the whole way" },
+        { "id": "target-practice", "text": "Slush blops standing along both shores at varied distances back from the water, arranged so a player drifting past can read which ones are in range" },
+        { "id": "station-loadout", "text": "A rack of water guns at the launch dock where players pick one up before getting in the water" },
+        { "id": "spawn-protected", "text": "An upstream launch dock where players and their friends get into the river together, set back far enough that the first blops are out of range" },
+        { "id": "winner-zone", "text": "A takeout beach at the downstream end where the float finishes and the payoff sits" }
+      ],
+      "layout_placement": [
+        { "id": "target-practice", "type": "Target", "text": "Blop positions along both banks, gradeable by distance from the water so range varies as the player drifts past" },
+        { "id": "station-loadout", "type": "TriggerZone", "text": "Pick-up and swap point for the water gun at the launch dock" },
+        { "id": "spawn-protected", "type": "SpawnZone", "text": "Group spawn on the upstream dock, outside the range of the first shoreline blops" },
+        { "id": "winner-zone", "type": "WinnerZone", "text": "End-of-run zone on the downstream takeout beach" }
+      ],
+      "mechanics": [
+        "you float down the river with your friends",
+        "you use water guns to shoot",
+        "the current carries the player downstream rather than the player walking",
+        "slush blops are the things being shot at"
+      ],
+      "notes": [
+        "preset Aim Trainer kept, but its shape range-directed was substituted for route-guided: range-directed states there is no route through the space, and here the player travels the whole length of the space while shooting sideways off it.",
+        "route-guided is not in Shooter's typical shapes; taken from shapes.md. route-point-to-point was rejected because nothing in the prompt makes the float a timed run, and it would have added P6.",
+        "pipeline CHECK comes only from water-body. The play volume is a surface float down an open channel, so self-occlusion is unlikely; the rest of the build is P0.",
+        "traversal is water-borne — players are carried by the current, not walking — so walkability and jump-gap assumptions do not read as usual.",
+        "the place the run ends was inferred, not stated: winner-zone as a downstream takeout beach.",
+        "the launch point was inferred from the scene. Shooter has no plain shared-spawn row (only opposing team bases and a spawn shield), so spawn-protected was bent into an upstream dock.",
+        "scale band assumed: the individual blops argue for room detail, the length of a river argues for more extent; block was taken as the compromise and the prompt named no extent.",
+        "theme emitted null per layout-intake's rule even though 'slush blops' and water guns read strongly toon."
+      ]
+    },
+    "theme": null,
+    "scale": { "band": "block", "assumed": true },
+    "open_questions": [
+      { "field": "slush blop", "ask": "What's a slush blop? I don't know the term, so a sentence on what one looks like would help me build them right." },
+      { "field": "option", "ask": "Do the slush blops just sit on the bank as things to shoot, or do they keep coming — appearing somewhere onshore and moving toward the water? Fixed positions and spawn points are built differently." },
+      { "field": "shape", "ask": "Is there an end to the river — a beach or dock where the float finishes — or does it loop round so you can keep drifting?" },
+      { "field": "theme", "ask": "Nothing was said about how this should look. Bright and cartoony like a water park, a natural forest river, or something else you had in mind?" }
+    ]
+  },
+  "coverage": {
+    "verdict": "partial",
+    "captured": [
+      "a river you float down",
+      "the shores on either side of it",
+      "slush blops on the shore as the things you shoot",
+      "water guns as the weapon",
+      "playing alongside friends"
+    ],
+    "preset_derived": ["station-loadout"],
+    "preset_rejected": [],
+    "missing": [
+      { "field": "slush blop", "ask": "What's a slush blop? I don't know the term, so a sentence on what one looks like would help me build them right." },
+      { "field": "option", "ask": "Do the slush blops just sit on the bank as things to shoot, or do they keep coming — appearing somewhere onshore and moving toward the water? Fixed positions and spawn points are built differently." },
+      { "field": "shape", "ask": "Is there an end to the river — a beach or dock where the float finishes — or does it loop round so you can keep drifting?" },
+      { "field": "theme", "ask": "Nothing was said about how this should look. Bright and cartoony like a water park, a natural forest river, or something else you had in mind?" }
+    ],
+    "enriched_invented": []
+  },
+  "gaps": {
+    "unmatched_options": [
+      { "canonical": "riverbank", "text": "the shore either side of the river, which is the ground the slush blops stand on", "destination": "image", "suggest_id": null, "quantity": null },
+      { "canonical": "water current", "text": "you float down the river — the water carries the player downstream in one direction", "destination": "mechanics", "suggest_id": null, "quantity": null },
+      { "canonical": "water gun", "text": "use water guns to shoot the slush blops", "destination": "mechanics", "suggest_id": null, "quantity": null }
+    ],
+    "genre_gap": null,
+    "skill_gap": {
+      "name": "water as traversal medium",
+      "why": "the river is both the route and the surface the player travels on, and no shape carries water. route-guided had to hold the route while the universal water-body — worded as a scenery feature and routed CHECK — had to hold the water, so the prompt's central geometry is split across two picks and the whole build's only modifier comes from a row that was not meant to be load-bearing. The bank alongside it has no row at all."
+    }
+  },
+  "notes_for_us": [
+    "options.md has no Type column, so a cross-genre layout pick (winner-zone) cannot fill layout_placement.type without loading the owning genre file the read scope excludes.",
+    "Emit says P0 is dropped once any modifier is present, but CHECK is a flag rather than a route. SET has an explicit 'keeps P0 alongside' exception and CHECK does not, so this build emits ['CHECK'] and reads as if it has no baseline route.",
+    "layout-intake says to infer theme from the prompt where possible and then says to emit null and never guess when the prompt is silent; a prompt whose vocabulary is toon but which states no theme falls between the two rules.",
+    "The pilot prompts.json has no 'enriched' field, so coverage.enriched_invented cannot be filled as LANE-BRIEF describes.",
+    "Shooter's table has no plain shared spawn — only opposing team bases and a spawn shield — so an ordinary 'everyone starts here together' point has to be bent out of spawn-protected."
+  ]
+}

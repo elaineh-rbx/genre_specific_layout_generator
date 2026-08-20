@@ -15,6 +15,9 @@ graph with THAT scene's actual data lit up on each node:
     iso/td     the actual images that landed for this scene
     plan       the authored plan, if the scene runs the layout-first path
 
+An optional read-only comparison panel places a fresh skill-run prose decision beside
+the production decision. It never presents untranscribed prose as a rendered result.
+
 Node layout (positions, edges, boundary/edgePath math) is lifted from
 `mpalleschi/3D-LayoutBuild-Rules/pipeline-viewer.html`, since that is the
 canonical drawing of the pipeline. Here we swap its `VARIATIONS` picker for
@@ -24,6 +27,11 @@ from that scene rather than from a hypothetical variation.
 Usage:
     python tools/build_pipeline_viewer.py            # writes results/pipeline_viewer.html
     python tools/build_pipeline_viewer.py --out foo.html
+    python tools/build_pipeline_viewer.py \
+        --scope-after-dir results/routing/agent_blob_scope_reduce_RUN \
+        --scope-after-manifest run/scope_reduce_RUN/manifest.json \
+        --scope-after-image-dir results/scenes/scope_reduce_RUN \
+        --only-scope-compared
 """
 
 from __future__ import annotations
@@ -51,6 +59,89 @@ def unescape_nl(s: str) -> str:
     """Turn the CSV-import's literal `\\n` sequences into real newlines for
     display - the router saw them as-is either way."""
     return s.replace("\\r\\n", "\n").replace("\\n", "\n").replace("\\t", "    ")
+
+
+def prose_section(text: str, heading: str) -> str:
+    """Return one ``##`` prose section without interpreting its decision."""
+    marker = f"## {heading}"
+    if marker not in text:
+        return ""
+    body = text.split(marker, 1)[1]
+    return body.split("\n## ", 1)[0].strip()
+
+
+def scope_comparisons(
+    prose_dir: pathlib.Path | None,
+    manifest_path: pathlib.Path | None,
+    image_dir: pathlib.Path | None = None,
+    image_status: str = "prompt-only",
+) -> dict[str, dict]:
+    """Load a skill-run comparison without promoting it to production.
+
+    The prose artifacts have deliberately not passed through Gateway transcription.
+    Optional images are direct prompt-only previews, so the viewer must keep them
+    separate from the baseline structured production spec and images.
+    """
+    if prose_dir is None:
+        return {}
+    manifest = {}
+    if manifest_path and manifest_path.is_file():
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    failures = manifest.get("validation_failures") or {}
+    rows = {}
+    for path in sorted(prose_dir.glob("*.md")):
+        text = path.read_text(encoding="utf-8")
+        images = {}
+        if image_dir is not None:
+            for kind in ("iso", "td", "plan"):
+                candidate = image_dir / kind / f"{path.stem}.png"
+                if candidate.is_file():
+                    try:
+                        image_url = "/" + candidate.resolve().relative_to(
+                            REPO.resolve()
+                        ).as_posix()
+                    except ValueError:
+                        image_url = candidate.resolve().as_uri()
+                    images[kind] = image_url
+        scope_result = prose_section(text, "Scope reduction result")
+        ledger = scope_result or prose_section(
+            text, "Scale, theme, and pipeline cost"
+        )
+        final_prompt = prose_section(text, "Final scoped image prompt")
+        rows[path.stem] = {
+            "scope_after_blob": text,
+            "scope_after_enriched": (
+                final_prompt or prose_section(text, "Enriched image prompt")
+            ),
+            "scope_after_genre": prose_section(text, "Genre"),
+            "scope_after_shape": (
+                prose_section(text, "Shape and preset")
+                or prose_section(text, "Shape, and the preset it came from")
+            ),
+            "scope_after_ledger": ledger,
+            "scope_after_fired": (
+                (
+                    "scope reduction:" in ledger.lower()
+                    or (
+                        bool(scope_result)
+                        and "active" in scope_result.lower()
+                    )
+                )
+                and "does not fire" not in ledger.lower()
+                and "did not fire" not in ledger.lower()
+                and "does not need reduction" not in ledger.lower()
+            ),
+            "scope_after_failure": failures.get(path.stem, ""),
+            "scope_after_images": images,
+            "scope_after_image_status": image_status if images else "",
+            "scope_after_run": manifest.get("run_name", prose_dir.name),
+            "scope_after_version": manifest.get("instruction_version", ""),
+            "scope_after_structurally_valid": (
+                manifest.get("structurally_valid_outputs", 0)
+            ),
+            "scope_after_total": manifest.get("scene_count", len(rows) + 1),
+        }
+    return rows
 
 
 def catalogue_option(genre, oid: str):
@@ -136,16 +227,33 @@ def sent_prompts(run_name: str = "agent_gateway") -> dict[str, dict]:
             if line.strip() for r in [json.loads(line)]}
 
 
-def collect(run_name: str = "agent_gateway", image_arm: str = "agent_gateway_260813",
-            *, only_sent: bool = False,
-            checklist_dir: pathlib.Path = EVAL) -> list[dict]:
+def collect(
+    run_name: str = "agent_gateway",
+    image_arm: str = "agent_gateway_260813",
+    *,
+    only_sent: bool = False,
+    checklist_dir: pathlib.Path = EVAL,
+    scope_after_dir: pathlib.Path | None = None,
+    scope_after_manifest: pathlib.Path | None = None,
+    scope_after_image_dir: pathlib.Path | None = None,
+    scope_after_image_status: str = "prompt-only",
+    only_scope_compared: bool = False,
+) -> list[dict]:
     rows: list[dict] = []
     sent = sent_prompts(run_name)
+    scope_after = scope_comparisons(
+        scope_after_dir,
+        scope_after_manifest,
+        scope_after_image_dir,
+        scope_after_image_status,
+    )
     for p in sorted(AGENT.glob("*.json")):
         d = json.loads(p.read_text(encoding="utf-8"))
         cfg = d.get("spec") or {}
         scene = d["scene"]
         if only_sent and scene not in sent:
+            continue
+        if only_scope_compared and scene not in scope_after:
             continue
         route = list(cfg.get("route") or [])
         mods = [m for m in route if m in FLOWCHART_MODIFIERS]
@@ -195,7 +303,7 @@ def collect(run_name: str = "agent_gateway", image_arm: str = "agent_gateway_260
             checklist["excluded"] = ec.get("excluded") or []
 
         answers = d.get("answers") or []
-        rows.append({
+        row = {
             "id": scene,
             "prompt": unescape_nl(d.get("source", "")),
             # What actually reached the image model, assembled. The source prompt and
@@ -226,6 +334,9 @@ def collect(run_name: str = "agent_gateway", image_arm: str = "agent_gateway_260
             "clarifications": cfg.get("clarifications") or [],
             "enriched": cfg.get("initial_scene_subprompt_enriched", ""),
             "agent_blob": d.get("blob", ""),
+            "before_ledger": prose_section(
+                d.get("blob", ""), "Scale, theme, and pipeline cost"
+            ),
             "structured_json": json.dumps(cfg, indent=2, ensure_ascii=False),
             "options_img": img_opts,
             "options_lay": lay_opts,
@@ -243,7 +354,9 @@ def collect(run_name: str = "agent_gateway", image_arm: str = "agent_gateway_260
             "addendum": run.get("addendum", ""),
             "images": images,
             "checklist": checklist,
-        })
+        }
+        row.update(scope_after.get(scene, {}))
+        rows.append(row)
     return rows
 
 
@@ -390,6 +503,57 @@ header .nav a.active{border-color:var(--accent);background:var(--panel-2)}
 .legend b{color:var(--text)}
 .legend code{background:var(--panel-2);padding:1px 5px;border-radius:5px;font-size:11.5px}
 
+.scope-compare{max-width:2140px;margin:0 0 18px;border:1px solid var(--orange);
+  border-radius:14px;padding:14px;background:linear-gradient(135deg,rgba(242,165,76,.09),rgba(108,140,255,.04))}
+.scope-compare .compare-head{display:flex;gap:12px;align-items:flex-start;justify-content:space-between}
+.scope-compare h2{margin:0;font-size:15px}
+.scope-compare .compare-note{margin:5px 0 0;color:var(--muted);font-size:11.5px;line-height:1.5;max-width:980px}
+.scope-status{flex:0 0 auto;padding:4px 9px;border-radius:999px;font-size:10.5px;font-weight:700;
+  border:1px solid var(--orange);color:var(--orange);background:var(--orange-bg)}
+.scope-status.fail{border-color:var(--red);color:var(--red);background:var(--red-bg)}
+.scope-summary{display:grid;grid-template-columns:repeat(5,minmax(130px,1fr));gap:8px;margin:12px 0}
+.scope-stat{background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:9px 10px}
+.scope-stat strong{display:block;font-size:17px;color:var(--text)}
+.scope-stat span{display:block;margin-top:2px;color:var(--muted);font-size:10.5px}
+.scope-flow{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:12px 0}
+.scope-flow span{padding:5px 9px;border:1px solid var(--line);border-radius:7px;background:var(--panel);
+  font-size:10.5px;color:var(--text)}
+.scope-flow span.added{border-color:var(--orange);color:var(--orange);font-weight:700}
+.scope-flow i{font-style:normal;color:var(--muted)}
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.compare-card{min-width:0;background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:11px 12px}
+.compare-card.after{border-color:rgba(242,165,76,.65)}
+.compare-card h3{margin:0 0 7px;font-size:11px;text-transform:uppercase;letter-spacing:.65px}
+.compare-card.before h3{color:var(--accent)}
+.compare-card.after h3{color:var(--orange)}
+.compare-card pre{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;max-height:250px;overflow:auto;
+  font:11.5px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--text)}
+.compare-card .empty{color:var(--muted);font-style:italic}
+.compare-image{display:flex;align-items:center;justify-content:center;min-height:180px;
+  border:1px solid var(--line);border-radius:8px;background:#0a0d16;overflow:hidden}
+.compare-image img{display:block;width:100%;max-height:620px;object-fit:contain;cursor:zoom-in}
+.compare-image .empty{padding:18px;text-align:center;font-size:11.5px;line-height:1.5}
+.compare-detail{margin-top:10px}
+.compare-detail summary{cursor:pointer;color:var(--muted);font-size:11px}
+.compare-warning{margin:10px 0 0;padding:8px 10px;border-radius:8px;border:1px solid var(--red);
+  background:var(--red-bg);color:var(--red);font-size:11.5px;line-height:1.45}
+.render-boundary{margin:10px 0;padding:9px 11px;border-radius:8px;border:1px solid var(--orange);
+  background:var(--orange-bg);color:var(--orange);font-size:11.5px;line-height:1.45;font-weight:600}
+.contrast{margin:0 0 12px;background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:11px 12px}
+.contrast h3{margin:0 0 8px;font-size:11px;text-transform:uppercase;letter-spacing:.65px;color:var(--green)}
+.contrast-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.contrast-col{min-width:0;border-left:2px solid var(--green);padding-left:9px}
+.contrast-col.changed{border-left-color:var(--orange)}
+.contrast-col h4{margin:0 0 5px;font-size:10.5px;color:var(--green)}
+.contrast-col.changed h4{color:var(--orange)}
+.contrast-col ul{margin:0;padding-left:16px}
+.contrast-col li{font-size:11.5px;line-height:1.45;color:var(--text);margin:2px 0}
+.contrast-shapes{margin-top:9px;padding-top:9px;border-top:1px dashed var(--line);
+  display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:start;font-size:11.5px}
+.contrast-shapes .old{color:var(--accent)}.contrast-shapes .new{color:var(--orange)}
+.contrast-shapes .arrow{color:var(--muted)}
+@media(max-width:1000px){.compare-grid,.contrast-grid{grid-template-columns:1fr}.scope-summary{grid-template-columns:1fr 1fr}.scope-compare .compare-head{display:block}.scope-status{display:inline-block;margin-top:8px}.contrast-shapes{grid-template-columns:1fr}}
+
 .tail{max-width:2140px;margin-top:20px;display:grid;
   grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:14px}
 .tail .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
@@ -412,8 +576,7 @@ HEADER_HTML = """
   <h1>Pipeline viewer &mdash; per-scene attribution</h1>
   <p>Pick a scene: the graph lights up the actual path its prompt took through
   the pipeline. Each node shows what came in at that step, so you can attribute
-  every input to its stage, including the Cursor agent's prose blob and the
-  strict structured JSON returned by the one Gateway transcription call.
+  every input to its stage.
   <b style="color:var(--green)">Green</b> = fits the
   current pipeline. <b style="color:var(--orange)">Orange</b> = P6 variant
   (procedural first) or a tiered flag. <b style="color:var(--red)">Red</b> = a
@@ -427,6 +590,20 @@ HEADER_HTML = """
   </div>
 </header>
 """
+
+SCOPE_HEADER_HTML = HEADER_HTML.replace(
+    "Pipeline viewer &mdash; per-scene attribution",
+    "Pipeline viewer &mdash; scope-skill comparison",
+).replace(
+    "Pick a scene: the graph lights up the actual path its prompt took through\n"
+    "  the pipeline. Each node shows what came in at that step, so you can attribute\n"
+    "  every input to its stage.",
+    "Pick a scene to compare the pre-skill production decision with the fresh\n"
+    "  <code>scope-reduce-default</code> evaluation decision from the same input.\n"
+    "  The graph below remains the production path and rendered evidence; the\n"
+    "  comparison panel explicitly stops the after side before Gateway transcription\n"
+    "  and images until validation passes.",
+)
 
 
 BODY_HTML = """
@@ -479,6 +656,97 @@ BODY_HTML = """
   </aside>
 
   <main class="main">
+    <section class="scope-compare" id="scopeCompare">
+      <div class="compare-head">
+        <div>
+          <h2>Before / after <code>scope-reduce-default</code></h2>
+          <p class="compare-note">The left side is the pre-skill production decision.
+          The right side starts from the unedited upstream-skill evaluation generated
+          from the same original input. Each completed production pair appears as its
+          Gateway transcription and image render finishes.</p>
+        </div>
+        <span class="scope-status" id="scopeStatus"></span>
+      </div>
+      <div class="scope-summary" aria-label="Dataset comparison summary">
+        <div class="scope-stat"><strong id="sumCompared"></strong><span>matched scenes</span></div>
+        <div class="scope-stat"><strong id="sumReduced"></strong><span>reduced to one active zone</span></div>
+        <div class="scope-stat"><strong id="sumWhole"></strong><span>returned as one whole frame</span></div>
+        <div class="scope-stat"><strong id="sumWords"></strong><span>median image-prompt word change</span></div>
+        <div class="scope-stat"><strong id="sumAfterRendered"></strong><span>after-skill image pairs available</span></div>
+      </div>
+      <div class="scope-flow" aria-label="Updated Build Agent flow">
+        <span>record full request</span><i>&rarr;</i>
+        <span class="added">scope reduce at end</span><i>&rarr;</i>
+        <span>final active-zone prompt</span><i>&rarr;</i>
+        <span>Gateway</span><i>&rarr;</i>
+        <span>same scoped body to both images</span>
+      </div>
+      <div class="contrast">
+        <h3>Compare &amp; contrast this scene</h3>
+        <div class="contrast-grid">
+          <div class="contrast-col">
+            <h4>What stayed the same</h4>
+            <ul id="sameList"></ul>
+          </div>
+          <div class="contrast-col changed">
+            <h4>What changed</h4>
+            <ul id="changedList"></ul>
+          </div>
+        </div>
+        <div class="contrast-shapes">
+          <div class="old"><b>Before:</b> <span id="beforeShape"></span></div>
+          <div class="arrow">&rarr;</div>
+          <div class="new"><b>After:</b> <span id="afterShape"></span></div>
+        </div>
+      </div>
+      <div class="render-boundary" id="renderBoundary"></div>
+      <div class="compare-grid" id="scopeImageCompare">
+        <article class="compare-card before">
+          <h3>OLD / NO SKILL &mdash; production isometric</h3>
+          <div class="compare-image" id="beforeIsoImage"></div>
+        </article>
+        <article class="compare-card after">
+          <h3 id="afterIsoHeading">NEW / WITH SKILL &mdash; isometric</h3>
+          <div class="compare-image" id="afterIsoImage"></div>
+        </article>
+        <article class="compare-card before">
+          <h3>OLD / NO SKILL &mdash; production top-down</h3>
+          <div class="compare-image" id="beforeTdImage"></div>
+        </article>
+        <article class="compare-card after">
+          <h3 id="afterTdHeading">NEW / WITH SKILL &mdash; top-down</h3>
+          <div class="compare-image" id="afterTdImage"></div>
+        </article>
+      </div>
+      <div class="compare-grid">
+        <article class="compare-card before">
+          <h3>OLD / NO SKILL &mdash; rendered prompt</h3>
+          <pre id="beforePrompt"></pre>
+        </article>
+        <article class="compare-card after">
+          <h3>NEW / WITH SKILL &mdash; final scoped image prompt</h3>
+          <pre id="afterPrompt"></pre>
+        </article>
+        <article class="compare-card before">
+          <h3>Before &mdash; scale and pipeline decision</h3>
+          <pre id="beforeLedger"></pre>
+        </article>
+        <article class="compare-card after">
+          <h3>After &mdash; full-request scope ledger</h3>
+          <pre id="afterLedger"></pre>
+        </article>
+      </div>
+      <div class="compare-warning" id="scopeFailure" hidden></div>
+      <details class="compare-detail">
+        <summary>Compare complete prose decisions</summary>
+        <div class="compare-grid" style="margin-top:10px">
+          <article class="compare-card before"><h3>Before &mdash; full prose</h3>
+            <pre id="beforeBlob"></pre></article>
+          <article class="compare-card after"><h3>After &mdash; full prose</h3>
+            <pre id="afterBlob"></pre></article>
+        </div>
+      </details>
+    </section>
     <div class="chart" id="chart">
       <svg class="edges" id="edges" viewBox="0 0 2500 690" preserveAspectRatio="none"></svg>
     </div>
@@ -525,6 +793,7 @@ BODY_HTML = """
 # truth for the pipeline drawing.
 JS = r"""
 const SCENES = __SCENES__;
+const VIEWER_AFTER_IMAGE_COUNT = __AFTER_IMAGE_COUNT__;
 
 const HALF_W = 86, HALF_H = 40;
 
@@ -669,7 +938,21 @@ function populate(){
     shown++;
   });
   pickerCount.textContent = `${shown} of ${SCENES.length} scenes`;
-  if (picker.options.length) picker.value = picker.options[0].value;
+  if (picker.options.length){
+    let remembered = "";
+    try { remembered = localStorage.getItem("pipeline-viewer-scene") || ""; }
+    catch (_) {}
+    const rememberedOption = Array.from(picker.options).find(
+      option => SCENES[+option.value].id === remembered
+    );
+    const preview = Array.from(picker.options).find(option => {
+      const images = SCENES[+option.value].scope_after_images || {};
+      return images.iso || images.td || images.plan;
+    });
+    picker.value = rememberedOption
+      ? rememberedOption.value
+      : (preview ? preview.value : picker.options[0].value);
+  }
 }
 
 const MARKERS = { dim:"var(--dim)", green:"var(--green)", orange:"var(--orange)", red:"var(--red)" };
@@ -681,6 +964,44 @@ function defs(){
 
 function esc(x){ return String(x==null?"":x).replace(/[&<>"']/g,
   c => ({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[c])); }
+
+function words(text){
+  return String(text||"").trim().split(/\s+/).filter(Boolean).length;
+}
+function signedPercent(value){
+  if (!Number.isFinite(value)) return "\u2014";
+  const rounded = Math.round(value);
+  return `${rounded > 0 ? "+" : ""}${rounded}%`;
+}
+function firstSentence(text, max=280){
+  const clean = String(text||"").replace(/\s+/g," ").trim();
+  if (!clean) return "(not recorded)";
+  const match = clean.match(/^.*?[.!?](?:\s|$)/);
+  const sentence = match ? match[0].trim() : clean;
+  return sentence.length > max ? sentence.slice(0,max-1)+"\u2026" : sentence;
+}
+function renderScopeSummary(){
+  const compared = SCENES.filter(s => s.scope_after_blob);
+  if (!compared.length) return;
+  const reduced = compared.filter(s => s.scope_after_fired).length;
+  const deltas = compared.map(s => {
+    const before = words(s.enriched), after = words(s.scope_after_enriched);
+    return before ? 100 * (after-before) / before : NaN;
+  }).filter(Number.isFinite).sort((a,b)=>a-b);
+  const mid = Math.floor(deltas.length/2);
+  const median = deltas.length
+    ? (deltas.length%2 ? deltas[mid] : (deltas[mid-1]+deltas[mid])/2)
+    : NaN;
+  document.getElementById("sumCompared").textContent = compared.length;
+  document.getElementById("sumReduced").textContent = reduced;
+  document.getElementById("sumWhole").textContent = compared.length-reduced;
+  document.getElementById("sumWords").textContent = signedPercent(median);
+  document.getElementById("sumAfterRendered").textContent =
+    compared.filter(s => {
+      const images = s.scope_after_images || {};
+      return images.iso && images.td;
+    }).length;
+}
 
 function optionDetails(list){
   if (!list || !list.length) return "(none)";
@@ -804,6 +1125,107 @@ function positionHoverDetail(node,detail){
 function render(idx){
   const s = SCENES[idx];
   if (!s) return;
+  const scopePanel = document.getElementById("scopeCompare");
+  const hasScopeComparison = !!s.scope_after_blob;
+  scopePanel.style.display = hasScopeComparison ? "block" : "none";
+  if (hasScopeComparison){
+    const put = (id, value, empty) => {
+      const el = document.getElementById(id);
+      el.textContent = value || empty;
+      el.classList.toggle("empty", !value);
+    };
+    const putImage = (id, url, alt, empty) => {
+      const el = document.getElementById(id);
+      el.innerHTML = url
+        ? `<img src="${esc(url)}" data-full="${esc(url)}" loading="lazy" alt="${esc(alt)}">`
+        : `<span class="empty">${esc(empty)}</span>`;
+    };
+    const afterImages = s.scope_after_images || {};
+    putImage("beforeIsoImage", (s.images||{}).iso, `${s.id} old production isometric`,
+             "No pre-skill production isometric is available.");
+    putImage("afterIsoImage", afterImages.iso, `${s.id} new scoped isometric preview`,
+             "No after-skill isometric preview has been rendered for this scene.");
+    putImage("beforeTdImage", (s.images||{}).td, `${s.id} old production top-down`,
+             "No pre-skill production top-down is available.");
+    putImage("afterTdImage", afterImages.td, `${s.id} new scoped top-down preview`,
+             "No after-skill top-down preview has been rendered for this scene.");
+    const hasAfterPreview = !!(afterImages.iso || afterImages.td || afterImages.plan);
+    const isProductionAfter = s.scope_after_image_status === "production";
+    document.getElementById("afterIsoHeading").textContent = isProductionAfter
+      ? "NEW / WITH SKILL — Gateway-transcribed production isometric"
+      : "NEW / WITH SKILL — prompt-only isometric preview";
+    document.getElementById("afterTdHeading").textContent = isProductionAfter
+      ? "NEW / WITH SKILL — Gateway-transcribed production top-down"
+      : "NEW / WITH SKILL — prompt-only top-down preview";
+    document.getElementById("renderBoundary").textContent = hasAfterPreview
+      ? (isProductionAfter
+          ? "The right-side images are production renders generated after Gateway transcription. Every “sent to image model” prompt below remains from the OLD production run until the after-run prompt evidence is added."
+          : "The right-side images are direct prompt-only previews of the final scoped prompt. They are not Gateway-transcribed production output. Every “sent to image model” prompt below remains from the OLD production run.")
+      : "No after-skill preview exists for this scene yet. Every rendered image and “sent to image model” prompt shown here belongs to the OLD, pre-skill production run.";
+    put("beforePrompt", s.enriched,
+        "No enriched image prompt was recorded in the pre-skill spec.");
+    put("afterPrompt", s.scope_after_enriched,
+        "No enriched image prompt was found in the after-skill prose.");
+    put("beforeLedger", s.before_ledger,
+        "No explicit scope ledger existed before the skill.");
+    put("afterLedger", s.scope_after_ledger,
+        "No scope ledger was found in the after-skill prose.");
+    put("beforeBlob", s.agent_blob, "No pre-skill prose was recorded.");
+    put("afterBlob", s.scope_after_blob, "No after-skill prose was recorded.");
+
+    const status = document.getElementById("scopeStatus");
+    const failure = document.getElementById("scopeFailure");
+    if (s.scope_after_failure){
+      status.className = "scope-status fail";
+      status.textContent = "known semantic failure";
+      failure.hidden = false;
+      failure.textContent = `Blocked: ${s.scope_after_failure}`;
+    } else {
+      status.className = "scope-status";
+      status.textContent = "structurally valid · semantic audit not exhaustive";
+      failure.hidden = true;
+      failure.textContent = "";
+    }
+    const runBits = [s.scope_after_run, s.scope_after_version].filter(Boolean);
+    status.title = runBits.join(" · ");
+
+    const beforeWords = words(s.enriched);
+    const afterWords = words(s.scope_after_enriched);
+    const delta = beforeWords ? 100 * (afterWords-beforeWords) / beforeWords : NaN;
+    const same = [
+      "Same original author prompt and intake answers.",
+      s.scope_after_genre && s.genre
+        && s.scope_after_genre.toLowerCase().includes(String(s.genre).toLowerCase())
+        ? `Dominant genre remains ${s.genre}.`
+        : "Full-request classification remains visible in the after decision.",
+      "Same shape and option catalogue; only the scope stage is newly inserted."
+    ];
+    const changed = [
+      s.scope_after_fired
+        ? "The new skill split the full request and selected one active buildable zone."
+        : "The new skill assessed the request and returned it as one whole frame.",
+      `Image-ready prose changed from ${beforeWords} to ${afterWords} words (${signedPercent(delta)}).`,
+      s.scope_after_fired
+        ? "Deferred zones remain in the scope ledger instead of the active image prompt."
+        : "Any wording differences come from the fresh decision run, not a scope cut.",
+      hasAfterPreview
+        ? (isProductionAfter
+            ? "Both sides have production render evidence; the right side uses the final scoped prompt after Gateway transcription."
+            : "Before is production evidence; after has prompt-only preview images, but no Gateway-transcribed production evidence.")
+        : "Before has production spec/render evidence; after remains prose-only until transcription and rendering."
+    ];
+    document.getElementById("sameList").innerHTML =
+      same.map(item=>`<li>${esc(item)}</li>`).join("");
+    document.getElementById("changedList").innerHTML =
+      changed.map(item=>`<li>${esc(item)}</li>`).join("");
+    const oldShape = s.shape_label
+      ? `${s.shape_label} (${s.shape})`
+      : (s.shape || "(not recorded)");
+    document.getElementById("beforeShape").textContent =
+      `${oldShape}; route ${(s.route||[]).join(" + ") || "P0"}`;
+    document.getElementById("afterShape").textContent =
+      firstSentence(s.scope_after_shape);
+  }
   const path = pathFor(s);
   const onPath = new Set(path);
   const isP6 = s.modifiers.includes("P6");
@@ -1026,7 +1448,13 @@ function render(idx){
   });
 }
 
-picker.addEventListener("change", e => render(+e.target.value));
+picker.addEventListener("change", e => {
+  const scene = SCENES[+e.target.value];
+  try {
+    if (scene) localStorage.setItem("pipeline-viewer-scene", scene.id);
+  } catch (_) {}
+  render(+e.target.value);
+});
 function refresh(){
   populate();
   if (picker.options.length) render(+picker.value);
@@ -1050,15 +1478,42 @@ document.addEventListener("keydown", e => {
 });
 
 populate();
+renderScopeSummary();
 if (picker.options.length) render(+picker.value);
+
+// The batch runner rewrites this page as image pairs finish. Reload only when a
+// newer build exposes more images, retaining the selected scene through localStorage.
+if (VIEWER_AFTER_IMAGE_COUNT < SCENES.filter(s => s.scope_after_blob).length){
+  setInterval(async () => {
+    try {
+      const response = await fetch(location.href, {cache:"no-store"});
+      const text = await response.text();
+      const match = text.match(/const VIEWER_AFTER_IMAGE_COUNT = (\d+);/);
+      if (match && Number(match[1]) > VIEWER_AFTER_IMAGE_COUNT) location.reload();
+    } catch (_) {}
+  }, 30000);
+}
 """
 
 
 def build_page(rows: list[dict]) -> str:
-    js = JS.replace("__SCENES__", json.dumps(rows))
+    after_image_count = sum(
+        bool((row.get("scope_after_images") or {}).get("iso"))
+        and bool((row.get("scope_after_images") or {}).get("td"))
+        for row in rows
+    )
+    js = (
+        JS.replace("__SCENES__", json.dumps(rows))
+        .replace("__AFTER_IMAGE_COUNT__", str(after_image_count))
+    )
+    header = (
+        SCOPE_HEADER_HTML
+        if any(row.get("scope_after_blob") for row in rows)
+        else HEADER_HTML
+    )
     return (f"<!doctype html>\n<html><head><meta charset=\"utf-8\">"
             f"<title>Pipeline viewer</title>\n<style>{CSS}</style></head>\n"
-            f"<body>{HEADER_HTML}{BODY_HTML}\n<script>{js}</script></body></html>\n")
+            f"<body>{header}{BODY_HTML}\n<script>{js}</script></body></html>\n")
 
 
 def main() -> None:
@@ -1073,12 +1528,46 @@ def main() -> None:
                     help="show only scenes present in the selected run")
     ap.add_argument("--checklist-dir", type=pathlib.Path, default=EVAL,
                     help="directory containing per-scene eval checklists")
+    ap.add_argument(
+        "--scope-after-dir",
+        type=pathlib.Path,
+        help="fresh skill-run prose directory to compare with production",
+    )
+    ap.add_argument(
+        "--scope-after-manifest",
+        type=pathlib.Path,
+        help="manifest carrying run provenance and known validation failures",
+    )
+    ap.add_argument(
+        "--scope-after-image-dir",
+        type=pathlib.Path,
+        help=(
+            "optional results/scenes directory containing prompt-only "
+            "after-skill previews"
+        ),
+    )
+    ap.add_argument(
+        "--scope-after-image-status",
+        choices=("prompt-only", "production"),
+        default="prompt-only",
+        help="provenance label for after-skill images",
+    )
+    ap.add_argument(
+        "--only-scope-compared",
+        action="store_true",
+        help="show only scenes that have an after-skill prose artifact",
+    )
     args = ap.parse_args()
     rows = collect(
         args.run_name,
         args.image_arm,
         only_sent=args.only_sent,
         checklist_dir=args.checklist_dir,
+        scope_after_dir=args.scope_after_dir,
+        scope_after_manifest=args.scope_after_manifest,
+        scope_after_image_dir=args.scope_after_image_dir,
+        scope_after_image_status=args.scope_after_image_status,
+        only_scope_compared=args.only_scope_compared,
     )
     text = build_page(rows)
     args.out.parent.mkdir(parents=True, exist_ok=True)

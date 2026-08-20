@@ -1,0 +1,20 @@
+---
+description: Keep the live viewer ports and three-page format stable
+alwaysApply: true
+---
+
+# Live viewer stability
+
+- Ports `8889` and `8890` are persistent user-facing viewer services.
+- Both must expose exactly these pages/tabs: `Original viewer`, `Pipeline`, and
+  `GPT Image 2 vs Gemini`.
+- The live pages are pinned under `run/locked_viewers/`. Do not edit, rebuild,
+  replace, or delete those snapshots unless the user explicitly asks to change
+  the live format.
+- Do not stop or replace the `layoutgen-viewers` tmux session. Its two watchdog
+  loops automatically restart either server if it exits.
+- Viewer development must write to a different output file or use a different
+  port. Editing source files or ordinary `results/*.html` artifacts must not
+  affect the live pages.
+- After relevant work, verify `/`, `/pipeline`, and `/comparison` return HTTP
+  200 on both ports without changing their navigation.

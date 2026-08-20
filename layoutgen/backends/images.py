@@ -16,6 +16,8 @@ import os
 import pathlib
 import random
 import time
+import base64
+import io
 from dataclasses import dataclass
 
 import httpx
@@ -44,6 +46,9 @@ TIMEOUT_S = 600.0
 #: refuses, a 401 for a stale key - is permanent, and trying it twice more only delays
 #: the report by the length of the backoff.
 RETRYABLE = {408, 409, 429, 500, 502, 503, 504}
+# Multimodal Gateway requests can intermittently return a false signature-verification
+# 401 for an otherwise-valid LCA token. Retrying remains bounded by each caller.
+GATEWAY_RETRYABLE = RETRYABLE | {401}
 
 
 def _hold(response: httpx.Response | None, attempt: int) -> float:
@@ -240,7 +245,7 @@ class LLMGatewayProvider:
                     raise last
                 return Answer(self._decode(image_data), self.model)
             except httpx.HTTPStatusError as exc:
-                if exc.response.status_code not in RETRYABLE:
+                if exc.response.status_code not in GATEWAY_RETRYABLE:
                     raise ImageError(
                         f"HTTP {exc.response.status_code}: {exc.response.text[:200]}"
                     ) from exc
@@ -256,7 +261,74 @@ class LLMGatewayProvider:
         )
 
 
-_provider: Provider | LLMGatewayProvider | None = None
+class SceneGenProvider:
+    """OpenAI-shaped SceneGen generation, optionally routing edits to another model."""
+
+    def __init__(
+        self,
+        model: str,
+        *,
+        reference_model: str | None = None,
+        base_url: str = (
+            "https://8080--standard--h200-training--akashgarg.devspaces.rbx.com"
+        ),
+        size: int = SIZE,
+    ):
+        self.model = model
+        self.reference_model = reference_model or model
+        self.base_url = base_url.rstrip("/")
+        self.size = size
+
+    @staticmethod
+    def _reference(path: pathlib.Path) -> str:
+        mime = "image/jpeg" if path.suffix.lower() in {".jpg", ".jpeg"} else "image/png"
+        encoded = base64.b64encode(path.read_bytes()).decode("ascii")
+        return f"data:{mime};base64,{encoded}"
+
+    def generate(
+        self,
+        prompt: str,
+        references: list[pathlib.Path] | None = None,
+        retries: int = 8,
+    ) -> Answer:
+        body = {
+            "model": self.reference_model if references else self.model,
+            "prompt": prompt,
+            "size": f"{self.size}x{self.size}",
+            "n": 1,
+        }
+        if references:
+            body["image"] = [self._reference(path) for path in references]
+        last: Exception | None = None
+        for attempt in range(1, retries + 1):
+            response: httpx.Response | None = None
+            try:
+                with httpx.Client(timeout=TIMEOUT_S) as client:
+                    response = client.post(
+                        f"{self.base_url}/v1/images/generations",
+                        json=body,
+                    )
+                    response.raise_for_status()
+                    payload = response.json()
+                encoded = payload["data"][0]["b64_json"]
+                with Image.open(io.BytesIO(base64.b64decode(encoded))) as opened:
+                    return Answer(opened.convert("RGB").copy(), str(body["model"]))
+            except httpx.HTTPStatusError as exc:
+                if exc.response.status_code not in RETRYABLE:
+                    raise ImageError(
+                        f"HTTP {exc.response.status_code}: {exc.response.text[:200]}"
+                    ) from exc
+                last = exc
+            except (httpx.HTTPError, KeyError, IndexError, ValueError, OSError) as exc:
+                last = exc
+            if attempt < retries:
+                time.sleep(_hold(response, attempt))
+        raise ImageError(
+            f"gave up after {retries} attempts, {type(last).__name__}: {last}"
+        )
+
+
+_provider: Provider | LLMGatewayProvider | SceneGenProvider | None = None
 
 
 def model_name() -> str:

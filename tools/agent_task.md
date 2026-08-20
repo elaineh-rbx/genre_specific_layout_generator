@@ -26,8 +26,10 @@ Repository: `/home/builder/workspace/genre_specific_layout_generator`
 5. `.cursor/skills/genre-choice/options.md` — the shared option catalogue. Read it on
    demand when the selected genre and the universal six do not cover a spatial request;
    take the canonical ID and route, but write scene-specific text.
-6. `.cursor/skills/layout-blob/SKILL.md` — the prose handoff contract. In particular,
-   follow its nine-section order, canonical IDs in backticks, and prose targets.
+6. `.cursor/skills/scope-reduce-default/SKILL.md` — the no-question reduction pass for
+   requests that need more than one buildable frame at their gameplay grain.
+7. `.cursor/skills/layout-blob/SKILL.md` — the prose handoff contract. In particular,
+   follow its ten-section order, canonical IDs in backticks, and prose targets.
 
 Then, per scene, read the one file under `.cursor/skills/genre-choice/genres/` for the
 genre you land on, and `.cursor/skills/genre-choice/no-genre.md` if you conclude the
@@ -49,24 +51,37 @@ write each result to disk before starting the next so partial progress survives.
    answers as `author`. Copy every supplied `field`, `ask`, and `answer` string verbatim:
    do not translate, paraphrase, shorten, or rename them. For any necessary unanswered
    question, choose the narrowest grounded answer and mark it `agent_inferred`.
-3. Decide the configuration by following `genre-choice`, then express the complete
-   decision by following `layout-blob`. The enriched image prompt incorporates both kinds
-   of resolved answers.
-4. There is no user to interview. Never imply that an agent-inferred answer came from the
+3. Decide and record the full-request configuration by following `genre-choice`, then
+   complete `layout-intake`'s handoff: genre, shape, options, placements, concrete
+   components, render order, scale, theme, and full route. Do not scope these decisions
+   while you are still collecting them.
+4. At the end, after the full-request sections are complete, follow
+   `scope-reduce-default` on that assembled handoff. In `## Scope reduction result`,
+   preserve the unchanged full-request decision and record its complete zone/active
+   result. If it fired, the active zone must include all executable shape, config,
+   placement, component, render-order, scale, theme, and route information; a modifier
+   named in `route_cleared` remains provenance rather than executable route.
+5. Last, follow `uprez-prompt` to write `## Final scoped image prompt`. If scope
+   reduction did not fire, this prompt describes the full request. If it fired, it
+   describes **only the active zone**. Deferred zones must not leak into this prompt
+   positively or negatively. This exact final section is the only scene body accepted by
+   both isometric and top-down prompt assembly.
+6. There is no user to interview. Never imply that an agent-inferred answer came from the
    author.
-5. Write `results/routing/agent_blob/<SCENE>.md` as prose beginning with
-   `# Agent decision`, followed by the nine sections required by `layout-blob/SKILL.md`:
-   Clarifications resolved; Enriched image prompt; Genre; Shape and preset; Config
-   requirements; Layout requirements; Layout components; Render order; Scale, theme, and
-   pipeline cost.
+7. Write `results/routing/agent_blob/<SCENE>.md` as prose beginning with
+   `# Agent decision`, followed by the ten sections required by `layout-blob/SKILL.md`:
+   Clarifications resolved; Genre; Shape and preset; Config requirements; Layout
+   requirements; Layout components; Render order; Scale, theme, and pipeline cost; Scope
+   reduction result; Final scoped image prompt.
 
 The decision is the self-contained artifact the gateway transcribes. Name canonical shape,
 option, order, and route IDs in backticks. Spell genre and preset names exactly as the
 genre file does. Include every scene-specific layout component and count the later JSON
 needs; the gateway may transcribe what you wrote but may not invent what you omitted. The
-enriched image prompt must combine the original message and intake answers into the final
-image-ready spatial description; answers override conflicting details from the original
-message. It is the only scene body that rendering accepts.
+final scoped image prompt must combine the original message and intake answers with the
+end-of-decision scope result; answers override conflicting source details. The builder
+copies that section verbatim after transcription, and rendering accepts no other scene
+body.
 
 ## Do not
 

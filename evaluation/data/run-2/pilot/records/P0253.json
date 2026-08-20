@@ -1,0 +1,97 @@
+{
+  "item_id": "P0253",
+  "bucket": "multi-map",
+  "handoff": {
+    "genre_choice": {
+      "genres": ["party-casual"],
+      "shape": {
+        "id": "space-staged",
+        "type": null,
+        "name": null
+      },
+      "preset": "Minigame",
+      "pipeline": ["P4", "P3"],
+      "image_prompt": [
+        { "id": "social-hub", "text": "A lobby where the whole server gathers before the match and returns between rounds, sized for peak concurrency and open enough that nobody jams at the exits" },
+        { "id": "teleporter-link", "text": "Transport pads in the lobby that send everyone into the arena when a match starts, and matching pads in the arena that return them when the round ends" },
+        { "id": "tracker-leaderboard", "text": "A prominent wall in the lobby sized to carry the point standings" },
+        { "id": "spectator-zone", "text": "An out-of-play strip at the edge of the arena where players who are done with a mini-game wait and watch the rest of the round" },
+        { "id": "building-interior", "text": "A shop in the lobby that players walk into to spend their coins on auras" },
+        { "id": null, "text": "Several distinct arcade-themed mini-game areas laid out around the arena floor, each one its own recognisable play space" }
+      ],
+      "layout_placement": [
+        { "id": "trigger-scoring", "type": "TriggerZone", "text": "Detection regions in each mini-game that register a point when a player finishes it" },
+        { "id": "spawn-protected", "type": "SpawnZone", "text": "Evenly distributed start points in the lobby where players join, and in the arena so no player starts a mini-game at an advantage" },
+        { "id": "teleporter-link", "type": "Teleporter", "text": "The markers that move everyone from the lobby into the arena at match start and back to the lobby at round end" },
+        { "id": "tracker-leaderboard", "type": "Tracker", "text": "The standings surface in the lobby, driven by the points players bank during the round" }
+      ],
+      "mechanics": [
+        "players get more points per mini game they finish",
+        "whoever has the most points wins the round",
+        "the round winner is awarded some coins",
+        "coins are spent at the shop in the lobby",
+        "the shop sells auras",
+        "matches run back to back — once one match finishes another starts",
+        "players spawn in the lobby before the match"
+      ],
+      "notes": [
+        "Preset Minigame taken whole, on its own shape space-staged. Added social-hub (the prompt names a lobby), spawn-protected (the prompt names where players spawn twice) and building-interior (the lobby shop).",
+        "P4 comes from space-staged plus teleporter-link read as a portal to a separate place: the prompt spawns players out of the lobby into the arena rather than walking them there. P3 comes from the lobby shop. Neither route is available today; both are recorded rather than downgraded because the prompt states the feature.",
+        "The round's terminus is the return teleport to the lobby plus the standings wall, inferred from the genre and preset rather than stated. No winner-zone: the payoff the prompt names is coins, which is progression.",
+        "shape.type and shape.name emitted null — see skill_gap. The ID and route are correct; only the display split is missing.",
+        "The arena is arcade-themed by the prompt; the lobby's look is unstated and was left to the theme field's assumption."
+      ]
+    },
+    "theme": "Arcade (neon cabinets, bright saturated colour, ticket-counter signage)",
+    "scale": { "band": "block", "assumed": true },
+    "open_questions": [
+      { "field": "shape", "ask": "Are the lobby and the arena two separate places players get teleported between, or one connected map where the lobby is a room you walk out of into the arena? Separate places is what I've assumed, and it changes how the build is framed." },
+      { "field": "option", "ask": "How should the mini-games sit in the arena — as several distinct areas around the floor (say four or five stations players move between), or as one open floor that gets re-dressed for each mini-game?" },
+      { "field": "option", "ask": "Is the lobby shop a building players walk inside, or a storefront counter they buy from out on the lobby floor?" },
+      { "field": "theme", "ask": "The arena is arcade-themed — should the lobby match it (neon, cabinets, carpet, ticket counter), or read as a plainer neutral waiting area?" }
+    ]
+  },
+  "coverage": {
+    "verdict": "partial",
+    "captured": [
+      "lobby players spawn into before the match",
+      "separate arena players are sent to when the match starts",
+      "arcade theme on the arena",
+      "several mini-games inside the arena",
+      "scoring regions on each mini-game",
+      "shop sited in the lobby",
+      "lobby-to-arena and arena-to-lobby transport",
+      "back-to-back match cycle"
+    ],
+    "preset_derived": ["tracker-leaderboard", "spectator-zone"],
+    "preset_rejected": [],
+    "missing": [
+      { "field": "shape", "ask": "Are the lobby and the arena two separate places players get teleported between, or one connected map where the lobby is a room you walk out of into the arena?" },
+      { "field": "option", "ask": "How should the mini-games sit in the arena — as several distinct areas around the floor (say four or five stations players move between), or as one open floor that gets re-dressed for each mini-game?" },
+      { "field": "option", "ask": "Is the lobby shop a building players walk inside, or a storefront counter they buy from out on the lobby floor?" },
+      { "field": "theme", "ask": "The arena is arcade-themed — should the lobby match it (neon, cabinets, carpet, ticket counter), or read as a plainer neutral waiting area?" }
+    ],
+    "enriched_invented": []
+  },
+  "gaps": {
+    "unmatched_options": [
+      { "canonical": "minigame station", "text": "an arena where players have to do mini games, several of them, each finishable for points", "destination": "image", "suggest_id": "station-minigame", "quantity": null },
+      { "canonical": "purchase menu", "text": "the shop in the lobby where players spend coins on auras — the buying interface itself, as distinct from the shop building", "destination": "ui", "suggest_id": null, "quantity": null },
+      { "canonical": "cosmetic aura", "text": "auras players buy with coins and wear", "destination": "progression", "suggest_id": null, "quantity": null },
+      { "canonical": "reward currency", "text": "coins awarded to the round winner and spent at the lobby shop", "destination": "progression", "suggest_id": null, "quantity": null },
+      { "canonical": "visual polish", "text": "\"a beautiful map\" and \"a beautiful arena\" — stated twice, as a quality bar over the whole build", "destination": "constraint", "suggest_id": null, "quantity": null }
+    ],
+    "genre_gap": null,
+    "skill_gap": {
+      "name": "shape display name not in genre file",
+      "why": "Step 6 requires shape.type and shape.name split from the shape row's **Type (Flavor Name)**, but a genre file only carries that split for shapes it rewords in its own table. Party & Casual reworks space-bounded and not space-staged, so the preset's own shape cannot be emitted in full without reading shapes.md — which step 2 and the read scope both say not to open when the typical shapes fit. Emitted type and name as null."
+    }
+  },
+  "notes_for_us": [
+    "The one shape the Minigame preset names cannot be emitted from the genre file alone: only rewritten shapes carry the Type (Flavor Name) split that step 6 demands. Every genre file has this hole for its non-reworded typical shapes.",
+    "Step 2's ordered search says a costume shop is building-interior, which forces P3; step 4 says prefer P0/P6 when nothing requires a modifier and read for the feature rather than the keyword. A lobby shop in a Roblox party game is usually a stall with a GUI, so the two rules point opposite ways and nothing arbitrates.",
+    "A multi-minigame arena has no option anywhere in the catalogue — space-staged says the round is staged elsewhere but nothing holds 'and there are several different games in it'. It went out as free text, which drops any route it would have carried.",
+    "Nothing in the network takes a screen-space request. The shop's buying interface is plainly a GUI, so it was either forced into a layout entry or dropped; it is logged as a ui destination only because the eval record has that field, not because the skills do.",
+    "spectator-zone is *varies* in options.md but flat in Party & Casual's own table, and the preset ships it. Neither file says which route a preset-derived spectator area takes when the prompt never mentions spectating."
+  ]
+}

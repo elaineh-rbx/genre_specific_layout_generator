@@ -17,6 +17,7 @@ It decides *what needs interpreting*. It does not interpret genre itself.
 - [ ] 1. Read the prompt and identify which concerns are in play
 - [ ] 2. Dispatch each concern, genre first
 - [ ] 3. Assemble the combined handoff
+- [ ] 4. Reduce to a buildable scope if the handoff overflows what runs today
 ```
 
 ## 1. Identify concerns
@@ -29,6 +30,7 @@ touches, and note which it leaves silent.
 | **Genre and layout features** | `genre-choice` skill | wired |
 | **Visual theme** | inline, below | wired |
 | **Spatial scale and boundary** | inline, below | wired |
+| **Buildable scope** | `scope-reduce-default` skill, step 4 | wired |
 | *(future concerns)* | see Extension point | — |
 
 Genre is always in play, even when the answer is "no genre." Run it first: it
@@ -217,6 +219,62 @@ Emit the `genre-choice` block with the other concerns added alongside it:
   the stream that owns it. Pass it through untouched, do not turn its entries
   into `open_questions`, and do not read a full `mechanics` array as a sign the
   prompt was poorly served. It usually means the opposite.
+
+## 4. Reduce to a buildable scope
+
+The handoff from step 3 describes the game the user asked for, routed correctly
+— which is not the same as a game we can build today. The pipeline runs **P0 and
+P6 only**; `P2`, `P3`, `P4` and `CHECK` are not production-ready
+(`docs/LayoutGen - Pipeline.md`, readiness gate). A handoff that needs one of
+those, or a single map too large for one isometric frame, cannot go straight to
+the pipeline.
+
+**When the assembled handoff overflows what runs today, read
+`.cursor/skills/scope-reduce-default/SKILL.md` and follow it.** It reads this
+handoff, interprets the whole request into build-ready zones, auto-selects the
+main gameplay area / entry zone to build first (no user questions), and returns
+**the same handoff unchanged** with two blocks added: `zones`, every part of the
+request cut into a build-ready entry, and `active`, naming the one P0/P6 zone we
+send to the pipeline now. Emit that.
+
+**It does not rewrite `genre_choice`.** The genre, shape and options are
+collected here and stay verbatim — the interpretation is added beside them in
+`zones`, never by editing the record. This is the same rule step 3 already states
+for `genre_choice`, applied to a skill instead of to this one. The pipeline
+builds the `active` zone; `genre_choice` remains the full statement of what the
+user asked for.
+
+**Whether it fires is judged at the gameplay's grain, not the raw size.** A
+region-scale world a player only ever sees from above (a flight sim) is one
+coarse zone and does not overflow; the same world walked at street level does.
+scope-reduce-default sets that grain first — see its step 0.
+
+Overflow is any one of: `pipeline` contains `P4`, `P3`, `P2` or `CHECK`;
+`genre_choice.segments` holds two or more `kind: "map"` entries; `scale.band` is
+`region` **and the gameplay needs detail one frame cannot hold**; or the map is
+**one space the player walks at a grain finer than the space is wide** — a city
+of districts, a campus of buildings — whatever its band and even when its route
+is a bare `P0`. This step fires on the genuinely oversized request, not on the
+ordinary single map.
+
+**When in doubt, invoke it.** `scope-reduce-default` re-checks its own trigger
+and returns the handoff untouched when nothing fires, so calling it
+unnecessarily costs a read and nothing else. Not calling it costs a whole city
+shipped as one frame. The two are not symmetric, so prefer the false invocation.
+
+**Its step 1 owns the trigger, and this list is a summary of it.** Where they
+disagree, its list wins and this one is stale — the route is not the only way to
+overflow, and a shape that became buildable did not thereby become small. That
+asymmetry is easy to miss: a rooftop city routed `P0 + tiered` clears every
+modifier in the first clause above and is still twenty districts.
+
+This is deliberately the **last** step: scope-reduce-default needs the whole
+assembled handoff — the shape, the route, the segments, and the scale band — to
+know what overflows, to enumerate the pieces, and to auto-select the one to start
+on. It is a
+temporary stage of the pipeline's current readiness, not a permanent concern; it
+disappears the day the other routes ship. Keep it separate from the other
+concerns for now.
 
 ## Extension point
 

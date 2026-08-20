@@ -16,6 +16,7 @@ Configuration, all optional:
 
     LAYOUTGEN_S3          s3://bucket/prefix holding `scenes/` and `thumbs/`
     LAYOUTGEN_S3_PROFILE  the credentials profile to read it with
+    LAYOUTGEN_S3_CACHE    local cache directory (use /tmp for an ephemeral cache)
     LAYOUTGEN_S3_OFF      set to anything to refuse the network and serve local only
 """
 
@@ -36,7 +37,9 @@ COMPARISON_BUCKET_URI = os.getenv(
     "s3://3dfm-data/users/elaineh/layoutgen_genre_images_260806",
 )
 PROFILE = os.getenv("LAYOUTGEN_S3_PROFILE", "3dfm")
-CACHE = paths.RUN / "cache"
+CACHE = pathlib.Path(
+    os.getenv("LAYOUTGEN_S3_CACHE", str(paths.RUN / "cache"))
+).expanduser()
 
 _lock = threading.Lock()
 
