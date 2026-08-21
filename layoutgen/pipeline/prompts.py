@@ -233,13 +233,121 @@ def for_model(text: str, stage: str, profile: str | None = None,
 # ---------------------------------------------------------------- text -> isometric
 
 PREFIX = "Generate directly from this text prompt only, with no reference image: "
-TAIL = (
+
+#: The production control tail. Unset LAYOUTGEN_STYLE_ARM (or any unknown value) keeps
+#: this default. Set LAYOUTGEN_STYLE_ARM=dmr|dmr2|dmr3|dmr4 to swap the whole style
+#: sentence; ISO_FROM_PLAN_TAIL inherits TAIL so the plan-first (p6) route swaps too.
+_BASE_TAIL = (
     " Polished square Roblox-like 3D environment concept in a true isometric elevated-"
     "oblique "
     "view. Keep the map footprint axis-aligned in the frame: its far/top boundary stays "
     "horizontal and its left and right boundaries stay vertical. Do not yaw the camera "
     "or rotate the map into a 45-degree diamond orientation. No captions or watermark."
 )
+
+#: zzhao's DMR style tails, verbatim from the image-system-prompt study
+#: (s3://3dfm-data/layoutgen/text_to_image/image_system_prompt/system_prompts/).
+_DMR_TAIL = (
+    " Render as a strict isometric orthographic diorama in the low-poly Roblox style: "
+    "zero perspective and no vanishing point, camera about 35 degrees above the horizon "
+    "and rotated 45 degrees to the map axes so three faces of a cube read at once. The "
+    "playable area is one self-contained slab with a straight geometric edge, filling "
+    "roughly half the frame, isolated on a plain black background. Build every object "
+    "from a handful of axis-aligned primitives, boxes first with occasional 45-degree "
+    "wedges and simple cylinders, one to five per object: a building is two or three "
+    "stacked boxes, a tree is a thin trunk under a canopy of one to four cubes. Snap "
+    "everything to a 90-degree grid so nothing is freely rotated, and step elevation as "
+    "flat-topped tiers rather than smooth slopes. Surfaces are untextured, matte and "
+    "flat, one uniform saturated colour per face used as a material label, with no "
+    "gradients and no wood grain, brickwork or grass blades. Light it with even ambient "
+    "light and simple face values, tops lightest and one side mid and the other dark, "
+    "with minimal short shadows and no bloom, glow, fog, reflections or depth of field. "
+    "Keep the tops of buildings, walls and terrain tiers perfectly flat and horizontal, "
+    "separate zones with stark ground-colour changes or uniform-width paths, leave nearly "
+    "half the ground empty, and space objects so no two footprints touch. Square output, "
+    "no captions or watermark."
+)
+_DMR_V2_TAIL = (
+    " Render as an isometric orthographic diorama in the stylised Roblox style: parallel "
+    "projection with no vanishing point, camera 30 to 45 degrees above the horizon so "
+    "every object's top face reads, with the whole layout inside the frame and filling "
+    "about two thirds of it. Build only what the scene describes, at the scope it "
+    "describes. An interior or a single enclosed venue is that space and nothing else, "
+    "sitting on a plain flat base with the surrounding area left empty — no invented "
+    "landscape, outskirts, gardens or extra districts wrapped around it. An outdoor map "
+    "is one self-contained island whose footprint follows the layout rather than "
+    "defaulting to a square slab, so L-shapes, long strips, small chains and rounded "
+    "outlines are all fine, cut off at a hard edge over a plain black background or a "
+    "flat water plane. Keep it simple and legible: a few dozen distinct masses at most, "
+    "each large enough to read at a glance, with roughly a third of the ground left "
+    "open. Prefer fewer, bigger elements over many small ones, and when the brief calls "
+    "a place massive, carry that with a handful of large landmarks and broad, clearly "
+    "separated zones rather than by multiplying small props into a dense field. Mix "
+    "shape languages by subject: axis-aligned boxes for buildings, rooms, roads and "
+    "fences, and curves or organic outlines where the subject really has them — tapered "
+    "trunks, overlapping spheres for canopies and boulders, swept tubes for slides, "
+    "wedges and bevels for pitched, tiered and shed roofs. Keep the smallest feature "
+    "chunky, with thick panes, posts and railings and no hair-thin geometry. Where the "
+    "scene genuinely repeats one kind of object many times, vary that kind instead of "
+    "stamping one copy — differing heights, silhouettes and shades, some isolated and "
+    "some grouped. Trees are only an example of that principle, so apply it to whatever "
+    "actually repeats here, and never add a category the scene does not call for, least "
+    "of all vegetation or water inside an indoor space. Surfaces stay smooth and "
+    "untextured with two or three flat saturated colours per object, identity carried by "
+    "colour and massing rather than detail, adjacent zones colour-blocked in sharp "
+    "contrast, water a flat opaque plane and glass a solid tint with thick frames. Light "
+    "with one strong directional sun plus even ambient so nothing falls black, crisp "
+    "semi-transparent shadows, and no bloom, lens flare, fog, atmospheric scattering, "
+    "reflections or depth of field. Keep paths and open ground visibly walkable, express "
+    "relief as clean steps or ramps, and let each object meet the ground on its own "
+    "without bleeding into its neighbour. Draw only the static map — terrain, water, "
+    "buildings, structures, vegetation, paths and props — with no avatars, characters, "
+    "NPCs, humanoid figures, crowds, animals or creatures anywhere in the frame. Square "
+    "output, no captions or watermark."
+)
+#: DMR v3: shortened imperative rewrite of v2. Selected with LAYOUTGEN_STYLE_ARM=dmr3.
+_DMR_V3_TAIL = (
+    " Render as an isometric orthographic diorama in a stylized Roblox blocky aesthetic: "
+    "parallel projection, camera 35 degrees above horizon. The entire layout sits as a "
+    "self-contained island occupying two-thirds of the frame over a plain black "
+    "background. Maintain extreme visual legibility: maximize open ground space and "
+    "prioritize large, readable footprints over dense prop clusters. When a category "
+    "repeats, group items into unified visual masses rather than scattering isolated "
+    "props. Flat, untextured, saturated matte colors per face with clean color-blocked "
+    "contrast. Step elevation in flat tiers. Light with one strong directional sun and "
+    "crisp soft shadows; no fog, bloom, or depth of field. Static environment geometry "
+    "only: render terrain, buildings, paths, and props with STRICTLY ZERO characters, "
+    "avatars, NPCs, or humanoids in frame. Square output, no text or watermarks."
+)
+
+#: DMR v4: v3 plus a grain-agnostic "hero + sparse filler + negative space" recipe.
+#: (1) HERO MASSING — 1–2 primary landmarks large and dominant so they never shrink
+#: to dots. (2) ABSTRACTED FILLER — a few chunky trees/rocks/houses standing in for a
+#: forest or town, never a dense field of small props. (3) NEGATIVE SPACE — open
+#: ground, water, and bare paths between landmarks. This cannot fix an over-broad
+#: scope on its own; the Knob 1 breadth drill still has to cut the landmark list
+#: first. Selected with LAYOUTGEN_STYLE_ARM=dmr4.
+_DMR_V4_TAIL = (
+    " Render as an isometric orthographic diorama in a stylized Roblox blocky aesthetic: "
+    "parallel projection, camera 35 degrees above horizon. The entire layout sits as a "
+    "self-contained island occupying two-thirds of the frame over a plain black "
+    "background. Compose with a clear size hierarchy: render the one or two primary "
+    "landmarks - the main hub, hall, gate, arena, or goal structure - LARGE and dominant "
+    "so they anchor the frame and never shrink into tiny dots. Represent repeated "
+    "background and filler as a sparse, chunky, representative sample - a few blocky trees, "
+    "rocks, or houses standing in for a whole forest or town - never a dense field of small "
+    "props. Preserve generous negative space: keep open ground, water, and bare paths "
+    "between landmarks as breathing room. When a category repeats, group items into unified "
+    "visual masses rather than scattering isolated props. Flat, untextured, saturated matte "
+    "colors per face with clean color-blocked contrast. Step elevation in flat tiers. Light "
+    "with one strong directional sun and crisp soft shadows; no fog, bloom, or depth of "
+    "field. Static environment geometry only: render terrain, buildings, paths, and props "
+    "with STRICTLY ZERO characters, avatars, NPCs, or humanoids in frame. Square output, no "
+    "text or watermarks."
+)
+_STYLE_ARM = os.getenv("LAYOUTGEN_STYLE_ARM", "").strip().lower()
+TAIL = {"dmr": _DMR_TAIL, "dmr2": _DMR_V2_TAIL,
+        "dmr3": _DMR_V3_TAIL, "dmr4": _DMR_V4_TAIL}.get(_STYLE_ARM, _BASE_TAIL)
 
 #: A `SET` route says there is real geometry that no avatar ever crosses - a rhythm
 #: stage with a crowd, a board on a table, a shooting gallery on rails. The image is

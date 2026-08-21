@@ -140,6 +140,44 @@ dispatches here *because* of those modifiers, so declining them meant nobody
 handled the one thing that sent us, and an unbuildable route went to the
 pipeline untouched.
 
+### Content breadth — a single-surface density trigger
+
+The signals above catch *structural* overflow (`P4`/`P3`/`P2`/`CHECK`, the region
+band). They miss a scene that is one contiguous `P0`/`P6` surface yet still too
+dense to read in one frame — a walkable overworld with many named territories.
+So `buildable_now` must test **semantic breadth, not just surface continuity**:
+an overworld is a bare `P0` and was still shipped illegible because every
+district was crammed into one frame.
+
+**Territory Breadth Count.** Count the distinct *named regions* the prompt
+requires at this grain — biomes, species territories, districts, arenas. Count
+nouns, not adjectives: "dense", "sprawling", "massive" are style-flavour and
+too brittle; ignore them and rely on the region count.
+
+- At a **walkable** grain the limit is **one hub/district + at most one adjacent
+  sub-zone**. If `count(distinct regions) > 1`, emit
+  `overflow: content_breadth_exceeded`, set the zone `buildable_now: false`, and
+  drill — even though its route is a bare `P0`/`P6` on a single surface.
+- Any prompt specifying **N ≥ 3** distinct biomes, arenas, or districts at a
+  walkable grain should immediately trigger this drill.
+- At a **flyover / map** grain breadth does not overflow: the whole thing reads
+  from above, so a many-region world stays one zone. This is what keeps a huge
+  empty desert with one monolith (breadth 1) a single buildable zone regardless
+  of footprint — you are counting semantic variety, not spatial size.
+
+**Default active pick when a breadth drill fires: hub + one starter territory**
+— not the bare hub (which renders as an empty plaza) and not all N (the clutter
+we are removing). Take the entry hub plus one adjacent territory; its far edges
+then double as the natural bound.
+
+**Record the deferred siblings as child zones** so "now build territory 2" is
+trivial later:
+
+```json
+{ "name": "Ember Territory", "kind": "zone", "buildable_now": false,
+  "parent_hub": "Warden Village", "connector": "East Canyon Trail" }
+```
+
 ## 2. Cut the request into zones
 
 **We do the cutting.** Interpreting every part is the point of this step: it is
@@ -369,7 +407,7 @@ Return the **full handoff unchanged**, with `zones` and `active` added.
 | :---- | :---- |
 | `genre_choice` | **Emitted verbatim.** Same block `layout-intake` assembled. If it differs, this skill has overstepped. |
 | `zones[]` | Every part of the request, each a build-ready entry. Present only when the skill fired. |
-| a zone's `buildable_now` | `true` when its route is a bare `P0`/`P6` (± `tiered`) at its grain and it needs no further cut. `false` when it is still too big or carries an unready modifier. |
+| a zone's `buildable_now` | `true` when its route is a bare `P0`/`P6` (± `tiered`) at its grain, it needs no further cut, **and** (at a walkable grain) its Territory Breadth Count is ≤ 1 hub + 1 adjacent sub-zone. `false` when it is still too big, carries an unready modifier, or `overflow: content_breadth_exceeded`. |
 | a zone's `pipeline` | The route for that zone alone. A `buildable_now: true` zone is `["P0"]` or `["P6"]`. |
 | a zone's `transition` | `none`, `gateway`, or `seamless` — per step 2. Drives the exterior-first preference in step 3. |
 | a zone's `cut_hint` | For a `buildable_now: false` zone, the named sub-zones it will cut into when built. Omit for buildable zones. |
@@ -422,3 +460,21 @@ The image model receives the **`active` zone's** `shape` and `image_prompt` only
 — here, `space-bounded` (P0) and the hub's two picks. The `active` zone's
 `layout_placement` goes to the post-segmentation placement pass. The other zones
 in `zones` are not sent now; they wait, build-ready, for their turn.
+
+**Scrub the deferred siblings from the active zone — prose AND structured fields.**
+The mapper assembles the active zone's `image_prompt` *and a catalogue addendum
+built from its `options` / `layout` / `layout_placement`* into one prompt. A
+sibling territory named in the prose, or a `count: 6` / "across the six
+territories" / a deferred dungeon left inside an `options` or `layout_placement`
+entry, leaks straight back into the render and re-crowds the very frame the drill
+was meant to thin. So when a breadth drill fires:
+
+- rewrite every `count` to the active sub-zone (e.g. `count: 1`);
+- drop options, paths and layout zones that named the deferred territories or the
+  deferred dungeon;
+- bound the active zone's outer edges with impassable terrain (treelines,
+  ridgelines, water) instead of trailing off toward what was cut.
+
+Empirically this is load-bearing: scrubbing the prose alone does **not** work —
+the structured fields re-inject the deferred content through the addendum, and the
+image still comes back with all N territories. Scrub both.
